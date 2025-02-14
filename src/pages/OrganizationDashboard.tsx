@@ -108,15 +108,15 @@ const OrganizationDashboard = () => {
           </div>
 
           <div className="flex gap-4">
-            <SellerSelector
-              selectedSeller={selectedSeller}
-              onSellerChange={handleSellerChange}
-              sellers={mockSellers}
-            />
             <MonthYearSelector
               selectedMonthYear={selectedMonthYear}
               onMonthYearChange={handleMonthYearChange}
               options={getMonthYearOptions()}
+            />
+            <SellerSelector
+              selectedSeller={selectedSeller}
+              onSellerChange={handleSellerChange}
+              sellers={mockSellers}
             />
           </div>
         </div>
