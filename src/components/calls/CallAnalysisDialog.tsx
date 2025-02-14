@@ -117,8 +117,8 @@ export const CallAnalysisDialog = ({
                     Informações extraídas para envio ao CRM
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="h-[calc(100%-100px)]">
-                  <ScrollArea className="h-full pr-4">
+                <CardContent>
+                  <ScrollArea className="h-[calc(100vh-350px)] pr-4">
                     <div className="space-y-6">
                       <div>
                         <h4 className="text-sm font-medium flex items-center gap-2 mb-4">
