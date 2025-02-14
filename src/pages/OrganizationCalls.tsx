@@ -7,7 +7,6 @@ import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
-import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
 import { Call, StatusMap } from "@/types/calls";
 
 // Mock data for calls with analysis
@@ -173,18 +172,11 @@ const OrganizationCalls = () => {
     <OrganizationLayout>
       <TooltipProvider>
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-semibold">Chamadas</h1>
-              <p className="text-muted-foreground mt-1">
-                Visualize e gerencie todas as chamadas recebidas
-              </p>
-            </div>
-            <CreateLeadDialog
-              hasPhoneIntegration={true}
-              hasEmailIntegration={true}
-              onCreateLead={handleCreateLead}
-            />
+          <div>
+            <h1 className="text-3xl font-semibold">Chamadas</h1>
+            <p className="text-muted-foreground mt-1">
+              Visualize e gerencie todas as chamadas recebidas
+            </p>
           </div>
 
           <CallsStats {...monthStats} />

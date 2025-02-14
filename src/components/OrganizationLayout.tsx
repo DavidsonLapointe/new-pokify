@@ -8,6 +8,7 @@ import {
   Headphones,
   UserCircle,
   Building2,
+  PhoneCall,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -41,6 +42,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         },
         { icon: Users, label: "Usuários", path: "/organization/users" },
         { icon: Phone, label: "Chamadas", path: "/organization/calls" },
+        { 
+          icon: PhoneCall, 
+          label: "Efetuar Ligação", 
+          path: "/organization/new-call"
+        },
         {
           icon: Headphones,
           label: "Integrações",
@@ -59,6 +65,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           path: "/organization/dashboard",
         },
         { icon: Phone, label: "Minhas Chamadas", path: "/organization/calls" },
+        { 
+          icon: PhoneCall, 
+          label: "Efetuar Ligação", 
+          path: "/organization/new-call"
+        },
         {
           icon: UserCircle,
           label: "Meu Perfil",
