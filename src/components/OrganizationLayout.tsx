@@ -90,23 +90,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r border-border animate-slideIn">
-        {/* Header com Avatar e Info do Usuário */}
+        {/* Logo ou Nome da Organização */}
         <div className="p-6 border-b">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
-              <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-sm font-medium truncate">
-                {mockLoggedUser.name}
-              </h1>
-              <p className="text-xs text-muted-foreground truncate">
-                {mockLoggedUser.email}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Building2 className="w-4 h-4" />
             <span className="truncate">{mockLoggedUser.organization.name}</span>
           </div>
@@ -146,6 +132,21 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
+        {/* Header com informações do usuário */}
+        <div className="h-16 border-b bg-card px-8 flex items-center justify-end">
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm font-medium">{mockLoggedUser.name}</p>
+              <p className="text-xs text-muted-foreground">{mockLoggedUser.email}</p>
+            </div>
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
+              <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+        
+        {/* Conteúdo da página */}
         <div className="p-8 animate-fadeIn">{children}</div>
       </main>
     </div>
