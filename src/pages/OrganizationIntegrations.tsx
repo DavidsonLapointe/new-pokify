@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { Link, Plug, AlertCircle } from "lucide-react";
+import { Link, Plug, AlertCircle, Brain } from "lucide-react";
 import {
   Alert,
   AlertDescription,
@@ -40,6 +40,21 @@ const mockIntegrations = [
     name: "Aircall",
     type: "call",
     description: "Integração com sistema de chamadas Aircall",
+    isConnected: false,
+  },
+  {
+    id: "gpt4o",
+    name: "GPT-4O",
+    type: "llm",
+    description: "Modelo LLM otimizado para extração de dados de chamadas",
+    isConnected: true,
+    lastSync: "2024-02-20T12:00:00",
+  },
+  {
+    id: "perplexity",
+    name: "Perplexity AI",
+    type: "llm",
+    description: "Modelo LLM especializado em análise de contexto",
     isConnected: false,
   },
 ];
@@ -82,7 +97,7 @@ const OrganizationIntegrations = () => {
         <div>
           <h1 className="text-3xl font-semibold">Integrações</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie suas integrações com CRMs e ferramentas de chamada
+            Gerencie suas integrações com CRMs, ferramentas de chamada e modelos LLM
           </p>
         </div>
 
@@ -90,8 +105,8 @@ const OrganizationIntegrations = () => {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Dica</AlertTitle>
           <AlertDescription>
-            Configure pelo menos um CRM e uma ferramenta de chamada para começar a
-            usar o sistema automaticamente.
+            Configure pelo menos um CRM, uma ferramenta de chamada e um modelo LLM para
+            começar a usar o sistema automaticamente.
           </AlertDescription>
         </Alert>
 
@@ -120,6 +135,23 @@ const OrganizationIntegrations = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {integrations
               .filter((integration) => integration.type === "call")
+              .map((integration) => (
+                <IntegrationCard
+                  key={integration.id}
+                  integration={integration}
+                />
+              ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Brain className="w-5 h-5" />
+            <h2 className="text-xl font-semibold">Modelos LLM</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {integrations
+              .filter((integration) => integration.type === "llm")
               .map((integration) => (
                 <IntegrationCard
                   key={integration.id}
