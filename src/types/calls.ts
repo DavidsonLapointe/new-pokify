@@ -32,14 +32,22 @@ export interface CallAnalysis {
 }
 
 export interface Call {
-  id: number;
+  id: string;
   date: string;
-  phone: string;
   duration: string;
-  status: "processed" | "pending" | "failed";
-  seller: string;
-  audioUrl: string;
-  analysis?: CallAnalysis;
+  status: "success" | "failed";
+}
+
+export interface Lead {
+  id: string;
+  firstName: string;
+  lastName?: string;
+  contactType: "phone" | "email";
+  contactValue: string;
+  status: "pending" | "contacted";
+  createdAt: string;
+  callCount: number;
+  calls?: Call[];
   crmInfo?: CRMInfo;
 }
 
@@ -47,6 +55,7 @@ export interface StatusConfig {
   label: string;
   color: string;
   icon: LucideIcon;
+  tooltip: string;
 }
 
 export interface StatusMap {

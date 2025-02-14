@@ -17,6 +17,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { statusMap } from "@/constants/callStatus";
 
 interface LeadsTableProps {
   leads: Lead[];
@@ -41,7 +48,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
   };
 
   return (
-    <>
+    <TooltipProvider>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -142,14 +149,23 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                       <TableCell>{formatDate(call.date)}</TableCell>
                       <TableCell>{call.duration}</TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                          ${call.status === 'success' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                          }`}
-                        >
-                          {call.status === 'success' ? 'Sucesso' : 'Falha'}
-                        </span>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium
+                              ${statusMap[call.status === 'success' ? 'success' : 'failed'].color}`}
+                            >
+                              {statusMap[call.status === 'success' ? 'success' : 'failed'].icon && 
+                                <statusMap[call.status === 'success' ? 'success' : 'failed'].icon className="h-3 w-3" />
+                              }
+                              {statusMap[call.status === 'success' ? 'success' : 'failed'].label}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              {statusMap[call.status === 'success' ? 'success' : 'failed'].tooltip}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -163,6 +179,6 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </TooltipProvider>
   );
 }
