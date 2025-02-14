@@ -48,7 +48,7 @@ export const CallAnalysisDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pr-10">
             <DialogTitle>Análise da Chamada</DialogTitle>
             <Badge variant="secondary" className={`${temperature.color}`}>
               <Flame className="w-3 h-3 mr-1" />
