@@ -1,8 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { Link, Plug, AlertCircle, Brain, ChevronDown } from "lucide-react";
+import { Link, Plug, AlertCircle, Brain } from "lucide-react";
 import {
   Alert,
   AlertDescription,
