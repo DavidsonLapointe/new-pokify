@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { Phone, CheckCircle2, Clock, AlertCircle, Calendar } from "lucide-react";
+import { Phone, CheckCircle2, Clock, AlertCircle, Calendar, HelpCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const OrganizationDashboard = () => {
   // Obtém o mês atual como padrão
@@ -51,16 +57,30 @@ const OrganizationDashboard = () => {
     value,
     icon: Icon,
     color = "text-muted-foreground",
+    tooltip,
   }: {
     title: string;
     value: number;
     icon: any;
     color?: string;
+    tooltip: string;
   }) => (
     <Card className="p-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">{title}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">{title}</p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">{tooltip}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <h3 className="text-2xl font-semibold mt-1">{value}</h3>
         </div>
         <Icon className={`w-5 h-5 ${color}`} />
@@ -101,24 +121,28 @@ const OrganizationDashboard = () => {
             title="Total de Chamadas"
             value={stats.totalCalls}
             icon={Phone}
+            tooltip="Número total de chamadas recebidas no período, incluindo chamadas processadas, pendentes e com erro"
           />
           <StatCard
             title="Chamadas Processadas"
             value={stats.processedCalls}
             icon={CheckCircle2}
             color="text-green-500"
+            tooltip="Chamadas que foram atendidas e processadas com sucesso pelo sistema"
           />
           <StatCard
             title="Chamadas Pendentes"
             value={stats.pendingCalls}
             icon={Clock}
             color="text-yellow-500"
+            tooltip="Chamadas que ainda estão aguardando processamento ou intervenção manual"
           />
           <StatCard
             title="Chamadas com Erro"
             value={stats.failedCalls}
             icon={AlertCircle}
             color="text-red-500"
+            tooltip="Chamadas que falharam durante o processamento e precisam ser verificadas"
           />
         </div>
       </div>
