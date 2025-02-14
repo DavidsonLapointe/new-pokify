@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -21,7 +20,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { CallAnalysis, LeadTemperature } from "@/types/calls";
-import { Flame, Contact2, ListChecks } from "lucide-react";
+import { Flame, Contact2, ListChecks, Phone } from "lucide-react";
 
 interface CallAnalysisDialogProps {
   isOpen: boolean;
@@ -47,68 +46,30 @@ export const CallAnalysisDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
-        <DialogHeader>
+        <DialogHeader className="space-y-2">
           <DialogTitle>Análise da Chamada</DialogTitle>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            {analysis.leadInfo.name && (
+              <div className="flex items-center gap-1">
+                <Contact2 className="h-4 w-4" />
+                {analysis.leadInfo.name}
+              </div>
+            )}
+            <div className="flex items-center gap-1">
+              <Phone className="h-4 w-4" />
+              {analysis.leadInfo.phone}
+            </div>
+          </div>
         </DialogHeader>
         
-        <Tabs defaultValue="transcription" className="flex-1 flex flex-col">
+        <Tabs defaultValue="lead" className="flex-1 flex flex-col">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="transcription">Transcrição</TabsTrigger>
-            <TabsTrigger value="summary">Resumo</TabsTrigger>
             <TabsTrigger value="lead">Ficha do Lead</TabsTrigger>
+            <TabsTrigger value="summary">Resumo</TabsTrigger>
+            <TabsTrigger value="transcription">Transcrição</TabsTrigger>
           </TabsList>
 
           <div className="flex-1 mt-4 overflow-hidden">
-            <TabsContent value="transcription" className="h-full m-0 data-[state=inactive]:hidden">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle>Transcrição da Conversa</CardTitle>
-                  <CardDescription>
-                    Transcrição completa da chamada gerada por IA
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="h-[calc(100%-100px)]">
-                  <ScrollArea className="h-full pr-4">
-                    <p className="whitespace-pre-wrap">{analysis.transcription}</p>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="summary" className="h-full m-0 data-[state=inactive]:hidden">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle>Resumo e Análise</CardTitle>
-                  <CardDescription>
-                    Resumo da conversa e análise de sentimento
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="h-[calc(100%-100px)]">
-                  <ScrollArea className="h-full pr-4">
-                    <div className="space-y-6">
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Resumo da Conversa</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {analysis.summary}
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Temperatura do Lead</h4>
-                        <Badge variant="secondary" className={`${temperature.color}`}>
-                          <Flame className="w-3 h-3 mr-1" />
-                          {temperature.label}
-                        </Badge>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {analysis.sentiment.reason}
-                        </p>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
             <TabsContent value="lead" className="h-full m-0 data-[state=inactive]:hidden">
               <Card className="h-full">
                 <CardHeader>
@@ -214,6 +175,56 @@ export const CallAnalysisDialog = ({
                         </div>
                       )}
                     </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="summary" className="h-full m-0 data-[state=inactive]:hidden">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Resumo e Análise</CardTitle>
+                  <CardDescription>
+                    Resumo da conversa e análise de sentimento
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="h-[calc(100%-100px)]">
+                  <ScrollArea className="h-full pr-4">
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Resumo da Conversa</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {analysis.summary}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Temperatura do Lead</h4>
+                        <Badge variant="secondary" className={`${temperature.color}`}>
+                          <Flame className="w-3 h-3 mr-1" />
+                          {temperature.label}
+                        </Badge>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {analysis.sentiment.reason}
+                        </p>
+                      </div>
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="transcription" className="h-full m-0 data-[state=inactive]:hidden">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Transcrição da Conversa</CardTitle>
+                  <CardDescription>
+                    Transcrição completa da chamada gerada por IA
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="h-[calc(100%-100px)]">
+                  <ScrollArea className="h-full pr-4">
+                    <p className="whitespace-pre-wrap">{analysis.transcription}</p>
                   </ScrollArea>
                 </CardContent>
               </Card>
