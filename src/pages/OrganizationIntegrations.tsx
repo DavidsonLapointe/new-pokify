@@ -3,87 +3,134 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { Link, Plug, AlertCircle, Brain } from "lucide-react";
+import { Link, Plug, AlertCircle, Brain, ChevronDown } from "lucide-react";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 
-// Mock das integrações disponíveis
-const mockIntegrations = [
-  {
-    id: "hubspot",
-    name: "HubSpot",
-    type: "crm",
-    description: "Integre suas chamadas diretamente com o HubSpot CRM",
-    isConnected: true,
-    lastSync: "2024-02-20T10:30:00",
-  },
-  {
-    id: "salesforce",
-    name: "Salesforce",
-    type: "crm",
-    description: "Sincronize leads automaticamente com o Salesforce",
-    isConnected: false,
-  },
-  {
-    id: "zendesk",
-    name: "Zendesk Talk",
-    type: "call",
-    description: "Capture chamadas realizadas através do Zendesk Talk",
-    isConnected: true,
-    lastSync: "2024-02-20T11:45:00",
-  },
-  {
-    id: "aircall",
-    name: "Aircall",
-    type: "call",
-    description: "Integração com sistema de chamadas Aircall",
-    isConnected: false,
-  },
-  {
-    id: "gpt4o",
-    name: "GPT-4O",
-    type: "llm",
-    description: "Modelo LLM otimizado para extração de dados de chamadas",
-    isConnected: true,
-    lastSync: "2024-02-20T12:00:00",
-  },
-  {
-    id: "perplexity",
-    name: "Perplexity AI",
-    type: "llm",
-    description: "Modelo LLM especializado em análise de contexto",
-    isConnected: false,
-  },
-];
+// Mock das integrações disponíveis (virá do backend depois)
+const mockAvailableIntegrations = {
+  crm: [
+    { id: "hubspot", name: "HubSpot" },
+    { id: "salesforce", name: "Salesforce" },
+    { id: "zoho", name: "Zoho CRM" },
+  ],
+  call: [
+    { id: "zendesk", name: "Zendesk Talk" },
+    { id: "aircall", name: "Aircall" },
+    { id: "twilio", name: "Twilio" },
+  ],
+  llm: [
+    { id: "gpt4o", name: "GPT-4O" },
+    { id: "perplexity", name: "Perplexity AI" },
+    { id: "claude", name: "Claude AI" },
+  ],
+};
+
+interface Integration {
+  id: string;
+  name: string;
+  type: "crm" | "call" | "llm";
+  description: string;
+  isConnected: boolean;
+  lastSync?: string;
+}
 
 const OrganizationIntegrations = () => {
-  const [integrations] = useState(mockIntegrations);
+  // Estado para armazenar as integrações selecionadas
+  const [selectedIntegrations, setSelectedIntegrations] = useState<{
+    crm?: Integration;
+    call?: Integration;
+    llm?: Integration;
+  }>({});
 
-  const getStatusBadge = (type: string) => {
-    const hasActiveIntegration = integrations.some(
-      (integration) => integration.type === type && integration.isConnected
+  // Estado para armazenar as integrações ativas
+  const [activeIntegrations, setActiveIntegrations] = useState<Integration[]>([]);
+
+  const getIntegrationDescription = (id: string): string => {
+    const descriptions: { [key: string]: string } = {
+      hubspot: "Integre suas chamadas diretamente com o HubSpot CRM",
+      salesforce: "Sincronize leads automaticamente com o Salesforce",
+      zoho: "Conecte-se ao Zoho CRM para gestão completa",
+      zendesk: "Capture chamadas realizadas através do Zendesk Talk",
+      aircall: "Integração com sistema de chamadas Aircall",
+      twilio: "Sistema de telefonia cloud com Twilio",
+      gpt4o: "Modelo LLM otimizado para extração de dados de chamadas",
+      perplexity: "Modelo LLM especializado em análise de contexto",
+      claude: "Assistente AI avançado para análise de conversas",
+    };
+    return descriptions[id] || "Descrição não disponível";
+  };
+
+  const handleSelectIntegration = (type: "crm" | "call" | "llm", integrationId: string) => {
+    const selectedTool = mockAvailableIntegrations[type].find(
+      (tool) => tool.id === integrationId
     );
+
+    if (selectedTool) {
+      const newIntegration: Integration = {
+        id: selectedTool.id,
+        name: selectedTool.name,
+        type: type,
+        description: getIntegrationDescription(selectedTool.id),
+        isConnected: false,
+      };
+
+      setSelectedIntegrations((prev) => ({
+        ...prev,
+        [type]: newIntegration,
+      }));
+    }
+  };
+
+  const handleToggleIntegration = (integration: Integration) => {
+    if (integration.isConnected) {
+      setActiveIntegrations((prev) =>
+        prev.filter((item) => item.id !== integration.id)
+      );
+      setSelectedIntegrations((prev) => ({
+        ...prev,
+        [integration.type]: { ...integration, isConnected: false },
+      }));
+    } else {
+      const now = new Date().toISOString();
+      const updatedIntegration = {
+        ...integration,
+        isConnected: true,
+        lastSync: now,
+      };
+      setActiveIntegrations((prev) => [...prev, updatedIntegration]);
+      setSelectedIntegrations((prev) => ({
+        ...prev,
+        [integration.type]: updatedIntegration,
+      }));
+    }
+  };
+
+  const getStatusBadge = (type: "crm" | "call" | "llm") => {
+    const isActive = activeIntegrations.some((integration) => integration.type === type);
     
     return (
       <Badge
-        variant={hasActiveIntegration ? "default" : "destructive"}
-        className={`ml-2 ${hasActiveIntegration ? "bg-green-500 hover:bg-green-600" : ""}`}
+        variant={isActive ? "default" : "destructive"}
+        className={`ml-2 ${isActive ? "bg-green-500 hover:bg-green-600" : ""}`}
       >
-        {hasActiveIntegration ? "Ativo" : "Pendente"}
+        {isActive ? "Ativo" : "Pendente"}
       </Badge>
     );
   };
 
-  const handleToggleIntegration = (integrationId: string) => {
-    // Aqui será implementada a lógica de conexão/desconexão
-    console.log(`Toggle integration: ${integrationId}`);
-  };
-
-  const IntegrationCard = ({ integration }: { integration: any }) => (
+  const IntegrationCard = ({ integration }: { integration: Integration }) => (
     <Card className="p-6">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
@@ -99,12 +146,49 @@ const OrganizationIntegrations = () => {
         </div>
         <Button
           variant={integration.isConnected ? "destructive" : "default"}
-          onClick={() => handleToggleIntegration(integration.id)}
+          onClick={() => handleToggleIntegration(integration)}
         >
           {integration.isConnected ? "Desconectar" : "Conectar"}
         </Button>
       </div>
     </Card>
+  );
+
+  const renderSection = (
+    type: "crm" | "call" | "llm",
+    title: string,
+    icon: React.ReactNode,
+    availableTools: { id: string; name: string }[]
+  ) => (
+    <div>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          {icon}
+          <h2 className="text-xl font-semibold">{title}</h2>
+          {getStatusBadge(type)}
+        </div>
+        <Select
+          value={selectedIntegrations[type]?.id || ""}
+          onValueChange={(value) => handleSelectIntegration(type, value)}
+        >
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Selecionar ferramenta" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableTools.map((tool) => (
+              <SelectItem key={tool.id} value={tool.id}>
+                {tool.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      {selectedIntegrations[type] && (
+        <div className="mt-4">
+          <IntegrationCard integration={selectedIntegrations[type]!} />
+        </div>
+      )}
+    </div>
   );
 
   return (
@@ -126,58 +210,27 @@ const OrganizationIntegrations = () => {
           </AlertDescription>
         </Alert>
 
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Plug className="w-5 h-5" />
-            <h2 className="text-xl font-semibold">CRMs</h2>
-            {getStatusBadge("crm")}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {integrations
-              .filter((integration) => integration.type === "crm")
-              .map((integration) => (
-                <IntegrationCard
-                  key={integration.id}
-                  integration={integration}
-                />
-              ))}
-          </div>
-        </div>
+        <div className="space-y-8">
+          {renderSection(
+            "crm",
+            "CRMs",
+            <Plug className="w-5 h-5" />,
+            mockAvailableIntegrations.crm
+          )}
 
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Link className="w-5 h-5" />
-            <h2 className="text-xl font-semibold">Ferramentas de Chamada</h2>
-            {getStatusBadge("call")}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {integrations
-              .filter((integration) => integration.type === "call")
-              .map((integration) => (
-                <IntegrationCard
-                  key={integration.id}
-                  integration={integration}
-                />
-              ))}
-          </div>
-        </div>
+          {renderSection(
+            "call",
+            "Ferramentas de Chamada",
+            <Link className="w-5 h-5" />,
+            mockAvailableIntegrations.call
+          )}
 
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Brain className="w-5 h-5" />
-            <h2 className="text-xl font-semibold">Modelos LLM</h2>
-            {getStatusBadge("llm")}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {integrations
-              .filter((integration) => integration.type === "llm")
-              .map((integration) => (
-                <IntegrationCard
-                  key={integration.id}
-                  integration={integration}
-                />
-              ))}
-          </div>
+          {renderSection(
+            "llm",
+            "Modelos LLM",
+            <Brain className="w-5 h-5" />,
+            mockAvailableIntegrations.llm
+          )}
         </div>
       </div>
     </OrganizationLayout>
