@@ -82,6 +82,22 @@ const OrganizationDashboard = () => {
 
   const [dailyData] = useState(getDailyData());
 
+  const CustomLabel = (props: any) => {
+    const { x, y, value } = props;
+    return (
+      <text 
+        x={x + 30} 
+        y={y - 10} 
+        fill="#374151" 
+        textAnchor="middle"
+        fontSize="12"
+        fontWeight="500"
+      >
+        {value}
+      </text>
+    );
+  };
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length > 0) {
       return (
@@ -210,7 +226,10 @@ const OrganizationDashboard = () => {
                   <RechartsTooltip content={<CustomTooltip />} />
                   <Legend />
                   <Bar dataKey="processadas" name="Processadas" stackId="a" fill="#22c55e">
-                    <LabelList dataKey="total" position="top" />
+                    <LabelList 
+                      dataKey="total" 
+                      content={CustomLabel}
+                    />
                   </Bar>
                   <Bar dataKey="pendentes" name="Pendentes" stackId="a" fill="#eab308" />
                   <Bar dataKey="erro" name="Erro" stackId="a" fill="#ef4444" />
