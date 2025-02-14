@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,26 +93,33 @@ const OrganizationIntegrations = () => {
   };
 
   const handleSelectIntegration = (type: "crm" | "call" | "llm", integrationId: string) => {
-    // Verifica se já existe uma integração ativa deste tipo
+    console.log('Selecting integration:', { type, integrationId });
+    
     const hasActiveIntegration = activeIntegrations.some(
       (integration) => integration.type === type
     );
+
+    console.log('Has active integration:', hasActiveIntegration);
 
     if (hasActiveIntegration) {
       const activeIntegration = activeIntegrations.find(
         (integration) => integration.type === type
       );
       
-      // Se tentar selecionar uma nova ferramenta enquanto há uma ativa,
-      // mostra o toast de erro e mantém a seleção atual
+      console.log('Active integration:', activeIntegration);
+      console.log('Attempting to select:', integrationId);
+
       if (activeIntegration?.id !== integrationId) {
+        console.log('Showing toast - different integration selected');
         toast({
           variant: "destructive",
-          title: "Ação não permitida",
-          description: "Por favor, desconecte a integração atual antes de selecionar uma nova.",
+          title: "Atenção!",
+          description: "Desconecte a integração atual antes de selecionar uma nova.",
+          duration: 3000,
         });
         return;
       }
+      console.log('Same integration selected, ignoring');
       return;
     }
 
