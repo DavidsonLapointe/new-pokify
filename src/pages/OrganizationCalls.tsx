@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import OrganizationLayout from "@/components/OrganizationLayout";
@@ -6,9 +5,10 @@ import { Card } from "@/components/ui/card";
 import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { CallsStats } from "@/components/calls/CallsStats";
+import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
 import { Call, StatusMap } from "@/types/calls";
 
-// Mock data for calls
+// Mock data for calls with analysis
 const mockCalls: Call[] = [
   {
     id: 1,
@@ -18,6 +18,29 @@ const mockCalls: Call[] = [
     status: "processed",
     seller: "João Silva",
     audioUrl: "https://example.com/audio1.mp3",
+    analysis: {
+      transcription: "Vendedor: Olá, bom dia! Em que posso ajudar?\nCliente: Bom dia! Gostaria de saber mais sobre os planos empresariais...",
+      summary: "Cliente demonstrou interesse nos planos empresariais, especialmente no módulo de gestão de vendas. Possui uma equipe de 15 vendedores e busca melhorar o processo de acompanhamento de leads.",
+      sentiment: {
+        temperature: "hot",
+        reason: "Cliente demonstrou forte interesse no produto, fez perguntas específicas sobre funcionalidades e mencionou orçamento disponível. Solicita uma proposta comercial com urgência.",
+      },
+      leadInfo: {
+        name: "Carlos Silva",
+        email: "carlos.silva@empresa.com.br",
+        phone: "(11) 98765-4321",
+        company: "Empresa XYZ Ltda",
+        position: "Diretor Comercial",
+        budget: "R$ 5.000 - R$ 10.000 / mês",
+        interests: ["Gestão de Vendas", "Automação", "Relatórios"],
+        painPoints: [
+          "Dificuldade em acompanhar performance dos vendedores",
+          "Perda de oportunidades por falta de follow-up",
+          "Processo manual de geração de relatórios",
+        ],
+        nextSteps: "Agendar demonstração técnica com a equipe de TI para a próxima semana",
+      },
+    },
   },
   {
     id: 2,
@@ -125,6 +148,19 @@ const OrganizationCalls = () => {
     }).format(date);
   };
 
+  const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+
+  const handleViewAnalysis = (call: Call) => {
+    setSelectedCall(call);
+    setIsAnalysisOpen(true);
+  };
+
+  const handleCloseAnalysis = () => {
+    setIsAnalysisOpen(false);
+    setSelectedCall(null);
+  };
+
   return (
     <OrganizationLayout>
       <div className="space-y-8">
@@ -152,9 +188,16 @@ const OrganizationCalls = () => {
             calls={filteredCalls}
             statusMap={statusMap}
             onPlayAudio={handlePlayAudio}
+            onViewAnalysis={handleViewAnalysis}
             formatDate={formatDate}
           />
         </Card>
+
+        <CallAnalysisDialog
+          isOpen={isAnalysisOpen}
+          onClose={handleCloseAnalysis}
+          analysis={selectedCall?.analysis}
+        />
       </div>
     </OrganizationLayout>
   );

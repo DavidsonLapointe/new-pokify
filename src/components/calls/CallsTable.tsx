@@ -9,17 +9,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle } from "lucide-react";
+import { PlayCircle, FileText } from "lucide-react";
 import { Call, StatusMap } from "@/types/calls";
 
 interface CallsTableProps {
   calls: Call[];
   statusMap: StatusMap;
   onPlayAudio: (audioUrl: string) => void;
+  onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
 }
 
-export const CallsTable = ({ calls, statusMap, onPlayAudio, formatDate }: CallsTableProps) => {
+export const CallsTable = ({
+  calls,
+  statusMap,
+  onPlayAudio,
+  onViewAnalysis,
+  formatDate,
+}: CallsTableProps) => {
   return (
     <div className="rounded-md border">
       <Table>
@@ -30,7 +37,7 @@ export const CallsTable = ({ calls, statusMap, onPlayAudio, formatDate }: CallsT
             <TableHead>Duração</TableHead>
             <TableHead>Vendedor</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Áudio</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,14 +60,26 @@ export const CallsTable = ({ calls, statusMap, onPlayAudio, formatDate }: CallsT
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onPlayAudio(call.audioUrl)}
-                    className="hover:text-primary"
-                  >
-                    <PlayCircle className="h-5 w-5" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onPlayAudio(call.audioUrl)}
+                      className="hover:text-primary"
+                    >
+                      <PlayCircle className="h-5 w-5" />
+                    </Button>
+                    {call.status === "processed" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onViewAnalysis(call)}
+                        className="hover:text-primary"
+                      >
+                        <FileText className="h-5 w-5" />
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             )})}
