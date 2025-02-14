@@ -1,46 +1,30 @@
 
 import { useState } from "react";
-import { Phone, CheckCircle2, Clock, AlertCircle, PlayCircle } from "lucide-react";
+import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
-import { StatCard } from "@/components/dashboard/StatCard";
+import { CallsFilters } from "@/components/calls/CallsFilters";
+import { CallsTable } from "@/components/calls/CallsTable";
+import { CallsStats } from "@/components/calls/CallsStats";
+import { Call, StatusMap } from "@/types/calls";
 
 // Mock data for calls
-const mockCalls = [
+const mockCalls: Call[] = [
   {
     id: 1,
     date: "2024-02-20T14:30:00",
     phone: "(11) 98765-4321",
     duration: "2:35",
-    status: "processed" as const,
+    status: "processed",
     seller: "João Silva",
-    audioUrl: "https://example.com/audio1.mp3", // URL simulada do áudio
+    audioUrl: "https://example.com/audio1.mp3",
   },
   {
     id: 2,
     date: "2024-02-20T15:15:00",
     phone: "(11) 98765-4322",
     duration: "1:45",
-    status: "pending" as const,
+    status: "pending",
     seller: "Maria Santos",
     audioUrl: "https://example.com/audio2.mp3",
   },
@@ -49,13 +33,13 @@ const mockCalls = [
     date: "2024-02-20T16:00:00",
     phone: "(11) 98765-4323",
     duration: "0:45",
-    status: "failed" as const,
+    status: "failed",
     seller: "Pedro Oliveira",
     audioUrl: "https://example.com/audio3.mp3",
   },
 ];
 
-const statusMap = {
+const statusMap: StatusMap = {
   processed: {
     label: "Processada",
     color: "bg-green-100 text-green-800",
@@ -104,7 +88,6 @@ const OrganizationCalls = () => {
 
   const handleMonthYearChange = (value: string) => {
     setSelectedMonthYear(value);
-    // Simulando estatísticas diferentes para cada mês
     const [month, year] = value.split('/');
     const total = Math.floor(Math.random() * 100) + 50;
     const processed = Math.floor(total * 0.7);
@@ -120,7 +103,6 @@ const OrganizationCalls = () => {
   };
 
   const handlePlayAudio = (audioUrl: string) => {
-    // Por enquanto apenas simula a reprodução do áudio
     console.log(`Reproduzindo áudio: ${audioUrl}`);
   };
 
@@ -153,110 +135,25 @@ const OrganizationCalls = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            title="Total de Chamadas"
-            value={monthStats.total}
-            icon={Phone}
-            tooltip="Número total de chamadas recebidas no período"
-          />
-          <StatCard
-            title="Chamadas Processadas"
-            value={monthStats.processed}
-            icon={CheckCircle2}
-            color="text-green-500"
-            tooltip="Chamadas que foram atendidas e processadas com sucesso"
-          />
-          <StatCard
-            title="Chamadas Pendentes"
-            value={monthStats.pending}
-            icon={Clock}
-            color="text-yellow-500"
-            tooltip="Chamadas que ainda estão aguardando processamento"
-          />
-          <StatCard
-            title="Chamadas com Erro"
-            value={monthStats.failed}
-            icon={AlertCircle}
-            color="text-red-500"
-            tooltip="Chamadas que falharam durante o processamento"
-          />
-        </div>
+        <CallsStats {...monthStats} />
 
         <Card className="p-6">
-          <div className="flex gap-4 mb-6">
-            <div className="flex-1">
-              <Input
-                placeholder="Buscar por telefone ou vendedor..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="max-w-sm"
-              />
-            </div>
-            <MonthYearSelector
-              selectedMonthYear={selectedMonthYear}
-              onMonthYearChange={handleMonthYearChange}
-              options={getMonthYearOptions()}
-            />
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os status</SelectItem>
-                <SelectItem value="processed">Processadas</SelectItem>
-                <SelectItem value="pending">Pendentes</SelectItem>
-                <SelectItem value="failed">Com erro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <CallsFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedMonthYear={selectedMonthYear}
+            onMonthYearChange={handleMonthYearChange}
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            monthYearOptions={getMonthYearOptions()}
+          />
 
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Data e Hora</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>Duração</TableHead>
-                  <TableHead>Vendedor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Áudio</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCalls.map((call) => {
-                  const status = statusMap[call.status];
-                  const StatusIcon = status.icon;
-                  return (
-                    <TableRow key={call.id}>
-                      <TableCell>{formatDate(call.date)}</TableCell>
-                      <TableCell>{call.phone}</TableCell>
-                      <TableCell>{call.duration}</TableCell>
-                      <TableCell>{call.seller}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={`flex items-center gap-1 w-fit ${status.color}`}
-                        >
-                          <StatusIcon className="w-3 h-3" />
-                          {status.label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handlePlayAudio(call.audioUrl)}
-                          className="hover:text-primary"
-                        >
-                          <PlayCircle className="h-5 w-5" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )})}
-              </TableBody>
-            </Table>
-          </div>
+          <CallsTable
+            calls={filteredCalls}
+            statusMap={statusMap}
+            onPlayAudio={handlePlayAudio}
+            formatDate={formatDate}
+          />
         </Card>
       </div>
     </OrganizationLayout>
