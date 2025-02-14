@@ -133,12 +133,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Header com informações do usuário */}
-        <div className="h-16 border-b bg-card px-8 flex items-center justify-end">
+        <div className="h-16 bg-card px-8 flex items-center justify-end">
           <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium">{mockLoggedUser.name}</p>
-              <p className="text-xs text-muted-foreground">{mockLoggedUser.email}</p>
-            </div>
+            <p className="text-sm font-medium">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
               <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
