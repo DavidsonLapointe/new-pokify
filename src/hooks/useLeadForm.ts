@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { leadFormSchema, LeadFormData } from "@/schemas/leadFormSchema";
+import * as z from "zod";
 
 interface UseLeadFormProps {
   hasPhoneIntegration: boolean;

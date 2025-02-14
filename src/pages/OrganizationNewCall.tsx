@@ -130,12 +130,12 @@ export default function OrganizationNewCall() {
       id: Math.random().toString(36).substr(2, 9),
       firstName: data.firstName,
       lastName: data.lastName,
-      contactType: data.contactType,
-      contactValue: data.contactValue,
+      contactType: data.phone ? "phone" : "email",
+      contactValue: data.phone || data.email || "",
       status: "pending",
       createdAt: new Date().toISOString(),
-      callCount: 0, // Adicionando callCount inicial como 0
-      calls: [], // Adicionando array vazio de calls
+      callCount: 0,
+      calls: [],
     };
 
     setLeads((current) => [newLead, ...current]);
