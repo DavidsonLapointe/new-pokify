@@ -21,6 +21,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
+import { StatCard } from "@/components/dashboard/StatCard";
 
 // Mock data for calls
 const mockCalls = [
@@ -77,6 +78,12 @@ const OrganizationCalls = () => {
   const [selectedMonthYear, setSelectedMonthYear] = useState(getCurrentMonthYear());
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [monthStats, setMonthStats] = useState({
+    total: 0,
+    processed: 0,
+    pending: 0,
+    failed: 0,
+  });
 
   const getMonthYearOptions = () => {
     const options = [];
@@ -93,7 +100,19 @@ const OrganizationCalls = () => {
 
   const handleMonthYearChange = (value: string) => {
     setSelectedMonthYear(value);
-    // Aqui você pode adicionar a lógica para filtrar as chamadas por mês/ano
+    // Simulando estatísticas diferentes para cada mês
+    const [month, year] = value.split('/');
+    const total = Math.floor(Math.random() * 100) + 50;
+    const processed = Math.floor(total * 0.7);
+    const pending = Math.floor(total * 0.2);
+    const failed = total - processed - pending;
+    
+    setMonthStats({
+      total,
+      processed,
+      pending,
+      failed,
+    });
   };
 
   const filteredCalls = mockCalls.filter((call) => {
@@ -123,6 +142,36 @@ const OrganizationCalls = () => {
           <p className="text-muted-foreground mt-1">
             Visualize e gerencie todas as chamadas recebidas
           </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="Total de Chamadas"
+            value={monthStats.total}
+            icon={Phone}
+            tooltip="Número total de chamadas recebidas no período"
+          />
+          <StatCard
+            title="Chamadas Processadas"
+            value={monthStats.processed}
+            icon={CheckCircle2}
+            color="text-green-500"
+            tooltip="Chamadas que foram atendidas e processadas com sucesso"
+          />
+          <StatCard
+            title="Chamadas Pendentes"
+            value={monthStats.pending}
+            icon={Clock}
+            color="text-yellow-500"
+            tooltip="Chamadas que ainda estão aguardando processamento"
+          />
+          <StatCard
+            title="Chamadas com Erro"
+            value={monthStats.failed}
+            icon={AlertCircle}
+            color="text-red-500"
+            tooltip="Chamadas que falharam durante o processamento"
+          />
         </div>
 
         <Card className="p-6">
