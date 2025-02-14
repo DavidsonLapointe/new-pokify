@@ -1,4 +1,12 @@
 
+type ContactType = "email" | "phone";
+
+interface ToolWithContact {
+  id: string;
+  name: string;
+  contactType?: ContactType;
+}
+
 export const mockAvailableIntegrations = {
   crm: [
     { id: "hubspot", name: "HubSpot" },
@@ -6,9 +14,9 @@ export const mockAvailableIntegrations = {
     { id: "zoho", name: "Zoho CRM" },
   ],
   call: [
-    { id: "zendesk", name: "Zendesk Talk", contactType: "email" },
-    { id: "aircall", name: "Aircall", contactType: "phone" },
-    { id: "twilio", name: "Twilio", contactType: "phone" },
+    { id: "zendesk", name: "Zendesk Talk", contactType: "email" as ContactType },
+    { id: "aircall", name: "Aircall", contactType: "phone" as ContactType },
+    { id: "twilio", name: "Twilio", contactType: "phone" as ContactType },
   ],
   llm: [
     { id: "gpt4o", name: "GPT-4O" },
@@ -32,7 +40,7 @@ export const getIntegrationDescription = (id: string): string => {
   return descriptions[id] || "Descrição não disponível";
 };
 
-export const getContactType = (toolId: string): "email" | "phone" | undefined => {
-  const tool = mockAvailableIntegrations.call.find(tool => tool.id === toolId);
+export const getContactType = (toolId: string): ContactType | undefined => {
+  const tool = mockAvailableIntegrations.call.find(tool => tool.id === toolId) as ToolWithContact;
   return tool?.contactType;
 };
