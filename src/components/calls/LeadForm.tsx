@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -149,39 +150,23 @@ export function LeadForm({
 
         {/* Quarta Linha: Campos específicos PF/PJ */}
         {personType === "pf" ? (
-          <div className="grid grid-cols-2 gap-3">
-            <FormField
-              control={form.control}
-              name="cpf"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>CPF</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      onChange={handleDocumentChange}
-                      placeholder="000.000.000-00"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="endereco"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Endereço</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Endereço completo" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="cpf"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CPF</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field}
+                    onChange={handleDocumentChange}
+                    placeholder="000.000.000-00"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
@@ -214,39 +199,23 @@ export function LeadForm({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <FormField
-                control={form.control}
-                name="cnpj"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CNPJ</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        onChange={handleDocumentChange}
-                        placeholder="00.000.000/0000-00"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="endereco"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Endereço</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Endereço completo" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="cnpj"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CNPJ</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field}
+                      onChange={handleDocumentChange}
+                      placeholder="00.000.000/0000-00"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </>
         )}
 
