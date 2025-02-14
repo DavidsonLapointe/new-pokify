@@ -1,5 +1,7 @@
+
 import { useState } from "react";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Card } from "@/components/ui/card";
 import { CallsFilters } from "@/components/calls/CallsFilters";
@@ -163,42 +165,44 @@ const OrganizationCalls = () => {
 
   return (
     <OrganizationLayout>
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-semibold">Chamadas</h1>
-          <p className="text-muted-foreground mt-1">
-            Visualize e gerencie todas as chamadas recebidas
-          </p>
+      <TooltipProvider>
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-semibold">Chamadas</h1>
+            <p className="text-muted-foreground mt-1">
+              Visualize e gerencie todas as chamadas recebidas
+            </p>
+          </div>
+
+          <CallsStats {...monthStats} />
+
+          <Card className="p-6">
+            <CallsFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              selectedMonthYear={selectedMonthYear}
+              onMonthYearChange={handleMonthYearChange}
+              selectedStatus={selectedStatus}
+              onStatusChange={setSelectedStatus}
+              monthYearOptions={getMonthYearOptions()}
+            />
+
+            <CallsTable
+              calls={filteredCalls}
+              statusMap={statusMap}
+              onPlayAudio={handlePlayAudio}
+              onViewAnalysis={handleViewAnalysis}
+              formatDate={formatDate}
+            />
+          </Card>
+
+          <CallAnalysisDialog
+            isOpen={isAnalysisOpen}
+            onClose={handleCloseAnalysis}
+            analysis={selectedCall?.analysis}
+          />
         </div>
-
-        <CallsStats {...monthStats} />
-
-        <Card className="p-6">
-          <CallsFilters
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedMonthYear={selectedMonthYear}
-            onMonthYearChange={handleMonthYearChange}
-            selectedStatus={selectedStatus}
-            onStatusChange={setSelectedStatus}
-            monthYearOptions={getMonthYearOptions()}
-          />
-
-          <CallsTable
-            calls={filteredCalls}
-            statusMap={statusMap}
-            onPlayAudio={handlePlayAudio}
-            onViewAnalysis={handleViewAnalysis}
-            formatDate={formatDate}
-          />
-        </Card>
-
-        <CallAnalysisDialog
-          isOpen={isAnalysisOpen}
-          onClose={handleCloseAnalysis}
-          analysis={selectedCall?.analysis}
-        />
-      </div>
+      </TooltipProvider>
     </OrganizationLayout>
   );
 };
