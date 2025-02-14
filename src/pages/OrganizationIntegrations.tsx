@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,15 +46,33 @@ interface Integration {
 }
 
 const OrganizationIntegrations = () => {
-  // Estado para armazenar as integrações selecionadas
+  // Iniciando com o HubSpot já integrado
   const [selectedIntegrations, setSelectedIntegrations] = useState<{
     crm?: Integration;
     call?: Integration;
     llm?: Integration;
-  }>({});
+  }>({
+    crm: {
+      id: "hubspot",
+      name: "HubSpot",
+      type: "crm",
+      description: "Integre suas chamadas diretamente com o HubSpot CRM",
+      isConnected: true,
+      lastSync: new Date().toISOString(),
+    }
+  });
 
-  // Estado para armazenar as integrações ativas
-  const [activeIntegrations, setActiveIntegrations] = useState<Integration[]>([]);
+  // Iniciando com o HubSpot como integração ativa
+  const [activeIntegrations, setActiveIntegrations] = useState<Integration[]>([
+    {
+      id: "hubspot",
+      name: "HubSpot",
+      type: "crm",
+      description: "Integre suas chamadas diretamente com o HubSpot CRM",
+      isConnected: true,
+      lastSync: new Date().toISOString(),
+    }
+  ]);
 
   const getIntegrationDescription = (id: string): string => {
     const descriptions: { [key: string]: string } = {
