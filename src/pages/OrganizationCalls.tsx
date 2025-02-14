@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +7,7 @@ import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
+import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
 import { Call, StatusMap } from "@/types/calls";
 
 // Mock data for calls with analysis
@@ -163,15 +163,28 @@ const OrganizationCalls = () => {
     setSelectedCall(null);
   };
 
+  const handleCreateLead = (data: any) => {
+    console.log("Novo lead:", data);
+    // Aqui você implementará a lógica de criação do lead
+    // baseada no tipo de contato (telefone ou email)
+  };
+
   return (
     <OrganizationLayout>
       <TooltipProvider>
         <div className="space-y-8">
-          <div>
-            <h1 className="text-3xl font-semibold">Chamadas</h1>
-            <p className="text-muted-foreground mt-1">
-              Visualize e gerencie todas as chamadas recebidas
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold">Chamadas</h1>
+              <p className="text-muted-foreground mt-1">
+                Visualize e gerencie todas as chamadas recebidas
+              </p>
+            </div>
+            <CreateLeadDialog
+              hasPhoneIntegration={true}
+              hasEmailIntegration={true}
+              onCreateLead={handleCreateLead}
+            />
           </div>
 
           <CallsStats {...monthStats} />
