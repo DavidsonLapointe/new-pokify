@@ -9,7 +9,6 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -20,10 +19,11 @@ import {
 export default function OrganizationNewCall() {
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [showVoiceIntegrationAlert, setShowVoiceIntegrationAlert] = useState(false);
+  const [showIntegrationsAlert, setShowIntegrationsAlert] = useState(false);
   
-  // Mock da integração de voz - em produção isso viria da configuração da empresa
+  // Mock das integrações - em produção isso viria da configuração da empresa
   const hasVoiceIntegration = false;
+  const hasLLMIntegration = false;
   const hasEmailIntegration = true;
   const hasPhoneIntegration = true;
 
@@ -42,8 +42,8 @@ export default function OrganizationNewCall() {
   };
 
   const handleStartCall = (lead: Lead) => {
-    if (!hasVoiceIntegration) {
-      setShowVoiceIntegrationAlert(true);
+    if (!hasVoiceIntegration || !hasLLMIntegration) {
+      setShowIntegrationsAlert(true);
       return;
     }
 
@@ -52,6 +52,25 @@ export default function OrganizationNewCall() {
       title: "Iniciando chamada",
       description: `Conectando com ${lead.firstName} (${lead.contactValue})`,
     });
+  };
+
+  // Função para gerar a mensagem do alerta com base nas integrações faltantes
+  const getAlertMessage = () => {
+    const missingIntegrations = [];
+    
+    if (!hasVoiceIntegration) {
+      missingIntegrations.push("canal de voz");
+    }
+    
+    if (!hasLLMIntegration) {
+      missingIntegrations.push("modelo de linguagem (LLM)");
+    }
+
+    if (missingIntegrations.length === 1) {
+      return `Para iniciar chamadas, é necessário configurar a integração com ${missingIntegrations[0]}.`;
+    }
+
+    return `Para iniciar chamadas, é necessário configurar as integrações com ${missingIntegrations.join(" e ")}.`;
   };
 
   return (
@@ -78,14 +97,14 @@ export default function OrganizationNewCall() {
         />
 
         <AlertDialog 
-          open={showVoiceIntegrationAlert} 
-          onOpenChange={setShowVoiceIntegrationAlert}
+          open={showIntegrationsAlert} 
+          onOpenChange={setShowIntegrationsAlert}
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Integração de Voz Necessária</AlertDialogTitle>
+              <AlertDialogTitle>Configuração Necessária</AlertDialogTitle>
               <AlertDialogDescription>
-                Para iniciar chamadas, é necessário configurar a integração com um canal de voz.
+                {getAlertMessage()}
                 Entre em contato com o administrador do sistema para realizar esta configuração.
               </AlertDialogDescription>
             </AlertDialogHeader>
