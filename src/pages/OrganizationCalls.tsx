@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Phone, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { Phone, CheckCircle2, Clock, AlertCircle, PlayCircle } from "lucide-react";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import {
   Select,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { StatCard } from "@/components/dashboard/StatCard";
 
@@ -32,6 +33,7 @@ const mockCalls = [
     duration: "2:35",
     status: "processed" as const,
     seller: "João Silva",
+    audioUrl: "https://example.com/audio1.mp3", // URL simulada do áudio
   },
   {
     id: 2,
@@ -40,6 +42,7 @@ const mockCalls = [
     duration: "1:45",
     status: "pending" as const,
     seller: "Maria Santos",
+    audioUrl: "https://example.com/audio2.mp3",
   },
   {
     id: 3,
@@ -48,6 +51,7 @@ const mockCalls = [
     duration: "0:45",
     status: "failed" as const,
     seller: "Pedro Oliveira",
+    audioUrl: "https://example.com/audio3.mp3",
   },
 ];
 
@@ -113,6 +117,11 @@ const OrganizationCalls = () => {
       pending,
       failed,
     });
+  };
+
+  const handlePlayAudio = (audioUrl: string) => {
+    // Por enquanto apenas simula a reprodução do áudio
+    console.log(`Reproduzindo áudio: ${audioUrl}`);
   };
 
   const filteredCalls = mockCalls.filter((call) => {
@@ -211,6 +220,7 @@ const OrganizationCalls = () => {
                   <TableHead>Duração</TableHead>
                   <TableHead>Vendedor</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Áudio</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -231,6 +241,16 @@ const OrganizationCalls = () => {
                           <StatusIcon className="w-3 h-3" />
                           {status.label}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handlePlayAudio(call.audioUrl)}
+                          className="hover:text-primary"
+                        >
+                          <PlayCircle className="h-5 w-5" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   )})}
