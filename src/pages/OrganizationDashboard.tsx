@@ -35,10 +35,10 @@ const OrganizationDashboard = () => {
 
   const [selectedMonthYear, setSelectedMonthYear] = useState(getCurrentMonthYear());
   const [stats, setStats] = useState({
-    totalCalls: 156,
-    processedCalls: 142,
-    pendingCalls: 14,
-    failedCalls: 3,
+    totalCalls: 0,
+    processedCalls: 0,
+    pendingCalls: 0,
+    failedCalls: 0,
   });
 
   // Gera lista de meses/anos para o dropdown (12 meses anteriores)
@@ -64,10 +64,19 @@ const OrganizationDashboard = () => {
   // Dados simulados para o gráfico (30 dias)
   const getDailyData = () => {
     const days = [];
+    let totalProcessadas = 0;
+    let totalPendentes = 0;
+    let totalErro = 0;
+
     for (let i = 1; i <= 30; i++) {
-      const processadas = Math.floor(Math.random() * 8) + 2;
-      const pendentes = Math.floor(Math.random() * 4) + 1;
-      const erro = Math.floor(Math.random() * 2);
+      const processadas = Math.floor(Math.random() * 8) + 2; // 2-9
+      const pendentes = Math.floor(Math.random() * 4) + 1;   // 1-4
+      const erro = Math.floor(Math.random() * 2);            // 0-1
+      
+      totalProcessadas += processadas;
+      totalPendentes += pendentes;
+      totalErro += erro;
+
       days.push({
         day: i,
         total: processadas + pendentes + erro,
@@ -76,6 +85,15 @@ const OrganizationDashboard = () => {
         erro,
       });
     }
+
+    // Atualiza os stats com os totais calculados
+    setStats({
+      totalCalls: totalProcessadas + totalPendentes + totalErro,
+      processedCalls: totalProcessadas,
+      pendingCalls: totalPendentes,
+      failedCalls: totalErro,
+    });
+
     return days;
   };
 
