@@ -7,4 +7,11 @@ export interface Lead {
   contactValue: string;
   status: "pending" | "contacted" | "failed";
   createdAt: string;
+  callCount: number;
+  calls?: {
+    id: string;
+    date: string;
+    duration: string;
+    status: "success" | "failed";
+  }[];
 }
