@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
-        <Route path="/organizations" element={<Organizations />} />
+        <Route path="/admin/organizations" element={<Organizations />} />
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
         <Route path="/organization/calls" element={<OrganizationCalls />} />
         <Route path="/organization/new-call" element={<OrganizationNewCall />} />
