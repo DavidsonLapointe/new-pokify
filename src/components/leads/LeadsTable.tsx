@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PhoneCall } from "lucide-react";
+import { PhoneCall, GitFork } from "lucide-react";
 import { Lead } from "@/types/leads";
 import {
   Dialog,
@@ -51,6 +51,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
               <TableHead>Data de Cadastro</TableHead>
               <TableHead>Chamadas</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Funil (CRM)</TableHead>
               <TableHead className="w-[100px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -83,6 +84,20 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                   </span>
                 </TableCell>
                 <TableCell>
+                  {lead.callCount > 0 && lead.crmInfo ? (
+                    <div className="flex items-center gap-1">
+                      <GitFork className="w-3 h-3 text-muted-foreground" />
+                      <span>
+                        {lead.crmInfo.funnel}
+                        <span className="text-muted-foreground mx-1">→</span>
+                        {lead.crmInfo.stage}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">-</span>
+                  )}
+                </TableCell>
+                <TableCell>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -95,7 +110,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
             ))}
             {leads.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   Nenhum lead cadastrado
                 </TableCell>
               </TableRow>

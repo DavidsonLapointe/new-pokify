@@ -14,4 +14,8 @@ export interface Lead {
     duration: string;
     status: "success" | "failed";
   }[];
+  crmInfo?: {
+    funnel: string;
+    stage: string;
+  };
 }
