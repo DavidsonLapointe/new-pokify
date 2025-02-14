@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText } from "lucide-react";
-import { Call, StatusMap } from "@/types/calls";
+import { PlayCircle, FileText, Flame } from "lucide-react";
+import { Call, StatusMap, LeadTemperature } from "@/types/calls";
 
 interface CallsTableProps {
   calls: Call[];
@@ -19,6 +19,12 @@ interface CallsTableProps {
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
 }
+
+const temperatureConfig: Record<LeadTemperature, { label: string; color: string }> = {
+  cold: { label: "Lead Frio", color: "bg-blue-100 text-blue-800" },
+  warm: { label: "Lead Morno", color: "bg-yellow-100 text-yellow-800" },
+  hot: { label: "Lead Quente", color: "bg-red-100 text-red-800" },
+};
 
 export const CallsTable = ({
   calls,
@@ -44,6 +50,10 @@ export const CallsTable = ({
           {calls.map((call) => {
             const status = statusMap[call.status];
             const StatusIcon = status.icon;
+            const temperature = call.analysis?.sentiment?.temperature 
+              ? temperatureConfig[call.analysis.sentiment.temperature]
+              : null;
+
             return (
               <TableRow key={call.id}>
                 <TableCell>{formatDate(call.date)}</TableCell>
@@ -51,13 +61,24 @@ export const CallsTable = ({
                 <TableCell>{call.duration}</TableCell>
                 <TableCell>{call.seller}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant="secondary"
-                    className={`flex items-center gap-1 w-fit ${status.color}`}
-                  >
-                    <StatusIcon className="w-3 h-3" />
-                    {status.label}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="secondary"
+                      className={`flex items-center gap-1 w-fit ${status.color}`}
+                    >
+                      <StatusIcon className="w-3 h-3" />
+                      {status.label}
+                    </Badge>
+                    {call.status === "processed" && temperature && (
+                      <Badge
+                        variant="secondary"
+                        className={`flex items-center gap-1 w-fit ${temperature.color}`}
+                      >
+                        <Flame className="w-3 h-3" />
+                        {temperature.label}
+                      </Badge>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
