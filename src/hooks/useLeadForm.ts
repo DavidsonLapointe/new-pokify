@@ -22,14 +22,21 @@ export const useLeadForm = ({
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadFormSchema),
     defaultValues: {
+      personType: "pf",
       firstName: "",
       lastName: "",
       contactType: hasPhoneIntegration ? "phone" : "email",
       contactValue: "",
+      cpf: "",
+      razaoSocial: "",
+      nomeFantasia: "",
+      cnpj: "",
+      endereco: "",
     },
   });
 
   const contactType = form.watch("contactType");
+  const personType = form.watch("personType");
 
   const handleContactValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
@@ -44,6 +51,24 @@ export const useLeadForm = ({
     }
     
     form.setValue("contactValue", value);
+  };
+
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    
+    if (personType === "pf" && value.length <= 11) {
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    } else if (personType === "pj" && value.length <= 14) {
+      value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+      value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+      value = value.replace(/(\d{4})(\d)/, "$1-$2");
+    }
+    
+    const field = personType === "pf" ? "cpf" : "cnpj";
+    form.setValue(field, value);
   };
 
   const onSubmit = (data: LeadFormData) => {
@@ -72,7 +97,9 @@ export const useLeadForm = ({
   return {
     form,
     contactType,
+    personType,
     handleContactValueChange,
+    handleDocumentChange,
     onSubmit,
   };
 };
