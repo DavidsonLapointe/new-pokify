@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Users, List, Database } from "lucide-react";
+import { Settings, Users, List, Database, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface AdminLayoutProps {
@@ -16,6 +16,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
     { icon: Database, label: "Integrações", path: "/admin/integrations" },
     { icon: Settings, label: "Configurações", path: "/admin/settings" },
+    { icon: User, label: "Meu Perfil", path: "/admin/profile" },
   ];
 
   return (
