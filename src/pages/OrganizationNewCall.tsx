@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
 import { LeadsTable } from "@/components/leads/LeadsTable";
@@ -15,8 +16,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function OrganizationNewCall() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [showIntegrationsAlert, setShowIntegrationsAlert] = useState(false);
@@ -26,6 +29,14 @@ export default function OrganizationNewCall() {
   const hasLLMIntegration = false;
   const hasEmailIntegration = true;
   const hasPhoneIntegration = true;
+
+  // Mock do usuário e admin - em produção isso viria do contexto de autenticação
+  const isAdmin = true; // Simula usuário admin
+  const adminContact = {
+    name: "João Silva",
+    phone: "(11) 98765-4321",
+    email: "joao@empresa.com"
+  };
 
   const handleCreateLead = (data: LeadFormData) => {
     const newLead: Lead = {
@@ -66,11 +77,45 @@ export default function OrganizationNewCall() {
       missingIntegrations.push("modelo de linguagem (LLM)");
     }
 
-    if (missingIntegrations.length === 1) {
-      return `Para iniciar chamadas, é necessário configurar a integração com ${missingIntegrations[0]}.`;
-    }
+    const baseMessage = missingIntegrations.length === 1
+      ? `Para iniciar chamadas, é necessário configurar a integração com ${missingIntegrations[0]}.`
+      : `Para iniciar chamadas, é necessário configurar as integrações com ${missingIntegrations.join(" e ")}.`;
 
-    return `Para iniciar chamadas, é necessário configurar as integrações com ${missingIntegrations.join(" e ")}.`;
+    if (isAdmin) {
+      return (
+        <div className="space-y-4">
+          <p>{baseMessage}</p>
+          <div className="bg-muted p-4 rounded-lg">
+            <p className="text-sm">
+              Como administrador, você pode configurar as integrações necessárias na 
+              página de integrações do sistema.
+            </p>
+            <Button 
+              variant="default" 
+              className="mt-2"
+              onClick={() => {
+                setShowIntegrationsAlert(false);
+                navigate("/organization/integrations");
+              }}
+            >
+              Ir para Integrações
+            </Button>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="space-y-4">
+          <p>{baseMessage}</p>
+          <div className="bg-muted p-4 rounded-lg">
+            <p className="text-sm font-medium">Contato do administrador:</p>
+            <p className="text-sm">{adminContact.name}</p>
+            <p className="text-sm">Tel: {adminContact.phone}</p>
+            <p className="text-sm">Email: {adminContact.email}</p>
+          </div>
+        </div>
+      );
+    }
   };
 
   return (
@@ -103,9 +148,8 @@ export default function OrganizationNewCall() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Configuração Necessária</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogDescription asChild>
                 {getAlertMessage()}
-                Entre em contato com o administrador do sistema para realizar esta configuração.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
