@@ -60,48 +60,48 @@ const AdminDashboard = () => {
         <div>
           <h1 className="text-3xl font-semibold">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            Monitor your platform's performance and key metrics
+            Monitore o desempenho da sua plataforma
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
-            title="Total Organizations"
+            title="Total de Empresas"
             value={stats.organizations}
             icon={Users}
           />
           <StatCard
-            title="Active Calls"
+            title="Chamadas Ativas"
             value={stats.activeCalls}
             icon={Phone}
           />
           <StatCard
-            title="Leads Processed"
+            title="Leads Processados"
             value={stats.leadsProcessed}
             icon={Database}
           />
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+          <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <QuickAction
-              title="Add Organization"
-              description="Register a new organization to the platform"
+              title="Adicionar Empresa"
+              description="Registre uma nova empresa na plataforma"
               onClick={() => {
                 toast({
-                  title: "Coming Soon",
-                  description: "This feature will be available soon.",
+                  title: "Em Breve",
+                  description: "Esta funcionalidade estará disponível em breve.",
                 });
               }}
             />
             <QuickAction
-              title="Configure Integration"
-              description="Set up CRM and call service integrations"
+              title="Configurar Integração"
+              description="Configure CRM e serviços de chamadas"
               onClick={() => {
                 toast({
-                  title: "Coming Soon",
-                  description: "This feature will be available soon.",
+                  title: "Em Breve",
+                  description: "Esta funcionalidade estará disponível em breve.",
                 });
               }}
             />

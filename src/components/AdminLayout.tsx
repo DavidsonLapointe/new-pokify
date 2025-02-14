@@ -13,9 +13,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const menuItems = [
     { icon: List, label: "Dashboard", path: "/admin" },
-    { icon: Users, label: "Organizations", path: "/admin/organizations" },
-    { icon: Database, label: "Integrations", path: "/admin/integrations" },
-    { icon: Settings, label: "Settings", path: "/admin/settings" },
+    { icon: Users, label: "Empresas", path: "/admin/organizations" },
+    { icon: Database, label: "Integrações", path: "/admin/integrations" },
+    { icon: Settings, label: "Configurações", path: "/admin/settings" },
   ];
 
   return (
