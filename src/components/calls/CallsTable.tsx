@@ -38,13 +38,13 @@ export const CallsTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Data e Hora</TableHead>
-            <TableHead>Telefone</TableHead>
-            <TableHead>Duração</TableHead>
-            <TableHead>Vendedor</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Funil (CRM)</TableHead>
-            <TableHead>Ações</TableHead>
+            <TableHead className="w-[140px] text-xs">Data e Hora</TableHead>
+            <TableHead className="w-[120px] text-xs">Telefone</TableHead>
+            <TableHead className="w-[80px] text-xs">Duração</TableHead>
+            <TableHead className="w-[120px] text-xs">Vendedor</TableHead>
+            <TableHead className="w-[220px] text-xs">Status</TableHead>
+            <TableHead className="w-[180px] text-xs">Funil (CRM)</TableHead>
+            <TableHead className="w-[100px] text-xs">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -56,16 +56,16 @@ export const CallsTable = ({
               : null;
 
             return (
-              <TableRow key={call.id}>
-                <TableCell>{formatDate(call.date)}</TableCell>
-                <TableCell>{call.phone}</TableCell>
-                <TableCell>{call.duration}</TableCell>
-                <TableCell>{call.seller}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
+              <TableRow key={call.id} className="text-xs">
+                <TableCell className="py-2">{formatDate(call.date)}</TableCell>
+                <TableCell className="py-2">{call.phone}</TableCell>
+                <TableCell className="py-2">{call.duration}</TableCell>
+                <TableCell className="py-2">{call.seller}</TableCell>
+                <TableCell className="py-2">
+                  <div className="flex items-center gap-1.5">
                     <Badge
                       variant="secondary"
-                      className={`flex items-center gap-1 w-fit ${status.color}`}
+                      className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
                     >
                       <StatusIcon className="w-3 h-3" />
                       {status.label}
@@ -73,7 +73,7 @@ export const CallsTable = ({
                     {call.status === "processed" && temperature && (
                       <Badge
                         variant="secondary"
-                        className={`flex items-center gap-1 w-fit ${temperature.color}`}
+                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${temperature.color}`}
                       >
                         <Flame className="w-3 h-3" />
                         {temperature.label}
@@ -81,38 +81,38 @@ export const CallsTable = ({
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-2">
                   {call.status === "processed" && call.crmInfo ? (
                     <div className="flex items-center gap-1">
                       <GitFork className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-sm">
+                      <span>
                         {call.crmInfo.funnel}
-                        <span className="text-muted-foreground"> → </span>
+                        <span className="text-muted-foreground mx-1">→</span>
                         {call.crmInfo.stage}
                       </span>
                     </div>
                   ) : (
-                    <span className="text-sm text-muted-foreground">-</span>
+                    <span className="text-muted-foreground">-</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
+                <TableCell className="py-2">
+                  <div className="flex gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => onPlayAudio(call.audioUrl)}
-                      className="hover:text-primary"
+                      className="hover:text-primary h-7 w-7"
                     >
-                      <PlayCircle className="h-5 w-5" />
+                      <PlayCircle className="h-4 w-4" />
                     </Button>
                     {call.status === "processed" && (
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => onViewAnalysis(call)}
-                        className="hover:text-primary"
+                        className="hover:text-primary h-7 w-7"
                       >
-                        <FileText className="h-5 w-5" />
+                        <FileText className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
