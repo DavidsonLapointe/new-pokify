@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 // Mock das integrações disponíveis (virá do backend depois)
 const mockAvailableIntegrations = {
@@ -293,6 +294,7 @@ const OrganizationIntegrations = () => {
           )}
         </div>
       </div>
+      <Toaster />
     </OrganizationLayout>
   );
 };
