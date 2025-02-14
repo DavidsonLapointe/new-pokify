@@ -3,11 +3,11 @@ import { Call } from "@/types/calls";
 
 export const mockCalls: Call[] = [
   {
-    id: 1,
+    id: "1",
     date: "2024-02-20T14:30:00",
     phone: "(11) 98765-4321",
     duration: "2:35",
-    status: "processed",
+    status: "success",
     seller: "João Silva",
     audioUrl: "https://example.com/audio1.mp3",
     analysis: {
@@ -33,23 +33,27 @@ export const mockCalls: Call[] = [
         nextSteps: "Agendar demonstração técnica com a equipe de TI para a próxima semana",
       },
     },
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Qualificação"
+    }
   },
   {
-    id: 2,
+    id: "2",
     date: "2024-02-20T15:15:00",
     phone: "(11) 98765-4322",
     duration: "1:45",
     status: "pending",
     seller: "Maria Santos",
-    audioUrl: "https://example.com/audio2.mp3",
+    audioUrl: "https://example.com/audio2.mp3"
   },
   {
-    id: 3,
+    id: "3",
     date: "2024-02-20T16:00:00",
     phone: "(11) 98765-4323",
     duration: "0:45",
     status: "failed",
     seller: "Pedro Oliveira",
-    audioUrl: "https://example.com/audio3.mp3",
-  },
+    audioUrl: "https://example.com/audio3.mp3"
+  }
 ];

@@ -35,19 +35,11 @@ export interface Call {
   id: string;
   date: string;
   duration: string;
-  status: "success" | "failed";
-}
-
-export interface Lead {
-  id: string;
-  firstName: string;
-  lastName?: string;
-  contactType: "phone" | "email";
-  contactValue: string;
-  status: "pending" | "contacted";
-  createdAt: string;
-  callCount: number;
-  calls?: Call[];
+  status: "success" | "failed" | "pending";
+  phone: string;
+  seller: string;
+  audioUrl: string;
+  analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
 }
 
