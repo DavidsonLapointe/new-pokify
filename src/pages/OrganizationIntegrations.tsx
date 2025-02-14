@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Link, Plug, AlertCircle, Brain } from "lucide-react";
 import {
@@ -62,6 +63,21 @@ const mockIntegrations = [
 const OrganizationIntegrations = () => {
   const [integrations] = useState(mockIntegrations);
 
+  const getStatusBadge = (type: string) => {
+    const hasActiveIntegration = integrations.some(
+      (integration) => integration.type === type && integration.isConnected
+    );
+    
+    return (
+      <Badge
+        variant={hasActiveIntegration ? "default" : "secondary"}
+        className="ml-2"
+      >
+        {hasActiveIntegration ? "Ativo" : "Pendente"}
+      </Badge>
+    );
+  };
+
   const handleToggleIntegration = (integrationId: string) => {
     // Aqui será implementada a lógica de conexão/desconexão
     console.log(`Toggle integration: ${integrationId}`);
@@ -114,6 +130,7 @@ const OrganizationIntegrations = () => {
           <div className="flex items-center gap-2 mb-4">
             <Plug className="w-5 h-5" />
             <h2 className="text-xl font-semibold">CRMs</h2>
+            {getStatusBadge("crm")}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {integrations
@@ -131,6 +148,7 @@ const OrganizationIntegrations = () => {
           <div className="flex items-center gap-2 mb-4">
             <Link className="w-5 h-5" />
             <h2 className="text-xl font-semibold">Ferramentas de Chamada</h2>
+            {getStatusBadge("call")}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {integrations
@@ -148,6 +166,7 @@ const OrganizationIntegrations = () => {
           <div className="flex items-center gap-2 mb-4">
             <Brain className="w-5 h-5" />
             <h2 className="text-xl font-semibold">Modelos LLM</h2>
+            {getStatusBadge("llm")}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {integrations
