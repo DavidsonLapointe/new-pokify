@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import OrganizationLayout from "@/components/OrganizationLayout";
@@ -16,6 +15,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const OrganizationDashboard = () => {
   // Obtém o mês atual como padrão
@@ -51,6 +60,23 @@ const OrganizationDashboard = () => {
     // Aqui você pode adicionar a lógica para buscar os dados do mês selecionado
     console.log(`Buscando dados para ${value}`);
   };
+
+  // Dados simulados para o gráfico (30 dias)
+  const getDailyData = () => {
+    const days = [];
+    for (let i = 1; i <= 30; i++) {
+      days.push({
+        day: i,
+        total: Math.floor(Math.random() * 10) + 3,
+        processadas: Math.floor(Math.random() * 8) + 2,
+        pendentes: Math.floor(Math.random() * 4) + 1,
+        erro: Math.floor(Math.random() * 2),
+      });
+    }
+    return days;
+  };
+
+  const [dailyData] = useState(getDailyData());
 
   const StatCard = ({
     title,
@@ -151,6 +177,27 @@ const OrganizationDashboard = () => {
             tooltip="Chamadas que falharam durante o processamento e precisam ser verificadas"
           />
         </div>
+
+        <Card className="p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Distribuição Diária de Chamadas</h3>
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Bar dataKey="total" name="Total" fill="#6b7280" />
+                  <Bar dataKey="processadas" name="Processadas" fill="#22c55e" />
+                  <Bar dataKey="pendentes" name="Pendentes" fill="#eab308" />
+                  <Bar dataKey="erro" name="Erro" fill="#ef4444" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </Card>
       </div>
     </OrganizationLayout>
   );
