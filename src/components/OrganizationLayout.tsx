@@ -41,7 +41,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           path: "/organization/dashboard",
         },
         { icon: Users, label: "Usuários", path: "/organization/users" },
-        { icon: Phone, label: "Chamadas", path: "/organization/calls" },
+        { icon: Phone, label: "Análise de Chamadas", path: "/organization/calls" },
         { 
           icon: PhoneCall, 
           label: "Efetuar Ligação", 
@@ -64,7 +64,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           label: "Dashboard",
           path: "/organization/dashboard",
         },
-        { icon: Phone, label: "Minhas Chamadas", path: "/organization/calls" },
+        { icon: Phone, label: "Análise de Chamadas", path: "/organization/calls" },
         { 
           icon: PhoneCall, 
           label: "Efetuar Ligação", 
