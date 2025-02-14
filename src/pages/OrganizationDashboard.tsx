@@ -66,14 +66,16 @@ const OrganizationDashboard = () => {
     tooltip: string;
   }) => (
     <Card className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">{title}</p>
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
+                <TooltipTrigger asChild>
+                  <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
+                    <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">{tooltip}</p>
@@ -81,9 +83,11 @@ const OrganizationDashboard = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <h3 className="text-2xl font-semibold mt-1">{value}</h3>
+          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+            <Icon className={`w-4 h-4 ${color}`} />
+          </div>
         </div>
-        <Icon className={`w-5 h-5 ${color}`} />
+        <h3 className="text-2xl font-semibold">{value}</h3>
       </div>
     </Card>
   );
