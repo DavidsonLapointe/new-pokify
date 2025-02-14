@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock das integrações disponíveis (virá do backend depois)
 const mockAvailableIntegrations = {
@@ -47,6 +47,8 @@ interface Integration {
 }
 
 const OrganizationIntegrations = () => {
+  const { toast } = useToast();
+  
   // Iniciando com o HubSpot já integrado
   const [selectedIntegrations, setSelectedIntegrations] = useState<{
     crm?: Integration;
@@ -91,6 +93,19 @@ const OrganizationIntegrations = () => {
   };
 
   const handleSelectIntegration = (type: "crm" | "call" | "llm", integrationId: string) => {
+    const hasActiveIntegration = activeIntegrations.some(
+      (integration) => integration.type === type
+    );
+
+    if (hasActiveIntegration) {
+      toast({
+        variant: "destructive",
+        title: "Ação não permitida",
+        description: "Por favor, desconecte a integração atual antes de selecionar uma nova.",
+      });
+      return;
+    }
+
     const selectedTool = mockAvailableIntegrations[type].find(
       (tool) => tool.id === integrationId
     );
@@ -120,6 +135,11 @@ const OrganizationIntegrations = () => {
         ...prev,
         [integration.type]: { ...integration, isConnected: false },
       }));
+
+      toast({
+        title: "Integração desconectada",
+        description: `A integração com ${integration.name} foi desconectada com sucesso.`,
+      });
     } else {
       const now = new Date().toISOString();
       const updatedIntegration = {
@@ -132,6 +152,11 @@ const OrganizationIntegrations = () => {
         ...prev,
         [integration.type]: updatedIntegration,
       }));
+
+      toast({
+        title: "Integração conectada",
+        description: `A integração com ${integration.name} foi estabelecida com sucesso.`,
+      });
     }
   };
 
