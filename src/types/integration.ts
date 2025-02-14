@@ -7,4 +7,5 @@ export interface Integration {
   isConnected: boolean;
   lastSync?: string;
   apiKey?: string;
+  contactValue?: string;
 }

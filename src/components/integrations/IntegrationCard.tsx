@@ -21,10 +21,11 @@ export const IntegrationCard = ({ integration, onToggle }: IntegrationCardProps)
     }
   };
 
-  const handleApiKeySubmit = (apiKey: string) => {
+  const handleApiKeySubmit = (apiKey: string, contactValue?: string) => {
     const updatedIntegration = {
       ...integration,
       apiKey,
+      contactValue,
     };
     onToggle(updatedIntegration);
     setIsModalOpen(false);
