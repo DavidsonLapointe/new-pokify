@@ -144,31 +144,32 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {selectedLead.calls.map((call) => (
-                    <TableRow key={call.id}>
-                      <TableCell>{formatDate(call.date)}</TableCell>
-                      <TableCell>{call.duration}</TableCell>
-                      <TableCell>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium
-                              ${statusMap[call.status === 'success' ? 'success' : 'failed'].color}`}
-                            >
-                              {statusMap[call.status === 'success' ? 'success' : 'failed'].icon && 
-                                <statusMap[call.status === 'success' ? 'success' : 'failed'].icon className="h-3 w-3" />
-                              }
-                              {statusMap[call.status === 'success' ? 'success' : 'failed'].label}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-xs">
-                              {statusMap[call.status === 'success' ? 'success' : 'failed'].tooltip}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {selectedLead.calls.map((call) => {
+                    const status = call.status === 'success' ? 'success' : 'failed';
+                    const StatusIcon = statusMap[status].icon;
+                    
+                    return (
+                      <TableRow key={call.id}>
+                        <TableCell>{formatDate(call.date)}</TableCell>
+                        <TableCell>{call.duration}</TableCell>
+                        <TableCell>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${statusMap[status].color}`}>
+                                <StatusIcon className="h-3 w-3" />
+                                {statusMap[status].label}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">
+                                {statusMap[status].tooltip}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             ) : (
