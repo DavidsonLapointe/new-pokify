@@ -10,6 +10,7 @@ import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import Admin from "./pages/Admin";
 import Organizations from "./pages/Organizations";
+import AdminProfile from "./pages/AdminProfile";
 import "./App.css";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/profile" element={<AdminProfile />} />
         <Route path="/organizations" element={<Organizations />} />
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
         <Route path="/organization/calls" element={<OrganizationCalls />} />
