@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 
 // Mock data for calls
 const mockCalls = [
@@ -47,7 +48,6 @@ const mockCalls = [
     status: "failed" as const,
     seller: "Pedro Oliveira",
   },
-  // Add more mock data as needed
 ];
 
 const statusMap = {
@@ -69,8 +69,32 @@ const statusMap = {
 };
 
 const OrganizationCalls = () => {
+  const getCurrentMonthYear = () => {
+    const date = new Date();
+    return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+  };
+
+  const [selectedMonthYear, setSelectedMonthYear] = useState(getCurrentMonthYear());
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const getMonthYearOptions = () => {
+    const options = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+      options.push(monthYear);
+    }
+    
+    return options;
+  };
+
+  const handleMonthYearChange = (value: string) => {
+    setSelectedMonthYear(value);
+    // Aqui você pode adicionar a lógica para filtrar as chamadas por mês/ano
+  };
 
   const filteredCalls = mockCalls.filter((call) => {
     const matchesStatus = selectedStatus === "all" || call.status === selectedStatus;
@@ -111,6 +135,11 @@ const OrganizationCalls = () => {
                 className="max-w-sm"
               />
             </div>
+            <MonthYearSelector
+              selectedMonthYear={selectedMonthYear}
+              onMonthYearChange={handleMonthYearChange}
+              options={getMonthYearOptions()}
+            />
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
