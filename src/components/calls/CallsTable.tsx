@@ -38,13 +38,13 @@ export const CallsTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[140px] text-xs">Data e Hora</TableHead>
-            <TableHead className="w-[120px] text-xs">Telefone</TableHead>
-            <TableHead className="w-[80px] text-xs">Duração</TableHead>
-            <TableHead className="w-[120px] text-xs">Vendedor</TableHead>
-            <TableHead className="w-[220px] text-xs">Status</TableHead>
-            <TableHead className="w-[180px] text-xs">Funil (CRM)</TableHead>
-            <TableHead className="w-[100px] text-xs">Ações</TableHead>
+            <TableHead className="w-[140px] text-xs whitespace-nowrap">Data e Hora</TableHead>
+            <TableHead className="w-[120px] text-xs whitespace-nowrap">Telefone</TableHead>
+            <TableHead className="w-[80px] text-xs whitespace-nowrap">Duração</TableHead>
+            <TableHead className="w-[120px] text-xs whitespace-nowrap">Vendedor</TableHead>
+            <TableHead className="w-[220px] text-xs whitespace-nowrap">Status</TableHead>
+            <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
+            <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -57,11 +57,11 @@ export const CallsTable = ({
 
             return (
               <TableRow key={call.id} className="text-xs">
-                <TableCell className="py-2">{formatDate(call.date)}</TableCell>
-                <TableCell className="py-2">{call.phone}</TableCell>
-                <TableCell className="py-2">{call.duration}</TableCell>
-                <TableCell className="py-2">{call.seller}</TableCell>
-                <TableCell className="py-2">
+                <TableCell className="py-2 whitespace-nowrap">{formatDate(call.date)}</TableCell>
+                <TableCell className="py-2 whitespace-nowrap">{call.phone}</TableCell>
+                <TableCell className="py-2 whitespace-nowrap">{call.duration}</TableCell>
+                <TableCell className="py-2 whitespace-nowrap">{call.seller}</TableCell>
+                <TableCell className="py-2 whitespace-nowrap">
                   <div className="flex items-center gap-1.5">
                     <Badge
                       variant="secondary"
@@ -81,7 +81,7 @@ export const CallsTable = ({
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="py-2">
+                <TableCell className="py-2 whitespace-nowrap">
                   {call.status === "processed" && call.crmInfo ? (
                     <div className="flex items-center gap-1">
                       <GitFork className="w-3 h-3 text-muted-foreground" />
