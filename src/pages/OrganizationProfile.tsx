@@ -64,21 +64,26 @@ const OrganizationProfile = () => {
   return (
     <OrganizationLayout>
       <div className="max-w-2xl mx-auto">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-semibold">Meu Perfil</h1>
-            <p className="text-muted-foreground mt-1">
-              Atualize suas informações pessoais e senha
+        <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-medium text-gray-900">Meu Perfil</h1>
+            <p className="text-muted-foreground">
+              Gerencie suas informações pessoais e preferências de conta
             </p>
           </div>
 
           <form onSubmit={handleUpdateProfile} className="space-y-8">
             {/* Informações de Contato */}
             <div className="space-y-6">
-              <h2 className="text-xl font-medium">Informações de Contato</h2>
-              <div className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900">Informações de Contato</h2>
+                <div className="h-[1px] flex-1 bg-gray-100 ml-4" />
+              </div>
+              <div className="grid gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     name="email"
@@ -86,10 +91,14 @@ const OrganizationProfile = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="seu@email.com"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
+                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                    Telefone
+                  </Label>
                   <Input
                     id="phone"
                     name="phone"
@@ -97,6 +106,8 @@ const OrganizationProfile = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="(00) 00000-0000"
                   />
                 </div>
               </div>
@@ -104,43 +115,59 @@ const OrganizationProfile = () => {
 
             {/* Alteração de Senha */}
             <div className="space-y-6">
-              <h2 className="text-xl font-medium">Alterar Senha</h2>
-              <div className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900">Alterar Senha</h2>
+                <div className="h-[1px] flex-1 bg-gray-100 ml-4" />
+              </div>
+              <div className="grid gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Senha Atual</Label>
+                  <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
+                    Senha Atual
+                  </Label>
                   <Input
                     id="currentPassword"
                     name="currentPassword"
                     type="password"
                     value={formData.currentPassword}
                     onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword">Nova Senha</Label>
+                  <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+                    Nova Senha
+                  </Label>
                   <Input
                     id="newPassword"
                     name="newPassword"
                     type="password"
                     value={formData.newPassword}
                     onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                    Confirmar Nova Senha
+                  </Label>
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading}>
+            <div className="pt-4 flex justify-end border-t">
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              >
                 {isLoading ? "Salvando..." : "Salvar Alterações"}
               </Button>
             </div>
