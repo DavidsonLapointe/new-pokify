@@ -41,31 +41,31 @@ export function LeadForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Primeira Linha: Tipo de Pessoa */}
         <FormField
           control={form.control}
           name="personType"
           render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Tipo de Pessoa</FormLabel>
+            <FormItem className="mb-2">
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  className="flex flex-col space-y-1"
+                  className="flex space-x-4"
                 >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="pf" />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-normal m-0">
                       Pessoa Física
                     </FormLabel>
                   </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="pj" />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-normal m-0">
                       Pessoa Jurídica
                     </FormLabel>
                   </FormItem>
@@ -76,56 +76,74 @@ export function LeadForm({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome *</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sobrenome</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {personType === "pf" && (
+        {/* Segunda Linha: Nome e Sobrenome */}
+        <div className="grid grid-cols-2 gap-3">
           <FormField
             control={form.control}
-            name="cpf"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CPF</FormLabel>
+                <FormLabel>Nome *</FormLabel>
                 <FormControl>
-                  <Input 
-                    {...field}
-                    onChange={handleDocumentChange}
-                    placeholder="000.000.000-00"
-                  />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        )}
 
-        {personType === "pj" && (
-          <>
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sobrenome</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Terceira Linha: Campos específicos PF/PJ */}
+        {personType === "pf" ? (
+          <div className="grid grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field}
+                      onChange={handleDocumentChange}
+                      placeholder="000.000.000-00"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="endereco"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Endereço</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Endereço completo" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
               name="razaoSocial"
@@ -153,7 +171,12 @@ export function LeadForm({
                 </FormItem>
               )}
             />
+          </div>
+        )}
 
+        {/* Quarta Linha: CNPJ e Endereço (apenas para PJ) */}
+        {personType === "pj" && (
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
               name="cnpj"
@@ -171,51 +194,51 @@ export function LeadForm({
                 </FormItem>
               )}
             />
-          </>
+
+            <FormField
+              control={form.control}
+              name="endereco"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Endereço</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Endereço completo" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         )}
 
-        <FormField
-          control={form.control}
-          name="endereco"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Endereço</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="Endereço completo" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        {/* Quinta Linha: Tipo de Contato */}
         <FormField
           control={form.control}
           name="contactType"
           render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Tipo de Contato *</FormLabel>
+            <FormItem>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  className="flex flex-col space-y-1"
+                  className="flex space-x-4"
                 >
                   {hasPhoneIntegration && (
-                    <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormItem className="flex items-center space-x-2">
                       <FormControl>
                         <RadioGroupItem value="phone" />
                       </FormControl>
-                      <FormLabel className="font-normal">
+                      <FormLabel className="font-normal m-0">
                         Telefone
                       </FormLabel>
                     </FormItem>
                   )}
                   {hasEmailIntegration && (
-                    <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormItem className="flex items-center space-x-2">
                       <FormControl>
                         <RadioGroupItem value="email" />
                       </FormControl>
-                      <FormLabel className="font-normal">
+                      <FormLabel className="font-normal m-0">
                         Email
                       </FormLabel>
                     </FormItem>
@@ -227,6 +250,7 @@ export function LeadForm({
           )}
         />
 
+        {/* Sexta Linha: Valor do Contato */}
         <FormField
           control={form.control}
           name="contactValue"
@@ -252,7 +276,8 @@ export function LeadForm({
           )}
         />
 
-        <div className="flex justify-end space-x-2 pt-4">
+        {/* Sétima Linha: Botões */}
+        <div className="flex justify-end space-x-2 pt-2">
           {showCancelButton && (
             <Button
               type="button"

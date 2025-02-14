@@ -48,7 +48,7 @@ export function CreateLeadDialog({
           Novo Lead
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Cadastrar Novo Lead</DialogTitle>
         </DialogHeader>
