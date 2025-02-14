@@ -70,8 +70,8 @@ const OrganizationIntegrations = () => {
     
     return (
       <Badge
-        variant={hasActiveIntegration ? "default" : "secondary"}
-        className="ml-2"
+        variant={hasActiveIntegration ? "default" : "destructive"}
+        className={`ml-2 ${hasActiveIntegration ? "bg-green-500 hover:bg-green-600" : ""}`}
       >
         {hasActiveIntegration ? "Ativo" : "Pendente"}
       </Badge>
