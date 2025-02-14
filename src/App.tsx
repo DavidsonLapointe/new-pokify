@@ -11,6 +11,7 @@ import OrganizationDashboard from "./pages/OrganizationDashboard";
 import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationCalls from "./pages/OrganizationCalls";
+import OrganizationNewCall from "./pages/OrganizationNewCall";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,10 @@ const App = () => (
           <Route
             path="/organization/calls"
             element={<OrganizationCalls />}
+          />
+          <Route
+            path="/organization/new-call"
+            element={<OrganizationNewCall />}
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
