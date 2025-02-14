@@ -24,7 +24,6 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
-  LabelList,
 } from "recharts";
 
 const OrganizationDashboard = () => {
@@ -103,6 +102,9 @@ const OrganizationDashboard = () => {
       return (
         <div className="bg-background border rounded-lg shadow-lg p-3">
           <p className="font-medium mb-2">Dia {label}</p>
+          <p className="text-sm mb-2 text-gray-700">
+            Total: {payload[0].payload.total}
+          </p>
           {payload.map((entry: any) => (
             <p key={entry.name} className="text-sm" style={{ color: entry.color }}>
               {entry.name}: {entry.value}
@@ -225,12 +227,7 @@ const OrganizationDashboard = () => {
                   <YAxis />
                   <RechartsTooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Bar dataKey="processadas" name="Processadas" stackId="a" fill="#22c55e">
-                    <LabelList 
-                      dataKey="total" 
-                      content={CustomLabel}
-                    />
-                  </Bar>
+                  <Bar dataKey="processadas" name="Processadas" stackId="a" fill="#22c55e" />
                   <Bar dataKey="pendentes" name="Pendentes" stackId="a" fill="#eab308" />
                   <Bar dataKey="erro" name="Erro" stackId="a" fill="#ef4444" />
                 </BarChart>
