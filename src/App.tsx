@@ -1,58 +1,34 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Admin from "./pages/Admin";
-import Organizations from "./pages/Organizations";
+import NotFound from "./pages/NotFound";
 import OrganizationDashboard from "./pages/OrganizationDashboard";
-import OrganizationIntegrations from "./pages/OrganizationIntegrations";
-import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationCalls from "./pages/OrganizationCalls";
 import OrganizationNewCall from "./pages/OrganizationNewCall";
-import NotFound from "./pages/NotFound";
+import OrganizationProfile from "./pages/OrganizationProfile";
+import OrganizationUsers from "./pages/OrganizationUsers";
+import OrganizationIntegrations from "./pages/OrganizationIntegrations";
+import Admin from "./pages/Admin";
+import Organizations from "./pages/Organizations";
+import "./App.css";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* Rotas Admin */}
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/organizations" element={<Organizations />} />
-          {/* Rotas da Organização */}
-          <Route
-            path="/organization/dashboard"
-            element={<OrganizationDashboard />}
-          />
-          <Route
-            path="/organization/integrations"
-            element={<OrganizationIntegrations />}
-          />
-          <Route
-            path="/organization/users"
-            element={<OrganizationUsers />}
-          />
-          <Route
-            path="/organization/calls"
-            element={<OrganizationCalls />}
-          />
-          <Route
-            path="/organization/new-call"
-            element={<OrganizationNewCall />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/organizations" element={<Organizations />} />
+        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+        <Route path="/organization/calls" element={<OrganizationCalls />} />
+        <Route path="/organization/new-call" element={<OrganizationNewCall />} />
+        <Route path="/organization/profile" element={<OrganizationProfile />} />
+        <Route path="/organization/users" element={<OrganizationUsers />} />
+        <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+}
 
 export default App;
