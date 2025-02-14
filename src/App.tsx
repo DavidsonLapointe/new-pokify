@@ -11,6 +11,7 @@ import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import Admin from "./pages/Admin";
 import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminProfile from "./pages/AdminProfile";
+import AdminIntegrations from "./pages/AdminIntegrations";
 import "./App.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
         <Route path="/admin/organizations" element={<AdminOrganizations />} />
+        <Route path="/admin/integrations" element={<AdminIntegrations />} />
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
         <Route path="/organization/calls" element={<OrganizationCalls />} />
         <Route path="/organization/new-call" element={<OrganizationNewCall />} />
