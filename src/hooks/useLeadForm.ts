@@ -20,13 +20,31 @@ export const useLeadForm = ({
   const { toast } = useToast();
 
   const form = useForm<LeadFormData>({
-    resolver: zodResolver(leadFormSchema),
+    resolver: zodResolver(
+      leadFormSchema.superRefine((data, ctx) => {
+        // Validação de campos obrigatórios baseado no tipo de integração
+        if (hasPhoneIntegration && !data.phone) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Telefone é obrigatório para integração VoIP",
+            path: ["phone"],
+          });
+        }
+        if (hasEmailIntegration && !data.email) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Email é obrigatório para integração de videoconferência",
+            path: ["email"],
+          });
+        }
+      })
+    ),
     defaultValues: {
       personType: "pf",
       firstName: "",
       lastName: "",
-      contactType: hasPhoneIntegration ? "phone" : "email",
-      contactValue: "",
+      phone: "",
+      email: "",
       cpf: "",
       razaoSocial: "",
       nomeFantasia: "",
@@ -35,22 +53,17 @@ export const useLeadForm = ({
     },
   });
 
-  const contactType = form.watch("contactType");
   const personType = form.watch("personType");
 
-  const handleContactValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
     
-    if (contactType === "phone") {
-      value = value.replace(/\D/g, "");
-      
-      if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-        value = value.replace(/(\d)(\d{4})$/, "$1-$2");
-      }
+    if (value.length <= 11) {
+      value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+      value = value.replace(/(\d)(\d{4})$/, "$1-$2");
     }
     
-    form.setValue("contactValue", value);
+    form.setValue("phone", value);
   };
 
   const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,14 +85,14 @@ export const useLeadForm = ({
   };
 
   const onSubmit = (data: LeadFormData) => {
-    const canProceed = (data.contactType === "phone" && hasPhoneIntegration) ||
-                      (data.contactType === "email" && hasEmailIntegration);
+    const hasValidPhone = data.phone && hasPhoneIntegration;
+    const hasValidEmail = data.email && hasEmailIntegration;
 
-    if (!canProceed) {
+    if (!hasValidPhone && !hasValidEmail) {
       toast({
         variant: "destructive",
         title: "Erro ao criar lead",
-        description: `Integração com ${data.contactType === "phone" ? "telefone" : "email"} não configurada.`,
+        description: "É necessário fornecer um meio de contato válido de acordo com a integração configurada.",
       });
       return;
     }
@@ -96,9 +109,8 @@ export const useLeadForm = ({
 
   return {
     form,
-    contactType,
     personType,
-    handleContactValueChange,
+    handlePhoneChange,
     handleDocumentChange,
     onSubmit,
   };

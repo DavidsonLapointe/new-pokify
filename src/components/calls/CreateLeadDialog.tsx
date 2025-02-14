@@ -28,9 +28,8 @@ export function CreateLeadDialog({
 
   const {
     form,
-    contactType,
     personType,
-    handleContactValueChange,
+    handlePhoneChange,
     handleDocumentChange,
     onSubmit,
   } = useLeadForm({
@@ -54,11 +53,10 @@ export function CreateLeadDialog({
         </DialogHeader>
         <LeadForm
           form={form}
-          contactType={contactType}
           personType={personType}
           hasPhoneIntegration={hasPhoneIntegration}
           hasEmailIntegration={hasEmailIntegration}
-          handleContactValueChange={handleContactValueChange}
+          handlePhoneChange={handlePhoneChange}
           handleDocumentChange={handleDocumentChange}
           onSubmit={onSubmit}
           showCancelButton

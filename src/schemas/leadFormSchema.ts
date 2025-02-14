@@ -5,20 +5,30 @@ export const leadFormSchema = z.object({
   personType: z.enum(["pf", "pj"]),
   firstName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   lastName: z.string().optional(),
-  contactType: z.enum(["phone", "email"]),
-  contactValue: z.string().refine((val) => {
-    if (!val) return false;
-    const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return val.includes("@") ? emailRegex.test(val) : phoneRegex.test(val);
-  }, "Contato inválido"),
-  // Campos PF
+  phone: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(val);
+      },
+      { message: "Telefone inválido" }
+    ),
+  email: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      },
+      { message: "Email inválido" }
+    ),
   cpf: z.string().optional(),
-  // Campos PJ
   razaoSocial: z.string().optional(),
   nomeFantasia: z.string().optional(),
   cnpj: z.string().optional(),
-  // Endereço
   endereco: z.string().optional(),
 });
 
