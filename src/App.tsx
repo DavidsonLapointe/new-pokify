@@ -10,6 +10,7 @@ import Organizations from "./pages/Organizations";
 import OrganizationDashboard from "./pages/OrganizationDashboard";
 import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import OrganizationUsers from "./pages/OrganizationUsers";
+import OrganizationCalls from "./pages/OrganizationCalls";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,10 @@ const App = () => (
           <Route
             path="/organization/users"
             element={<OrganizationUsers />}
+          />
+          <Route
+            path="/organization/calls"
+            element={<OrganizationCalls />}
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
