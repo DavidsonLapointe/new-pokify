@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText, Flame } from "lucide-react";
+import { PlayCircle, FileText, Flame, GitFork } from "lucide-react";
 import { Call, StatusMap, LeadTemperature } from "@/types/calls";
 
 interface CallsTableProps {
@@ -43,6 +43,7 @@ export const CallsTable = ({
             <TableHead>Duração</TableHead>
             <TableHead>Vendedor</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Funil (CRM)</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -79,6 +80,20 @@ export const CallsTable = ({
                       </Badge>
                     )}
                   </div>
+                </TableCell>
+                <TableCell>
+                  {call.status === "processed" && call.crmInfo ? (
+                    <div className="flex items-center gap-1">
+                      <GitFork className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-sm">
+                        {call.crmInfo.funnel}
+                        <span className="text-muted-foreground"> → </span>
+                        {call.crmInfo.stage}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">-</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">

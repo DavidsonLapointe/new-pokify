@@ -1,6 +1,13 @@
+
 import { LucideIcon } from "lucide-react";
 
 export type LeadTemperature = "cold" | "warm" | "hot";
+
+export interface CRMInfo {
+  funnel: string;
+  stage: string;
+  lastUpdate?: string;
+}
 
 export interface LeadInfo {
   name?: string;
@@ -33,6 +40,7 @@ export interface Call {
   seller: string;
   audioUrl: string;
   analysis?: CallAnalysis;
+  crmInfo?: CRMInfo;
 }
 
 export interface StatusConfig {
