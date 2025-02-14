@@ -9,7 +9,7 @@ import OrganizationProfile from "./pages/OrganizationProfile";
 import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import Admin from "./pages/Admin";
-import Organizations from "./pages/Organizations";
+import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminProfile from "./pages/AdminProfile";
 import "./App.css";
 
@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
-        <Route path="/admin/organizations" element={<Organizations />} />
+        <Route path="/admin/organizations" element={<AdminOrganizations />} />
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
         <Route path="/organization/calls" element={<OrganizationCalls />} />
         <Route path="/organization/new-call" element={<OrganizationNewCall />} />
