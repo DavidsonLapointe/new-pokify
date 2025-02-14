@@ -250,6 +250,114 @@ export function LeadForm({
           </>
         )}
 
+        {/* Campos de Endereço */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Endereço</h3>
+          <div className="grid grid-cols-12 gap-3">
+            <FormField
+              control={form.control}
+              name="logradouro"
+              render={({ field }) => (
+                <FormItem className="col-span-8">
+                  <FormLabel>Logradouro</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Rua, Avenida, etc." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="numero"
+              render={({ field }) => (
+                <FormItem className="col-span-4">
+                  <FormLabel>Número</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="123" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-12 gap-3">
+            <FormField
+              control={form.control}
+              name="complemento"
+              render={({ field }) => (
+                <FormItem className="col-span-6">
+                  <FormLabel>Complemento</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Apto, Sala, etc." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="bairro"
+              render={({ field }) => (
+                <FormItem className="col-span-6">
+                  <FormLabel>Bairro</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Bairro" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-12 gap-3">
+            <FormField
+              control={form.control}
+              name="cep"
+              render={({ field }) => (
+                <FormItem className="col-span-4">
+                  <FormLabel>CEP</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="00000-000" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cidade"
+              render={({ field }) => (
+                <FormItem className="col-span-5">
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Cidade" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="estado"
+              render={({ field }) => (
+                <FormItem className="col-span-3">
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="UF" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
         {/* Botões */}
         <div className="flex justify-end space-x-2 pt-2">
           {showCancelButton && (

@@ -23,7 +23,6 @@ export const useLeadForm = ({
   const form = useForm<LeadFormData>({
     resolver: zodResolver(
       leadFormSchema.superRefine((data, ctx) => {
-        // Validação de campos obrigatórios baseado no tipo de integração
         if (hasPhoneIntegration && !data.phone) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -50,7 +49,13 @@ export const useLeadForm = ({
       razaoSocial: "",
       nomeFantasia: "",
       cnpj: "",
-      endereco: "",
+      logradouro: "",
+      numero: "",
+      complemento: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      cep: "",
     },
   });
 

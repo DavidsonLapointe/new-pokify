@@ -29,7 +29,13 @@ export const leadFormSchema = z.object({
   razaoSocial: z.string().optional(),
   nomeFantasia: z.string().optional(),
   cnpj: z.string().optional(),
-  endereco: z.string().optional(),
+  logradouro: z.string().optional(),
+  numero: z.string().optional(),
+  complemento: z.string().optional(),
+  bairro: z.string().optional(),
+  cidade: z.string().optional(),
+  estado: z.string().optional(),
+  cep: z.string().optional(),
 });
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;
