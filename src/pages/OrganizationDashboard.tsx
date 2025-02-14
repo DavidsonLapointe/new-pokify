@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Phone, CheckCircle2, Clock, AlertCircle, Calendar, HelpCircle } from "lucide-react";
@@ -27,7 +28,6 @@ import {
 } from "recharts";
 
 const OrganizationDashboard = () => {
-  // Obtém o mês atual como padrão
   const getCurrentMonthYear = () => {
     const date = new Date();
     return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
@@ -40,6 +40,7 @@ const OrganizationDashboard = () => {
     pendingCalls: 0,
     failedCalls: 0,
   });
+  const [dailyData, setDailyData] = useState<any[]>([]);
 
   // Gera lista de meses/anos para o dropdown (12 meses anteriores)
   const getMonthYearOptions = () => {
@@ -62,7 +63,7 @@ const OrganizationDashboard = () => {
   };
 
   // Dados simulados para o gráfico (30 dias)
-  const getDailyData = () => {
+  const generateDailyData = () => {
     const days = [];
     let totalProcessadas = 0;
     let totalPendentes = 0;
@@ -86,34 +87,19 @@ const OrganizationDashboard = () => {
       });
     }
 
-    // Atualiza os stats com os totais calculados
+    setDailyData(days);
     setStats({
       totalCalls: totalProcessadas + totalPendentes + totalErro,
       processedCalls: totalProcessadas,
       pendingCalls: totalPendentes,
       failedCalls: totalErro,
     });
-
-    return days;
   };
 
-  const [dailyData] = useState(getDailyData());
-
-  const CustomLabel = (props: any) => {
-    const { x, y, value } = props;
-    return (
-      <text 
-        x={x + 30} 
-        y={y - 10} 
-        fill="#374151" 
-        textAnchor="middle"
-        fontSize="12"
-        fontWeight="500"
-      >
-        {value}
-      </text>
-    );
-  };
+  // Gera os dados iniciais quando o componente monta
+  useEffect(() => {
+    generateDailyData();
+  }, []);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length > 0) {
