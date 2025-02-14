@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -93,16 +94,26 @@ const OrganizationIntegrations = () => {
   };
 
   const handleSelectIntegration = (type: "crm" | "call" | "llm", integrationId: string) => {
+    // Verifica se já existe uma integração ativa deste tipo
     const hasActiveIntegration = activeIntegrations.some(
       (integration) => integration.type === type
     );
 
     if (hasActiveIntegration) {
-      toast({
-        variant: "destructive",
-        title: "Ação não permitida",
-        description: "Por favor, desconecte a integração atual antes de selecionar uma nova.",
-      });
+      const activeIntegration = activeIntegrations.find(
+        (integration) => integration.type === type
+      );
+      
+      // Se tentar selecionar uma nova ferramenta enquanto há uma ativa,
+      // mostra o toast de erro e mantém a seleção atual
+      if (activeIntegration?.id !== integrationId) {
+        toast({
+          variant: "destructive",
+          title: "Ação não permitida",
+          description: "Por favor, desconecte a integração atual antes de selecionar uma nova.",
+        });
+        return;
+      }
       return;
     }
 
