@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -47,7 +48,13 @@ export const CallAnalysisDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader className="space-y-2">
-          <DialogTitle>Análise da Chamada</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Análise da Chamada</DialogTitle>
+            <Badge variant="secondary" className={`${temperature.color}`}>
+              <Flame className="w-3 h-3 mr-1" />
+              {temperature.label}
+            </Badge>
+          </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             {analysis.leadInfo.name && (
               <div className="flex items-center gap-1">
