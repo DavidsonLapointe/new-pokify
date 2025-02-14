@@ -6,4 +6,5 @@ export interface Integration {
   description: string;
   isConnected: boolean;
   lastSync?: string;
+  apiKey?: string;
 }
