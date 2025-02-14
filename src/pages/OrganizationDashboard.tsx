@@ -24,6 +24,7 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 const OrganizationDashboard = () => {
@@ -65,18 +66,37 @@ const OrganizationDashboard = () => {
   const getDailyData = () => {
     const days = [];
     for (let i = 1; i <= 30; i++) {
+      const processadas = Math.floor(Math.random() * 8) + 2;
+      const pendentes = Math.floor(Math.random() * 4) + 1;
+      const erro = Math.floor(Math.random() * 2);
       days.push({
         day: i,
-        total: Math.floor(Math.random() * 10) + 3,
-        processadas: Math.floor(Math.random() * 8) + 2,
-        pendentes: Math.floor(Math.random() * 4) + 1,
-        erro: Math.floor(Math.random() * 2),
+        total: processadas + pendentes + erro,
+        processadas,
+        pendentes,
+        erro,
       });
     }
     return days;
   };
 
   const [dailyData] = useState(getDailyData());
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length > 0) {
+      return (
+        <div className="bg-background border rounded-lg shadow-lg p-3">
+          <p className="font-medium mb-2">Dia {label}</p>
+          {payload.map((entry: any) => (
+            <p key={entry.name} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   const StatCard = ({
     title,
@@ -187,12 +207,13 @@ const OrganizationDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
-                  <RechartsTooltip />
+                  <RechartsTooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Bar dataKey="total" name="Total" fill="#6b7280" />
-                  <Bar dataKey="processadas" name="Processadas" fill="#22c55e" />
-                  <Bar dataKey="pendentes" name="Pendentes" fill="#eab308" />
-                  <Bar dataKey="erro" name="Erro" fill="#ef4444" />
+                  <Bar dataKey="processadas" name="Processadas" stackId="a" fill="#22c55e">
+                    <LabelList dataKey="total" position="top" />
+                  </Bar>
+                  <Bar dataKey="pendentes" name="Pendentes" stackId="a" fill="#eab308" />
+                  <Bar dataKey="erro" name="Erro" stackId="a" fill="#ef4444" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
