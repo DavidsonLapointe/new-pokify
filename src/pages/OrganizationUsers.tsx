@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,9 +25,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, Search, Mail, UserCircle, PencilIcon } from "lucide-react";
+import { UserPlus, Search, Mail, UserCircle, PencilIcon, LockIcon } from "lucide-react";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+
+// Mock de permissões disponíveis
+const availablePermissions = {
+  dashboard: {
+    label: "Dashboard",
+    permissions: {
+      view: "Visualizar dashboard",
+      export: "Exportar relatórios",
+    },
+  },
+  users: {
+    label: "Usuários",
+    permissions: {
+      view: "Visualizar usuários",
+      create: "Criar usuários",
+      edit: "Editar usuários",
+      delete: "Remover usuários",
+    },
+  },
+  flows: {
+    label: "Fluxos",
+    permissions: {
+      view: "Visualizar fluxos",
+      create: "Criar fluxos",
+      edit: "Editar fluxos",
+      delete: "Remover fluxos",
+      execute: "Executar fluxos",
+    },
+  },
+  integrations: {
+    label: "Integrações",
+    permissions: {
+      view: "Visualizar integrações",
+      configure: "Configurar integrações",
+    },
+  },
+};
 
 // Mock de usuários para exemplo
 const mockUsers = [
@@ -40,6 +77,12 @@ const mockUsers = [
     role: "admin",
     status: "active",
     lastAccess: "2024-02-20T14:30:00",
+    permissions: {
+      dashboard: ["view", "export"],
+      users: ["view", "create", "edit", "delete"],
+      flows: ["view", "create", "edit", "delete", "execute"],
+      integrations: ["view", "configure"],
+    },
   },
   {
     id: 2,
@@ -49,15 +92,12 @@ const mockUsers = [
     role: "seller",
     status: "active",
     lastAccess: "2024-02-20T16:45:00",
-  },
-  {
-    id: 3,
-    name: "Pedro Costa",
-    email: "pedro@empresa.com",
-    phone: "(11) 94567-8901",
-    role: "seller",
-    status: "inactive",
-    lastAccess: "2024-02-19T10:15:00",
+    permissions: {
+      dashboard: ["view"],
+      users: ["view"],
+      flows: ["view", "execute"],
+      integrations: ["view"],
+    },
   },
 ];
 
@@ -66,6 +106,7 @@ const OrganizationUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+  const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [newUser, setNewUser] = useState({
     name: "",
@@ -81,7 +122,6 @@ const OrganizationUsers = () => {
   );
 
   const handleAddUser = () => {
-    // Aqui será implementada a lógica de adicionar usuário
     console.log("Novo usuário:", newUser);
     toast.success("Usuário adicionado com sucesso!");
     setIsAddUserOpen(false);
@@ -91,7 +131,6 @@ const OrganizationUsers = () => {
   const handleEditUser = () => {
     if (!selectedUser) return;
 
-    // Atualiza o usuário na lista (mock)
     const updatedUsers = users.map((user) =>
       user.id === selectedUser.id ? { ...user, ...selectedUser } : user
     );
@@ -102,9 +141,31 @@ const OrganizationUsers = () => {
     setSelectedUser(null);
   };
 
+  const handlePermissionChange = (module: string, permission: string) => {
+    if (!selectedUser) return;
+
+    const currentPermissions = selectedUser.permissions[module] || [];
+    const updatedPermissions = currentPermissions.includes(permission)
+      ? currentPermissions.filter((p: string) => p !== permission)
+      : [...currentPermissions, permission];
+
+    setSelectedUser({
+      ...selectedUser,
+      permissions: {
+        ...selectedUser.permissions,
+        [module]: updatedPermissions,
+      },
+    });
+  };
+
   const openEditDialog = (user: any) => {
     setSelectedUser(user);
     setIsEditUserOpen(true);
+  };
+
+  const openPermissionsDialog = (user: any) => {
+    setSelectedUser(user);
+    setIsPermissionsOpen(true);
   };
 
   return (
@@ -196,7 +257,6 @@ const OrganizationUsers = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Modal de Edição */}
           <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
             <DialogContent>
               <DialogHeader>
@@ -289,6 +349,46 @@ const OrganizationUsers = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          <Dialog open={isPermissionsOpen} onOpenChange={setIsPermissionsOpen}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Permissões do Usuário</DialogTitle>
+                <DialogDescription>
+                  Gerencie as permissões de acesso para {selectedUser?.name}
+                </DialogDescription>
+              </DialogHeader>
+              {selectedUser && (
+                <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
+                  {Object.entries(availablePermissions).map(([module, { label, permissions }]) => (
+                    <div key={module} className="space-y-4">
+                      <h3 className="font-medium text-lg border-b pb-2">{label}</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(permissions).map(([key, description]) => (
+                          <div key={key} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`${module}-${key}`}
+                              checked={selectedUser.permissions[module]?.includes(key)}
+                              onChange={() => handlePermissionChange(module, key)}
+                              className="h-4 w-4 rounded border-gray-300"
+                            />
+                            <Label htmlFor={`${module}-${key}`}>{description}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsPermissionsOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleEditUser}>Salvar Permissões</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="relative">
@@ -309,7 +409,7 @@ const OrganizationUsers = () => {
                 <TableHead>Função</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Último Acesso</TableHead>
-                <TableHead className="w-[100px]">Ações</TableHead>
+                <TableHead className="w-[150px]">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -349,13 +449,22 @@ const OrganizationUsers = () => {
                     {new Date(user.lastAccess).toLocaleString("pt-BR")}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => openEditDialog(user)}
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEditDialog(user)}
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openPermissionsDialog(user)}
+                      >
+                        <LockIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
