@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrganizationLayout from "@/components/OrganizationLayout";
@@ -47,6 +46,8 @@ export default function OrganizationNewCall() {
       contactValue: data.contactValue,
       status: "pending",
       createdAt: new Date().toISOString(),
+      callCount: 0, // Adicionando callCount inicial como 0
+      calls: [], // Adicionando array vazio de calls
     };
 
     setLeads((current) => [newLead, ...current]);
