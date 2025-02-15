@@ -38,13 +38,12 @@ export function LeadForm({
 }: LeadFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Primeira Linha: Tipo de Pessoa */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         <FormField
           control={form.control}
           name="personType"
           render={({ field }) => (
-            <FormItem className="mb-2">
+            <FormItem className="mb-1">
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -55,7 +54,7 @@ export function LeadForm({
                     <FormControl>
                       <RadioGroupItem value="pf" />
                     </FormControl>
-                    <FormLabel className="font-normal m-0">
+                    <FormLabel className="font-normal text-sm m-0">
                       Pessoa Física
                     </FormLabel>
                   </FormItem>
@@ -63,7 +62,7 @@ export function LeadForm({
                     <FormControl>
                       <RadioGroupItem value="pj" />
                     </FormControl>
-                    <FormLabel className="font-normal m-0">
+                    <FormLabel className="font-normal text-sm m-0">
                       Pessoa Jurídica
                     </FormLabel>
                   </FormItem>
@@ -74,16 +73,15 @@ export function LeadForm({
           )}
         />
 
-        {/* Segunda Linha: Nome e Sobrenome */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <FormField
             control={form.control}
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome *</FormLabel>
+                <FormLabel className="text-sm">Nome *</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input className="h-8" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,9 +93,9 @@ export function LeadForm({
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sobrenome</FormLabel>
+                <FormLabel className="text-sm">Sobrenome</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input className="h-8" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,18 +103,18 @@ export function LeadForm({
           />
         </div>
 
-        {/* Terceira Linha: Campos de Contato */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <FormField
             control={form.control}
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="text-sm">
                   Telefone {hasPhoneIntegration && "*"}
                 </FormLabel>
                 <FormControl>
                   <Input 
+                    className="h-8"
                     {...field}
                     onChange={handlePhoneChange}
                     placeholder="(11) 99999-9999"
@@ -132,11 +130,12 @@ export function LeadForm({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="text-sm">
                   Email {hasEmailIntegration && "*"}
                 </FormLabel>
                 <FormControl>
                   <Input 
+                    className="h-8"
                     {...field}
                     type="email"
                     placeholder="exemplo@email.com"
@@ -148,16 +147,16 @@ export function LeadForm({
           />
         </div>
 
-        {/* Quarta Linha: Campos específicos PF/PJ */}
         {personType === "pf" ? (
           <FormField
             control={form.control}
             name="cpf"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CPF</FormLabel>
+                <FormLabel className="text-sm">CPF</FormLabel>
                 <FormControl>
                   <Input 
+                    className="h-8"
                     {...field}
                     onChange={handleDocumentChange}
                     placeholder="000.000.000-00"
@@ -169,15 +168,15 @@ export function LeadForm({
           />
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <FormField
                 control={form.control}
                 name="razaoSocial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Razão Social</FormLabel>
+                    <FormLabel className="text-sm">Razão Social</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className="h-8" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -189,9 +188,9 @@ export function LeadForm({
                 name="nomeFantasia"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome Fantasia</FormLabel>
+                    <FormLabel className="text-sm">Nome Fantasia</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className="h-8" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -204,9 +203,10 @@ export function LeadForm({
               name="cnpj"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>CNPJ</FormLabel>
+                  <FormLabel className="text-sm">CNPJ</FormLabel>
                   <FormControl>
                     <Input 
+                      className="h-8"
                       {...field}
                       onChange={handleDocumentChange}
                       placeholder="00.000.000/0000-00"
@@ -219,18 +219,17 @@ export function LeadForm({
           </>
         )}
 
-        {/* Campos de Endereço */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h3 className="text-sm font-medium">Endereço</h3>
-          <div className="grid grid-cols-12 gap-3">
+          <div className="grid grid-cols-12 gap-2">
             <FormField
               control={form.control}
               name="logradouro"
               render={({ field }) => (
                 <FormItem className="col-span-8">
-                  <FormLabel>Logradouro</FormLabel>
+                  <FormLabel className="text-sm">Logradouro</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Rua, Avenida, etc." />
+                    <Input className="h-8" {...field} placeholder="Rua, Avenida, etc." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -242,9 +241,9 @@ export function LeadForm({
               name="numero"
               render={({ field }) => (
                 <FormItem className="col-span-4">
-                  <FormLabel>Número</FormLabel>
+                  <FormLabel className="text-sm">Número</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="123" />
+                    <Input className="h-8" {...field} placeholder="123" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -252,15 +251,15 @@ export function LeadForm({
             />
           </div>
 
-          <div className="grid grid-cols-12 gap-3">
+          <div className="grid grid-cols-12 gap-2">
             <FormField
               control={form.control}
               name="complemento"
               render={({ field }) => (
                 <FormItem className="col-span-6">
-                  <FormLabel>Complemento</FormLabel>
+                  <FormLabel className="text-sm">Complemento</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Apto, Sala, etc." />
+                    <Input className="h-8" {...field} placeholder="Apto, Sala, etc." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -272,9 +271,9 @@ export function LeadForm({
               name="bairro"
               render={({ field }) => (
                 <FormItem className="col-span-6">
-                  <FormLabel>Bairro</FormLabel>
+                  <FormLabel className="text-sm">Bairro</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Bairro" />
+                    <Input className="h-8" {...field} placeholder="Bairro" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -282,15 +281,15 @@ export function LeadForm({
             />
           </div>
 
-          <div className="grid grid-cols-12 gap-3">
+          <div className="grid grid-cols-12 gap-2">
             <FormField
               control={form.control}
               name="cep"
               render={({ field }) => (
                 <FormItem className="col-span-4">
-                  <FormLabel>CEP</FormLabel>
+                  <FormLabel className="text-sm">CEP</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="00000-000" />
+                    <Input className="h-8" {...field} placeholder="00000-000" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -302,9 +301,9 @@ export function LeadForm({
               name="cidade"
               render={({ field }) => (
                 <FormItem className="col-span-5">
-                  <FormLabel>Cidade</FormLabel>
+                  <FormLabel className="text-sm">Cidade</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Cidade" />
+                    <Input className="h-8" {...field} placeholder="Cidade" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -316,9 +315,9 @@ export function LeadForm({
               name="estado"
               render={({ field }) => (
                 <FormItem className="col-span-3">
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel className="text-sm">Estado</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="UF" />
+                    <Input className="h-8" {...field} placeholder="UF" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -327,18 +326,18 @@ export function LeadForm({
           </div>
         </div>
 
-        {/* Botões */}
         <div className="flex justify-end space-x-2 pt-2">
           {showCancelButton && (
             <Button
               type="button"
               variant="outline"
               onClick={onCancel}
+              size="sm"
             >
               Cancelar
             </Button>
           )}
-          <Button type="submit">
+          <Button type="submit" size="sm">
             {showCancelButton ? "Cadastrar Lead" : "Iniciar Contato"}
           </Button>
         </div>

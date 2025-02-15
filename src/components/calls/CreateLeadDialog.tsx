@@ -47,21 +47,23 @@ export function CreateLeadDialog({
           Novo Lead
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[600px]">
+      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Cadastrar Novo Lead</DialogTitle>
         </DialogHeader>
-        <LeadForm
-          form={form}
-          personType={personType}
-          hasPhoneIntegration={hasPhoneIntegration}
-          hasEmailIntegration={hasEmailIntegration}
-          handlePhoneChange={handlePhoneChange}
-          handleDocumentChange={handleDocumentChange}
-          onSubmit={onSubmit}
-          showCancelButton
-          onCancel={() => setOpen(false)}
-        />
+        <div className="py-2">
+          <LeadForm
+            form={form}
+            personType={personType}
+            hasPhoneIntegration={hasPhoneIntegration}
+            hasEmailIntegration={hasEmailIntegration}
+            handlePhoneChange={handlePhoneChange}
+            handleDocumentChange={handleDocumentChange}
+            onSubmit={onSubmit}
+            showCancelButton
+            onCancel={() => setOpen(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
