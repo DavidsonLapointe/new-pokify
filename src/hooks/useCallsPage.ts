@@ -4,51 +4,15 @@ import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 
 export const useCallsPage = () => {
-  const getCurrentMonthYear = () => {
-    const date = new Date();
-    return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-  };
-
-  const [selectedMonthYear, setSelectedMonthYear] = useState(getCurrentMonthYear());
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [monthStats, setMonthStats] = useState({
-    total: 0,
-    processed: 0,
-    pending: 0,
-    failed: 0,
+  const [monthStats] = useState({
+    total: 45,
+    processed: 32,
+    pending: 10,
+    failed: 3,
   });
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
-
-  const getMonthYearOptions = () => {
-    const options = [];
-    const today = new Date();
-    
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-      options.push(monthYear);
-    }
-    
-    return options;
-  };
-
-  const handleMonthYearChange = (value: string) => {
-    setSelectedMonthYear(value);
-    const [month, year] = value.split('/');
-    const total = Math.floor(Math.random() * 100) + 50;
-    const processed = Math.floor(total * 0.7);
-    const pending = Math.floor(total * 0.2);
-    const failed = total - processed - pending;
-    
-    setMonthStats({
-      total,
-      processed,
-      pending,
-      failed,
-    });
-  };
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -76,24 +40,25 @@ export const useCallsPage = () => {
   };
 
   const filteredCalls = mockCalls.filter((call) => {
-    const matchesStatus = selectedStatus === "all" || call.status === selectedStatus;
-    const matchesSearch =
-      call.phone.includes(searchQuery) ||
-      call.seller.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    const searchTerms = searchQuery.toLowerCase();
+    const leadName = call.leadInfo.personType === "pf" 
+      ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
+      : call.leadInfo.razaoSocial;
+    
+    return (
+      (leadName && leadName.toLowerCase().includes(searchTerms)) ||
+      call.phone.includes(searchTerms) ||
+      (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
+      // Note: CPF/CNPJ ainda não está no modelo de dados, será necessário adicionar quando disponível
+    );
   });
 
   return {
-    selectedMonthYear,
-    selectedStatus,
     searchQuery,
     monthStats,
     selectedCall,
     isAnalysisOpen,
     filteredCalls,
-    getMonthYearOptions,
-    handleMonthYearChange,
-    setSelectedStatus,
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,

@@ -12,16 +12,11 @@ import { useCallsPage } from "@/hooks/useCallsPage";
 
 const OrganizationCalls = () => {
   const {
-    selectedMonthYear,
-    selectedStatus,
     searchQuery,
     monthStats,
     selectedCall,
     isAnalysisOpen,
     filteredCalls,
-    getMonthYearOptions,
-    handleMonthYearChange,
-    setSelectedStatus,
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
@@ -44,11 +39,6 @@ const OrganizationCalls = () => {
             <CallsFilters
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
-              selectedMonthYear={selectedMonthYear}
-              onMonthYearChange={handleMonthYearChange}
-              selectedStatus={selectedStatus}
-              onStatusChange={setSelectedStatus}
-              monthYearOptions={getMonthYearOptions()}
             />
 
             <CallsTable
