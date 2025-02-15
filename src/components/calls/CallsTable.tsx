@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GitFork, PhoneIcon, Flame, HelpCircle } from "lucide-react";
+import { GitFork, Eye, Flame, HelpCircle } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
@@ -146,10 +146,10 @@ export const CallsTable = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => {}} // Implementar ação de iniciar chamada
+                      onClick={() => handleShowCallHistory(lead)}
                       className="hover:text-primary h-7 w-7"
                     >
-                      <PhoneIcon className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
