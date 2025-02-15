@@ -19,9 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText, UserCircle } from "lucide-react";
+import { PlayCircle, FileText } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
+import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
 
 interface CallHistoryProps {
   isOpen: boolean;
@@ -54,14 +55,20 @@ export const CallHistory = ({
                 Histórico de Chamadas - {selectedLead ? getLeadName(selectedLead) : ""}
               </DialogTitle>
               {selectedLead && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowLeadDetails(true)}
-                  className="h-8 w-8"
-                >
-                  <FileText className="h-5 w-5" />
-                </Button>
+                <>
+                  <LeadTemperatureBadge
+                    calls={selectedLead.calls}
+                    hasProcessed={selectedLead.calls.some(call => call.status === "success")}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowLeadDetails(true)}
+                    className="h-8 w-8"
+                  >
+                    <FileText className="h-5 w-5" />
+                  </Button>
+                </>
               )}
             </div>
             <DialogDescription className="text-sm mt-2">
