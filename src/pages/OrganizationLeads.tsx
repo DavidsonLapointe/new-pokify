@@ -12,7 +12,7 @@ import { statusMap } from "@/constants/callStatus";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 
-const OrganizationCalls = () => {
+const OrganizationLeads = () => {
   const {
     searchQuery,
     monthStats,
@@ -76,4 +76,4 @@ const OrganizationCalls = () => {
   );
 };
 
-export default OrganizationCalls;
+export default OrganizationLeads;
