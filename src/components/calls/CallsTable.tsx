@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GitFork, Eye, Flame, HelpCircle } from "lucide-react";
+import { GitFork, Eye, Flame, HelpCircle, Upload } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
+import { UploadCallDialog } from "./UploadCallDialog";
 import {
   getLeadName,
   getLeadStatus,
@@ -30,6 +30,8 @@ export const CallsTable = ({
 }: CallsTableProps) => {
   const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
   const [showCallsHistory, setShowCallsHistory] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
 
   const leadsWithCalls: LeadCalls[] = calls.reduce((leads: LeadCalls[], call) => {
     const existingLead = leads.find(lead => lead.id === call.leadId);
@@ -57,8 +59,18 @@ export const CallsTable = ({
     setShowCallsHistory(true);
   };
 
+  const handleShowUpload = (lead: LeadCalls) => {
+    setUploadLeadId(lead.id);
+    setShowUpload(true);
+  };
+
   const hasProcessedCalls = (calls: LeadCalls['calls']) => {
     return calls.some(call => call.status === "success" && call.analysis);
+  };
+
+  const handleUploadSuccess = () => {
+    // Aqui você pode implementar a lógica de atualização da lista de chamadas
+    // após um upload bem-sucedido
   };
 
   return (
@@ -143,14 +155,24 @@ export const CallsTable = ({
                     )}
                   </TableCell>
                   <TableCell className="py-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleShowCallHistory(lead)}
-                      className="hover:text-primary h-7 w-7"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleShowCallHistory(lead)}
+                        className="hover:text-primary h-7 w-7"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleShowUpload(lead)}
+                        className="hover:text-primary h-7 w-7"
+                      >
+                        <Upload className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
@@ -168,6 +190,18 @@ export const CallsTable = ({
         onViewAnalysis={onViewAnalysis}
         formatDate={formatDate}
       />
+
+      {uploadLeadId && (
+        <UploadCallDialog
+          leadId={uploadLeadId}
+          isOpen={showUpload}
+          onOpenChange={(open) => {
+            setShowUpload(open);
+            if (!open) setUploadLeadId(null);
+          }}
+          onUploadSuccess={handleUploadSuccess}
+        />
+      )}
     </TooltipProvider>
   );
 };
