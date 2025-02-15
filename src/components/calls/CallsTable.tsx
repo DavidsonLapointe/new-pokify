@@ -16,8 +16,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { GitFork, PhoneIcon, PlayCircle, FileText } from "lucide-react";
-import { Call, StatusMap } from "@/types/calls";
+import { GitFork, PhoneIcon, PlayCircle, FileText, Flame } from "lucide-react";
+import { Call, StatusMap, LeadTemperature } from "@/types/calls";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +45,12 @@ interface LeadCalls {
     stage: string;
   };
 }
+
+const temperatureConfig: Record<LeadTemperature, { label: string; color: string }> = {
+  cold: { label: "Lead Frio", color: "bg-blue-100 text-blue-800" },
+  warm: { label: "Lead Morno", color: "bg-yellow-100 text-yellow-800" },
+  hot: { label: "Lead Quente", color: "bg-red-100 text-red-800" },
+};
 
 export const CallsTable = ({
   calls,
@@ -88,6 +94,16 @@ export const CallsTable = ({
     return callCount === 0 ? "pending" : "active";
   };
 
+  const getLastCallTemperature = (calls: Call[]) => {
+    const sortedCalls = [...calls].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    const lastCallWithAnalysis = sortedCalls.find(call => call.analysis?.sentiment?.temperature);
+    
+    return lastCallWithAnalysis?.analysis?.sentiment?.temperature || null;
+  };
+
   const handleShowCallHistory = (lead: LeadCalls) => {
     setSelectedLead(lead);
     setShowCallsHistory(true);
@@ -118,6 +134,7 @@ export const CallsTable = ({
             <TableRow>
               <TableHead className="w-[250px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
               <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
@@ -127,6 +144,8 @@ export const CallsTable = ({
             {leadsWithCalls.map((lead) => {
               const leadStatus = getLeadStatus(lead.calls.length);
               const successfulCalls = lead.calls.filter(call => call.status === "success").length;
+              const temperature = getLastCallTemperature(lead.calls);
+              const tempConfig = temperature ? temperatureConfig[temperature] : null;
 
               return (
                 <TableRow key={lead.id} className="text-xs">
@@ -144,6 +163,19 @@ export const CallsTable = ({
                     >
                       {leadStatus === "active" ? "Ativo" : "Pendente"}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">
+                    {tempConfig ? (
+                      <Badge
+                        variant="secondary"
+                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${tempConfig.color}`}
+                      >
+                        <Flame className="w-3 h-3 mr-1" />
+                        {tempConfig.label}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
                     <Button
