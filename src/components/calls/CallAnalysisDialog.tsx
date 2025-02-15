@@ -63,42 +63,19 @@ export const CallAnalysisDialog = ({
           </div>
         </DialogHeader>
         
-        <Tabs defaultValue="summary" className="flex-1 flex flex-col">
+        <Tabs defaultValue="transcription" className="flex-1 flex flex-col">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="summary">Descrição</TabsTrigger>
             <TabsTrigger value="transcription">Transcrição</TabsTrigger>
+            <TabsTrigger value="summary">Resumo</TabsTrigger>
           </TabsList>
 
           <div className="flex-1 mt-4 overflow-hidden">
-            <TabsContent value="summary" className="h-full m-0 data-[state=inactive]:hidden">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle>Descrição da Chamada</CardTitle>
-                  <CardDescription>
-                    Resumo e pontos principais da conversa
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="h-[calc(100%-100px)]">
-                  <ScrollArea className="h-full pr-4">
-                    <div className="space-y-6">
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Resumo da Conversa</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {analysis.summary}
-                        </p>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
             <TabsContent value="transcription" className="h-full m-0 data-[state=inactive]:hidden">
               <Card className="h-full">
                 <CardHeader>
-                  <CardTitle>Transcrição da Conversa</CardTitle>
+                  <CardTitle>Transcrição da Chamada</CardTitle>
                   <CardDescription>
-                    Transcrição completa da chamada gerada por IA
+                    Transcrição completa de toda a conversa
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="h-[calc(100%-100px)]">
@@ -106,6 +83,26 @@ export const CallAnalysisDialog = ({
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {analysis.transcription}
                     </p>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="summary" className="h-full m-0 data-[state=inactive]:hidden">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Resumo da Chamada</CardTitle>
+                  <CardDescription>
+                    Resumo dos principais pontos da conversa
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="h-[calc(100%-100px)]">
+                  <ScrollArea className="h-full pr-4">
+                    <div className="space-y-6">
+                      <p className="text-sm text-muted-foreground">
+                        {analysis.summary}
+                      </p>
+                    </div>
                   </ScrollArea>
                 </CardContent>
               </Card>
