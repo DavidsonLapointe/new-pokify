@@ -69,6 +69,10 @@ const OrganizationLeads = () => {
             isOpen={isAnalysisOpen}
             onClose={handleCloseAnalysis}
             analysis={selectedCall?.analysis}
+            call={{
+              date: selectedCall?.date || "",
+              duration: selectedCall?.duration || "",
+            }}
           />
         </div>
       </TooltipProvider>
