@@ -96,18 +96,20 @@ export const CallsTable = ({
                     <TooltipContent 
                       side="right" 
                       align="start" 
-                      className="p-4"
+                      className="p-6"
                     >
-                      <div className="space-y-3 max-w-[300px]">
+                      <div className="space-y-4 max-w-[400px]">
                         <div className="text-sm">
-                          <strong>Lead Ativo:</strong>
-                          <br />
-                          Lead que possui pelo menos 1 arquivo de chamada registrado.
+                          <strong className="block mb-2">Lead Ativo:</strong>
+                          <span className="whitespace-normal leading-relaxed">
+                            Lead que possui pelo menos 1 arquivo de chamada registrado.
+                          </span>
                         </div>
                         <div className="text-sm">
-                          <strong>Lead Pendente:</strong>
-                          <br />
-                          Lead que ainda não possui nenhum arquivo de chamada.
+                          <strong className="block mb-2">Lead Pendente:</strong>
+                          <span className="whitespace-normal leading-relaxed">
+                            Lead que ainda não possui nenhum arquivo de chamada.
+                          </span>
                         </div>
                       </div>
                     </TooltipContent>
