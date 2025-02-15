@@ -24,7 +24,7 @@ function App() {
         <Route path="/admin/organizations" element={<AdminOrganizations />} />
         <Route path="/admin/integrations" element={<AdminIntegrations />} />
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/calls" element={<OrganizationCalls />} />
+        <Route path="/organization/leads" element={<OrganizationCalls />} />
         <Route path="/organization/new-call" element={<OrganizationNewCall />} />
         <Route path="/organization/profile" element={<OrganizationProfile />} />
         <Route path="/organization/users" element={<OrganizationUsers />} />
