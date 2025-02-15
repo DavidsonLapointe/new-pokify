@@ -60,7 +60,7 @@ export const CallHistory = ({
                   onClick={() => setShowLeadDetails(true)}
                   className="h-8 w-8"
                 >
-                  <UserCircle className="h-5 w-5" />
+                  <FileText className="h-5 w-5" />
                 </Button>
               )}
             </div>
