@@ -18,6 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PlayCircle, FileText, Video } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
@@ -43,127 +49,19 @@ export const CallHistory = ({
   onViewAnalysis,
   formatDate,
 }: CallHistoryProps) => {
-  const [showLeadDetails, setShowLeadDetails] = useState(false);
-  const [processingCallId, setProcessingCallId] = useState<string | null>(null);
-  const [showVideoModal, setShowVideoModal] = useState(false);
-  const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
-  const { toast } = useToast();
-
   const handleMediaPlay = (call: Call) => {
-    const isVideo = call.mediaType === "video";
-    if (isVideo) {
-      setSelectedMediaUrl(call.audioUrl);
-      setShowVideoModal(true);
-    } else {
-      onPlayAudio(call.audioUrl);
-    }
+    onPlayAudio(call.audioUrl);
   };
-
-  const handleProcessCall = async (call: Call) => {
-    setProcessingCallId(call.id);
-    
-    try {
-      // Simulate API call for processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Randomly succeed or fail for demonstration
-      const success = Math.random() > 0.5;
-      
-      if (success) {
-        toast({
-          title: "Chamada processada com sucesso",
-          description: "A análise foi concluída e está disponível para visualização.",
-        });
-        // Here you would update the call status in your state management
-      } else {
-        throw new Error("Falha no processamento");
-      }
-    } catch (error) {
-      toast({
-        title: "Erro no processamento",
-        description: "Não foi possível processar a chamada. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setProcessingCallId(null);
-    }
-  };
-
-  const exampleCalls: Call[] = selectedLead ? [
-    {
-      id: "1",
-      leadId: selectedLead.id,
-      date: "2024-03-10T10:00:00",
-      duration: "5:23",
-      status: "success",
-      phone: "(11) 99999-9999",
-      seller: "João Silva",
-      audioUrl: "#",
-      mediaType: "audio",
-      leadInfo: selectedLead.calls[0].leadInfo,
-      analysis: {
-        transcription: "Exemplo de transcrição",
-        summary: "Resumo da chamada",
-        sentiment: {
-          temperature: "warm",
-          reason: "Cliente demonstrou interesse"
-        },
-        leadInfo: selectedLead.calls[0].leadInfo
-      }
-    },
-    {
-      id: "2",
-      leadId: selectedLead.id,
-      date: "2024-03-11T14:30:00",
-      duration: "3:45",
-      status: "failed",
-      phone: "(11) 99999-9999",
-      seller: "Maria Santos",
-      audioUrl: "#",
-      mediaType: "video",
-      leadInfo: selectedLead.calls[0].leadInfo
-    },
-    {
-      id: "3",
-      leadId: selectedLead.id,
-      date: "2024-03-12T16:15:00",
-      duration: "4:12",
-      status: "pending",
-      phone: "(11) 99999-9999",
-      seller: "Pedro Oliveira",
-      audioUrl: "#",
-      mediaType: "audio",
-      leadInfo: selectedLead.calls[0].leadInfo
-    }
-  ] : [];
 
   return (
-    <>
+    <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <div className="flex items-center gap-2">
-              <DialogTitle className="text-lg">
-                Histórico de Chamadas - {selectedLead ? getLeadName(selectedLead) : ""}
-              </DialogTitle>
-              {selectedLead && (
-                <>
-                  <LeadTemperatureBadge
-                    calls={selectedLead.calls}
-                    hasProcessed={selectedLead.calls.some(call => call.status === "success")}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowLeadDetails(true)}
-                    className="h-8 w-8"
-                  >
-                    <FileText className="h-5 w-5" />
-                  </Button>
-                </>
-              )}
-            </div>
-            <DialogDescription className="text-sm mt-2">
+            <DialogTitle>
+              Histórico de Chamadas - {getLeadName(selectedLead)}
+            </DialogTitle>
+            <DialogDescription>
               {getLeadDetails(selectedLead)}
             </DialogDescription>
           </DialogHeader>
@@ -179,10 +77,10 @@ export const CallHistory = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {exampleCalls.map((call) => {
+                {selectedLead?.calls.map((call) => {
                   const status = statusMap[call.status];
                   const StatusIcon = status.icon;
-                  const isProcessing = processingCallId === call.id;
+                  const isProcessing = call.status === "pending";
                   const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
 
                   return (
@@ -191,13 +89,22 @@ export const CallHistory = ({
                       <TableCell className="py-2">{call.seller}</TableCell>
                       <TableCell className="py-2">{call.duration}</TableCell>
                       <TableCell className="py-2">
-                        <Badge
-                          variant="secondary"
-                          className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
-                        >
-                          <StatusIcon className="w-3 h-3" />
-                          {status.label}
-                        </Badge>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Badge
+                              variant="secondary"
+                              className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
+                            >
+                              <StatusIcon className="w-3 h-3" />
+                              {status.label}
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              {status.tooltip}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
                       </TableCell>
                       <TableCell className="py-2">
                         <div className="flex gap-1">
@@ -210,7 +117,7 @@ export const CallHistory = ({
                             <MediaIcon className="h-4 w-4" />
                           </Button>
                           
-                          {call.status === "success" && (
+                          {call.status === "success" && call.analysis && (
                             <Button
                               variant="ghost"
                               size="icon"
@@ -218,30 +125,6 @@ export const CallHistory = ({
                               className="hover:text-primary h-7 w-7"
                             >
                               <FileText className="h-4 w-4" />
-                            </Button>
-                          )}
-
-                          {call.status === "failed" && (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => handleProcessCall(call)}
-                              disabled={isProcessing}
-                              className="h-7 px-3 text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
-                            >
-                              {isProcessing ? "Reprocessando..." : "Reprocessar"}
-                            </Button>
-                          )}
-
-                          {call.status === "pending" && (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => handleProcessCall(call)}
-                              disabled={isProcessing}
-                              className="h-7 px-3 text-xs font-medium bg-yellow-50 text-yellow-600 hover:bg-yellow-100 hover:text-yellow-700"
-                            >
-                              {isProcessing ? "Processando..." : "Processar"}
                             </Button>
                           )}
                         </div>
@@ -255,30 +138,11 @@ export const CallHistory = ({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle>Visualizar Vídeo</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 aspect-video">
-            <video
-              src={selectedMediaUrl}
-              controls
-              className="w-full h-full"
-            >
-              Seu navegador não suporta a reprodução de vídeos.
-            </video>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {selectedLead && (
-        <LeadDetailsDialog
-          isOpen={showLeadDetails}
-          onClose={() => setShowLeadDetails(false)}
-          lead={selectedLead}
-        />
-      )}
-    </>
+      <LeadDetailsDialog
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        lead={selectedLead}
+      />
+    </TooltipProvider>
   );
 };
