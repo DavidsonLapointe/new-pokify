@@ -209,11 +209,11 @@ export const CallHistory = ({
 
                           {call.status === "failed" && (
                             <Button
-                              variant="ghost"
+                              variant="secondary"
                               size="sm"
                               onClick={() => handleProcessCall(call)}
                               disabled={isProcessing}
-                              className="h-7"
+                              className="h-7 px-3 text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                             >
                               {isProcessing ? "Reprocessando..." : "Reprocessar"}
                             </Button>
@@ -221,11 +221,11 @@ export const CallHistory = ({
 
                           {call.status === "pending" && (
                             <Button
-                              variant="ghost"
+                              variant="secondary"
                               size="sm"
                               onClick={() => handleProcessCall(call)}
                               disabled={isProcessing}
-                              className="h-7"
+                              className="h-7 px-3 text-xs font-medium bg-yellow-50 text-yellow-600 hover:bg-yellow-100 hover:text-yellow-700"
                             >
                               {isProcessing ? "Processando..." : "Processar"}
                             </Button>
