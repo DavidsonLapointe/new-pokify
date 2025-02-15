@@ -47,6 +47,7 @@ export const CallsTable = ({
       razaoSocial: call.leadInfo.razaoSocial,
       calls: [call],
       crmInfo: call.crmInfo,
+      createdAt: call.date, // Using the first call date as registration date
     };
 
     return [...leads, newLead];
@@ -77,11 +78,12 @@ export const CallsTable = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
+              <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
-              <TableHead className="w-[120px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
-              <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
+              <TableHead className="w-[100px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
+              <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -104,6 +106,9 @@ export const CallsTable = ({
                       calls={lead.calls} 
                       hasProcessed={hasProcessed} 
                     />
+                  </TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">
+                    {formatDate(lead.createdAt)}
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
                     <Button

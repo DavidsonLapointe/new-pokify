@@ -12,6 +12,7 @@ export interface LeadCalls {
     funnel: string;
     stage: string;
   };
+  createdAt: string;
 }
 
 export interface CallsTableProps {
