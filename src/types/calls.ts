@@ -43,6 +43,7 @@ export interface Call {
   phone: string;
   seller: string;
   audioUrl: string;
+  mediaType: "audio" | "video";  // Adicionada esta propriedade
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
   leadInfo: LeadInfo;

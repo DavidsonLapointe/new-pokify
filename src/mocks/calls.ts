@@ -11,6 +11,7 @@ export const mockCalls: Call[] = [
     status: "success",
     seller: "João Silva",
     audioUrl: "https://example.com/audio1.mp3",
+    mediaType: "audio", // Adicionada esta propriedade
     leadInfo: {
       personType: "pf",
       firstName: "Carlos",
@@ -67,6 +68,7 @@ export const mockCalls: Call[] = [
     status: "pending",
     seller: "Maria Santos",
     audioUrl: "https://example.com/audio2.mp3",
+    mediaType: "video", // Adicionada esta propriedade
     leadInfo: {
       personType: "pj",
       razaoSocial: "Tech Solutions LTDA",
@@ -76,13 +78,14 @@ export const mockCalls: Call[] = [
   },
   {
     id: "3",
-    leadId: "lead_2", // Mesmo lead do registro anterior
+    leadId: "lead_2",
     date: "2024-02-20T16:00:00",
     phone: "(11) 98765-4322",
     duration: "0:45",
     status: "failed",
     seller: "Pedro Oliveira",
     audioUrl: "https://example.com/audio3.mp3",
+    mediaType: "audio", // Adicionada esta propriedade
     leadInfo: {
       personType: "pj",
       razaoSocial: "Tech Solutions LTDA",
