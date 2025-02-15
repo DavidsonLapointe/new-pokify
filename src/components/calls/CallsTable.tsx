@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GitFork, PhoneIcon, Flame } from "lucide-react";
+import { GitFork, PhoneIcon, Flame, HelpCircle } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
@@ -57,6 +57,10 @@ export const CallsTable = ({
     setShowCallsHistory(true);
   };
 
+  const hasProcessedCalls = (calls: LeadCalls['calls']) => {
+    return calls.some(call => call.status === "success" && call.analysis);
+  };
+
   return (
     <TooltipProvider>
       <div className="rounded-md border">
@@ -77,6 +81,7 @@ export const CallsTable = ({
               const successfulCalls = lead.calls.filter(call => call.status === "success").length;
               const temperature = getLastCallTemperature(lead.calls);
               const tempConfig = temperature ? temperatureConfig[temperature] : null;
+              const hasProcessed = hasProcessedCalls(lead.calls);
 
               return (
                 <TableRow key={lead.id} className="text-xs">
@@ -96,16 +101,22 @@ export const CallsTable = ({
                     </Badge>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {tempConfig ? (
+                    {hasProcessed ? (
                       <Badge
                         variant="secondary"
-                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${tempConfig.color}`}
+                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${tempConfig?.color}`}
                       >
                         <Flame className="w-3 h-3 mr-1" />
-                        {tempConfig.label}
+                        {tempConfig?.label}
                       </Badge>
                     ) : (
-                      <span className="text-muted-foreground">-</span>
+                      <Badge
+                        variant="secondary"
+                        className="flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 bg-gray-100 text-gray-800"
+                      >
+                        <HelpCircle className="w-3 h-3 mr-1" />
+                        Sem classificação
+                      </Badge>
                     )}
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
