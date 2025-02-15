@@ -53,7 +53,7 @@ export const CallsTable = ({
       razaoSocial: call.leadInfo.razaoSocial,
       calls: [call],
       crmInfo: call.crmInfo,
-      createdAt: call.date, // Using the first call date as registration date
+      createdAt: call.date,
     };
 
     return [...leads, newLead];
@@ -93,7 +93,7 @@ export const CallsTable = ({
                     <TooltipTrigger>
                       <HelpCircle className="h-3 w-3 text-muted-foreground" />
                     </TooltipTrigger>
-                    <TooltipContent className="w-[320px] p-3">
+                    <TooltipContent className="w-[400px] p-3">
                       <div className="space-y-2 text-sm">
                         <p className="leading-relaxed">
                           <strong>Lead Ativo:</strong> Lead que possui pelo menos 1 arquivo de chamada registrado.
