@@ -207,15 +207,27 @@ export const CallHistory = ({
                             </Button>
                           )}
 
-                          {(call.status === "failed" || call.status === "pending") && (
+                          {call.status === "failed" && (
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="sm"
                               onClick={() => handleProcessCall(call)}
                               disabled={isProcessing}
-                              className="hover:text-primary h-7 w-7"
+                              className="h-7"
                             >
-                              <RefreshCw className={`h-4 w-4 ${isProcessing ? "animate-spin" : ""}`} />
+                              {isProcessing ? "Reprocessando..." : "Reprocessar"}
+                            </Button>
+                          )}
+
+                          {call.status === "pending" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleProcessCall(call)}
+                              disabled={isProcessing}
+                              className="h-7"
+                            >
+                              {isProcessing ? "Processando..." : "Processar"}
                             </Button>
                           )}
                         </div>
