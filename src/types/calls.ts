@@ -10,7 +10,10 @@ export interface CRMInfo {
 }
 
 export interface LeadInfo {
-  name?: string;
+  personType: "pf" | "pj";
+  firstName?: string;
+  lastName?: string;
+  razaoSocial?: string;
   email?: string;
   phone: string;
   company?: string;
@@ -33,6 +36,7 @@ export interface CallAnalysis {
 
 export interface Call {
   id: string;
+  leadId: string;
   date: string;
   duration: string;
   status: "success" | "failed" | "pending";
@@ -41,6 +45,7 @@ export interface Call {
   audioUrl: string;
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
+  leadInfo: LeadInfo;
 }
 
 export interface StatusConfig {

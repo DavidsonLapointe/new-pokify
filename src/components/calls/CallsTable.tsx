@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,8 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText, Flame, GitFork } from "lucide-react";
-import { Call, StatusMap, LeadTemperature } from "@/types/calls";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { GitFork, PhoneIcon } from "lucide-react";
+import { Call, StatusMap } from "@/types/calls";
 import {
   Tooltip,
   TooltipContent,
@@ -26,11 +33,18 @@ interface CallsTableProps {
   formatDate: (date: string) => string;
 }
 
-const temperatureConfig: Record<LeadTemperature, { label: string; color: string }> = {
-  cold: { label: "Lead Frio", color: "bg-blue-100 text-blue-800" },
-  warm: { label: "Lead Morno", color: "bg-yellow-100 text-yellow-800" },
-  hot: { label: "Lead Quente", color: "bg-red-100 text-red-800" },
-};
+interface LeadCalls {
+  id: string;
+  personType: "pf" | "pj";
+  firstName?: string;
+  lastName?: string;
+  razaoSocial?: string;
+  calls: Call[];
+  crmInfo?: {
+    funnel: string;
+    stage: string;
+  };
+}
 
 export const CallsTable = ({
   calls,
@@ -39,63 +53,101 @@ export const CallsTable = ({
   onViewAnalysis,
   formatDate,
 }: CallsTableProps) => {
+  const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
+  const [showCallsHistory, setShowCallsHistory] = useState(false);
+
+  // Agrupa chamadas por lead
+  const leadsWithCalls: LeadCalls[] = calls.reduce((leads: LeadCalls[], call) => {
+    const existingLead = leads.find(lead => lead.id === call.leadId);
+    
+    if (existingLead) {
+      existingLead.calls.push(call);
+      return leads;
+    }
+
+    const newLead: LeadCalls = {
+      id: call.leadId,
+      personType: call.leadInfo.personType,
+      firstName: call.leadInfo.firstName,
+      lastName: call.leadInfo.lastName,
+      razaoSocial: call.leadInfo.razaoSocial,
+      calls: [call],
+      crmInfo: call.crmInfo,
+    };
+
+    return [...leads, newLead];
+  }, []);
+
+  const getLeadName = (lead: LeadCalls) => {
+    if (lead.personType === "pf") {
+      return `${lead.firstName} ${lead.lastName || ""}`;
+    }
+    return lead.razaoSocial;
+  };
+
+  const getLeadStatus = (callCount: number) => {
+    return callCount === 0 ? "pending" : "active";
+  };
+
+  const handleShowCallHistory = (lead: LeadCalls) => {
+    setSelectedLead(lead);
+    setShowCallsHistory(true);
+  };
+
   return (
     <TooltipProvider>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[140px] text-xs whitespace-nowrap">Data e Hora</TableHead>
-              <TableHead className="w-[120px] text-xs whitespace-nowrap">Telefone</TableHead>
-              <TableHead className="w-[80px] text-xs whitespace-nowrap">Duração</TableHead>
+              <TableHead className="w-[250px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Vendedor</TableHead>
-              <TableHead className="w-[220px] text-xs whitespace-nowrap">Status Chamada</TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
               <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {calls.map((call) => {
-              const status = statusMap[call.status];
-              const StatusIcon = status.icon;
-              const temperature = call.analysis?.sentiment?.temperature 
-                ? temperatureConfig[call.analysis.sentiment.temperature]
-                : null;
+            {leadsWithCalls.map((lead) => {
+              const leadStatus = getLeadStatus(lead.calls.length);
+              const successfulCalls = lead.calls.filter(call => call.status === "success").length;
 
               return (
-                <TableRow key={call.id} className="text-xs">
-                  <TableCell className="py-2 whitespace-nowrap">{formatDate(call.date)}</TableCell>
-                  <TableCell className="py-2 whitespace-nowrap">{call.phone}</TableCell>
-                  <TableCell className="py-2 whitespace-nowrap">{call.duration}</TableCell>
-                  <TableCell className="py-2 whitespace-nowrap">{call.seller}</TableCell>
+                <TableRow key={lead.id} className="text-xs">
                   <TableCell className="py-2 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <Badge
-                        variant="secondary"
-                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
-                      >
-                        <StatusIcon className="w-3 h-3" />
-                        {status.label}
-                      </Badge>
-                      {call.status === "success" && temperature && (
-                        <Badge
-                          variant="secondary"
-                          className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${temperature.color}`}
-                        >
-                          <Flame className="w-3 h-3" />
-                          {temperature.label}
-                        </Badge>
-                      )}
-                    </div>
+                    {getLeadName(lead)}
+                  </TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">{lead.calls[0]?.seller}</TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">
+                    <Badge
+                      variant="secondary"
+                      className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${
+                        leadStatus === "active" 
+                          ? "bg-green-100 text-green-800" 
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {leadStatus === "active" ? "Ativo" : "Pendente"}
+                    </Badge>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {call.status === "success" && call.crmInfo ? (
+                    <Button
+                      variant="link"
+                      onClick={() => handleShowCallHistory(lead)}
+                      className="p-0 h-auto font-medium"
+                    >
+                      {lead.calls.length}
+                    </Button>
+                  </TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">
+                    {successfulCalls > 0 && lead.crmInfo ? (
                       <div className="flex items-center gap-1">
                         <GitFork className="w-3 h-3 text-muted-foreground" />
                         <span>
-                          {call.crmInfo.funnel}
+                          {lead.crmInfo.funnel}
                           <span className="text-muted-foreground mx-1">→</span>
-                          {call.crmInfo.stage}
+                          {lead.crmInfo.stage}
                         </span>
                       </div>
                     ) : (
@@ -103,26 +155,14 @@ export const CallsTable = ({
                     )}
                   </TableCell>
                   <TableCell className="py-2">
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onPlayAudio(call.audioUrl)}
-                        className="hover:text-primary h-7 w-7"
-                      >
-                        <PlayCircle className="h-4 w-4" />
-                      </Button>
-                      {call.status === "success" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onViewAnalysis(call)}
-                          className="hover:text-primary h-7 w-7"
-                        >
-                          <FileText className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {}} // Implementar ação de iniciar chamada
+                      className="hover:text-primary h-7 w-7"
+                    >
+                      <PhoneIcon className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );
@@ -130,6 +170,73 @@ export const CallsTable = ({
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={showCallsHistory} onOpenChange={setShowCallsHistory}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              Histórico de Chamadas - {selectedLead ? getLeadName(selectedLead) : ""}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs">Data e Hora</TableHead>
+                  <TableHead className="text-xs">Duração</TableHead>
+                  <TableHead className="text-xs">Status da Chamada</TableHead>
+                  <TableHead className="text-xs">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedLead?.calls.map((call) => {
+                  const status = statusMap[call.status];
+                  const StatusIcon = status.icon;
+
+                  return (
+                    <TableRow key={call.id} className="text-xs">
+                      <TableCell className="py-2">{formatDate(call.date)}</TableCell>
+                      <TableCell className="py-2">{call.duration}</TableCell>
+                      <TableCell className="py-2">
+                        <Badge
+                          variant="secondary"
+                          className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {status.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onPlayAudio(call.audioUrl)}
+                            className="hover:text-primary h-7 w-7"
+                          >
+                            <PlayCircle className="h-4 w-4" />
+                          </Button>
+                          {call.status === "success" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onViewAnalysis(call)}
+                              className="hover:text-primary h-7 w-7"
+                            >
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </TooltipProvider>
   );
 };
+
