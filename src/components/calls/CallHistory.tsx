@@ -25,7 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PlayCircle, FileText, Video } from "lucide-react";
+import { PlayCircle, FileText, Video, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
@@ -83,7 +83,32 @@ export const CallHistory = ({
                   <TableHead className="text-xs">Data e Hora</TableHead>
                   <TableHead className="text-xs">Vendedor</TableHead>
                   <TableHead className="text-xs">Duração</TableHead>
-                  <TableHead className="text-xs">Status da Chamada</TableHead>
+                  <TableHead className="text-xs">
+                    <div className="flex items-center gap-1">
+                      Status da Chamada
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent className="p-4">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="secondary" className="bg-green-100 text-green-700">Processada</Badge>
+                              <span className="text-xs">Chamadas que foram atendidas e processadas com sucesso pelo sistema</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Pendente</Badge>
+                              <span className="text-xs">Chamadas que ainda estão aguardando processamento ou intervenção manual</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="secondary" className="bg-red-100 text-red-700">Erro</Badge>
+                              <span className="text-xs">Chamadas que falharam durante o processamento e precisam ser verificadas</span>
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableHead>
                   <TableHead className="text-xs">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -99,22 +124,13 @@ export const CallHistory = ({
                       <TableCell className="py-2">{call.seller}</TableCell>
                       <TableCell className="py-2">{call.duration}</TableCell>
                       <TableCell className="py-2">
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Badge
-                              variant="secondary"
-                              className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
-                            >
-                              <StatusIcon className="w-3 h-3" />
-                              {status.label}
-                            </Badge>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-xs">
-                              {status.tooltip}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Badge
+                          variant="secondary"
+                          className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {status.label}
+                        </Badge>
                       </TableCell>
                       <TableCell className="py-2">
                         <div className="flex gap-1">
