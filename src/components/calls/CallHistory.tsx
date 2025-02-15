@@ -1,4 +1,3 @@
-
 import { Call, StatusMap } from "@/types/calls";
 import { LeadCalls } from "./types";
 import { getLeadName, getLeadDetails } from "./utils";
@@ -19,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText, RefreshCw } from "lucide-react";
+import { PlayCircle, FileText, Video } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
@@ -46,7 +45,19 @@ export const CallHistory = ({
 }: CallHistoryProps) => {
   const [showLeadDetails, setShowLeadDetails] = useState(false);
   const [processingCallId, setProcessingCallId] = useState<string | null>(null);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
   const { toast } = useToast();
+
+  const handleMediaPlay = (call: Call) => {
+    const isVideo = call.mediaType === "video";
+    if (isVideo) {
+      setSelectedMediaUrl(call.audioUrl);
+      setShowVideoModal(true);
+    } else {
+      onPlayAudio(call.audioUrl);
+    }
+  };
 
   const handleProcessCall = async (call: Call) => {
     setProcessingCallId(call.id);
@@ -78,7 +89,6 @@ export const CallHistory = ({
     }
   };
 
-  // Example calls for demonstration
   const exampleCalls: Call[] = selectedLead ? [
     {
       id: "1",
@@ -89,6 +99,7 @@ export const CallHistory = ({
       phone: "(11) 99999-9999",
       seller: "João Silva",
       audioUrl: "#",
+      mediaType: "audio",
       leadInfo: selectedLead.calls[0].leadInfo,
       analysis: {
         transcription: "Exemplo de transcrição",
@@ -109,6 +120,7 @@ export const CallHistory = ({
       phone: "(11) 99999-9999",
       seller: "Maria Santos",
       audioUrl: "#",
+      mediaType: "video",
       leadInfo: selectedLead.calls[0].leadInfo
     },
     {
@@ -120,6 +132,7 @@ export const CallHistory = ({
       phone: "(11) 99999-9999",
       seller: "Pedro Oliveira",
       audioUrl: "#",
+      mediaType: "audio",
       leadInfo: selectedLead.calls[0].leadInfo
     }
   ] : [];
@@ -170,6 +183,7 @@ export const CallHistory = ({
                   const status = statusMap[call.status];
                   const StatusIcon = status.icon;
                   const isProcessing = processingCallId === call.id;
+                  const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
 
                   return (
                     <TableRow key={call.id} className="text-xs">
@@ -190,10 +204,10 @@ export const CallHistory = ({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => onPlayAudio(call.audioUrl)}
+                            onClick={() => handleMediaPlay(call)}
                             className="hover:text-primary h-7 w-7"
                           >
-                            <PlayCircle className="h-4 w-4" />
+                            <MediaIcon className="h-4 w-4" />
                           </Button>
                           
                           {call.status === "success" && (
@@ -237,6 +251,23 @@ export const CallHistory = ({
                 })}
               </TableBody>
             </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Visualizar Vídeo</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 aspect-video">
+            <video
+              src={selectedMediaUrl}
+              controls
+              className="w-full h-full"
+            >
+              Seu navegador não suporta a reprodução de vídeos.
+            </video>
           </div>
         </DialogContent>
       </Dialog>
