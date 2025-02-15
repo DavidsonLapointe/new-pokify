@@ -52,7 +52,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       },
       { 
         icon: Phone, 
-        label: "Análise de Chamadas", 
+        label: "Análise de Leads", 
         path: "/organization/calls" 
       },
       { 

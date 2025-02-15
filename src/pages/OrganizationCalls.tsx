@@ -34,8 +34,8 @@ const OrganizationCalls = () => {
       <TooltipProvider>
         <div className="space-y-8">
           <CallsHeader 
-            title="Análise de Chamadas"
-            description="Visualize e gerencie todas as chamadas recebidas"
+            title="Análise de Leads"
+            description="Visualize e gerencie todos os leads e suas chamadas"
           />
 
           <CallsStats {...monthStats} />
