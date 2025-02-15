@@ -44,6 +44,15 @@ export const CallAnalysisDialog = ({
 
   const temperature = temperatureConfig[analysis.sentiment.temperature];
 
+  const getLeadName = (leadInfo: typeof analysis.leadInfo) => {
+    if (leadInfo.personType === "pf") {
+      return `${leadInfo.firstName} ${leadInfo.lastName || ""}`;
+    }
+    return leadInfo.razaoSocial;
+  };
+
+  const leadName = getLeadName(analysis.leadInfo);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
@@ -56,10 +65,10 @@ export const CallAnalysisDialog = ({
             </Badge>
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            {analysis.leadInfo.name && (
+            {leadName && (
               <div className="flex items-center gap-1">
                 <Contact2 className="h-4 w-4" />
-                {analysis.leadInfo.name}
+                {leadName}
               </div>
             )}
             <div className="flex items-center gap-1">
@@ -94,11 +103,13 @@ export const CallAnalysisDialog = ({
                           Informações de Contato
                         </h4>
                         <div className="grid grid-cols-2 gap-4">
-                          {analysis.leadInfo.name && (
+                          {leadName && (
                             <div>
-                              <p className="text-sm font-medium">Nome</p>
+                              <p className="text-sm font-medium">
+                                {analysis.leadInfo.personType === "pf" ? "Nome" : "Razão Social"}
+                              </p>
                               <p className="text-sm text-muted-foreground">
-                                {analysis.leadInfo.name}
+                                {leadName}
                               </p>
                             </div>
                           )}
