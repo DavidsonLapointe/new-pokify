@@ -19,10 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlayCircle, FileText } from "lucide-react";
+import { PlayCircle, FileText, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CallHistoryProps {
   isOpen: boolean;
@@ -44,6 +45,84 @@ export const CallHistory = ({
   formatDate,
 }: CallHistoryProps) => {
   const [showLeadDetails, setShowLeadDetails] = useState(false);
+  const [processingCallId, setProcessingCallId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleProcessCall = async (call: Call) => {
+    setProcessingCallId(call.id);
+    
+    try {
+      // Simulate API call for processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Randomly succeed or fail for demonstration
+      const success = Math.random() > 0.5;
+      
+      if (success) {
+        toast({
+          title: "Chamada processada com sucesso",
+          description: "A análise foi concluída e está disponível para visualização.",
+        });
+        // Here you would update the call status in your state management
+      } else {
+        throw new Error("Falha no processamento");
+      }
+    } catch (error) {
+      toast({
+        title: "Erro no processamento",
+        description: "Não foi possível processar a chamada. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingCallId(null);
+    }
+  };
+
+  // Example calls for demonstration
+  const exampleCalls: Call[] = selectedLead ? [
+    {
+      id: "1",
+      leadId: selectedLead.id,
+      date: "2024-03-10T10:00:00",
+      duration: "5:23",
+      status: "success",
+      phone: "(11) 99999-9999",
+      seller: "João Silva",
+      audioUrl: "#",
+      leadInfo: selectedLead.calls[0].leadInfo,
+      analysis: {
+        transcription: "Exemplo de transcrição",
+        summary: "Resumo da chamada",
+        sentiment: {
+          temperature: "warm",
+          reason: "Cliente demonstrou interesse"
+        },
+        leadInfo: selectedLead.calls[0].leadInfo
+      }
+    },
+    {
+      id: "2",
+      leadId: selectedLead.id,
+      date: "2024-03-11T14:30:00",
+      duration: "3:45",
+      status: "failed",
+      phone: "(11) 99999-9999",
+      seller: "Maria Santos",
+      audioUrl: "#",
+      leadInfo: selectedLead.calls[0].leadInfo
+    },
+    {
+      id: "3",
+      leadId: selectedLead.id,
+      date: "2024-03-12T16:15:00",
+      duration: "4:12",
+      status: "pending",
+      phone: "(11) 99999-9999",
+      seller: "Pedro Oliveira",
+      audioUrl: "#",
+      leadInfo: selectedLead.calls[0].leadInfo
+    }
+  ] : [];
 
   return (
     <>
@@ -87,9 +166,10 @@ export const CallHistory = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {selectedLead?.calls.map((call) => {
+                {exampleCalls.map((call) => {
                   const status = statusMap[call.status];
                   const StatusIcon = status.icon;
+                  const isProcessing = processingCallId === call.id;
 
                   return (
                     <TableRow key={call.id} className="text-xs">
@@ -115,6 +195,7 @@ export const CallHistory = ({
                           >
                             <PlayCircle className="h-4 w-4" />
                           </Button>
+                          
                           {call.status === "success" && (
                             <Button
                               variant="ghost"
@@ -123,6 +204,18 @@ export const CallHistory = ({
                               className="hover:text-primary h-7 w-7"
                             >
                               <FileText className="h-4 w-4" />
+                            </Button>
+                          )}
+
+                          {(call.status === "failed" || call.status === "pending") && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleProcessCall(call)}
+                              disabled={isProcessing}
+                              className="hover:text-primary h-7 w-7"
+                            >
+                              <RefreshCw className={`h-4 w-4 ${isProcessing ? "animate-spin" : ""}`} />
                             </Button>
                           )}
                         </div>
