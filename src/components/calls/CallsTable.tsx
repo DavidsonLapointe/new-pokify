@@ -101,7 +101,6 @@ export const CallsTable = ({
           <TableHeader>
             <TableRow>
               <TableHead className="w-[250px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
-              <TableHead className="w-[120px] text-xs whitespace-nowrap">Vendedor</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
               <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
@@ -118,7 +117,6 @@ export const CallsTable = ({
                   <TableCell className="py-2 whitespace-nowrap">
                     {getLeadName(lead)}
                   </TableCell>
-                  <TableCell className="py-2 whitespace-nowrap">{lead.calls[0]?.seller}</TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
                     <Badge
                       variant="secondary"
@@ -183,6 +181,7 @@ export const CallsTable = ({
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-xs">Data e Hora</TableHead>
+                  <TableHead className="text-xs">Vendedor</TableHead>
                   <TableHead className="text-xs">Duração</TableHead>
                   <TableHead className="text-xs">Status da Chamada</TableHead>
                   <TableHead className="text-xs">Ações</TableHead>
@@ -196,6 +195,7 @@ export const CallsTable = ({
                   return (
                     <TableRow key={call.id} className="text-xs">
                       <TableCell className="py-2">{formatDate(call.date)}</TableCell>
+                      <TableCell className="py-2">{call.seller}</TableCell>
                       <TableCell className="py-2">{call.duration}</TableCell>
                       <TableCell className="py-2">
                         <Badge
@@ -239,4 +239,3 @@ export const CallsTable = ({
     </TooltipProvider>
   );
 };
-
