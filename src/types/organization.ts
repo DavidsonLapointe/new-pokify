@@ -1,5 +1,5 @@
 
-export type UserRole = "admin" | "seller";
+export type UserRole = "admin" | "seller" | "leadly_admin";
 export type UserStatus = "active" | "inactive";
 
 export interface User {
@@ -56,6 +56,25 @@ export const availablePermissions: { [key: string]: Permission } = {
       configure: "Configurar integrações",
     },
   },
+  organizations: {
+    label: "Empresas",
+    permissions: {
+      view: "Visualizar empresas",
+      create: "Criar empresas",
+      edit: "Editar empresas",
+      delete: "Remover empresas",
+      manage: "Gerenciar empresas",
+    },
+  },
+  system: {
+    label: "Sistema",
+    permissions: {
+      manage_integrations: "Gerenciar integrações do sistema",
+      manage_settings: "Gerenciar configurações do sistema",
+      view_logs: "Visualizar logs do sistema",
+      manage_admins: "Gerenciar administradores",
+    },
+  },
 };
 
 export const mockUsers: User[] = [
@@ -87,6 +106,21 @@ export const mockUsers: User[] = [
       users: ["view"],
       flows: ["view", "execute"],
       integrations: ["view"],
+    },
+  },
+  {
+    id: 3,
+    name: "Maria Silva",
+    email: "maria.silva@leadly.com",
+    phone: "(11) 97777-8888",
+    role: "leadly_admin",
+    status: "active",
+    lastAccess: "2024-02-20T17:30:00",
+    permissions: {
+      organizations: ["view", "create", "edit", "delete", "manage"],
+      system: ["manage_integrations", "manage_settings", "view_logs", "manage_admins"],
+      users: ["view", "create", "edit", "delete"],
+      integrations: ["view", "configure"],
     },
   },
 ];
