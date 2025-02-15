@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { GitFork, PhoneIcon, PlayCircle, FileText } from "lucide-react";
 import { Call, StatusMap } from "@/types/calls";
@@ -56,7 +56,6 @@ export const CallsTable = ({
   const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
   const [showCallsHistory, setShowCallsHistory] = useState(false);
 
-  // Agrupa chamadas por lead
   const leadsWithCalls: LeadCalls[] = calls.reduce((leads: LeadCalls[], call) => {
     const existingLead = leads.find(lead => lead.id === call.leadId);
     
@@ -92,6 +91,23 @@ export const CallsTable = ({
   const handleShowCallHistory = (lead: LeadCalls) => {
     setSelectedLead(lead);
     setShowCallsHistory(true);
+  };
+
+  const getLeadDetails = (lead: LeadCalls | null) => {
+    if (!lead) return null;
+
+    const details = [];
+    if (lead.personType === "pj") {
+      details.push(`Razão Social: ${lead.razaoSocial}`);
+    }
+    
+    const firstCall = lead.calls[0];
+    if (firstCall) {
+      if (firstCall.phone) details.push(`Tel: ${firstCall.phone}`);
+      if (firstCall.leadInfo.email) details.push(`Email: ${firstCall.leadInfo.email}`);
+    }
+
+    return details.join(" • ");
   };
 
   return (
@@ -172,9 +188,12 @@ export const CallsTable = ({
       <Dialog open={showCallsHistory} onOpenChange={setShowCallsHistory}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg">
               Histórico de Chamadas - {selectedLead ? getLeadName(selectedLead) : ""}
             </DialogTitle>
+            <DialogDescription className="text-sm mt-2">
+              {getLeadDetails(selectedLead)}
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             <Table>
