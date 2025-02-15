@@ -8,11 +8,13 @@ export const temperatureConfig: Record<LeadTemperature, { label: string; color: 
   hot: { label: "Lead Quente", color: "bg-red-100 text-red-800" },
 };
 
-export const getLeadName = (lead: LeadCalls) => {
+export const getLeadName = (lead: LeadCalls | null) => {
+  if (!lead) return ""; // Retorna string vazia se o lead for null
+  
   if (lead.personType === "pf") {
     return `${lead.firstName} ${lead.lastName || ""}`;
   }
-  return lead.razaoSocial;
+  return lead.razaoSocial || "";
 };
 
 export const getLeadStatus = (callCount: number) => {
@@ -30,8 +32,8 @@ export const getLastCallTemperature = (calls: Call[]) => {
 };
 
 export const getLeadDetails = (lead: LeadCalls | null) => {
-  if (!lead) return null;
-
+  if (!lead) return ""; // Retorna string vazia se o lead for null
+  
   const details = [];
   if (lead.personType === "pj") {
     details.push(`Razão Social: ${lead.razaoSocial}`);

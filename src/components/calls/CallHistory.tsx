@@ -1,3 +1,4 @@
+
 import { Call, StatusMap } from "@/types/calls";
 import { LeadCalls } from "./types";
 import { getLeadName, getLeadDetails } from "./utils";
@@ -49,8 +50,18 @@ export const CallHistory = ({
   onViewAnalysis,
   formatDate,
 }: CallHistoryProps) => {
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
+  const { toast } = useToast();
+
   const handleMediaPlay = (call: Call) => {
-    onPlayAudio(call.audioUrl);
+    const isVideo = call.mediaType === "video";
+    if (isVideo) {
+      setSelectedMediaUrl(call.audioUrl);
+      setShowVideoModal(true);
+    } else {
+      onPlayAudio(call.audioUrl);
+    }
   };
 
   return (
@@ -77,10 +88,9 @@ export const CallHistory = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {selectedLead?.calls.map((call) => {
+                {selectedLead?.calls?.map((call) => {
                   const status = statusMap[call.status];
                   const StatusIcon = status.icon;
-                  const isProcessing = call.status === "pending";
                   const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
 
                   return (
@@ -138,10 +148,27 @@ export const CallHistory = ({
         </DialogContent>
       </Dialog>
 
+      <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Visualizar Vídeo</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 aspect-video">
+            <video
+              src={selectedMediaUrl}
+              controls
+              className="w-full h-full"
+            >
+              Seu navegador não suporta a reprodução de vídeos.
+            </video>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <LeadDetailsDialog
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
         lead={selectedLead}
+        onClose={() => onOpenChange(false)}
       />
     </TooltipProvider>
   );
