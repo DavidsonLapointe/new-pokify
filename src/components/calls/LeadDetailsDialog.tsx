@@ -26,7 +26,7 @@ import { getLeadName } from "./utils";
 interface LeadDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  lead: LeadCalls;
+  lead: LeadCalls | null;
 }
 
 export const LeadDetailsDialog = ({
@@ -34,6 +34,8 @@ export const LeadDetailsDialog = ({
   onClose,
   lead,
 }: LeadDetailsDialogProps) => {
+  if (!lead) return null;
+
   const lastSuccessfulCall = lead.calls
     .filter(call => call.status === "success" && call.analysis)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
