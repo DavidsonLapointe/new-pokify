@@ -93,11 +93,15 @@ export const CallsTable = ({
                     <TooltipTrigger>
                       <HelpCircle className="h-3 w-3 text-muted-foreground" />
                     </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      <p>
-                        <strong>Lead Ativo:</strong> Lead que possui pelo menos 1 arquivo de chamada registrado.<br />
-                        <strong>Lead Pendente:</strong> Lead que ainda não possui nenhum arquivo de chamada.
-                      </p>
+                    <TooltipContent className="w-[280px]">
+                      <div className="space-y-2 text-sm">
+                        <p>
+                          <strong>Lead Ativo:</strong> Lead que possui pelo menos 1 arquivo de chamada registrado.
+                        </p>
+                        <p>
+                          <strong>Lead Pendente:</strong> Lead que ainda não possui nenhum arquivo de chamada.
+                        </p>
+                      </div>
                     </TooltipContent>
                   </Tooltip>
                 </div>
