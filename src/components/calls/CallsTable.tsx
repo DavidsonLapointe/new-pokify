@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { GitFork, PhoneIcon } from "lucide-react";
+import { GitFork, PhoneIcon, PlayCircle, FileText } from "lucide-react";
 import { Call, StatusMap } from "@/types/calls";
 import {
   Tooltip,
