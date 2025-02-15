@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CallAnalysis } from "@/types/calls";
-import { Contact2, Phone, Mail, Calendar, Clock } from "lucide-react";
+import { Contact2, Phone, Mail, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -64,7 +64,7 @@ export const CallAnalysisDialog = ({
                 {formattedDate}
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
+                <span className="font-medium">Duração:</span>
                 {call.duration}
               </div>
             </div>
