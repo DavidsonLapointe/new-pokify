@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CallAnalysis } from "@/types/calls";
-import { Contact2, Phone, Mail, Calendar } from "lucide-react";
+import { FileText, Phone, Mail, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -71,7 +71,7 @@ export const CallAnalysisDialog = ({
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               {leadName && (
                 <div className="flex items-center gap-1">
-                  <Contact2 className="h-4 w-4" />
+                  <FileText className="h-4 w-4" />
                   {leadName}
                 </div>
               )}
