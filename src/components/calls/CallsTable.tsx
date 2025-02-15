@@ -9,7 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
 import { UploadCallDialog } from "./UploadCallDialog";
@@ -80,7 +86,22 @@ export const CallsTable = ({
             <TableRow>
               <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
-              <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">
+                <div className="flex items-center gap-1">
+                  Status do Lead
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>
+                        <strong>Lead Ativo:</strong> Lead que possui pelo menos 1 arquivo de chamada registrado.<br />
+                        <strong>Lead Pendente:</strong> Lead que ainda não possui nenhum arquivo de chamada.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
               <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
