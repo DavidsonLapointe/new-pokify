@@ -49,7 +49,7 @@ export const CallsTable = ({
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Telefone</TableHead>
               <TableHead className="w-[80px] text-xs whitespace-nowrap">Duração</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Vendedor</TableHead>
-              <TableHead className="w-[220px] text-xs whitespace-nowrap">Status</TableHead>
+              <TableHead className="w-[220px] text-xs whitespace-nowrap">Status Chamada</TableHead>
               <TableHead className="w-[180px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
             </TableRow>
