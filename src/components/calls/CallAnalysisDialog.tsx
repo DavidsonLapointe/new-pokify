@@ -20,18 +20,25 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CallAnalysis } from "@/types/calls";
-import { Contact2, Phone } from "lucide-react";
+import { Contact2, Phone, Mail, Calendar, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface CallAnalysisDialogProps {
   isOpen: boolean;
   onClose: () => void;
   analysis?: CallAnalysis;
+  call: {
+    date: string;
+    duration: string;
+  };
 }
 
 export const CallAnalysisDialog = ({
   isOpen,
   onClose,
   analysis,
+  call,
 }: CallAnalysisDialogProps) => {
   if (!analysis) return null;
 
@@ -43,22 +50,41 @@ export const CallAnalysisDialog = ({
   };
 
   const leadName = getLeadName(analysis.leadInfo);
+  const formattedDate = format(new Date(call.date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Análise da Chamada</DialogTitle>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            {leadName && (
+          <div className="flex flex-col gap-2 mt-2">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Contact2 className="h-4 w-4" />
-                {leadName}
+                <Calendar className="h-4 w-4" />
+                {formattedDate}
               </div>
-            )}
-            <div className="flex items-center gap-1">
-              <Phone className="h-4 w-4" />
-              {analysis.leadInfo.phone}
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {call.duration}
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              {leadName && (
+                <div className="flex items-center gap-1">
+                  <Contact2 className="h-4 w-4" />
+                  {leadName}
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <Phone className="h-4 w-4" />
+                {analysis.leadInfo.phone}
+              </div>
+              {analysis.leadInfo.email && (
+                <div className="flex items-center gap-1">
+                  <Mail className="h-4 w-4" />
+                  {analysis.leadInfo.email}
+                </div>
+              )}
             </div>
           </div>
         </DialogHeader>
