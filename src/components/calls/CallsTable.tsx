@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,17 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GitFork, Eye, Flame, HelpCircle, Upload } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
 import { UploadCallDialog } from "./UploadCallDialog";
-import {
-  getLeadName,
-  getLeadStatus,
-  getLastCallTemperature,
-  temperatureConfig,
-} from "./utils";
+import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
+import { LeadStatusBadge } from "./LeadStatusBadge";
+import { LeadCRMInfo } from "./LeadCRMInfo";
+import { LeadActionButtons } from "./LeadActionButtons";
+import { getLeadName, getLeadStatus } from "./utils";
 
 export const CallsTable = ({
   calls,
@@ -92,8 +89,6 @@ export const CallsTable = ({
             {leadsWithCalls.map((lead) => {
               const leadStatus = getLeadStatus(lead.calls.length);
               const successfulCalls = lead.calls.filter(call => call.status === "success").length;
-              const temperature = getLastCallTemperature(lead.calls);
-              const tempConfig = temperature ? temperatureConfig[temperature] : null;
               const hasProcessed = hasProcessedCalls(lead.calls);
 
               return (
@@ -102,35 +97,13 @@ export const CallsTable = ({
                     {getLeadName(lead)}
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    <Badge
-                      variant="secondary"
-                      className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${
-                        leadStatus === "active" 
-                          ? "bg-green-100 text-green-800" 
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {leadStatus === "active" ? "Ativo" : "Pendente"}
-                    </Badge>
+                    <LeadStatusBadge status={leadStatus} />
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {hasProcessed ? (
-                      <Badge
-                        variant="secondary"
-                        className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${tempConfig?.color}`}
-                      >
-                        <Flame className="w-3 h-3 mr-1" />
-                        {tempConfig?.label}
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="secondary"
-                        className="flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 bg-gray-100 text-gray-800"
-                      >
-                        <HelpCircle className="w-3 h-3 mr-1" />
-                        Sem classificação
-                      </Badge>
-                    )}
+                    <LeadTemperatureBadge 
+                      calls={lead.calls} 
+                      hasProcessed={hasProcessed} 
+                    />
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
                     <Button
@@ -142,38 +115,17 @@ export const CallsTable = ({
                     </Button>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {successfulCalls > 0 && lead.crmInfo ? (
-                      <div className="flex items-center gap-1">
-                        <GitFork className="w-3 h-3 text-muted-foreground" />
-                        <span>
-                          {lead.crmInfo.funnel}
-                          <span className="text-muted-foreground mx-1">→</span>
-                          {lead.crmInfo.stage}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
+                    <LeadCRMInfo 
+                      successfulCalls={successfulCalls}
+                      crmInfo={lead.crmInfo}
+                    />
                   </TableCell>
                   <TableCell className="py-2">
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleShowCallHistory(lead)}
-                        className="hover:text-primary h-7 w-7"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleShowUpload(lead)}
-                        className="hover:text-primary h-7 w-7"
-                      >
-                        <Upload className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <LeadActionButtons
+                      lead={lead}
+                      onShowHistory={handleShowCallHistory}
+                      onShowUpload={handleShowUpload}
+                    />
                   </TableCell>
                 </TableRow>
               );
