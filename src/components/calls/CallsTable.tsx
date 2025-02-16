@@ -81,8 +81,12 @@ export const CallsTable = ({
   };
 
   const handleCreateLead = (data: any) => {
-    // Aqui seria implementada a lógica de criação do lead
     console.log("Novo lead:", data);
+    setIsCreateLeadOpen(false);
+  };
+
+  const handleUploadClick = (data: any) => {
+    console.log("Upload para novo lead:", data);
     setIsCreateLeadOpen(false);
   };
 
@@ -108,6 +112,7 @@ export const CallsTable = ({
           hasPhoneIntegration={true}
           hasEmailIntegration={true}
           onCreateLead={handleCreateLead}
+          onUploadClick={handleUploadClick}
           isOpen={isCreateLeadOpen}
           onOpenChange={setIsCreateLeadOpen}
         />
