@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Call, StatusMap } from "@/types/calls";
-import { FileText, PlayCircle, Video, RefreshCcw, Play } from "lucide-react";
+import { FileText, PlayCircle, Video } from "lucide-react";
 
 interface CallHistoryTableRowProps {
   call: Call;
@@ -46,7 +46,7 @@ export const CallHistoryTableRow = ({
         </Badge>
       </TableCell>
       <TableCell className="py-2">
-        <div className="flex gap-1">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -69,25 +69,23 @@ export const CallHistoryTableRow = ({
 
           {call.status === "failed" && (
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
+              size="sm"
               onClick={handleReprocess}
-              className="hover:text-red-500 h-7 w-7"
-              title="Reprocessar chamada"
+              className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors"
             >
-              <RefreshCcw className="h-4 w-4" />
+              Reprocessar
             </Button>
           )}
 
           {call.status === "pending" && (
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
+              size="sm"
               onClick={handleProcess}
-              className="hover:text-yellow-500 h-7 w-7"
-              title="Processar chamada"
+              className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition-colors"
             >
-              <Play className="h-4 w-4" />
+              Processar
             </Button>
           )}
         </div>
