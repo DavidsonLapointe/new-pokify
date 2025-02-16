@@ -34,43 +34,18 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
-    const emptyCall: Call = {
-      id: uuidv4(),
-      leadId: newLeadId,
-      date: new Date().toISOString(),
-      duration: "0:00",
-      status: "pending",
-      phone: leadData.phone || "",
-      seller: "Sistema",
-      audioUrl: "",
-      mediaType: "audio",
-      leadInfo: {
-        personType: leadData.personType,
-        firstName: leadData.firstName,
-        lastName: leadData.lastName || "",
-        razaoSocial: leadData.razaoSocial || "",
-        email: leadData.email || "",
-        phone: leadData.phone || "",
-      },
-      emptyLead: true,
-    };
-
-    // Adiciona o lead vazio à lista de calls
-    setCalls(prevCalls => [emptyCall, ...prevCalls]);
-    
+    // Não criamos mais a chamada vazia aqui
     return newLeadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (withUpload && newCall) {
-      // Se houver upload, atualiza a chamada existente
-      setCalls(prevCalls => prevCalls.map(call => 
-        call.leadId === newCall.leadId && call.emptyLead 
-          ? { ...newCall, status: "success", emptyLead: false }
-          : call
-      ));
+      // Se houver upload, adiciona a chamada
+      setCalls(prevCalls => [newCall, ...prevCalls]);
+    } else {
+      // Se não houver upload, cria um lead sem chamadas (não adiciona nada à lista)
+      // A lista de calls só será atualizada quando houver uma chamada real
     }
-    // Se não houver upload, o lead já foi criado com emptyLead: true
     setPendingLead(null);
   };
 
