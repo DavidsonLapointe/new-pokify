@@ -18,7 +18,7 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Upload, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/leads";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Call } from "@/types/calls";
 
 const OrganizationLeads = () => {
@@ -32,6 +32,7 @@ const OrganizationLeads = () => {
   const [selectedLeadForUpload, setSelectedLeadForUpload] = useState<Lead | null>(null);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState || false);
   const [newLeadId, setNewLeadId] = useState<string | null>(null);
+  const [pendingNewCall, setPendingNewCall] = useState<Call | null>(null);
 
   const {
     searchQuery,
@@ -52,7 +53,6 @@ const OrganizationLeads = () => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
-    // Adiciona o novo lead à lista de calls com uma flag especial e sem chamadas
     const newCall: Call = {
       id: leadId,
       leadId,
@@ -74,9 +74,8 @@ const OrganizationLeads = () => {
       isNewLead: true,
       emptyLead: true
     };
-
-    // Adiciona o novo lead à lista de calls
-    confirmNewLead(false, newCall);
+    
+    setPendingNewCall(newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
@@ -86,7 +85,10 @@ const OrganizationLeads = () => {
   };
 
   const handleUploadSuccess = () => {
-    confirmNewLead(true);
+    if (pendingNewCall) {
+      confirmNewLead(true, pendingNewCall);
+      setPendingNewCall(null);
+    }
     setIsUploadOpen(false);
     setNewLeadId(null);
     
@@ -97,8 +99,10 @@ const OrganizationLeads = () => {
   };
 
   const handleUploadCancel = () => {
-    // Confirmamos o lead sem upload quando cancelar
-    confirmNewLead(false);
+    if (pendingNewCall) {
+      confirmNewLead(false, pendingNewCall);
+      setPendingNewCall(null);
+    }
     setIsUploadOpen(false);
     setNewLeadId(null);
     
