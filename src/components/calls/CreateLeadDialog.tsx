@@ -71,7 +71,6 @@ export function CreateLeadDialog({
     if (leadData) {
       onCreateLead(leadData);
       setOpen(false);
-      setIsUploadOpen(true); // Esta linha será chamada através do OrganizationLeads.tsx
     }
     setShowSuccessCard(false);
     setLeadData(null);

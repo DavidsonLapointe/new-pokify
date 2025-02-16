@@ -49,7 +49,7 @@ const OrganizationLeads = () => {
   const handleCreateLead = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    confirmNewLead(false); // Confirma o lead sem upload quando fecha pelo X
+    setIsUploadOpen(true); // Abre o modal de upload quando clica no botão
   };
 
   const handleUploadSuccess = () => {
