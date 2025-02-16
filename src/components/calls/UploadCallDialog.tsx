@@ -47,45 +47,50 @@ export const UploadCallDialog = ({
     }
   };
 
+  const handleCancel = () => {
+    onCancel?.();
+    onOpenChange(false);
+    setFile(null);
+  };
+
   const handleProcess = async () => {
     if (!file) return;
 
     setIsUploading(true);
     try {
-      // Aqui seria implementada a lógica de upload e processamento
-      // 1. Upload do arquivo
-      // 2. Envio para processamento LLM
-      // 3. Atualização do status
-
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulando processamento
-
-      toast({
-        title: "Arquivo enviado com sucesso",
-        description: "O arquivo será processado em breve.",
-      });
+      // Simula o upload e processamento
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Chama o callback de sucesso que vai atualizar o lead
       onUploadSuccess?.();
+      
+      // Fecha o modal e limpa o estado
       onOpenChange(false);
+      setFile(null);
+      
+      // Mostra mensagem de sucesso
+      toast({
+        title: "Chamada processada com sucesso",
+        description: "O arquivo foi processado e o lead foi atualizado.",
+      });
     } catch (error) {
       toast({
-        title: "Erro no upload",
+        title: "Erro no processamento",
         description: "Ocorreu um erro ao processar o arquivo.",
         variant: "destructive",
       });
     } finally {
       setIsUploading(false);
-      setFile(null);
     }
-  };
-
-  const handleCancel = () => {
-    onCancel?.();
-    onOpenChange(false);
   };
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        if (!open && !isUploading) {
+          handleCancel();
+        }
+      }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Upload de Chamada</DialogTitle>
@@ -100,6 +105,7 @@ export const UploadCallDialog = ({
                   accept="audio/*,video/*"
                   onChange={handleFileChange}
                   className="cursor-pointer"
+                  disabled={isUploading}
                 />
               </div>
               {file && (
@@ -121,7 +127,14 @@ export const UploadCallDialog = ({
                 onClick={handleProcess}
                 disabled={!file || isUploading}
               >
-                {isUploading ? "Processando..." : "Processar arquivo"}
+                {isUploading ? (
+                  <>Processando...</>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Processar arquivo
+                  </>
+                )}
               </Button>
             </div>
           </div>
