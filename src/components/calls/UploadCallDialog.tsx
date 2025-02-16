@@ -6,10 +6,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProcessingOverlay } from "./ProcessingOverlay";
 
@@ -48,9 +49,11 @@ export const UploadCallDialog = ({
   };
 
   const handleCancel = () => {
-    onCancel?.();
-    onOpenChange(false);
-    setFile(null);
+    if (!isUploading) {
+      onCancel?.();
+      onOpenChange(false);
+      setFile(null);
+    }
   };
 
   const handleProcess = async () => {
@@ -59,19 +62,20 @@ export const UploadCallDialog = ({
     setIsUploading(true);
     try {
       // Simula o upload e processamento
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Chama o callback de sucesso que vai atualizar o lead
-      onUploadSuccess?.();
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Fecha o modal e limpa o estado
       onOpenChange(false);
       setFile(null);
       
+      // Chama o callback de sucesso que vai atualizar o lead
+      // Importante: chamar após o modal fechar para evitar problemas de estado
+      onUploadSuccess?.();
+      
       // Mostra mensagem de sucesso
       toast({
         title: "Chamada processada com sucesso",
-        description: "O arquivo foi processado e o lead foi atualizado.",
+        description: "O arquivo foi processado e o lead foi atualizado com a primeira chamada.",
       });
     } catch (error) {
       toast({
@@ -86,14 +90,20 @@ export const UploadCallDialog = ({
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        if (!open && !isUploading) {
-          handleCancel();
-        }
-      }}>
+      <Dialog 
+        open={isOpen} 
+        onOpenChange={(open) => {
+          if (!open && !isUploading) {
+            handleCancel();
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Upload de Chamada</DialogTitle>
+            <DialogDescription>
+              Faça o upload do arquivo de áudio ou vídeo da chamada para processamento.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-6">
             <div className="space-y-2">
@@ -128,7 +138,10 @@ export const UploadCallDialog = ({
                 disabled={!file || isUploading}
               >
                 {isUploading ? (
-                  <>Processando...</>
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processando...
+                  </>
                 ) : (
                   <>
                     <Upload className="w-4 h-4 mr-2" />
