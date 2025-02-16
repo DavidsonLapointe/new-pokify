@@ -29,12 +29,19 @@ export const CallsTable = ({
   const { leadsWithCalls } = useLeadsData(calls);
 
   const handleShowCallHistory = (lead: LeadCalls) => {
-    // Encontrar todas as chamadas do lead selecionado
-    const leadWithFilteredCalls = {
+    // Pegamos todas as chamadas não vazias do lead direto do array original
+    const allLeadCalls = calls.filter(
+      call => call.leadId === lead.id && !call.emptyLead
+    );
+    
+    // Atualizamos o lead selecionado com todas as suas chamadas
+    const leadWithAllCalls = {
       ...lead,
-      calls: calls.filter(call => call.leadId === lead.id && !call.emptyLead)
+      calls: allLeadCalls
     };
-    setSelectedLead(leadWithFilteredCalls);
+
+    console.log('Lead selecionado com chamadas:', leadWithAllCalls);
+    setSelectedLead(leadWithAllCalls);
     setShowCallsHistory(true);
   };
 
@@ -44,8 +51,6 @@ export const CallsTable = ({
   };
 
   const handleUploadSuccess = () => {
-    // Aqui você pode implementar a lógica de atualização da lista de chamadas
-    // após um upload bem-sucedido
     setShowUpload(false);
   };
 
