@@ -17,14 +17,22 @@ interface CreateLeadDialogProps {
   hasPhoneIntegration: boolean;
   hasEmailIntegration: boolean;
   onCreateLead: (data: LeadFormData) => void;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function CreateLeadDialog({
   hasPhoneIntegration,
   hasEmailIntegration,
   onCreateLead,
+  isOpen: controlledIsOpen,
+  onOpenChange: controlledOnOpenChange,
 }: CreateLeadDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+
+  const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledIsOpen : uncontrolledOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setUncontrolledOpen;
 
   const {
     form,
