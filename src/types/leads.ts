@@ -1,4 +1,6 @@
 
+import { Call, LeadInfo } from "./calls";
+
 export interface Lead {
   id: string;
   firstName: string;
@@ -22,13 +24,11 @@ export interface Lead {
 
 export interface LeadWithCalls {
   id: string;
-  leadInfo: {
-    personType: "pf" | "pj";
-    firstName: string;
-    lastName?: string;
-    razaoSocial?: string;
-    email?: string;
-    phone: string;
+  leadInfo: LeadInfo;
+  calls: Call[];
+  createdAt: string;
+  crmInfo?: {
+    funnel: string;
+    stage: string;
   };
-  calls: any[];
 }

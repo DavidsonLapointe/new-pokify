@@ -3,18 +3,17 @@ import { Card } from "@/components/ui/card";
 import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { CallsStats } from "@/components/calls/CallsStats";
-import { StatusMap } from "@/types/calls";
+import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
-import { LeadWithCalls } from "@/types/leads";
 
 interface LeadsPageContentProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   monthStats: MonthStats;
-  calls: LeadWithCalls[];
+  calls: Call[];
   statusMap: StatusMap;
   onPlayAudio: (audioUrl: string) => void;
-  onViewAnalysis: (call: any) => void;
+  onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
 }
 
@@ -28,7 +27,6 @@ export const LeadsPageContent = ({
   onViewAnalysis,
   formatDate,
 }: LeadsPageContentProps) => {
-  // Log para debug
   console.log("LeadsPageContent - calls recebidos:", calls);
   
   return (

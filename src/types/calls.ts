@@ -11,7 +11,7 @@ export interface CRMInfo {
 
 export interface LeadInfo {
   personType: "pf" | "pj";
-  firstName?: string;
+  firstName: string;  // Removido o opcional
   lastName?: string;
   razaoSocial?: string;
   email?: string;
@@ -47,8 +47,8 @@ export interface Call {
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
   leadInfo: LeadInfo;
-  emptyLead?: boolean; // Adicionada esta propriedade
-  isNewLead?: boolean; // Adicionada esta propriedade também para consistência
+  emptyLead?: boolean;
+  isNewLead?: boolean;
 }
 
 export interface StatusConfig {
