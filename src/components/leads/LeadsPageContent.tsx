@@ -5,12 +5,13 @@ import { CallsTable } from "@/components/calls/CallsTable";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { StatusMap } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
+import { LeadWithCalls } from "@/types/leads";
 
 interface LeadsPageContentProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   monthStats: MonthStats;
-  calls: any[];
+  calls: LeadWithCalls[];
   statusMap: StatusMap;
   onPlayAudio: (audioUrl: string) => void;
   onViewAnalysis: (call: any) => void;
@@ -27,6 +28,9 @@ export const LeadsPageContent = ({
   onViewAnalysis,
   formatDate,
 }: LeadsPageContentProps) => {
+  // Log para debug
+  console.log("LeadsPageContent - calls recebidos:", calls);
+  
   return (
     <>
       <CallsStats {...monthStats} />

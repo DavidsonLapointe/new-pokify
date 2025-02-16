@@ -19,3 +19,16 @@ export interface Lead {
     stage: string;
   };
 }
+
+export interface LeadWithCalls {
+  id: string;
+  leadInfo: {
+    personType: "pf" | "pj";
+    firstName: string;
+    lastName?: string;
+    razaoSocial?: string;
+    email?: string;
+    phone: string;
+  };
+  calls: any[];
+}
