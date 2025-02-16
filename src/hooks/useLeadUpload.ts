@@ -35,29 +35,28 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   });
 
   const handleCreateLead = (data: LeadFormData) => {
-    // Cria o lead diretamente quando não vamos fazer upload
+    // 3. Cria o lead com qtde de chamadas zero
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
-    confirmNewLead(false, newCall); // Necessário para criar o lead sem upload
+    confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
-    // Não cria o lead aqui, apenas prepara para o upload
-    const leadId = createNewLead(data);
-    setNewLeadId(leadId);
-    
-    const newCall = createCallObject(leadId, data);
-    setPendingNewCall(newCall);
+    // 5. Apenas abre o modal de upload
     setIsUploadOpen(true);
   };
 
   const handleUploadSuccess = () => {
     if (pendingNewCall) {
-      // Agora sim criamos o lead com a chamada
-      confirmNewLead(true, pendingNewCall);
+      // 7. Atualiza o lead para incluir a chamada após o upload
+      const callWithUpload = {
+        ...pendingNewCall,
+        emptyLead: false
+      };
+      confirmNewLead(true, callWithUpload);
     }
     setIsUploadOpen(false);
     setNewLeadId(null);
@@ -70,17 +69,14 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   };
 
   const handleUploadCancel = () => {
-    // Cria o lead sem chamada quando cancela o upload
-    if (pendingNewCall) {
-      confirmNewLead(false, pendingNewCall);
-    }
+    // 6. Apenas fecha o modal, mantendo o lead com zero chamadas
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
     
     toast({
-      title: "Lead criado com sucesso",
-      description: "O novo lead foi adicionado à lista sem chamadas.",
+      title: "Operação cancelada",
+      description: "O lead foi mantido sem chamadas.",
     });
   };
 
