@@ -94,16 +94,17 @@ export const CallHistory = ({
                     <TableHead className="text-xs sticky top-0 bg-background">
                       <div className="flex items-center gap-1">
                         Status da Chamada
-                        <Tooltip>
+                        <Tooltip defaultOpen={false}>
                           <TooltipTrigger asChild>
                             <Button 
                               variant="ghost" 
                               className="p-0 h-auto hover:bg-transparent"
+                              type="button"
                             >
                               <HelpCircle className="h-3 w-3 text-muted-foreground" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent side="bottom" align="start">
+                          <TooltipContent side="bottom" align="start" className="p-3">
                             <div className="space-y-3">
                               <div className="flex items-center gap-1.5">
                                 <Badge variant="secondary" className="bg-green-100 text-green-700">Processada</Badge>
