@@ -23,21 +23,21 @@ export const CallsStats = ({ total, processed, pending, failed }: CallsStatsProp
         value={processed}
         icon={CheckCircle2}
         color="text-green-500"
-        tooltip="Chamadas que foram atendidas e processadas com sucesso"
+        tooltip="Chamadas que foram processadas com sucesso pelo sistema"
       />
       <StatCard
         title="Chamadas Pendentes"
         value={pending}
         icon={Clock}
         color="text-yellow-500"
-        tooltip="Chamadas que ainda estão aguardando processamento"
+        tooltip="Chamadas que ainda estão aguardando solicitação de processamento"
       />
       <StatCard
         title="Chamadas com Erro"
         value={failed}
         icon={AlertCircle}
         color="text-red-500"
-        tooltip="Chamadas que falharam durante o processamento"
+        tooltip="Chamadas que falharam durante o processamento e precisam ser reprocessadas"
       />
     </div>
   );
