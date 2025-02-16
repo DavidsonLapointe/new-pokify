@@ -37,9 +37,9 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   const handleCreateLead = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    confirmNewLead(false);
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
+    confirmNewLead(false); // Confirma criação do lead sem upload
   };
 
   const handleUploadClick = (data: LeadFormData) => {
@@ -53,7 +53,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
         emptyLead: false,
         status: "success" as const
       };
-      confirmNewLead(true, callWithUpload);
+      confirmNewLead(true, callWithUpload); // Confirma lead com upload
     }
     setIsUploadOpen(false);
     setNewLeadId(null);

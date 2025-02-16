@@ -34,12 +34,49 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
+    // Adiciona o lead sem chamadas inicialmente
+    setCalls(prevCalls => [
+      ...prevCalls,
+      {
+        id: newLeadId,
+        leadId: newLeadId,
+        date: new Date().toISOString(),
+        duration: "0:00",
+        status: "pending",
+        phone: leadData.phone || "",
+        seller: "Sistema",
+        audioUrl: "",
+        mediaType: "audio",
+        leadInfo: {
+          personType: leadData.personType,
+          firstName: leadData.firstName,
+          lastName: leadData.lastName || "",
+          razaoSocial: leadData.razaoSocial || "",
+          email: leadData.email || "",
+          phone: leadData.phone || "",
+        },
+        emptyLead: true,
+        isNewLead: true,
+      },
+    ]);
     return newLeadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (withUpload && newCall) {
-      setCalls(prevCalls => [newCall, ...prevCalls]);
+      // Atualiza a chamada existente ou adiciona uma nova com o status de sucesso
+      setCalls(prevCalls => {
+        const index = prevCalls.findIndex(call => call.leadId === newCall.leadId && call.emptyLead);
+        if (index !== -1) {
+          // Atualiza a chamada existente
+          const updatedCalls = [...prevCalls];
+          updatedCalls[index] = newCall;
+          return updatedCalls;
+        } else {
+          // Adiciona uma nova chamada
+          return [newCall, ...prevCalls];
+        }
+      });
       console.log("Nova chamada adicionada:", newCall);
     }
   };
