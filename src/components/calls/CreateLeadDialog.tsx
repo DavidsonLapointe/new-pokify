@@ -59,7 +59,7 @@ export function CreateLeadDialog({
 
   const handleClose = () => {
     if (leadData) {
-      onCreateLead(leadData);
+      onCreateLead(leadData); // Salva o lead quando fecha com X
     }
     setOpen(false);
     setShowSuccessCard(false);
