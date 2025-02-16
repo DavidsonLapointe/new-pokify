@@ -69,6 +69,9 @@ export const CallHistory = ({
     setShowCallAnalysis(true);
   };
 
+  console.log("Selected Lead in CallHistory:", selectedLead);
+  console.log("Calls in history:", selectedLead?.calls);
+
   const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
   const tempConfig = temperature ? temperatureConfig[temperature] : null;
 
