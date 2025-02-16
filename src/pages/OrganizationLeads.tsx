@@ -54,6 +54,9 @@ const OrganizationLeads = () => {
     setSearchQuery(searchQueryFromState);
   }
 
+  // Log para debug
+  console.log("Leads filtrados na página:", filteredLeads);
+
   return (
     <OrganizationLayout>
       <TooltipProvider>

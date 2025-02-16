@@ -5,36 +5,9 @@ import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
 
-interface LeadWithCalls {
-  id: string;
-  leadInfo: Call['leadInfo'];
-  calls: Call[];
-}
-
-// Função auxiliar para processar os leads do mock
-const processMockLeads = (mockCalls: Call[]): LeadWithCalls[] => {
-  const mockLeadsMap = new Map<string, LeadWithCalls>();
-  
-  mockCalls.forEach(call => {
-    if (!mockLeadsMap.has(call.leadId)) {
-      mockLeadsMap.set(call.leadId, {
-        id: call.leadId,
-        leadInfo: call.leadInfo,
-        calls: [call]
-      });
-    } else {
-      mockLeadsMap.get(call.leadId)?.calls.push(call);
-    }
-  });
-
-  return Array.from(mockLeadsMap.values());
-};
-
 export const useCallsPage = () => {
-  // Inicializa o estado com os leads do mock
-  const [calls, setCalls] = useState(mockCalls);
-  const [leads, setLeads] = useState<LeadWithCalls[]>(() => processMockLeads(mockCalls));
-  const [pendingLead, setPendingLead] = useState<Call | null>(null);
+  // Inicializa o estado com as chamadas do mock
+  const [calls, setCalls] = useState<Call[]>(mockCalls);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
     total: 45,
@@ -61,42 +34,14 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
-    
-    const newLead: LeadWithCalls = {
-      id: newLeadId,
-      leadInfo: {
-        personType: leadData.personType,
-        firstName: leadData.firstName,
-        lastName: leadData.lastName || "",
-        razaoSocial: leadData.razaoSocial || "",
-        email: leadData.email || "",
-        phone: leadData.phone || "",
-      },
-      calls: []
-    };
-    
-    setLeads(prevLeads => [newLead, ...prevLeads]);
-    console.log("Novo lead criado:", newLead);
     return newLeadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (withUpload && newCall) {
       setCalls(prevCalls => [newCall, ...prevCalls]);
-      
-      setLeads(prevLeads => prevLeads.map(lead => {
-        if (lead.id === newCall.leadId) {
-          return {
-            ...lead,
-            calls: [newCall, ...lead.calls]
-          };
-        }
-        return lead;
-      }));
-      
       console.log("Nova chamada adicionada:", newCall);
     }
-    setPendingLead(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -110,27 +55,24 @@ export const useCallsPage = () => {
     }).format(date);
   };
 
-  const getLeadCalls = (leadId: string) => {
-    return calls.filter(call => call.leadId === leadId);
-  };
-
-  // Usa useMemo para filtrar os leads
+  // Usa useMemo para filtrar as chamadas
   const filteredLeads = useMemo(() => {
-    return leads.filter(lead => {
+    console.log("Filtrando chamadas com query:", searchQuery);
+    return calls.filter(call => {
       const searchTerms = searchQuery.toLowerCase();
-      const leadName = lead.leadInfo.personType === "pf" 
-        ? `${lead.leadInfo.firstName} ${lead.leadInfo.lastName || ""}`
-        : lead.leadInfo.razaoSocial;
+      const leadName = call.leadInfo.personType === "pf" 
+        ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
+        : call.leadInfo.razaoSocial;
       
       return (
         (leadName && leadName.toLowerCase().includes(searchTerms)) ||
-        lead.leadInfo.phone.includes(searchTerms) ||
-        (lead.leadInfo.email && lead.leadInfo.email.toLowerCase().includes(searchTerms))
+        call.phone.includes(searchTerms) ||
+        (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
       );
     });
-  }, [leads, searchQuery]);
+  }, [calls, searchQuery]);
 
-  console.log("Leads processados:", filteredLeads);
+  console.log("Chamadas filtradas:", filteredLeads);
 
   return {
     searchQuery,
@@ -145,6 +87,5 @@ export const useCallsPage = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
-    getLeadCalls,
   };
 };
