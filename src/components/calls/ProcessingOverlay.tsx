@@ -11,9 +11,9 @@ export const ProcessingOverlay = ({ isVisible, message }: ProcessingOverlayProps
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center animate-in fade-in">
-      <div className="bg-white rounded-lg p-6 shadow-lg w-80 space-y-4 animate-in zoom-in">
-        <div className="flex flex-col items-center gap-3">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center animate-in fade-in-0 duration-200">
+      <div className="bg-white rounded-lg p-6 shadow-lg w-80 space-y-4 animate-in zoom-in-50 duration-200">
+        <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm font-medium text-center">{message}</p>
         </div>
