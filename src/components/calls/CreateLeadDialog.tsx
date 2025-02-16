@@ -5,10 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { LeadForm } from "./LeadForm";
 import { useLeadForm } from "@/hooks/useLeadForm";
 import { LeadFormData } from "@/schemas/leadFormSchema";
@@ -49,12 +46,6 @@ export function CreateLeadDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Lead
-        </Button>
-      </DialogTrigger>
       <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Cadastrar Novo Lead</DialogTitle>
