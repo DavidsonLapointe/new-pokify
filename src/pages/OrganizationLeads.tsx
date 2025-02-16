@@ -52,7 +52,7 @@ const OrganizationLeads = () => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
-    // Adiciona o novo lead à lista de calls com uma flag especial
+    // Adiciona o novo lead à lista de calls com uma flag especial e sem chamadas
     const newCall: Call & { isNewLead?: boolean } = {
       id: leadId,
       leadId,
@@ -72,6 +72,7 @@ const OrganizationLeads = () => {
         phone: data.phone || "",
       },
       isNewLead: true, // Flag especial para identificar novos leads
+      emptyLead: true // Nova flag para identificar leads sem chamadas
     };
 
     // Adiciona o novo lead à lista de calls
