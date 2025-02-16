@@ -75,7 +75,7 @@ export const CallHistory = ({
   return (
     <TooltipProvider delayDuration={0}>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+        <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col overflow-hidden">
           <DialogHeader className="flex-shrink-0">
             <div className="flex items-center gap-2">
               <DialogTitle>
@@ -111,8 +111,8 @@ export const CallHistory = ({
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-auto min-h-0 mt-4">
-            <div className="relative">
+          <div className="flex-1 overflow-auto min-h-0 mt-4 relative">
+            <div className="absolute inset-0 overflow-auto">
               <Table>
                 <CallHistoryTableHeader />
                 <TableBody>
