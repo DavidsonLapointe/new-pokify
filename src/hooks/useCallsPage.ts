@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 export const useCallsPage = () => {
   // Inicializa o estado com as chamadas do mock
   const [calls, setCalls] = useState<Call[]>(mockCalls);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");  // Explicitamente tipado como string
   const [monthStats] = useState({
     total: 45,
     processed: 32,
@@ -58,16 +58,17 @@ export const useCallsPage = () => {
   // Usa useMemo para filtrar as chamadas
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
+    const query = String(searchQuery).toLowerCase(); // Garante que searchQuery seja string
+    
     return calls.filter(call => {
-      const searchTerms = searchQuery.toLowerCase();
       const leadName = call.leadInfo.personType === "pf" 
         ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
         : call.leadInfo.razaoSocial;
       
       return (
-        (leadName && leadName.toLowerCase().includes(searchTerms)) ||
-        call.phone.includes(searchTerms) ||
-        (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
+        (leadName && leadName.toLowerCase().includes(query)) ||
+        call.phone.includes(query) ||
+        (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(query))
       );
     });
   }, [calls, searchQuery]);
