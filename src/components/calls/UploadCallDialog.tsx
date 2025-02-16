@@ -64,13 +64,12 @@ export const UploadCallDialog = ({
       // Simula o upload e processamento
       await new Promise(resolve => setTimeout(resolve, 3000));
       
+      // Chama o callback de sucesso que vai atualizar o lead
+      onUploadSuccess?.();
+      
       // Fecha o modal e limpa o estado
       onOpenChange(false);
       setFile(null);
-      
-      // Chama o callback de sucesso que vai atualizar o lead
-      // Importante: chamar após o modal fechar para evitar problemas de estado
-      onUploadSuccess?.();
       
       // Mostra mensagem de sucesso
       toast({
