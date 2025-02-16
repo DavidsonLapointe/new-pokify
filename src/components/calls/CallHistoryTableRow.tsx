@@ -61,7 +61,7 @@ export const CallHistoryTableRow = ({
               variant="ghost"
               size="icon"
               onClick={() => onViewAnalysis(call)}
-              className="hover:text-[#8B5CF6] h-7 w-7"
+              className="text-primary h-7 w-7 hover:text-primary/80"
             >
               <FileText className="h-4 w-4" />
             </Button>
