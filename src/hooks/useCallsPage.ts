@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
@@ -11,9 +11,29 @@ interface LeadWithCalls {
   calls: Call[];
 }
 
+// Função auxiliar para processar os leads do mock
+const processMockLeads = (mockCalls: Call[]): LeadWithCalls[] => {
+  const mockLeadsMap = new Map<string, LeadWithCalls>();
+  
+  mockCalls.forEach(call => {
+    if (!mockLeadsMap.has(call.leadId)) {
+      mockLeadsMap.set(call.leadId, {
+        id: call.leadId,
+        leadInfo: call.leadInfo,
+        calls: [call]
+      });
+    } else {
+      mockLeadsMap.get(call.leadId)?.calls.push(call);
+    }
+  });
+
+  return Array.from(mockLeadsMap.values());
+};
+
 export const useCallsPage = () => {
+  // Inicializa o estado com os leads do mock
   const [calls, setCalls] = useState(mockCalls);
-  const [leads, setLeads] = useState<LeadWithCalls[]>([]); // Inicializado como array vazio
+  const [leads, setLeads] = useState<LeadWithCalls[]>(() => processMockLeads(mockCalls));
   const [pendingLead, setPendingLead] = useState<Call | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
@@ -42,7 +62,6 @@ export const useCallsPage = () => {
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
     
-    // Criar novo lead sem chamadas
     const newLead: LeadWithCalls = {
       id: newLeadId,
       leadInfo: {
@@ -63,10 +82,8 @@ export const useCallsPage = () => {
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (withUpload && newCall) {
-      // Adiciona a chamada à lista geral de chamadas
       setCalls(prevCalls => [newCall, ...prevCalls]);
       
-      // Atualiza o lead com a nova chamada
       setLeads(prevLeads => prevLeads.map(lead => {
         if (lead.id === newCall.leadId) {
           return {
@@ -97,42 +114,21 @@ export const useCallsPage = () => {
     return calls.filter(call => call.leadId === leadId);
   };
 
-  // Combina os leads existentes do mockCalls com os novos leads
-  const allLeads = [...leads];
-  
-  // Agrupa as chamadas mock por leadId se ainda não existirem na lista de leads
-  const mockLeadsMap = new Map<string, LeadWithCalls>();
-  calls.forEach(call => {
-    if (!leads.some(l => l.id === call.leadId)) {
-      if (!mockLeadsMap.has(call.leadId)) {
-        mockLeadsMap.set(call.leadId, {
-          id: call.leadId,
-          leadInfo: call.leadInfo,
-          calls: [call]
-        });
-      } else {
-        mockLeadsMap.get(call.leadId)?.calls.push(call);
-      }
-    }
-  });
-  
-  // Adiciona os leads do mock à lista completa
-  mockLeadsMap.forEach(lead => {
-    allLeads.push(lead);
-  });
-
-  const filteredLeads = allLeads.filter(lead => {
-    const searchTerms = searchQuery.toLowerCase();
-    const leadName = lead.leadInfo.personType === "pf" 
-      ? `${lead.leadInfo.firstName} ${lead.leadInfo.lastName || ""}`
-      : lead.leadInfo.razaoSocial;
-    
-    return (
-      (leadName && leadName.toLowerCase().includes(searchTerms)) ||
-      lead.leadInfo.phone.includes(searchTerms) ||
-      (lead.leadInfo.email && lead.leadInfo.email.toLowerCase().includes(searchTerms))
-    );
-  });
+  // Usa useMemo para filtrar os leads
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      const searchTerms = searchQuery.toLowerCase();
+      const leadName = lead.leadInfo.personType === "pf" 
+        ? `${lead.leadInfo.firstName} ${lead.leadInfo.lastName || ""}`
+        : lead.leadInfo.razaoSocial;
+      
+      return (
+        (leadName && leadName.toLowerCase().includes(searchTerms)) ||
+        lead.leadInfo.phone.includes(searchTerms) ||
+        (lead.leadInfo.email && lead.leadInfo.email.toLowerCase().includes(searchTerms))
+      );
+    });
+  }, [leads, searchQuery]);
 
   console.log("Leads processados:", filteredLeads);
 
