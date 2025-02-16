@@ -50,15 +50,17 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
     setIsUploadOpen(true);
+    confirmNewLead(false, newCall); // Adiciona o lead à lista imediatamente
   };
 
   const handleUploadSuccess = () => {
     if (pendingNewCall) {
+      // Atualiza o lead existente para incluir a chamada
       confirmNewLead(true, pendingNewCall);
-      setPendingNewCall(null);
     }
     setIsUploadOpen(false);
     setNewLeadId(null);
+    setPendingNewCall(null);
     
     toast({
       title: "Lead criado com sucesso",
@@ -67,10 +69,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   };
 
   const handleUploadCancel = () => {
-    // Quando cancela o upload, apenas adiciona o lead com zero chamadas
-    if (pendingNewCall) {
-      confirmNewLead(false, pendingNewCall);
-    }
+    // Não precisa chamar confirmNewLead aqui porque o lead já foi adicionado em handleUploadClick
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
