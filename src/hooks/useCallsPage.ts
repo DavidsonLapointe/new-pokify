@@ -58,8 +58,11 @@ export const useCallsPage = () => {
     return newLeadId;
   };
 
-  const confirmNewLead = (withUpload: boolean = false) => {
-    if (pendingLead) {
+  const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
+    if (newCall) {
+      // Se um newCall for fornecido, use-o diretamente
+      setCalls(prevCalls => [newCall, ...prevCalls]);
+    } else if (pendingLead) {
       if (withUpload) {
         // Se houver upload, adiciona a chamada junto com o lead
         setCalls(prevCalls => [pendingLead, ...prevCalls]);
