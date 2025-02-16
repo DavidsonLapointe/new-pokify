@@ -60,7 +60,7 @@ export const useCallsPage = () => {
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (newCall) {
-      const updatedCall = {
+      const updatedCall: Call = {
         ...newCall,
         emptyLead: false,
         status: withUpload ? "success" : "pending",
@@ -70,7 +70,7 @@ export const useCallsPage = () => {
     } else if (pendingLead) {
       if (withUpload) {
         // Se houver upload, adiciona a chamada junto com o lead
-        const updatedCall = {
+        const updatedCall: Call = {
           ...pendingLead,
           emptyLead: false,
           status: "success"
@@ -135,4 +135,3 @@ export const useCallsPage = () => {
     getLeadCalls,
   };
 };
-
