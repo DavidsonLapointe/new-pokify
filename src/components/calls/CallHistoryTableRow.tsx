@@ -1,27 +1,13 @@
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Call, StatusMap } from "@/types/calls";
-import { FileText, PlayCircle, Video } from "lucide-react";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ProcessingOverlay } from "./ProcessingOverlay";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { CallMediaButtons } from "./row/CallMediaButtons";
+import { CallActionButtons } from "./row/CallActionButtons";
+import { CallProcessingDialogs } from "./row/CallProcessingDialogs";
 
 interface CallHistoryTableRowProps {
   call: Call;
@@ -47,10 +33,8 @@ export const CallHistoryTableRow = ({
   const [processingMessage, setProcessingMessage] = useState("");
   
   const StatusIcon = status.icon;
-  const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
 
   const simulateProcessing = async () => {
-    // Simulando um processamento assíncrono com 50% de chance de sucesso
     return new Promise<boolean>((resolve) => {
       setTimeout(() => {
         resolve(Math.random() > 0.5);
@@ -157,106 +141,29 @@ export const CallHistoryTableRow = ({
         </TableCell>
         <TableCell className="py-2">
           <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onMediaPlay(call)}
-                  className="hover:text-primary h-7 w-7"
-                >
-                  <MediaIcon className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{call.mediaType === "video" ? "Assistir o vídeo desta chamada" : "Ouvir o áudio desta chamada"}</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            {call.status === "success" && call.analysis && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onViewAnalysis(call)}
-                    className="h-7 w-7"
-                  >
-                    <FileText className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Transcrição e resumo desta chamada</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
-
-            {call.status === "failed" && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleReprocess}
-                disabled={isProcessing}
-                className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors text-[11px] h-6 px-2"
-              >
-                {isProcessing ? "Reprocessando..." : "Reprocessar"}
-              </Button>
-            )}
-
-            {call.status === "pending" && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleProcess}
-                disabled={isProcessing}
-                className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition-colors text-[11px] h-6 px-2"
-              >
-                {isProcessing ? "Processando..." : "Processar"}
-              </Button>
-            )}
+            <CallMediaButtons
+              call={call}
+              onMediaPlay={onMediaPlay}
+              onViewAnalysis={onViewAnalysis}
+            />
+            <CallActionButtons
+              call={call}
+              isProcessing={isProcessing}
+              onProcess={handleProcess}
+              onReprocess={handleReprocess}
+            />
           </div>
         </TableCell>
       </TableRow>
 
-      <AlertDialog open={showReprocessDialog} onOpenChange={setShowReprocessDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Reprocessar chamada</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja reprocessar esta chamada? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmReprocess}
-              className="bg-red-500 hover:bg-red-600 text-white"
-            >
-              Reprocessar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog open={showProcessDialog} onOpenChange={setShowProcessDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Processar chamada</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja processar esta chamada? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmProcess}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white"
-            >
-              Processar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CallProcessingDialogs
+        showReprocessDialog={showReprocessDialog}
+        showProcessDialog={showProcessDialog}
+        onReprocessDialogChange={setShowReprocessDialog}
+        onProcessDialogChange={setShowProcessDialog}
+        onConfirmReprocess={confirmReprocess}
+        onConfirmProcess={confirmProcess}
+      />
 
       <ProcessingOverlay 
         isVisible={isProcessing} 
