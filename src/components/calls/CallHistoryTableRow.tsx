@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Call, StatusMap } from "@/types/calls";
-import { FileText, PlayCircle, Video } from "lucide-react";
+import { FileText, PlayCircle, Video, RefreshCcw, Play } from "lucide-react";
 
 interface CallHistoryTableRowProps {
   call: Call;
@@ -22,6 +22,14 @@ export const CallHistoryTableRow = ({
 }: CallHistoryTableRowProps) => {
   const StatusIcon = status.icon;
   const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
+
+  const handleReprocess = () => {
+    console.log("Reprocessando chamada:", call.id);
+  };
+
+  const handleProcess = () => {
+    console.log("Processando chamada:", call.id);
+  };
 
   return (
     <TableRow className="text-xs">
@@ -56,6 +64,30 @@ export const CallHistoryTableRow = ({
               className="hover:text-primary h-7 w-7"
             >
               <FileText className="h-4 w-4" />
+            </Button>
+          )}
+
+          {call.status === "failed" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleReprocess}
+              className="hover:text-red-500 h-7 w-7"
+              title="Reprocessar chamada"
+            >
+              <RefreshCcw className="h-4 w-4" />
+            </Button>
+          )}
+
+          {call.status === "pending" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleProcess}
+              className="hover:text-yellow-500 h-7 w-7"
+              title="Processar chamada"
+            >
+              <Play className="h-4 w-4" />
             </Button>
           )}
         </div>
