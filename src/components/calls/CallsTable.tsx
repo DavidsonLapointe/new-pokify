@@ -24,6 +24,7 @@ import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadCRMInfo } from "./LeadCRMInfo";
 import { LeadActionButtons } from "./LeadActionButtons";
 import { getLeadName, getLeadStatus } from "./utils";
+import { CreateLeadDialog } from "./CreateLeadDialog";
 
 export const CallsTable = ({
   calls,
@@ -36,6 +37,7 @@ export const CallsTable = ({
   const [showCallsHistory, setShowCallsHistory] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
 
   const leadsWithCalls: LeadCalls[] = calls.reduce((leads: LeadCalls[], call) => {
     const existingLead = leads.find(lead => lead.id === call.leadId);
@@ -78,6 +80,12 @@ export const CallsTable = ({
     // após um upload bem-sucedido
   };
 
+  const handleCreateLead = (data: any) => {
+    // Aqui seria implementada a lógica de criação do lead
+    console.log("Novo lead:", data);
+    setIsCreateLeadOpen(false);
+  };
+
   if (leadsWithCalls.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 px-4">
@@ -90,11 +98,19 @@ export const CallsTable = ({
         </p>
         <Button 
           variant="secondary" 
-          onClick={() => window.location.href = "/organization/leads?newLead=true"}
+          onClick={() => setIsCreateLeadOpen(true)}
         >
           <UserPlus className="w-4 h-4 mr-2" />
           Cadastrar Novo Lead
         </Button>
+
+        <CreateLeadDialog
+          hasPhoneIntegration={true}
+          hasEmailIntegration={true}
+          onCreateLead={handleCreateLead}
+          isOpen={isCreateLeadOpen}
+          onOpenChange={setIsCreateLeadOpen}
+        />
       </div>
     );
   }
