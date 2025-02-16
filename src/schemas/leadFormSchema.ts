@@ -3,7 +3,7 @@ import * as z from "zod";
 
 export const leadFormSchema = z.object({
   personType: z.enum(["pf", "pj"]),
-  firstName: z.string().optional(),
+  firstName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   lastName: z.string().optional(),
   phone: z
     .string()
