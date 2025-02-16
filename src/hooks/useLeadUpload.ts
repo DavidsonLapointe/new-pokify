@@ -39,18 +39,46 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     };
     
     setPendingNewCall(newCall);
-    // Adiciona o lead imediatamente
+    // Adiciona o lead imediatamente com zero chamadas
     confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
+    
+    const newCall: Call = {
+      id: leadId,
+      leadId,
+      date: new Date().toISOString(),
+      duration: "0:00",
+      status: "pending",
+      phone: data.phone || "",
+      seller: "Sistema",
+      audioUrl: "",
+      mediaType: "audio",
+      leadInfo: {
+        personType: data.personType,
+        firstName: data.firstName,
+        lastName: data.lastName || "",
+        razaoSocial: data.razaoSocial || "",
+        email: data.email || "",
+        phone: data.phone || "",
+      },
+      isNewLead: true,
+      emptyLead: true
+    };
+    
+    setPendingNewCall(newCall);
     setIsUploadOpen(true);
+    
+    // Adiciona o lead imediatamente com zero chamadas
+    confirmNewLead(false, newCall);
   };
 
   const handleUploadSuccess = () => {
     if (pendingNewCall) {
+      // Atualiza o lead para incluir a chamada
       confirmNewLead(true, pendingNewCall);
       setPendingNewCall(null);
     }
@@ -64,12 +92,11 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   };
 
   const handleUploadCancel = () => {
-    if (pendingNewCall) {
-      confirmNewLead(false, pendingNewCall);
-      setPendingNewCall(null);
-    }
+    // Não precisamos fazer nada aqui pois o lead já foi adicionado
+    // com zero chamadas no handleUploadClick
     setIsUploadOpen(false);
     setNewLeadId(null);
+    setPendingNewCall(null);
     
     toast({
       title: "Lead criado com sucesso",
