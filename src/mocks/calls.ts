@@ -11,7 +11,7 @@ export const mockCalls: Call[] = [
     status: "success",
     seller: "João Silva",
     audioUrl: "https://example.com/audio1.mp3",
-    mediaType: "audio", // Adicionada esta propriedade
+    mediaType: "audio",
     leadInfo: {
       personType: "pf",
       firstName: "Carlos",
@@ -61,36 +61,79 @@ export const mockCalls: Call[] = [
   },
   {
     id: "2",
-    leadId: "lead_2",
-    date: "2024-02-20T15:15:00",
-    phone: "(11) 98765-4322",
-    duration: "1:45",
-    status: "pending",
+    leadId: "lead_1",
+    date: "2024-02-21T15:45:00",
+    phone: "(11) 98765-4321",
+    duration: "3:15",
+    status: "success",
     seller: "Maria Santos",
-    audioUrl: "https://example.com/audio2.mp3",
-    mediaType: "video", // Adicionada esta propriedade
+    audioUrl: "https://example.com/video1.mp4",
+    mediaType: "video",
     leadInfo: {
-      personType: "pj",
-      razaoSocial: "Tech Solutions LTDA",
-      email: "contato@techsolutions.com.br",
-      phone: "(11) 98765-4322"
+      personType: "pf",
+      firstName: "Carlos",
+      lastName: "Silva",
+      email: "carlos.silva@empresa.com.br",
+      phone: "(11) 98765-4321",
+      company: "Empresa XYZ Ltda",
+      position: "Diretor Comercial"
+    },
+    analysis: {
+      transcription: "Vendedor: Olá, boa tarde! Vamos continuar nossa demonstração...\nCliente: Perfeito, gostaria de ver as funcionalidades de relatório...",
+      summary: "Realizada demonstração detalhada do módulo de relatórios. Cliente mostrou-se muito satisfeito com as possibilidades de customização.",
+      sentiment: {
+        temperature: "hot",
+        reason: "Cliente demonstrou entusiasmo durante a demonstração e sinalizou interesse em avançar para a proposta comercial.",
+      },
+      leadInfo: {
+        personType: "pf",
+        firstName: "Carlos",
+        lastName: "Silva",
+        email: "carlos.silva@empresa.com.br",
+        phone: "(11) 98765-4321",
+        company: "Empresa XYZ Ltda",
+        position: "Diretor Comercial"
+      },
     }
   },
   {
     id: "3",
-    leadId: "lead_2",
-    date: "2024-02-20T16:00:00",
-    phone: "(11) 98765-4322",
+    leadId: "lead_1",
+    date: "2024-02-22T10:20:00",
+    phone: "(11) 98765-4321",
     duration: "0:45",
     status: "failed",
     seller: "Pedro Oliveira",
     audioUrl: "https://example.com/audio3.mp3",
-    mediaType: "audio", // Adicionada esta propriedade
+    mediaType: "audio",
     leadInfo: {
-      personType: "pj",
-      razaoSocial: "Tech Solutions LTDA",
-      email: "contato@techsolutions.com.br",
-      phone: "(11) 98765-4322"
+      personType: "pf",
+      firstName: "Carlos",
+      lastName: "Silva",
+      email: "carlos.silva@empresa.com.br",
+      phone: "(11) 98765-4321",
+      company: "Empresa XYZ Ltda",
+      position: "Diretor Comercial"
+    }
+  },
+  {
+    id: "4",
+    leadId: "lead_1",
+    date: "2024-02-23T09:00:00",
+    phone: "(11) 98765-4321",
+    duration: "1:30",
+    status: "pending",
+    seller: "Ana Beatriz",
+    audioUrl: "https://example.com/audio4.mp3",
+    mediaType: "audio",
+    leadInfo: {
+      personType: "pf",
+      firstName: "Carlos",
+      lastName: "Silva",
+      email: "carlos.silva@empresa.com.br",
+      phone: "(11) 98765-4321",
+      company: "Empresa XYZ Ltda",
+      position: "Diretor Comercial"
     }
   }
 ];
