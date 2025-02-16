@@ -54,16 +54,13 @@ export function CreateLeadDialog({
     hasPhoneIntegration,
     hasEmailIntegration,
     onCreateLead: (data) => {
+      onCreateLead(data); // Chama onCreateLead imediatamente
       setLeadData(data);
       setShowSuccessCard(true);
     },
   });
 
   const handleClose = () => {
-    if (showSuccessCard && leadData) {
-      // Quando fecha com X, cadastra o lead sem nenhuma chamada
-      onCreateLead(leadData);
-    }
     setOpen(false);
     setShowSuccessCard(false);
     setLeadData(null);
@@ -71,18 +68,10 @@ export function CreateLeadDialog({
   };
 
   const handleUploadClick = () => {
-    if (leadData) {
-      if (onUploadClick) {
-        onUploadClick(leadData);
-      } else {
-        // Se não houver onUploadClick, cadastra o lead sem chamadas
-        onCreateLead(leadData);
-      }
-      setOpen(false);
+    if (leadData && onUploadClick) {
+      onUploadClick(leadData);
     }
-    setShowSuccessCard(false);
-    setLeadData(null);
-    form.reset();
+    handleClose();
   };
 
   return (

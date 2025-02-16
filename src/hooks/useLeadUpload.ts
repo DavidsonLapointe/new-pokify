@@ -39,6 +39,8 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     };
     
     setPendingNewCall(newCall);
+    // Adiciona o lead imediatamente
+    confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
