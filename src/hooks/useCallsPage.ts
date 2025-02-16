@@ -49,7 +49,6 @@ export const useCallsPage = () => {
       (leadName && leadName.toLowerCase().includes(searchTerms)) ||
       call.phone.includes(searchTerms) ||
       (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
-      // Note: CPF/CNPJ ainda não está no modelo de dados, será necessário adicionar quando disponível
     );
   });
 
