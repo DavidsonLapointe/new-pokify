@@ -15,7 +15,7 @@ import { FindLeadDialog } from "@/components/calls/FindLeadDialog";
 import { statusMap } from "@/constants/callStatus";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { LeadFormData } from "@/schemas/leadFormSchema";
-import { Upload } from "lucide-react";
+import { Upload, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/leads";
 
@@ -80,13 +80,12 @@ const OrganizationLeads = () => {
                 Upload
               </Button>
 
-              <CreateLeadDialog
-                hasPhoneIntegration={true}
-                hasEmailIntegration={true}
-                onCreateLead={handleCreateLead}
-                isOpen={isCreateLeadOpen}
-                onOpenChange={setIsCreateLeadOpen}
-              />
+              <Button
+                onClick={() => setIsCreateLeadOpen(true)}
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Novo Lead
+              </Button>
             </div>
           </div>
 
@@ -133,6 +132,14 @@ const OrganizationLeads = () => {
               }}
             />
           )}
+
+          <CreateLeadDialog
+            hasPhoneIntegration={true}
+            hasEmailIntegration={true}
+            onCreateLead={handleCreateLead}
+            isOpen={isCreateLeadOpen}
+            onOpenChange={setIsCreateLeadOpen}
+          />
         </div>
       </TooltipProvider>
     </OrganizationLayout>
