@@ -7,12 +7,21 @@ export const useLeadsData = (calls: Call[]) => {
 
   // Processa todas as chamadas
   calls.forEach(call => {
+    // Ignora chamadas sem leadId ou leadInfo
+    if (!call.leadId || !call.leadInfo) return;
+
     const existingLead = leadsMap.get(call.leadId);
     
     if (existingLead) {
       // Se o lead já existe, adiciona a chamada à lista de chamadas dele
-      if (!call.emptyLead) {
-        existingLead.calls.push(call);
+      existingLead.calls.push(call);
+      // Atualiza a data de criação se esta chamada for mais antiga
+      if (new Date(call.date) < new Date(existingLead.createdAt)) {
+        existingLead.createdAt = call.date;
+      }
+      // Atualiza as informações do CRM se disponíveis
+      if (call.crmInfo) {
+        existingLead.crmInfo = call.crmInfo;
       }
     } else {
       // Se o lead não existe, cria um novo com a primeira chamada
@@ -22,12 +31,17 @@ export const useLeadsData = (calls: Call[]) => {
         firstName: call.leadInfo.firstName,
         lastName: call.leadInfo.lastName,
         razaoSocial: call.leadInfo.razaoSocial,
-        calls: call.emptyLead ? [] : [call],
+        calls: [call],
         crmInfo: call.crmInfo,
         createdAt: call.date,
       };
       leadsMap.set(call.leadId, newLead);
     }
+  });
+
+  // Para cada lead, ordena as chamadas por data (mais recente primeiro)
+  leadsMap.forEach(lead => {
+    lead.calls.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   });
 
   // Converte o Map para array e ordena por data de criação (mais recente primeiro)
