@@ -36,6 +36,7 @@ export function CreateLeadDialog({
 }: CreateLeadDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [showSuccessCard, setShowSuccessCard] = useState(false);
+  const [leadData, setLeadData] = useState<LeadFormData | null>(null);
 
   const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledIsOpen : uncontrolledOpen;
@@ -51,17 +52,28 @@ export function CreateLeadDialog({
     hasPhoneIntegration,
     hasEmailIntegration,
     onCreateLead: (data) => {
-      onCreateLead(data);
+      setLeadData(data);
       setShowSuccessCard(true);
-    },
-    onSuccess: () => {
-      // Agora não fechamos o modal, apenas mostramos o card de sucesso
     },
   });
 
   const handleClose = () => {
+    if (leadData) {
+      onCreateLead(leadData);
+    }
     setOpen(false);
     setShowSuccessCard(false);
+    setLeadData(null);
+    form.reset();
+  };
+
+  const handleUploadClick = () => {
+    if (leadData) {
+      onCreateLead(leadData);
+    }
+    setOpen(false);
+    setShowSuccessCard(false);
+    setLeadData(null);
     form.reset();
   };
 
@@ -100,10 +112,7 @@ export function CreateLeadDialog({
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4 pt-4">
               <Button
-                onClick={() => {
-                  handleClose();
-                  setShowSuccessCard(false);
-                }}
+                onClick={handleClose}
                 variant="outline"
                 className="w-full max-w-sm"
               >
@@ -111,7 +120,7 @@ export function CreateLeadDialog({
                 Fechar
               </Button>
               <Button
-                onClick={() => handleClose()}
+                onClick={handleUploadClick}
                 variant="secondary"
                 className="w-full max-w-sm"
               >
