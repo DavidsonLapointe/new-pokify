@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ClipboardList, Flame } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { CallHistoryTableHeader } from "./CallHistoryTableHeader";
 import { CallHistoryTableRow } from "./CallHistoryTableRow";
@@ -54,6 +54,13 @@ export const CallHistory = ({
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [showCallAnalysis, setShowCallAnalysis] = useState(false);
 
+  useEffect(() => {
+    if (selectedLead) {
+      console.log("Lead selecionado no CallHistory:", selectedLead);
+      console.log("Chamadas do lead:", selectedLead.calls);
+    }
+  }, [selectedLead]);
+
   const handleMediaPlay = (call: Call) => {
     const isVideo = call.mediaType === "video";
     if (isVideo) {
@@ -68,9 +75,6 @@ export const CallHistory = ({
     setSelectedCall(call);
     setShowCallAnalysis(true);
   };
-
-  console.log("Selected Lead in CallHistory:", selectedLead);
-  console.log("Calls in history:", selectedLead?.calls);
 
   const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
   const tempConfig = temperature ? temperatureConfig[temperature] : null;
@@ -114,24 +118,22 @@ export const CallHistory = ({
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-auto min-h-0 mt-4 relative">
-            <div className="absolute inset-0 overflow-auto">
-              <Table>
-                <CallHistoryTableHeader />
-                <TableBody>
-                  {selectedLead?.calls?.map((call) => (
-                    <CallHistoryTableRow
-                      key={call.id}
-                      call={call}
-                      status={statusMap[call.status]}
-                      onMediaPlay={handleMediaPlay}
-                      onViewAnalysis={handleViewAnalysis}
-                      formatDate={formatDate}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+          <div className="flex-1 overflow-auto min-h-0 mt-4">
+            <Table>
+              <CallHistoryTableHeader />
+              <TableBody>
+                {selectedLead?.calls?.map((call) => (
+                  <CallHistoryTableRow
+                    key={call.id}
+                    call={call}
+                    status={statusMap[call.status]}
+                    onMediaPlay={handleMediaPlay}
+                    onViewAnalysis={handleViewAnalysis}
+                    formatDate={formatDate}
+                  />
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </DialogContent>
       </Dialog>
