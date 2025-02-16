@@ -48,6 +48,7 @@ export const useCallsPage = () => {
         lastName: leadData.lastName || "",
         email: leadData.email || "",
         razaoSocial: leadData.razaoSocial || "",
+        phone: leadData.phone || "", // Adding the required phone property
       },
     };
 
