@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const useCallsPage = () => {
   const [calls, setCalls] = useState(mockCalls);
+  const [pendingLead, setPendingLead] = useState<Call | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
     total: 45,
@@ -31,7 +32,7 @@ export const useCallsPage = () => {
     setSelectedCall(null);
   };
 
-  const addNewLead = (leadData: LeadFormData) => {
+  const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
     const newCall: Call = {
       id: uuidv4(),
@@ -40,7 +41,7 @@ export const useCallsPage = () => {
       duration: "0:00",
       status: "pending",
       phone: leadData.phone || "",
-      seller: "Sistema", // Adicionando o campo seller obrigatório
+      seller: "Sistema",
       audioUrl: "",
       mediaType: "audio",
       leadInfo: {
@@ -53,7 +54,19 @@ export const useCallsPage = () => {
       },
     };
 
-    setCalls(prevCalls => [newCall, ...prevCalls]);
+    setPendingLead(newCall);
+    return newLeadId;
+  };
+
+  const confirmNewLead = () => {
+    if (pendingLead) {
+      setCalls(prevCalls => [pendingLead, ...prevCalls]);
+      setPendingLead(null);
+    }
+  };
+
+  const cancelNewLead = () => {
+    setPendingLead(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -91,6 +104,8 @@ export const useCallsPage = () => {
     handleViewAnalysis,
     handleCloseAnalysis,
     formatDate,
-    addNewLead,
+    createNewLead,
+    confirmNewLead,
+    cancelNewLead,
   };
 };

@@ -30,6 +30,7 @@ const OrganizationLeads = () => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedLeadForUpload, setSelectedLeadForUpload] = useState<Lead | null>(null);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState || false);
+  const [newLeadId, setNewLeadId] = useState<string | null>(null);
 
   const {
     searchQuery,
@@ -42,21 +43,33 @@ const OrganizationLeads = () => {
     handleViewAnalysis,
     handleCloseAnalysis,
     formatDate,
-    addNewLead,
+    createNewLead,
+    confirmNewLead,
+    cancelNewLead,
   } = useCallsPage();
 
   const handleCreateLead = (data: LeadFormData) => {
-    addNewLead(data);
+    const leadId = createNewLead(data);
+    setNewLeadId(leadId);
     setIsCreateLeadOpen(false);
+    setIsUploadOpen(true);
+  };
+
+  const handleUploadSuccess = () => {
+    confirmNewLead();
+    setIsUploadOpen(false);
+    setNewLeadId(null);
     
     toast({
       title: "Lead criado com sucesso",
       description: "O novo lead foi adicionado à lista.",
     });
+  };
 
-    if (showCreateLeadFromState) {
-      setIsUploadOpen(true);
-    }
+  const handleUploadCancel = () => {
+    cancelNewLead();
+    setIsUploadOpen(false);
+    setNewLeadId(null);
   };
 
   const handleLeadFound = (lead: Lead) => {
@@ -130,13 +143,23 @@ const OrganizationLeads = () => {
             onLeadFound={handleLeadFound}
           />
 
-          {selectedLeadForUpload && (
+          {(selectedLeadForUpload || newLeadId) && (
             <UploadCallDialog
-              leadId={selectedLeadForUpload.id}
+              leadId={selectedLeadForUpload?.id || newLeadId || ""}
               isOpen={isUploadOpen}
-              onOpenChange={setIsUploadOpen}
+              onOpenChange={(open) => {
+                setIsUploadOpen(open);
+                if (!open && newLeadId) {
+                  handleUploadCancel();
+                }
+              }}
               onUploadSuccess={() => {
-                setSelectedLeadForUpload(null);
+                if (selectedLeadForUpload) {
+                  setSelectedLeadForUpload(null);
+                } else {
+                  handleUploadSuccess();
+                }
+                setIsUploadOpen(false);
               }}
             />
           )}
