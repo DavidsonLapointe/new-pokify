@@ -48,8 +48,8 @@ export const useCallsPage = () => {
         personType: leadData.personType,
         firstName: leadData.firstName,
         lastName: leadData.lastName || "",
-        email: leadData.email || "",
         razaoSocial: leadData.razaoSocial || "",
+        email: leadData.email || "",
         phone: leadData.phone || "",
       },
     };
@@ -60,12 +60,22 @@ export const useCallsPage = () => {
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (newCall) {
-      // Se um newCall for fornecido, use-o diretamente
-      setCalls(prevCalls => [newCall, ...prevCalls]);
+      const updatedCall = {
+        ...newCall,
+        emptyLead: false,
+        status: withUpload ? "success" : "pending",
+        date: new Date().toISOString(),
+      };
+      setCalls(prevCalls => [updatedCall, ...prevCalls]);
     } else if (pendingLead) {
       if (withUpload) {
         // Se houver upload, adiciona a chamada junto com o lead
-        setCalls(prevCalls => [pendingLead, ...prevCalls]);
+        const updatedCall = {
+          ...pendingLead,
+          emptyLead: false,
+          status: "success"
+        };
+        setCalls(prevCalls => [updatedCall, ...prevCalls]);
       } else {
         // Se não houver upload, adiciona apenas o lead sem a chamada
         const leadWithoutCall: Call = {
@@ -90,6 +100,10 @@ export const useCallsPage = () => {
       hour: "2-digit",
       minute: "2-digit",
     }).format(date);
+  };
+
+  const getLeadCalls = (leadId: string) => {
+    return calls.filter(call => call.leadId === leadId);
   };
 
   const filteredCalls = calls.filter((call) => {
@@ -118,5 +132,7 @@ export const useCallsPage = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
+    getLeadCalls,
   };
 };
+
