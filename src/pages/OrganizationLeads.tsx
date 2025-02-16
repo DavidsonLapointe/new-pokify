@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,8 +49,7 @@ const OrganizationLeads = () => {
   const handleCreateLead = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    setIsCreateLeadOpen(false);
-    setIsUploadOpen(true);
+    confirmNewLead(false); // Confirma o lead sem upload quando fecha pelo X
   };
 
   const handleUploadSuccess = () => {
@@ -66,14 +64,8 @@ const OrganizationLeads = () => {
   };
 
   const handleUploadCancel = () => {
-    confirmNewLead(false); // Confirma o lead sem upload
     setIsUploadOpen(false);
     setNewLeadId(null);
-    
-    toast({
-      title: "Lead criado com sucesso",
-      description: "O novo lead foi adicionado à lista sem chamadas.",
-    });
   };
 
   const handleLeadFound = (lead: Lead) => {
@@ -81,7 +73,6 @@ const OrganizationLeads = () => {
     setIsUploadOpen(true);
   };
 
-  // Efeito para preencher a busca quando vier do redirecionamento
   if (searchQueryFromState && searchQuery !== searchQueryFromState) {
     setSearchQuery(searchQueryFromState);
   }

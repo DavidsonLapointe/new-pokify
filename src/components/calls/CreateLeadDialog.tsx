@@ -58,7 +58,7 @@ export function CreateLeadDialog({
   });
 
   const handleClose = () => {
-    if (leadData) {
+    if (showSuccessCard && leadData) {
       onCreateLead(leadData); // Salva o lead quando fecha com X
     }
     setOpen(false);
@@ -70,8 +70,9 @@ export function CreateLeadDialog({
   const handleUploadClick = () => {
     if (leadData) {
       onCreateLead(leadData);
+      setOpen(false);
+      setIsUploadOpen(true); // Esta linha será chamada através do OrganizationLeads.tsx
     }
-    setOpen(false);
     setShowSuccessCard(false);
     setLeadData(null);
     form.reset();
