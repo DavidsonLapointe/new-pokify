@@ -18,8 +18,10 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Upload, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/leads";
+import { useToast } from "@/components/ui/use-toast";
 
 const OrganizationLeads = () => {
+  const { toast } = useToast();
   const location = useLocation();
   const showCreateLeadFromState = location.state?.showCreateLead;
   const searchQueryFromState = location.state?.searchQuery;
@@ -40,13 +42,19 @@ const OrganizationLeads = () => {
     handleViewAnalysis,
     handleCloseAnalysis,
     formatDate,
+    addNewLead,
   } = useCallsPage();
 
   const handleCreateLead = (data: LeadFormData) => {
-    // Aqui seria implementada a lógica de criação do lead
-    console.log("Novo lead:", data);
+    addNewLead(data);
+    setIsCreateLeadOpen(false);
+    
+    toast({
+      title: "Lead criado com sucesso",
+      description: "O novo lead foi adicionado à lista.",
+    });
+
     if (showCreateLeadFromState) {
-      // Se veio da busca, abrir o upload após criar o lead
       setIsUploadOpen(true);
     }
   };

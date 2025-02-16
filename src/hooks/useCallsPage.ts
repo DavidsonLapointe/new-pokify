@@ -2,8 +2,11 @@
 import { useState } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
+import { LeadFormData } from "@/schemas/leadFormSchema";
+import { v4 as uuidv4 } from "uuid";
 
 export const useCallsPage = () => {
+  const [calls, setCalls] = useState(mockCalls);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
     total: 45,
@@ -28,6 +31,29 @@ export const useCallsPage = () => {
     setSelectedCall(null);
   };
 
+  const addNewLead = (leadData: LeadFormData) => {
+    const newLeadId = uuidv4();
+    const newCall: Call = {
+      id: uuidv4(),
+      leadId: newLeadId,
+      date: new Date().toISOString(),
+      duration: "0:00",
+      status: "pending",
+      phone: leadData.phone || "",
+      audioUrl: "",
+      mediaType: "audio",
+      leadInfo: {
+        personType: leadData.personType,
+        firstName: leadData.firstName,
+        lastName: leadData.lastName || "",
+        email: leadData.email || "",
+        razaoSocial: leadData.razaoSocial || "",
+      },
+    };
+
+    setCalls(prevCalls => [newCall, ...prevCalls]);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("pt-BR", {
@@ -39,7 +65,7 @@ export const useCallsPage = () => {
     }).format(date);
   };
 
-  const filteredCalls = mockCalls.filter((call) => {
+  const filteredCalls = calls.filter((call) => {
     const searchTerms = searchQuery.toLowerCase();
     const leadName = call.leadInfo.personType === "pf" 
       ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
@@ -63,5 +89,6 @@ export const useCallsPage = () => {
     handleViewAnalysis,
     handleCloseAnalysis,
     formatDate,
+    addNewLead,
   };
 };
