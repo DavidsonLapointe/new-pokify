@@ -133,21 +133,21 @@ const OrganizationDashboard = () => {
             value={stats.processedCalls}
             icon={CheckCircle2}
             color="text-green-500"
-            tooltip="Chamadas que foram atendidas e processadas com sucesso pelo sistema"
+            tooltip="Chamadas que foram processadas com sucesso pelo sistema"
           />
           <StatCard
             title="Chamadas Pendentes"
             value={stats.pendingCalls}
             icon={Clock}
             color="text-yellow-500"
-            tooltip="Chamadas que ainda estão aguardando processamento ou intervenção manual"
+            tooltip="Chamadas que ainda estão aguardando solicitação de processamento"
           />
           <StatCard
             title="Chamadas com Erro"
             value={stats.failedCalls}
             icon={AlertCircle}
             color="text-red-500"
-            tooltip="Chamadas que falharam durante o processamento e precisam ser verificadas"
+            tooltip="Chamadas que falharam durante o processamento e precisam ser reprocessadas"
           />
         </div>
 
