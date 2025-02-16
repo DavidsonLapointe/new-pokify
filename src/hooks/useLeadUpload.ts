@@ -35,27 +35,28 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   });
 
   const handleCreateLead = (data: LeadFormData) => {
-    // Não cria o lead aqui, apenas guarda os dados para criar no handleUploadClick
+    // Cria o lead diretamente quando não vamos fazer upload
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
+    confirmNewLead(false, newCall); // Necessário para criar o lead sem upload
   };
 
   const handleUploadClick = (data: LeadFormData) => {
+    // Não cria o lead aqui, apenas prepara para o upload
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
     setIsUploadOpen(true);
-    confirmNewLead(false, newCall); // Apenas aqui adicionamos o lead à lista
   };
 
   const handleUploadSuccess = () => {
     if (pendingNewCall) {
-      // Atualiza o lead existente para incluir a chamada
+      // Agora sim criamos o lead com a chamada
       confirmNewLead(true, pendingNewCall);
     }
     setIsUploadOpen(false);
@@ -69,7 +70,10 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   };
 
   const handleUploadCancel = () => {
-    // Não precisa chamar confirmNewLead aqui porque o lead já foi adicionado em handleUploadClick
+    // Cria o lead sem chamada quando cancela o upload
+    if (pendingNewCall) {
+      confirmNewLead(false, pendingNewCall);
+    }
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
