@@ -12,6 +12,7 @@ import { useCallsPage } from "@/hooks/useCallsPage";
 import { useLeadUpload } from "@/hooks/useLeadUpload";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
+import { Toaster } from "@/components/ui/toaster";
 
 const OrganizationLeads = () => {
   const location = useLocation();
@@ -26,7 +27,7 @@ const OrganizationLeads = () => {
     monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredLeads, // Mudamos aqui de filteredCalls para filteredLeads
+    filteredLeads,
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
@@ -66,7 +67,7 @@ const OrganizationLeads = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             monthStats={monthStats}
-            calls={filteredLeads} // Passamos os leads filtrados aqui
+            calls={filteredLeads}
             statusMap={statusMap}
             onPlayAudio={handlePlayAudio}
             onViewAnalysis={handleViewAnalysis}
@@ -121,6 +122,7 @@ const OrganizationLeads = () => {
           />
         </div>
       </TooltipProvider>
+      <Toaster />
     </OrganizationLayout>
   );
 };
