@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import {
   Table,
   TableBody,
 } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { CallsTableProps } from "./types";
+import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
 import { UploadCallDialog } from "./UploadCallDialog";
 import { EmptyLeadsState } from "./table/EmptyLeadsState";

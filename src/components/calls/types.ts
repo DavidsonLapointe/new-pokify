@@ -22,3 +22,5 @@ export interface CallsTableProps {
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
 }
+
+export type { Call } from "@/types/calls";
