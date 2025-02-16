@@ -13,11 +13,6 @@ export const mockAvailableIntegrations = {
     { id: "salesforce", name: "Salesforce" },
     { id: "zoho", name: "Zoho CRM" },
   ],
-  call: [
-    { id: "zendesk", name: "Zendesk Talk", contactType: "email" as ContactType },
-    { id: "aircall", name: "Aircall", contactType: "phone" as ContactType },
-    { id: "twilio", name: "Twilio", contactType: "phone" as ContactType },
-  ],
   llm: [
     { id: "gpt4o", name: "GPT-4O" },
     { id: "perplexity", name: "Perplexity AI" },
@@ -30,9 +25,6 @@ export const getIntegrationDescription = (id: string): string => {
     hubspot: "Integre suas chamadas diretamente com o HubSpot CRM",
     salesforce: "Sincronize leads automaticamente com o Salesforce",
     zoho: "Conecte-se ao Zoho CRM para gestão completa",
-    zendesk: "Capture chamadas realizadas através do Zendesk Talk (necessário email)",
-    aircall: "Integração com sistema de chamadas Aircall (necessário telefone)",
-    twilio: "Sistema de telefonia cloud com Twilio (necessário telefone)",
     gpt4o: "Modelo LLM otimizado para extração de dados de chamadas",
     perplexity: "Modelo LLM especializado em análise de contexto",
     claude: "Assistente AI avançado para análise de conversas",
@@ -41,6 +33,5 @@ export const getIntegrationDescription = (id: string): string => {
 };
 
 export const getContactType = (toolId: string): ContactType | undefined => {
-  const tool = mockAvailableIntegrations.call.find(tool => tool.id === toolId) as ToolWithContact;
-  return tool?.contactType;
+  return undefined; // Como não temos mais integrações de chamada, esta função sempre retornará undefined
 };

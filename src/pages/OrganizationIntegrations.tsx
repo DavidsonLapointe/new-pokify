@@ -1,5 +1,5 @@
 
-import { Link, Plug, AlertCircle, Brain } from "lucide-react";
+import { Plug, AlertCircle, Brain } from "lucide-react";
 import {
   Alert,
   AlertDescription,
@@ -18,7 +18,6 @@ const OrganizationIntegrations = () => {
   
   const [selectedIntegrations, setSelectedIntegrations] = useState<{
     crm?: Integration;
-    call?: Integration;
     llm?: Integration;
   }>({
     crm: {
@@ -42,7 +41,7 @@ const OrganizationIntegrations = () => {
     }
   ]);
 
-  const handleSelectIntegration = (type: "crm" | "call" | "llm", integrationId: string) => {
+  const handleSelectIntegration = (type: "crm" | "llm", integrationId: string) => {
     console.log('Selecting integration:', { type, integrationId });
     
     const hasActiveIntegration = activeIntegrations.some(
@@ -126,7 +125,7 @@ const OrganizationIntegrations = () => {
         <div>
           <h1 className="text-3xl font-semibold">Integrações</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie suas integrações com CRMs, ferramentas de chamada e modelos LLM
+            Gerencie suas integrações com CRMs e modelos LLM
           </p>
         </div>
 
@@ -134,8 +133,7 @@ const OrganizationIntegrations = () => {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Dica</AlertTitle>
           <AlertDescription>
-            Configure pelo menos um CRM, uma ferramenta de chamada e um modelo LLM para
-            começar a usar o sistema automaticamente.
+            Configure um CRM e um modelo LLM para começar a usar o sistema automaticamente.
           </AlertDescription>
         </Alert>
 
@@ -147,17 +145,6 @@ const OrganizationIntegrations = () => {
             availableTools={mockAvailableIntegrations.crm}
             isActive={activeIntegrations.some((i) => i.type === "crm")}
             selectedIntegration={selectedIntegrations.crm}
-            onSelect={handleSelectIntegration}
-            onToggle={handleToggleIntegration}
-          />
-
-          <IntegrationSection
-            type="call"
-            title="Ferramentas de Chamada"
-            icon={<Link className="w-5 h-5" />}
-            availableTools={mockAvailableIntegrations.call}
-            isActive={activeIntegrations.some((i) => i.type === "call")}
-            selectedIntegration={selectedIntegrations.call}
             onSelect={handleSelectIntegration}
             onToggle={handleToggleIntegration}
           />
