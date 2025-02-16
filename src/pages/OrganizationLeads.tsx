@@ -19,6 +19,7 @@ import { Upload, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/leads";
 import { useToast } from "@/components/ui/use-toast";
+import { Call } from "@/types/calls";
 
 const OrganizationLeads = () => {
   const { toast } = useToast();
@@ -50,17 +51,41 @@ const OrganizationLeads = () => {
   const handleCreateLead = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    confirmNewLead(false); // Confirma o lead sem upload
+    
+    // Adiciona o novo lead à lista de calls com uma flag especial
+    const newCall: Call & { isNewLead?: boolean } = {
+      id: leadId,
+      leadId,
+      date: new Date().toISOString(),
+      duration: "0:00",
+      status: "pending",
+      phone: data.phone || "",
+      seller: "Sistema",
+      audioUrl: "",
+      mediaType: "audio",
+      leadInfo: {
+        personType: data.personType,
+        firstName: data.firstName,
+        lastName: data.lastName || "",
+        razaoSocial: data.razaoSocial || "",
+        email: data.email || "",
+        phone: data.phone || "",
+      },
+      isNewLead: true, // Flag especial para identificar novos leads
+    };
+
+    // Adiciona o novo lead à lista de calls
+    confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    setIsUploadOpen(true); // Abre o modal de upload apenas quando clica no botão
+    setIsUploadOpen(true);
   };
 
   const handleUploadSuccess = () => {
-    confirmNewLead(true); // Confirma o lead com upload
+    confirmNewLead(true);
     setIsUploadOpen(false);
     setNewLeadId(null);
     
