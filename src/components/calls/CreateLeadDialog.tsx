@@ -61,7 +61,13 @@ export function CreateLeadDialog({
 
   const handleClose = () => {
     if (showSuccessCard && leadData) {
-      onCreateLead(leadData); // Salva o lead quando fecha com X
+      // Quando fecha com X, cadastra o lead sem nenhuma chamada
+      const newLead = {
+        ...leadData,
+        calls: [], // Inicializa com array vazio de chamadas
+        createdAt: new Date().toISOString(),
+      };
+      onCreateLead(newLead);
     }
     setOpen(false);
     setShowSuccessCard(false);
@@ -74,7 +80,13 @@ export function CreateLeadDialog({
       if (onUploadClick) {
         onUploadClick(leadData);
       } else {
-        onCreateLead(leadData);
+        // Se não houver onUploadClick, cadastra o lead sem chamadas
+        const newLead = {
+          ...leadData,
+          calls: [], // Inicializa com array vazio de chamadas
+          createdAt: new Date().toISOString(),
+        };
+        onCreateLead(newLead);
       }
       setOpen(false);
     }
