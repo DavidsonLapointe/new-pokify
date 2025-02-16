@@ -1,7 +1,8 @@
 
 import { Call, StatusMap } from "@/types/calls";
 import { LeadCalls } from "./types";
-import { getLeadName, getLeadDetails } from "./utils";
+import { getLeadName, getLeadDetails, getLastCallTemperature, temperatureConfig } from "./utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +16,7 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { User2 } from "lucide-react";
+import { ClipboardList, Flame } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { CallHistoryTableHeader } from "./CallHistoryTableHeader";
@@ -63,12 +64,15 @@ export const CallHistory = ({
     setShowCallAnalysis(true);
   };
 
+  const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
+  const tempConfig = temperature ? temperatureConfig[temperature] : null;
+
   return (
     <TooltipProvider delayDuration={0}>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-shrink-0">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <DialogTitle>
                 Histórico de Chamadas - {getLeadName(selectedLead)}
               </DialogTitle>
@@ -76,10 +80,19 @@ export const CallHistory = ({
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowLeadDetails(true)}
-                className="hover:text-primary h-8 w-8"
+                className="hover:text-primary h-7 w-7"
               >
-                <User2 className="h-5 w-5" />
+                <ClipboardList className="h-4 w-4" />
               </Button>
+              {tempConfig && (
+                <Badge
+                  variant="secondary"
+                  className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${tempConfig.color}`}
+                >
+                  <Flame className="w-3 h-3 mr-1" />
+                  {tempConfig.label}
+                </Badge>
+              )}
             </div>
             <DialogDescription>
               {getLeadDetails(selectedLead)}
