@@ -35,12 +35,12 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   });
 
   const handleCreateLead = (data: LeadFormData) => {
+    // Não cria o lead aqui, apenas guarda os dados para criar no handleUploadClick
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
-    confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
@@ -50,7 +50,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
     setIsUploadOpen(true);
-    confirmNewLead(false, newCall); // Adiciona o lead à lista imediatamente
+    confirmNewLead(false, newCall); // Apenas aqui adicionamos o lead à lista
   };
 
   const handleUploadSuccess = () => {
