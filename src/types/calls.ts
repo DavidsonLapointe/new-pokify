@@ -43,10 +43,12 @@ export interface Call {
   phone: string;
   seller: string;
   audioUrl: string;
-  mediaType: "audio" | "video";  // Adicionada esta propriedade
+  mediaType: "audio" | "video";
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
   leadInfo: LeadInfo;
+  emptyLead?: boolean; // Adicionada esta propriedade
+  isNewLead?: boolean; // Adicionada esta propriedade também para consistência
 }
 
 export interface StatusConfig {
