@@ -5,8 +5,15 @@ import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
 
+interface LeadWithCalls {
+  id: string;
+  leadInfo: Call['leadInfo'];
+  calls: Call[];
+}
+
 export const useCallsPage = () => {
   const [calls, setCalls] = useState(mockCalls);
+  const [leads, setLeads] = useState<LeadWithCalls[]>([]);
   const [pendingLead, setPendingLead] = useState<Call | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
@@ -34,15 +41,42 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
-    // Não criamos nenhuma chamada aqui, apenas retornamos o ID
-    console.log("Novo lead criado com ID:", newLeadId);
+    
+    // Criar novo lead sem chamadas
+    const newLead: LeadWithCalls = {
+      id: newLeadId,
+      leadInfo: {
+        personType: leadData.personType,
+        firstName: leadData.firstName,
+        lastName: leadData.lastName || "",
+        razaoSocial: leadData.razaoSocial || "",
+        email: leadData.email || "",
+        phone: leadData.phone || "",
+      },
+      calls: []
+    };
+    
+    setLeads(prevLeads => [newLead, ...prevLeads]);
+    console.log("Novo lead criado:", newLead);
     return newLeadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
     if (withUpload && newCall) {
-      // Apenas adiciona a chamada se houver upload
+      // Adiciona a chamada à lista geral de chamadas
       setCalls(prevCalls => [newCall, ...prevCalls]);
+      
+      // Atualiza o lead com a nova chamada
+      setLeads(prevLeads => prevLeads.map(lead => {
+        if (lead.id === newCall.leadId) {
+          return {
+            ...lead,
+            calls: [newCall, ...lead.calls]
+          };
+        }
+        return lead;
+      }));
+      
       console.log("Nova chamada adicionada:", newCall);
     }
     setPendingLead(null);
@@ -63,27 +97,51 @@ export const useCallsPage = () => {
     return calls.filter(call => call.leadId === leadId);
   };
 
-  const filteredCalls = calls.filter((call) => {
+  // Combina os leads existentes do mockCalls com os novos leads
+  const allLeads = [...leads];
+  
+  // Agrupa as chamadas mock por leadId se ainda não existirem na lista de leads
+  const mockLeadsMap = new Map<string, LeadWithCalls>();
+  calls.forEach(call => {
+    if (!leads.some(l => l.id === call.leadId)) {
+      if (!mockLeadsMap.has(call.leadId)) {
+        mockLeadsMap.set(call.leadId, {
+          id: call.leadId,
+          leadInfo: call.leadInfo,
+          calls: [call]
+        });
+      } else {
+        mockLeadsMap.get(call.leadId)?.calls.push(call);
+      }
+    }
+  });
+  
+  // Adiciona os leads do mock à lista completa
+  mockLeadsMap.forEach(lead => {
+    allLeads.push(lead);
+  });
+
+  const filteredLeads = allLeads.filter(lead => {
     const searchTerms = searchQuery.toLowerCase();
-    const leadName = call.leadInfo.personType === "pf" 
-      ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
-      : call.leadInfo.razaoSocial;
+    const leadName = lead.leadInfo.personType === "pf" 
+      ? `${lead.leadInfo.firstName} ${lead.leadInfo.lastName || ""}`
+      : lead.leadInfo.razaoSocial;
     
     return (
       (leadName && leadName.toLowerCase().includes(searchTerms)) ||
-      call.phone.includes(searchTerms) ||
-      (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
+      lead.leadInfo.phone.includes(searchTerms) ||
+      (lead.leadInfo.email && lead.leadInfo.email.toLowerCase().includes(searchTerms))
     );
   });
 
-  console.log("Leads processados:", filteredCalls);
+  console.log("Leads processados:", filteredLeads);
 
   return {
     searchQuery,
     monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredCalls,
+    filteredLeads, // Agora retornamos leads em vez de calls
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
