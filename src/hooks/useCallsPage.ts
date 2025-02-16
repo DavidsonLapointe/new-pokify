@@ -73,6 +73,7 @@ export const useCallsPage = () => {
           status: "pending",
           duration: "0:00",
           audioUrl: "",
+          emptyLead: true,
         };
         setCalls(prevCalls => [leadWithoutCall, ...prevCalls]);
       }
