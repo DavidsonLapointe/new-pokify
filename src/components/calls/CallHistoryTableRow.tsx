@@ -72,7 +72,7 @@ export const CallHistoryTableRow = ({
               variant="outline"
               size="sm"
               onClick={handleReprocess}
-              className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors"
+              className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors text-[11px] h-6 px-2"
             >
               Reprocessar
             </Button>
@@ -83,7 +83,7 @@ export const CallHistoryTableRow = ({
               variant="outline"
               size="sm"
               onClick={handleProcess}
-              className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition-colors"
+              className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition-colors text-[11px] h-6 px-2"
             >
               Processar
             </Button>
