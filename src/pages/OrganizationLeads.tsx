@@ -97,8 +97,15 @@ const OrganizationLeads = () => {
   };
 
   const handleUploadCancel = () => {
+    // Confirmamos o lead sem upload quando cancelar
+    confirmNewLead(false);
     setIsUploadOpen(false);
     setNewLeadId(null);
+    
+    toast({
+      title: "Lead criado com sucesso",
+      description: "O novo lead foi adicionado à lista sem chamadas.",
+    });
   };
 
   const handleLeadFound = (lead: Lead) => {
@@ -189,6 +196,7 @@ const OrganizationLeads = () => {
                 }
                 setIsUploadOpen(false);
               }}
+              onCancel={handleUploadCancel}
             />
           )}
 

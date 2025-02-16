@@ -10,13 +10,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { ProcessingOverlay } from "./ProcessingOverlay";
 
 interface UploadCallDialogProps {
   leadId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onUploadSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 export const UploadCallDialog = ({
@@ -24,6 +26,7 @@ export const UploadCallDialog = ({
   isOpen,
   onOpenChange,
   onUploadSuccess,
+  onCancel,
 }: UploadCallDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -54,6 +57,8 @@ export const UploadCallDialog = ({
       // 2. Envio para processamento LLM
       // 3. Atualização do status
 
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulando processamento
+
       toast({
         title: "Arquivo enviado com sucesso",
         description: "O arquivo será processado em breve.",
@@ -73,48 +78,60 @@ export const UploadCallDialog = ({
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Upload de Chamada</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="file">Arquivo de áudio ou vídeo</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="file"
-                type="file"
-                accept="audio/*,video/*"
-                onChange={handleFileChange}
-                className="cursor-pointer"
-              />
-            </div>
-            {file && (
-              <p className="text-sm text-muted-foreground">
-                Arquivo selecionado: {file.name}
-              </p>
-            )}
-          </div>
+  const handleCancel = () => {
+    onCancel?.();
+    onOpenChange(false);
+  };
 
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isUploading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleProcess}
-              disabled={!file || isUploading}
-            >
-              {isUploading ? "Processando..." : "Processar arquivo"}
-            </Button>
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upload de Chamada</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="file">Arquivo de áudio ou vídeo</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="file"
+                  type="file"
+                  accept="audio/*,video/*"
+                  onChange={handleFileChange}
+                  className="cursor-pointer"
+                />
+              </div>
+              {file && (
+                <p className="text-sm text-muted-foreground">
+                  Arquivo selecionado: {file.name}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                disabled={isUploading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleProcess}
+                disabled={!file || isUploading}
+              >
+                {isUploading ? "Processando..." : "Processar arquivo"}
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <ProcessingOverlay 
+        isVisible={isUploading} 
+        message="Processando arquivo. Por favor, aguarde..."
+      />
+    </>
   );
 };
