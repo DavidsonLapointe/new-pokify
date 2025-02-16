@@ -3,7 +3,7 @@ import * as z from "zod";
 
 export const leadFormSchema = z.object({
   personType: z.enum(["pf", "pj"]),
-  firstName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  firstName: z.string().optional(),
   lastName: z.string().optional(),
   phone: z
     .string()
@@ -36,6 +36,15 @@ export const leadFormSchema = z.object({
   cidade: z.string().optional(),
   estado: z.string().optional(),
   cep: z.string().optional(),
-});
+}).refine(
+  (data) => {
+    // Pelo menos um meio de contato deve estar preenchido
+    return Boolean(data.phone) || Boolean(data.email);
+  },
+  {
+    message: "É necessário fornecer pelo menos um meio de contato (telefone ou email)",
+    path: ["phone"], // Mostra o erro no campo telefone por padrão
+  }
+);
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;

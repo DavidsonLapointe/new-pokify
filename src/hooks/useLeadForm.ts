@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { leadFormSchema, LeadFormData } from "@/schemas/leadFormSchema";
-import * as z from "zod";
 
 interface UseLeadFormProps {
   hasPhoneIntegration: boolean;
@@ -13,32 +12,13 @@ interface UseLeadFormProps {
 }
 
 export const useLeadForm = ({
-  hasPhoneIntegration,
-  hasEmailIntegration,
   onCreateLead,
   onSuccess,
 }: UseLeadFormProps) => {
   const { toast } = useToast();
 
   const form = useForm<LeadFormData>({
-    resolver: zodResolver(
-      leadFormSchema.superRefine((data, ctx) => {
-        if (hasPhoneIntegration && !data.phone) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Telefone é obrigatório para integração VoIP",
-            path: ["phone"],
-          });
-        }
-        if (hasEmailIntegration && !data.email) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Email é obrigatório para integração de videoconferência",
-            path: ["email"],
-          });
-        }
-      })
-    ),
+    resolver: zodResolver(leadFormSchema),
     defaultValues: {
       personType: "pf",
       firstName: "",
@@ -91,14 +71,11 @@ export const useLeadForm = ({
   };
 
   const onSubmit = (data: LeadFormData) => {
-    const hasValidPhone = data.phone && hasPhoneIntegration;
-    const hasValidEmail = data.email && hasEmailIntegration;
-
-    if (!hasValidPhone && !hasValidEmail) {
+    if (!data.phone && !data.email) {
       toast({
         variant: "destructive",
         title: "Erro ao criar lead",
-        description: "É necessário fornecer um meio de contato válido de acordo com a integração configurada.",
+        description: "É necessário fornecer pelo menos um meio de contato (telefone ou email).",
       });
       return;
     }
