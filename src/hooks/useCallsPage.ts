@@ -40,6 +40,7 @@ export const useCallsPage = () => {
       duration: "0:00",
       status: "pending",
       phone: leadData.phone || "",
+      seller: "Sistema", // Adicionando o campo seller obrigatório
       audioUrl: "",
       mediaType: "audio",
       leadInfo: {
@@ -48,7 +49,7 @@ export const useCallsPage = () => {
         lastName: leadData.lastName || "",
         email: leadData.email || "",
         razaoSocial: leadData.razaoSocial || "",
-        phone: leadData.phone || "", // Adding the required phone property
+        phone: leadData.phone || "",
       },
     };
 
