@@ -87,7 +87,7 @@ export const CallHistory = ({
                     variant="outline"
                     size="icon"
                     onClick={() => setShowLeadDetails(true)}
-                    className="h-8 w-8 rounded-full border-2 border-primary/20 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-200 hover:scale-110 active:scale-95"
+                    className="h-8 w-8 rounded-full border-2 border-primary/20 bg-[#9b87f5] hover:bg-[#8B5CF6] hover:border-[#8B5CF6] text-white transition-all duration-200 hover:scale-110 active:scale-95"
                   >
                     <ClipboardList className="h-4 w-4" />
                   </Button>
