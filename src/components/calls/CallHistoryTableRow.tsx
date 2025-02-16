@@ -17,6 +17,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ProcessingOverlay } from "./ProcessingOverlay";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CallHistoryTableRowProps {
   call: Call;
@@ -152,24 +157,38 @@ export const CallHistoryTableRow = ({
         </TableCell>
         <TableCell className="py-2">
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onMediaPlay(call)}
-              className="hover:text-primary h-7 w-7"
-            >
-              <MediaIcon className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onMediaPlay(call)}
+                  className="hover:text-primary h-7 w-7"
+                >
+                  <MediaIcon className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{call.mediaType === "video" ? "Assistir o vídeo desta chamada" : "Ouvir o áudio desta chamada"}</p>
+              </TooltipContent>
+            </Tooltip>
             
             {call.status === "success" && call.analysis && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onViewAnalysis(call)}
-                className="h-7 w-7"
-              >
-                <FileText className="h-4 w-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onViewAnalysis(call)}
+                    className="h-7 w-7"
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Transcrição e resumo desta chamada</p>
+                </TooltipContent>
+              </Tooltip>
             )}
 
             {call.status === "failed" && (
