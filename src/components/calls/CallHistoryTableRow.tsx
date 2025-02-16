@@ -16,6 +16,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { ProcessingOverlay } from "./ProcessingOverlay";
 
 interface CallHistoryTableRowProps {
   call: Call;
@@ -38,6 +39,7 @@ export const CallHistoryTableRow = ({
   const [showReprocessDialog, setShowReprocessDialog] = useState(false);
   const [showProcessDialog, setShowProcessDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingMessage, setProcessingMessage] = useState("");
   
   const StatusIcon = status.icon;
   const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
@@ -62,6 +64,7 @@ export const CallHistoryTableRow = ({
   const confirmReprocess = async () => {
     setShowReprocessDialog(false);
     setIsProcessing(true);
+    setProcessingMessage("Reprocessando chamada...");
     
     toast({
       title: "Reprocessando chamada",
@@ -91,12 +94,14 @@ export const CallHistoryTableRow = ({
       onStatusUpdate?.(call.id, "failed");
     } finally {
       setIsProcessing(false);
+      setProcessingMessage("");
     }
   };
 
   const confirmProcess = async () => {
     setShowProcessDialog(false);
     setIsProcessing(true);
+    setProcessingMessage("Processando chamada...");
     
     toast({
       title: "Processando chamada",
@@ -126,6 +131,7 @@ export const CallHistoryTableRow = ({
       onStatusUpdate?.(call.id, "failed");
     } finally {
       setIsProcessing(false);
+      setProcessingMessage("");
     }
   };
 
@@ -232,6 +238,11 @@ export const CallHistoryTableRow = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ProcessingOverlay 
+        isVisible={isProcessing} 
+        message={processingMessage}
+      />
     </>
   );
 };
