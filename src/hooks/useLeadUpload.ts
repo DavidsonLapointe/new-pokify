@@ -67,12 +67,13 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
   };
 
   const handleUploadCancel = () => {
+    // Quando cancela o upload, apenas adiciona o lead com zero chamadas
     if (pendingNewCall) {
       confirmNewLead(false, pendingNewCall);
-      setPendingNewCall(null);
     }
     setIsUploadOpen(false);
     setNewLeadId(null);
+    setPendingNewCall(null);
     
     toast({
       title: "Lead criado com sucesso",
