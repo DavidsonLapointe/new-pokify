@@ -45,7 +45,6 @@ const OrganizationLeads = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
-    cancelNewLead,
   } = useCallsPage();
 
   const handleCreateLead = (data: LeadFormData) => {
@@ -56,20 +55,25 @@ const OrganizationLeads = () => {
   };
 
   const handleUploadSuccess = () => {
-    confirmNewLead();
+    confirmNewLead(true); // Confirma o lead com upload
     setIsUploadOpen(false);
     setNewLeadId(null);
     
     toast({
       title: "Lead criado com sucesso",
-      description: "O novo lead foi adicionado à lista.",
+      description: "O novo lead foi adicionado à lista com a primeira chamada.",
     });
   };
 
   const handleUploadCancel = () => {
-    cancelNewLead();
+    confirmNewLead(false); // Confirma o lead sem upload
     setIsUploadOpen(false);
     setNewLeadId(null);
+    
+    toast({
+      title: "Lead criado com sucesso",
+      description: "O novo lead foi adicionado à lista sem chamadas.",
+    });
   };
 
   const handleLeadFound = (lead: Lead) => {

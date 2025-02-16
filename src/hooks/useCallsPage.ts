@@ -58,15 +58,23 @@ export const useCallsPage = () => {
     return newLeadId;
   };
 
-  const confirmNewLead = () => {
+  const confirmNewLead = (withUpload: boolean = false) => {
     if (pendingLead) {
-      setCalls(prevCalls => [pendingLead, ...prevCalls]);
+      if (withUpload) {
+        // Se houver upload, adiciona a chamada junto com o lead
+        setCalls(prevCalls => [pendingLead, ...prevCalls]);
+      } else {
+        // Se não houver upload, adiciona apenas o lead sem a chamada
+        const leadWithoutCall: Call = {
+          ...pendingLead,
+          status: "pending",
+          duration: "0:00",
+          audioUrl: "",
+        };
+        setCalls(prevCalls => [leadWithoutCall, ...prevCalls]);
+      }
       setPendingLead(null);
     }
-  };
-
-  const cancelNewLead = () => {
-    setPendingLead(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -106,6 +114,5 @@ export const useCallsPage = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
-    cancelNewLead,
   };
 };
