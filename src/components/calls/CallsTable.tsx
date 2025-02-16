@@ -29,7 +29,12 @@ export const CallsTable = ({
   const { leadsWithCalls } = useLeadsData(calls);
 
   const handleShowCallHistory = (lead: LeadCalls) => {
-    setSelectedLead(lead);
+    // Encontrar todas as chamadas do lead selecionado
+    const leadWithFilteredCalls = {
+      ...lead,
+      calls: calls.filter(call => call.leadId === lead.id && !call.emptyLead)
+    };
+    setSelectedLead(leadWithFilteredCalls);
     setShowCallsHistory(true);
   };
 
@@ -41,6 +46,7 @@ export const CallsTable = ({
   const handleUploadSuccess = () => {
     // Aqui você pode implementar a lógica de atualização da lista de chamadas
     // após um upload bem-sucedido
+    setShowUpload(false);
   };
 
   if (leadsWithCalls.length === 0) {
