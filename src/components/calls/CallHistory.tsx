@@ -2,6 +2,7 @@
 import { Call, StatusMap } from "@/types/calls";
 import { LeadCalls } from "./types";
 import { getLeadName, getLeadDetails } from "./utils";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,11 +15,13 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { User2 } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { CallHistoryTableHeader } from "./CallHistoryTableHeader";
 import { CallHistoryTableRow } from "./CallHistoryTableRow";
 import { CallVideoModal } from "./CallVideoModal";
+import { CallAnalysisDialog } from "./CallAnalysisDialog";
 
 interface CallHistoryProps {
   isOpen: boolean;
@@ -42,6 +45,8 @@ export const CallHistory = ({
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
   const [showLeadDetails, setShowLeadDetails] = useState(false);
+  const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+  const [showCallAnalysis, setShowCallAnalysis] = useState(false);
 
   const handleMediaPlay = (call: Call) => {
     const isVideo = call.mediaType === "video";
@@ -54,8 +59,8 @@ export const CallHistory = ({
   };
 
   const handleViewAnalysis = (call: Call) => {
-    onViewAnalysis(call);
-    setShowLeadDetails(true);
+    setSelectedCall(call);
+    setShowCallAnalysis(true);
   };
 
   return (
@@ -63,9 +68,19 @@ export const CallHistory = ({
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-shrink-0">
-            <DialogTitle>
-              Histórico de Chamadas - {getLeadName(selectedLead)}
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle>
+                Histórico de Chamadas - {getLeadName(selectedLead)}
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowLeadDetails(true)}
+                className="hover:text-primary h-8 w-8"
+              >
+                <User2 className="h-5 w-5" />
+              </Button>
+            </div>
             <DialogDescription>
               {getLeadDetails(selectedLead)}
             </DialogDescription>
@@ -104,6 +119,21 @@ export const CallHistory = ({
         lead={selectedLead}
         onClose={() => setShowLeadDetails(false)}
       />
+
+      {selectedCall && (
+        <CallAnalysisDialog
+          isOpen={showCallAnalysis}
+          onClose={() => {
+            setShowCallAnalysis(false);
+            setSelectedCall(null);
+          }}
+          analysis={selectedCall.analysis}
+          call={{
+            date: selectedCall.date,
+            duration: selectedCall.duration,
+          }}
+        />
+      )}
     </TooltipProvider>
   );
 };

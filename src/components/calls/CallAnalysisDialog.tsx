@@ -42,14 +42,6 @@ export const CallAnalysisDialog = ({
 }: CallAnalysisDialogProps) => {
   if (!analysis) return null;
 
-  const getLeadName = (leadInfo: typeof analysis.leadInfo) => {
-    if (leadInfo.personType === "pf") {
-      return `${leadInfo.firstName} ${leadInfo.lastName || ""}`;
-    }
-    return leadInfo.razaoSocial;
-  };
-
-  const leadName = getLeadName(analysis.leadInfo);
   const formattedDate = format(new Date(call.date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
   return (
@@ -69,12 +61,6 @@ export const CallAnalysisDialog = ({
               </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              {leadName && (
-                <div className="flex items-center gap-1">
-                  <FileText className="h-4 w-4" />
-                  {leadName}
-                </div>
-              )}
               <div className="flex items-center gap-1">
                 <Phone className="h-4 w-4" />
                 {analysis.leadInfo.phone}
