@@ -80,7 +80,7 @@ export const CallsTable = ({
 
   if (leadsWithCalls.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4">
+      <div className="flex flex-col items-center justify-center py-8 px-4">
         <div className="bg-muted/50 rounded-full p-3 mb-4">
           <UserPlus className="w-6 h-6 text-muted-foreground" />
         </div>
@@ -88,7 +88,10 @@ export const CallsTable = ({
         <p className="text-muted-foreground text-center max-w-sm mb-6">
           Cadastre um novo lead para começar a fazer upload de chamadas e análises.
         </p>
-        <Button variant="outline" onClick={() => window.location.href = "/organization/leads?newLead=true"}>
+        <Button 
+          variant="secondary" 
+          onClick={() => window.location.href = "/organization/leads?newLead=true"}
+        >
           <UserPlus className="w-4 h-4 mr-2" />
           Cadastrar Novo Lead
         </Button>
