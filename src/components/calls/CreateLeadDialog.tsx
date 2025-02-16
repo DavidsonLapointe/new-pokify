@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, CheckCircle, X } from "lucide-react";
+import { Upload, CheckCircle } from "lucide-react";
 
 interface CreateLeadDialogProps {
   hasPhoneIntegration: boolean;
@@ -111,14 +111,6 @@ export function CreateLeadDialog({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4 pt-4">
-              <Button
-                onClick={handleClose}
-                variant="outline"
-                className="w-full max-w-sm"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Fechar
-              </Button>
               <Button
                 onClick={handleUploadClick}
                 variant="secondary"
