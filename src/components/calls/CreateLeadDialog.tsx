@@ -61,10 +61,13 @@ export function CreateLeadDialog({
   });
 
   const handleClose = () => {
+    if (!showSuccessCard) {
+      // Se fechou sem completar o cadastro, reseta tudo
+      form.reset();
+      setLeadData(null);
+    }
     setOpen(false);
     setShowSuccessCard(false);
-    setLeadData(null);
-    form.reset();
   };
 
   const handleUploadClick = () => {

@@ -39,9 +39,12 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
     
+    // Confirma a criação do lead sem chamada
+    confirmNewLead(false);
+    
+    // Cria o objeto de chamada mas mantém como pendente
     const newCall = createCallObject(leadId, data);
     setPendingNewCall(newCall);
-    confirmNewLead(false, newCall);
   };
 
   const handleUploadClick = (data: LeadFormData) => {
