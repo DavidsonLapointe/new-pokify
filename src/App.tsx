@@ -16,22 +16,24 @@ import "./App.css";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/profile" element={<AdminProfile />} />
-        <Route path="/admin/organizations" element={<AdminOrganizations />} />
-        <Route path="/admin/integrations" element={<AdminIntegrations />} />
-        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/leads" element={<OrganizationLeads />} />
-        <Route path="/organization/new-call" element={<OrganizationNewCall />} />
-        <Route path="/organization/profile" element={<OrganizationProfile />} />
-        <Route path="/organization/users" element={<OrganizationUsers />} />
-        <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <React.StrictMode>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
+          <Route path="/admin/organizations" element={<AdminOrganizations />} />
+          <Route path="/admin/integrations" element={<AdminIntegrations />} />
+          <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+          <Route path="/organization/leads" element={<OrganizationLeads />} />
+          <Route path="/organization/new-call" element={<OrganizationNewCall />} />
+          <Route path="/organization/profile" element={<OrganizationProfile />} />
+          <Route path="/organization/users" element={<OrganizationUsers />} />
+          <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </React.StrictMode>
   );
 }
 
