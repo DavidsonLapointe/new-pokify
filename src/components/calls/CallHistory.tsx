@@ -15,7 +15,12 @@ import {
   Table,
   TableBody,
 } from "@/components/ui/table";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ClipboardList, Flame } from "lucide-react";
 import { useState } from "react";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
@@ -76,14 +81,21 @@ export const CallHistory = ({
               <DialogTitle>
                 Histórico de Chamadas - {getLeadName(selectedLead)}
               </DialogTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowLeadDetails(true)}
-                className="hover:text-primary h-7 w-7"
-              >
-                <ClipboardList className="h-4 w-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowLeadDetails(true)}
+                    className="h-8 w-8 rounded-full border-2 border-primary/20 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-200 hover:scale-110 active:scale-95"
+                  >
+                    <ClipboardList className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Ver relatório completo do lead</p>
+                </TooltipContent>
+              </Tooltip>
               {tempConfig && (
                 <Badge
                   variant="secondary"
