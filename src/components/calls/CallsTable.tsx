@@ -29,20 +29,8 @@ export const CallsTable = ({
   const { leadsWithCalls } = useLeadsData(calls);
 
   const handleShowCallHistory = (lead: LeadCalls) => {
-    const validCalls = calls
-      .filter(call => call.leadId === lead.id)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    const updatedLead: LeadCalls = {
-      ...lead,
-      calls: validCalls,
-      createdAt: validCalls[validCalls.length - 1]?.date || lead.createdAt
-    };
-
-    console.log('Chamadas encontradas:', validCalls.length);
-    console.log('Lead atualizado:', updatedLead);
-    
-    setSelectedLead(updatedLead);
+    console.log("Mostrando histórico para lead:", lead);
+    setSelectedLead(lead);
     setShowCallsHistory(true);
   };
 
