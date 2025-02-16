@@ -61,7 +61,7 @@ export const CallHistoryTableRow = ({
               variant="ghost"
               size="icon"
               onClick={() => onViewAnalysis(call)}
-              className="text-foreground h-7 w-7"
+              className="h-7 w-7"
             >
               <FileText className="h-4 w-4" />
             </Button>
