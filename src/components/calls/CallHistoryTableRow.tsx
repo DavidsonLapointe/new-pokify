@@ -23,6 +23,7 @@ interface CallHistoryTableRowProps {
   onMediaPlay: (call: Call) => void;
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
+  onStatusUpdate?: (callId: string, newStatus: Call['status']) => void;
 }
 
 export const CallHistoryTableRow = ({
@@ -31,13 +32,24 @@ export const CallHistoryTableRow = ({
   onMediaPlay,
   onViewAnalysis,
   formatDate,
+  onStatusUpdate,
 }: CallHistoryTableRowProps) => {
   const { toast } = useToast();
   const [showReprocessDialog, setShowReprocessDialog] = useState(false);
   const [showProcessDialog, setShowProcessDialog] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const StatusIcon = status.icon;
   const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
+
+  const simulateProcessing = async () => {
+    // Simulando um processamento assíncrono com 50% de chance de sucesso
+    return new Promise<boolean>((resolve) => {
+      setTimeout(() => {
+        resolve(Math.random() > 0.5);
+      }, 2000);
+    });
+  };
 
   const handleReprocess = () => {
     setShowReprocessDialog(true);
@@ -47,24 +59,74 @@ export const CallHistoryTableRow = ({
     setShowProcessDialog(true);
   };
 
-  const confirmReprocess = () => {
+  const confirmReprocess = async () => {
     setShowReprocessDialog(false);
+    setIsProcessing(true);
+    
     toast({
       title: "Reprocessando chamada",
       description: "Aguarde enquanto a chamada é reprocessada...",
       duration: 3000,
     });
-    console.log("Reprocessando chamada:", call.id);
+
+    try {
+      const success = await simulateProcessing();
+      const newStatus = success ? "success" : "failed";
+      
+      onStatusUpdate?.(call.id, newStatus);
+      
+      toast({
+        title: success ? "Reprocessamento concluído" : "Erro no reprocessamento",
+        description: success 
+          ? "A chamada foi reprocessada com sucesso."
+          : "Ocorreu um erro durante o reprocessamento da chamada.",
+        variant: success ? "default" : "destructive",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no reprocessamento",
+        description: "Ocorreu um erro inesperado durante o reprocessamento.",
+        variant: "destructive",
+      });
+      onStatusUpdate?.(call.id, "failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const confirmProcess = () => {
+  const confirmProcess = async () => {
     setShowProcessDialog(false);
+    setIsProcessing(true);
+    
     toast({
       title: "Processando chamada",
       description: "Aguarde enquanto a chamada é processada...",
       duration: 3000,
     });
-    console.log("Processando chamada:", call.id);
+
+    try {
+      const success = await simulateProcessing();
+      const newStatus = success ? "success" : "failed";
+      
+      onStatusUpdate?.(call.id, newStatus);
+      
+      toast({
+        title: success ? "Processamento concluído" : "Erro no processamento",
+        description: success 
+          ? "A chamada foi processada com sucesso."
+          : "Ocorreu um erro durante o processamento da chamada.",
+        variant: success ? "default" : "destructive",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no processamento",
+        description: "Ocorreu um erro inesperado durante o processamento.",
+        variant: "destructive",
+      });
+      onStatusUpdate?.(call.id, "failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -109,9 +171,10 @@ export const CallHistoryTableRow = ({
                 variant="outline"
                 size="sm"
                 onClick={handleReprocess}
+                disabled={isProcessing}
                 className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors text-[11px] h-6 px-2"
               >
-                Reprocessar
+                {isProcessing ? "Reprocessando..." : "Reprocessar"}
               </Button>
             )}
 
@@ -120,9 +183,10 @@ export const CallHistoryTableRow = ({
                 variant="outline"
                 size="sm"
                 onClick={handleProcess}
+                disabled={isProcessing}
                 className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition-colors text-[11px] h-6 px-2"
               >
-                Processar
+                {isProcessing ? "Processando..." : "Processar"}
               </Button>
             )}
           </div>
