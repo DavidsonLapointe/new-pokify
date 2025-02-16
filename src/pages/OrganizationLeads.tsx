@@ -26,7 +26,7 @@ const OrganizationLeads = () => {
     monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredCalls,
+    filteredLeads, // Mudamos aqui de filteredCalls para filteredLeads
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
@@ -66,7 +66,7 @@ const OrganizationLeads = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             monthStats={monthStats}
-            calls={filteredCalls}
+            calls={filteredLeads} // Passamos os leads filtrados aqui
             statusMap={statusMap}
             onPlayAudio={handlePlayAudio}
             onViewAnalysis={handleViewAnalysis}

@@ -13,7 +13,7 @@ interface LeadWithCalls {
 
 export const useCallsPage = () => {
   const [calls, setCalls] = useState(mockCalls);
-  const [leads, setLeads] = useState<LeadWithCalls[]>([]);
+  const [leads, setLeads] = useState<LeadWithCalls[]>([]); // Inicializado como array vazio
   const [pendingLead, setPendingLead] = useState<Call | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [monthStats] = useState({
@@ -141,7 +141,7 @@ export const useCallsPage = () => {
     monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredLeads, // Agora retornamos leads em vez de calls
+    filteredLeads,
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
