@@ -71,7 +71,7 @@ export const CallHistory = ({
   };
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-shrink-0">
@@ -95,10 +95,15 @@ export const CallHistory = ({
                       <div className="flex items-center gap-1">
                         Status da Chamada
                         <Tooltip>
-                          <TooltipTrigger>
-                            <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              className="p-0 h-auto hover:bg-transparent"
+                            >
+                              <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                            </Button>
                           </TooltipTrigger>
-                          <TooltipContent className="p-4">
+                          <TooltipContent side="bottom" align="start">
                             <div className="space-y-3">
                               <div className="flex items-center gap-1.5">
                                 <Badge variant="secondary" className="bg-green-100 text-green-700">Processada</Badge>
