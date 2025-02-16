@@ -52,6 +52,7 @@ export const CallHistory = ({
 }: CallHistoryProps) => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedMediaUrl, setSelectedMediaUrl] = useState("");
+  const [showLeadDetails, setShowLeadDetails] = useState(false);
   const { toast } = useToast();
 
   const handleMediaPlay = (call: Call) => {
@@ -62,6 +63,11 @@ export const CallHistory = ({
     } else {
       onPlayAudio(call.audioUrl);
     }
+  };
+
+  const handleViewAnalysis = (call: Call) => {
+    onViewAnalysis(call);
+    setShowLeadDetails(true);
   };
 
   return (
@@ -147,7 +153,7 @@ export const CallHistory = ({
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => onViewAnalysis(call)}
+                              onClick={() => handleViewAnalysis(call)}
                               className="hover:text-primary h-7 w-7"
                             >
                               <FileText className="h-4 w-4" />
@@ -182,9 +188,9 @@ export const CallHistory = ({
       </Dialog>
 
       <LeadDetailsDialog
-        isOpen={isOpen}
+        isOpen={showLeadDetails}
         lead={selectedLead}
-        onClose={() => onOpenChange(false)}
+        onClose={() => setShowLeadDetails(false)}
       />
     </TooltipProvider>
   );

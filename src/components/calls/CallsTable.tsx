@@ -86,36 +86,7 @@ export const CallsTable = ({
             <TableRow>
               <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
-              <TableHead className="w-[120px] text-xs whitespace-nowrap">
-                <div className="flex items-center gap-1">
-                  Status do Lead
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle className="h-3 w-3 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent 
-                      side="right" 
-                      align="start" 
-                      className="p-6"
-                    >
-                      <div className="space-y-4 max-w-[400px]">
-                        <div className="text-sm">
-                          <strong className="block mb-2">Lead Ativo:</strong>
-                          <span className="whitespace-normal leading-relaxed">
-                            Lead que possui pelo menos 1 arquivo de chamada registrado.
-                          </span>
-                        </div>
-                        <div className="text-sm">
-                          <strong className="block mb-2">Lead Pendente:</strong>
-                          <span className="whitespace-normal leading-relaxed">
-                            Lead que ainda não possui nenhum arquivo de chamada.
-                          </span>
-                        </div>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TableHead>
+              <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
               <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
               <TableHead className="w-[100px] text-xs whitespace-nowrap">Qtde de Chamadas</TableHead>
               <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
