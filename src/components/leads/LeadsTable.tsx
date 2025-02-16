@@ -48,7 +48,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
   };
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -154,7 +154,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                         <TableCell>{call.duration}</TableCell>
                         <TableCell>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${statusMap[status].color}`}>
                                 <StatusIcon className="h-3 w-3" />
                                 {statusMap[status].label}

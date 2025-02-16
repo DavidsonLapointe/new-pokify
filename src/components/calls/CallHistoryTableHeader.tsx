@@ -23,7 +23,7 @@ export const CallHistoryTableHeader = () => {
         <TableHead className="text-xs sticky top-0 bg-background">
           <div className="flex items-center gap-1">
             Status da Chamada
-            <Tooltip defaultOpen={false}>
+            <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
