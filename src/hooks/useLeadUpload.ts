@@ -57,7 +57,8 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
       // 7. Atualiza o lead para incluir a chamada após o upload
       const callWithUpload = {
         ...pendingNewCall,
-        emptyLead: false
+        emptyLead: false,
+        status: "success"
       };
       confirmNewLead(true, callWithUpload);
     }

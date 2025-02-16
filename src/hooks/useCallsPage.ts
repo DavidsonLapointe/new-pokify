@@ -34,7 +34,7 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const newLeadId = uuidv4();
-    const newCall: Call = {
+    const emptyCall: Call = {
       id: uuidv4(),
       leadId: newLeadId,
       date: new Date().toISOString(),
@@ -52,43 +52,26 @@ export const useCallsPage = () => {
         email: leadData.email || "",
         phone: leadData.phone || "",
       },
+      emptyLead: true,
     };
 
-    setPendingLead(newCall);
+    // Adiciona o lead vazio à lista de calls
+    setCalls(prevCalls => [emptyCall, ...prevCalls]);
+    
     return newLeadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
-    if (newCall) {
-      const updatedCall: Call = {
-        ...newCall,
-        emptyLead: false,
-        status: withUpload ? "success" : "pending",
-        date: new Date().toISOString(),
-      };
-      setCalls(prevCalls => [updatedCall, ...prevCalls]);
-    } else if (pendingLead) {
-      if (withUpload) {
-        // Se houver upload, adiciona a chamada junto com o lead
-        const updatedCall: Call = {
-          ...pendingLead,
-          emptyLead: false,
-          status: "success"
-        };
-        setCalls(prevCalls => [updatedCall, ...prevCalls]);
-      } else {
-        // Se não houver upload, adiciona apenas o lead sem a chamada
-        const leadWithoutCall: Call = {
-          ...pendingLead,
-          status: "pending",
-          duration: "0:00",
-          audioUrl: "",
-          emptyLead: true,
-        };
-        setCalls(prevCalls => [leadWithoutCall, ...prevCalls]);
-      }
-      setPendingLead(null);
+    if (withUpload && newCall) {
+      // Se houver upload, atualiza a chamada existente
+      setCalls(prevCalls => prevCalls.map(call => 
+        call.leadId === newCall.leadId && call.emptyLead 
+          ? { ...newCall, status: "success", emptyLead: false }
+          : call
+      ));
     }
+    // Se não houver upload, o lead já foi criado com emptyLead: true
+    setPendingLead(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -118,6 +101,8 @@ export const useCallsPage = () => {
       (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(searchTerms))
     );
   });
+
+  console.log("Leads processados:", filteredCalls);
 
   return {
     searchQuery,
