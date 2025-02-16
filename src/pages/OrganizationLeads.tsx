@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -49,7 +50,13 @@ const OrganizationLeads = () => {
   const handleCreateLead = (data: LeadFormData) => {
     const leadId = createNewLead(data);
     setNewLeadId(leadId);
-    setIsUploadOpen(true); // Abre o modal de upload quando clica no botão
+    confirmNewLead(false); // Confirma o lead sem upload
+  };
+
+  const handleUploadClick = (data: LeadFormData) => {
+    const leadId = createNewLead(data);
+    setNewLeadId(leadId);
+    setIsUploadOpen(true); // Abre o modal de upload apenas quando clica no botão
   };
 
   const handleUploadSuccess = () => {
@@ -163,6 +170,7 @@ const OrganizationLeads = () => {
             hasPhoneIntegration={true}
             hasEmailIntegration={true}
             onCreateLead={handleCreateLead}
+            onUploadClick={handleUploadClick}
             isOpen={isCreateLeadOpen}
             onOpenChange={setIsCreateLeadOpen}
           />

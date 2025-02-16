@@ -23,6 +23,7 @@ interface CreateLeadDialogProps {
   hasPhoneIntegration: boolean;
   hasEmailIntegration: boolean;
   onCreateLead: (data: LeadFormData) => void;
+  onUploadClick: (data: LeadFormData) => void;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -31,6 +32,7 @@ export function CreateLeadDialog({
   hasPhoneIntegration,
   hasEmailIntegration,
   onCreateLead,
+  onUploadClick,
   isOpen: controlledIsOpen,
   onOpenChange: controlledOnOpenChange,
 }: CreateLeadDialogProps) {
@@ -69,7 +71,7 @@ export function CreateLeadDialog({
 
   const handleUploadClick = () => {
     if (leadData) {
-      onCreateLead(leadData);
+      onUploadClick(leadData); // Chama a função que abre o modal de upload
       setOpen(false);
     }
     setShowSuccessCard(false);
