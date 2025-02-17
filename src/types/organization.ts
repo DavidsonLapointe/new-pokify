@@ -1,4 +1,3 @@
-
 export type UserRole = "admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
@@ -23,9 +22,6 @@ export interface User {
   logs: UserLog[];
 }
 
-// Removendo a interface OrganizationUser já que é idêntica a User
-// e estava causando confusão na tipagem
-
 export interface Organization {
   id: number;
   name: string;
@@ -33,6 +29,7 @@ export interface Organization {
   plan: string;
   users: User[];
   status: UserStatus;
+  pendingReason?: "contract_signature" | "pro_rata_payment" | null;
   integratedCRM: string | null;
   integratedLLM: string | null;
   email: string;
@@ -40,9 +37,9 @@ export interface Organization {
   cnpj: string;
   adminName: string;
   adminEmail: string;
+  contractSignedAt?: string;
 }
 
-// Mock data for users
 export const mockUsers: User[] = [
   {
     id: 1,

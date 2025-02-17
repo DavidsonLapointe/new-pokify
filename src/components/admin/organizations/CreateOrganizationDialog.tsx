@@ -28,6 +28,7 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { sendWelcomeEmail } from "@/services/organizationService";
 import { createProRataTitle } from "@/services/financialService";
+import { sendInitialContract } from "@/services/contractService";
 import { Organization, User } from "@/types/organization";
 
 const formSchema = z.object({
@@ -85,6 +86,7 @@ export const CreateOrganizationDialog = ({
         logs: []
       }],
       status: "pending",
+      pendingReason: "contract_signature",
       integratedCRM: null,
       integratedLLM: null,
       email: values.email,
@@ -95,10 +97,7 @@ export const CreateOrganizationDialog = ({
     };
 
     try {
-      const proRataTitle = createProRataTitle(newOrganization, 156.67);
-      console.log("Título pro rata gerado:", proRataTitle);
-
-      await sendWelcomeEmail(newOrganization);
+      await sendInitialContract(newOrganization);
 
       toast({
         title: "Empresa criada com sucesso",
@@ -106,9 +105,8 @@ export const CreateOrganizationDialog = ({
         children: (
           <ul className="mt-2 ml-2 list-disc list-inside">
             <li>Contrato de adesão para assinatura</li>
-            <li>Instruções para pagamento da primeira mensalidade (pro rata)</li>
-            <li>Opções de pagamento via PIX ou boleto</li>
-            <li>Link para acesso ao sistema após confirmação do pagamento</li>
+            <li>Link para assinatura digital do contrato</li>
+            <li>Instruções sobre os próximos passos</li>
           </ul>
         ),
       });
@@ -118,7 +116,7 @@ export const CreateOrganizationDialog = ({
     } catch (error) {
       toast({
         title: "Erro ao criar empresa",
-        description: "Não foi possível enviar o email com as instruções. Tente novamente.",
+        description: "Não foi possível enviar o email com o contrato. Tente novamente.",
         variant: "destructive",
       });
     }

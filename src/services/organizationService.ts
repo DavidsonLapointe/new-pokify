@@ -10,75 +10,93 @@ const generateContract = (organization: Organization) => {
   };
 };
 
-// Função para calcular o valor pro rata
-const calculateProRataValue = (planValue: number) => {
-  const today = new Date();
+// Função para calcular o valor pro rata baseado na data de assinatura do contrato
+export const calculateProRataValue = (planValue: number, contractSignedDate: Date) => {
+  const today = contractSignedDate;
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate();
   return (planValue / daysInMonth) * remainingDays;
 };
 
-// Função para gerar dados de pagamento
+// Função para gerar dados de pagamento com vencimento em 2 dias
 const generatePaymentData = (organization: Organization, proRataValue: number) => {
-  // Mock de dados de pagamento
-  const pixKey = "00000000-0000-0000-0000-000000000000";
-  const boletoCode = "00000000000000000000000000000000000000000000000";
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + 2);
 
   return {
     pix: {
-      key: pixKey,
+      key: "00000000-0000-0000-0000-000000000000",
       value: proRataValue,
     },
     boleto: {
-      code: boletoCode,
+      code: "00000000000000000000000000000000000000000000000",
       value: proRataValue,
-      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 dias
+      dueDate: dueDate.toISOString(),
     },
   };
 };
 
-// Função para enviar email com contrato e instruções de pagamento (mock)
-export const sendWelcomeEmail = async (organization: Organization) => {
+// Função para enviar o contrato inicial
+export const sendInitialContract = async (organization: Organization) => {
   const contract = generateContract(organization);
-  const proRataValue = calculateProRataValue(1000); // Exemplo: plano de R$1000
-  const paymentData = generatePaymentData(organization, proRataValue);
 
-  console.log("Enviando email para:", organization.adminEmail, {
-    subject: "Bem-vindo(a) à Plataforma - Instruções de Acesso",
+  console.log("Enviando contrato inicial para:", organization.adminEmail, {
+    subject: "Bem-vindo(a) à Plataforma - Contrato de Adesão",
     attachments: ["contrato.pdf"],
     content: {
       contract,
-      paymentData,
-      accessInstructions: "Após confirmação do pagamento, você receberá as credenciais de acesso.",
+      message: "Por favor, assine o contrato para continuar o processo de ativação.",
     },
   });
 
   return true;
 };
 
-// Função para verificar status do pagamento (mock)
-export const checkPaymentStatus = async (organizationId: number): Promise<"pending" | "paid" | "overdue"> => {
-  // Aqui implementaríamos a verificação real do status do pagamento
-  // Por enquanto, retornamos um status aleatório para demonstração
-  const statuses: ("pending" | "paid" | "overdue")[] = ["pending", "paid", "overdue"];
-  return statuses[Math.floor(Math.random() * statuses.length)];
+// Função para enviar instruções de pagamento pro rata
+export const sendProRataPaymentInstructions = async (organization: Organization, proRataValue: number) => {
+  const paymentData = generatePaymentData(organization, proRataValue);
+
+  console.log("Enviando instruções de pagamento pro rata para:", organization.adminEmail, {
+    subject: "Instruções de Pagamento - Valor Pro Rata",
+    content: {
+      paymentData,
+      message: "Para ativar sua conta, efetue o pagamento do valor pro rata.",
+    },
+  });
+
+  return true;
+};
+
+// Função para enviar link de configuração inicial
+export const sendSetupLink = async (organization: Organization) => {
+  const setupToken = Math.random().toString(36).substring(7);
+  
+  console.log("Enviando link de configuração para:", organization.adminEmail, {
+    subject: "Configure seu acesso à Plataforma",
+    content: {
+      setupUrl: `https://app.example.com/setup/${setupToken}`,
+      message: "Clique no link para configurar sua senha e método de pagamento.",
+    },
+  });
+
+  return true;
 };
 
 // Função para atualizar status da organização
 export const updateOrganizationStatus = async (
   organizationId: number, 
-  status: "active" | "pending" | "inactive"
+  status: "active" | "pending" | "inactive",
+  pendingReason?: OrganizationPendingReason
 ) => {
-  console.log("Atualizando status da organização:", organizationId, status);
+  console.log("Atualizando status da organização:", organizationId, status, pendingReason);
   return true;
 };
 
 // Função para verificar status da organização por email
 export const checkOrganizationStatus = async (email: string) => {
-  // Aqui implementaríamos a consulta real ao banco de dados
-  // Por enquanto, retornamos um mock
   return {
     status: "pending" as const,
+    pendingReason: "contract_signature" as OrganizationPendingReason,
     email: email,
     organizationId: 1,
   };
