@@ -27,9 +27,7 @@ const OrganizationDashboard = () => {
     const date = subDays(new Date(), 29 - index);
     return {
       day: format(date, 'dd/MM'),
-      ativos: Math.floor(Math.random() * 8) + 1,
-      contatados: Math.floor(Math.random() * 5),
-      perdidos: Math.floor(Math.random() * 2),
+      novos: Math.floor(Math.random() * 5) + 1, // 1-5 novos leads por dia
     };
   });
 

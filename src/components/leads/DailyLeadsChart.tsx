@@ -7,7 +7,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 
@@ -20,11 +19,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-white border rounded-lg shadow-lg p-4">
         <p className="font-medium">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} style={{ color: entry.color }}>
-            {entry.name}: {entry.value}
-          </p>
-        ))}
+        <p className="text-primary">
+          Novos Leads: {payload[0].value}
+        </p>
       </div>
     );
   }
@@ -34,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export const DailyLeadsChart = ({ data }: DailyLeadsChartProps) => (
   <Card className="p-4">
     <div className="space-y-2">
-      <h3 className="text-lg font-semibold">Distribuição Diária de Leads</h3>
+      <h3 className="text-lg font-semibold">Novos Leads por Dia</h3>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
@@ -42,10 +39,7 @@ export const DailyLeadsChart = ({ data }: DailyLeadsChartProps) => (
             <XAxis dataKey="day" />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
-            <Legend />
-            <Bar dataKey="ativos" name="Ativos" fill="#22c55e" />
-            <Bar dataKey="contatados" name="Contatados" fill="#eab308" />
-            <Bar dataKey="perdidos" name="Perdidos" fill="#ef4444" />
+            <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
           </BarChart>
         </ResponsiveContainer>
       </div>
