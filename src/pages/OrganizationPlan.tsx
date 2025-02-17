@@ -15,6 +15,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import { useState } from "react";
 
 // Mock data - em produção viria da API
@@ -34,6 +36,8 @@ const planInfo = {
 
 const OrganizationPlan = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const remainingAnalyses = planInfo.monthlyQuota - planInfo.used;
   const usagePercentage = (planInfo.used / planInfo.monthlyQuota) * 100;
   const isQuotaExhausted = remainingAnalyses <= 0;
@@ -45,8 +49,15 @@ const OrganizationPlan = () => {
   };
 
   const handleCancelSubscription = () => {
+    if (!cancelReason.trim()) {
+      toast.error("Por favor, informe o motivo do cancelamento");
+      return;
+    }
     // Aqui implementaria a lógica de cancelamento
-    console.log("Assinatura cancelada");
+    console.log("Assinatura cancelada. Motivo:", cancelReason);
+    setIsAlertOpen(false);
+    setCancelReason("");
+    toast.success("Assinatura cancelada com sucesso");
   };
 
   return (
@@ -84,7 +95,7 @@ const OrganizationPlan = () => {
                 </ul>
               </div>
               
-              <AlertDialog>
+              <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="ghost"
@@ -96,13 +107,31 @@ const OrganizationPlan = () => {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação irá cancelar sua assinatura ao final do período atual. 
-                      Você perderá acesso a todos os recursos do sistema após o término do período.
+                    <AlertDialogDescription className="space-y-4">
+                      <p>
+                        Essa ação <span className="font-medium">não poderá ser desfeita</span>. 
+                        Sua assinatura será cancelada ao final do período atual e você perderá 
+                        acesso a todos os recursos do sistema.
+                      </p>
+                      <div className="space-y-2">
+                        <label htmlFor="cancelReason" className="text-sm font-medium text-foreground">
+                          Por que você está cancelando?
+                        </label>
+                        <Textarea
+                          id="cancelReason"
+                          value={cancelReason}
+                          onChange={(e) => setCancelReason(e.target.value)}
+                          placeholder="Descreva o motivo do cancelamento..."
+                          className="resize-none"
+                          rows={4}
+                        />
+                      </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Manter assinatura</AlertDialogCancel>
+                    <AlertDialogCancel onClick={() => setCancelReason("")}>
+                      Manter assinatura
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleCancelSubscription}
                       className="bg-destructive hover:bg-destructive/90"
