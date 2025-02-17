@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -46,14 +47,37 @@ export const EditPlanDialog = ({ open, onOpenChange, plan, onSave }: EditPlanDia
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: plan?.name || "",
-      price: plan?.price?.toString() || "",
-      maxUsers: plan?.maxUsers?.toString() || "",
-      description: plan?.description || "",
-      features: plan?.features?.join("\n") || "",
-      active: plan?.active ?? true,
+      name: "",
+      price: "",
+      maxUsers: "",
+      description: "",
+      features: "",
+      active: true,
     },
   });
+
+  // Atualiza o formulário quando o plano muda
+  useEffect(() => {
+    if (plan) {
+      form.reset({
+        name: plan.name,
+        price: plan.price.toString(),
+        maxUsers: plan.maxUsers.toString(),
+        description: plan.description,
+        features: plan.features.join("\n"),
+        active: plan.active,
+      });
+    } else {
+      form.reset({
+        name: "",
+        price: "",
+        maxUsers: "",
+        description: "",
+        features: "",
+        active: true,
+      });
+    }
+  }, [plan, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
