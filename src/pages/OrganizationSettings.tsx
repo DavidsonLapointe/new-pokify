@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,8 +11,8 @@ import { AlertCircle, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Organization } from "@/types/organization";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-// Dados mockados movidos para fora do componente
 const mockFunnels: Funnel[] = [
   {
     id: "1",
@@ -43,7 +42,7 @@ const mockCurrentOrganization: Organization = {
   plan: "Enterprise",
   users: [],
   status: "active",
-  integratedCRM: null, // Alterado para null para mostrar o estado de integração pendente
+  integratedCRM: null,
   integratedLLM: "GPT-4",
   email: "contact@techsolutions.com",
   phone: "(11) 1234-5678",
@@ -63,6 +62,7 @@ const OrganizationSettings = () => {
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
   const [isFunnelDialogOpen, setIsFunnelDialogOpen] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
+  const [isNoFunnelAlertOpen, setIsNoFunnelAlertOpen] = useState(false);
   const [newFunnel, setNewFunnel] = useState("");
   const [newStage, setNewStage] = useState("");
   const [newStageFunnelId, setNewStageFunnelId] = useState<string>("");
@@ -110,6 +110,14 @@ const OrganizationSettings = () => {
     setIsFieldsDialogOpen(false);
     setIsEditingField(false);
     setEditingFieldId(null);
+  };
+
+  const handleNewStageClick = () => {
+    if (funnels.length === 0) {
+      setIsNoFunnelAlertOpen(true);
+    } else {
+      setIsStageDialogOpen(true);
+    }
   };
 
   const handleSaveFunnel = () => {
@@ -193,7 +201,7 @@ const OrganizationSettings = () => {
           setSelectedFunnel={setSelectedFunnel}
           setSelectedStage={setSelectedStage}
           setIsFunnelDialogOpen={setIsFunnelDialogOpen}
-          setIsStageDialogOpen={setIsStageDialogOpen}
+          setIsStageDialogOpen={handleNewStageClick}
         />
 
         <CustomFieldsSection
@@ -229,6 +237,27 @@ const OrganizationSettings = () => {
           setNewField={setNewField}
           handleSaveFieldsSettings={handleSaveFieldsSettings}
         />
+
+        <AlertDialog open={isNoFunnelAlertOpen} onOpenChange={setIsNoFunnelAlertOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Nenhum Funil Cadastrado</AlertDialogTitle>
+              <AlertDialogDescription>
+                Para cadastrar uma nova etapa, é necessário primeiro criar pelo menos um funil.
+                Clique no botão "Novo Funil" ao lado para criar um.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => {
+                setIsNoFunnelAlertOpen(false);
+                setIsFunnelDialogOpen(true);
+              }}>
+                Criar Novo Funil
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </OrganizationLayout>
   );
