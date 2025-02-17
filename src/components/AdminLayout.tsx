@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign } from "lucide-react";
+import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign, Package } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -8,12 +8,11 @@ interface AdminLayoutProps {
   children: ReactNode;
 }
 
-// Mock do usuário logado - depois será substituído pela autenticação real
 const mockLoggedUser = {
   id: 1,
   name: "Maria Silva",
   email: "maria.silva@leadly.com",
-  avatar: "", // URL da imagem do usuário
+  avatar: "",
   role: "admin",
 };
 
@@ -25,28 +24,25 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: List, label: "Dashboard", path: "/admin" },
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans" },
+    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages" },
     { icon: Database, label: "Integrações", path: "/admin/integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile" },
   ];
 
-  // Função para fazer logout (mock)
   const handleLogout = () => {
     console.log("Logout realizado");
-    navigate("/"); // Redireciona para a landing page
+    navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
       <aside className="w-64 bg-card border-r border-border animate-slideIn">
-        {/* Logo */}
         <div className="p-6 border-b">
           <h1 className="text-xl font-semibold">Leadly</h1>
         </div>
 
-        {/* Menu de Navegação */}
         <nav className="mt-6">
           <div className="px-3 py-2">
             <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -74,7 +70,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
           </div>
 
-          {/* Botão de Logout */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground mt-6"
@@ -85,9 +80,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        {/* Header com informações do usuário */}
         <div className="h-16 bg-card px-8 flex items-center justify-end">
           <div className="flex items-center gap-4">
             <p className="text-sm font-medium">{mockLoggedUser.name}</p>
