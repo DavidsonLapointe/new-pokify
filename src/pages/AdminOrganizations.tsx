@@ -21,7 +21,7 @@ const mockOrganizations = [
     plan: "Enterprise",
     users: 15,
     status: "active",
-    integratedCRM: "HubSpot",
+    integratedCRM: null, // Exemplo de empresa sem CRM integrado
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ const mockOrganizations = [
     plan: "Basic",
     users: 3,
     status: "inactive",
-    integratedCRM: "Salesforce",
+    integratedCRM: null, // Exemplo de empresa sem CRM integrado
   },
 ];
 
@@ -67,7 +67,9 @@ const Organizations = () => {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">CRM</span>
-            <span className="font-medium">{organization.integratedCRM}</span>
+            <span className={`font-medium ${!organization.integratedCRM ? "text-yellow-600" : ""}`}>
+              {organization.integratedCRM || "Pendente de integração"}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Status</span>
