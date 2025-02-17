@@ -37,6 +37,13 @@ export const UploadCallDialog = ({
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
+  const getLeadName = () => {
+    if (!leadInfo) return "";
+    return leadInfo.personType === "pf"
+      ? `${leadInfo.firstName} ${leadInfo.lastName || ""}`
+      : leadInfo.razaoSocial || "";
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -121,7 +128,7 @@ export const UploadCallDialog = ({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Upload de Chamada</DialogTitle>
+            <DialogTitle>Upload de Chamada - {getLeadName()}</DialogTitle>
             <DialogDescription>
               Faça o upload do arquivo de áudio ou vídeo da chamada para processamento.
             </DialogDescription>
