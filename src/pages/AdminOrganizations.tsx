@@ -24,6 +24,7 @@ const mockOrganizations = [
     users: 15,
     status: "active",
     integratedCRM: null,
+    integratedLLM: "GPT-4O",
     email: "contato@techsolutions.com",
     phone: "(11) 99999-9999",
     cnpj: "00.000.000/0000-01",
@@ -38,6 +39,7 @@ const mockOrganizations = [
     users: 8,
     status: "active",
     integratedCRM: "Pipedrive",
+    integratedLLM: "Claude AI",
     email: "contato@vendasdiretas.com",
     phone: "(11) 88888-8888",
     cnpj: "00.000.000/0000-02",
@@ -52,6 +54,7 @@ const mockOrganizations = [
     users: 3,
     status: "inactive",
     integratedCRM: null,
+    integratedLLM: null,
     email: "contato@global.com",
     phone: "(11) 77777-7777",
     cnpj: "00.000.000/0000-03",
@@ -106,6 +109,12 @@ const Organizations = () => {
             <span className="text-muted-foreground">CRM</span>
             <span className={`font-medium ${!organization.integratedCRM ? "text-yellow-600" : ""}`}>
               {organization.integratedCRM || "Pendente de integração"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">LLM</span>
+            <span className={`font-medium ${!organization.integratedLLM ? "text-yellow-600" : ""}`}>
+              {organization.integratedLLM || "Pendente de integração"}
             </span>
           </div>
           <div className="flex justify-between items-center">
