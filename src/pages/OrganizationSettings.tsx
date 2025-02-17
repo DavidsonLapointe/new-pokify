@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,30 +7,30 @@ import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
 import { NewFunnelDialog } from "@/components/settings/NewFunnelDialog";
 import { NewStageDialog } from "@/components/settings/NewStageDialog";
 import { CustomFieldDialog } from "@/components/settings/CustomFieldDialog";
+import { AlertCircle, Check, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { Organization } from "@/types/organization";
 
-const mockFunnels = [
-  {
-    id: "1",
-    name: "Funil de Vendas",
-    stages: [
-      { id: "1", name: "Qualificação" },
-      { id: "2", name: "Apresentação" },
-      { id: "3", name: "Proposta" },
-      { id: "4", name: "Negociação" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Funil de Marketing",
-    stages: [
-      { id: "5", name: "Lead" },
-      { id: "6", name: "MQL" },
-      { id: "7", name: "SQL" },
-    ],
-  },
-];
+// Mock da organização atual (depois será substituído pela organização real)
+const mockCurrentOrganization: Organization = {
+  id: 1,
+  name: "Tech Solutions",
+  nomeFantasia: "Tech Solutions Ltda",
+  plan: "Enterprise",
+  users: [],
+  status: "active",
+  integratedCRM: "HubSpot", // ou null se não tiver integração
+  integratedLLM: "GPT-4",
+  email: "contact@techsolutions.com",
+  phone: "(11) 1234-5678",
+  cnpj: "12.345.678/0001-00",
+  adminName: "João Silva",
+  adminEmail: "joao@techsolutions.com"
+};
 
 const OrganizationSettings = () => {
+  const navigate = useNavigate();
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [newField, setNewField] = useState<Partial<CustomField>>({});
   const [selectedFunnel, setSelectedFunnel] = useState<string>("");
@@ -135,10 +134,33 @@ const OrganizationSettings = () => {
     <OrganizationLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Configurações</h1>
-          <p className="text-muted-foreground">
-            Configure os campos que serão extraídos automaticamente das chamadas
-          </p>
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold">Configurações</h1>
+              <p className="text-muted-foreground">
+                Configure os campos que serão extraídos automaticamente das chamadas
+              </p>
+            </div>
+            
+            {mockCurrentOrganization.integratedCRM ? (
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg">
+                <Check className="h-5 w-5" />
+                <span className="text-sm font-medium">
+                  Integrado com {mockCurrentOrganization.integratedCRM}
+                </span>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 text-yellow-600 border-yellow-200 bg-yellow-50 hover:bg-yellow-100 hover:text-yellow-700"
+                onClick={() => navigate("/organization/integrations")}
+              >
+                <AlertCircle className="h-4 w-4" />
+                <span>Integração com CRM Pendente</span>
+                <ExternalLink className="h-4 w-4 ml-1" />
+              </Button>
+            )}
+          </div>
         </div>
 
         <FunnelSection
