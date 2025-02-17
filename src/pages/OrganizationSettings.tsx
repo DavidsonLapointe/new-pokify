@@ -43,7 +43,7 @@ const mockCurrentOrganization: Organization = {
   plan: "Enterprise",
   users: [],
   status: "active",
-  integratedCRM: "HubSpot", // ou null se não tiver integração
+  integratedCRM: null, // Alterado para null para mostrar o estado de integração pendente
   integratedLLM: "GPT-4",
   email: "contact@techsolutions.com",
   phone: "(11) 1234-5678",
