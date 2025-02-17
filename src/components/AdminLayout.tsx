@@ -25,6 +25,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans" },
     { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages" },
+    { icon: DollarSign, label: "Financeiro", path: "/admin/financial" },
     { icon: Database, label: "Integrações", path: "/admin/integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings" },
