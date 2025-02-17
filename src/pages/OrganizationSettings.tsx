@@ -249,9 +249,9 @@ const OrganizationSettings = () => {
         <Dialog open={isFieldsDialogOpen} onOpenChange={setIsFieldsDialogOpen}>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Editar Campos Personalizados</DialogTitle>
+              <DialogTitle>Cadastre Campos Personalizados</DialogTitle>
               <DialogDescription>
-                Adicione ou remova campos que serão extraídos das chamadas
+                Adicione campos que serão extraídos das chamadas
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-6">
