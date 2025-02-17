@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Building2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ interface Organization {
   nomeFantasia: string;
   plan: string;
   users: OrganizationUser[];
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pending";
   integratedCRM: string | null;
   integratedLLM: string | null;
 }
@@ -102,10 +101,16 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
               className={`px-2 py-1 rounded-full text-xs font-medium ${
                 organization.status === "active"
                   ? "bg-green-100 text-green-700"
+                  : organization.status === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
                   : "bg-red-100 text-red-700"
               }`}
             >
-              {organization.status === "active" ? "Ativo" : "Inativo"}
+              {organization.status === "active"
+                ? "Ativo"
+                : organization.status === "pending"
+                ? "Pendente"
+                : "Inativo"}
             </span>
           </div>
         </div>

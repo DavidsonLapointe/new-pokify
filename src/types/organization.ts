@@ -13,7 +13,7 @@ export interface User {
   email: string;
   phone: string;
   role: UserRole;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
   permissions: {
@@ -24,7 +24,7 @@ export interface User {
 
 export interface OrganizationUser extends User {
   role: UserRole;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pending";
 }
 
 export interface Organization {
@@ -33,7 +33,7 @@ export interface Organization {
   nomeFantasia: string;
   plan: string;
   users: User[];
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pending";
   integratedCRM: string | null;
   integratedLLM: string | null;
   email: string;
