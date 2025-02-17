@@ -101,6 +101,13 @@ const OrganizationSettings = () => {
     }
   };
 
+  const handleCreateFunnelFromAlert = () => {
+    setIsNoFunnelAlertOpen(false);
+    setTimeout(() => {
+      setIsFunnelDialogOpen(true);
+    }, 100);
+  };
+
   const handleSaveFunnel = () => {
     if (!newFunnel) {
       toast.error("Digite o nome do funil");
@@ -117,11 +124,6 @@ const OrganizationSettings = () => {
     setNewFunnel("");
     setIsFunnelDialogOpen(false);
     toast.success("Funil criado com sucesso");
-  };
-
-  const handleCreateFunnelFromAlert = () => {
-    setIsNoFunnelAlertOpen(false);
-    setIsFunnelDialogOpen(true);
   };
 
   const handleSaveStage = () => {
@@ -224,23 +226,27 @@ const OrganizationSettings = () => {
           handleSaveFieldsSettings={handleSaveFieldsSettings}
         />
 
-        <AlertDialog open={isNoFunnelAlertOpen} onOpenChange={setIsNoFunnelAlertOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Nenhum Funil Cadastrado</AlertDialogTitle>
-              <AlertDialogDescription>
-                Para cadastrar uma nova etapa, é necessário primeiro criar pelo menos um funil.
-                Clique no botão "Novo Funil" ao lado para criar um.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleCreateFunnelFromAlert}>
-                Criar Novo Funil
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {isNoFunnelAlertOpen && (
+          <AlertDialog open={isNoFunnelAlertOpen} onOpenChange={setIsNoFunnelAlertOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Nenhum Funil Cadastrado</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Para cadastrar uma nova etapa, é necessário primeiro criar pelo menos um funil.
+                  Clique no botão "Novo Funil" ao lado para criar um.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsNoFunnelAlertOpen(false)}>
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleCreateFunnelFromAlert}>
+                  Criar Novo Funil
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </OrganizationLayout>
   );
