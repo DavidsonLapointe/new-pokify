@@ -1,6 +1,7 @@
 
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types/organization";
+import { updateOrganizationStatus } from "./organizationService";
 
 export const createProRataTitle = (organization: Organization, proRataValue: number): FinancialTitle => {
   const dueDate = new Date();
@@ -43,4 +44,48 @@ export const processPayment = async (titleId: string) => {
   // Em produção, implementar a lógica de processamento do pagamento
   console.log("Processando pagamento do título:", titleId);
   return true;
+};
+
+// Função para atualizar status do título e da organização após pagamento
+export const handleTitlePayment = async (title: FinancialTitle, organization: Organization) => {
+  try {
+    // Processa o pagamento
+    await processPayment(title.id);
+
+    // Se for título pro rata, ativa a organização e o usuário admin
+    if (title.type === "pro_rata") {
+      // Atualiza o status da organização para ativo
+      await updateOrganizationStatus(organization.id, "active");
+      
+      // Atualiza o status do usuário admin para ativo
+      const adminUser = organization.users.find(user => 
+        user.role === "admin" && user.email === organization.adminEmail
+      );
+      
+      if (adminUser) {
+        adminUser.status = "active";
+        console.log("Status do usuário admin atualizado para ativo:", adminUser);
+      }
+
+      console.log("Organização e usuário admin ativados após pagamento do título pro rata");
+    }
+
+    // Atualiza o status do título para pago
+    return {
+      ...title,
+      status: "paid" as const,
+      paymentDate: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Erro ao processar pagamento:", error);
+    throw error;
+  }
+};
+
+// Função para verificar status do pagamento (mock)
+export const checkPaymentStatus = async (organizationId: number): Promise<"pending" | "paid" | "overdue"> => {
+  // Aqui implementaríamos a verificação real do status do pagamento
+  // Por enquanto, retornamos um status aleatório para demonstração
+  const statuses: ("pending" | "paid" | "overdue")[] = ["pending", "paid", "overdue"];
+  return statuses[Math.floor(Math.random() * statuses.length)];
 };

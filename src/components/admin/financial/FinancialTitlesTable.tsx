@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { FinancialTitle, TitleStatus } from "@/types/financial";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { handleTitlePayment } from "@/services/financialService";
+import { Organization } from "@/types/organization";
 
 // Mock data - em produção viria da API
 const mockTitles: FinancialTitle[] = [
@@ -57,22 +59,57 @@ export const FinancialTitlesTable = () => {
   const { toast } = useToast();
   const [titles, setTitles] = useState<FinancialTitle[]>(mockTitles);
 
-  const handlePayment = (titleId: string) => {
-    setTitles(prev => prev.map(title => {
-      if (title.id === titleId) {
-        return {
-          ...title,
-          status: "paid" as const,
-          paymentDate: new Date().toISOString(),
-        };
-      }
-      return title;
-    }));
+  const handlePayment = async (title: FinancialTitle) => {
+    try {
+      // Em produção, você buscaria a organização da API
+      const mockOrganization: Organization = {
+        id: title.organizationId,
+        name: title.organizationName,
+        nomeFantasia: title.organizationName,
+        plan: "Basic",
+        users: [
+          {
+            id: 1,
+            name: "Admin",
+            email: "admin@example.com",
+            phone: "11999999999",
+            role: "admin",
+            status: "pending",
+            createdAt: new Date().toISOString(),
+            lastAccess: new Date().toISOString(),
+            permissions: {},
+            logs: []
+          }
+        ],
+        status: "pending",
+        integratedCRM: null,
+        integratedLLM: null,
+        email: "contact@example.com",
+        phone: "11999999999",
+        cnpj: "00000000000000",
+        adminName: "Admin",
+        adminEmail: "admin@example.com"
+      };
 
-    toast({
-      title: "Título baixado com sucesso",
-      description: "O pagamento foi registrado e o título foi baixado.",
-    });
+      const updatedTitle = await handleTitlePayment(title, mockOrganization);
+      
+      setTitles(prev => prev.map(t => 
+        t.id === title.id ? updatedTitle : t
+      ));
+
+      toast({
+        title: "Título baixado com sucesso",
+        description: title.type === "pro_rata" 
+          ? "O pagamento foi registrado, a organização e o usuário admin foram ativados."
+          : "O pagamento foi registrado e o título foi baixado.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao processar pagamento",
+        description: "Ocorreu um erro ao tentar baixar o título.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -111,7 +148,7 @@ export const FinancialTitlesTable = () => {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => handlePayment(title.id)}
+                    onClick={() => handlePayment(title)}
                   >
                     Baixar Título
                   </Button>
