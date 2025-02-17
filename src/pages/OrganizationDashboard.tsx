@@ -35,8 +35,7 @@ const OrganizationDashboard = () => {
   const leadsStats = {
     total: 150,
     active: 45,
-    contacted: 85,
-    lost: 20,
+    pending: 105,
   };
 
   return (
@@ -69,8 +68,7 @@ const OrganizationDashboard = () => {
             <LeadsStats
               total={leadsStats.total}
               active={leadsStats.active}
-              contacted={leadsStats.contacted}
-              lost={leadsStats.lost}
+              pending={leadsStats.pending}
             />
             <DailyLeadsChart data={dailyLeadsData} />
           </TabsContent>
