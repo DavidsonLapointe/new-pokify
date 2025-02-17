@@ -56,6 +56,22 @@ const OrganizationSettings = () => {
   const [selectedFunnel, setSelectedFunnel] = useState<string>("");
   const [selectedStage, setSelectedStage] = useState<string>("");
   const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
+  const [isEditingField, setIsEditingField] = useState(false);
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+
+  const handleOpenNewField = () => {
+    setIsEditingField(false);
+    setEditingFieldId(null);
+    setNewField({});
+    setIsFieldsDialogOpen(true);
+  };
+
+  const handleOpenEditField = (field: CustomField) => {
+    setIsEditingField(true);
+    setEditingFieldId(field.id);
+    setNewField(field);
+    setIsFieldsDialogOpen(true);
+  };
 
   const handleSaveFieldsSettings = () => {
     if (!newField.name || !newField.description) {
@@ -63,17 +79,28 @@ const OrganizationSettings = () => {
       return;
     }
 
-    const field: CustomField = {
-      id: crypto.randomUUID(),
-      name: newField.name,
-      description: newField.description,
-      isRequired: newField.isRequired || false,
-    };
+    if (isEditingField && editingFieldId) {
+      setCustomFields(customFields.map(field => 
+        field.id === editingFieldId 
+          ? { ...field, ...newField } 
+          : field
+      ));
+      toast.success("Campo personalizado atualizado com sucesso");
+    } else {
+      const field: CustomField = {
+        id: crypto.randomUUID(),
+        name: newField.name,
+        description: newField.description,
+        isRequired: newField.isRequired || false,
+      };
+      setCustomFields([...customFields, field]);
+      toast.success("Campo personalizado salvo com sucesso");
+    }
 
-    setCustomFields([...customFields, field]);
     setNewField({});
     setIsFieldsDialogOpen(false);
-    toast.success("Campo personalizado salvo com sucesso");
+    setIsEditingField(false);
+    setEditingFieldId(null);
   };
 
   const handleRemoveField = (id: string) => {
@@ -190,7 +217,7 @@ const OrganizationSettings = () => {
               </div>
               <Button
                 className="bg-[#000000e6] hover:bg-black/80"
-                onClick={() => setIsFieldsDialogOpen(true)}
+                onClick={handleOpenNewField}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Campo
@@ -220,7 +247,7 @@ const OrganizationSettings = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setIsFieldsDialogOpen(true)}
+                        onClick={() => handleOpenEditField(field)}
                         className="hover:bg-muted"
                       >
                         <PenLine className="h-4 w-4" />
@@ -244,9 +271,14 @@ const OrganizationSettings = () => {
         <Dialog open={isFieldsDialogOpen} onOpenChange={setIsFieldsDialogOpen}>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Cadastre Campos Personalizados</DialogTitle>
+              <DialogTitle>
+                {isEditingField ? "Editar Campo Personalizado" : "Cadastre Campos Personalizados"}
+              </DialogTitle>
               <DialogDescription>
-                Adicione campos que serão extraídos das chamadas
+                {isEditingField 
+                  ? "Modifique as informações do campo personalizado"
+                  : "Adicione campos que serão extraídos das chamadas"
+                }
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-6">
