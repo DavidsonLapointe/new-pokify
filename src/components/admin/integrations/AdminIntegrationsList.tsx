@@ -20,13 +20,6 @@ export const AdminIntegrationsList = () => {
       isActive: true,
     },
     {
-      id: "2",
-      name: "Zendesk Talk",
-      type: "call",
-      contactType: "email",
-      isActive: true,
-    },
-    {
       id: "3",
       name: "GPT-4O",
       type: "llm",
@@ -38,8 +31,6 @@ export const AdminIntegrationsList = () => {
     switch (type) {
       case "crm":
         return "CRM";
-      case "call":
-        return "Ferramenta de Chamada";
       case "llm":
         return "Modelo LLM";
       default:
