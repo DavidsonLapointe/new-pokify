@@ -48,7 +48,7 @@ const mockOrganization = {
   plan: "enterprise",
   users: mockUsers,
   status: "active" as const,
-  integratedCRM: "HubSpot",
+  integratedCRM: null, // Removida a integração com CRM
   integratedLLM: "GPT-4O",
   email: "contato@techsolutions.com",
   phone: "(11) 3333-3333",
