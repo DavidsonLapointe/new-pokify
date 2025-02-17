@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Admin from "@/pages/Admin";
 import Index from "@/pages/Index";
@@ -18,8 +17,9 @@ import OrganizationProfile from "@/pages/OrganizationProfile";
 import OrganizationSettings from "@/pages/OrganizationSettings";
 import OrganizationUsers from "@/pages/OrganizationUsers";
 import AdminAnalysisPackages from "@/pages/AdminAnalysisPackages";
+import AdminFinancial from "@/pages/AdminFinancial";
 
-const App = () => {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -33,6 +33,7 @@ const App = () => {
         <Route path="/admin/integrations" element={<AdminIntegrations />} />
         <Route path="/admin/prompt" element={<AdminPrompt />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
+        <Route path="/admin/financial" element={<AdminFinancial />} />
 
         {/* Organization Routes */}
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
@@ -49,6 +50,4 @@ const App = () => {
       </Routes>
     </BrowserRouter>
   );
-};
-
-export default App;
+}

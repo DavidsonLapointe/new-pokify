@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { sendWelcomeEmail } from "@/services/organizationService";
+import { createProRataTitle } from "@/services/financialService";
 
 const formSchema = z.object({
   razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
@@ -67,7 +68,16 @@ export const CreateOrganizationDialog = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Criar a empresa com status "pending"
     const newOrganization = {
-      ...values,
+      id: Math.random(), // Em produção, isso viria do banco de dados
+      name: values.razaoSocial,
+      razaoSocial: values.razaoSocial,
+      nomeFantasia: values.nomeFantasia,
+      cnpj: values.cnpj,
+      plan: values.plan,
+      email: values.email,
+      phone: values.phone,
+      adminName: values.adminName,
+      adminEmail: values.adminEmail,
       status: "pending",
       integratedCRM: null,
       integratedLLM: null,
@@ -85,6 +95,10 @@ export const CreateOrganizationDialog = ({
     };
 
     try {
+      // Criar título pro rata
+      const proRataTitle = createProRataTitle(newOrganization, 156.67); // Valor calculado com base no plano
+      console.log("Título pro rata gerado:", proRataTitle);
+
       // Enviar email com contrato e instruções de pagamento
       await sendWelcomeEmail(newOrganization);
 
@@ -100,12 +114,6 @@ export const CreateOrganizationDialog = ({
             <li>Link para acesso ao sistema após confirmação do pagamento</li>
           </ul>
         ),
-      });
-
-      // Enviar notificação ao admin do sistema
-      toast({
-        title: "Notificação administrativa",
-        description: "Nova empresa cadastrada aguardando pagamento inicial",
       });
 
       form.reset();
