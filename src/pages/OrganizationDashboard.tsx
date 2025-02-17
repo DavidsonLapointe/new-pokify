@@ -14,16 +14,24 @@ const OrganizationDashboard = () => {
   const { monthStats } = useCallsPage();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Gera dados para os últimos 30 dias (chamadas)
-  const dailyCallsData = Array.from({ length: 30 }).map((_, index) => {
-    const date = subDays(new Date(), 29 - index);
-    return {
-      day: format(date, 'dd/MM'),
-      processadas: Math.floor(Math.random() * 10) + 1,
-      pendentes: Math.floor(Math.random() * 5),
-      erro: Math.floor(Math.random() * 3),
-    };
-  });
+  // Gera dados para o mês selecionado (chamadas)
+  const dailyCallsData = useMemo(() => {
+    const monthStart = startOfMonth(selectedDate);
+    const monthEnd = endOfMonth(selectedDate);
+    
+    return Array.from({ length: 30 }).map((_, index) => {
+      const date = subDays(monthEnd, 29 - index);
+      if (isWithinInterval(date, { start: monthStart, end: monthEnd })) {
+        return {
+          day: format(date, 'dd/MM'),
+          processadas: Math.floor(Math.random() * 10) + 1,
+          pendentes: Math.floor(Math.random() * 5),
+          erro: Math.floor(Math.random() * 3),
+        };
+      }
+      return null;
+    }).filter(Boolean);
+  }, [selectedDate]);
 
   // Gera dados para os últimos 30 dias (leads)
   const dailyLeadsData = Array.from({ length: 30 }).map((_, index) => {
@@ -101,7 +109,11 @@ const OrganizationDashboard = () => {
               pending={monthStats.pending}
               failed={monthStats.failed}
             />
-            <DailyCallsChart data={dailyCallsData} />
+            <DailyCallsChart 
+              data={dailyCallsData}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+            />
           </TabsContent>
           
           <TabsContent value="leads" className="space-y-6">
