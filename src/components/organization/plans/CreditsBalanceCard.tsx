@@ -26,7 +26,7 @@ export function CreditsBalanceCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileBarChart className="h-5 w-5 text-primary" />
-          Créditos para Análise
+          Créditos para análise de arquivos
         </CardTitle>
         <CardDescription>
           Gerencie seus créditos para análise
