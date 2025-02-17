@@ -1,13 +1,12 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 export const useCallsPage = () => {
-  const { toast } = useToast();
   const [calls, setCalls] = useState<Call[]>(mockCalls);
   const [searchQuery, setSearchQuery] = useState<string>();
   const [monthStats] = useState({
@@ -39,7 +38,7 @@ export const useCallsPage = () => {
     return leadId;
   };
 
-  const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
+  const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
     if (!withUpload) {
       // Quando o lead é criado inicialmente, sem upload
       const emptyCall: Call = {
@@ -85,7 +84,7 @@ export const useCallsPage = () => {
         return [newCall, ...prevCalls];
       });
     }
-  };
+  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
