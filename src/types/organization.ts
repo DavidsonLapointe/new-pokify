@@ -23,10 +23,8 @@ export interface User {
   logs: UserLog[];
 }
 
-export interface OrganizationUser extends User {
-  role: UserRole;
-  status: UserStatus;
-}
+// Removendo a interface OrganizationUser já que é idêntica a User
+// e estava causando confusão na tipagem
 
 export interface Organization {
   id: number;

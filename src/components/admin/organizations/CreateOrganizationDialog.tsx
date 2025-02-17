@@ -28,6 +28,7 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { sendWelcomeEmail } from "@/services/organizationService";
 import { createProRataTitle } from "@/services/financialService";
+import { Organization, User } from "@/types/organization";
 
 const formSchema = z.object({
   razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
