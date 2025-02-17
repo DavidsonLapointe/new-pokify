@@ -19,12 +19,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useState } from "react";
+import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
 
 // Mock data - em produção viria da API
 const planInfo = {
   name: "Professional",
   monthlyQuota: 500,
   used: 423,
+  additionalCredits: 150, // Créditos adicionais comprados
   price: 199.90,
   features: [
     "Até 10 usuários",
@@ -49,14 +51,20 @@ const OrganizationPlan = () => {
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
+  
   const remainingAnalyses = planInfo.monthlyQuota - planInfo.used;
   const usagePercentage = (planInfo.used / planInfo.monthlyQuota) * 100;
   const isQuotaExhausted = remainingAnalyses <= 0;
 
   const handleBuyMoreAnalyses = () => {
-    setIsLoading(true);
-    // Aqui implementaria a lógica de compra
-    setTimeout(() => setIsLoading(false), 1000);
+    setIsPackagesDialogOpen(true);
+  };
+
+  const handleSelectPackage = (pkg: any) => {
+    setIsPackagesDialogOpen(false);
+    // Aqui você implementaria a integração com o gateway de pagamento
+    toast.success("Redirecionando para o gateway de pagamento...");
   };
 
   const handleCancelSubscription = () => {
@@ -190,24 +198,41 @@ const OrganizationPlan = () => {
             </CardContent>
           </Card>
 
-          {/* Card de Uso do Plano */}
+          {/* Card de Saldo de Créditos */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileBarChart className="h-5 w-5 text-primary" />
-                Consumo de Análises
+                Saldo de créditos para análises de arquivos
               </CardTitle>
               <CardDescription>
-                Consumo do mês atual
+                Gerencie seus créditos para análise
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Créditos do Plano Mensal */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Créditos do plano mensal</span>
+                    <span className="font-medium">{planInfo.used}/{planInfo.monthlyQuota}</span>
+                  </div>
+                  <Progress value={usagePercentage} className="h-2" />
+                  <p className="text-xs text-muted-foreground">
+                    Expiram ao final do mês
+                  </p>
+                </div>
+              </div>
+
+              {/* Créditos Adicionais */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Análises utilizadas</span>
-                  <span className="font-medium">{planInfo.used}/{planInfo.monthlyQuota}</span>
+                  <span>Créditos adicionais disponíveis</span>
+                  <span className="font-medium">{planInfo.additionalCredits}</span>
                 </div>
-                <Progress value={usagePercentage} className="h-2" />
+                <p className="text-xs text-muted-foreground">
+                  Não expiram e são consumidos após o término dos créditos mensais
+                </p>
               </div>
 
               <div className="space-y-4">
@@ -215,11 +240,9 @@ const OrganizationPlan = () => {
                   <div className="flex items-start gap-2">
                     <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">Saldo disponível</p>
+                      <p className="text-sm font-medium">Ordem de consumo dos créditos</p>
                       <p className="text-sm text-muted-foreground">
-                        {isQuotaExhausted 
-                          ? "Você utilizou todas as análises disponíveis para este mês." 
-                          : `Você ainda tem ${remainingAnalyses} análises disponíveis para este mês.`}
+                        O sistema utilizará primeiro os créditos do plano mensal. Os créditos adicionais serão consumidos apenas quando o saldo mensal estiver zerado.
                       </p>
                     </div>
                   </div>
@@ -237,6 +260,12 @@ const OrganizationPlan = () => {
             </CardContent>
           </Card>
         </div>
+
+        <AnalysisPackagesDialog
+          open={isPackagesDialogOpen}
+          onOpenChange={setIsPackagesDialogOpen}
+          onSelectPackage={handleSelectPackage}
+        />
       </div>
     </OrganizationLayout>
   );
