@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -94,9 +94,12 @@ const AdminPrompt = () => {
 
         {prompts.length === 0 && (
           <Card className="p-12">
-            <div className="text-center text-muted-foreground">
-              <p>Nenhum prompt cadastrado ainda.</p>
-              <p className="text-sm mt-1">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                <FileText className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground">Nenhum prompt cadastrado ainda.</p>
+              <p className="text-sm text-muted-foreground mt-1">
                 Clique no botão "Novo Prompt" para começar.
               </p>
             </div>
