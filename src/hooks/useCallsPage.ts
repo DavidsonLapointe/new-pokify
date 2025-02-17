@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 
 export const useCallsPage = () => {
   const [calls, setCalls] = useState<Call[]>(mockCalls);
-  const [searchQuery, setSearchQuery] = useState<string>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [monthStats] = useState({
     total: 45,
     processed: 32,
@@ -19,30 +19,29 @@ export const useCallsPage = () => {
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
 
-  const handlePlayAudio = (audioUrl: string) => {
+  const handlePlayAudio = useCallback((audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
-  };
+  }, []);
 
-  const handleViewAnalysis = (call: Call) => {
+  const handleViewAnalysis = useCallback((call: Call) => {
     setSelectedCall(call);
     setIsAnalysisOpen(true);
-  };
+  }, []);
 
-  const handleCloseAnalysis = () => {
+  const handleCloseAnalysis = useCallback(() => {
     setIsAnalysisOpen(false);
     setSelectedCall(null);
-  };
+  }, []);
 
-  const createNewLead = (leadData: LeadFormData) => {
+  const createNewLead = useCallback((leadData: LeadFormData) => {
     const leadId = uuidv4();
     console.log("Criando novo lead com ID:", leadId, "com dados:", leadData);
     setPendingLeadData(leadData);
     return leadId;
-  };
+  }, []);
 
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
     if (!withUpload) {
-      // Quando o lead é criado inicialmente, sem upload
       const emptyCall: Call = {
         id: uuidv4(),
         leadId: newCall?.leadId || uuidv4(),
@@ -78,7 +77,6 @@ export const useCallsPage = () => {
       setCalls(prevCalls => {
         const index = prevCalls.findIndex(call => call.leadId === newCall.leadId);
         if (index !== -1) {
-          // Remove a chamada vazia e adiciona a nova com upload
           const filteredCalls = prevCalls.filter(call => 
             !(call.leadId === newCall.leadId && call.emptyLead)
           );
@@ -89,7 +87,7 @@ export const useCallsPage = () => {
     }
   }, [pendingLeadData]);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
@@ -98,14 +96,13 @@ export const useCallsPage = () => {
       hour: "2-digit",
       minute: "2-digit",
     }).format(date);
-  };
+  }, []);
 
-  // Usa useMemo para filtrar as chamadas
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
     console.log("Chamadas disponíveis:", calls);
     
-    const query = String(searchQuery || "").toLowerCase();
+    const query = (searchQuery || "").toLowerCase();
     
     return calls.filter(call => {
       const leadName = call.leadInfo.personType === "pf" 
@@ -119,8 +116,6 @@ export const useCallsPage = () => {
       );
     });
   }, [calls, searchQuery]);
-
-  console.log("Chamadas filtradas:", filteredLeads);
 
   return {
     searchQuery,

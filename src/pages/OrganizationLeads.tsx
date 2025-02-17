@@ -16,11 +16,11 @@ import { Toaster } from "@/components/ui/toaster";
 
 const OrganizationLeads = () => {
   const location = useLocation();
-  const showCreateLeadFromState = location.state?.showCreateLead;
-  const searchQueryFromState = location.state?.searchQuery;
+  const showCreateLeadFromState = location.state?.showCreateLead || false;
+  const searchQueryFromState = location.state?.searchQuery || "";
 
   const [isFindLeadOpen, setIsFindLeadOpen] = useState(false);
-  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState || false);
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
 
   const {
     searchQuery,
@@ -50,12 +50,12 @@ const OrganizationLeads = () => {
     handleLeadFound,
   } = useLeadUpload(createNewLead, confirmNewLead);
 
-  if (searchQueryFromState && searchQuery !== searchQueryFromState) {
-    setSearchQuery(searchQueryFromState);
-  }
-
-  // Log para debug
-  console.log("Leads filtrados na página:", filteredLeads);
+  // Configuração inicial do searchQuery
+  useState(() => {
+    if (searchQueryFromState && searchQuery !== searchQueryFromState) {
+      setSearchQuery(searchQueryFromState);
+    }
+  });
 
   return (
     <OrganizationLayout>
@@ -67,7 +67,7 @@ const OrganizationLeads = () => {
           />
 
           <LeadsPageContent
-            searchQuery={searchQuery}
+            searchQuery={searchQuery || ""}
             onSearchChange={setSearchQuery}
             monthStats={monthStats}
             calls={filteredLeads}
