@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@/types/organization";
-import { UserCircle, Mail, PencilIcon, LockIcon, Calendar, FileText } from "lucide-react";
+import { UserCircle, Mail, PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
@@ -45,18 +45,8 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableHead>Usuário</TableHead>
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Data de Cadastro
-              </div>
-            </TableHead>
-            <TableHead>
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Qtde de Logs
-              </div>
-            </TableHead>
+            <TableHead>Data de Cadastro</TableHead>
+            <TableHead>Qtde de Logs</TableHead>
             <TableHead>Último Acesso</TableHead>
             <TableHead className="w-[150px]">Ações</TableHead>
           </TableRow>
