@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
@@ -112,7 +111,7 @@ const OrganizationDashboard = () => {
 
         <Tabs defaultValue="calls" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="calls">Chamadas</TabsTrigger>
+            <TabsTrigger value="calls">Uploads</TabsTrigger>
             <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
           </TabsList>
