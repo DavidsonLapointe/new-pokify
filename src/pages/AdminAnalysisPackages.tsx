@@ -56,6 +56,7 @@ const AdminAnalysisPackages = () => {
   ]);
 
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newPackage, setNewPackage] = useState({
     name: "",
     credits: "",
@@ -107,6 +108,7 @@ const AdminAnalysisPackages = () => {
 
     setPackages(updatedPackages);
     setEditingPackage(null);
+    setIsEditDialogOpen(false);
     toast.success("Pacote atualizado com sucesso");
   };
 
@@ -203,13 +205,16 @@ const AdminAnalysisPackages = () => {
                         R$ {pkg.price.toFixed(2)}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Dialog>
+                        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                           <DialogTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-muted-foreground hover:text-primary"
-                              onClick={() => setEditingPackage(pkg)}
+                              onClick={() => {
+                                setEditingPackage(pkg);
+                                setIsEditDialogOpen(true);
+                              }}
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
