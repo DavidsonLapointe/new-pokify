@@ -52,13 +52,12 @@ const mockFunnels = [
 const OrganizationSettings = () => {
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [newField, setNewField] = useState<Partial<CustomField>>({});
-  const [isEditingFields, setIsEditingFields] = useState(false);
   const [isEditingFunnel, setIsEditingFunnel] = useState(false);
   const [selectedFunnel, setSelectedFunnel] = useState<string>("");
   const [selectedStage, setSelectedStage] = useState<string>("");
   const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
 
-  const handleAddField = () => {
+  const handleSaveFieldsSettings = () => {
     if (!newField.name || !newField.description) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
@@ -73,7 +72,8 @@ const OrganizationSettings = () => {
 
     setCustomFields([...customFields, field]);
     setNewField({});
-    toast.success("Campo adicionado com sucesso");
+    setIsFieldsDialogOpen(false);
+    toast.success("Campo personalizado salvo com sucesso");
   };
 
   const handleRemoveField = (id: string) => {
@@ -84,11 +84,6 @@ const OrganizationSettings = () => {
   const handleSaveFunnelSettings = () => {
     setIsEditingFunnel(false);
     toast.success("Configurações do funil salvas com sucesso");
-  };
-
-  const handleSaveFieldsSettings = () => {
-    setIsFieldsDialogOpen(false);
-    toast.success("Campos personalizados salvos com sucesso");
   };
 
   const currentFunnel = mockFunnels.find((f) => f.id === selectedFunnel);
@@ -294,31 +289,6 @@ const OrganizationSettings = () => {
                   </div>
                 </div>
               </div>
-
-              {customFields.length > 0 && (
-                <div className="space-y-4">
-                  {customFields.map((field) => (
-                    <div
-                      key={field.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div>
-                        <h4 className="font-medium">{field.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {field.description}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveField(field.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               <div className="flex justify-end">
                 <Button
