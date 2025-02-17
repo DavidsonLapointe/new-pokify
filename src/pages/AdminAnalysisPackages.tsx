@@ -197,7 +197,7 @@ const AdminAnalysisPackages = () => {
                     <div>
                       <h3 className="font-medium">{pkg.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {pkg.credits} créditos
+                        {pkg.credits} {pkg.credits === 1 ? 'crédito' : 'créditos'} para análises de arquivos
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
