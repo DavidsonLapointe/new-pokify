@@ -1,54 +1,54 @@
 
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/sonner";
-import Index from "@/pages/Index";
 import Admin from "@/pages/Admin";
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
 import AdminOrganizations from "@/pages/AdminOrganizations";
 import AdminPlans from "@/pages/AdminPlans";
+import AdminPrompt from "@/pages/AdminPrompt";
 import AdminIntegrations from "@/pages/AdminIntegrations";
 import AdminProfile from "@/pages/AdminProfile";
-import AdminPrompt from "@/pages/AdminPrompt";
-import NotFound from "@/pages/NotFound";
+import OrganizationCalls from "@/pages/OrganizationCalls";
 import OrganizationDashboard from "@/pages/OrganizationDashboard";
-import OrganizationLeads from "@/pages/OrganizationLeads";
-import OrganizationUsers from "@/pages/OrganizationUsers";
 import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
-import OrganizationProfile from "@/pages/OrganizationProfile";
+import OrganizationLeads from "@/pages/OrganizationLeads";
 import OrganizationNewCall from "@/pages/OrganizationNewCall";
 import OrganizationPlan from "@/pages/OrganizationPlan";
+import OrganizationProfile from "@/pages/OrganizationProfile";
 import OrganizationSettings from "@/pages/OrganizationSettings";
+import OrganizationUsers from "@/pages/OrganizationUsers";
+import AdminAnalysisPackages from "@/pages/AdminAnalysisPackages";
 
-function App() {
+const App = () => {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/organizations" element={<AdminOrganizations />} />
-          <Route path="/admin/plans" element={<AdminPlans />} />
-          <Route path="/admin/integrations" element={<AdminIntegrations />} />
-          <Route path="/admin/prompt" element={<AdminPrompt />} />
-          <Route path="/admin/profile" element={<AdminProfile />} />
-          
-          {/* Rotas da Organização */}
-          <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-          <Route path="/organization/leads" element={<OrganizationLeads />} />
-          <Route path="/organization/new-call" element={<OrganizationNewCall />} />
-          <Route path="/organization/users" element={<OrganizationUsers />} />
-          <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
-          <Route path="/organization/profile" element={<OrganizationProfile />} />
-          <Route path="/organization/plan" element={<OrganizationPlan />} />
-          <Route path="/organization/settings" element={<OrganizationSettings />} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-      </BrowserRouter>
-    </ThemeProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/organizations" element={<AdminOrganizations />} />
+        <Route path="/admin/plans" element={<AdminPlans />} />
+        <Route path="/admin/analysis-packages" element={<AdminAnalysisPackages />} />
+        <Route path="/admin/integrations" element={<AdminIntegrations />} />
+        <Route path="/admin/prompt" element={<AdminPrompt />} />
+        <Route path="/admin/profile" element={<AdminProfile />} />
+
+        {/* Organization Routes */}
+        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+        <Route path="/organization/calls" element={<OrganizationCalls />} />
+        <Route path="/organization/calls/new" element={<OrganizationNewCall />} />
+        <Route path="/organization/leads" element={<OrganizationLeads />} />
+        <Route path="/organization/users" element={<OrganizationUsers />} />
+        <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
+        <Route path="/organization/plan" element={<OrganizationPlan />} />
+        <Route path="/organization/profile" element={<OrganizationProfile />} />
+        <Route path="/organization/settings" element={<OrganizationSettings />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
