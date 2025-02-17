@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -279,7 +278,7 @@ const OrganizationSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4">
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -293,7 +292,6 @@ const OrganizationSettings = () => {
                       Campo obrigatório
                     </label>
                   </div>
-                  <Button onClick={handleAddField}>Adicionar Campo</Button>
                 </div>
               </div>
 
