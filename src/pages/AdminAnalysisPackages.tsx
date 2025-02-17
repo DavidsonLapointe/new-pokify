@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Package, Plus, Pencil } from "lucide-react";
+import { Package, Plus, Pencil, Infinity } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -186,6 +186,12 @@ const AdminAnalysisPackages = () => {
               <CardDescription>
                 Pacotes de créditos atualmente disponíveis para venda
               </CardDescription>
+              <div className="mt-4 flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
+                <Infinity className="h-4 w-4 text-primary shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Os créditos adquiridos não expiram ao final do mês, ficando disponíveis até serem utilizados
+                </p>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
