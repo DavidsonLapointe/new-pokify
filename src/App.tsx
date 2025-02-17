@@ -11,6 +11,11 @@ import AdminIntegrations from "@/pages/AdminIntegrations";
 import AdminProfile from "@/pages/AdminProfile";
 import AdminPrompt from "@/pages/AdminPrompt";
 import NotFound from "@/pages/NotFound";
+import OrganizationDashboard from "@/pages/OrganizationDashboard";
+import OrganizationCalls from "@/pages/OrganizationCalls";
+import OrganizationUsers from "@/pages/OrganizationUsers";
+import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
+import OrganizationProfile from "@/pages/OrganizationProfile";
 
 function App() {
   return (
@@ -24,6 +29,14 @@ function App() {
           <Route path="/admin/integrations" element={<AdminIntegrations />} />
           <Route path="/admin/prompt" element={<AdminPrompt />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
+          
+          {/* Rotas da Organização */}
+          <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
+          <Route path="/organization/calls" element={<OrganizationCalls />} />
+          <Route path="/organization/users" element={<OrganizationUsers />} />
+          <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
+          <Route path="/organization/profile" element={<OrganizationProfile />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
