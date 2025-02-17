@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Clock, Database } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +67,7 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="text-white border-white hover:bg-white/10" 
+                  className="bg-blue-600/20 text-white border-white hover:bg-blue-600/30 backdrop-blur-sm" 
                   onClick={() => navigate("/demo")}
                 >
                   Agendar Demo
