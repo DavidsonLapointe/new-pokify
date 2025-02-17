@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, ArrowRight, Calendar } from "lucide-react";
-import { toast } from "sonner";
-import { format, endOfMonth, startOfMonth, addMonths } from "date-fns";
+import { format, startOfMonth, addMonths } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 import { useState } from "react";
 import { ConfirmPlanChangeDialog } from "./ConfirmPlanChangeDialog";
@@ -29,15 +28,6 @@ export function ChangePlanDialog({
 }: ChangePlanDialogProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-
-  const calculateProRatedAmount = (planPrice: number) => {
-    const today = new Date();
-    const endOfCurrentMonth = endOfMonth(today);
-    const daysInMonth = endOfCurrentMonth.getDate();
-    const remainingDays = endOfCurrentMonth.getDate() - today.getDate() + 1;
-    
-    return (planPrice / daysInMonth) * remainingDays;
-  };
 
   const getNextBillingDate = () => {
     return startOfMonth(addMonths(new Date(), 1));
@@ -69,52 +59,44 @@ export function ChangePlanDialog({
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
             {availablePlans
               .filter((plan) => plan.id !== currentPlan.id)
-              .map((plan) => {
-                const proRatedAmount = calculateProRatedAmount(plan.price);
-                
-                return (
-                  <div
-                    key={plan.id}
-                    className="border rounded-lg p-4 space-y-4 hover:border-primary hover:shadow-sm transition-all"
-                  >
-                    <div className="space-y-2">
-                      <h3 className="font-semibold text-lg">{plan.name}</h3>
-                      <p className="text-muted-foreground text-sm leading-snug">
-                        {plan.description}
-                      </p>
-                      <div>
-                        <div className="text-2xl font-bold">
-                          R$ {plan.price.toFixed(2)}
-                          <span className="text-sm font-normal text-muted-foreground">
-                            /mês
-                          </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Valor pro rata para este mês: R$ {proRatedAmount.toFixed(2)}
-                        </p>
-                      </div>
+              .map((plan) => (
+                <div
+                  key={plan.id}
+                  className="border rounded-lg p-4 space-y-4 hover:border-primary hover:shadow-sm transition-all"
+                >
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-lg">{plan.name}</h3>
+                    <p className="text-muted-foreground text-sm leading-snug">
+                      {plan.description}
+                    </p>
+                    <div className="text-2xl font-bold">
+                      R$ {plan.price.toFixed(2)}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        /mês
+                      </span>
                     </div>
-
-                    <ul className="space-y-2">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <BadgeCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                          <span className="leading-tight">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      className="w-full"
-                      onClick={() => handlePlanSelect(plan)}
-                      size="sm"
-                    >
-                      Mudar para este plano
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
                   </div>
-                );
-              })}
+
+                  <ul className="space-y-2">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm">
+                        <BadgeCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span className="leading-tight">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    className="w-full"
+                    onClick={() => handlePlanSelect(plan)}
+                    size="sm"
+                  >
+                    Mudar para este plano
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              );
+            })}
           </div>
         </DialogContent>
       </Dialog>
@@ -124,7 +106,6 @@ export function ChangePlanDialog({
           open={showConfirmDialog}
           onOpenChange={setShowConfirmDialog}
           selectedPlan={selectedPlan}
-          proRatedAmount={calculateProRatedAmount(selectedPlan.price)}
           nextBillingDate={getNextBillingDate()}
         />
       )}
