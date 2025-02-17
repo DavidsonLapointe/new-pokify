@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import {
   Settings,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
@@ -37,10 +37,25 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const location = useLocation();
   const isAdmin = mockLoggedUser.role === "admin";
 
-  // Função para fazer logout (mock)
+  // Função para fazer logout
   const handleLogout = () => {
-    console.log("Logout realizado");
-    navigate("/"); // Redireciona para a landing page
+    try {
+      // Limpar dados do usuário do localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      
+      // Limpar qualquer outro dado de sessão que exista
+      sessionStorage.clear();
+      
+      // Notificar o usuário
+      toast.success("Logout realizado com sucesso");
+      
+      // Redirecionar para a landing page
+      navigate("/");
+    } catch (error) {
+      toast.error("Erro ao realizar logout");
+      console.error("Erro no logout:", error);
+    }
   };
 
   // Menu items baseados no perfil do usuário

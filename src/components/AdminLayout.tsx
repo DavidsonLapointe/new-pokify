@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign, Package } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -33,8 +34,23 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   ];
 
   const handleLogout = () => {
-    console.log("Logout realizado");
-    navigate("/");
+    try {
+      // Limpar dados do usuário do localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      
+      // Limpar qualquer outro dado de sessão que exista
+      sessionStorage.clear();
+      
+      // Notificar o usuário
+      toast.success("Logout realizado com sucesso");
+      
+      // Redirecionar para a landing page
+      navigate("/");
+    } catch (error) {
+      toast.error("Erro ao realizar logout");
+      console.error("Erro no logout:", error);
+    }
   };
 
   return (
