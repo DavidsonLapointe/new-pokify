@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Building2, Plus, Search } from "lucide-react";
 import { useState } from "react";
+import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 
 // Dados mockados para exemplo
 const mockOrganizations = [
@@ -43,6 +44,7 @@ const mockOrganizations = [
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [organizations] = useState(mockOrganizations);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const filteredOrganizations = organizations.filter((org) =>
     org.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,7 +96,7 @@ const Organizations = () => {
               Gerencie as empresas contratantes da plataforma
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Nova Empresa
           </Button>
@@ -115,6 +117,11 @@ const Organizations = () => {
             <OrganizationCard key={org.id} organization={org} />
           ))}
         </div>
+
+        <CreateOrganizationDialog 
+          open={isCreateDialogOpen} 
+          onOpenChange={setIsCreateDialogOpen} 
+        />
       </div>
     </AdminLayout>
   );
