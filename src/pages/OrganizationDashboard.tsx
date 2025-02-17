@@ -1,7 +1,11 @@
 
 import OrganizationLayout from "@/components/OrganizationLayout";
+import { useCallsPage } from "@/hooks/useCallsPage";
+import { CallsStats } from "@/components/calls/CallsStats";
 
 const OrganizationDashboard = () => {
+  const { monthStats } = useCallsPage();
+
   return (
     <OrganizationLayout>
       <div className="space-y-6">
@@ -11,6 +15,13 @@ const OrganizationDashboard = () => {
             Visão geral da sua organização
           </p>
         </div>
+
+        <CallsStats
+          total={monthStats.total}
+          processed={monthStats.processed}
+          pending={monthStats.pending}
+          failed={monthStats.failed}
+        />
       </div>
     </OrganizationLayout>
   );
