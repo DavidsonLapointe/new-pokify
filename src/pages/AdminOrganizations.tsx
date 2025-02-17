@@ -86,7 +86,7 @@ const Organizations = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-secondary"
+            className="hover:bg-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setEditingOrganization(organization);
