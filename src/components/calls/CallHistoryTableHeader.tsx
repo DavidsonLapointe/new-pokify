@@ -19,7 +19,7 @@ export const CallHistoryTableHeader = () => {
       <TableRow>
         <TableHead className="text-xs sticky top-0 bg-background">Data e Hora</TableHead>
         <TableHead className="text-xs sticky top-0 bg-background">Vendedor</TableHead>
-        <TableHead className="text-xs sticky top-0 bg-background">Duração</TableHead>
+        <TableHead className="text-xs sticky top-0 bg-background">Duração do arquivo</TableHead>
         <TableHead className="text-xs sticky top-0 bg-background">
           <div className="flex items-center gap-1">
             Status do Upload
@@ -33,14 +33,14 @@ export const CallHistoryTableHeader = () => {
                   <HelpCircle className="h-3 w-3 text-muted-foreground" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" align="start" className="p-3">
+              <TooltipContent side="bottom" align="start" className="p-3 max-w-[300px]">
                 <div className="space-y-3">
                   <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="bg-green-100 text-green-700">Processado</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-700 shrink-0">Processado</Badge>
                     <span className="text-xs">Arquivos que foram processadas com sucesso pelo sistema</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="bg-red-100 text-red-700">Erro</Badge>
+                    <Badge variant="secondary" className="bg-red-100 text-red-700 shrink-0">Erro</Badge>
                     <span className="text-xs">Arquivos que falharam durante o processamento e precisam ser reprocessados</span>
                   </div>
                 </div>
