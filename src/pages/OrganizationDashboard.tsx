@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
@@ -7,7 +8,7 @@ import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { format, startOfMonth, endOfMonth, isWithinInterval, addDays } from "date-fns";
 import { useState, useMemo } from "react";
 
 const OrganizationDashboard = () => {
@@ -47,14 +48,19 @@ const OrganizationDashboard = () => {
     return daysInMonth;
   }, [selectedDate, filteredLeads]);
 
-  // Gera dados para os últimos 30 dias (leads)
-  const dailyLeadsData = Array.from({ length: 30 }).map((_, index) => {
-    const date = subDays(startOfMonth(selectedDate), -index);
-    return {
-      day: format(date, 'dd/MM'),
-      novos: Math.floor(Math.random() * 5) + 1, // 1-5 novos leads por dia
-    };
-  });
+  // Gera dados para o mês atual (leads)
+  const dailyLeadsData = useMemo(() => {
+    const monthStart = startOfMonth(selectedDate);
+    const daysInMonth = endOfMonth(selectedDate).getDate();
+    
+    return Array.from({ length: daysInMonth }).map((_, index) => {
+      const date = addDays(monthStart, index);
+      return {
+        day: format(date, 'dd/MM'),
+        novos: Math.floor(Math.random() * 5) + 1, // 1-5 novos leads por dia
+      };
+    });
+  }, [selectedDate]);
 
   // Calcula as estatísticas de leads para o mês selecionado
   const leadsStats = useMemo(() => {
@@ -82,15 +88,20 @@ const OrganizationDashboard = () => {
     };
   }, [selectedDate, dailyLeadsData]);
 
-  // Gera dados para performance dos vendedores
-  const dailyPerformanceData = Array.from({ length: 30 }).map((_, index) => {
-    const date = subDays(new Date(), 29 - index);
-    return {
-      day: format(date, 'dd/MM'),
-      joao: Math.floor(Math.random() * 6) + 2, // 2-7 leads por dia
-      maria: Math.floor(Math.random() * 5) + 1, // 1-5 leads por dia
-    };
-  });
+  // Mock data para performance dos vendedores
+  const dailyPerformanceData = useMemo(() => {
+    const monthStart = startOfMonth(selectedDate);
+    const daysInMonth = endOfMonth(selectedDate).getDate();
+    
+    return Array.from({ length: daysInMonth }).map((_, index) => {
+      const date = addDays(monthStart, index);
+      return {
+        day: format(date, 'dd/MM'),
+        joao: Math.floor(Math.random() * 6) + 2, // 2-7 leads por dia
+        maria: Math.floor(Math.random() * 5) + 1, // 1-5 leads por dia
+      };
+    });
+  }, [selectedDate]);
 
   // Mock data para estatísticas de vendedores
   const sellersStats = {
