@@ -5,21 +5,30 @@ import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
 import { CreditsBalanceCard } from "@/components/organization/plans/CreditsBalanceCard";
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
+import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
 // Mock data - em produção viria da API
-const planInfo = {
+// Agora usando a mesma estrutura do admin
+const planInfo: Plan = {
+  id: 2,
   name: "Professional",
+  price: 199.90,
+  description: "Perfect para empresas em crescimento",
+  features: [
+    "Até 10 usuários",
+    "500 créditos (análise de arquivos)",
+    "Integração com 3 CRMs",
+    "Suporte prioritário",
+    "API de integração"
+  ],
+  active: true
+};
+
+// Additional data specific to the organization's usage
+const usageInfo = {
   monthlyQuota: 500,
   used: 423,
   additionalCredits: 150,
-  price: 199.90,
-  features: [
-    "Até 10 usuários",
-    "500 análises por mês",
-    "Integração com 3 CRMs",
-    "Suporte prioritário",
-    "API de integração",
-  ]
 };
 
 const OrganizationPlan = () => {
@@ -49,9 +58,9 @@ const OrganizationPlan = () => {
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
           <CurrentPlanCard planInfo={planInfo} />
           <CreditsBalanceCard
-            monthlyQuota={planInfo.monthlyQuota}
-            used={planInfo.used}
-            additionalCredits={planInfo.additionalCredits}
+            monthlyQuota={usageInfo.monthlyQuota}
+            used={usageInfo.used}
+            additionalCredits={usageInfo.additionalCredits}
             onBuyMoreCredits={handleBuyMoreAnalyses}
             isLoading={isLoading}
           />

@@ -1,4 +1,3 @@
-
 import { BadgeCheck } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,12 +16,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
 interface CurrentPlanCardProps {
-  planInfo: {
-    name: string;
-    features: string[];
-  };
+  planInfo: Plan;
 }
 
 export function CurrentPlanCard({ planInfo }: CurrentPlanCardProps) {
@@ -72,7 +69,7 @@ export function CurrentPlanCard({ planInfo }: CurrentPlanCardProps) {
           Plano {planInfo.name}
         </CardTitle>
         <CardDescription>
-          Seu plano atual e recursos disponíveis
+          {planInfo.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
