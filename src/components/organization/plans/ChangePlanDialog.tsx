@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { BadgeCheck, ArrowRight, Calendar } from "lucide-react";
 import { format, startOfMonth, addMonths } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConfirmPlanChangeDialog } from "./ConfirmPlanChangeDialog";
 
 interface ChangePlanDialogProps {
@@ -29,6 +29,14 @@ export function ChangePlanDialog({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
+  // Limpa os estados quando o diálogo principal é fechado
+  useEffect(() => {
+    if (!open) {
+      setShowConfirmDialog(false);
+      setSelectedPlan(null);
+    }
+  }, [open]);
+
   const getNextBillingDate = () => {
     return startOfMonth(addMonths(new Date(), 1));
   };
@@ -36,6 +44,14 @@ export function ChangePlanDialog({
   const handlePlanSelect = (plan: Plan) => {
     setSelectedPlan(plan);
     setShowConfirmDialog(true);
+  };
+
+  // Handler para quando o diálogo de confirmação é fechado
+  const handleConfirmDialogChange = (isOpen: boolean) => {
+    setShowConfirmDialog(isOpen);
+    if (!isOpen) {
+      onOpenChange(false); // Fecha o diálogo principal também
+    }
   };
 
   return (
@@ -103,7 +119,7 @@ export function ChangePlanDialog({
       {selectedPlan && (
         <ConfirmPlanChangeDialog
           open={showConfirmDialog}
-          onOpenChange={setShowConfirmDialog}
+          onOpenChange={handleConfirmDialogChange}
           selectedPlan={selectedPlan}
           nextBillingDate={getNextBillingDate()}
         />
