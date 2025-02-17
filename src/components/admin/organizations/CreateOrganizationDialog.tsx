@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -64,7 +63,7 @@ export const CreateOrganizationDialog = ({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Criar a empresa com status "pending"
     const newOrganization = {
       ...values,
@@ -84,30 +83,39 @@ export const CreateOrganizationDialog = ({
       }]
     };
 
-    console.log("Nova empresa criada:", newOrganization);
+    try {
+      // Enviar email com contrato e instruções de pagamento
+      await sendWelcomeEmail(newOrganization);
 
-    // Mostrar mensagem de sucesso com detalhes sobre o email
-    toast({
-      title: "Empresa criada com sucesso",
-      description: "Um email foi enviado para o administrador contendo:",
-      children: (
-        <ul className="mt-2 ml-2 list-disc list-inside">
-          <li>Contrato de adesão para assinatura</li>
-          <li>Instruções para pagamento da primeira mensalidade (pro rata)</li>
-          <li>Opções de pagamento via PIX ou boleto</li>
-          <li>Link para acesso ao sistema após confirmação do pagamento</li>
-        </ul>
-      ),
-    });
+      // Mostrar mensagem de sucesso com detalhes sobre o email
+      toast({
+        title: "Empresa criada com sucesso",
+        description: "Um email foi enviado para o administrador contendo:",
+        children: (
+          <ul className="mt-2 ml-2 list-disc list-inside">
+            <li>Contrato de adesão para assinatura</li>
+            <li>Instruções para pagamento da primeira mensalidade (pro rata)</li>
+            <li>Opções de pagamento via PIX ou boleto</li>
+            <li>Link para acesso ao sistema após confirmação do pagamento</li>
+          </ul>
+        ),
+      });
 
-    // Enviar notificação ao admin do sistema
-    toast({
-      title: "Notificação administrativa",
-      description: "Nova empresa cadastrada aguardando pagamento inicial",
-    });
+      // Enviar notificação ao admin do sistema
+      toast({
+        title: "Notificação administrativa",
+        description: "Nova empresa cadastrada aguardando pagamento inicial",
+      });
 
-    form.reset();
-    onOpenChange(false);
+      form.reset();
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Erro ao criar empresa",
+        description: "Não foi possível enviar o email com as instruções. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
