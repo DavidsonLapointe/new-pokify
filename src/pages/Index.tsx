@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Clock, Database } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -41,7 +42,7 @@ const Index = () => {
         <div 
           className="w-full h-[600px] bg-cover bg-center"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2940&auto=format&fit=crop')",
+            backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2940&auto=format&fit=crop')",
           }}
         >
           <div className="container mx-auto px-4 h-full flex items-center relative">
