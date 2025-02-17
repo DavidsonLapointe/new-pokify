@@ -20,7 +20,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     defaultValues: {
       name: "",
       price: "",
-      maxUsers: "",
       description: "",
       features: "",
       active: true,
@@ -32,7 +31,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
-        maxUsers: plan.maxUsers.toString(),
         description: plan.description,
         features: plan.features.join("\n"),
         active: plan.active,
@@ -41,7 +39,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       form.reset({
         name: "",
         price: "",
-        maxUsers: "",
         description: "",
         features: "",
         active: true,
@@ -54,7 +51,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
-        maxUsers: parseInt(values.maxUsers),
         features: values.features.split("\n").filter(f => f.trim()),
       };
       

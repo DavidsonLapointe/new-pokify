@@ -60,7 +60,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
             name="price"
@@ -69,20 +69,6 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                 <FormLabel>Preço (R$)</FormLabel>
                 <FormControl>
                   <Input {...field} type="number" step="0.01" min="0" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="maxUsers"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Máximo de Usuários</FormLabel>
-                <FormControl>
-                  <Input {...field} type="number" min="1" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
