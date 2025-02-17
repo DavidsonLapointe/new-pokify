@@ -87,11 +87,11 @@ export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps
           </ul>
         </div>
 
-        <div className="flex flex-col gap-2 pt-4 border-t">
+        <div className="flex flex-col items-center gap-2 pt-4 border-t">
           <Button 
             variant="outline" 
             onClick={onChangePlan}
-            className="w-full text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             size="sm"
           >
             <ArrowUpDown className="h-4 w-4 mr-2" />
@@ -102,6 +102,7 @@ export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
+                size="sm"
                 className="text-muted-foreground hover:text-destructive"
               >
                 Cancelar assinatura
