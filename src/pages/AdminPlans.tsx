@@ -79,12 +79,12 @@ const Plans = () => {
   };
 
   const PlanCard = ({ plan }: { plan: any }) => (
-    <Card className="hover:shadow-md transition-shadow flex flex-col">
-      <CardHeader>
+    <Card className="hover:shadow-md transition-shadow h-full">
+      <CardHeader className="pb-6">
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-            <CardDescription className="mt-2">{plan.description}</CardDescription>
+            <CardDescription className="mt-2 min-h-[40px]">{plan.description}</CardDescription>
           </div>
           <div className="text-2xl font-bold text-primary">
             R$ {plan.price.toFixed(2)}
@@ -92,25 +92,31 @@ const Plans = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <div className="space-y-4 flex-1">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="w-4 h-4" />
-            <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
+      <CardContent className="flex flex-col h-full pt-0">
+        <div className="flex-1 space-y-6">
+          {/* Linha de usuários máximos */}
+          <div className="py-2 border-t border-b">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users className="w-4 h-4 shrink-0" />
+              <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
+            </div>
           </div>
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Recursos inclusos:</div>
-            <ul className="space-y-2">
+
+          {/* Seção de recursos */}
+          <div className="space-y-4">
+            <div className="text-sm font-medium border-b pb-2">Recursos inclusos:</div>
+            <ul className="space-y-3">
               {plan.features.map((feature: string, index: number) => (
                 <li key={index} className="flex items-start gap-2 text-sm">
-                  <FileText className="w-4 h-4 mt-0.5 text-primary" />
-                  {feature}
+                  <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                  <span>{feature}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
-        <div className="pt-6 mt-auto">
+
+        <div className="pt-6 mt-6 border-t">
           <Button 
             className="w-full" 
             variant="default"
