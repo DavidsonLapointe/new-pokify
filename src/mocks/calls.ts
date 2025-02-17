@@ -1,4 +1,3 @@
-
 import { Call } from "@/types/calls";
 
 export const mockCalls: Call[] = [
@@ -122,7 +121,7 @@ export const mockCalls: Call[] = [
     date: "2024-02-23T09:00:00",
     phone: "(11) 98765-4321",
     duration: "1:30",
-    status: "pending",
+    status: "failed",
     seller: "Ana Beatriz",
     audioUrl: "https://example.com/audio4.mp3",
     mediaType: "audio",

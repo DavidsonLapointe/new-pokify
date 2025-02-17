@@ -24,24 +24,29 @@ export const useCallsFilter = (leads: LeadWithCalls[], searchQuery: string) => {
   };
 
   const processCallsData = (filteredLeads: LeadWithCalls[]): Call[] => {
-    return filteredLeads.flatMap(lead => 
-      lead.calls.length > 0 
-        ? lead.calls 
-        : [{
-            id: uuidv4(),
-            leadId: lead.id,
-            date: lead.createdAt,
-            duration: "0:00",
-            status: "pending" as const,
-            phone: lead.leadInfo.phone,
-            seller: "Sistema",
-            audioUrl: "",
-            mediaType: "audio",
-            leadInfo: lead.leadInfo,
-            emptyLead: true,
-            isNewLead: true,
-          }]
-    );
+    return filteredLeads.flatMap(lead => {
+      const validCalls = lead.calls.filter(call => !call.emptyLead);
+      
+      if (validCalls.length > 0) {
+        return validCalls;
+      }
+      
+      // Se não houver chamadas válidas, cria uma chamada inicial
+      return [{
+        id: uuidv4(),
+        leadId: lead.id,
+        date: lead.createdAt,
+        duration: "0:00",
+        status: "failed" as const,
+        phone: lead.leadInfo.phone,
+        seller: "Sistema",
+        audioUrl: "",
+        mediaType: "audio",
+        leadInfo: lead.leadInfo,
+        emptyLead: true,
+        isNewLead: true,
+      }];
+    });
   };
 
   return { filterLeads, processCallsData };

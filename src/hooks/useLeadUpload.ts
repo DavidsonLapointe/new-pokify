@@ -17,7 +17,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     leadId,
     date: new Date().toISOString(),
     duration: "0:00",
-    status: "pending",
+    status: "failed",
     phone: data.phone || "",
     seller: "Sistema",
     audioUrl: "",
@@ -51,9 +51,9 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
       const callWithUpload: Call = {
         ...pendingNewCall,
         emptyLead: false,
-        status: "success" as const
+        status: "success"
       };
-      confirmNewLead(true, callWithUpload); // Confirma lead com upload
+      confirmNewLead(true, callWithUpload);
     }
     setIsUploadOpen(false);
     setNewLeadId(null);
