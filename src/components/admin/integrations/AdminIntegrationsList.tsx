@@ -45,7 +45,6 @@ export const AdminIntegrationsList = () => {
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead>Tipo</TableHead>
-            <TableHead>Contato Necessário</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -54,15 +53,6 @@ export const AdminIntegrationsList = () => {
             <TableRow key={integration.id}>
               <TableCell className="font-medium">{integration.name}</TableCell>
               <TableCell>{getTypeLabel(integration.type)}</TableCell>
-              <TableCell>
-                {integration.contactType ? (
-                  <Badge variant="outline">
-                    {integration.contactType === "email" ? "Email" : "Telefone"}
-                  </Badge>
-                ) : (
-                  "-"
-                )}
-              </TableCell>
               <TableCell>
                 <Badge variant={integration.isActive ? "default" : "secondary"}>
                   {integration.isActive ? "Ativo" : "Inativo"}
