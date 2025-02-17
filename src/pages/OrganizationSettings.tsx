@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -112,10 +113,15 @@ const OrganizationSettings = () => {
       stages: [],
     };
 
-    setFunnels([...funnels, funnel]);
+    setFunnels(prev => [...prev, funnel]);
     setNewFunnel("");
     setIsFunnelDialogOpen(false);
     toast.success("Funil criado com sucesso");
+  };
+
+  const handleCreateFunnelFromAlert = () => {
+    setIsNoFunnelAlertOpen(false);
+    setIsFunnelDialogOpen(true);
   };
 
   const handleSaveStage = () => {
@@ -229,10 +235,7 @@ const OrganizationSettings = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={() => {
-                setIsNoFunnelAlertOpen(false);
-                setIsFunnelDialogOpen(true);
-              }}>
+              <AlertDialogAction onClick={handleCreateFunnelFromAlert}>
                 Criar Novo Funil
               </AlertDialogAction>
             </AlertDialogFooter>
