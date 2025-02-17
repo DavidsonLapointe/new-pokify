@@ -27,6 +27,17 @@ interface CustomField {
   isRequired: boolean;
 }
 
+interface Funnel {
+  id: string;
+  name: string;
+  stages: Stage[];
+}
+
+interface Stage {
+  id: string;
+  name: string;
+}
+
 const mockFunnels = [
   {
     id: "1",
@@ -58,6 +69,11 @@ const OrganizationSettings = () => {
   const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
   const [isEditingField, setIsEditingField] = useState(false);
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+  const [isFunnelDialogOpen, setIsFunnelDialogOpen] = useState(false);
+  const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
+  const [newFunnel, setNewFunnel] = useState("");
+  const [newStage, setNewStage] = useState("");
+  const [funnels, setFunnels] = useState<Funnel[]>(mockFunnels);
 
   const handleOpenNewField = () => {
     setIsEditingField(false);
@@ -108,12 +124,52 @@ const OrganizationSettings = () => {
     toast.success("Campo removido com sucesso");
   };
 
+  const handleSaveFunnel = () => {
+    if (!newFunnel) {
+      toast.error("Digite o nome do funil");
+      return;
+    }
+
+    const funnel: Funnel = {
+      id: crypto.randomUUID(),
+      name: newFunnel,
+      stages: [],
+    };
+
+    setFunnels([...funnels, funnel]);
+    setNewFunnel("");
+    setIsFunnelDialogOpen(false);
+    toast.success("Funil criado com sucesso");
+  };
+
+  const handleSaveStage = () => {
+    if (!selectedFunnel || !newStage) {
+      toast.error("Selecione um funil e digite o nome da etapa");
+      return;
+    }
+
+    const updatedFunnels = funnels.map(funnel => {
+      if (funnel.id === selectedFunnel) {
+        return {
+          ...funnel,
+          stages: [...funnel.stages, { id: crypto.randomUUID(), name: newStage }]
+        };
+      }
+      return funnel;
+    });
+
+    setFunnels(updatedFunnels);
+    setNewStage("");
+    setIsStageDialogOpen(false);
+    toast.success("Etapa criada com sucesso");
+  };
+
   const handleSaveFunnelSettings = () => {
     setIsEditingFunnel(false);
     toast.success("Configurações do funil salvas com sucesso");
   };
 
-  const currentFunnel = mockFunnels.find((f) => f.id === selectedFunnel);
+  const currentFunnel = funnels.find((f) => f.id === selectedFunnel);
 
   return (
     <OrganizationLayout>
@@ -137,14 +193,23 @@ const OrganizationSettings = () => {
                   Define o funil e etapa padrão para novos leads no CRM
                 </CardDescription>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsEditingFunnel(true)}
-                className="hover:bg-muted"
-              >
-                <PenLine className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsFunnelDialogOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Funil
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsStageDialogOpen(true)}
+                  disabled={!selectedFunnel}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Etapa
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -153,14 +218,16 @@ const OrganizationSettings = () => {
                 <label className="text-sm font-medium">Funil</label>
                 <Select
                   value={selectedFunnel}
-                  onValueChange={setSelectedFunnel}
-                  disabled={!isEditingFunnel}
+                  onValueChange={(value) => {
+                    setSelectedFunnel(value);
+                    setSelectedStage("");
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um funil" />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockFunnels.map((funnel) => (
+                    {funnels.map((funnel) => (
                       <SelectItem key={funnel.id} value={funnel.id}>
                         {funnel.name}
                       </SelectItem>
@@ -174,7 +241,7 @@ const OrganizationSettings = () => {
                 <Select
                   value={selectedStage}
                   onValueChange={setSelectedStage}
-                  disabled={!isEditingFunnel || !selectedFunnel}
+                  disabled={!selectedFunnel}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma etapa" />
@@ -331,6 +398,72 @@ const OrganizationSettings = () => {
                   Salvar Configurações
                 </Button>
               </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isFunnelDialogOpen} onOpenChange={setIsFunnelDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Novo Funil</DialogTitle>
+              <DialogDescription>
+                Cadastre um novo funil para organizar suas oportunidades
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nome do Funil</label>
+                <Input
+                  placeholder="Ex: Funil de Vendas"
+                  value={newFunnel}
+                  onChange={(e) => setNewFunnel(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                className="bg-[#000000e6] hover:bg-black/80"
+                onClick={handleSaveFunnel}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Salvar Funil
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Nova Etapa</DialogTitle>
+              <DialogDescription>
+                Adicione uma nova etapa ao funil selecionado
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Funil Selecionado</label>
+                <p className="text-sm text-muted-foreground">
+                  {currentFunnel?.name || "Nenhum funil selecionado"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nome da Etapa</label>
+                <Input
+                  placeholder="Ex: Qualificação"
+                  value={newStage}
+                  onChange={(e) => setNewStage(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                className="bg-[#000000e6] hover:bg-black/80"
+                onClick={handleSaveStage}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Salvar Etapa
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
