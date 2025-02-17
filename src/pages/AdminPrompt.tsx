@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Eye, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -78,14 +78,31 @@ const AdminPrompt = () => {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {prompts.map((prompt) => (
-            <Card key={prompt.id} className="p-6 space-y-4">
-              <div>
-                <h3 className="font-semibold">{prompt.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+            <Card key={prompt.id} className="p-6 space-y-4 hover:shadow-md transition-shadow">
+              <div className="flex flex-col h-full">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-lg truncate pr-4">{prompt.name}</h3>
+                  <div className="flex gap-2 shrink-0">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                      onClick={() => console.log('View prompt:', prompt.id)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                      onClick={() => console.log('Edit prompt:', prompt.id)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground line-clamp-3">
                   {prompt.description}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
-                  {prompt.content}
                 </p>
               </div>
             </Card>
