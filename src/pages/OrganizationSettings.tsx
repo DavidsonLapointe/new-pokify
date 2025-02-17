@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -28,6 +29,29 @@ const mockCurrentOrganization: Organization = {
   adminName: "João Silva",
   adminEmail: "joao@techsolutions.com"
 };
+
+// Mock dos funis (depois será substituído pelos dados reais do backend)
+const mockFunnels = [
+  {
+    id: "1",
+    name: "Funil de Vendas",
+    stages: [
+      { id: "1", name: "Qualificação" },
+      { id: "2", name: "Apresentação" },
+      { id: "3", name: "Proposta" },
+      { id: "4", name: "Negociação" },
+    ],
+  },
+  {
+    id: "2",
+    name: "Funil de Marketing",
+    stages: [
+      { id: "5", name: "Lead" },
+      { id: "6", name: "MQL" },
+      { id: "7", name: "SQL" },
+    ],
+  },
+];
 
 const OrganizationSettings = () => {
   const navigate = useNavigate();
