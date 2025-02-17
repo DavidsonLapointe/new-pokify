@@ -9,7 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@/types/organization";
-import { UserCircle, Mail, PencilIcon, LockIcon } from "lucide-react";
+import { UserCircle, Mail, PencilIcon, LockIcon, Calendar, FileText } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useState } from "react";
+import { UserLogsDialog } from "./UserLogsDialog";
 
 interface UsersTableProps {
   users: User[];
@@ -18,6 +22,21 @@ interface UsersTableProps {
 }
 
 export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableProps) => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [logsDialogOpen, setLogsDialogOpen] = useState(false);
+
+  const handleViewLogs = (user: User) => {
+    setSelectedUser(user);
+    setLogsDialogOpen(true);
+  };
+
+  const getUniqueDaysCount = (logs: User["logs"]) => {
+    const uniqueDays = new Set(
+      logs.map((log) => new Date(log.date).toDateString())
+    );
+    return uniqueDays.size;
+  };
+
   return (
     <div className="border rounded-lg">
       <Table>
@@ -26,6 +45,18 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableHead>Usuário</TableHead>
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Data de Cadastro
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Qtde de Logs
+              </div>
+            </TableHead>
             <TableHead>Último Acesso</TableHead>
             <TableHead className="w-[150px]">Ações</TableHead>
           </TableRow>
@@ -64,7 +95,23 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                 </span>
               </TableCell>
               <TableCell>
-                {new Date(user.lastAccess).toLocaleString("pt-BR")}
+                {format(new Date(user.createdAt), "dd/MM/yyyy", {
+                  locale: ptBR,
+                })}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  className="px-2 font-medium"
+                  onClick={() => handleViewLogs(user)}
+                >
+                  {getUniqueDaysCount(user.logs)} dias
+                </Button>
+              </TableCell>
+              <TableCell>
+                {format(new Date(user.lastAccess), "dd/MM/yyyy HH:mm", {
+                  locale: ptBR,
+                })}
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
@@ -88,6 +135,14 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
           ))}
         </TableBody>
       </Table>
+
+      {selectedUser && (
+        <UserLogsDialog
+          isOpen={logsDialogOpen}
+          onClose={() => setLogsDialogOpen(false)}
+          user={selectedUser}
+        />
+      )}
     </div>
   );
 };
