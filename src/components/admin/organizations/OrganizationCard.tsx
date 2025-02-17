@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Building2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,12 +23,28 @@ interface OrganizationCardProps {
 }
 
 export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    // Delay the initial render slightly to prevent ResizeObserver issues
+    const timeoutId = setTimeout(() => {
+      if (cardRef.current) {
+        // Force a reflow
+        cardRef.current.style.display = 'none';
+        cardRef.current.offsetHeight; // Trigger reflow
+        cardRef.current.style.display = '';
+      }
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   const activeUsers = organization.users.filter(user => user.status === "active");
   const activeAdmins = activeUsers.filter(user => user.role === "admin").length;
   const activeSellers = activeUsers.filter(user => user.role === "seller").length;
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+    <Card ref={cardRef} className="hover:shadow-md transition-shadow cursor-pointer group">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
@@ -59,10 +75,10 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
             <span className="text-muted-foreground">Usuários ativos</span>
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <span className="font-medium">{activeUsers.length}</span>
+                <TooltipTrigger asChild>
+                  <span className="font-medium cursor-help">{activeUsers.length}</span>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="top">
                   <p>Administradores: {activeAdmins}</p>
                   <p>Vendedores: {activeSellers}</p>
                 </TooltipContent>
