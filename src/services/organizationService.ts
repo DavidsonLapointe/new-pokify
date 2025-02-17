@@ -1,5 +1,5 @@
 
-import { Organization } from "@/types/organization";
+import { Organization, OrganizationPendingReason } from "@/types/organization";
 
 // Função para gerar o contrato de adesão (mock)
 const generateContract = (organization: Organization) => {
