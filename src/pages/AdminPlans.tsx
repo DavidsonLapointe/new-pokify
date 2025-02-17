@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, DollarSign, Users, FileText } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { useState } from "react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 
@@ -17,7 +17,6 @@ const mockPlans = [
     id: 1,
     name: "Basic",
     price: 99.90,
-    maxUsers: 3,
     description: "Ideal para pequenas empresas iniciando no mercado",
     features: [
       "Até 3 usuários",
@@ -31,7 +30,6 @@ const mockPlans = [
     id: 2,
     name: "Professional",
     price: 199.90,
-    maxUsers: 10,
     description: "Perfect para empresas em crescimento",
     features: [
       "Até 10 usuários",
@@ -46,7 +44,6 @@ const mockPlans = [
     id: 3,
     name: "Enterprise",
     price: 499.90,
-    maxUsers: 25,
     description: "Para grandes empresas que precisam de mais recursos",
     features: [
       "Usuários ilimitados",
@@ -95,14 +92,6 @@ const Plans = () => {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
         <div className="space-y-6 flex-1">
-          {/* Linha de usuários máximos - altura fixa para alinhar */}
-          <div className="h-[40px] flex items-center border-y">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Users className="w-4 h-4 shrink-0" />
-              <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
-            </div>
-          </div>
-
           {/* Seção de recursos - altura fixa para o título */}
           <div className="space-y-4">
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
