@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
 import { CreditsBalanceCard } from "@/components/organization/plans/CreditsBalanceCard";
+import { PaymentMethodCard } from "@/components/organization/plans/PaymentMethodCard";
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
 import { ChangePlanDialog } from "@/components/organization/plans/ChangePlanDialog";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -83,13 +84,20 @@ const OrganizationPlan = () => {
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
 
+  // Mock do cartão atual - em produção viria da API
+  const mockPaymentMethod = {
+    brand: "visa",
+    last4: "4242",
+    expMonth: 12,
+    expYear: 2025
+  };
+
   const handleBuyMoreAnalyses = () => {
     setIsPackagesDialogOpen(true);
   };
 
   const handleSelectPackage = (pkg: any) => {
     setIsPackagesDialogOpen(false);
-    // Aqui você implementaria a integração com o gateway de pagamento
     toast.success("Redirecionando para o gateway de pagamento...");
   };
 
@@ -115,6 +123,10 @@ const OrganizationPlan = () => {
             onBuyMoreCredits={handleBuyMoreAnalyses}
             isLoading={isLoading}
           />
+        </div>
+
+        <div className="mt-6">
+          <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
         </div>
 
         <AnalysisPackagesDialog

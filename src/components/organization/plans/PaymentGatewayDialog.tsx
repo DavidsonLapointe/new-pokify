@@ -7,9 +7,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CreditCard, QrCode } from "lucide-react";
+import { CreditCard, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe("pk_test_your_key");
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -21,57 +25,92 @@ interface PaymentGatewayDialogProps {
   } | null;
 }
 
+const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/organization/plan`,
+        },
+      });
+
+      if (error) {
+        toast.error("Erro no pagamento: " + error.message);
+      } else {
+        onSuccess();
+      }
+    } catch (e) {
+      toast.error("Erro ao processar pagamento");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement />
+      <Button disabled={!stripe || isLoading} className="w-full">
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processando
+          </>
+        ) : (
+          <>
+            <CreditCard className="mr-2 h-4 w-4" />
+            Pagar com cartão
+          </>
+        )}
+      </Button>
+    </form>
+  );
+};
+
 export function PaymentGatewayDialog({
   open,
   onOpenChange,
   package: selectedPackage,
 }: PaymentGatewayDialogProps) {
-  const [paymentMethod, setPaymentMethod] = useState<'credit' | 'pix' | null>(null);
-
   if (!selectedPackage) return null;
 
-  const handlePayment = (method: 'credit' | 'pix') => {
-    setPaymentMethod(method);
-    // Aqui você implementaria a integração real com o gateway de pagamento
-    toast.success(`Processando pagamento via ${method === 'credit' ? 'cartão de crédito' : 'PIX'}...`);
-    setTimeout(() => {
-      onOpenChange(false);
-      setPaymentMethod(null);
-      toast.success("Pagamento confirmado! Os créditos foram adicionados à sua conta.");
-    }, 2000);
+  const options = {
+    mode: 'payment' as const,
+    currency: 'brl',
+    amount: selectedPackage.price * 100, // Stripe trabalha com centavos
+    appearance: {
+      theme: 'stripe',
+    },
+  };
+
+  const handleSuccess = () => {
+    onOpenChange(false);
+    toast.success("Pagamento confirmado! Os créditos foram adicionados à sua conta.");
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Escolha a forma de pagamento</DialogTitle>
+          <DialogTitle>Finalizar compra</DialogTitle>
           <DialogDescription>
             {selectedPackage.name} - {selectedPackage.credits} créditos
             <br />
             Valor: R$ {selectedPackage.price.toFixed(2)}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-4 py-4">
-          <Button
-            variant="outline"
-            className="flex flex-col items-center justify-center h-32 gap-2"
-            onClick={() => handlePayment('credit')}
-            disabled={!!paymentMethod}
-          >
-            <CreditCard className="h-8 w-8" />
-            <span className="text-sm font-medium">Cartão de Crédito</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex flex-col items-center justify-center h-32 gap-2"
-            onClick={() => handlePayment('pix')}
-            disabled={!!paymentMethod}
-          >
-            <QrCode className="h-8 w-8" />
-            <span className="text-sm font-medium">PIX</span>
-          </Button>
-        </div>
+        <Elements stripe={stripePromise} options={options}>
+          <PaymentForm onSuccess={handleSuccess} />
+        </Elements>
       </DialogContent>
     </Dialog>
   );
