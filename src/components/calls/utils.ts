@@ -17,8 +17,10 @@ export const getLeadName = (lead: LeadCalls | null) => {
   return lead.razaoSocial || "";
 };
 
-export const getLeadStatus = (callCount: number) => {
-  return callCount === 0 ? "pending" : "active";
+export const getLeadStatus = (lead: LeadCalls) => {
+  // Considera apenas chamadas válidas para determinar o status
+  const validCalls = lead.calls.filter(call => !call.emptyLead);
+  return validCalls.length === 0 ? "pending" : "active";
 };
 
 export const getLastCallTemperature = (calls: Call[]) => {
