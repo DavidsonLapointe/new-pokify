@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Users, List, Database, User, LogOut } from "lucide-react";
+import { Settings, Users, List, Database, User, LogOut, MessageSquare } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -25,6 +25,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: List, label: "Dashboard", path: "/admin" },
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
     { icon: Database, label: "Integrações", path: "/admin/integrations" },
+    { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile" },
   ];
