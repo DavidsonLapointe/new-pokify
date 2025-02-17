@@ -1,0 +1,85 @@
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
+import { Organization } from "@/types/organization";
+import { sendInitialContract } from "@/services/organizationService";
+import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
+
+export const useOrganizationForm = (onSuccess: () => void) => {
+  const { toast } = useToast();
+  
+  const form = useForm<CreateOrganizationFormData>({
+    resolver: zodResolver(createOrganizationSchema),
+    defaultValues: {
+      razaoSocial: "",
+      nomeFantasia: "",
+      cnpj: "",
+      email: "",
+      phone: "",
+      plan: "professional",
+      adminName: "",
+      adminEmail: "",
+    },
+  });
+
+  const onSubmit = async (values: CreateOrganizationFormData) => {
+    const newOrganization: Organization = {
+      id: Math.random(),
+      name: values.razaoSocial,
+      nomeFantasia: values.nomeFantasia,
+      plan: values.plan,
+      users: [{
+        id: 1,
+        name: values.adminName,
+        email: values.adminEmail,
+        phone: values.phone,
+        role: "admin",
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        lastAccess: new Date().toISOString(),
+        permissions: { integrations: ["view", "edit"] },
+        logs: []
+      }],
+      status: "pending",
+      pendingReason: "contract_signature",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: values.email,
+      phone: values.phone,
+      cnpj: values.cnpj,
+      adminName: values.adminName,
+      adminEmail: values.adminEmail,
+    };
+
+    try {
+      await sendInitialContract(newOrganization);
+
+      toast({
+        title: "Empresa criada com sucesso",
+        description: "Um email foi enviado para o administrador contendo:",
+        children: (
+          <ul className="mt-2 ml-2 list-disc list-inside">
+            <li>Contrato de adesão para assinatura</li>
+            <li>Link para assinatura digital do contrato</li>
+            <li>Instruções sobre os próximos passos</li>
+          </ul>
+        ),
+      });
+
+      form.reset();
+      onSuccess();
+    } catch (error) {
+      toast({
+        title: "Erro ao criar empresa",
+        description: "Não foi possível enviar o email com o contrato. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return {
+    form,
+    onSubmit,
+  };
+};

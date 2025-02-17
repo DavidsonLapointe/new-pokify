@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -6,41 +7,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { useToast } from "@/hooks/use-toast";
-import { sendWelcomeEmail } from "@/services/organizationService";
-import { createProRataTitle } from "@/services/financialService";
-import { sendInitialContract } from "@/services/contractService";
-import { Organization, User } from "@/types/organization";
-
-const formSchema = z.object({
-  razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
-  nomeFantasia: z.string().min(2, "O nome fantasia deve ter pelo menos 2 caracteres"),
-  cnpj: z.string().min(14, "CNPJ inválido"),
-  plan: z.enum(["basic", "professional", "enterprise"]),
-  email: z.string().email("Email da empresa inválido"),
-  phone: z.string().min(10, "Telefone inválido"),
-  adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
-  adminEmail: z.string().email("Email do administrador inválido"),
-});
+import { Form } from "@/components/ui/form";
+import { OrganizationFormFields } from "./organization-form-fields";
+import { useOrganizationForm } from "./use-organization-form";
 
 interface CreateOrganizationDialogProps {
   open: boolean;
@@ -51,76 +20,7 @@ export const CreateOrganizationDialog = ({
   open,
   onOpenChange,
 }: CreateOrganizationDialogProps) => {
-  const { toast } = useToast();
-  
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      razaoSocial: "",
-      nomeFantasia: "",
-      cnpj: "",
-      email: "",
-      phone: "",
-      plan: "professional",
-      adminName: "",
-      adminEmail: "",
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newOrganization: Organization = {
-      id: Math.random(),
-      name: values.razaoSocial,
-      nomeFantasia: values.nomeFantasia,
-      plan: values.plan,
-      users: [{
-        id: 1,
-        name: values.adminName,
-        email: values.adminEmail,
-        phone: values.phone,
-        role: "admin",
-        status: "pending",
-        createdAt: new Date().toISOString(),
-        lastAccess: new Date().toISOString(),
-        permissions: { integrations: ["view", "edit"] },
-        logs: []
-      }],
-      status: "pending",
-      pendingReason: "contract_signature",
-      integratedCRM: null,
-      integratedLLM: null,
-      email: values.email,
-      phone: values.phone,
-      cnpj: values.cnpj,
-      adminName: values.adminName,
-      adminEmail: values.adminEmail,
-    };
-
-    try {
-      await sendInitialContract(newOrganization);
-
-      toast({
-        title: "Empresa criada com sucesso",
-        description: "Um email foi enviado para o administrador contendo:",
-        children: (
-          <ul className="mt-2 ml-2 list-disc list-inside">
-            <li>Contrato de adesão para assinatura</li>
-            <li>Link para assinatura digital do contrato</li>
-            <li>Instruções sobre os próximos passos</li>
-          </ul>
-        ),
-      });
-
-      form.reset();
-      onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: "Erro ao criar empresa",
-        description: "Não foi possível enviar o email com o contrato. Tente novamente.",
-        variant: "destructive",
-      });
-    }
-  };
+  const { form, onSubmit } = useOrganizationForm(() => onOpenChange(false));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -134,148 +34,8 @@ export const CreateOrganizationDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="razaoSocial"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Razão Social</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite a razão social" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="nomeFantasia"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome Fantasia</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite o nome fantasia" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="cnpj"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CNPJ</FormLabel>
-                    <FormControl>
-                      <Input placeholder="00.000.000/0000-00" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="plan"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Plano</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o plano" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="basic">Basic</SelectItem>
-                        <SelectItem value="professional">Professional</SelectItem>
-                        <SelectItem value="enterprise">Enterprise</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email da Empresa</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="email" 
-                        placeholder="contato@empresa.com" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone da Empresa</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="(00) 00000-0000" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="border-t pt-4 mt-4">
-              <h3 className="text-sm font-medium mb-4">Dados do Administrador</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="adminName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome do Administrador</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Digite o nome completo" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="adminEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email do Administrador</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="email" 
-                          placeholder="admin@empresa.com" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
+            <OrganizationFormFields form={form} />
+            
             <div className="flex justify-end space-x-4 pt-4">
               <Button
                 type="button"
