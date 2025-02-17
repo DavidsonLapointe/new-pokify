@@ -1,3 +1,4 @@
+
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +79,7 @@ const Plans = () => {
   };
 
   const PlanCard = ({ plan }: { plan: any }) => (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow flex flex-col">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
@@ -91,8 +92,8 @@ const Plans = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="flex-1 flex flex-col">
+        <div className="space-y-4 flex-1">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="w-4 h-4" />
             <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
@@ -108,9 +109,11 @@ const Plans = () => {
               ))}
             </ul>
           </div>
+        </div>
+        <div className="pt-6 mt-auto">
           <Button 
-            className="w-full mt-4" 
-            variant={plan.name === "Professional" ? "default" : "outline"}
+            className="w-full" 
+            variant="default"
             onClick={() => setEditingPlan(plan)}
           >
             Editar Plano
