@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 
 interface LoginModalProps {
   open: boolean;
@@ -16,7 +15,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
-  const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +25,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Aqui você implementará a lógica de autenticação
-    console.log("Login submitted:", { email, description, password });
+    console.log("Login submitted:", { email, password });
     
     setIsLoading(false);
   };
@@ -69,31 +67,16 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           </div>
 
           {mode === "login" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descrição da Finalidade</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Descreva brevemente a finalidade do prompt..."
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="resize-none"
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </>
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           )}
 
           <div className="flex items-center justify-between">

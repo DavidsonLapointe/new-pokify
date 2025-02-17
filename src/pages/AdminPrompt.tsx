@@ -19,16 +19,17 @@ interface Prompt {
   id: string;
   name: string;
   content: string;
+  description: string;
 }
 
 const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [newPrompt, setNewPrompt] = useState({ name: "", content: "" });
+  const [newPrompt, setNewPrompt] = useState({ name: "", content: "", description: "" });
   const { toast } = useToast();
 
   const handleSavePrompt = () => {
-    if (!newPrompt.name.trim() || !newPrompt.content.trim()) {
+    if (!newPrompt.name.trim() || !newPrompt.content.trim() || !newPrompt.description.trim()) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos.",
@@ -41,10 +42,11 @@ const AdminPrompt = () => {
       id: Date.now().toString(),
       name: newPrompt.name,
       content: newPrompt.content,
+      description: newPrompt.description,
     };
 
     setPrompts([...prompts, prompt]);
-    setNewPrompt({ name: "", content: "" });
+    setNewPrompt({ name: "", content: "", description: "" });
     setIsModalOpen(false);
     
     toast({
@@ -54,7 +56,7 @@ const AdminPrompt = () => {
   };
 
   const handleCancel = () => {
-    setNewPrompt({ name: "", content: "" });
+    setNewPrompt({ name: "", content: "", description: "" });
     setIsModalOpen(false);
   };
 
@@ -79,6 +81,9 @@ const AdminPrompt = () => {
             <Card key={prompt.id} className="p-6 space-y-4">
               <div>
                 <h3 className="font-semibold">{prompt.name}</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {prompt.description}
+                </p>
                 <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
                   {prompt.content}
                 </p>
@@ -115,6 +120,21 @@ const AdminPrompt = () => {
                     setNewPrompt({ ...newPrompt, name: e.target.value })
                   }
                   placeholder="Ex: Análise de Sentimento"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">
+                  Descrição da Finalidade
+                </label>
+                <Textarea
+                  id="description"
+                  value={newPrompt.description}
+                  onChange={(e) =>
+                    setNewPrompt({ ...newPrompt, description: e.target.value })
+                  }
+                  placeholder="Descreva brevemente a finalidade do prompt..."
+                  className="resize-none"
+                  rows={3}
                 />
               </div>
               <div className="space-y-2">
