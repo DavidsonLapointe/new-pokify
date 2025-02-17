@@ -1,5 +1,8 @@
+
 export type UserRole = "admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
+
+export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | null;
 
 export interface UserLog {
   id: number;
@@ -29,7 +32,7 @@ export interface Organization {
   plan: string;
   users: User[];
   status: UserStatus;
-  pendingReason?: "contract_signature" | "pro_rata_payment" | null;
+  pendingReason?: OrganizationPendingReason;
   integratedCRM: string | null;
   integratedLLM: string | null;
   email: string;
