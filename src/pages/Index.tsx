@@ -2,9 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Clock, Database } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import LoginModal from "@/components/auth/LoginModal";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const features = [
     {
@@ -30,11 +33,20 @@ const Index = () => {
       <header className="border-b fixed w-full bg-white/80 backdrop-blur-sm z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Leadly</h1>
-          <Button variant="outline" onClick={() => navigate("/admin")}>
+          <Button 
+            variant="outline" 
+            onClick={() => setShowLoginModal(true)}
+          >
             Acessar Plataforma
           </Button>
         </div>
       </header>
+
+      {/* Login Modal */}
+      <LoginModal 
+        open={showLoginModal} 
+        onOpenChange={setShowLoginModal}
+      />
 
       {/* Hero Section */}
       <section className="relative min-h-[700px] bg-gradient-to-br from-slate-50 to-blue-50">
