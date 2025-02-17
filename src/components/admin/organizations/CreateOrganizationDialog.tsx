@@ -76,14 +76,14 @@ export const CreateOrganizationDialog = ({
         name: values.adminName,
         email: values.adminEmail,
         phone: values.phone,
-        role: "admin",
-        status: "pending",
+        role: "admin" as const,
+        status: "pending" as const,
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
         permissions: { integrations: ["view", "edit"] },
         logs: []
       }],
-      status: "pending",
+      status: "pending" as const,
       integratedCRM: null,
       integratedLLM: null,
       email: values.email,
@@ -91,7 +91,7 @@ export const CreateOrganizationDialog = ({
       cnpj: values.cnpj,
       adminName: values.adminName,
       adminEmail: values.adminEmail,
-    };
+    } as const;
 
     try {
       const proRataTitle = createProRataTitle(newOrganization, 156.67);

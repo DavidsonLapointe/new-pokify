@@ -35,9 +35,9 @@ const mockTitles: FinancialTitle[] = [
 
 const getStatusBadge = (status: TitleStatus) => {
   const variants = {
-    pending: "default",
-    paid: "secondary",
-    overdue: "destructive",
+    pending: "default" as const,
+    paid: "secondary" as const,
+    overdue: "destructive" as const,
   };
 
   const labels = {
