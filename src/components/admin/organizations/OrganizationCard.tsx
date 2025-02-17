@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Building2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,22 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface OrganizationUser {
-  role: "admin" | "seller";
-  status: "active" | "inactive";
-}
-
-interface Organization {
-  id: number;
-  name: string;
-  nomeFantasia: string;
-  plan: string;
-  users: OrganizationUser[];
-  status: "active" | "inactive" | "pending";
-  integratedCRM: string | null;
-  integratedLLM: string | null;
-}
+import { Organization, User } from "@/types/organization";
 
 interface OrganizationCardProps {
   organization: Organization;
