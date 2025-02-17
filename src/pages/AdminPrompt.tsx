@@ -24,8 +24,11 @@ interface Prompt {
 
 const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [newPrompt, setNewPrompt] = useState({ name: "", content: "", description: "" });
+  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
 
   const handleSavePrompt = () => {
@@ -38,26 +41,55 @@ const AdminPrompt = () => {
       return;
     }
 
-    const prompt: Prompt = {
-      id: Date.now().toString(),
-      name: newPrompt.name,
-      content: newPrompt.content,
-      description: newPrompt.description,
-    };
+    if (isEditing && selectedPrompt) {
+      // Atualizar prompt existente
+      const updatedPrompts = prompts.map((prompt) =>
+        prompt.id === selectedPrompt.id ? { ...newPrompt, id: prompt.id } : prompt
+      );
+      setPrompts(updatedPrompts);
+      toast({
+        title: "Sucesso",
+        description: "Prompt atualizado com sucesso!",
+      });
+    } else {
+      // Criar novo prompt
+      const prompt: Prompt = {
+        id: Date.now().toString(),
+        name: newPrompt.name,
+        content: newPrompt.content,
+        description: newPrompt.description,
+      };
+      setPrompts([...prompts, prompt]);
+      toast({
+        title: "Sucesso",
+        description: "Prompt cadastrado com sucesso!",
+      });
+    }
 
-    setPrompts([...prompts, prompt]);
-    setNewPrompt({ name: "", content: "", description: "" });
-    setIsModalOpen(false);
-    
-    toast({
-      title: "Sucesso",
-      description: "Prompt cadastrado com sucesso!",
-    });
+    handleCancel();
   };
 
   const handleCancel = () => {
     setNewPrompt({ name: "", content: "", description: "" });
     setIsModalOpen(false);
+    setIsEditing(false);
+    setSelectedPrompt(null);
+  };
+
+  const handleEdit = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setNewPrompt({
+      name: prompt.name,
+      content: prompt.content,
+      description: prompt.description,
+    });
+    setIsEditing(true);
+    setIsModalOpen(true);
+  };
+
+  const handleView = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setIsViewModalOpen(true);
   };
 
   return (
@@ -87,7 +119,7 @@ const AdminPrompt = () => {
                       variant="ghost" 
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-primary"
-                      onClick={() => console.log('View prompt:', prompt.id)}
+                      onClick={() => handleView(prompt)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -95,7 +127,7 @@ const AdminPrompt = () => {
                       variant="ghost" 
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-primary"
-                      onClick={() => console.log('Edit prompt:', prompt.id)}
+                      onClick={() => handleEdit(prompt)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -123,10 +155,39 @@ const AdminPrompt = () => {
           </Card>
         )}
 
+        {/* Modal de Visualização */}
+        <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+          <DialogContent className="sm:max-w-[525px]">
+            <DialogHeader>
+              <DialogTitle>Visualizar Prompt</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <h4 className="font-medium">Nome</h4>
+                <p className="text-sm text-muted-foreground">{selectedPrompt?.name}</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Descrição</h4>
+                <p className="text-sm text-muted-foreground">{selectedPrompt?.description}</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Conteúdo</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedPrompt?.content}</p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setIsViewModalOpen(false)}>
+                Fechar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Criação/Edição */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
-              <DialogTitle>Novo Prompt</DialogTitle>
+              <DialogTitle>{isEditing ? "Editar Prompt" : "Novo Prompt"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
@@ -177,7 +238,7 @@ const AdminPrompt = () => {
                 Cancelar
               </Button>
               <Button onClick={handleSavePrompt}>
-                Salvar
+                {isEditing ? "Salvar Alterações" : "Salvar"}
               </Button>
             </DialogFooter>
           </DialogContent>
