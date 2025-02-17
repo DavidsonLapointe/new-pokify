@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Package, Plus } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Package, Plus, Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -167,7 +168,7 @@ const AdminAnalysisPackages = () => {
                 {packages.map((pkg) => (
                   <div
                     key={pkg.id}
-                    className="p-4 border rounded-lg flex items-center justify-between"
+                    className="p-4 border rounded-lg flex items-center justify-between hover:bg-accent/50 transition-colors group"
                   >
                     <div>
                       <h3 className="font-medium">{pkg.name}</h3>
@@ -175,23 +176,37 @@ const AdminAnalysisPackages = () => {
                         {pkg.credits} créditos
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="flex items-center gap-4">
                       <p className="font-medium">
                         R$ {pkg.price.toFixed(2)}
                       </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={pkg.active ? "text-green-600" : "text-red-600"}
-                        onClick={() => {
-                          setPackages(packages.map(p => 
-                            p.id === pkg.id ? { ...p, active: !p.active } : p
-                          ));
-                          toast.success(`Pacote ${pkg.active ? 'desativado' : 'ativado'} com sucesso`);
-                        }}
-                      >
-                        {pkg.active ? "Ativo" : "Inativo"}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          onClick={() => {
+                            // TODO: Implement edit functionality
+                            toast.info("Funcionalidade de edição em desenvolvimento");
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={pkg.active}
+                            onCheckedChange={(checked) => {
+                              setPackages(packages.map(p => 
+                                p.id === pkg.id ? { ...p, active: checked } : p
+                              ));
+                              toast.success(`Pacote ${checked ? 'ativado' : 'desativado'} com sucesso`);
+                            }}
+                          />
+                          <span className={`text-sm ${pkg.active ? 'text-green-600' : 'text-red-600'}`}>
+                            {pkg.active ? 'Ativo' : 'Inativo'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
