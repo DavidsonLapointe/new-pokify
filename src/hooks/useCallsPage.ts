@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
@@ -18,18 +18,6 @@ export const useCallsPage = () => {
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
-  const [processedCalls, setProcessedCalls] = useState<Call[]>([]);
-
-  // Efeito para processar as chamadas e garantir que todas sejam exibidas
-  useEffect(() => {
-    const processLeads = () => {
-      const allCalls = [...calls];
-      console.log("Processando leads:", allCalls);
-      setProcessedCalls(allCalls);
-    };
-
-    processLeads();
-  }, [calls]);
 
   const handlePlayAudio = useCallback((audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -88,16 +76,7 @@ export const useCallsPage = () => {
 
       console.log("Chamada vazia criada:", emptyCall);
       
-      // Atualização do estado usando função de atualização
-      setCalls(prevCalls => {
-        const newCalls = [emptyCall, ...prevCalls];
-        console.log("Nova lista de chamadas após adição:", newCalls);
-        return newCalls;
-      });
-
-      // Garantir que o processedCalls seja atualizado imediatamente após
-      setProcessedCalls(prevProcessed => [emptyCall, ...prevProcessed]);
-
+      setCalls(prevCalls => [emptyCall, ...prevCalls]);
       setPendingLeadData(null);
       
       toast({
@@ -110,9 +89,7 @@ export const useCallsPage = () => {
         const filteredCalls = prevCalls.filter(call => 
           !(call.leadId === newCall.leadId && call.emptyLead)
         );
-        const newCalls = [newCall, ...filteredCalls];
-        setProcessedCalls(newCalls); // Atualiza processedCalls imediatamente
-        return newCalls;
+        return [newCall, ...filteredCalls];
       });
     }
   }, [pendingLeadData]);
@@ -130,11 +107,11 @@ export const useCallsPage = () => {
 
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
-    console.log("Chamadas processadas disponíveis:", processedCalls);
+    console.log("Chamadas disponíveis:", calls);
     
     const query = (searchQuery || "").toLowerCase();
     
-    return processedCalls.filter(call => {
+    return calls.filter(call => {
       const leadName = call.leadInfo.personType === "pf" 
         ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
         : call.leadInfo.razaoSocial;
@@ -147,7 +124,7 @@ export const useCallsPage = () => {
         (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(query))
       );
     });
-  }, [processedCalls, searchQuery]);
+  }, [calls, searchQuery]);
 
   return {
     searchQuery,
