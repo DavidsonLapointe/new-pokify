@@ -42,7 +42,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     navigate("/"); // Redireciona para a landing page
   };
 
-  // Menu items baseados no perfil do usuário com as novas opções
+  // Menu items baseados no perfil do usuário
   const getMenuItems = () => {
     const commonItems = [
       {
@@ -53,7 +53,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       { 
         icon: Phone, 
         label: "Análise de Leads", 
-        path: "/organization/leads" // Corrigido o caminho de /calls para /leads
+        path: "/organization/leads"
       },
       { 
         icon: PhoneCall, 

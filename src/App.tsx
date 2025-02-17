@@ -12,10 +12,11 @@ import AdminProfile from "@/pages/AdminProfile";
 import AdminPrompt from "@/pages/AdminPrompt";
 import NotFound from "@/pages/NotFound";
 import OrganizationDashboard from "@/pages/OrganizationDashboard";
-import OrganizationCalls from "@/pages/OrganizationCalls";
+import OrganizationLeads from "@/pages/OrganizationLeads";
 import OrganizationUsers from "@/pages/OrganizationUsers";
 import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
 import OrganizationProfile from "@/pages/OrganizationProfile";
+import OrganizationNewCall from "@/pages/OrganizationNewCall";
 
 function App() {
   return (
@@ -32,7 +33,8 @@ function App() {
           
           {/* Rotas da Organização */}
           <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-          <Route path="/organization/calls" element={<OrganizationCalls />} />
+          <Route path="/organization/leads" element={<OrganizationLeads />} />
+          <Route path="/organization/new-call" element={<OrganizationNewCall />} />
           <Route path="/organization/users" element={<OrganizationUsers />} />
           <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
           <Route path="/organization/profile" element={<OrganizationProfile />} />
