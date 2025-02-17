@@ -22,8 +22,10 @@ export const LeadsTableRow = ({
   onShowUpload
 }: LeadsTableRowProps) => {
   const leadStatus = getLeadStatus(lead.calls.length);
-  const successfulCalls = lead.calls.filter(call => call.status === "success").length;
-  const hasProcessed = lead.calls.some(call => call.status === "success" && call.analysis);
+  // Filtra apenas as chamadas válidas (não vazias)
+  const validCalls = lead.calls.filter(call => !call.emptyLead);
+  const successfulCalls = validCalls.filter(call => call.status === "success").length;
+  const hasProcessed = validCalls.some(call => call.status === "success" && call.analysis);
 
   return (
     <TableRow key={lead.id} className="text-xs">
@@ -38,7 +40,7 @@ export const LeadsTableRow = ({
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadTemperatureBadge 
-          calls={lead.calls} 
+          calls={validCalls} 
           hasProcessed={hasProcessed} 
         />
       </TableCell>
@@ -48,7 +50,7 @@ export const LeadsTableRow = ({
           onClick={() => onShowHistory(lead)}
           className="p-0 h-auto font-medium"
         >
-          {lead.calls.length}
+          {validCalls.length}
         </Button>
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">

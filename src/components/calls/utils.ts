@@ -22,7 +22,10 @@ export const getLeadStatus = (callCount: number) => {
 };
 
 export const getLastCallTemperature = (calls: Call[]) => {
-  const sortedCalls = [...calls].sort((a, b) => 
+  // Filtra chamadas vazias antes de processar
+  const validCalls = calls.filter(call => !call.emptyLead);
+  
+  const sortedCalls = [...validCalls].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
@@ -39,7 +42,10 @@ export const getLeadDetails = (lead: LeadCalls | null) => {
     details.push(`Razão Social: ${lead.razaoSocial}`);
   }
   
-  const firstCall = lead.calls[0];
+  // Usa apenas chamadas válidas
+  const validCalls = lead.calls.filter(call => !call.emptyLead);
+  const firstCall = validCalls[0];
+  
   if (firstCall) {
     if (firstCall.phone) details.push(`Tel: ${firstCall.phone}`);
     if (firstCall.leadInfo.email) details.push(`Email: ${firstCall.leadInfo.email}`);
