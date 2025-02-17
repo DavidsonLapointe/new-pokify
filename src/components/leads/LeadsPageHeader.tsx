@@ -45,11 +45,10 @@ export const LeadsPageHeader = ({
   const hasIntegrationsAccess = currentUser.permissions?.integrations?.includes("edit") || false;
 
   // Filtra usuários ativos com acesso a integrações
-  const integrationUsers = organization.users
-    .filter(user => 
-      user.role === "admin" || 
-      (user.permissions?.integrations?.includes("edit") && user.status === "active")
-    );
+  const integrationUsers = organization.users.filter(user => 
+    user.role === "admin" || 
+    (user.permissions?.integrations?.includes("edit") && user.status === "active")
+  );
 
   return (
     <>

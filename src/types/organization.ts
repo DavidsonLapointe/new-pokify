@@ -1,27 +1,6 @@
 
 export type UserRole = "admin" | "seller";
 
-export interface OrganizationUser {
-  role: UserRole;
-  status: "active" | "inactive";
-}
-
-export interface Organization {
-  id: number;
-  name: string;
-  nomeFantasia: string;
-  plan: string;
-  users: OrganizationUser[];
-  status: "active" | "inactive";
-  integratedCRM: string | null;
-  integratedLLM: string | null;
-  email: string;
-  phone: string;
-  cnpj: string;
-  adminName: string;
-  adminEmail: string;
-}
-
 export interface UserLog {
   id: number;
   date: string;
@@ -43,31 +22,26 @@ export interface User {
   logs: UserLog[];
 }
 
-export const availablePermissions = {
-  dashboard: {
-    label: "Dashboard",
-    permissions: {
-      view: "Visualizar dashboard",
-      export: "Exportar relatórios",
-    },
-  },
-  calls: {
-    label: "Chamadas",
-    permissions: {
-      view: "Visualizar chamadas",
-      upload: "Upload de chamadas",
-      delete: "Deletar chamadas",
-    },
-  },
-  leads: {
-    label: "Leads",
-    permissions: {
-      view: "Visualizar leads",
-      edit: "Editar leads",
-      delete: "Deletar leads",
-    },
-  },
-} as const;
+export interface OrganizationUser extends User {
+  role: UserRole;
+  status: "active" | "inactive";
+}
+
+export interface Organization {
+  id: number;
+  name: string;
+  nomeFantasia: string;
+  plan: string;
+  users: User[];
+  status: "active" | "inactive";
+  integratedCRM: string | null;
+  integratedLLM: string | null;
+  email: string;
+  phone: string;
+  cnpj: string;
+  adminName: string;
+  adminEmail: string;
+}
 
 // Mock data for users
 export const mockUsers: User[] = [
@@ -84,6 +58,7 @@ export const mockUsers: User[] = [
       dashboard: ["view", "export"],
       calls: ["view", "upload", "delete"],
       leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {
@@ -111,6 +86,7 @@ export const mockUsers: User[] = [
       dashboard: ["view"],
       calls: ["view", "upload"],
       leads: ["view", "edit"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {
@@ -121,3 +97,29 @@ export const mockUsers: User[] = [
     ],
   },
 ];
+
+export const availablePermissions = {
+  dashboard: {
+    label: "Dashboard",
+    permissions: {
+      view: "Visualizar dashboard",
+      export: "Exportar relatórios",
+    },
+  },
+  calls: {
+    label: "Chamadas",
+    permissions: {
+      view: "Visualizar chamadas",
+      upload: "Upload de chamadas",
+      delete: "Deletar chamadas",
+    },
+  },
+  leads: {
+    label: "Leads",
+    permissions: {
+      view: "Visualizar leads",
+      edit: "Editar leads",
+      delete: "Deletar leads",
+    },
+  },
+} as const;

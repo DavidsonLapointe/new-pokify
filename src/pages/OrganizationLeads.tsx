@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,44 +18,41 @@ const mockLoggedUser = {
   id: 1,
   name: "João Silva",
   email: "joao@empresa.com",
+  phone: "(11) 99999-9999",
   role: "admin",
   status: "active",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: "2024-03-15T14:30:00.000Z",
   permissions: {
     dashboard: ["view", "export"],
     calls: ["view", "upload", "delete"],
     leads: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
   },
+  logs: [
+    {
+      id: 1,
+      date: "2024-03-15T14:30:00.000Z",
+      action: "Acessou o sistema",
+    },
+  ],
 };
 
 // Mock da organização - depois será substituído pelos dados reais
 const mockOrganization = {
   id: 1,
   name: "Tech Solutions Ltda",
+  nomeFantasia: "Tech Solutions",
+  plan: "enterprise",
+  status: "active",
   integratedCRM: "HubSpot",
   integratedLLM: "GPT-4O",
-  users: [
-    {
-      id: 1,
-      name: "João Silva",
-      email: "joao@empresa.com",
-      role: "admin",
-      status: "active",
-      permissions: {
-        integrations: ["view", "edit"],
-      },
-    },
-    {
-      id: 2,
-      name: "Maria Santos",
-      email: "maria@empresa.com",
-      role: "admin",
-      status: "active",
-      permissions: {
-        integrations: ["view", "edit"],
-      },
-    },
-  ],
+  email: "contato@techsolutions.com",
+  phone: "(11) 3333-3333",
+  cnpj: "12.345.678/0001-90",
+  adminName: "João Silva",
+  adminEmail: "joao@empresa.com",
+  users: mockUsers,
 };
 
 const OrganizationLeads = () => {
