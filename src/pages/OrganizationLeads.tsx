@@ -15,21 +15,21 @@ import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
 
-// Mock do usuário logado - depois será substituído pela autenticação real
+// Mock do usuário logado - agora como vendedor
 const mockLoggedUser = {
-  id: 1,
-  name: "João Silva",
-  email: "joao@empresa.com",
-  phone: "(11) 99999-9999",
-  role: "admin" as const,
+  id: 2,
+  name: "Maria Santos",
+  email: "maria@empresa.com",
+  phone: "(11) 98888-8888",
+  role: "seller" as const,
   status: "active" as const,
   createdAt: "2024-01-01T00:00:00.000Z",
   lastAccess: "2024-03-15T14:30:00.000Z",
   permissions: {
-    dashboard: ["view", "export"],
-    calls: ["view", "upload", "delete"],
-    leads: ["view", "edit", "delete"],
-    integrations: ["view", "edit"],
+    dashboard: ["view"],
+    calls: ["view", "upload"],
+    leads: ["view", "edit"],
+    integrations: ["view"], // Vendedor só tem permissão de visualização
   },
   logs: [
     {
@@ -40,7 +40,7 @@ const mockLoggedUser = {
   ],
 };
 
-// Mock da organização - depois será substituído pelos dados reais
+// Mock da organização - com CRM mas sem LLM
 const mockOrganization = {
   id: 1,
   name: "Tech Solutions Ltda",
@@ -48,8 +48,8 @@ const mockOrganization = {
   plan: "enterprise",
   users: mockUsers,
   status: "active" as const,
-  integratedCRM: null, // Removida a integração com CRM
-  integratedLLM: null, // Removida a integração com LLM
+  integratedCRM: "HubSpot", // CRM está integrado
+  integratedLLM: null, // LLM não está integrado
   email: "contato@techsolutions.com",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
