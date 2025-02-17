@@ -7,8 +7,8 @@ import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, subDays, startOfMonth } from "date-fns";
-import { useState } from "react";
+import { format, subDays, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { useState, useMemo } from "react";
 
 const OrganizationDashboard = () => {
   const { monthStats } = useCallsPage();
@@ -34,6 +34,32 @@ const OrganizationDashboard = () => {
     };
   });
 
+  // Calcula as estatísticas de leads para o mês selecionado
+  const leadsStats = useMemo(() => {
+    const monthStart = startOfMonth(selectedDate);
+    const monthEnd = endOfMonth(selectedDate);
+
+    // Filtra apenas os leads do mês selecionado
+    const monthLeads = dailyLeadsData.filter(lead => {
+      const [day, month] = lead.day.split('/').map(Number);
+      const leadDate = new Date(selectedDate.getFullYear(), month - 1, day);
+      return isWithinInterval(leadDate, { start: monthStart, end: monthEnd });
+    });
+
+    // Calcula o total de leads no mês
+    const total = monthLeads.reduce((acc, curr) => acc + curr.novos, 0);
+    
+    // Simula leads ativos e pendentes baseado no total
+    const active = Math.floor(total * 0.3); // 30% dos leads são ativos
+    const pending = total - active; // restante são pendentes
+
+    return {
+      total,
+      active,
+      pending,
+    };
+  }, [selectedDate, dailyLeadsData]);
+
   // Gera dados para performance dos vendedores
   const dailyPerformanceData = Array.from({ length: 30 }).map((_, index) => {
     const date = subDays(new Date(), 29 - index);
@@ -43,13 +69,6 @@ const OrganizationDashboard = () => {
       maria: Math.floor(Math.random() * 5) + 1, // 1-5 leads por dia
     };
   });
-
-  // Mock data para estatísticas de leads
-  const leadsStats = {
-    total: 150,
-    active: 45,
-    pending: 105,
-  };
 
   // Mock data para estatísticas de vendedores
   const sellersStats = {
