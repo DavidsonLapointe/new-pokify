@@ -3,20 +3,21 @@ import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
+import { format, subDays } from "date-fns";
 
 const OrganizationDashboard = () => {
   const { monthStats } = useCallsPage();
 
-  // Dados mockados para o gráfico diário
-  const dailyData = [
-    { day: '01/03', processadas: 5, pendentes: 2, erro: 1 },
-    { day: '02/03', processadas: 7, pendentes: 3, erro: 0 },
-    { day: '03/03', processadas: 4, pendentes: 1, erro: 1 },
-    { day: '04/03', processadas: 6, pendentes: 2, erro: 0 },
-    { day: '05/03', processadas: 8, pendentes: 1, erro: 1 },
-    { day: '06/03', processadas: 3, pendentes: 1, erro: 0 },
-    { day: '07/03', processadas: 5, pendentes: 2, erro: 0 },
-  ];
+  // Gera dados para os últimos 30 dias
+  const dailyData = Array.from({ length: 30 }).map((_, index) => {
+    const date = subDays(new Date(), 29 - index);
+    return {
+      day: format(date, 'dd/MM'),
+      processadas: Math.floor(Math.random() * 10) + 1, // 1-10 chamadas processadas
+      pendentes: Math.floor(Math.random() * 5),        // 0-4 chamadas pendentes
+      erro: Math.floor(Math.random() * 3),            // 0-2 chamadas com erro
+    };
+  });
 
   return (
     <OrganizationLayout>
