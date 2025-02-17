@@ -33,7 +33,7 @@ export const CallHistoryTableHeader = () => {
                   <HelpCircle className="h-3 w-3 text-muted-foreground" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" align="end" className="p-3 max-w-[400px] -translate-x-[200px]">
+              <TooltipContent side="bottom" align="end" className="p-3 max-w-[400px] -translate-x-[150px]">
                 <div className="space-y-3">
                   <div className="flex items-center gap-1.5">
                     <Badge variant="secondary" className="bg-green-100 text-green-700 shrink-0">Processado</Badge>
