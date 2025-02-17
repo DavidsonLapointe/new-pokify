@@ -17,6 +17,7 @@ export const useCallsPage = () => {
   });
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -35,6 +36,7 @@ export const useCallsPage = () => {
   const createNewLead = (leadData: LeadFormData) => {
     const leadId = uuidv4();
     console.log("Criando novo lead com ID:", leadId, "com dados:", leadData);
+    setPendingLeadData(leadData);
     return leadId;
   };
 
@@ -47,17 +49,17 @@ export const useCallsPage = () => {
         date: new Date().toISOString(),
         duration: "0:00",
         status: "pending",
-        phone: newCall?.leadInfo?.phone || "",
+        phone: pendingLeadData?.phone || newCall?.leadInfo?.phone || "",
         seller: "Sistema",
         audioUrl: "",
         mediaType: "audio",
         leadInfo: {
-          personType: newCall?.leadInfo?.personType || "pf",
-          firstName: newCall?.leadInfo?.firstName || "",
-          lastName: newCall?.leadInfo?.lastName || "",
-          razaoSocial: newCall?.leadInfo?.razaoSocial || "",
-          email: newCall?.leadInfo?.email || "",
-          phone: newCall?.leadInfo?.phone || "",
+          personType: pendingLeadData?.personType || newCall?.leadInfo?.personType || "pf",
+          firstName: pendingLeadData?.firstName || newCall?.leadInfo?.firstName || "",
+          lastName: pendingLeadData?.lastName || newCall?.leadInfo?.lastName || "",
+          razaoSocial: pendingLeadData?.razaoSocial || newCall?.leadInfo?.razaoSocial || "",
+          email: pendingLeadData?.email || newCall?.leadInfo?.email || "",
+          phone: pendingLeadData?.phone || newCall?.leadInfo?.phone || "",
         },
         emptyLead: true,
         isNewLead: true,
@@ -65,6 +67,7 @@ export const useCallsPage = () => {
 
       console.log("Adicionando chamada vazia com informações do lead:", emptyCall);
       setCalls(prevCalls => [emptyCall, ...prevCalls]);
+      setPendingLeadData(null);
       
       toast({
         title: "Lead criado com sucesso",
@@ -84,7 +87,7 @@ export const useCallsPage = () => {
         return [newCall, ...prevCalls];
       });
     }
-  }, []);
+  }, [pendingLeadData]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
