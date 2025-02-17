@@ -33,7 +33,7 @@ export const LeadsTableRow = ({
         {getLeadName(lead)}
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
-        {formatDate(lead.createdAt).split(' ')[0]}
+        {formatDate(lead.createdAt).split(',')[0]}
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadStatusBadge status={leadStatus} />
