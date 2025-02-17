@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -55,6 +54,7 @@ const mockOrganization = {
   cnpj: "12.345.678/0001-90",
   adminName: "João Silva",
   adminEmail: "joao@empresa.com",
+  createdAt: "2024-01-01T00:00:00.000Z",
 };
 
 const OrganizationLeads = () => {

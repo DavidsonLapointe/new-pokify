@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { FunnelSection } from "@/components/settings/FunnelSection";
@@ -26,7 +25,8 @@ const mockCurrentOrganization = {
   phone: "(11) 1234-5678",
   cnpj: "12.345.678/0001-00",
   adminName: "João Silva",
-  adminEmail: "joao@techsolutions.com"
+  adminEmail: "joao@techsolutions.com",
+  createdAt: "2024-01-01T00:00:00.000Z",
 };
 
 const OrganizationSettings = () => {

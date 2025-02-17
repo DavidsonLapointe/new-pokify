@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -55,6 +54,36 @@ const getStatusBadge = (status: TitleStatus) => {
   );
 };
 
+const mockOrganization: Organization = {
+  id: 1,
+  name: "Tech Solutions",
+  nomeFantasia: "Tech Solutions Ltda",
+  plan: "Enterprise",
+  users: [
+    {
+      id: 1,
+      name: "Admin",
+      email: "admin@example.com",
+      phone: "(11) 99999-9999",
+      role: "admin",
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      lastAccess: new Date().toISOString(),
+      permissions: {},
+      logs: [],
+    },
+  ],
+  status: "pending",
+  integratedCRM: null,
+  integratedLLM: null,
+  email: "contact@example.com",
+  phone: "(11) 99999-9999",
+  cnpj: "12.345.678/0001-00",
+  adminName: "Admin",
+  adminEmail: "admin@example.com",
+  createdAt: "2024-01-01T00:00:00.000Z",
+};
+
 export const FinancialTitlesTable = () => {
   const { toast } = useToast();
   const [titles, setTitles] = useState<FinancialTitle[]>(mockTitles);
@@ -62,35 +91,6 @@ export const FinancialTitlesTable = () => {
   const handlePayment = async (title: FinancialTitle) => {
     try {
       // Em produção, você buscaria a organização da API
-      const mockOrganization: Organization = {
-        id: title.organizationId,
-        name: title.organizationName,
-        nomeFantasia: title.organizationName,
-        plan: "Basic",
-        users: [
-          {
-            id: 1,
-            name: "Admin",
-            email: "admin@example.com",
-            phone: "11999999999",
-            role: "admin",
-            status: "pending",
-            createdAt: new Date().toISOString(),
-            lastAccess: new Date().toISOString(),
-            permissions: {},
-            logs: []
-          }
-        ],
-        status: "pending",
-        integratedCRM: null,
-        integratedLLM: null,
-        email: "contact@example.com",
-        phone: "11999999999",
-        cnpj: "00000000000000",
-        adminName: "Admin",
-        adminEmail: "admin@example.com"
-      };
-
       const updatedTitle = await handleTitlePayment(title, mockOrganization);
       
       setTitles(prev => prev.map(t => 

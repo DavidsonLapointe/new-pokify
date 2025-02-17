@@ -50,6 +50,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       cnpj: values.cnpj,
       adminName: values.adminName,
       adminEmail: values.adminEmail,
+      createdAt: new Date().toISOString(), // Adicionando createdAt
     };
 
     try {
