@@ -37,11 +37,11 @@ export const CallHistoryTableHeader = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-1.5">
                     <Badge variant="secondary" className="bg-green-100 text-green-700 shrink-0">Processado</Badge>
-                    <span className="text-xs">Arquivos que foram processadas com sucesso pelo sistema</span>
+                    <span className="text-xs">Uploads que foram processados com sucesso pelo sistema</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Badge variant="secondary" className="bg-red-100 text-red-700 shrink-0">Erro</Badge>
-                    <span className="text-xs">Arquivos que falharam durante o processamento e precisam ser reprocessados</span>
+                    <span className="text-xs">Uploads que falharam durante o processamento e precisam ser reprocessados</span>
                   </div>
                 </div>
               </TooltipContent>
