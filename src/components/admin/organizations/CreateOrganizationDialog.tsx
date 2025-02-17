@@ -66,7 +66,7 @@ export const CreateOrganizationDialog = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newOrganization = {
+    const newOrganization: Organization = {
       id: Math.random(),
       name: values.razaoSocial,
       nomeFantasia: values.nomeFantasia,
@@ -76,14 +76,14 @@ export const CreateOrganizationDialog = ({
         name: values.adminName,
         email: values.adminEmail,
         phone: values.phone,
-        role: "admin" as const,
-        status: "pending" as const,
+        role: "admin",
+        status: "pending",
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
         permissions: { integrations: ["view", "edit"] },
         logs: []
       }],
-      status: "pending" as const,
+      status: "pending",
       integratedCRM: null,
       integratedLLM: null,
       email: values.email,
@@ -91,7 +91,7 @@ export const CreateOrganizationDialog = ({
       cnpj: values.cnpj,
       adminName: values.adminName,
       adminEmail: values.adminEmail,
-    } as const;
+    };
 
     try {
       const proRataTitle = createProRataTitle(newOrganization, 156.67);

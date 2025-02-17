@@ -1,5 +1,6 @@
 
 export type UserRole = "admin" | "seller";
+export type UserStatus = "active" | "inactive" | "pending";
 
 export interface UserLog {
   id: number;
@@ -13,7 +14,7 @@ export interface User {
   email: string;
   phone: string;
   role: UserRole;
-  status: "active" | "inactive" | "pending";
+  status: UserStatus;
   createdAt: string;
   lastAccess: string;
   permissions: {
@@ -24,7 +25,7 @@ export interface User {
 
 export interface OrganizationUser extends User {
   role: UserRole;
-  status: "active" | "inactive" | "pending";
+  status: UserStatus;
 }
 
 export interface Organization {
@@ -33,7 +34,7 @@ export interface Organization {
   nomeFantasia: string;
   plan: string;
   users: User[];
-  status: "active" | "inactive" | "pending";
+  status: UserStatus;
   integratedCRM: string | null;
   integratedLLM: string | null;
   email: string;
