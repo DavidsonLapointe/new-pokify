@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
@@ -18,16 +18,6 @@ export const useCallsPage = () => {
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
-  const pendingCallsRef = useRef<Call[]>([]);
-
-  useEffect(() => {
-    if (pendingCallsRef.current.length > 0) {
-      const updatedCalls = [...pendingCallsRef.current, ...calls];
-      setCalls(updatedCalls);
-      pendingCallsRef.current = [];
-      console.log("Atualizando lista de chamadas com pendentes:", updatedCalls);
-    }
-  }, [calls]);
 
   const handlePlayAudio = useCallback((audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -52,7 +42,6 @@ export const useCallsPage = () => {
 
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
     console.log("Confirmando novo lead - withUpload:", withUpload);
-    console.log("pendingLeadData:", pendingLeadData);
     
     if (!withUpload && pendingLeadData) {
       const leadId = uuidv4();
@@ -86,11 +75,12 @@ export const useCallsPage = () => {
 
       console.log("Chamada vazia criada:", emptyCall);
       
-      // Adiciona a nova chamada à fila de pendentes
-      pendingCallsRef.current = [emptyCall];
-      
-      // Força uma atualização do estado calls para disparar o useEffect
-      setCalls(prevCalls => [...prevCalls]);
+      // Atualiza o estado imediatamente com o novo lead
+      setCalls(prevCalls => {
+        const newCalls = [emptyCall, ...prevCalls];
+        console.log("Nova lista de chamadas:", newCalls);
+        return newCalls;
+      });
       
       setPendingLeadData(null);
       
@@ -122,12 +112,11 @@ export const useCallsPage = () => {
 
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
-    const allCalls = [...calls, ...pendingCallsRef.current];
-    console.log("Total de chamadas disponíveis:", allCalls.length);
+    console.log("Total de chamadas disponíveis:", calls.length);
     
     const query = (searchQuery || "").toLowerCase();
     
-    return allCalls.filter(call => {
+    return calls.filter(call => {
       const leadName = call.leadInfo.personType === "pf" 
         ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
         : call.leadInfo.razaoSocial;
