@@ -3,9 +3,16 @@ import OrganizationLayout from "@/components/OrganizationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Save, ListChecks, GitBranch } from "lucide-react";
+import { Plus, Trash2, ListChecks, GitBranch, PenLine, Save } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -46,9 +53,11 @@ const mockFunnels = [
 const OrganizationSettings = () => {
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [newField, setNewField] = useState<Partial<CustomField>>({});
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingFields, setIsEditingFields] = useState(false);
+  const [isEditingFunnel, setIsEditingFunnel] = useState(false);
   const [selectedFunnel, setSelectedFunnel] = useState<string>("");
   const [selectedStage, setSelectedStage] = useState<string>("");
+  const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
 
   const handleAddField = () => {
     if (!newField.name || !newField.description) {
@@ -65,7 +74,6 @@ const OrganizationSettings = () => {
 
     setCustomFields([...customFields, field]);
     setNewField({});
-    setIsEditing(false);
     toast.success("Campo adicionado com sucesso");
   };
 
@@ -74,13 +82,14 @@ const OrganizationSettings = () => {
     toast.success("Campo removido com sucesso");
   };
 
-  const handleSaveSettings = () => {
-    console.log("Configurações salvas:", {
-      customFields,
-      defaultFunnel: selectedFunnel,
-      defaultStage: selectedStage,
-    });
-    toast.success("Configurações salvas com sucesso");
+  const handleSaveFunnelSettings = () => {
+    setIsEditingFunnel(false);
+    toast.success("Configurações do funil salvas com sucesso");
+  };
+
+  const handleSaveFieldsSettings = () => {
+    setIsFieldsDialogOpen(false);
+    toast.success("Campos personalizados salvos com sucesso");
   };
 
   const currentFunnel = mockFunnels.find((f) => f.id === selectedFunnel);
@@ -88,29 +97,33 @@ const OrganizationSettings = () => {
   return (
     <OrganizationLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Configurações</h1>
-            <p className="text-muted-foreground">
-              Configure os campos que serão extraídos automaticamente das chamadas
-            </p>
-          </div>
-          <Button onClick={handleSaveSettings}>
-            <Save className="h-4 w-4 mr-2" />
-            Salvar Configurações
-          </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Configurações</h1>
+          <p className="text-muted-foreground">
+            Configure os campos que serão extraídos automaticamente das chamadas
+          </p>
         </div>
 
         <Card>
           <CardHeader className="border-b py-4">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2">
-                <GitBranch className="h-5 w-5 text-primary" />
-                Funil do CRM
-              </CardTitle>
-              <CardDescription>
-                Define o funil e etapa padrão para novos leads no CRM
-              </CardDescription>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <CardTitle className="flex items-center gap-2">
+                  <GitBranch className="h-5 w-5 text-primary" />
+                  Funil do CRM
+                </CardTitle>
+                <CardDescription>
+                  Define o funil e etapa padrão para novos leads no CRM
+                </CardDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditingFunnel(true)}
+                className="hover:bg-muted"
+              >
+                <PenLine className="h-4 w-4" />
+              </Button>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -120,6 +133,7 @@ const OrganizationSettings = () => {
                 <Select
                   value={selectedFunnel}
                   onValueChange={setSelectedFunnel}
+                  disabled={!isEditingFunnel}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um funil" />
@@ -139,7 +153,7 @@ const OrganizationSettings = () => {
                 <Select
                   value={selectedStage}
                   onValueChange={setSelectedStage}
-                  disabled={!selectedFunnel}
+                  disabled={!isEditingFunnel || !selectedFunnel}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma etapa" />
@@ -154,6 +168,17 @@ const OrganizationSettings = () => {
                 </Select>
               </div>
             </div>
+            {isEditingFunnel && (
+              <div className="mt-6 flex justify-end">
+                <Button
+                  className="bg-[#000000e6] hover:bg-black/80"
+                  onClick={handleSaveFunnelSettings}
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Configurações
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -169,20 +194,60 @@ const OrganizationSettings = () => {
                   Defina os campos que serão extraídos pelo modelo LLM
                 </CardDescription>
               </div>
-              {!isEditing && (
-                <Button
-                  className="bg-[#000000e6] hover:bg-black/80"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Campo
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsFieldsDialogOpen(true)}
+                className="hover:bg-muted"
+              >
+                <PenLine className="h-4 w-4" />
+              </Button>
             </div>
           </CardHeader>
           <CardContent className="p-6">
-            {isEditing && (
-              <div className="mb-6 p-4 border rounded-lg bg-muted/50">
+            {customFields.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {customFields.map((field) => (
+                  <div
+                    key={field.id}
+                    className="p-4 border rounded-lg"
+                  >
+                    <div className="space-y-1">
+                      <h3 className="font-medium">{field.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {field.description}
+                      </p>
+                      {field.isRequired && (
+                        <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                          Obrigatório
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p>Nenhum campo personalizado configurado</p>
+                <p className="text-sm">
+                  Clique no ícone de edição para adicionar campos
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Dialog open={isFieldsDialogOpen} onOpenChange={setIsFieldsDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Editar Campos Personalizados</DialogTitle>
+              <DialogDescription>
+                Adicione ou remova campos que serão extraídos das chamadas
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="p-4 border rounded-lg bg-muted/50">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Nome do Campo</label>
@@ -219,64 +284,47 @@ const OrganizationSettings = () => {
                       Campo obrigatório
                     </label>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setIsEditing(false);
-                        setNewField({});
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button onClick={handleAddField}>Adicionar Campo</Button>
-                  </div>
+                  <Button onClick={handleAddField}>Adicionar Campo</Button>
                 </div>
               </div>
-            )}
 
-            {customFields.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {customFields.map((field) => (
-                  <div
-                    key={field.id}
-                    className="relative group p-4 border rounded-lg hover:border-primary/50 transition-colors"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-medium">{field.name}</h3>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveField(field.id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+              {customFields.length > 0 && (
+                <div className="space-y-4">
+                  {customFields.map((field) => (
+                    <div
+                      key={field.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
+                      <div>
+                        <h4 className="font-medium">{field.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {field.description}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {field.description}
-                      </p>
-                      {field.isRequired && (
-                        <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                          Obrigatório
-                        </span>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveField(field.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <Button
+                  className="bg-[#000000e6] hover:bg-black/80"
+                  onClick={handleSaveFieldsSettings}
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Configurações
+                </Button>
               </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Nenhum campo personalizado configurado</p>
-                <p className="text-sm">
-                  Adicione campos para extrair informações das suas chamadas
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </OrganizationLayout>
   );
