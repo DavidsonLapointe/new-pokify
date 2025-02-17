@@ -60,6 +60,7 @@ const mockOrganizations: Organization[] = [
     cnpj: "00.000.000/0000-01",
     adminName: "João Silva",
     adminEmail: "joao@techsolutions.com",
+    createdAt: "2024-01-01T00:00:00.000Z"
   },
   {
     id: 2,
@@ -100,6 +101,7 @@ const mockOrganizations: Organization[] = [
     cnpj: "00.000.000/0000-02",
     adminName: "Maria Santos",
     adminEmail: "maria@vendasdiretas.com",
+    createdAt: "2024-02-01T00:00:00.000Z"
   },
   {
     id: 3,
@@ -128,6 +130,7 @@ const mockOrganizations: Organization[] = [
     cnpj: "00.000.000/0000-03",
     adminName: "Pedro Costa",
     adminEmail: "pedro@global.com",
+    createdAt: "2024-03-01T00:00:00.000Z"
   },
 ];
 

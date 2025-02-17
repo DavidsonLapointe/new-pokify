@@ -1,4 +1,3 @@
-
 export type UserRole = "admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
@@ -41,6 +40,7 @@ export interface Organization {
   adminName: string;
   adminEmail: string;
   contractSignedAt?: string;
+  createdAt: string;
 }
 
 export const mockUsers: User[] = [
