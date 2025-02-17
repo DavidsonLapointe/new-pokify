@@ -77,7 +77,7 @@ export function CreditsBalanceCard({
             disabled={isLoading}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Comprar análises adicionais
+            Comprar créditos para análises adicionais
           </Button>
         </div>
       </CardContent>
