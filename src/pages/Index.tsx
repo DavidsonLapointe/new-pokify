@@ -102,7 +102,7 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 rounded-3xl animate-pulse"></div>
                 <img
-                  src="https://images.unsplash.com/photo-1618092388874-e262a562887f?auto=format&fit=crop&q=80&w=1200"
+                  src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&q=80&w=1200"
                   alt="SDR trabalhando no CRM"
                   className="rounded-3xl shadow-2xl object-cover h-[600px] w-full"
                 />
