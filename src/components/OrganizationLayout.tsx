@@ -10,6 +10,7 @@ import {
   Building2,
   PhoneCall,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -59,6 +60,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         icon: PhoneCall, 
         label: "Efetuar Ligação", 
         path: "/organization/new-call"
+      },
+      {
+        icon: CreditCard,
+        label: "Meu Plano",
+        path: "/organization/plan",
       },
       {
         icon: UserCircle,
