@@ -13,25 +13,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Organization } from "@/types/organization";
 
-// Mock da organização atual (depois será substituído pela organização real)
-const mockCurrentOrganization: Organization = {
-  id: 1,
-  name: "Tech Solutions",
-  nomeFantasia: "Tech Solutions Ltda",
-  plan: "Enterprise",
-  users: [],
-  status: "active",
-  integratedCRM: "HubSpot", // ou null se não tiver integração
-  integratedLLM: "GPT-4",
-  email: "contact@techsolutions.com",
-  phone: "(11) 1234-5678",
-  cnpj: "12.345.678/0001-00",
-  adminName: "João Silva",
-  adminEmail: "joao@techsolutions.com"
-};
-
-// Mock dos funis (depois será substituído pelos dados reais do backend)
-const mockFunnels = [
+// Dados mockados movidos para fora do componente
+const mockFunnels: Funnel[] = [
   {
     id: "1",
     name: "Funil de Vendas",
@@ -52,6 +35,22 @@ const mockFunnels = [
     ],
   },
 ];
+
+const mockCurrentOrganization: Organization = {
+  id: 1,
+  name: "Tech Solutions",
+  nomeFantasia: "Tech Solutions Ltda",
+  plan: "Enterprise",
+  users: [],
+  status: "active",
+  integratedCRM: "HubSpot", // ou null se não tiver integração
+  integratedLLM: "GPT-4",
+  email: "contact@techsolutions.com",
+  phone: "(11) 1234-5678",
+  cnpj: "12.345.678/0001-00",
+  adminName: "João Silva",
+  adminEmail: "joao@techsolutions.com"
+};
 
 const OrganizationSettings = () => {
   const navigate = useNavigate();
