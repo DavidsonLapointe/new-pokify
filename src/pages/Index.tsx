@@ -36,66 +36,90 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section with Image */}
-      <section className="relative min-h-[800px] flex items-center pt-16 overflow-hidden">
-        <div className="absolute inset-0">
-          <div 
-            className="absolute inset-0 bg-gradient-to-r from-blue-600/95 to-blue-800/95 mix-blend-multiply z-10" 
-          />
-          <div 
-            className="absolute inset-0 bg-cover bg-center scale-105 animate-[float_6s_ease-in-out_infinite]"
-            style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2940&auto=format&fit=crop')",
-              animation: "float 6s ease-in-out infinite",
-            }}
-          />
-        </div>
-        <div className="container mx-auto px-4 relative z-20">
-          <div className="max-w-3xl text-white space-y-8 py-20">
-            <div className="inline-block px-4 py-2 bg-blue-500/20 backdrop-blur-sm rounded-full text-blue-200 text-sm font-medium mb-4">
-              ✨ Revolucione seu processo de vendas
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Automatize o Cadastro de{" "}
-              <span className="bg-gradient-to-r from-blue-200 to-blue-100 bg-clip-text text-transparent">
-                Leads no CRM
-              </span>
-            </h1>
-            <p className="text-xl text-blue-100/90 leading-relaxed max-w-2xl">
-              Chega de perder tempo preenchendo manualmente informações após cada
-              ligação. Nossa IA extrai e cadastra os dados automaticamente enquanto
-              você foca no que importa: vender mais.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-blue-600 hover:bg-blue-50 h-14 px-8 text-lg" 
-                onClick={() => navigate("/register")}
-              >
-                Começar Agora
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="bg-blue-600/20 text-white border-white hover:bg-blue-600/30 backdrop-blur-sm h-14 px-8 text-lg" 
-                onClick={() => navigate("/demo")}
-              >
-                Agendar Demo
-              </Button>
-            </div>
-            <div className="flex items-center gap-8 pt-8 text-blue-100/80 text-sm">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5" />
-                Teste Grátis por 14 dias
+      {/* Hero Section */}
+      <section className="relative min-h-[700px] bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 pt-32 pb-20 items-center">
+            {/* Left Content */}
+            <div className="space-y-8 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-100">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Tecnologia de ponta em Vendas
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5" />
-                Suporte 24/7
+              
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
+                Automatize suas{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                  Vendas com IA
+                </span>
+              </h1>
+              
+              <p className="text-lg text-slate-600 leading-relaxed">
+                Nossa plataforma integra IA avançada para converter chamadas em leads qualificados automaticamente. 
+                Aumente sua produtividade e foque no que realmente importa: fechar negócios.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white h-12 px-6" 
+                  onClick={() => navigate("/register")}
+                >
+                  Começar Gratuitamente
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="h-12 px-6" 
+                  onClick={() => navigate("/demo")}
+                >
+                  Ver Demonstração
+                </Button>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5" />
-                Sem compromisso
+
+              <div className="grid grid-cols-3 gap-6 pt-8 border-t">
+                <div>
+                  <div className="text-2xl font-bold text-slate-900">98%</div>
+                  <div className="text-sm text-slate-600">Precisão na extração</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-slate-900">2.5x</div>
+                  <div className="text-sm text-slate-600">Mais produtividade</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-slate-900">24/7</div>
+                  <div className="text-sm text-slate-600">Suporte dedicado</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image/Illustration */}
+            <div className="relative lg:block">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 rounded-3xl animate-pulse"></div>
+                <img
+                  src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1200"
+                  alt="Dashboard da plataforma"
+                  className="rounded-3xl shadow-2xl object-cover h-[600px] w-full"
+                />
+              </div>
+              <div className="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl max-w-[280px]">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <CheckCircle2 className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Lead Qualificado</div>
+                    <div className="text-sm text-slate-600">Extração automática</div>
+                  </div>
+                </div>
+                <div className="h-2 bg-blue-100 rounded-full">
+                  <div className="h-2 w-4/5 bg-blue-600 rounded-full"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -157,4 +181,3 @@ const Index = () => {
 };
 
 export default Index;
-
