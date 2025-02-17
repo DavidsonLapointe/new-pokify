@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -103,32 +102,30 @@ const OrganizationPlan = () => {
 
   return (
     <OrganizationLayout>
-      <div className="h-[calc(100vh-4rem)] p-6 flex flex-col">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">Meu Plano</h1>
-          <p className="text-muted-foreground text-sm">
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-3xl font-bold">Meu Plano</h1>
+          <p className="text-muted-foreground">
             Gerencie seu plano e consumo de análises
           </p>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 flex-1 overflow-hidden">
-          <div className="space-y-4 overflow-auto pr-2">
-            <CurrentPlanCard 
-              planInfo={planInfo}
-              onChangePlan={() => setIsChangePlanDialogOpen(true)}
-            />
-            <CreditsBalanceCard
-              monthlyQuota={usageInfo.monthlyQuota}
-              used={usageInfo.used}
-              additionalCredits={usageInfo.additionalCredits}
-              onBuyMoreCredits={handleBuyMoreAnalyses}
-              isLoading={isLoading}
-            />
-          </div>
-          
-          <div className="overflow-auto pr-2">
-            <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
-          </div>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <CurrentPlanCard 
+            planInfo={planInfo}
+            onChangePlan={() => setIsChangePlanDialogOpen(true)}
+          />
+          <CreditsBalanceCard
+            monthlyQuota={usageInfo.monthlyQuota}
+            used={usageInfo.used}
+            additionalCredits={usageInfo.additionalCredits}
+            onBuyMoreCredits={handleBuyMoreAnalyses}
+            isLoading={isLoading}
+          />
+        </div>
+
+        <div className="mt-4">
+          <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
         </div>
 
         <AnalysisPackagesDialog
