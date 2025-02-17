@@ -1,4 +1,3 @@
-
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,8 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Plus, DollarSign, Users, FileText } from "lucide-react";
 import { useState } from "react";
+import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 
-// Dados mockados para exemplo
 const mockPlans = [
   {
     id: 1,
@@ -61,7 +60,22 @@ const mockPlans = [
 ];
 
 const Plans = () => {
-  const [plans] = useState(mockPlans);
+  const [plans, setPlans] = useState(mockPlans);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<any>(null);
+
+  const handleSavePlan = (data: any) => {
+    if (editingPlan) {
+      setPlans(plans.map(plan => 
+        plan.id === editingPlan.id 
+          ? { ...plan, ...data, id: plan.id }
+          : plan
+      ));
+      setEditingPlan(null);
+    } else {
+      setPlans([...plans, { ...data, id: plans.length + 1 }]);
+    }
+  };
 
   const PlanCard = ({ plan }: { plan: any }) => (
     <Card className="hover:shadow-md transition-shadow">
@@ -94,7 +108,11 @@ const Plans = () => {
               ))}
             </ul>
           </div>
-          <Button className="w-full mt-4" variant={plan.name === "Professional" ? "default" : "outline"}>
+          <Button 
+            className="w-full mt-4" 
+            variant={plan.name === "Professional" ? "default" : "outline"}
+            onClick={() => setEditingPlan(plan)}
+          >
             Editar Plano
           </Button>
         </div>
@@ -112,7 +130,7 @@ const Plans = () => {
               Gerencie os planos disponíveis na plataforma
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Novo Plano
           </Button>
@@ -123,6 +141,19 @@ const Plans = () => {
             <PlanCard key={plan.id} plan={plan} />
           ))}
         </div>
+
+        <EditPlanDialog
+          open={!!editingPlan}
+          onOpenChange={(open) => !open && setEditingPlan(null)}
+          plan={editingPlan}
+          onSave={handleSavePlan}
+        />
+
+        <EditPlanDialog
+          open={isCreateDialogOpen}
+          onOpenChange={setIsCreateDialogOpen}
+          onSave={handleSavePlan}
+        />
       </div>
     </AdminLayout>
   );
