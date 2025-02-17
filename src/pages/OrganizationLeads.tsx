@@ -14,6 +14,51 @@ import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 
+// Mock do usuário logado - depois será substituído pela autenticação real
+const mockLoggedUser = {
+  id: 1,
+  name: "João Silva",
+  email: "joao@empresa.com",
+  role: "admin",
+  status: "active",
+  permissions: {
+    dashboard: ["view", "export"],
+    calls: ["view", "upload", "delete"],
+    leads: ["view", "edit", "delete"],
+    integrations: ["view", "edit"],
+  },
+};
+
+// Mock da organização - depois será substituído pelos dados reais
+const mockOrganization = {
+  id: 1,
+  name: "Tech Solutions Ltda",
+  integratedCRM: "HubSpot",
+  integratedLLM: "GPT-4O",
+  users: [
+    {
+      id: 1,
+      name: "João Silva",
+      email: "joao@empresa.com",
+      role: "admin",
+      status: "active",
+      permissions: {
+        integrations: ["view", "edit"],
+      },
+    },
+    {
+      id: 2,
+      name: "Maria Santos",
+      email: "maria@empresa.com",
+      role: "admin",
+      status: "active",
+      permissions: {
+        integrations: ["view", "edit"],
+      },
+    },
+  ],
+};
+
 const OrganizationLeads = () => {
   const location = useLocation();
   const showCreateLeadFromState = location.state?.showCreateLead || false;
@@ -64,6 +109,8 @@ const OrganizationLeads = () => {
           <LeadsPageHeader
             onUploadClick={() => setIsFindLeadOpen(true)}
             onNewLeadClick={() => setIsCreateLeadOpen(true)}
+            currentUser={mockLoggedUser}
+            organization={mockOrganization}
           />
 
           <LeadsPageContent
