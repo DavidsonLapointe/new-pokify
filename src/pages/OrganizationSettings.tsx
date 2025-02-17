@@ -1,11 +1,17 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Save, ListChecks } from "lucide-react";
+import { Plus, Trash2, Save, ListChecks, GitBranch } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CustomField {
   id: string;
@@ -14,10 +20,34 @@ interface CustomField {
   isRequired: boolean;
 }
 
+const mockFunnels = [
+  {
+    id: "1",
+    name: "Funil de Vendas",
+    stages: [
+      { id: "1", name: "Qualificação" },
+      { id: "2", name: "Apresentação" },
+      { id: "3", name: "Proposta" },
+      { id: "4", name: "Negociação" },
+    ],
+  },
+  {
+    id: "2",
+    name: "Funil de Marketing",
+    stages: [
+      { id: "5", name: "Lead" },
+      { id: "6", name: "MQL" },
+      { id: "7", name: "SQL" },
+    ],
+  },
+];
+
 const OrganizationSettings = () => {
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [newField, setNewField] = useState<Partial<CustomField>>({});
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedFunnel, setSelectedFunnel] = useState<string>("");
+  const [selectedStage, setSelectedStage] = useState<string>("");
 
   const handleAddField = () => {
     if (!newField.name || !newField.description) {
@@ -44,10 +74,15 @@ const OrganizationSettings = () => {
   };
 
   const handleSaveSettings = () => {
-    // Aqui implementaria a lógica para salvar as configurações
-    console.log("Campos salvos:", customFields);
+    console.log("Configurações salvas:", {
+      customFields,
+      defaultFunnel: selectedFunnel,
+      defaultStage: selectedStage,
+    });
     toast.success("Configurações salvas com sucesso");
   };
+
+  const currentFunnel = mockFunnels.find((f) => f.id === selectedFunnel);
 
   return (
     <OrganizationLayout>
@@ -64,6 +99,62 @@ const OrganizationSettings = () => {
             Salvar Configurações
           </Button>
         </div>
+
+        <Card>
+          <CardHeader className="border-b">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2">
+                <GitBranch className="h-5 w-5 text-primary" />
+                Funil do CRM
+              </CardTitle>
+              <CardDescription>
+                Define o funil e etapa padrão para novos leads no CRM
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Funil</label>
+                <Select
+                  value={selectedFunnel}
+                  onValueChange={setSelectedFunnel}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um funil" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockFunnels.map((funnel) => (
+                      <SelectItem key={funnel.id} value={funnel.id}>
+                        {funnel.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Etapa</label>
+                <Select
+                  value={selectedStage}
+                  onValueChange={setSelectedStage}
+                  disabled={!selectedFunnel}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione uma etapa" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currentFunnel?.stages.map((stage) => (
+                      <SelectItem key={stage.id} value={stage.id}>
+                        {stage.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader className="border-b">
