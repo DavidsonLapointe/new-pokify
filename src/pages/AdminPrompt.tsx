@@ -1,4 +1,3 @@
-
 import AdminLayout from "@/components/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,6 +30,13 @@ const AdminPrompt = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
 
+  const handleNewPrompt = () => {
+    setNewPrompt({ name: "", content: "", description: "" });
+    setIsEditing(false);
+    setSelectedPrompt(null);
+    setIsModalOpen(true);
+  };
+
   const handleSavePrompt = () => {
     if (!newPrompt.name.trim() || !newPrompt.content.trim() || !newPrompt.description.trim()) {
       toast({
@@ -42,7 +48,6 @@ const AdminPrompt = () => {
     }
 
     if (isEditing && selectedPrompt) {
-      // Atualizar prompt existente
       const updatedPrompts = prompts.map((prompt) =>
         prompt.id === selectedPrompt.id ? { ...newPrompt, id: prompt.id } : prompt
       );
@@ -52,7 +57,6 @@ const AdminPrompt = () => {
         description: "Prompt atualizado com sucesso!",
       });
     } else {
-      // Criar novo prompt
       const prompt: Prompt = {
         id: Date.now().toString(),
         name: newPrompt.name,
@@ -102,7 +106,7 @@ const AdminPrompt = () => {
               Gerencie seus prompts de IA
             </p>
           </div>
-          <Button onClick={() => setIsModalOpen(true)}>
+          <Button onClick={handleNewPrompt}>
             <Plus className="w-4 h-4 mr-2" />
             Novo Prompt
           </Button>
@@ -155,7 +159,6 @@ const AdminPrompt = () => {
           </Card>
         )}
 
-        {/* Modal de Visualização */}
         <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
@@ -183,7 +186,6 @@ const AdminPrompt = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Modal de Criação/Edição */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
