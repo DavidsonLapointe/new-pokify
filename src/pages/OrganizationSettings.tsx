@@ -73,6 +73,7 @@ const OrganizationSettings = () => {
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [newFunnel, setNewFunnel] = useState("");
   const [newStage, setNewStage] = useState("");
+  const [newStageFunnelId, setNewStageFunnelId] = useState<string>("");
   const [funnels, setFunnels] = useState<Funnel[]>(mockFunnels);
 
   const handleOpenNewField = () => {
@@ -143,13 +144,13 @@ const OrganizationSettings = () => {
   };
 
   const handleSaveStage = () => {
-    if (!selectedFunnel || !newStage) {
+    if (!newStageFunnelId || !newStage) {
       toast.error("Selecione um funil e digite o nome da etapa");
       return;
     }
 
     const updatedFunnels = funnels.map(funnel => {
-      if (funnel.id === selectedFunnel) {
+      if (funnel.id === newStageFunnelId) {
         return {
           ...funnel,
           stages: [...funnel.stages, { id: crypto.randomUUID(), name: newStage }]
@@ -160,6 +161,7 @@ const OrganizationSettings = () => {
 
     setFunnels(updatedFunnels);
     setNewStage("");
+    setNewStageFunnelId("");
     setIsStageDialogOpen(false);
     toast.success("Etapa criada com sucesso");
   };
@@ -195,16 +197,15 @@ const OrganizationSettings = () => {
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant="outline"
+                  className="bg-[#000000e6] hover:bg-black/80"
                   onClick={() => setIsFunnelDialogOpen(true)}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Funil
                 </Button>
                 <Button
-                  variant="outline"
+                  className="bg-[#000000e6] hover:bg-black/80"
                   onClick={() => setIsStageDialogOpen(true)}
-                  disabled={!selectedFunnel}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Etapa
@@ -256,17 +257,6 @@ const OrganizationSettings = () => {
                 </Select>
               </div>
             </div>
-            {isEditingFunnel && (
-              <div className="mt-6 flex justify-end">
-                <Button
-                  className="bg-[#000000e6] hover:bg-black/80"
-                  onClick={handleSaveFunnelSettings}
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvar Configurações
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -442,10 +432,22 @@ const OrganizationSettings = () => {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Funil Selecionado</label>
-                <p className="text-sm text-muted-foreground">
-                  {currentFunnel?.name || "Nenhum funil selecionado"}
-                </p>
+                <label className="text-sm font-medium">Selecione o Funil</label>
+                <Select
+                  value={newStageFunnelId}
+                  onValueChange={setNewStageFunnelId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um funil" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {funnels.map((funnel) => (
+                      <SelectItem key={funnel.id} value={funnel.id}>
+                        {funnel.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Nome da Etapa</label>
