@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
@@ -18,6 +18,18 @@ export const useCallsPage = () => {
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
+  const [processedCalls, setProcessedCalls] = useState<Call[]>([]);
+
+  // Efeito para processar as chamadas e garantir que todas sejam exibidas
+  useEffect(() => {
+    const processLeads = () => {
+      const allCalls = [...calls];
+      console.log("Processando leads:", allCalls);
+      setProcessedCalls(allCalls);
+    };
+
+    processLeads();
+  }, [calls]);
 
   const handlePlayAudio = useCallback((audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -43,13 +55,10 @@ export const useCallsPage = () => {
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
     console.log("Confirmando novo lead - withUpload:", withUpload);
     console.log("pendingLeadData:", pendingLeadData);
-    console.log("newCall:", newCall);
-
+    
     if (!withUpload && pendingLeadData) {
       const leadId = uuidv4();
-      console.log("Criando chamada vazia com dados:", pendingLeadData);
-
-      // Verifica se os dados obrigatórios estão presentes
+      
       if (!pendingLeadData.firstName) {
         console.error("Nome do lead está vazio!");
         return;
@@ -67,7 +76,7 @@ export const useCallsPage = () => {
         mediaType: "audio",
         leadInfo: {
           personType: pendingLeadData.personType,
-          firstName: pendingLeadData.firstName, // Campo obrigatório
+          firstName: pendingLeadData.firstName,
           lastName: pendingLeadData.lastName || "",
           razaoSocial: pendingLeadData.razaoSocial || "",
           email: pendingLeadData.email || "",
@@ -79,11 +88,15 @@ export const useCallsPage = () => {
 
       console.log("Chamada vazia criada:", emptyCall);
       
+      // Atualização do estado usando função de atualização
       setCalls(prevCalls => {
         const newCalls = [emptyCall, ...prevCalls];
-        console.log("Nova lista de chamadas:", newCalls);
+        console.log("Nova lista de chamadas após adição:", newCalls);
         return newCalls;
       });
+
+      // Garantir que o processedCalls seja atualizado imediatamente após
+      setProcessedCalls(prevProcessed => [emptyCall, ...prevProcessed]);
 
       setPendingLeadData(null);
       
@@ -94,14 +107,12 @@ export const useCallsPage = () => {
     } else if (withUpload && newCall) {
       console.log("Atualizando lead com upload:", newCall);
       setCalls(prevCalls => {
-        const index = prevCalls.findIndex(call => call.leadId === newCall.leadId);
-        if (index !== -1) {
-          const filteredCalls = prevCalls.filter(call => 
-            !(call.leadId === newCall.leadId && call.emptyLead)
-          );
-          return [newCall, ...filteredCalls];
-        }
-        return [newCall, ...prevCalls];
+        const filteredCalls = prevCalls.filter(call => 
+          !(call.leadId === newCall.leadId && call.emptyLead)
+        );
+        const newCalls = [newCall, ...filteredCalls];
+        setProcessedCalls(newCalls); // Atualiza processedCalls imediatamente
+        return newCalls;
       });
     }
   }, [pendingLeadData]);
@@ -119,11 +130,11 @@ export const useCallsPage = () => {
 
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
-    console.log("Chamadas disponíveis:", calls);
+    console.log("Chamadas processadas disponíveis:", processedCalls);
     
     const query = (searchQuery || "").toLowerCase();
     
-    return calls.filter(call => {
+    return processedCalls.filter(call => {
       const leadName = call.leadInfo.personType === "pf" 
         ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
         : call.leadInfo.razaoSocial;
@@ -136,7 +147,7 @@ export const useCallsPage = () => {
         (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(query))
       );
     });
-  }, [calls, searchQuery]);
+  }, [processedCalls, searchQuery]);
 
   return {
     searchQuery,
