@@ -65,11 +65,47 @@ export const CreateOrganizationDialog = ({
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    // Criar a empresa com status "pending"
+    const newOrganization = {
+      ...values,
+      status: "pending",
+      integratedCRM: null,
+      integratedLLM: null,
+      users: [{
+        id: 1,
+        name: values.adminName,
+        email: values.adminEmail,
+        role: "admin",
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        lastAccess: null,
+        permissions: { integrations: ["view", "edit"] },
+        logs: []
+      }]
+    };
+
+    console.log("Nova empresa criada:", newOrganization);
+
+    // Mostrar mensagem de sucesso com detalhes sobre o email
     toast({
       title: "Empresa criada com sucesso",
-      description: "Um email foi enviado para o administrador com as instruções de acesso.",
+      description: "Um email foi enviado para o administrador contendo:",
+      children: (
+        <ul className="mt-2 ml-2 list-disc list-inside">
+          <li>Contrato de adesão para assinatura</li>
+          <li>Instruções para pagamento da primeira mensalidade (pro rata)</li>
+          <li>Opções de pagamento via PIX ou boleto</li>
+          <li>Link para acesso ao sistema após confirmação do pagamento</li>
+        </ul>
+      ),
     });
+
+    // Enviar notificação ao admin do sistema
+    toast({
+      title: "Notificação administrativa",
+      description: "Nova empresa cadastrada aguardando pagamento inicial",
+    });
+
     form.reset();
     onOpenChange(false);
   };
@@ -81,6 +117,7 @@ export const CreateOrganizationDialog = ({
           <DialogTitle>Nova Empresa</DialogTitle>
           <DialogDescription>
             Preencha os dados da empresa e do administrador inicial.
+            O contrato e as instruções de pagamento serão enviados por email.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -235,7 +272,7 @@ export const CreateOrganizationDialog = ({
               >
                 Cancelar
               </Button>
-              <Button type="submit">Criar</Button>
+              <Button type="submit">Criar Empresa</Button>
             </div>
           </form>
         </Form>
