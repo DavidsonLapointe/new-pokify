@@ -40,17 +40,17 @@ export function ChangePlanDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
           {availablePlans
             .filter((plan) => plan.id !== currentPlan.id)
             .map((plan) => (
               <div
                 key={plan.id}
-                className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors"
+                className="border rounded-lg p-4 space-y-4 hover:border-primary hover:shadow-sm transition-all"
               >
                 <div className="space-y-2">
                   <h3 className="font-semibold text-lg">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-sm leading-snug">
                     {plan.description}
                   </p>
                   <div className="text-2xl font-bold">
@@ -65,16 +65,17 @@ export function ChangePlanDialog({
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       <BadgeCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      <span>{feature}</span>
+                      <span className="leading-tight">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button
-                  className="w-full mt-4"
+                  className="w-full"
                   onClick={() => handlePlanChange(plan)}
+                  size="sm"
                 >
-                  Mudar para este plano
+                  Mudar
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

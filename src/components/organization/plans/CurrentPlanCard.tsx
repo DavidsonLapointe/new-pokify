@@ -91,10 +91,11 @@ export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps
           <Button 
             variant="outline" 
             onClick={onChangePlan}
-            className="w-full"
+            className="w-full text-muted-foreground hover:text-foreground transition-colors"
+            size="sm"
           >
             <ArrowUpDown className="h-4 w-4 mr-2" />
-            Mudar de plano
+            Alterar plano
           </Button>
           
           <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
