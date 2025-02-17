@@ -432,6 +432,14 @@ const OrganizationSettings = () => {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
+                <label className="text-sm font-medium">Nome da Etapa</label>
+                <Input
+                  placeholder="Ex: Qualificação"
+                  value={newStage}
+                  onChange={(e) => setNewStage(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
                 <label className="text-sm font-medium">Selecione o Funil</label>
                 <Select
                   value={newStageFunnelId}
@@ -448,14 +456,6 @@ const OrganizationSettings = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Nome da Etapa</label>
-                <Input
-                  placeholder="Ex: Qualificação"
-                  value={newStage}
-                  onChange={(e) => setNewStage(e.target.value)}
-                />
               </div>
             </div>
             <div className="flex justify-end">
