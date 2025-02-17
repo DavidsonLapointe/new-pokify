@@ -13,27 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Organization } from "@/types/organization";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-const mockFunnels: Funnel[] = [
-  {
-    id: "1",
-    name: "Funil de Vendas",
-    stages: [
-      { id: "1", name: "Qualificação" },
-      { id: "2", name: "Apresentação" },
-      { id: "3", name: "Proposta" },
-      { id: "4", name: "Negociação" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Funil de Marketing",
-    stages: [
-      { id: "5", name: "Lead" },
-      { id: "6", name: "MQL" },
-      { id: "7", name: "SQL" },
-    ],
-  },
-];
+const mockFunnels: Funnel[] = [];
 
 const mockCurrentOrganization: Organization = {
   id: 1,
