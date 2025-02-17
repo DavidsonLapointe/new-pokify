@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -48,6 +47,8 @@ const OrganizationSettings = () => {
   const [newStage, setNewStage] = useState("");
   const [newStageFunnelId, setNewStageFunnelId] = useState<string>("");
   const [funnels, setFunnels] = useState<Funnel[]>(mockFunnels);
+  const [isDefaultConfigSaved, setIsDefaultConfigSaved] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleOpenNewField = () => {
     setIsEditingField(false);
@@ -149,6 +150,21 @@ const OrganizationSettings = () => {
     toast.success("Etapa criada com sucesso");
   };
 
+  const handleSaveDefaultConfig = () => {
+    if (!selectedFunnel || !selectedStage) {
+      toast.error("Selecione um funil e uma etapa");
+      return;
+    }
+
+    setIsDefaultConfigSaved(true);
+    setIsEditing(false);
+    toast.success("Configurações salvas com sucesso");
+  };
+
+  const handleToggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
   return (
     <OrganizationLayout>
       <div className="space-y-6">
@@ -190,6 +206,10 @@ const OrganizationSettings = () => {
           setSelectedStage={setSelectedStage}
           setIsFunnelDialogOpen={setIsFunnelDialogOpen}
           setIsStageDialogOpen={handleNewStageClick}
+          isDefaultConfigSaved={isDefaultConfigSaved}
+          isEditing={isEditing}
+          onSaveDefaultConfig={handleSaveDefaultConfig}
+          onToggleEdit={handleToggleEdit}
         />
 
         <CustomFieldsSection
