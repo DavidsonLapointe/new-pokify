@@ -25,8 +25,7 @@ const OrganizationUsers = () => {
     setPermissionsDialogOpen(true);
   };
 
-  const handleUserAdded = (newUser: User) => {
-    setUsers((currentUsers) => [...currentUsers, newUser]);
+  const handleUserAdded = () => {
     toast.success("Usuário adicionado com sucesso!");
   };
 
@@ -72,16 +71,16 @@ const OrganizationUsers = () => {
         {selectedUser && (
           <>
             <EditUserDialog
-              open={editDialogOpen}
-              onOpenChange={setEditDialogOpen}
+              isOpen={editDialogOpen}
+              onClose={() => setEditDialogOpen(false)}
               user={selectedUser}
-              onUserUpdated={handleUserUpdated}
+              onUserUpdate={handleUserUpdated}
             />
             <UserPermissionsDialog
-              open={permissionsDialogOpen}
-              onOpenChange={setPermissionsDialogOpen}
+              isOpen={permissionsDialogOpen}
+              onClose={() => setPermissionsDialogOpen(false)}
               user={selectedUser}
-              onPermissionsUpdated={handlePermissionsUpdated}
+              onUserUpdate={handlePermissionsUpdated}
             />
           </>
         )}
