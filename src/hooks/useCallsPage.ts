@@ -91,7 +91,7 @@ export const useCallsPage = () => {
           if (lead.id === newCall.leadId) {
             return {
               ...lead,
-              calls: [newCall, ...lead.calls]
+              calls: [newCall, ...lead.calls.filter(call => !call.emptyLead)]
             };
           }
           return lead;
@@ -102,6 +102,31 @@ export const useCallsPage = () => {
     toast({
       title: "Lead atualizado com sucesso",
       description: withUpload ? "Upload da chamada realizado com sucesso." : "Lead criado com sucesso.",
+    });
+  }, []);
+
+  const handleUploadSuccess = useCallback((leadId: string, uploadedCall: Call) => {
+    setLeads(prevLeads => {
+      return prevLeads.map(lead => {
+        if (lead.id === leadId) {
+          // Remove chamadas vazias (emptyLead: true) e adiciona a nova chamada
+          const updatedCalls = [
+            uploadedCall,
+            ...lead.calls.filter(call => !call.emptyLead)
+          ];
+          
+          return {
+            ...lead,
+            calls: updatedCalls
+          };
+        }
+        return lead;
+      });
+    });
+
+    toast({
+      title: "Upload realizado com sucesso",
+      description: "A chamada foi adicionada ao histórico do lead.",
     });
   }, []);
 
@@ -170,5 +195,6 @@ export const useCallsPage = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
+    handleUploadSuccess,
   };
 };

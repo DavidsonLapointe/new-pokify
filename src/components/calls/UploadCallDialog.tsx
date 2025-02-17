@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProcessingOverlay } from "./ProcessingOverlay";
+import { Call } from "@/types/calls";
+import { v4 as uuidv4 } from "uuid";
 
 interface UploadCallDialogProps {
   leadId: string;
@@ -20,6 +22,7 @@ interface UploadCallDialogProps {
   onOpenChange: (open: boolean) => void;
   onUploadSuccess?: () => void;
   onCancel?: () => void;
+  leadInfo?: Call["leadInfo"];
 }
 
 export const UploadCallDialog = ({
@@ -28,6 +31,7 @@ export const UploadCallDialog = ({
   onOpenChange,
   onUploadSuccess,
   onCancel,
+  leadInfo,
 }: UploadCallDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -57,12 +61,26 @@ export const UploadCallDialog = ({
   };
 
   const handleProcess = async () => {
-    if (!file) return;
+    if (!file || !leadInfo) return;
 
     setIsUploading(true);
     try {
       // Simula o upload e processamento
       await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Cria o objeto da nova chamada
+      const newCall: Call = {
+        id: uuidv4(),
+        leadId,
+        date: new Date().toISOString(),
+        duration: "0:00",
+        status: "success" as const,
+        phone: leadInfo.phone,
+        seller: "Sistema",
+        audioUrl: URL.createObjectURL(file),
+        mediaType: file.type.startsWith('video/') ? "video" : "audio",
+        leadInfo,
+      };
       
       // Chama o callback de sucesso que vai atualizar o lead
       onUploadSuccess?.();
@@ -74,7 +92,7 @@ export const UploadCallDialog = ({
       // Mostra mensagem de sucesso
       toast({
         title: "Chamada processada com sucesso",
-        description: "O arquivo foi processado e o lead foi atualizado com a primeira chamada.",
+        description: "O arquivo foi processado e adicionado ao histórico do lead.",
       });
     } catch (error) {
       toast({
