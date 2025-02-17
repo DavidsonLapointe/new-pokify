@@ -13,6 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Building2, Plus, Search, Pencil } from "lucide-react";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Dados mockados para exemplo
 const mockOrganizations = [
@@ -21,7 +27,14 @@ const mockOrganizations = [
     name: "Tech Solutions Ltda",
     nomeFantasia: "Tech Solutions",
     plan: "Enterprise",
-    users: 15,
+    users: [
+      { role: "admin", status: "active" },
+      { role: "admin", status: "inactive" },
+      { role: "seller", status: "active" },
+      { role: "seller", status: "active" },
+      { role: "seller", status: "active" },
+      { role: "seller", status: "inactive" },
+    ],
     status: "active",
     integratedCRM: null,
     integratedLLM: "GPT-4O",
@@ -36,7 +49,11 @@ const mockOrganizations = [
     name: "Vendas Diretas S.A.",
     nomeFantasia: "Vendas Diretas",
     plan: "Professional",
-    users: 8,
+    users: [
+      { role: "admin", status: "active" },
+      { role: "seller", status: "active" },
+      { role: "seller", status: "active" },
+    ],
     status: "active",
     integratedCRM: "Pipedrive",
     integratedLLM: "Claude AI",
@@ -51,7 +68,10 @@ const mockOrganizations = [
     name: "Global Comercio",
     nomeFantasia: "Global",
     plan: "Basic",
-    users: 3,
+    users: [
+      { role: "admin", status: "active" },
+      { role: "seller", status: "inactive" },
+    ],
     status: "inactive",
     integratedCRM: null,
     integratedLLM: null,
@@ -75,66 +95,84 @@ const Organizations = () => {
     )
   );
 
-  const OrganizationCard = ({ organization }: { organization: any }) => (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer group">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-base font-medium">
-              <Building2 className="w-4 h-4 text-muted-foreground" />
-              {organization.name}
-            </CardTitle>
-            <CardDescription className="mt-1">
-              <span className="font-medium text-sm">Plano:</span> {organization.plan}
-            </CardDescription>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-secondary"
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditingOrganization(organization);
-            }}
-          >
-            <Pencil className="w-4 h-4 text-primary hover:text-primary/80" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2.5 text-sm">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Usuários</span>
-            <span className="font-medium">{organization.users}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">CRM</span>
-            <span className={`font-medium ${!organization.integratedCRM ? "text-yellow-600" : ""}`}>
-              {organization.integratedCRM || "Pendente de integração"}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">LLM</span>
-            <span className={`font-medium ${!organization.integratedLLM ? "text-yellow-600" : ""}`}>
-              {organization.integratedLLM || "Pendente de integração"}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Status</span>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                organization.status === "active"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
+  const OrganizationCard = ({ organization }: { organization: any }) => {
+    const activeUsers = organization.users.filter(user => user.status === "active");
+    const activeAdmins = activeUsers.filter(user => user.role === "admin").length;
+    const activeSellers = activeUsers.filter(user => user.role === "seller").length;
+    
+    return (
+      <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+        <CardHeader className="pb-3">
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base font-medium">
+                <Building2 className="w-4 h-4 text-muted-foreground" />
+                {organization.name}
+              </CardTitle>
+              <CardDescription className="mt-1">
+                <span className="font-medium text-sm">Plano:</span> {organization.plan}
+              </CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-secondary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingOrganization(organization);
+              }}
             >
-              {organization.status === "active" ? "Ativo" : "Inativo"}
-            </span>
+              <Pencil className="w-4 h-4 text-primary hover:text-primary/80" />
+            </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2.5 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Usuários ativos</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span className="font-medium">
+                      {activeUsers.length}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Administradores: {activeAdmins}</p>
+                    <p>Vendedores: {activeSellers}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">CRM</span>
+              <span className={`font-medium ${!organization.integratedCRM ? "text-yellow-600" : ""}`}>
+                {organization.integratedCRM || "Pendente de integração"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">LLM</span>
+              <span className={`font-medium ${!organization.integratedLLM ? "text-yellow-600" : ""}`}>
+                {organization.integratedLLM || "Pendente de integração"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Status</span>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  organization.status === "active"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {organization.status === "active" ? "Ativo" : "Inativo"}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <AdminLayout>
