@@ -3,9 +3,9 @@ import { ReactNode } from "react";
 import {
   Settings,
   Users,
-  Phone,
-  BarChart3,
   Headphones,
+  BarChart3,
+  Network,
   UserCircle,
   Building2,
   PhoneCall,
@@ -52,7 +52,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         path: "/organization/dashboard",
       },
       { 
-        icon: Phone, 
+        icon: Headphones, 
         label: "Análise de Leads", 
         path: "/organization/leads"
       },
@@ -76,7 +76,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     const adminItems = [
       { icon: Users, label: "Usuários", path: "/organization/users" },
       {
-        icon: Headphones,
+        icon: Network,
         label: "Integrações",
         path: "/organization/integrations",
       },
