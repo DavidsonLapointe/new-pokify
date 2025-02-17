@@ -20,7 +20,7 @@ interface UploadCallDialogProps {
   leadId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onUploadSuccess?: () => void;
+  onUploadSuccess?: (call?: Call) => void;
   onCancel?: () => void;
   leadInfo?: Call["leadInfo"];
 }
@@ -61,7 +61,7 @@ export const UploadCallDialog = ({
   };
 
   const handleProcess = async () => {
-    if (!file || !leadInfo) return;
+    if (!file) return;
 
     setIsUploading(true);
     try {
@@ -75,15 +75,19 @@ export const UploadCallDialog = ({
         date: new Date().toISOString(),
         duration: "0:00",
         status: "success" as const,
-        phone: leadInfo.phone,
+        phone: leadInfo?.phone || "",
         seller: "Sistema",
         audioUrl: URL.createObjectURL(file),
         mediaType: file.type.startsWith('video/') ? "video" : "audio",
-        leadInfo,
+        leadInfo: leadInfo || {
+          personType: "pf",
+          firstName: "",
+          phone: ""
+        },
       };
       
       // Chama o callback de sucesso que vai atualizar o lead
-      onUploadSuccess?.();
+      onUploadSuccess?.(newCall);
       
       // Fecha o modal e limpa o estado
       onOpenChange(false);
