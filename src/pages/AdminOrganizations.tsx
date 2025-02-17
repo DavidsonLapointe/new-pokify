@@ -71,45 +71,50 @@ const Organizations = () => {
   );
 
   const OrganizationCard = ({ organization }: { organization: any }) => (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer">
-      <CardHeader>
+    <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+      <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
-            {organization.name}
-          </CardTitle>
+          <div>
+            <CardTitle className="flex items-center gap-2 text-base font-medium">
+              <Building2 className="w-4 h-4 text-muted-foreground" />
+              {organization.name}
+            </CardTitle>
+            <CardDescription className="mt-1">
+              <span className="font-medium text-sm">Plano:</span> {organization.plan}
+            </CardDescription>
+          </div>
           <Button
             variant="ghost"
             size="icon"
+            className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setEditingOrganization(organization);
             }}
           >
-            <Pencil className="w-4 h-4" />
+            <Pencil className="w-4 h-4 text-primary hover:text-primary/80" />
           </Button>
         </div>
-        <CardDescription>Plano: {organization.plan}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
+        <div className="space-y-2.5 text-sm">
+          <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Usuários</span>
             <span className="font-medium">{organization.users}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="text-muted-foreground">CRM</span>
             <span className={`font-medium ${!organization.integratedCRM ? "text-yellow-600" : ""}`}>
               {organization.integratedCRM || "Pendente de integração"}
             </span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Status</span>
             <span
-              className={`font-medium ${
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
                 organization.status === "active"
-                  ? "text-green-600"
-                  : "text-red-600"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
               }`}
             >
               {organization.status === "active" ? "Ativo" : "Inativo"}
