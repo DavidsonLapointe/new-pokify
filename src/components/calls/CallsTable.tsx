@@ -57,7 +57,10 @@ export const CallsTable = ({
     setUploadLeadInfo(undefined);
   };
 
-  if (leadsWithCalls.length === 0) {
+  console.log("CallsTable - calls:", calls);
+  console.log("CallsTable - leadsWithCalls:", leadsWithCalls);
+
+  if (!calls || calls.length === 0) {
     return (
       <EmptyLeadsState
         isCreateLeadOpen={isCreateLeadOpen}

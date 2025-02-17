@@ -1,9 +1,14 @@
 
 import { Call, LeadCalls } from "../types";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 export const useLeadsData = (initialCalls: Call[]) => {
   const [calls, setCalls] = useState(initialCalls);
+
+  // Atualiza o estado local quando as chamadas iniciais mudarem
+  useEffect(() => {
+    setCalls(initialCalls);
+  }, [initialCalls]);
 
   const processLeads = useCallback((callsData: Call[]) => {
     const leadsMap = new Map<string, LeadCalls>();
