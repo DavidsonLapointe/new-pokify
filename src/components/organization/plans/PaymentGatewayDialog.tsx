@@ -86,9 +86,9 @@ export function PaymentGatewayDialog({
   const options = {
     mode: 'payment' as const,
     currency: 'brl',
-    amount: selectedPackage.price * 100, // Stripe trabalha com centavos
+    amount: selectedPackage.price * 100,
     appearance: {
-      theme: 'stripe',
+      theme: 'stripe' as const, // Explicitamente tipado como "stripe"
     },
   };
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
 
-// Use sua chave pública do Stripe aqui
 const stripePromise = loadStripe("pk_test_your_key");
 
 interface PaymentMethodCardProps {
@@ -70,12 +68,11 @@ const PaymentMethodForm = () => {
 export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardProps) {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
-  // Em produção, você buscaria isso do seu backend
   const options = {
-    mode: 'setup',
+    mode: 'setup' as const,
     currency: 'brl',
     appearance: {
-      theme: 'stripe',
+      theme: 'stripe' as const,
     },
   };
 
