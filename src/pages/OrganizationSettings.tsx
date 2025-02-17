@@ -427,7 +427,7 @@ const OrganizationSettings = () => {
             <DialogHeader>
               <DialogTitle>Nova Etapa</DialogTitle>
               <DialogDescription>
-                Adicione uma nova etapa ao funil selecionado
+                Defina o nome da etapa e vincule ao funil desejado para organizar o fluxo do seu processo
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
