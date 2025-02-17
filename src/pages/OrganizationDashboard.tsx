@@ -109,25 +109,12 @@ const OrganizationDashboard = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="calls" className="space-y-4">
+        <Tabs defaultValue="leads" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="calls">Uploads</TabsTrigger>
             <TabsTrigger value="leads">Leads</TabsTrigger>
+            <TabsTrigger value="calls">Uploads</TabsTrigger>
             <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="calls" className="space-y-6">
-            <CallsStats
-              total={monthStats.total}
-              processed={monthStats.processed}
-              failed={monthStats.failed}
-            />
-            <DailyCallsChart 
-              data={dailyCallsData}
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-            />
-          </TabsContent>
           
           <TabsContent value="leads" className="space-y-6">
             <LeadsStats
@@ -142,6 +129,19 @@ const OrganizationDashboard = () => {
             />
           </TabsContent>
 
+          <TabsContent value="calls" className="space-y-6">
+            <CallsStats
+              total={monthStats.total}
+              processed={monthStats.processed}
+              failed={monthStats.failed}
+            />
+            <DailyCallsChart 
+              data={dailyCallsData}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+            />
+          </TabsContent>
+          
           <TabsContent value="sellers" className="space-y-6">
             <SellersStats
               totalSellers={sellersStats.totalSellers}
