@@ -1,3 +1,4 @@
+
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,15 +81,16 @@ const Plans = () => {
   const PlanCard = ({ plan }: { plan: any }) => (
     <Card className="hover:shadow-md transition-shadow flex flex-col">
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-            <CardDescription className="mt-2">{plan.description}</CardDescription>
+            <div className="flex items-baseline text-xl font-semibold text-primary">
+              <span className="text-base mr-1">R$</span>
+              {plan.price.toFixed(2)}
+              <span className="text-sm font-normal text-muted-foreground ml-1">/mês</span>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-primary">
-            R$ {plan.price.toFixed(2)}
-            <span className="text-sm font-normal text-muted-foreground">/mês</span>
-          </div>
+          <CardDescription className="text-sm">{plan.description}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
