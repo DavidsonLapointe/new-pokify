@@ -5,9 +5,29 @@ import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/hooks/use-toast";
+import { LeadWithCalls } from "@/types/leads";
 
 export const useCallsPage = () => {
-  const [calls, setCalls] = useState<Call[]>(mockCalls);
+  // Convertemos as chamadas mock para o formato de leads com chamadas
+  const initialLeads = useMemo(() => {
+    const leadsMap = new Map<string, LeadWithCalls>();
+    
+    mockCalls.forEach(call => {
+      if (!leadsMap.has(call.leadId)) {
+        leadsMap.set(call.leadId, {
+          id: call.leadId,
+          leadInfo: call.leadInfo,
+          calls: [],
+          createdAt: call.date
+        });
+      }
+      leadsMap.get(call.leadId)?.calls.push(call);
+    });
+    
+    return Array.from(leadsMap.values());
+  }, []);
+
+  const [leads, setLeads] = useState<LeadWithCalls[]>(initialLeads);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [monthStats] = useState({
     total: 45,
@@ -36,68 +56,54 @@ export const useCallsPage = () => {
   const createNewLead = useCallback((leadData: LeadFormData) => {
     console.log("Dados do lead recebidos em createNewLead:", leadData);
     const leadId = uuidv4();
+
+    // Cria um novo lead com array de chamadas vazio
+    const newLead: LeadWithCalls = {
+      id: leadId,
+      leadInfo: {
+        personType: leadData.personType,
+        firstName: leadData.firstName,
+        lastName: leadData.lastName || "",
+        razaoSocial: leadData.razaoSocial || "",
+        email: leadData.email || "",
+        phone: leadData.phone || "",
+      },
+      calls: [],
+      createdAt: new Date().toISOString()
+    };
+
+    // Adiciona o novo lead à lista
+    setLeads(prevLeads => {
+      const updatedLeads = [newLead, ...prevLeads];
+      console.log("Lista atualizada de leads:", updatedLeads);
+      return updatedLeads;
+    });
+
     setPendingLeadData(leadData);
     return leadId;
   }, []);
 
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
-    console.log("Confirmando novo lead - withUpload:", withUpload);
-    
-    if (!withUpload && pendingLeadData) {
-      const leadId = uuidv4();
-      
-      if (!pendingLeadData.firstName) {
-        console.error("Nome do lead está vazio!");
-        return;
-      }
-
-      const emptyCall: Call = {
-        id: uuidv4(),
-        leadId,
-        date: new Date().toISOString(),
-        duration: "0:00",
-        status: "pending",
-        phone: pendingLeadData.phone || "",
-        seller: "Sistema",
-        audioUrl: "",
-        mediaType: "audio",
-        leadInfo: {
-          personType: pendingLeadData.personType,
-          firstName: pendingLeadData.firstName,
-          lastName: pendingLeadData.lastName || "",
-          razaoSocial: pendingLeadData.razaoSocial || "",
-          email: pendingLeadData.email || "",
-          phone: pendingLeadData.phone || "",
-        },
-        emptyLead: true,
-        isNewLead: true,
-      };
-
-      console.log("Chamada vazia criada:", emptyCall);
-      
-      // Atualiza o estado imediatamente com o novo lead
-      setCalls(prevCalls => {
-        const newCalls = [emptyCall, ...prevCalls];
-        console.log("Nova lista de chamadas:", newCalls);
-        return newCalls;
-      });
-      
-      setPendingLeadData(null);
-      
-      toast({
-        title: "Lead criado com sucesso",
-        description: "O novo lead foi adicionado à lista.",
-      });
-    } else if (withUpload && newCall) {
-      console.log("Atualizando lead com upload:", newCall);
-      setCalls(prevCalls => {
-        const filteredCalls = prevCalls.filter(call => 
-          !(call.leadId === newCall.leadId && call.emptyLead)
-        );
-        return [newCall, ...filteredCalls];
+    if (withUpload && newCall) {
+      // Atualiza o lead existente adicionando a nova chamada
+      setLeads(prevLeads => {
+        return prevLeads.map(lead => {
+          if (lead.id === newCall.leadId) {
+            return {
+              ...lead,
+              calls: [newCall, ...lead.calls]
+            };
+          }
+          return lead;
+        });
       });
     }
-  }, [pendingLeadData]);
+
+    toast({
+      title: "Lead atualizado com sucesso",
+      description: withUpload ? "Upload da chamada realizado com sucesso." : "Lead criado com sucesso.",
+    });
+  }, []);
 
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
@@ -111,32 +117,52 @@ export const useCallsPage = () => {
   }, []);
 
   const filteredLeads = useMemo(() => {
-    console.log("Filtrando chamadas com query:", searchQuery);
-    console.log("Total de chamadas disponíveis:", calls.length);
+    console.log("Filtrando leads com query:", searchQuery);
+    console.log("Total de leads disponíveis:", leads.length);
     
     const query = (searchQuery || "").toLowerCase();
     
-    return calls.filter(call => {
-      const leadName = call.leadInfo.personType === "pf" 
-        ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
-        : call.leadInfo.razaoSocial;
-      
-      console.log("Lead name para filtro:", leadName);
+    return leads.filter(lead => {
+      const leadName = lead.leadInfo.personType === "pf" 
+        ? `${lead.leadInfo.firstName} ${lead.leadInfo.lastName || ""}`
+        : lead.leadInfo.razaoSocial;
       
       return (
         (leadName && leadName.toLowerCase().includes(query)) ||
-        call.phone.includes(query) ||
-        (call.leadInfo.email && call.leadInfo.email.toLowerCase().includes(query))
+        lead.leadInfo.phone.includes(query) ||
+        (lead.leadInfo.email && lead.leadInfo.email.toLowerCase().includes(query))
       );
     });
-  }, [calls, searchQuery]);
+  }, [leads, searchQuery]);
+
+  // Convertemos os leads filtrados para o formato esperado pela tabela
+  const processedCalls = useMemo(() => {
+    return filteredLeads.flatMap(lead => 
+      lead.calls.length > 0 
+        ? lead.calls 
+        : [{
+            id: uuidv4(),
+            leadId: lead.id,
+            date: lead.createdAt,
+            duration: "0:00",
+            status: "pending",
+            phone: lead.leadInfo.phone,
+            seller: "Sistema",
+            audioUrl: "",
+            mediaType: "audio",
+            leadInfo: lead.leadInfo,
+            emptyLead: true,
+            isNewLead: true,
+          }]
+    );
+  }, [filteredLeads]);
 
   return {
     searchQuery,
     monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredLeads,
+    filteredLeads: processedCalls,
     setSearchQuery,
     handlePlayAudio,
     handleViewAnalysis,
