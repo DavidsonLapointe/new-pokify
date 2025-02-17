@@ -9,35 +9,54 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Building2, Plus, Search } from "lucide-react";
+import { Building2, Plus, Search, Pencil } from "lucide-react";
 import { useState } from "react";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
+import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
 
 // Dados mockados para exemplo
 const mockOrganizations = [
   {
     id: 1,
     name: "Tech Solutions Ltda",
+    nomeFantasia: "Tech Solutions",
     plan: "Enterprise",
     users: 15,
     status: "active",
-    integratedCRM: null, // Exemplo de empresa sem CRM integrado
+    integratedCRM: null,
+    email: "contato@techsolutions.com",
+    phone: "(11) 99999-9999",
+    cnpj: "00.000.000/0000-01",
+    adminName: "João Silva",
+    adminEmail: "joao@techsolutions.com",
   },
   {
     id: 2,
     name: "Vendas Diretas S.A.",
+    nomeFantasia: "Vendas Diretas",
     plan: "Professional",
     users: 8,
     status: "active",
     integratedCRM: "Pipedrive",
+    email: "contato@vendasdiretas.com",
+    phone: "(11) 88888-8888",
+    cnpj: "00.000.000/0000-02",
+    adminName: "Maria Santos",
+    adminEmail: "maria@vendasdiretas.com",
   },
   {
     id: 3,
     name: "Global Comercio",
+    nomeFantasia: "Global",
     plan: "Basic",
     users: 3,
     status: "inactive",
-    integratedCRM: null, // Exemplo de empresa sem CRM integrado
+    integratedCRM: null,
+    email: "contato@global.com",
+    phone: "(11) 77777-7777",
+    cnpj: "00.000.000/0000-03",
+    adminName: "Pedro Costa",
+    adminEmail: "pedro@global.com",
   },
 ];
 
@@ -45,6 +64,7 @@ const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [organizations] = useState(mockOrganizations);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingOrganization, setEditingOrganization] = useState<any>(null);
 
   const filteredOrganizations = organizations.filter((org) =>
     org.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -53,10 +73,22 @@ const Organizations = () => {
   const OrganizationCard = ({ organization }: { organization: any }) => (
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="w-5 h-5" />
-          {organization.name}
-        </CardTitle>
+        <div className="flex justify-between items-start">
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="w-5 h-5" />
+            {organization.name}
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditingOrganization(organization);
+            }}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </div>
         <CardDescription>Plano: {organization.plan}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -124,6 +156,14 @@ const Organizations = () => {
           open={isCreateDialogOpen} 
           onOpenChange={setIsCreateDialogOpen} 
         />
+
+        {editingOrganization && (
+          <EditOrganizationDialog
+            open={!!editingOrganization}
+            onOpenChange={(open) => !open && setEditingOrganization(null)}
+            organization={editingOrganization}
+          />
+        )}
       </div>
     </AdminLayout>
   );
