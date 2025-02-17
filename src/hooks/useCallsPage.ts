@@ -41,24 +41,25 @@ export const useCallsPage = () => {
   }, []);
 
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
-    if (!withUpload) {
+    if (!withUpload && pendingLeadData) {
+      const leadId = uuidv4();
       const emptyCall: Call = {
         id: uuidv4(),
-        leadId: newCall?.leadId || uuidv4(),
+        leadId,
         date: new Date().toISOString(),
         duration: "0:00",
         status: "pending",
-        phone: pendingLeadData?.phone || newCall?.leadInfo?.phone || "",
+        phone: pendingLeadData.phone || "",
         seller: "Sistema",
         audioUrl: "",
         mediaType: "audio",
         leadInfo: {
-          personType: pendingLeadData?.personType || newCall?.leadInfo?.personType || "pf",
-          firstName: pendingLeadData?.firstName || newCall?.leadInfo?.firstName || "",
-          lastName: pendingLeadData?.lastName || newCall?.leadInfo?.lastName || "",
-          razaoSocial: pendingLeadData?.razaoSocial || newCall?.leadInfo?.razaoSocial || "",
-          email: pendingLeadData?.email || newCall?.leadInfo?.email || "",
-          phone: pendingLeadData?.phone || newCall?.leadInfo?.phone || "",
+          personType: pendingLeadData.personType,
+          firstName: pendingLeadData.firstName,
+          lastName: pendingLeadData.lastName || "",
+          razaoSocial: pendingLeadData.razaoSocial || "",
+          email: pendingLeadData.email || "",
+          phone: pendingLeadData.phone || "",
         },
         emptyLead: true,
         isNewLead: true,
