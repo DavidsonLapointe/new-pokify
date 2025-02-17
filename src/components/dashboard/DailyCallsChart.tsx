@@ -17,10 +17,10 @@ interface DailyCallsChartProps {
 }
 
 export const DailyCallsChart = ({ data }: DailyCallsChartProps) => (
-  <Card className="p-6">
-    <div className="space-y-4">
+  <Card className="p-4">
+    <div className="space-y-2">
       <h3 className="text-lg font-semibold">Distribuição Diária de Chamadas</h3>
-      <div className="h-[400px] w-full">
+      <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />

@@ -11,7 +11,7 @@ interface CallsStatsProps {
 
 export const CallsStats = ({ total, processed, pending, failed }: CallsStatsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
         title="Total de Chamadas"
         value={total}

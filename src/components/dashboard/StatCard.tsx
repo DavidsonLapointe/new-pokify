@@ -24,14 +24,14 @@ export const StatCard = ({
   color = "text-muted-foreground",
   tooltip,
 }: StatCardProps) => (
-  <Card className="p-6">
-    <div className="space-y-4">
+  <Card className="p-4">
+    <div className="space-y-2">
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           <p className="text-sm text-muted-foreground">{title}</p>
-          <h3 className="text-2xl font-semibold">{value}</h3>
+          <h3 className="text-xl font-semibold">{value}</h3>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -44,7 +44,7 @@ export const StatCard = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
             <Icon className={`w-4 h-4 ${color}`} />
           </div>
         </div>
