@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             style={{ color: item.fill }}
             className="capitalize"
           >
-            {item.name}: {item.value}
+            {item.name}: {item.value} uploads
           </p>
         ))}
       </div>
@@ -41,7 +41,7 @@ export const DailyCallsChart = ({ data, selectedDate, onDateChange }: DailyCalls
   <Card className="p-4">
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Chamadas por dia</h3>
+        <h3 className="text-lg font-semibold">Uploads por dia</h3>
         {selectedDate && onDateChange && (
           <MonthYearSelector
             selectedDate={selectedDate}
@@ -56,9 +56,7 @@ export const DailyCallsChart = ({ data, selectedDate, onDateChange }: DailyCalls
             <XAxis dataKey="day" />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
-            <Bar dataKey="processadas" name="Processadas" fill="#22c55e" />
-            <Bar dataKey="pendentes" name="Pendentes" fill="#eab308" />
-            <Bar dataKey="erro" name="Erro" fill="#ef4444" />
+            <Bar dataKey="uploads" name="Uploads" fill="#2563eb" />
           </BarChart>
         </ResponsiveContainer>
       </div>

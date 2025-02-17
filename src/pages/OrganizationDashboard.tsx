@@ -7,31 +7,45 @@ import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, subDays, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { useState, useMemo } from "react";
 
 const OrganizationDashboard = () => {
-  const { monthStats } = useCallsPage();
+  const { monthStats, filteredLeads } = useCallsPage();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Gera dados para o mês selecionado (chamadas)
+  // Processa os dados de uploads por dia para o mês selecionado
   const dailyCallsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const monthEnd = endOfMonth(selectedDate);
     
-    return Array.from({ length: 30 }).map((_, index) => {
-      const date = subDays(monthEnd, 29 - index);
-      if (isWithinInterval(date, { start: monthStart, end: monthEnd })) {
-        return {
-          day: format(date, 'dd/MM'),
-          processadas: Math.floor(Math.random() * 10) + 1,
-          pendentes: Math.floor(Math.random() * 5),
-          erro: Math.floor(Math.random() * 3),
-        };
+    // Agrupa os uploads por dia
+    const uploadsByDay = new Map();
+    
+    filteredLeads.forEach(call => {
+      if (!call.emptyLead) { // Ignora leads sem uploads
+        const callDate = new Date(call.date);
+        
+        // Verifica se a chamada está dentro do mês selecionado
+        if (isWithinInterval(callDate, { start: monthStart, end: monthEnd })) {
+          const dayKey = format(callDate, 'dd/MM');
+          uploadsByDay.set(dayKey, (uploadsByDay.get(dayKey) || 0) + 1);
+        }
       }
-      return null;
-    }).filter(Boolean);
-  }, [selectedDate]);
+    });
+
+    // Converte o Map para o formato esperado pelo gráfico
+    const daysInMonth = Array.from({ length: monthEnd.getDate() }, (_, i) => {
+      const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i + 1);
+      const dayKey = format(date, 'dd/MM');
+      return {
+        day: dayKey,
+        uploads: uploadsByDay.get(dayKey) || 0
+      };
+    });
+
+    return daysInMonth;
+  }, [selectedDate, filteredLeads]);
 
   // Gera dados para os últimos 30 dias (leads)
   const dailyLeadsData = Array.from({ length: 30 }).map((_, index) => {
