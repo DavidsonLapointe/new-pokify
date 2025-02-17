@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -5,8 +6,9 @@ import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrg
 import { OrganizationCard } from "@/components/admin/organizations/OrganizationCard";
 import { OrganizationsHeader } from "@/components/admin/organizations/OrganizationsHeader";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
+import { Organization } from "@/types/organization";
 
-const mockOrganizations = [
+const mockOrganizations: Organization[] = [
   {
     id: 1,
     name: "Tech Solutions Ltda",
@@ -70,9 +72,9 @@ const mockOrganizations = [
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [organizations] = useState(mockOrganizations);
+  const [organizations] = useState<Organization[]>(mockOrganizations);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingOrganization, setEditingOrganization] = useState<any>(null);
+  const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
 
   const filteredOrganizations = organizations.filter((org) =>
     [org.name, org.nomeFantasia, org.cnpj].some(field =>
