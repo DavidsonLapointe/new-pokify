@@ -40,10 +40,6 @@ export const CallHistoryTableHeader = () => {
                     <span className="text-xs">Chamadas que foram processadas com sucesso pelo sistema</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Pendente</Badge>
-                    <span className="text-xs">Chamadas que ainda estão aguardando solicitação de processamento</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
                     <Badge variant="secondary" className="bg-red-100 text-red-700">Erro</Badge>
                     <span className="text-xs">Chamadas que falharam durante o processamento e precisam ser reprocessadas</span>
                   </div>
