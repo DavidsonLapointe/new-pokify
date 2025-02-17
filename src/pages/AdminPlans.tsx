@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, Infinity } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { useState } from "react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 
@@ -20,7 +20,7 @@ const mockPlans = [
     description: "Ideal para pequenas empresas iniciando no mercado",
     features: [
       "Até 3 usuários",
-      "100 créditos para análise de arquivos",
+      "100 créditos (análise de arquivos)",
       "Integração com 1 CRM",
       "Suporte por email",
     ],
@@ -33,7 +33,7 @@ const mockPlans = [
     description: "Perfect para empresas em crescimento",
     features: [
       "Até 10 usuários",
-      "500 créditos para análise de arquivos",
+      "500 créditos (análise de arquivos)",
       "Integração com 3 CRMs",
       "Suporte prioritário",
       "API de integração",
@@ -47,7 +47,7 @@ const mockPlans = [
     description: "Para grandes empresas que precisam de mais recursos",
     features: [
       "Usuários ilimitados",
-      "1000 créditos para análise de arquivos",
+      "1000 créditos (análise de arquivos)",
       "Integrações ilimitadas",
       "Suporte 24/7",
       "API dedicada",
@@ -88,12 +88,6 @@ const Plans = () => {
             </div>
           </div>
           <CardDescription className="text-sm">{plan.description}</CardDescription>
-          <div className="mt-2 flex items-center gap-2 p-2 bg-secondary/50 rounded-lg">
-            <Infinity className="h-4 w-4 text-primary shrink-0" />
-            <p className="text-xs text-muted-foreground">
-              Os créditos do plano não expiram ao final do mês
-            </p>
-          </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
