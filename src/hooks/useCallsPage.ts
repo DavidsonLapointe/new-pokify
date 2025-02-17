@@ -12,7 +12,21 @@ export const useCallsPage = () => {
   const initialLeads = useMemo(() => {
     const leadsMap = new Map<string, LeadWithCalls>();
     
-    mockCalls.forEach(call => {
+    // Gera dados mock mais realistas para os últimos 30 dias
+    const today = new Date();
+    const mockData = Array.from({ length: 50 }).map((_, index) => {
+      const randomDaysAgo = Math.floor(Math.random() * 30); // Distribuir ao longo dos últimos 30 dias
+      const date = new Date(today);
+      date.setDate(date.getDate() - randomDaysAgo);
+      
+      return {
+        ...mockCalls[index % mockCalls.length],
+        date: date.toISOString(),
+        leadId: `lead-${Math.floor(index / 3)}`, // Agrupa chamadas por lead (3 chamadas por lead em média)
+      };
+    });
+
+    mockData.forEach(call => {
       if (!leadsMap.has(call.leadId)) {
         leadsMap.set(call.leadId, {
           id: call.leadId,
