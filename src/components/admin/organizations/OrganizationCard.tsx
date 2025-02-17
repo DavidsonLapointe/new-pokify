@@ -16,6 +16,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Organization, User } from "@/types/organization";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface OrganizationCardProps {
   organization: Organization;
@@ -54,6 +56,11 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
     }
   };
 
+  // Usando createdAt da mock data (assumindo que existe no objeto organization)
+  const formattedDate = organization.createdAt 
+    ? format(new Date(organization.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+    : "Data não disponível";
+
   return (
     <Card ref={cardRef} className="hover:shadow-md transition-shadow cursor-pointer group">
       <CardHeader className="pb-3">
@@ -65,6 +72,8 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
             </CardTitle>
             <CardDescription className="mt-1">
               <span className="font-medium text-sm">Plano:</span> {organization.plan}
+              <br />
+              <span className="text-xs">Cadastrado em: {formattedDate}</span>
             </CardDescription>
           </div>
           <Button
