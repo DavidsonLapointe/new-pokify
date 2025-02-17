@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
 import { CreditsBalanceCard } from "@/components/organization/plans/CreditsBalanceCard";
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
+import { ChangePlanDialog } from "@/components/organization/plans/ChangePlanDialog";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
 // Mock data - em produção viria da API
@@ -24,6 +25,52 @@ const planInfo: Plan = {
   active: true
 };
 
+// Mock available plans - em produção viria da API
+const availablePlans: Plan[] = [
+  {
+    id: 1,
+    name: "Basic",
+    price: 99.90,
+    description: "Ideal para pequenas empresas iniciando no mercado",
+    features: [
+      "Até 3 usuários",
+      "100 créditos (análise de arquivos)",
+      "Integração com 1 CRM",
+      "Suporte por email",
+    ],
+    active: true
+  },
+  {
+    id: 2,
+    name: "Professional",
+    price: 199.90,
+    description: "Perfect para empresas em crescimento",
+    features: [
+      "Até 10 usuários",
+      "500 créditos (análise de arquivos)",
+      "Integração com 3 CRMs",
+      "Suporte prioritário",
+      "API de integração"
+    ],
+    active: true
+  },
+  {
+    id: 3,
+    name: "Enterprise",
+    price: 499.90,
+    description: "Para grandes empresas que precisam de mais recursos",
+    features: [
+      "Usuários ilimitados",
+      "1000 créditos (análise de arquivos)",
+      "Integrações ilimitadas",
+      "Suporte 24/7",
+      "API dedicada",
+      "Manager dedicado",
+    ],
+    active: true
+  }
+];
+
 // Additional data specific to the organization's usage
 const usageInfo = {
   monthlyQuota: 500,
@@ -34,6 +81,7 @@ const usageInfo = {
 const OrganizationPlan = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
+  const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
 
   const handleBuyMoreAnalyses = () => {
     setIsPackagesDialogOpen(true);
@@ -56,7 +104,10 @@ const OrganizationPlan = () => {
         </div>
 
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-          <CurrentPlanCard planInfo={planInfo} />
+          <CurrentPlanCard 
+            planInfo={planInfo}
+            onChangePlan={() => setIsChangePlanDialogOpen(true)}
+          />
           <CreditsBalanceCard
             monthlyQuota={usageInfo.monthlyQuota}
             used={usageInfo.used}
@@ -70,6 +121,13 @@ const OrganizationPlan = () => {
           open={isPackagesDialogOpen}
           onOpenChange={setIsPackagesDialogOpen}
           onSelectPackage={handleSelectPackage}
+        />
+
+        <ChangePlanDialog
+          open={isChangePlanDialogOpen}
+          onOpenChange={setIsChangePlanDialogOpen}
+          currentPlan={planInfo}
+          availablePlans={availablePlans}
         />
       </div>
     </OrganizationLayout>

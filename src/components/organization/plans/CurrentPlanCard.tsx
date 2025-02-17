@@ -1,4 +1,5 @@
-import { BadgeCheck } from "lucide-react";
+
+import { BadgeCheck, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +21,10 @@ import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
 interface CurrentPlanCardProps {
   planInfo: Plan;
+  onChangePlan: () => void;
 }
 
-export function CurrentPlanCard({ planInfo }: CurrentPlanCardProps) {
+export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps) {
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -84,74 +86,85 @@ export function CurrentPlanCard({ planInfo }: CurrentPlanCardProps) {
             ))}
           </ul>
         </div>
-        
-        <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-destructive text-sm mt-4"
-            >
-              Cancelar assinatura
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
-              <AlertDialogDescription className="space-y-4">
-                <p>
-                  Essa ação <span className="font-medium">não poderá ser desfeita</span>. 
-                  Sua assinatura será cancelada ao final do período atual e você perderá 
-                  acesso a todos os recursos do sistema.
-                </p>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Por que você está cancelando?
-                  </label>
-                  <RadioGroup 
-                    value={selectedReason} 
-                    onValueChange={setSelectedReason}
-                    className="space-y-3"
-                  >
-                    {cancellationReasons.map((reason) => (
-                      <div key={reason.id} className="flex items-center space-x-2">
-                        <RadioGroupItem value={reason.id} id={reason.id} />
-                        <label 
-                          htmlFor={reason.id}
-                          className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {reason.label}
-                        </label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                  
-                  {selectedReason === "other" && (
-                    <div className="mt-4">
-                      <Textarea
-                        value={otherReason}
-                        onChange={(e) => setOtherReason(e.target.value)}
-                        placeholder="Descreva o motivo do cancelamento..."
-                        className="resize-none"
-                        rows={4}
-                      />
-                    </div>
-                  )}
-                </div>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleModalClose}>
-                Manter assinatura
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleCancelSubscription}
-                className="bg-destructive hover:bg-destructive/90"
+
+        <div className="flex flex-col gap-2 pt-4 border-t">
+          <Button 
+            variant="outline" 
+            onClick={onChangePlan}
+            className="w-full"
+          >
+            <ArrowUpDown className="h-4 w-4 mr-2" />
+            Mudar de plano
+          </Button>
+          
+          <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                className="text-muted-foreground hover:text-destructive"
               >
-                Confirmar cancelamento
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                Cancelar assinatura
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
+                <AlertDialogDescription className="space-y-4">
+                  <p>
+                    Essa ação <span className="font-medium">não poderá ser desfeita</span>. 
+                    Sua assinatura será cancelada ao final do período atual e você perderá 
+                    acesso a todos os recursos do sistema.
+                  </p>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      Por que você está cancelando?
+                    </label>
+                    <RadioGroup 
+                      value={selectedReason} 
+                      onValueChange={setSelectedReason}
+                      className="space-y-3"
+                    >
+                      {cancellationReasons.map((reason) => (
+                        <div key={reason.id} className="flex items-center space-x-2">
+                          <RadioGroupItem value={reason.id} id={reason.id} />
+                          <label 
+                            htmlFor={reason.id}
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {reason.label}
+                          </label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    
+                    {selectedReason === "other" && (
+                      <div className="mt-4">
+                        <Textarea
+                          value={otherReason}
+                          onChange={(e) => setOtherReason(e.target.value)}
+                          placeholder="Descreva o motivo do cancelamento..."
+                          className="resize-none"
+                          rows={4}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleModalClose}>
+                  Manter assinatura
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleCancelSubscription}
+                  className="bg-destructive hover:bg-destructive/90"
+                >
+                  Confirmar cancelamento
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </CardContent>
     </Card>
   );
