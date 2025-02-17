@@ -34,15 +34,27 @@ export const useCallsPage = () => {
   }, []);
 
   const createNewLead = useCallback((leadData: LeadFormData) => {
+    console.log("Dados do lead recebidos em createNewLead:", leadData);
     const leadId = uuidv4();
-    console.log("Criando novo lead com ID:", leadId, "com dados:", leadData);
     setPendingLeadData(leadData);
     return leadId;
   }, []);
 
   const confirmNewLead = useCallback((withUpload: boolean = false, newCall?: Call) => {
+    console.log("Confirmando novo lead - withUpload:", withUpload);
+    console.log("pendingLeadData:", pendingLeadData);
+    console.log("newCall:", newCall);
+
     if (!withUpload && pendingLeadData) {
       const leadId = uuidv4();
+      console.log("Criando chamada vazia com dados:", pendingLeadData);
+
+      // Verifica se os dados obrigatórios estão presentes
+      if (!pendingLeadData.firstName) {
+        console.error("Nome do lead está vazio!");
+        return;
+      }
+
       const emptyCall: Call = {
         id: uuidv4(),
         leadId,
@@ -55,7 +67,7 @@ export const useCallsPage = () => {
         mediaType: "audio",
         leadInfo: {
           personType: pendingLeadData.personType,
-          firstName: pendingLeadData.firstName,
+          firstName: pendingLeadData.firstName, // Campo obrigatório
           lastName: pendingLeadData.lastName || "",
           razaoSocial: pendingLeadData.razaoSocial || "",
           email: pendingLeadData.email || "",
@@ -65,8 +77,14 @@ export const useCallsPage = () => {
         isNewLead: true,
       };
 
-      console.log("Adicionando chamada vazia com informações do lead:", emptyCall);
-      setCalls(prevCalls => [emptyCall, ...prevCalls]);
+      console.log("Chamada vazia criada:", emptyCall);
+      
+      setCalls(prevCalls => {
+        const newCalls = [emptyCall, ...prevCalls];
+        console.log("Nova lista de chamadas:", newCalls);
+        return newCalls;
+      });
+
       setPendingLeadData(null);
       
       toast({
@@ -109,6 +127,8 @@ export const useCallsPage = () => {
       const leadName = call.leadInfo.personType === "pf" 
         ? `${call.leadInfo.firstName} ${call.leadInfo.lastName || ""}`
         : call.leadInfo.razaoSocial;
+      
+      console.log("Lead name para filtro:", leadName);
       
       return (
         (leadName && leadName.toLowerCase().includes(query)) ||
