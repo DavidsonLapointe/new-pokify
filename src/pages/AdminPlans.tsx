@@ -95,15 +95,19 @@ const Plans = () => {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
         <div className="space-y-6 flex-1">
-          {/* Linha de usuários máximos */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground border-y py-2">
-            <Users className="w-4 h-4 shrink-0" />
-            <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
+          {/* Linha de usuários máximos - altura fixa para alinhar */}
+          <div className="h-[40px] flex items-center border-y">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users className="w-4 h-4 shrink-0" />
+              <span>Máximo de {plan.maxUsers === 25 ? "ilimitados" : plan.maxUsers} usuários</span>
+            </div>
           </div>
 
-          {/* Seção de recursos */}
+          {/* Seção de recursos - altura fixa para o título */}
           <div className="space-y-4">
-            <div className="text-sm font-medium border-b pb-2">Recursos inclusos:</div>
+            <div className="h-[32px] flex items-center border-b text-sm font-medium">
+              Recursos inclusos:
+            </div>
             <ul className="space-y-2">
               {plan.features.map((feature: string, index: number) => (
                 <li key={index} className="flex items-start gap-2 text-sm">
