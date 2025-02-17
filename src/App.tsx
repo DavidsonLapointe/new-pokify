@@ -1,4 +1,7 @@
+
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
 import Admin from "@/pages/Admin";
@@ -11,19 +14,21 @@ import NotFound from "@/pages/NotFound";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/organizations" element={<AdminOrganizations />} />
-        <Route path="/admin/plans" element={<AdminPlans />} />
-        <Route path="/admin/integrations" element={<AdminIntegrations />} />
-        <Route path="/admin/prompt" element={<AdminPrompt />} />
-        <Route path="/admin/profile" element={<AdminProfile />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Toaster />
-    </BrowserRouter>
+    <ThemeProvider attribute="class" defaultTheme="light">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/organizations" element={<AdminOrganizations />} />
+          <Route path="/admin/plans" element={<AdminPlans />} />
+          <Route path="/admin/integrations" element={<AdminIntegrations />} />
+          <Route path="/admin/prompt" element={<AdminPrompt />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

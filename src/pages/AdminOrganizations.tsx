@@ -1,4 +1,5 @@
 
+import React, { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Building2, Plus, Search, Pencil } from "lucide-react";
-import { useState } from "react";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
 
