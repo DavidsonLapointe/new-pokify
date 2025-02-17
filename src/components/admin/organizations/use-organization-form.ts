@@ -58,13 +58,13 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       toast({
         title: "Empresa criada com sucesso",
         description: "Um email foi enviado para o administrador contendo:",
-        children: (
-          <ul className="mt-2 ml-2 list-disc list-inside">
-            <li>Contrato de adesão para assinatura</li>
-            <li>Link para assinatura digital do contrato</li>
-            <li>Instruções sobre os próximos passos</li>
-          </ul>
-        ),
+        children: [
+          "Contrato de adesão para assinatura",
+          "Link para assinatura digital do contrato",
+          "Instruções sobre os próximos passos"
+        ].map((text, index) => (
+          `• ${text}`
+        )).join("\n")
       });
 
       form.reset();
