@@ -1,5 +1,5 @@
 
-import { OrganizationLayout } from "@/components/OrganizationLayout";
+import OrganizationLayout from "@/components/OrganizationLayout";
 
 const OrganizationIntegrations = () => {
   return (
