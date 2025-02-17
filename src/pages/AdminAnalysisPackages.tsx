@@ -14,6 +14,13 @@ import { Switch } from "@/components/ui/switch";
 import { Package, Plus, Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AnalysisPackage {
   id: string;
@@ -48,6 +55,7 @@ const AdminAnalysisPackages = () => {
     }
   ]);
 
+  const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [newPackage, setNewPackage] = useState({
     name: "",
     credits: "",
@@ -86,6 +94,20 @@ const AdminAnalysisPackages = () => {
     setPackages([...packages, package_]);
     setNewPackage({ name: "", credits: "", price: "" });
     toast.success("Pacote criado com sucesso");
+  };
+
+  const handleUpdatePackage = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingPackage) return;
+
+    const updatedPackages = packages.map(pkg => 
+      pkg.id === editingPackage.id ? editingPackage : pkg
+    );
+
+    setPackages(updatedPackages);
+    setEditingPackage(null);
+    toast.success("Pacote atualizado com sucesso");
   };
 
   return (
@@ -181,17 +203,69 @@ const AdminAnalysisPackages = () => {
                         R$ {pkg.price.toFixed(2)}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
-                          onClick={() => {
-                            // TODO: Implement edit functionality
-                            toast.info("Funcionalidade de edição em desenvolvimento");
-                          }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-primary"
+                              onClick={() => setEditingPackage(pkg)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Editar Pacote</DialogTitle>
+                            </DialogHeader>
+                            {editingPackage && (
+                              <form onSubmit={handleUpdatePackage} className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-name">Nome do Pacote</Label>
+                                  <Input
+                                    id="edit-name"
+                                    value={editingPackage.name}
+                                    onChange={(e) => setEditingPackage({
+                                      ...editingPackage,
+                                      name: e.target.value
+                                    })}
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-credits">Quantidade de Créditos</Label>
+                                  <Input
+                                    id="edit-credits"
+                                    type="number"
+                                    value={editingPackage.credits}
+                                    onChange={(e) => setEditingPackage({
+                                      ...editingPackage,
+                                      credits: parseInt(e.target.value) || 0
+                                    })}
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-price">Preço (R$)</Label>
+                                  <Input
+                                    id="edit-price"
+                                    type="number"
+                                    step="0.01"
+                                    value={editingPackage.price}
+                                    onChange={(e) => setEditingPackage({
+                                      ...editingPackage,
+                                      price: parseFloat(e.target.value) || 0
+                                    })}
+                                  />
+                                </div>
+
+                                <Button type="submit" className="w-full">
+                                  Salvar Alterações
+                                </Button>
+                              </form>
+                            )}
+                          </DialogContent>
+                        </Dialog>
                         <div className="flex items-center gap-2">
                           <Switch
                             checked={pkg.active}
