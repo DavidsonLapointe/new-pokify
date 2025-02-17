@@ -26,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { sendWelcomeEmail } from "@/services/organizationService";
 
 const formSchema = z.object({
   razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
