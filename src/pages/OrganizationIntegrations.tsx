@@ -1,5 +1,5 @@
 
-import { Building2, BrainCircuit } from "lucide-react";
+import { Building2, BrainCircuit, Network } from "lucide-react";
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { mockAvailableIntegrations, getIntegrationDescription } from "@/constants/integrations";
 import { Integration } from "@/types/integration";
@@ -46,11 +46,14 @@ const OrganizationIntegrations = () => {
   return (
     <OrganizationLayout>
       <div className="space-y-12">
-        <div>
-          <h1 className="text-3xl font-bold">Integrações</h1>
-          <p className="text-muted-foreground">
-            Configure as integrações com outras ferramentas
-          </p>
+        <div className="flex items-center gap-2">
+          <Network className="w-6 h-6" />
+          <div>
+            <h1 className="text-3xl font-bold">Integrações</h1>
+            <p className="text-muted-foreground">
+              Configure as integrações com outras ferramentas
+            </p>
+          </div>
         </div>
 
         <div className="space-y-8">
