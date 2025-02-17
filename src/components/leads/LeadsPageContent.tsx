@@ -2,7 +2,6 @@
 import { Card } from "@/components/ui/card";
 import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
-import { CallsStats } from "@/components/calls/CallsStats";
 import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
 
@@ -30,21 +29,18 @@ export const LeadsPageContent = ({
   console.log("LeadsPageContent - calls recebidos:", calls);
   
   return (
-    <>
-      <CallsStats {...monthStats} />
-      <Card className="p-6">
-        <CallsFilters
-          searchQuery={searchQuery}
-          onSearchChange={onSearchChange}
-        />
-        <CallsTable
-          calls={calls}
-          statusMap={statusMap}
-          onPlayAudio={onPlayAudio}
-          onViewAnalysis={onViewAnalysis}
-          formatDate={formatDate}
-        />
-      </Card>
-    </>
+    <Card className="p-6">
+      <CallsFilters
+        searchQuery={searchQuery}
+        onSearchChange={onSearchChange}
+      />
+      <CallsTable
+        calls={calls}
+        statusMap={statusMap}
+        onPlayAudio={onPlayAudio}
+        onViewAnalysis={onViewAnalysis}
+        formatDate={formatDate}
+      />
+    </Card>
   );
 };
