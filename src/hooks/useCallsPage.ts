@@ -34,7 +34,7 @@ export const useCallsPage = () => {
 
   const createNewLead = (leadData: LeadFormData) => {
     const leadId = uuidv4();
-    console.log("Criando novo lead com ID:", leadId);
+    console.log("Criando novo lead com ID:", leadId, "com dados:", leadData);
     return leadId;
   };
 
@@ -47,23 +47,23 @@ export const useCallsPage = () => {
         date: new Date().toISOString(),
         duration: "0:00",
         status: "pending",
-        phone: "",
+        phone: newCall?.leadInfo?.phone || "",
         seller: "Sistema",
         audioUrl: "",
         mediaType: "audio",
-        leadInfo: newCall?.leadInfo || {
-          personType: "pf",
-          firstName: "",
-          lastName: "",
-          razaoSocial: "",
-          email: "",
-          phone: "",
+        leadInfo: {
+          personType: newCall?.leadInfo?.personType || "pf",
+          firstName: newCall?.leadInfo?.firstName || "",
+          lastName: newCall?.leadInfo?.lastName || "",
+          razaoSocial: newCall?.leadInfo?.razaoSocial || "",
+          email: newCall?.leadInfo?.email || "",
+          phone: newCall?.leadInfo?.phone || "",
         },
         emptyLead: true,
         isNewLead: true,
       };
 
-      console.log("Adicionando chamada vazia:", emptyCall);
+      console.log("Adicionando chamada vazia com informações do lead:", emptyCall);
       setCalls(prevCalls => [emptyCall, ...prevCalls]);
       
       toast({
