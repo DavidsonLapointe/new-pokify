@@ -76,6 +76,10 @@ const Organizations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
 
+  const handleEditOrganization = (organization: Organization) => {
+    setEditingOrganization(organization);
+  };
+
   const filteredOrganizations = organizations.filter((org) =>
     [org.name, org.nomeFantasia, org.cnpj].some(field =>
       field?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,7 +101,7 @@ const Organizations = () => {
             <OrganizationCard 
               key={org.id} 
               organization={org}
-              onEdit={setEditingOrganization}
+              onEdit={handleEditOrganization}
             />
           ))}
         </div>
