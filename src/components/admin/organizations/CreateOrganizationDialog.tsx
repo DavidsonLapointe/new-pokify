@@ -66,43 +66,39 @@ export const CreateOrganizationDialog = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Criar a empresa com status "pending"
     const newOrganization = {
-      id: Math.random(), // Em produção, isso viria do banco de dados
+      id: Math.random(),
       name: values.razaoSocial,
-      razaoSocial: values.razaoSocial,
       nomeFantasia: values.nomeFantasia,
-      cnpj: values.cnpj,
       plan: values.plan,
-      email: values.email,
-      phone: values.phone,
-      adminName: values.adminName,
-      adminEmail: values.adminEmail,
-      status: "pending",
-      integratedCRM: null,
-      integratedLLM: null,
       users: [{
         id: 1,
         name: values.adminName,
         email: values.adminEmail,
+        phone: values.phone,
         role: "admin",
-        status: "pending",
+        status: "active",
         createdAt: new Date().toISOString(),
-        lastAccess: null,
+        lastAccess: new Date().toISOString(),
         permissions: { integrations: ["view", "edit"] },
         logs: []
-      }]
+      }],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: values.email,
+      phone: values.phone,
+      cnpj: values.cnpj,
+      adminName: values.adminName,
+      adminEmail: values.adminEmail,
     };
 
     try {
-      // Criar título pro rata
-      const proRataTitle = createProRataTitle(newOrganization, 156.67); // Valor calculado com base no plano
+      const proRataTitle = createProRataTitle(newOrganization, 156.67);
       console.log("Título pro rata gerado:", proRataTitle);
 
-      // Enviar email com contrato e instruções de pagamento
       await sendWelcomeEmail(newOrganization);
 
-      // Mostrar mensagem de sucesso com detalhes sobre o email
       toast({
         title: "Empresa criada com sucesso",
         description: "Um email foi enviado para o administrador contendo:",
