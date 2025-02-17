@@ -6,9 +6,8 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
 
 export const useCallsPage = () => {
-  // Inicializa o estado com as chamadas do mock
   const [calls, setCalls] = useState<Call[]>(mockCalls);
-  const [searchQuery, setSearchQuery] = useState<string>("");  // Explicitamente tipado como string
+  const [searchQuery, setSearchQuery] = useState<string>();
   const [monthStats] = useState({
     total: 45,
     processed: 32,
@@ -33,49 +32,47 @@ export const useCallsPage = () => {
   };
 
   const createNewLead = (leadData: LeadFormData) => {
-    const newLeadId = uuidv4();
-    // Adiciona o lead sem chamadas inicialmente
-    setCalls(prevCalls => [
-      ...prevCalls,
-      {
-        id: newLeadId,
-        leadId: newLeadId,
-        date: new Date().toISOString(),
-        duration: "0:00",
-        status: "pending",
-        phone: leadData.phone || "",
-        seller: "Sistema",
-        audioUrl: "",
-        mediaType: "audio",
-        leadInfo: {
-          personType: leadData.personType,
-          firstName: leadData.firstName,
-          lastName: leadData.lastName || "",
-          razaoSocial: leadData.razaoSocial || "",
-          email: leadData.email || "",
-          phone: leadData.phone || "",
-        },
-        emptyLead: true,
-        isNewLead: true,
-      },
-    ]);
-    return newLeadId;
+    // Apenas retorna o ID do novo lead, sem adicionar chamada
+    return uuidv4();
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
-    if (withUpload && newCall) {
-      // Atualiza a chamada existente ou adiciona uma nova com o status de sucesso
+    if (!withUpload && !newCall) {
+      // Quando o lead é criado inicialmente, sem upload
+      const emptyCall: Call = {
+        id: uuidv4(),
+        leadId: newCall?.leadId || "",
+        date: new Date().toISOString(),
+        duration: "0:00",
+        status: "pending",
+        phone: "",
+        seller: "Sistema",
+        audioUrl: "",
+        mediaType: "audio",
+        leadInfo: newCall?.leadInfo || {
+          personType: "pf",
+          firstName: "",
+          lastName: "",
+          razaoSocial: "",
+          email: "",
+          phone: "",
+        },
+        emptyLead: true,
+        isNewLead: true,
+      };
+      setCalls(prevCalls => [emptyCall, ...prevCalls]);
+    } else if (withUpload && newCall) {
+      // Quando um upload é realizado com sucesso
       setCalls(prevCalls => {
-        const index = prevCalls.findIndex(call => call.leadId === newCall.leadId && call.emptyLead);
+        const index = prevCalls.findIndex(call => call.leadId === newCall.leadId);
         if (index !== -1) {
-          // Atualiza a chamada existente
-          const updatedCalls = [...prevCalls];
-          updatedCalls[index] = newCall;
-          return updatedCalls;
-        } else {
-          // Adiciona uma nova chamada
-          return [newCall, ...prevCalls];
+          // Remove a chamada vazia e adiciona a nova com upload
+          const filteredCalls = prevCalls.filter(call => 
+            !(call.leadId === newCall.leadId && call.emptyLead)
+          );
+          return [newCall, ...filteredCalls];
         }
+        return [newCall, ...prevCalls];
       });
       console.log("Nova chamada adicionada:", newCall);
     }
@@ -95,7 +92,7 @@ export const useCallsPage = () => {
   // Usa useMemo para filtrar as chamadas
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
-    const query = String(searchQuery).toLowerCase(); // Garante que searchQuery seja string
+    const query = String(searchQuery || "").toLowerCase();
     
     return calls.filter(call => {
       const leadName = call.leadInfo.personType === "pf" 
