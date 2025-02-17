@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -102,15 +103,15 @@ const OrganizationPlan = () => {
 
   return (
     <OrganizationLayout>
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Meu Plano</h1>
-          <p className="text-muted-foreground">
+      <div className="space-y-2">
+        <div className="mb-2">
+          <h1 className="text-2xl font-bold">Meu Plano</h1>
+          <p className="text-muted-foreground text-sm">
             Gerencie seu plano e consumo de análises
           </p>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
           <CurrentPlanCard 
             planInfo={planInfo}
             onChangePlan={() => setIsChangePlanDialogOpen(true)}
@@ -124,7 +125,7 @@ const OrganizationPlan = () => {
           />
         </div>
 
-        <div className="mt-4">
+        <div className="mt-2">
           <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
         </div>
 
