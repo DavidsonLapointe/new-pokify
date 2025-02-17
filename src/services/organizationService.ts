@@ -1,5 +1,6 @@
 
 import { Organization, OrganizationPendingReason } from "@/types/organization";
+import { createProRataTitle, handleTitlePayment } from "./financialService";
 
 // Função para gerar o contrato de adesão (mock)
 const generateContract = (organization: Organization) => {
@@ -50,6 +51,60 @@ export const sendInitialContract = async (organization: Organization) => {
   });
 
   return true;
+};
+
+// Nova função para processar a assinatura do contrato
+export const processContractSignature = async (organization: Organization) => {
+  try {
+    // Atualiza a data de assinatura do contrato
+    organization.contractSignedAt = new Date().toISOString();
+
+    // Calcula o valor pro rata
+    const proRataValue = calculateProRataValue(500, new Date()); // 500 é o valor base do plano
+
+    // Cria o título pro rata
+    const proRataTitle = createProRataTitle(organization, proRataValue);
+
+    // Atualiza o status da organização
+    await updateOrganizationStatus(
+      organization.id,
+      "pending",
+      "pro_rata_payment"
+    );
+
+    // Envia as instruções de pagamento
+    await sendProRataPaymentInstructions(organization, proRataValue);
+
+    return { success: true, proRataValue };
+  } catch (error) {
+    console.error("Erro ao processar assinatura do contrato:", error);
+    throw error;
+  }
+};
+
+// Nova função para processar a ativação após o pagamento
+export const processActivation = async (organization: Organization) => {
+  try {
+    // Atualiza o status da organização para ativo
+    await updateOrganizationStatus(organization.id, "active");
+
+    // Atualiza o status do usuário admin para ativo
+    const adminUser = organization.users.find(
+      (user) => user.role === "admin" && user.email === organization.adminEmail
+    );
+
+    if (adminUser) {
+      adminUser.status = "active";
+    }
+
+    // Envia o email de boas-vindas
+    console.log("Enviando email de boas-vindas para:", organization.adminEmail);
+
+    return true;
+  } catch (error) {
+    console.error("Erro ao processar ativação:", error);
+    throw error;
+  }
 };
 
 // Função para enviar instruções de pagamento pro rata

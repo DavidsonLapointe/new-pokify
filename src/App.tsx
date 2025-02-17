@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Admin from "@/pages/Admin";
 import Index from "@/pages/Index";
@@ -16,6 +17,7 @@ import OrganizationPlan from "@/pages/OrganizationPlan";
 import OrganizationProfile from "@/pages/OrganizationProfile";
 import OrganizationSettings from "@/pages/OrganizationSettings";
 import OrganizationUsers from "@/pages/OrganizationUsers";
+import OrganizationSetup from "@/pages/OrganizationSetup";
 import AdminAnalysisPackages from "@/pages/AdminAnalysisPackages";
 import AdminFinancial from "@/pages/AdminFinancial";
 
@@ -45,6 +47,9 @@ export default function App() {
         <Route path="/organization/plan" element={<OrganizationPlan />} />
         <Route path="/organization/profile" element={<OrganizationProfile />} />
         <Route path="/organization/settings" element={<OrganizationSettings />} />
+
+        {/* Setup Route */}
+        <Route path="/setup/:setupToken" element={<OrganizationSetup />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
