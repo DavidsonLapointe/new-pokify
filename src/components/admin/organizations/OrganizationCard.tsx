@@ -43,6 +43,17 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
   const activeAdmins = activeUsers.filter(user => user.role === "admin").length;
   const activeSellers = activeUsers.filter(user => user.role === "seller").length;
 
+  const getPendingReason = (reason?: string | null) => {
+    switch (reason) {
+      case "contract_signature":
+        return "Aguardando assinatura do contrato";
+      case "pro_rata_payment":
+        return "Aguardando pagamento pro rata";
+      default:
+        return "Aguardando ativação";
+    }
+  };
+
   return (
     <Card ref={cardRef} className="hover:shadow-md transition-shadow cursor-pointer group">
       <CardHeader className="pb-3">
@@ -99,21 +110,32 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Status</span>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                organization.status === "active"
-                  ? "bg-green-100 text-green-700"
-                  : organization.status === "pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {organization.status === "active"
-                ? "Ativo"
-                : organization.status === "pending"
-                ? "Pendente"
-                : "Inativo"}
-            </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium cursor-help ${
+                      organization.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : organization.status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {organization.status === "active"
+                      ? "Ativo"
+                      : organization.status === "pending"
+                      ? "Pendente"
+                      : "Inativo"}
+                  </span>
+                </TooltipTrigger>
+                {organization.status === "pending" && (
+                  <TooltipContent side="top">
+                    <p>{getPendingReason(organization.pendingReason)}</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </CardContent>
