@@ -18,7 +18,7 @@ export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelec
   const monthOptions = Array.from({ length: 12 }).map((_, index) => {
     const date = subMonths(new Date(), index);
     const value = format(date, "yyyy-MM");
-    const label = format(date, "MMMM/yyyy");
+    const label = format(date, "MM/yyyy");
     return { value, label, date };
   });
 
