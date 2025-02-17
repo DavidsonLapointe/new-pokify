@@ -5,10 +5,12 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { User } from "@/types/organization";
+import { X } from "lucide-react";
 
 interface IntegrationAlertDialogProps {
   isOpen: boolean;
@@ -39,7 +41,17 @@ export const IntegrationAlertDialog = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+          onClick={() => onOpenChange(false)}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Fechar</span>
+        </Button>
+
         <AlertDialogHeader>
           <AlertDialogTitle>Integrações Necessárias</AlertDialogTitle>
           <AlertDialogDescription className="space-y-4">
