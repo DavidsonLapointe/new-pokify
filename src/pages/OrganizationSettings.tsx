@@ -195,12 +195,11 @@ const OrganizationSettings = () => {
                 </CardDescription>
               </div>
               <Button
-                variant="ghost"
-                size="icon"
+                className="bg-[#000000e6] hover:bg-black/80"
                 onClick={() => setIsFieldsDialogOpen(true)}
-                className="hover:bg-muted"
               >
-                <PenLine className="h-4 w-4" />
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Campo
               </Button>
             </div>
           </CardHeader>
@@ -212,16 +211,26 @@ const OrganizationSettings = () => {
                     key={field.id}
                     className="p-4 border rounded-lg"
                   >
-                    <div className="space-y-1">
-                      <h3 className="font-medium">{field.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {field.description}
-                      </p>
-                      {field.isRequired && (
-                        <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                          Obrigatório
-                        </span>
-                      )}
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <h3 className="font-medium">{field.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {field.description}
+                        </p>
+                        {field.isRequired && (
+                          <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                            Obrigatório
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsFieldsDialogOpen(true)}
+                        className="hover:bg-muted"
+                      >
+                        <PenLine className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -231,7 +240,7 @@ const OrganizationSettings = () => {
                 <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p>Nenhum campo personalizado configurado</p>
                 <p className="text-sm">
-                  Clique no ícone de edição para adicionar campos
+                  Clique em Novo Campo para adicionar campos
                 </p>
               </div>
             )}
