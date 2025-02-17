@@ -22,7 +22,7 @@ export const CallHistoryTableHeader = () => {
         <TableHead className="text-xs sticky top-0 bg-background">Duração</TableHead>
         <TableHead className="text-xs sticky top-0 bg-background">
           <div className="flex items-center gap-1">
-            Status da Chamada
+            Status do Upload
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
@@ -36,7 +36,7 @@ export const CallHistoryTableHeader = () => {
               <TooltipContent side="bottom" align="start" className="p-3">
                 <div className="space-y-3">
                   <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="bg-green-100 text-green-700">Processada</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-700">Processado</Badge>
                     <span className="text-xs">Chamadas que foram processadas com sucesso pelo sistema</span>
                   </div>
                   <div className="flex items-center gap-1.5">

@@ -4,7 +4,7 @@ import { StatusMap } from "@/types/calls";
 
 export const statusMap: StatusMap = {
   success: {
-    label: "Processada",
+    label: "Processado",
     color: "bg-green-100 text-green-700",
     icon: CheckCircle2,
     tooltip: "Chamadas que foram processadas com sucesso pelo sistema"

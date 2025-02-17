@@ -86,7 +86,7 @@ export const CallHistory = ({
           <DialogHeader className="flex-shrink-0">
             <div className="flex items-center gap-2">
               <DialogTitle>
-                Histórico de Chamadas - {getLeadName(selectedLead)}
+                Histórico de Uploads - {getLeadName(selectedLead)}
               </DialogTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
