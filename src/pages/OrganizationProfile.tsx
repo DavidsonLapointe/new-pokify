@@ -1,79 +1,19 @@
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { toast } from "sonner";
-
-// Mock do usuário (depois será substituído pela autenticação real)
-const mockUser = {
-  name: "João Silva",
-  email: "joao.silva@empresa.com",
-  phone: "(11) 98765-4321",
-};
+import { ContactForm } from "@/components/organization/profile/ContactForm";
+import { PasswordForm } from "@/components/organization/profile/PasswordForm";
+import { useProfileForm } from "@/components/organization/profile/useProfileForm";
 
 const OrganizationProfile = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [formData, setFormData] = useState({
-    email: mockUser.email,
-    phone: mockUser.phone,
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const { formData, isLoading, handleInputChange, handleUpdateProfile } = useProfileForm();
 
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Mock da atualização
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Validação da senha
-      if (formData.newPassword) {
-        if (formData.newPassword.length < 6) {
-          toast.error("A nova senha deve ter pelo menos 6 caracteres");
-          return;
-        }
-        if (formData.newPassword !== formData.confirmPassword) {
-          toast.error("As senhas não coincidem");
-          return;
-        }
-        if (!formData.currentPassword) {
-          toast.error("Digite sua senha atual");
-          return;
-        }
-      }
-
-      toast.success("Perfil atualizado com sucesso!");
-      
-      // Limpa os campos de senha após a atualização
-      setFormData((prev) => ({
-        ...prev,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
-    } catch (error) {
-      toast.error("Erro ao atualizar o perfil");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (!mounted) {
     return null;
@@ -97,118 +37,20 @@ const OrganizationProfile = () => {
             </TabsList>
 
             <form onSubmit={handleUpdateProfile}>
-              <TabsContent value="contact" className="space-y-6 mt-6">
-                <div className="grid gap-6">
-                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        Email
-                        <span className="text-xs text-gray-500 font-normal">(principal)</span>
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-                        placeholder="seu@email.com"
-                      />
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
-                          Telefone
-                        </Label>
-                        <Input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-                          placeholder="(00) 00000-0000"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="pt-4 flex justify-end">
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                  >
-                    {isLoading ? "Salvando..." : "Salvar Alterações"}
-                  </Button>
-                </div>
+              <TabsContent value="contact" className="mt-6">
+                <ContactForm
+                  formData={formData}
+                  isLoading={isLoading}
+                  onInputChange={handleInputChange}
+                />
               </TabsContent>
 
-              <TabsContent value="password" className="space-y-6 mt-6">
-                <div className="grid gap-6">
-                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        Senha Atual
-                        <span className="text-xs text-gray-500 font-normal">(necessário para alterar a senha)</span>
-                      </Label>
-                      <Input
-                        id="currentPassword"
-                        name="currentPassword"
-                        type="password"
-                        value={formData.currentPassword}
-                        onChange={handleInputChange}
-                        className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-                        placeholder="Digite sua senha atual"
-                      />
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
-                            Nova Senha
-                          </Label>
-                          <Input
-                            id="newPassword"
-                            name="newPassword"
-                            type="password"
-                            value={formData.newPassword}
-                            onChange={handleInputChange}
-                            className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-                            placeholder="Mínimo de 6 caracteres"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                            Confirmar Nova Senha
-                          </Label>
-                          <Input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type="password"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
-                            className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-                            placeholder="Digite a nova senha novamente"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="pt-4 flex justify-end">
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                  >
-                    {isLoading ? "Salvando..." : "Alterar Senha"}
-                  </Button>
-                </div>
+              <TabsContent value="password" className="mt-6">
+                <PasswordForm
+                  formData={formData}
+                  isLoading={isLoading}
+                  onInputChange={handleInputChange}
+                />
               </TabsContent>
             </form>
           </Tabs>
