@@ -1,10 +1,12 @@
 
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { UsersTable } from "@/components/organization/UsersTable";
+import { AddUserDialog } from "@/components/organization/AddUserDialog";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { mockUsers } from "@/types/organization";
 import type { User } from "@/types/organization";
+import { toast } from "sonner";
 
 const OrganizationUsers = () => {
   const handleEditUser = (user: User) => {
@@ -13,6 +15,11 @@ const OrganizationUsers = () => {
 
   const handleEditPermissions = (user: User) => {
     console.log("Editar permissões:", user);
+  };
+
+  const handleUserAdded = () => {
+    // Aqui você pode atualizar a lista de usuários
+    toast.success("Usuário adicionado com sucesso!");
   };
 
   return (
@@ -25,10 +32,7 @@ const OrganizationUsers = () => {
               Gerencie os usuários da sua organização
             </p>
           </div>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Adicionar Usuário
-          </Button>
+          <AddUserDialog onUserAdded={handleUserAdded} />
         </div>
 
         <UsersTable
