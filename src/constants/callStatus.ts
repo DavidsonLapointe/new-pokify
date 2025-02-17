@@ -7,12 +7,12 @@ export const statusMap: StatusMap = {
     label: "Processado",
     color: "bg-green-100 text-green-700",
     icon: CheckCircle2,
-    tooltip: "Chamadas que foram processadas com sucesso pelo sistema"
+    tooltip: "Arquivos que foram processadas com sucesso pelo sistema"
   },
   failed: {
     label: "Erro",
     color: "bg-red-100 text-red-700",
     icon: AlertCircle,
-    tooltip: "Chamadas que falharam durante o processamento e precisam ser reprocessadas"
+    tooltip: "Arquivos que falharam durante o processamento e precisam ser reprocessados"
   }
 };
