@@ -15,7 +15,7 @@ import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
 
-// Mock do usuário logado - agora como vendedor
+// Mock do usuário logado - vendedor
 const mockLoggedUser = {
   id: 2,
   name: "Maria Santos",
@@ -29,7 +29,7 @@ const mockLoggedUser = {
     dashboard: ["view"],
     calls: ["view", "upload"],
     leads: ["view", "edit"],
-    integrations: ["view"], // Vendedor só tem permissão de visualização
+    integrations: ["view"],
   },
   logs: [
     {
@@ -40,7 +40,7 @@ const mockLoggedUser = {
   ],
 };
 
-// Mock da organização - com CRM mas sem LLM
+// Mock da organização - agora com ambas integrações
 const mockOrganization = {
   id: 1,
   name: "Tech Solutions Ltda",
@@ -48,8 +48,8 @@ const mockOrganization = {
   plan: "enterprise",
   users: mockUsers,
   status: "active" as const,
-  integratedCRM: "HubSpot", // CRM está integrado
-  integratedLLM: null, // LLM não está integrado
+  integratedCRM: "HubSpot", // CRM integrado
+  integratedLLM: "OpenAI", // LLM agora está integrado
   email: "contato@techsolutions.com",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
