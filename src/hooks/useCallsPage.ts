@@ -136,7 +136,7 @@ export const useCallsPage = () => {
   }, [leads, searchQuery]);
 
   // Convertemos os leads filtrados para o formato esperado pela tabela
-  const processedCalls = useMemo(() => {
+  const processedCalls = useMemo((): Call[] => {
     return filteredLeads.flatMap(lead => 
       lead.calls.length > 0 
         ? lead.calls 
@@ -145,7 +145,7 @@ export const useCallsPage = () => {
             leadId: lead.id,
             date: lead.createdAt,
             duration: "0:00",
-            status: "pending",
+            status: "pending" as const,
             phone: lead.leadInfo.phone,
             seller: "Sistema",
             audioUrl: "",
