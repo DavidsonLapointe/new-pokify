@@ -49,7 +49,7 @@ const mockOrganization = {
   users: mockUsers,
   status: "active" as const,
   integratedCRM: null, // Removida a integração com CRM
-  integratedLLM: "GPT-4O",
+  integratedLLM: null, // Removida a integração com LLM
   email: "contato@techsolutions.com",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
