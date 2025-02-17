@@ -11,7 +11,7 @@ export interface CRMInfo {
 
 export interface LeadInfo {
   personType: "pf" | "pj";
-  firstName: string;  // Removido o opcional
+  firstName: string;
   lastName?: string;
   razaoSocial?: string;
   email?: string;
@@ -39,7 +39,7 @@ export interface Call {
   leadId: string;
   date: string;
   duration: string;
-  status: "success" | "failed" | "pending";
+  status: "success" | "failed";
   phone: string;
   seller: string;
   audioUrl: string;
@@ -65,6 +65,5 @@ export interface StatusMap {
 export interface MonthStats {
   total: number;
   processed: number;
-  pending: number;
   failed: number;
 }

@@ -62,32 +62,6 @@ const OrganizationDashboard = () => {
     });
   }, [selectedDate]);
 
-  // Calcula as estatísticas de leads para o mês selecionado
-  const leadsStats = useMemo(() => {
-    const monthStart = startOfMonth(selectedDate);
-    const monthEnd = endOfMonth(selectedDate);
-
-    // Filtra apenas os leads do mês selecionado
-    const monthLeads = dailyLeadsData.filter(lead => {
-      const [day, month] = lead.day.split('/').map(Number);
-      const leadDate = new Date(selectedDate.getFullYear(), month - 1, day);
-      return isWithinInterval(leadDate, { start: monthStart, end: monthEnd });
-    });
-
-    // Calcula o total de leads no mês
-    const total = monthLeads.reduce((acc, curr) => acc + curr.novos, 0);
-    
-    // Simula leads ativos e pendentes baseado no total
-    const active = Math.floor(total * 0.3); // 30% dos leads são ativos
-    const pending = total - active; // restante são pendentes
-
-    return {
-      total,
-      active,
-      pending,
-    };
-  }, [selectedDate, dailyLeadsData]);
-
   // Mock data para performance dos vendedores
   const dailyPerformanceData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
@@ -110,6 +84,22 @@ const OrganizationDashboard = () => {
     topPerformerLeads: 42,
   };
 
+  // Calcula as estatísticas de leads para o mês selecionado
+  const leadsStats = useMemo(() => {
+    // Filtra apenas os leads do mês selecionado
+    const monthLeads = dailyLeadsData.reduce((acc, curr) => acc + curr.novos, 0);
+    
+    // Simula leads ativos e pendentes baseado no total
+    const active = Math.floor(monthLeads * 0.3); // 30% dos leads são ativos
+    const pending = monthLeads - active; // restante são pendentes
+
+    return {
+      total: monthLeads,
+      active,
+      pending,
+    };
+  }, [selectedDate, dailyLeadsData]);
+
   return (
     <OrganizationLayout>
       <div className="space-y-6">
@@ -131,7 +121,6 @@ const OrganizationDashboard = () => {
             <CallsStats
               total={monthStats.total}
               processed={monthStats.processed}
-              pending={monthStats.pending}
               failed={monthStats.failed}
             />
             <DailyCallsChart 

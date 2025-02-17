@@ -28,11 +28,10 @@ export const CallHistoryTableRow = ({
 }: CallHistoryTableRowProps) => {
   const { toast } = useToast();
   const [showReprocessDialog, setShowReprocessDialog] = useState(false);
-  const [showProcessDialog, setShowProcessDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState("");
   
-  const StatusIcon = status.icon;
+  const StatusIcon = status?.icon;
 
   const simulateProcessing = async () => {
     return new Promise<boolean>((resolve) => {
@@ -44,10 +43,6 @@ export const CallHistoryTableRow = ({
 
   const handleReprocess = () => {
     setShowReprocessDialog(true);
-  };
-
-  const handleProcess = () => {
-    setShowProcessDialog(true);
   };
 
   const confirmReprocess = async () => {
@@ -87,42 +82,11 @@ export const CallHistoryTableRow = ({
     }
   };
 
-  const confirmProcess = async () => {
-    setShowProcessDialog(false);
-    setIsProcessing(true);
-    setProcessingMessage("Processando chamada...");
-    
-    toast({
-      title: "Processando chamada",
-      description: "Aguarde enquanto a chamada é processada...",
-      duration: 3000,
-    });
-
-    try {
-      const success = await simulateProcessing();
-      const newStatus = success ? "success" : "failed";
-      
-      onStatusUpdate?.(call.id, newStatus);
-      
-      toast({
-        title: success ? "Processamento concluído" : "Erro no processamento",
-        description: success 
-          ? "A chamada foi processada com sucesso."
-          : "Ocorreu um erro durante o processamento da chamada.",
-        variant: success ? "default" : "destructive",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro no processamento",
-        description: "Ocorreu um erro inesperado durante o processamento.",
-        variant: "destructive",
-      });
-      onStatusUpdate?.(call.id, "failed");
-    } finally {
-      setIsProcessing(false);
-      setProcessingMessage("");
-    }
-  };
+  // Se o status não estiver definido, não renderiza a linha
+  if (!status) {
+    console.error(`Status não encontrado para a chamada ${call.id} com status ${call.status}`);
+    return null;
+  }
 
   return (
     <>
@@ -149,7 +113,6 @@ export const CallHistoryTableRow = ({
             <CallActionButtons
               call={call}
               isProcessing={isProcessing}
-              onProcess={handleProcess}
               onReprocess={handleReprocess}
             />
           </div>
@@ -158,11 +121,11 @@ export const CallHistoryTableRow = ({
 
       <CallProcessingDialogs
         showReprocessDialog={showReprocessDialog}
-        showProcessDialog={showProcessDialog}
+        showProcessDialog={false}
         onReprocessDialogChange={setShowReprocessDialog}
-        onProcessDialogChange={setShowProcessDialog}
+        onProcessDialogChange={() => {}}
         onConfirmReprocess={confirmReprocess}
-        onConfirmProcess={confirmProcess}
+        onConfirmProcess={() => {}}
       />
 
       <ProcessingOverlay 
