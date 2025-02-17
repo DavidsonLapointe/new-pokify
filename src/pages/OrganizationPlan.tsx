@@ -4,6 +4,17 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, FileBarChart, Plus, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 
 // Mock data - em produção viria da API
@@ -31,6 +42,11 @@ const OrganizationPlan = () => {
     setIsLoading(true);
     // Aqui implementaria a lógica de compra
     setTimeout(() => setIsLoading(false), 1000);
+  };
+
+  const handleCancelSubscription = () => {
+    // Aqui implementaria a lógica de cancelamento
+    console.log("Assinatura cancelada");
   };
 
   return (
@@ -67,6 +83,35 @@ const OrganizationPlan = () => {
                   ))}
                 </ul>
               </div>
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-destructive text-sm mt-4"
+                  >
+                    Cancelar assinatura
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação irá cancelar sua assinatura ao final do período atual. 
+                      Você perderá acesso a todos os recursos do sistema após o término do período.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Manter assinatura</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCancelSubscription}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Confirmar cancelamento
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
 
