@@ -41,7 +41,7 @@ export const IntegrationAlertDialog = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="relative">
+      <AlertDialogContent>
         <Button
           variant="ghost"
           size="icon"
