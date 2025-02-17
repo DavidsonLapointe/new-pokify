@@ -4,8 +4,10 @@ import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
+import { useToast } from "@/hooks/use-toast";
 
 export const useCallsPage = () => {
+  const { toast } = useToast();
   const [calls, setCalls] = useState<Call[]>(mockCalls);
   const [searchQuery, setSearchQuery] = useState<string>();
   const [monthStats] = useState({
@@ -32,16 +34,17 @@ export const useCallsPage = () => {
   };
 
   const createNewLead = (leadData: LeadFormData) => {
-    // Apenas retorna o ID do novo lead, sem adicionar chamada
-    return uuidv4();
+    const leadId = uuidv4();
+    console.log("Criando novo lead com ID:", leadId);
+    return leadId;
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
-    if (!withUpload && !newCall) {
+    if (!withUpload) {
       // Quando o lead é criado inicialmente, sem upload
       const emptyCall: Call = {
         id: uuidv4(),
-        leadId: newCall?.leadId || "",
+        leadId: newCall?.leadId || uuidv4(),
         date: new Date().toISOString(),
         duration: "0:00",
         status: "pending",
@@ -60,9 +63,16 @@ export const useCallsPage = () => {
         emptyLead: true,
         isNewLead: true,
       };
+
+      console.log("Adicionando chamada vazia:", emptyCall);
       setCalls(prevCalls => [emptyCall, ...prevCalls]);
+      
+      toast({
+        title: "Lead criado com sucesso",
+        description: "O novo lead foi adicionado à lista.",
+      });
     } else if (withUpload && newCall) {
-      // Quando um upload é realizado com sucesso
+      console.log("Atualizando lead com upload:", newCall);
       setCalls(prevCalls => {
         const index = prevCalls.findIndex(call => call.leadId === newCall.leadId);
         if (index !== -1) {
@@ -74,7 +84,6 @@ export const useCallsPage = () => {
         }
         return [newCall, ...prevCalls];
       });
-      console.log("Nova chamada adicionada:", newCall);
     }
   };
 
@@ -92,6 +101,8 @@ export const useCallsPage = () => {
   // Usa useMemo para filtrar as chamadas
   const filteredLeads = useMemo(() => {
     console.log("Filtrando chamadas com query:", searchQuery);
+    console.log("Chamadas disponíveis:", calls);
+    
     const query = String(searchQuery || "").toLowerCase();
     
     return calls.filter(call => {
