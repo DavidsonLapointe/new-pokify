@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign } from "lucide-react";
+import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign, Phone, LineChart, Building2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -21,7 +21,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems = [
+  const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin" },
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans" },
@@ -29,6 +29,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile" },
+  ];
+
+  const organizationMenuItems = [
+    { icon: LineChart, label: "Dashboard", path: "/organization/dashboard" },
+    { icon: Phone, label: "Ligações", path: "/organization/calls" },
+    { icon: Building2, label: "Usuários", path: "/organization/users" },
+    { icon: Database, label: "Integrações", path: "/organization/integrations" },
+    { icon: User, label: "Meu Perfil", path: "/organization/profile" },
   ];
 
   // Função para fazer logout (mock)
@@ -48,24 +56,57 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
         {/* Menu de Navegação */}
         <nav className="mt-6">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
-                  isActive
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                <Icon className="w-4 h-4 mr-3" />
-                {item.label}
-              </button>
-            );
-          })}
+          <div className="px-3 py-2">
+            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+              Admin
+            </h2>
+            <div className="space-y-1">
+              {adminMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
+                      isActive
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="px-3 py-2">
+            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+              Organização
+            </h2>
+            <div className="space-y-1">
+              {organizationMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
+                      isActive
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Botão de Logout */}
           <button
