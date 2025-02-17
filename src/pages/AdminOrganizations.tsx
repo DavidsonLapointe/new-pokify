@@ -6,7 +6,7 @@ import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrg
 import { OrganizationCard } from "@/components/admin/organizations/OrganizationCard";
 import { OrganizationsHeader } from "@/components/admin/organizations/OrganizationsHeader";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
-import { Organization } from "@/types/organization";
+import { Organization, User } from "@/types/organization";
 
 const mockOrganizations: Organization[] = [
   {
@@ -15,12 +15,42 @@ const mockOrganizations: Organization[] = [
     nomeFantasia: "Tech Solutions",
     plan: "Enterprise",
     users: [
-      { role: "admin", status: "active" },
-      { role: "admin", status: "inactive" },
-      { role: "seller", status: "active" },
-      { role: "seller", status: "active" },
-      { role: "seller", status: "active" },
-      { role: "seller", status: "inactive" },
+      {
+        id: 1,
+        name: "Admin User 1",
+        email: "admin1@tech.com",
+        phone: "(11) 99999-9999",
+        role: "admin",
+        status: "active",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { integrations: ["view", "edit"] },
+        logs: []
+      },
+      {
+        id: 2,
+        name: "Admin User 2",
+        email: "admin2@tech.com",
+        phone: "(11) 99999-9998",
+        role: "admin",
+        status: "inactive",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { integrations: ["view"] },
+        logs: []
+      },
+      {
+        id: 3,
+        name: "Seller 1",
+        email: "seller1@tech.com",
+        phone: "(11) 99999-9997",
+        role: "seller",
+        status: "active",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { calls: ["view"] },
+        logs: []
+      },
     ],
     status: "active",
     integratedCRM: null,
@@ -37,9 +67,30 @@ const mockOrganizations: Organization[] = [
     nomeFantasia: "Vendas Diretas",
     plan: "Professional",
     users: [
-      { role: "admin", status: "active" },
-      { role: "seller", status: "active" },
-      { role: "seller", status: "active" },
+      {
+        id: 4,
+        name: "Admin User 3",
+        email: "admin3@vendas.com",
+        phone: "(11) 99999-9996",
+        role: "admin",
+        status: "active",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { integrations: ["view", "edit"] },
+        logs: []
+      },
+      {
+        id: 5,
+        name: "Seller 2",
+        email: "seller2@vendas.com",
+        phone: "(11) 99999-9995",
+        role: "seller",
+        status: "active",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { calls: ["view"] },
+        logs: []
+      },
     ],
     status: "active",
     integratedCRM: "Pipedrive",
@@ -56,8 +107,18 @@ const mockOrganizations: Organization[] = [
     nomeFantasia: "Global",
     plan: "Basic",
     users: [
-      { role: "admin", status: "active" },
-      { role: "seller", status: "inactive" },
+      {
+        id: 6,
+        name: "Admin User 4",
+        email: "admin4@global.com",
+        phone: "(11) 99999-9994",
+        role: "admin",
+        status: "active",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        lastAccess: "2024-03-15T14:30:00.000Z",
+        permissions: { integrations: ["view", "edit"] },
+        logs: []
+      },
     ],
     status: "inactive",
     integratedCRM: null,

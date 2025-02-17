@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import { useLeadUpload } from "@/hooks/useLeadUpload";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
+import { mockUsers } from "@/types/organization";
 
 // Mock do usuário logado - depois será substituído pela autenticação real
 const mockLoggedUser = {
@@ -19,8 +21,8 @@ const mockLoggedUser = {
   name: "João Silva",
   email: "joao@empresa.com",
   phone: "(11) 99999-9999",
-  role: "admin",
-  status: "active",
+  role: "admin" as const,
+  status: "active" as const,
   createdAt: "2024-01-01T00:00:00.000Z",
   lastAccess: "2024-03-15T14:30:00.000Z",
   permissions: {
@@ -44,7 +46,8 @@ const mockOrganization = {
   name: "Tech Solutions Ltda",
   nomeFantasia: "Tech Solutions",
   plan: "enterprise",
-  status: "active",
+  users: mockUsers,
+  status: "active" as const,
   integratedCRM: "HubSpot",
   integratedLLM: "GPT-4O",
   email: "contato@techsolutions.com",
@@ -52,7 +55,6 @@ const mockOrganization = {
   cnpj: "12.345.678/0001-90",
   adminName: "João Silva",
   adminEmail: "joao@empresa.com",
-  users: mockUsers,
 };
 
 const OrganizationLeads = () => {
