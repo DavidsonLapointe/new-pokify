@@ -1,5 +1,6 @@
 
 import OrganizationLayout from "@/components/OrganizationLayout";
+import { AdminIntegrationsList } from "@/components/admin/integrations/AdminIntegrationsList";
 
 const OrganizationIntegrations = () => {
   return (
@@ -11,6 +12,8 @@ const OrganizationIntegrations = () => {
             Configure as integrações com outras ferramentas
           </p>
         </div>
+
+        <AdminIntegrationsList />
       </div>
     </OrganizationLayout>
   );
