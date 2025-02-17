@@ -3,22 +3,43 @@ import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
+import { LeadsStats } from "@/components/leads/LeadsStats";
+import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subDays } from "date-fns";
 
 const OrganizationDashboard = () => {
   const { monthStats } = useCallsPage();
 
-  // Gera dados para os últimos 30 dias
-  const dailyData = Array.from({ length: 30 }).map((_, index) => {
+  // Gera dados para os últimos 30 dias (chamadas)
+  const dailyCallsData = Array.from({ length: 30 }).map((_, index) => {
     const date = subDays(new Date(), 29 - index);
     return {
       day: format(date, 'dd/MM'),
-      processadas: Math.floor(Math.random() * 10) + 1, // 1-10 chamadas processadas
-      pendentes: Math.floor(Math.random() * 5),        // 0-4 chamadas pendentes
-      erro: Math.floor(Math.random() * 3),            // 0-2 chamadas com erro
+      processadas: Math.floor(Math.random() * 10) + 1,
+      pendentes: Math.floor(Math.random() * 5),
+      erro: Math.floor(Math.random() * 3),
     };
   });
+
+  // Gera dados para os últimos 30 dias (leads)
+  const dailyLeadsData = Array.from({ length: 30 }).map((_, index) => {
+    const date = subDays(new Date(), 29 - index);
+    return {
+      day: format(date, 'dd/MM'),
+      ativos: Math.floor(Math.random() * 8) + 1,
+      contatados: Math.floor(Math.random() * 5),
+      perdidos: Math.floor(Math.random() * 2),
+    };
+  });
+
+  // Mock data para estatísticas de leads
+  const leadsStats = {
+    total: 150,
+    active: 45,
+    contacted: 85,
+    lost: 20,
+  };
 
   return (
     <OrganizationLayout>
@@ -43,13 +64,17 @@ const OrganizationDashboard = () => {
               pending={monthStats.pending}
               failed={monthStats.failed}
             />
-            <DailyCallsChart data={dailyData} />
+            <DailyCallsChart data={dailyCallsData} />
           </TabsContent>
           
-          <TabsContent value="leads">
-            <div className="text-center py-8 text-muted-foreground">
-              Conteúdo da tab Leads será implementado em breve
-            </div>
+          <TabsContent value="leads" className="space-y-6">
+            <LeadsStats
+              total={leadsStats.total}
+              active={leadsStats.active}
+              contacted={leadsStats.contacted}
+              lost={leadsStats.lost}
+            />
+            <DailyLeadsChart data={dailyLeadsData} />
           </TabsContent>
         </Tabs>
       </div>
