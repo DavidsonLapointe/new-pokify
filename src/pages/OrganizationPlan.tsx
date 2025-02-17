@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, FileBarChart, Plus, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,9 +35,19 @@ const planInfo = {
   ]
 };
 
+const cancellationReasons = [
+  { id: "price", label: "Preço muito alto" },
+  { id: "features", label: "Faltam recursos importantes" },
+  { id: "usability", label: "Difícil de usar" },
+  { id: "competitor", label: "Mudando para outro serviço" },
+  { id: "temporary", label: "Pausa temporária" },
+  { id: "other", label: "Outro motivo" }
+];
+
 const OrganizationPlan = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [cancelReason, setCancelReason] = useState("");
+  const [selectedReason, setSelectedReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const remainingAnalyses = planInfo.monthlyQuota - planInfo.used;
   const usagePercentage = (planInfo.used / planInfo.monthlyQuota) * 100;
@@ -49,15 +60,29 @@ const OrganizationPlan = () => {
   };
 
   const handleCancelSubscription = () => {
-    if (!cancelReason.trim()) {
-      toast.error("Por favor, informe o motivo do cancelamento");
+    if (!selectedReason) {
+      toast.error("Por favor, selecione um motivo para o cancelamento");
       return;
     }
+    
+    if (selectedReason === "other" && !otherReason.trim()) {
+      toast.error("Por favor, descreva o motivo do cancelamento");
+      return;
+    }
+
     // Aqui implementaria a lógica de cancelamento
-    console.log("Assinatura cancelada. Motivo:", cancelReason);
+    const finalReason = selectedReason === "other" ? otherReason : cancellationReasons.find(r => r.id === selectedReason)?.label;
+    console.log("Assinatura cancelada. Motivo:", finalReason);
+    
     setIsAlertOpen(false);
-    setCancelReason("");
+    setSelectedReason("");
+    setOtherReason("");
     toast.success("Assinatura cancelada com sucesso");
+  };
+
+  const handleModalClose = () => {
+    setSelectedReason("");
+    setOtherReason("");
   };
 
   return (
@@ -114,22 +139,43 @@ const OrganizationPlan = () => {
                         acesso a todos os recursos do sistema.
                       </p>
                       <div className="space-y-2">
-                        <label htmlFor="cancelReason" className="text-sm font-medium text-foreground">
+                        <label className="text-sm font-medium text-foreground">
                           Por que você está cancelando?
                         </label>
-                        <Textarea
-                          id="cancelReason"
-                          value={cancelReason}
-                          onChange={(e) => setCancelReason(e.target.value)}
-                          placeholder="Descreva o motivo do cancelamento..."
-                          className="resize-none"
-                          rows={4}
-                        />
+                        <RadioGroup 
+                          value={selectedReason} 
+                          onValueChange={setSelectedReason}
+                          className="space-y-3"
+                        >
+                          {cancellationReasons.map((reason) => (
+                            <div key={reason.id} className="flex items-center space-x-2">
+                              <RadioGroupItem value={reason.id} id={reason.id} />
+                              <label 
+                                htmlFor={reason.id}
+                                className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {reason.label}
+                              </label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                        
+                        {selectedReason === "other" && (
+                          <div className="mt-4">
+                            <Textarea
+                              value={otherReason}
+                              onChange={(e) => setOtherReason(e.target.value)}
+                              placeholder="Descreva o motivo do cancelamento..."
+                              className="resize-none"
+                              rows={4}
+                            />
+                          </div>
+                        )}
                       </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setCancelReason("")}>
+                    <AlertDialogCancel onClick={handleModalClose}>
                       Manter assinatura
                     </AlertDialogCancel>
                     <AlertDialogAction
