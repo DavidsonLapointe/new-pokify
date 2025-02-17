@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,7 +102,7 @@ const OrganizationSettings = () => {
         </div>
 
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader className="border-b py-4">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-2">
                 <GitBranch className="h-5 w-5 text-primary" />
@@ -157,7 +158,7 @@ const OrganizationSettings = () => {
         </Card>
 
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader className="border-b py-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <CardTitle className="flex items-center gap-2">
@@ -170,7 +171,7 @@ const OrganizationSettings = () => {
               </div>
               {!isEditing && (
                 <Button
-                  variant="outline"
+                  className="bg-[#000000e6] hover:bg-black/80"
                   onClick={() => setIsEditing(true)}
                 >
                   <Plus className="h-4 w-4 mr-2" />
