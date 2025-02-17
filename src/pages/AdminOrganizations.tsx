@@ -70,7 +70,9 @@ const Organizations = () => {
   const [editingOrganization, setEditingOrganization] = useState<any>(null);
 
   const filteredOrganizations = organizations.filter((org) =>
-    org.name.toLowerCase().includes(searchTerm.toLowerCase())
+    [org.name, org.nomeFantasia, org.cnpj].some(field =>
+      field?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   const OrganizationCard = ({ organization }: { organization: any }) => (
@@ -153,7 +155,7 @@ const Organizations = () => {
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar empresas..."
+            placeholder="Buscar por razão social, nome fantasia ou CNPJ..."
             className="pl-9"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
