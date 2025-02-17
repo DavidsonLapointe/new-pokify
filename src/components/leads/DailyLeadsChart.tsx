@@ -9,9 +9,12 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 
 interface DailyLeadsChartProps {
   data: any[];
+  onDateChange: (date: Date) => void;
+  selectedDate: Date;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -28,10 +31,16 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const DailyLeadsChart = ({ data }: DailyLeadsChartProps) => (
+export const DailyLeadsChart = ({ data, onDateChange, selectedDate }: DailyLeadsChartProps) => (
   <Card className="p-4">
-    <div className="space-y-2">
-      <h3 className="text-lg font-semibold">Novos Leads por Dia</h3>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Cadastro de novos leads por dia</h3>
+        <MonthYearSelector
+          selectedDate={selectedDate}
+          onDateChange={onDateChange}
+        />
+      </div>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>

@@ -7,10 +7,12 @@ import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, subDays } from "date-fns";
+import { format, subDays, startOfMonth } from "date-fns";
+import { useState } from "react";
 
 const OrganizationDashboard = () => {
   const { monthStats } = useCallsPage();
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Gera dados para os últimos 30 dias (chamadas)
   const dailyCallsData = Array.from({ length: 30 }).map((_, index) => {
@@ -25,7 +27,7 @@ const OrganizationDashboard = () => {
 
   // Gera dados para os últimos 30 dias (leads)
   const dailyLeadsData = Array.from({ length: 30 }).map((_, index) => {
-    const date = subDays(new Date(), 29 - index);
+    const date = subDays(startOfMonth(selectedDate), -index);
     return {
       day: format(date, 'dd/MM'),
       novos: Math.floor(Math.random() * 5) + 1, // 1-5 novos leads por dia
@@ -89,7 +91,11 @@ const OrganizationDashboard = () => {
               active={leadsStats.active}
               pending={leadsStats.pending}
             />
-            <DailyLeadsChart data={dailyLeadsData} />
+            <DailyLeadsChart 
+              data={dailyLeadsData}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+            />
           </TabsContent>
 
           <TabsContent value="sellers" className="space-y-6">
