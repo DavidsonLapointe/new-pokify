@@ -17,6 +17,7 @@ import OrganizationUsers from "@/pages/OrganizationUsers";
 import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
 import OrganizationProfile from "@/pages/OrganizationProfile";
 import OrganizationNewCall from "@/pages/OrganizationNewCall";
+import OrganizationPlan from "@/pages/OrganizationPlan";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/organization/users" element={<OrganizationUsers />} />
           <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
           <Route path="/organization/profile" element={<OrganizationProfile />} />
+          <Route path="/organization/plan" element={<OrganizationPlan />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
