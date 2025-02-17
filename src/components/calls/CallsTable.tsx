@@ -12,6 +12,7 @@ import { EmptyLeadsState } from "./table/EmptyLeadsState";
 import { LeadsTableHeader } from "./table/LeadsTableHeader";
 import { LeadsTableRow } from "./table/LeadsTableRow";
 import { useLeadsData } from "./table/useLeadsData";
+import { Call } from "@/types/calls";
 
 export const CallsTable = ({
   calls,
@@ -24,9 +25,10 @@ export const CallsTable = ({
   const [showCallsHistory, setShowCallsHistory] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
+  const [uploadLeadInfo, setUploadLeadInfo] = useState<Call["leadInfo"] | undefined>();
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
 
-  const { leadsWithCalls } = useLeadsData(calls);
+  const { leadsWithCalls, updateLeadCalls } = useLeadsData(calls);
 
   const handleShowCallHistory = (lead: LeadCalls) => {
     console.log("Mostrando histórico para lead:", lead);
@@ -36,11 +38,23 @@ export const CallsTable = ({
 
   const handleShowUpload = (lead: LeadCalls) => {
     setUploadLeadId(lead.id);
+    setUploadLeadInfo({
+      personType: lead.personType,
+      firstName: lead.firstName,
+      lastName: lead.lastName,
+      razaoSocial: lead.razaoSocial,
+      phone: lead.calls[0]?.phone || ""
+    });
     setShowUpload(true);
   };
 
-  const handleUploadSuccess = () => {
+  const handleUploadSuccess = (newCall?: Call) => {
+    if (newCall && uploadLeadId) {
+      updateLeadCalls(uploadLeadId, newCall);
+    }
     setShowUpload(false);
+    setUploadLeadId(null);
+    setUploadLeadInfo(undefined);
   };
 
   if (leadsWithCalls.length === 0) {
@@ -87,9 +101,13 @@ export const CallsTable = ({
           isOpen={showUpload}
           onOpenChange={(open) => {
             setShowUpload(open);
-            if (!open) setUploadLeadId(null);
+            if (!open) {
+              setUploadLeadId(null);
+              setUploadLeadInfo(undefined);
+            }
           }}
           onUploadSuccess={handleUploadSuccess}
+          leadInfo={uploadLeadInfo}
         />
       )}
     </TooltipProvider>
