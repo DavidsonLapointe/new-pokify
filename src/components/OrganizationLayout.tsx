@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import {
   Settings,
@@ -37,20 +38,12 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const location = useLocation();
   const isAdmin = mockLoggedUser.role === "admin";
 
-  // Função para fazer logout
   const handleLogout = () => {
     try {
-      // Limpar dados do usuário do localStorage
       localStorage.removeItem('user');
       localStorage.removeItem('token');
-      
-      // Limpar qualquer outro dado de sessão que exista
       sessionStorage.clear();
-      
-      // Notificar o usuário
       toast.success("Logout realizado com sucesso");
-      
-      // Redirecionar para a landing page
       navigate("/");
     } catch (error) {
       toast.error("Erro ao realizar logout");
@@ -58,7 +51,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     }
   };
 
-  // Menu items baseados no perfil do usuário
   const getMenuItems = () => {
     const commonItems = [
       {
@@ -109,8 +101,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-card border-r border-border animate-slideIn">
+      {/* Sidebar - Agora fixa */}
+      <aside className="w-64 bg-card border-r border-border fixed left-0 top-0 h-screen overflow-y-auto z-40">
         {/* Logo ou Nome da Organização */}
         <div className="p-6 border-b">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -151,10 +143,10 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        {/* Header com informações do usuário */}
-        <div className="h-16 bg-card px-8 flex items-center justify-end">
+      {/* Main Content com margem à esquerda para compensar o sidebar fixo */}
+      <div className="flex-1 ml-64">
+        {/* Header com informações do usuário - Agora fixo */}
+        <div className="h-16 bg-card border-b px-8 flex items-center justify-end fixed top-0 right-0 left-64 z-30">
           <div className="flex items-center gap-4">
             <p className="text-sm font-medium">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
@@ -164,9 +156,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           </div>
         </div>
         
-        {/* Conteúdo da página */}
-        <div className="p-8 animate-fadeIn">{children}</div>
-      </main>
+        {/* Conteúdo da página com padding-top para compensar o header fixo */}
+        <div className="p-8 pt-24 animate-fadeIn">{children}</div>
+      </div>
     </div>
   );
 };
