@@ -1,7 +1,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { FilterX } from "lucide-react";
 
 interface CallsFiltersProps {
   searchQuery: string;
@@ -18,23 +18,22 @@ export const CallsFilters = ({
 
   return (
     <div className="mb-6">
-      <div className="relative max-w-lg">
-        <Input
-          placeholder="Buscar por nome, telefone, CPF/CNPJ ou email..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pr-10"
-        />
-        {searchQuery && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground hover:text-foreground"
-            onClick={handleClearSearch}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 max-w-lg">
+          <Input
+            placeholder="Buscar por nome, telefone, CPF/CNPJ ou email..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+        </div>
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          onClick={handleClearSearch}
+        >
+          <FilterX className="h-4 w-4" />
+          Limpar Filtros
+        </Button>
       </div>
     </div>
   );
