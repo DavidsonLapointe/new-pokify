@@ -35,27 +35,25 @@ export const leadFormSchema = z.object({
   cidade: z.string().optional(),
   estado: z.string().optional(),
   cep: z.string().optional(),
-}).refine(
-  (data) => {
-    if (data.personType === "pf") {
-      // Para PF: email é obrigatório
-      return Boolean(data.email);
-    } else {
-      // Para PJ: razaoSocial e cnpj são obrigatórios
-      return Boolean(data.razaoSocial) && Boolean(data.cnpj);
-    }
-  },
-  {
-    message: (data) => {
-      if (data.personType === "pf") {
-        return "Email é obrigatório para Pessoa Física";
-      } else {
-        return "Razão Social e CNPJ são obrigatórios para Pessoa Jurídica";
-      }
-    },
-    path: ["email"], // Para PF o erro aparece no campo email
+}).superRefine((data, ctx) => {
+  if (data.personType === "pf" && !data.email) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Email é obrigatório para Pessoa Física",
+      path: ["email"],
+    });
   }
-);
+
+  if (data.personType === "pj") {
+    if (!data.razaoSocial || !data.cnpj) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Razão Social e CNPJ são obrigatórios para Pessoa Jurídica",
+        path: ["razaoSocial"],
+      });
+    }
+  }
+});
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;
 
