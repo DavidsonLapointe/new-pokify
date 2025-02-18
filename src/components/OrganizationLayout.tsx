@@ -55,7 +55,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       { 
         icon: PhoneCall, 
         label: "Efetuar Ligação", 
-        path: "/organization/new-call"
+        path: "/organization/calls/new"  // Corrigido aqui
       },
       {
         icon: CreditCard,
