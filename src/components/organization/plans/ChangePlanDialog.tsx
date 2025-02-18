@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -29,7 +28,6 @@ export function ChangePlanDialog({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-  // Limpa os estados quando o diálogo principal é fechado
   useEffect(() => {
     if (!open) {
       setShowConfirmDialog(false);
@@ -46,11 +44,10 @@ export function ChangePlanDialog({
     setShowConfirmDialog(true);
   };
 
-  // Handler para quando o diálogo de confirmação é fechado
   const handleConfirmDialogChange = (isOpen: boolean) => {
     setShowConfirmDialog(isOpen);
     if (!isOpen) {
-      onOpenChange(false); // Fecha o diálogo principal também
+      onOpenChange(false);
     }
   };
 

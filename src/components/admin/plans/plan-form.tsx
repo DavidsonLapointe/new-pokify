@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -105,7 +104,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
         />
 
         <div className="flex justify-end gap-4 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="cancel" onClick={onCancel}>
             Cancelar
           </Button>
           <Button type="submit">

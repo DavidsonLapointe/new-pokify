@@ -1,4 +1,3 @@
-
 import {
   AlertDialog,
   AlertDialogContent,
@@ -13,6 +12,7 @@ import { Calendar, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmPlanChangeDialogProps {
   open: boolean;
@@ -60,8 +60,10 @@ export function ConfirmPlanChangeDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogCancel asChild>
+            <Button variant="cancel">Cancelar</Button>
+          </AlertDialogCancel>
+          <AlertDialogAction>
             Confirmar mudança
           </AlertDialogAction>
         </AlertDialogFooter>
