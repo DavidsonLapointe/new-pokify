@@ -60,9 +60,14 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
   }
 
   const getInitials = (name: string) => {
+    // Adicionando console.log para debug
+    console.log("Nome recebido no AvatarUpload:", name);
     const nameParts = name.trim().split(' ')
-    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
-    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+    const initials = nameParts.length === 1 
+      ? nameParts[0].substring(0, 2).toUpperCase()
+      : (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+    console.log("Iniciais geradas no AvatarUpload:", initials);
+    return initials
   }
 
   return (
@@ -80,8 +85,11 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
         >
           <Avatar className="h-28 w-28 ring-2 ring-gray-100">
             <AvatarImage src={previewUrl} alt={name} />
-            <AvatarFallback className="bg-[#9b87f5] flex items-center justify-center">
-              <span className="text-xl font-medium text-white">{getInitials(name)}</span>
+            <AvatarFallback 
+              className="bg-[#9b87f5] flex items-center justify-center"
+              style={{ fontSize: '1.25rem', fontWeight: 500 }} // Adicionando estilos inline para garantir
+            >
+              {getInitials(name)}
             </AvatarFallback>
           </Avatar>
           <div className="absolute inset-0 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

@@ -19,6 +19,10 @@ const OrganizationProfile = () => {
     return null;
   }
 
+  // Adicionar console.log para debug
+  console.log("Nome do usuário:", formData.name);
+  console.log("Iniciais geradas:", formData.name ? formData.name.split(' ').map(n => n[0]).join('').toUpperCase() : '');
+
   return (
     <OrganizationLayout>
       <div className="max-w-2xl mx-auto">
