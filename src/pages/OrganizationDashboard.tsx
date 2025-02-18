@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
@@ -23,7 +24,7 @@ const OrganizationDashboard = () => {
     const uploadsByDay = new Map();
     
     filteredLeads.forEach(call => {
-      if (!call.emptyLead) { // Ignora leads sem uploads
+      if (!call.emptyLead) {
         const callDate = new Date(call.date);
         
         // Verifica se a chamada está dentro do mês selecionado
@@ -83,21 +84,23 @@ const OrganizationDashboard = () => {
     topPerformerLeads: 42,
   };
 
-  // Calcula as estatísticas de leads para o mês selecionado
+  // Estatísticas totais de leads (não mais baseadas no mês selecionado)
   const leadsStats = useMemo(() => {
-    // Filtra apenas os leads do mês selecionado
-    const monthLeads = dailyLeadsData.reduce((acc, curr) => acc + curr.novos, 0);
+    // Calcula o total de todos os leads
+    const totalLeads = filteredLeads.length;
     
-    // Simula leads ativos e pendentes baseado no total
-    const active = Math.floor(monthLeads * 0.3); // 30% dos leads são ativos
-    const pending = monthLeads - active; // restante são pendentes
+    // Calcula total de leads ativos (com pelo menos um arquivo processado)
+    const activeLeads = filteredLeads.filter(lead => !lead.emptyLead).length;
+    
+    // Calcula total de leads pendentes
+    const pendingLeads = totalLeads - activeLeads;
 
     return {
-      total: monthLeads,
-      active,
-      pending,
+      total: totalLeads,
+      active: activeLeads,
+      pending: pendingLeads,
     };
-  }, [selectedDate, dailyLeadsData]);
+  }, [filteredLeads]); // Agora só depende dos leads filtrados, não do mês selecionado
 
   return (
     <OrganizationLayout>
