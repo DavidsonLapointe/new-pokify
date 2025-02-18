@@ -138,7 +138,7 @@ export const FunnelSection = ({
           <div className="flex justify-end mt-6">
             {isDefaultConfigSaved && !isEditing ? (
               <Button
-                variant="outline"
+                variant="default"
                 onClick={onToggleEdit}
                 className="flex items-center gap-2"
               >
