@@ -110,7 +110,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       </header>
 
       <div className="flex pt-16">
-        <aside className="w-64 bg-[#9b87f5] fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+        <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="py-6">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -119,23 +119,23 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#7E69AB] ${
+                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#E5DEFF] ${
                     isActive
-                      ? "bg-[#7E69AB] text-white"
-                      : "text-white/80"
+                      ? "bg-[#E5DEFF] text-[#9b87f5]"
+                      : "text-gray-600"
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-3" />
+                  <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
                   {item.label}
                 </button>
               );
             })}
 
-            <Separator className="my-6 bg-white/10" />
+            <Separator className="my-6 bg-gray-200" />
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#7E69AB] text-white/80"
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#E5DEFF] text-gray-600"
             >
               <LogOut className="w-4 h-4 mr-3" />
               Sair
