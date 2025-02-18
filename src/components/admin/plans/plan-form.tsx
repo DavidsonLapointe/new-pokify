@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 import {
   Form,
   FormControl,
@@ -37,7 +37,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                 </div>
               </div>
               <FormControl>
-                <Switch
+                <CustomSwitch
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
