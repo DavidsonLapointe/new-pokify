@@ -1,5 +1,7 @@
+
 import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, addDays, subMonths, isWithinInterval, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useCallsPage } from "./useCallsPage";
 import { mockUsers } from "@/types/organization";
 
@@ -53,7 +55,7 @@ export const useDashboardData = () => {
     const baseData = Array.from({ length: 13 }).map((_, index) => {
       const date = subMonths(today, index);
       return {
-        month: format(date, 'MMM/yy'),
+        month: format(date, 'MMM/yy', { locale: ptBR }),
         novos: Math.floor(Math.random() * 50) + 20,
       };
     }).reverse();
@@ -94,7 +96,7 @@ export const useDashboardData = () => {
     const baseData = Array.from({ length: 13 }).map((_, index) => {
       const date = subMonths(today, index);
       return {
-        month: format(date, 'MMM/yy'),
+        month: format(date, 'MMM/yy', { locale: ptBR }),
         uploads: Math.floor(Math.random() * 50) + 20,
       };
     }).reverse();
@@ -139,7 +141,7 @@ export const useDashboardData = () => {
       const monthSeed = parseInt(format(date, 'MMyyy'));
       
       return {
-        month: format(date, 'MMM/yy'),
+        month: format(date, 'MMM/yy', { locale: ptBR }),
         "Preço muito alto": 10 + (monthSeed % 20),
         "Não tenho orçamento": 8 + (monthSeed % 15),
         "Preciso consultar": 6 + (monthSeed % 12),
