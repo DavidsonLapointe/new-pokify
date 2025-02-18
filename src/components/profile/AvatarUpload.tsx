@@ -60,13 +60,10 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
   }
 
   const getInitials = (name: string) => {
-    // Adicionando console.log para debug
-    console.log("Nome recebido no AvatarUpload:", name);
     const nameParts = name.trim().split(' ')
     const initials = nameParts.length === 1 
       ? nameParts[0].substring(0, 2).toUpperCase()
       : (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
-    console.log("Iniciais geradas no AvatarUpload:", initials);
     return initials
   }
 
@@ -85,10 +82,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
         >
           <Avatar className="h-28 w-28 ring-2 ring-gray-100">
             <AvatarImage src={previewUrl} alt={name} />
-            <AvatarFallback 
-              className="bg-[#9b87f5] flex items-center justify-center"
-              style={{ fontSize: '1.25rem', fontWeight: 500 }} // Adicionando estilos inline para garantir
-            >
+            <AvatarFallback className="bg-[#9b87f5] text-white flex items-center justify-center text-xl font-medium">
               {getInitials(name)}
             </AvatarFallback>
           </Avatar>
