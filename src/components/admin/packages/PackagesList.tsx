@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 import { AnalysisPackage } from "@/types/packages";
 import { Pencil } from "lucide-react";
 import { toast } from "sonner";
@@ -38,18 +38,13 @@ export function PackagesList({ packages, onEdit, onToggleActive }: PackagesListP
               >
                 <Pencil className="h-4 w-4" />
               </Button>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={pkg.active}
-                  onCheckedChange={(checked) => {
-                    onToggleActive(pkg, checked);
-                    toast.success(`Pacote ${checked ? 'ativado' : 'desativado'} com sucesso`);
-                  }}
-                />
-                <span className={`text-sm ${pkg.active ? 'text-green-600' : 'text-red-600'}`}>
-                  {pkg.active ? 'Ativo' : 'Inativo'}
-                </span>
-              </div>
+              <CustomSwitch
+                checked={pkg.active}
+                onCheckedChange={(checked) => {
+                  onToggleActive(pkg, checked);
+                  toast.success(`Pacote ${checked ? 'ativado' : 'desativado'} com sucesso`);
+                }}
+              />
             </div>
           </div>
         </div>
