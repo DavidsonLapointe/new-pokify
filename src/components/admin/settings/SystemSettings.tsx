@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -35,7 +34,6 @@ const SystemSettings = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Filtrar apenas os valores das configurações habilitadas
     const enabledValues = Object.keys(values).reduce((acc, key) => {
       if (enabledSettings[key as keyof typeof enabledSettings]) {
         acc[key] = values[key as keyof typeof values];
@@ -160,7 +158,7 @@ const SystemSettings = () => {
             <Button 
               type="button"
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
-              className="bg-black text-white hover:bg-black"
+              className="bg-primary text-white hover:bg-primary/90"
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
             </Button>

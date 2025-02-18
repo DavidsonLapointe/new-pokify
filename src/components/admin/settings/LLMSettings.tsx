@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -208,7 +207,7 @@ const LLMSettings: React.FC<LLMSettingsProps> = () => {
             <Button 
               type="button"
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
-              className="bg-black text-white hover:bg-black"
+              className="bg-primary text-white hover:bg-primary/90"
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
             </Button>
