@@ -104,32 +104,6 @@ export const useDashboardData = () => {
     return filterDataBySeller(baseData, monthlyCallsSeller);
   }, [monthlyCallsSeller]);
 
-  const dailyPerformanceData = useMemo(() => {
-    const monthStart = startOfMonth(performanceDate);
-    const daysInMonth = endOfMonth(performanceDate).getDate();
-    
-    return Array.from({ length: daysInMonth }).map((_, index) => {
-      const date = addDays(monthStart, index);
-      return {
-        day: format(date, 'dd/MM'),
-        joao: Math.floor(Math.random() * 6) + 2,
-        maria: Math.floor(Math.random() * 5) + 1,
-      };
-    });
-  }, [performanceDate]);
-
-  const monthlyPerformanceData = useMemo(() => {
-    const today = new Date();
-    return Array.from({ length: 13 }).map((_, index) => {
-      const date = subMonths(today, index);
-      return {
-        month: format(date, 'MMM/yy', { locale: ptBR }),
-        joao: Math.floor(Math.random() * 60) + 20,
-        maria: Math.floor(Math.random() * 50) + 15,
-      };
-    }).reverse();
-  }, []);
-
   const objectionsData = useMemo(() => {
     const monthYear = format(monthlyObjectionsDate, 'MM/yyyy');
     const seed = parseInt(monthYear.replace('/', ''));
@@ -175,6 +149,32 @@ export const useDashboardData = () => {
       "Estamos com restrições orçamentárias"
     ],
   }), []);
+
+  const dailyPerformanceData = useMemo(() => {
+    const monthStart = startOfMonth(performanceDate);
+    const daysInMonth = endOfMonth(performanceDate).getDate();
+    
+    return Array.from({ length: daysInMonth }).map((_, index) => {
+      const date = addDays(monthStart, index);
+      return {
+        day: format(date, 'dd/MM'),
+        joao: Math.floor(Math.random() * 6) + 2,
+        maria: Math.floor(Math.random() * 5) + 1,
+      };
+    });
+  }, [performanceDate]);
+
+  const monthlyPerformanceData = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 13 }).map((_, index) => {
+      const date = subMonths(today, index);
+      return {
+        month: format(date, 'MMM/yy', { locale: ptBR }),
+        joao: Math.floor(Math.random() * 60) + 20,
+        maria: Math.floor(Math.random() * 50) + 15,
+      };
+    }).reverse();
+  }, []);
 
   return {
     monthStats,
