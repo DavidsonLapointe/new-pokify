@@ -74,11 +74,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       onClick={() => navigate(item.path)}
                       className={`w-full flex items-center px-6 py-3 text-sm transition-colors rounded-md
                         ${isActive 
-                          ? "bg-[#F1F0FB] text-gray-700" 
+                          ? "bg-[#F1F0FB] text-[#9b87f5]" 
                           : "text-gray-700 hover:bg-[#F1F0FB]"
                         }`}
                     >
-                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-gray-700" : "text-gray-500"}`} />
+                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-500"}`} />
                       {item.label}
                     </button>
                   );
