@@ -35,12 +35,13 @@ export const NewFunnelDialog = ({
               placeholder="Ex: Funil de Vendas"
               value={newFunnel}
               onChange={(e) => setNewFunnel(e.target.value)}
+              autoFocus
             />
           </div>
         </div>
         <div className="flex justify-end">
           <Button
-            variant="default"
+            type="submit"
             onClick={handleSaveFunnel}
           >
             <Save className="h-4 w-4 mr-2" />
