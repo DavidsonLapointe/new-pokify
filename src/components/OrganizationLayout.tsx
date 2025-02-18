@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
@@ -134,8 +135,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
                 </button>
               );
             })}
-
-            <Separator className="my-6 bg-gray-200" />
 
             <button
               onClick={handleLogout}
