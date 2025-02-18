@@ -1,17 +1,34 @@
-
 import { Call } from "@/types/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/hooks/use-toast";
 import { LeadWithCalls } from "@/types/leads";
+import { syncLeadWithCRM } from "@/services/crmIntegrationService";
+import { Integration } from "@/types/integration";
 
 export const useLeadsManagement = (
   setLeads: React.Dispatch<React.SetStateAction<LeadWithCalls[]>>,
-  setPendingLeadData: React.Dispatch<React.SetStateAction<LeadFormData | null>>
+  setPendingLeadData: React.Dispatch<React.SetStateAction<LeadFormData | null>>,
+  crmIntegration?: Integration
 ) => {
-  const createNewLead = (leadData: LeadFormData) => {
+  const createNewLead = async (leadData: LeadFormData) => {
     console.log("Dados do lead recebidos em createNewLead:", leadData);
     const leadId = uuidv4();
+
+    // Se houver integração com CRM, sincroniza o lead
+    if (crmIntegration) {
+      const syncResult = await syncLeadWithCRM(crmIntegration, leadData);
+      
+      if (!syncResult.success) {
+        toast({
+          title: "Erro na sincronização com CRM",
+          description: syncResult.error,
+          variant: "destructive",
+        });
+      } else if (syncResult.leadId) {
+        console.log("Lead sincronizado com CRM, ID:", syncResult.leadId);
+      }
+    }
 
     const newLead: LeadWithCalls = {
       id: leadId,
