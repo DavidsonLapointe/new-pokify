@@ -88,11 +88,17 @@ const OrganizationDashboard = () => {
               failed={monthStats.failed}
               subtitle="Total acumulado desde o início"
             />
-            <div className="space-y-6">
+            <div className="grid gap-6">
               <DailyCallsChart 
                 data={dailyCallsData}
                 selectedDate={callsDate}
                 onDateChange={setCallsDate}
+              />
+              <DailyCallsChart 
+                data={monthlyCallsData}
+                selectedDate={callsDate}
+                onDateChange={setCallsDate}
+                isMonthly={true}
               />
             </div>
           </TabsContent>
