@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TitleStatus, TitleType } from "@/types/financial";
 import { FilterX, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 interface FinancialFiltersProps {
   onSearch: (filters: { status: TitleStatus | "all", type: TitleType | "all", search: string }) => void;
@@ -38,57 +39,73 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <Select value={status} onValueChange={(value: TitleStatus | "all") => setStatus(value)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos</SelectItem>
-          <SelectItem value="pending">Pendente</SelectItem>
-          <SelectItem value="paid">Pago</SelectItem>
-          <SelectItem value="overdue">Vencido</SelectItem>
-        </SelectContent>
-      </Select>
+      <div className="space-y-2">
+        <Label htmlFor="status-select" className="text-sm font-medium text-gray-700">
+          Status de Pagamento
+        </Label>
+        <Select value={status} onValueChange={(value: TitleStatus | "all") => setStatus(value)}>
+          <SelectTrigger id="status-select" className="w-[180px]">
+            <SelectValue placeholder="Status de Pagamento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Status</SelectItem>
+            <SelectItem value="pending">Pendente</SelectItem>
+            <SelectItem value="paid">Pago</SelectItem>
+            <SelectItem value="overdue">Vencido</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <Select value={type} onValueChange={(value: TitleType | "all") => setType(value)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Tipo" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos</SelectItem>
-          <SelectItem value="pro_rata">Pro Rata</SelectItem>
-          <SelectItem value="mensalidade">Mensalidade</SelectItem>
-        </SelectContent>
-      </Select>
+      <div className="space-y-2">
+        <Label htmlFor="type-select" className="text-sm font-medium text-gray-700">
+          Tipo de Título
+        </Label>
+        <Select value={type} onValueChange={(value: TitleType | "all") => setType(value)}>
+          <SelectTrigger id="type-select" className="w-[180px]">
+            <SelectValue placeholder="Tipo de Título" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Tipos</SelectItem>
+            <SelectItem value="pro_rata">Pro Rata</SelectItem>
+            <SelectItem value="mensalidade">Mensalidade</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <div className="flex gap-2 flex-1">
-        <Input
-          placeholder="Buscar por empresa..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Button 
-          variant="default"
-          onClick={handleSearch}
-          className="flex items-center gap-2"
-        >
-          <Search className="h-4 w-4" />
-          Buscar
-        </Button>
-        <Button 
-          variant="outline" 
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-          onClick={handleClearFilters}
-        >
-          <FilterX className="h-4 w-4" />
-          Limpar Filtros
-        </Button>
+      <div className="flex-1 space-y-2">
+        <Label htmlFor="search-input" className="text-sm font-medium text-gray-700">
+          Nome da Empresa
+        </Label>
+        <div className="flex gap-2">
+          <Input
+            id="search-input"
+            placeholder="Buscar por empresa..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+          />
+          <Button 
+            variant="default"
+            onClick={handleSearch}
+            className="flex items-center gap-2"
+          >
+            <Search className="h-4 w-4" />
+            Buscar
+          </Button>
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+            onClick={handleClearFilters}
+          >
+            <FilterX className="h-4 w-4" />
+            Limpar Filtros
+          </Button>
+        </div>
       </div>
     </div>
   );
