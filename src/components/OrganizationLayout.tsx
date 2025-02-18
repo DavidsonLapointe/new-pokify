@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
   Users,
@@ -25,6 +25,16 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isAdmin = mockLoggedUser.role === "admin";
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
+
+  useEffect(() => {
+    // Pequeno delay para permitir que o layout se estabilize
+    const timer = setTimeout(() => {
+      setIsLayoutReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogout = () => {
     try {
@@ -135,7 +145,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
         <main className="flex-1 ml-64">
           <div className="p-8 animate-fadeIn">
-            {children}
+            {isLayoutReady ? children : null}
           </div>
         </main>
       </div>
