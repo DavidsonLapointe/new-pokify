@@ -3,6 +3,7 @@ import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
+import { MonthlyPerformanceChart } from "@/components/sellers/MonthlyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
 import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabContent";
@@ -18,6 +19,7 @@ const OrganizationDashboard = () => {
     dailyCallsData,
     monthlyCallsData,
     dailyPerformanceData,
+    monthlyPerformanceData,
     objectionsData,
     objectionTrendsData,
     objectionExamples,
@@ -113,9 +115,14 @@ const OrganizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="sellers" className="space-y-6">
-            <DailyPerformanceChart 
-              data={dailyPerformanceData}
-            />
+            <div className="grid gap-6">
+              <DailyPerformanceChart 
+                data={dailyPerformanceData}
+              />
+              <MonthlyPerformanceChart 
+                data={monthlyPerformanceData}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="objections" className="space-y-6">
