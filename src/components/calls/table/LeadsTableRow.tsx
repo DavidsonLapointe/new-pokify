@@ -21,11 +21,13 @@ export const LeadsTableRow = ({
   onShowHistory,
   onShowUpload
 }: LeadsTableRowProps) => {
-  // Filtra apenas as chamadas válidas (não vazias)
-  const validCalls = lead.calls.filter(call => !call.emptyLead);
+  // Remove o filtro de emptyLead pois todas as chamadas são válidas neste contexto
+  const validCalls = lead.calls;
   const successfulCalls = validCalls.filter(call => call.status === "success").length;
   const hasProcessed = validCalls.some(call => call.status === "success" && call.analysis);
   const leadStatus = getLeadStatus(lead);
+
+  console.log("Lead calls:", lead.calls.length); // Debug log
 
   return (
     <TableRow key={lead.id} className="text-xs">
