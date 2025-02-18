@@ -76,15 +76,23 @@ const OrganizationSettings = () => {
 
   const handleCreateFunnelFromAlert = () => {
     setIsNoFunnelAlertOpen(false);
-    setIsFunnelDialogOpen(true);
+    // Adiciona um pequeno delay para garantir que o modal de alerta seja fechado antes
+    setTimeout(() => {
+      setIsFunnelDialogOpen(true);
+    }, 100);
   };
 
   // Handler para fechar o modal de funil
   const handleFunnelDialogClose = (open: boolean) => {
-    setIsFunnelDialogOpen(open);
-    // Limpar o estado do novo funil quando fechar o modal
     if (!open) {
+      // Primeiro limpa os estados
       setNewFunnel("");
+      // Depois fecha o modal
+      setTimeout(() => {
+        setIsFunnelDialogOpen(false);
+      }, 100);
+    } else {
+      setIsFunnelDialogOpen(true);
     }
   };
 
