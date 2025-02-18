@@ -2,7 +2,6 @@
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
-import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
@@ -114,11 +113,6 @@ const OrganizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="sellers" className="space-y-6">
-            <SellersStats
-              totalSellers={8}
-              activeSellers={6}
-              topPerformerLeads={42}
-            />
             <DailyPerformanceChart 
               data={dailyPerformanceData}
             />
