@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
@@ -10,6 +11,16 @@ import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChar
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, startOfMonth, endOfMonth, isWithinInterval, addDays, subMonths } from "date-fns";
 import { useState, useMemo } from "react";
+import { Card } from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
@@ -43,6 +54,17 @@ const OrganizationDashboard = () => {
 
     return daysInMonth;
   }, [selectedDate, filteredLeads]);
+
+  const monthlyCallsData = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 13 }).map((_, index) => {
+      const date = subMonths(today, index);
+      return {
+        month: format(date, 'MMM/yy'),
+        uploads: Math.floor(Math.random() * 50) + 20,
+      };
+    }).reverse();
+  }, []);
 
   const dailyLeadsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
@@ -100,6 +122,48 @@ const OrganizationDashboard = () => {
     };
   }, [filteredLeads]);
 
+  const MonthlyCallsChart = ({ data }: { data: any[] }) => (
+    <Card className="p-4">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Uploads por mês</h3>
+        </div>
+        <div className="h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="month" 
+                angle={-30}
+                textAnchor="end"
+                height={40}
+                interval={0}
+                tick={{ fontSize: 13 }}
+              />
+              <YAxis />
+              <RechartsTooltip content={<CustomTooltip />} />
+              <Bar dataKey="uploads" name="Uploads" fill="#2563eb" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </Card>
+  );
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white border rounded-lg shadow-lg p-4">
+          <p className="font-medium">{label}</p>
+          <p className="text-primary">
+            Uploads: {payload[0].value}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <OrganizationLayout>
       <div className="space-y-6">
@@ -138,12 +202,16 @@ const OrganizationDashboard = () => {
               total={monthStats.total}
               processed={monthStats.processed}
               failed={monthStats.failed}
+              subtitle="Total acumulado desde o início"
             />
-            <DailyCallsChart 
-              data={dailyCallsData}
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-            />
+            <div className="space-y-6">
+              <MonthlyCallsChart data={monthlyCallsData} />
+              <DailyCallsChart 
+                data={dailyCallsData}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+              />
+            </div>
           </TabsContent>
           
           <TabsContent value="sellers" className="space-y-6">

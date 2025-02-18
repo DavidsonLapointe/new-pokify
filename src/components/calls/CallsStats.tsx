@@ -6,19 +6,22 @@ interface CallsStatsProps {
   total: number;
   processed: number;
   failed: number;
+  subtitle?: string;
 }
 
-export const CallsStats = ({ total, processed, failed }: CallsStatsProps) => {
+export const CallsStats = ({ total, processed, failed, subtitle }: CallsStatsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <StatCard
         title="Total de Uploads"
+        subtitle={subtitle}
         value={total}
         icon={Phone}
         tooltip="Número total de uploads recebidos no período"
       />
       <StatCard
         title="Uploads Processados"
+        subtitle={subtitle}
         value={processed}
         icon={CheckCircle2}
         color="text-green-500"
@@ -26,6 +29,7 @@ export const CallsStats = ({ total, processed, failed }: CallsStatsProps) => {
       />
       <StatCard
         title="Uploads com Erro"
+        subtitle={subtitle}
         value={failed}
         icon={AlertCircle}
         color="text-red-500"
