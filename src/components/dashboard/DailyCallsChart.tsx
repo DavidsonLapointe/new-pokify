@@ -10,12 +10,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
+import { SellerSelector } from "@/components/dashboard/SellerSelector";
+import { User } from "@/types/organization";
 
 interface DailyCallsChartProps {
   data: any[];
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
   isMonthly?: boolean;
+  selectedSeller: string;
+  onSellerChange: (sellerId: string) => void;
+  sellers: User[];
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -38,19 +43,34 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const DailyCallsChart = ({ data, selectedDate, onDateChange, isMonthly = false }: DailyCallsChartProps) => (
+export const DailyCallsChart = ({ 
+  data, 
+  selectedDate, 
+  onDateChange, 
+  isMonthly = false,
+  selectedSeller,
+  onSellerChange,
+  sellers 
+}: DailyCallsChartProps) => (
   <Card className="p-4">
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
           {isMonthly ? "Uploads por mês" : "Uploads por dia"}
         </h3>
-        {selectedDate && onDateChange && (
-          <MonthYearSelector
-            selectedDate={selectedDate}
-            onDateChange={onDateChange}
+        <div className="flex items-center gap-4">
+          {!isMonthly && selectedDate && onDateChange && (
+            <MonthYearSelector
+              selectedDate={selectedDate}
+              onDateChange={onDateChange}
+            />
+          )}
+          <SellerSelector
+            selectedSeller={selectedSeller}
+            onSellerChange={onSellerChange}
+            sellers={sellers}
           />
-        )}
+        </div>
       </div>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">

@@ -90,15 +90,19 @@ const OrganizationDashboard = () => {
             />
             <div className="grid gap-6">
               <DailyCallsChart 
+                data={monthlyCallsData}
+                isMonthly={true}
+                selectedSeller={monthlyLeadsSeller}
+                onSellerChange={setMonthlyLeadsSeller}
+                sellers={mockUsers}
+              />
+              <DailyCallsChart 
                 data={dailyCallsData}
                 selectedDate={callsDate}
                 onDateChange={setCallsDate}
-              />
-              <DailyCallsChart 
-                data={monthlyCallsData}
-                selectedDate={callsDate}
-                onDateChange={setCallsDate}
-                isMonthly={true}
+                selectedSeller={dailyLeadsSeller}
+                onSellerChange={setDailyLeadsSeller}
+                sellers={mockUsers}
               />
             </div>
           </TabsContent>
