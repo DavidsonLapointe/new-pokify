@@ -59,10 +59,7 @@ export const LeadsPageHeader = ({
         />
 
         <div className="flex gap-2">
-          <Button
-            onClick={onUploadClick}
-            className="bg-[#7E69AB] hover:bg-[#9b87f5]"
-          >
+          <Button onClick={onUploadClick}>
             <Upload className="w-4 h-4 mr-2" />
             Upload
           </Button>
