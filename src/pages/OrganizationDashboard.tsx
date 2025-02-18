@@ -7,6 +7,7 @@ import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChar
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
 import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabContent";
+import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { mockUsers } from "@/types/organization";
 
@@ -30,10 +31,10 @@ const OrganizationDashboard = () => {
     callsDate,
     setCallsDate,
     performanceDate,
-    monthlyCallsSeller, // Adicionado
-    setMonthlyCallsSeller, // Adicionado
-    dailyCallsSeller, // Adicionado
-    setDailyCallsSeller, // Adicionado
+    monthlyCallsSeller,
+    setMonthlyCallsSeller,
+    dailyCallsSeller,
+    setDailyCallsSeller,
     monthlyLeadsSeller,
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
@@ -64,8 +65,9 @@ const OrganizationDashboard = () => {
           <TabsList>
             <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="calls">Uploads</TabsTrigger>
-            <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
+            <TabsTrigger value="sellers">Performance</TabsTrigger>
             <TabsTrigger value="objections">Objeções</TabsTrigger>
+            <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
           </TabsList>
           
           <TabsContent value="leads">
@@ -135,6 +137,10 @@ const OrganizationDashboard = () => {
               setObjectionTrendsSeller={setObjectionTrendsSeller}
               sellers={mockUsers}
             />
+          </TabsContent>
+
+          <TabsContent value="sellers-info">
+            <SellersTabContent sellers={mockUsers} />
           </TabsContent>
         </Tabs>
       </div>
