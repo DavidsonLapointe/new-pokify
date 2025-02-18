@@ -39,9 +39,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     }
   };
 
+  const getInitials = (name: string) => {
+    const nameParts = name.trim().split(' ')
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar - Com novo esquema de cores */}
       <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
         <div className="h-full px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">Leadly</h1>
@@ -49,14 +54,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <p className="text-sm font-medium text-white">{mockAdminUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockAdminUser.avatar} alt={mockAdminUser.name} />
-              <AvatarFallback>{mockAdminUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="bg-[#8E9196] text-white">{getInitials(mockAdminUser.name)}</AvatarFallback>
             </Avatar>
           </div>
         </div>
       </header>
 
       <div className="flex pt-16">
-        {/* Sidebar - Com novo esquema de cores */}
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="py-6">
             <div className="px-3 py-2">
@@ -92,7 +96,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 ml-64">
           <div className="p-8 animate-fadeIn">
             {children}
