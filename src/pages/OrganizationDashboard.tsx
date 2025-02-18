@@ -27,8 +27,6 @@ const OrganizationDashboard = () => {
     setDailyLeadsDate,
     monthlyObjectionsDate,
     setMonthlyObjectionsDate,
-    objectionTrendsDate,
-    setObjectionTrendsDate,
     callsDate,
     setCallsDate,
     performanceDate,
@@ -117,8 +115,6 @@ const OrganizationDashboard = () => {
               objectionExamples={objectionExamples}
               monthlyObjectionsDate={monthlyObjectionsDate}
               setMonthlyObjectionsDate={setMonthlyObjectionsDate}
-              objectionTrendsDate={objectionTrendsDate}
-              setObjectionTrendsDate={setObjectionTrendsDate}
               monthlyObjectionsSeller={monthlyObjectionsSeller}
               setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
               objectionTrendsSeller={objectionTrendsSeller}
