@@ -74,7 +74,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     isActive
                       ? "bg-[#F1F0FB] text-[#9b87f5]"
                       : "text-gray-600"
-                  } mb-1`}
+                  }`}
                 >
                   <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
                   {item.label}
