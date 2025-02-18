@@ -9,7 +9,6 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types/organization";
 
@@ -41,8 +40,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export const MonthlyLeadsChart = ({ 
   data, 
-  selectedDate, 
-  onDateChange,
   selectedSeller,
   onSellerChange,
   sellers
@@ -51,14 +48,11 @@ export const MonthlyLeadsChart = ({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
-        <div className="flex items-center gap-4">
-          <MonthYearSelector selectedDate={selectedDate} onDateChange={onDateChange} />
-          <SellerSelector 
-            selectedSeller={selectedSeller}
-            onSellerChange={onSellerChange}
-            sellers={sellers}
-          />
-        </div>
+        <SellerSelector 
+          selectedSeller={selectedSeller}
+          onSellerChange={onSellerChange}
+          sellers={sellers}
+        />
       </div>
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
