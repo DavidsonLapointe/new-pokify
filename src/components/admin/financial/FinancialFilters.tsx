@@ -74,12 +74,12 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
 
       <div className="flex-1 space-y-1.5">
         <Label htmlFor="search-input" className="text-sm text-muted-foreground">
-          Nome da Empresa
+          Buscar Empresa
         </Label>
         <div className="flex gap-2">
           <Input
             id="search-input"
-            placeholder="Buscar por empresa..."
+            placeholder="Buscar por razão social, nome fantasia ou CNPJ..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-sm"

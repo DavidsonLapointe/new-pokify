@@ -14,7 +14,9 @@ const AdminFinancial = () => {
     {
       id: "1",
       organizationId: 1,
-      organizationName: "Empresa A",
+      organizationName: "Empresa A LTDA",
+      organizationNomeFantasia: "Empresa A",
+      organizationCNPJ: "12.345.678/0001-90",
       type: "mensalidade",
       value: 1000,
       dueDate: "2024-03-25",
@@ -25,7 +27,9 @@ const AdminFinancial = () => {
     {
       id: "2",
       organizationId: 2,
-      organizationName: "Empresa B",
+      organizationName: "Empresa B Comércio S.A.",
+      organizationNomeFantasia: "Empresa B",
+      organizationCNPJ: "98.765.432/0001-10",
       type: "pro_rata",
       value: 500,
       dueDate: "2024-03-20",
@@ -49,8 +53,13 @@ const AdminFinancial = () => {
     const filtered = mockTitles.filter(title => {
       const matchesStatus = filters.status === "all" || title.status === filters.status;
       const matchesType = filters.type === "all" || title.type === filters.type;
+      
+      // Busca por razão social, nome fantasia ou CNPJ
+      const searchTerm = filters.search.toLowerCase();
       const matchesSearch = filters.search === "" || 
-        title.organizationName.toLowerCase().includes(filters.search.toLowerCase());
+        title.organizationName.toLowerCase().includes(searchTerm) ||
+        title.organizationNomeFantasia?.toLowerCase().includes(searchTerm) ||
+        title.organizationCNPJ?.toLowerCase().includes(searchTerm);
 
       return matchesStatus && matchesType && matchesSearch;
     });
