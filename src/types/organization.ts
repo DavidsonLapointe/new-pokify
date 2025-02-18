@@ -1,3 +1,4 @@
+
 export type UserRole = "admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
@@ -92,6 +93,29 @@ export const mockUsers: User[] = [
         id: 1,
         date: "2024-03-15T13:00:00.000Z",
         action: "Acessou o sistema",
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Pedro Oliveira",
+    email: "pedro@empresa.com",
+    phone: "(11) 77777-7777",
+    role: "seller",
+    status: "inactive",
+    createdAt: "2024-01-15T00:00:00.000Z",
+    lastAccess: "2024-02-28T16:45:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      calls: ["view", "upload"],
+      leads: ["view", "edit"],
+      integrations: ["view"],
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-28T16:45:00.000Z",
+        action: "Último acesso ao sistema",
       },
     ],
   },
