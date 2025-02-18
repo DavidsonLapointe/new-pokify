@@ -60,7 +60,7 @@ export const CustomFieldsSection = ({
                     onClick={() => handleOpenEditField(field)}
                     className="hover:bg-muted"
                   >
-                    <PenLine className="h-4 w-4" />
+                    <PenLine className="h-4 w-4 text-primary" />
                   </Button>
                 </div>
               </div>
