@@ -35,17 +35,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = () => {
     try {
-      // Limpar dados do usuário do localStorage
       localStorage.removeItem('user');
       localStorage.removeItem('token');
-      
-      // Limpar qualquer outro dado de sessão que exista
       sessionStorage.clear();
-      
-      // Notificar o usuário
       toast.success("Logout realizado com sucesso");
-      
-      // Redirecionar para a landing page
       navigate("/");
     } catch (error) {
       toast.error("Erro ao realizar logout");
@@ -54,51 +47,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <aside className="w-64 bg-card border-r border-border animate-slideIn">
-        <div className="p-6 border-b">
+    <div className="min-h-screen bg-background">
+      {/* Navbar - Ocupando toda a largura */}
+      <header className="h-16 bg-card border-b fixed top-0 left-0 right-0 z-40">
+        <div className="h-full px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Leadly</h1>
-        </div>
-
-        <nav className="mt-6">
-          <div className="px-3 py-2">
-            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-              Admin
-            </h2>
-            <div className="space-y-1">
-              {adminMenuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                    className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
-                      isActive
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 mr-3" />
-                    {item.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground mt-6"
-          >
-            <LogOut className="w-4 h-4 mr-3" />
-            Sair
-          </button>
-        </nav>
-      </aside>
-
-      <main className="flex-1 overflow-auto">
-        <div className="h-16 bg-card px-8 flex items-center justify-end">
           <div className="flex items-center gap-4">
             <p className="text-sm font-medium">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
@@ -107,9 +60,52 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </Avatar>
           </div>
         </div>
-        
-        <div className="p-8 animate-fadeIn">{children}</div>
-      </main>
+      </header>
+
+      <div className="flex pt-16">
+        {/* Sidebar */}
+        <aside className="w-64 bg-card border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+          <nav className="py-6">
+            <div className="px-3 py-2">
+              <div className="space-y-1">
+                {adminMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <button
+                      key={item.path}
+                      onClick={() => navigate(item.path)}
+                      className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
+                        isActive
+                          ? "bg-accent text-accent-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 mr-3" />
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground mt-6"
+            >
+              <LogOut className="w-4 h-4 mr-3" />
+              Sair
+            </button>
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 ml-64">
+          <div className="p-8 animate-fadeIn">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
