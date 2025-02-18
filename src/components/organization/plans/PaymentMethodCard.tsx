@@ -25,7 +25,11 @@ interface PaymentMethodCardProps {
   } | null;
 }
 
-const PaymentMethodForm = () => {
+interface PaymentMethodFormProps {
+  onSuccess?: () => void;
+}
+
+const PaymentMethodForm = ({ onSuccess }: PaymentMethodFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,17 +41,19 @@ const PaymentMethodForm = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await stripe.confirmSetup({
+      const { error, setupIntent } = await stripe.confirmSetup({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/organization/plan`,
         },
+        redirect: 'if_required', // Evita redirecionamento automático
       });
 
       if (error) {
         toast.error("Erro ao salvar cartão: " + error.message);
       } else {
         toast.success("Cartão salvo com sucesso!");
+        onSuccess?.();
       }
     } catch (e) {
       toast.error("Erro ao processar pagamento");
@@ -84,6 +90,10 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
     },
   };
 
+  const handleSuccess = () => {
+    setShowUpdateDialog(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -115,7 +125,7 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
           </div>
         ) : (
           <Elements stripe={stripePromise} options={options}>
-            <PaymentMethodForm />
+            <PaymentMethodForm onSuccess={handleSuccess} />
           </Elements>
         )}
 
@@ -128,7 +138,7 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
               </DialogDescription>
             </DialogHeader>
             <Elements stripe={stripePromise} options={options}>
-              <PaymentMethodForm />
+              <PaymentMethodForm onSuccess={handleSuccess} />
             </Elements>
           </DialogContent>
         </Dialog>
