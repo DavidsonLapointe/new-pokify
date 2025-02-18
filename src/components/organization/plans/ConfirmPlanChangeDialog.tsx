@@ -52,7 +52,7 @@ export const ConfirmPlanChangeDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end gap-4 mt-6">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="cancel" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
           <Button onClick={() => onOpenChange(false)}>
