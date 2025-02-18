@@ -4,6 +4,7 @@ import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
 import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
 import { ObjectionTrendsChart } from "@/components/objections/ObjectionTrendsChart";
 import { ObjectionDetails } from "@/components/objections/ObjectionDetails";
+import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types/organization";
 
 interface ObjectionsTabContentProps {
@@ -29,10 +30,17 @@ export const ObjectionsTabContent = ({
 }: ObjectionsTabContentProps) => {
   return (
     <div className="space-y-6">
-      <ObjectionsFilters
-        selectedDate={objectionsDate}
-        onDateChange={setObjectionsDate}
-      />
+      <div className="flex justify-between items-center">
+        <ObjectionsFilters
+          selectedDate={objectionsDate}
+          onDateChange={setObjectionsDate}
+        />
+        <SellerSelector 
+          selectedSeller={objectionsSeller}
+          onSellerChange={setObjectionsSeller}
+          sellers={sellers}
+        />
+      </div>
       <ObjectionsStats
         totalObjections={127}
         uniqueObjections={7}
