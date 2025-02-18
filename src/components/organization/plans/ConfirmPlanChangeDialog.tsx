@@ -53,7 +53,7 @@ export const ConfirmPlanChangeDialog = ({
         </DialogHeader>
         <div className="flex justify-end gap-4 mt-6">
           <Button variant="cancel" onClick={() => onOpenChange(false)}>
-            Manter assinatura
+            Cancelar
           </Button>
           <Button onClick={() => onOpenChange(false)}>
             Confirmar mudança
