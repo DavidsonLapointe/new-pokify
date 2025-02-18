@@ -54,7 +54,14 @@ export const AdminIntegrationsList = () => {
               <TableCell className="font-medium">{integration.name}</TableCell>
               <TableCell>{getTypeLabel(integration.type)}</TableCell>
               <TableCell>
-                <Badge variant={integration.isActive ? "default" : "secondary"}>
+                <Badge
+                  variant={integration.isActive ? "secondary" : "destructive"}
+                  className={`
+                    ${integration.isActive 
+                      ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                      : "bg-red-100 text-red-800 hover:bg-red-100"}
+                  `}
+                >
                   {integration.isActive ? "Ativo" : "Inativo"}
                 </Badge>
               </TableCell>
