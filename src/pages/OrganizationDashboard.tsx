@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
@@ -44,6 +43,10 @@ const OrganizationDashboard = () => {
     setMonthlyObjectionsSeller,
     objectionTrendsSeller,
     setObjectionTrendsSeller,
+    dailyMetric,
+    setDailyMetric,
+    monthlyMetric,
+    setMonthlyMetric,
   } = useDashboardData();
 
   const leadsStats = {
@@ -118,9 +121,13 @@ const OrganizationDashboard = () => {
             <div className="grid gap-6">
               <DailyPerformanceChart 
                 data={dailyPerformanceData}
+                selectedMetric={dailyMetric}
+                onMetricChange={setDailyMetric}
               />
               <MonthlyPerformanceChart 
                 data={monthlyPerformanceData}
+                selectedMetric={monthlyMetric}
+                onMetricChange={setMonthlyMetric}
               />
             </div>
           </TabsContent>

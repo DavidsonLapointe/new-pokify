@@ -3,8 +3,25 @@ import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, addDays, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+export type PerformanceMetric = "leads" | "uploads" | "logins";
+
 export const usePerformanceData = () => {
   const [performanceDate, setPerformanceDate] = useState(() => new Date());
+  const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>("leads");
+  const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>("leads");
+
+  const getRandomValue = (metric: PerformanceMetric, isMonthly: boolean) => {
+    switch (metric) {
+      case "leads":
+        return isMonthly ? Math.floor(Math.random() * 60) + 20 : Math.floor(Math.random() * 6) + 2;
+      case "uploads":
+        return isMonthly ? Math.floor(Math.random() * 40) + 15 : Math.floor(Math.random() * 4) + 1;
+      case "logins":
+        return isMonthly ? Math.floor(Math.random() * 100) + 30 : Math.floor(Math.random() * 8) + 3;
+      default:
+        return 0;
+    }
+  };
 
   const dailyPerformanceData = useMemo(() => {
     const monthStart = startOfMonth(performanceDate);
@@ -14,11 +31,11 @@ export const usePerformanceData = () => {
       const date = addDays(monthStart, index);
       return {
         day: format(date, 'dd/MM'),
-        joao: Math.floor(Math.random() * 6) + 2,
-        maria: Math.floor(Math.random() * 5) + 1,
+        joao: getRandomValue(dailyMetric, false),
+        maria: getRandomValue(dailyMetric, false),
       };
     });
-  }, [performanceDate]);
+  }, [performanceDate, dailyMetric]);
 
   const monthlyPerformanceData = useMemo(() => {
     const today = new Date();
@@ -26,16 +43,20 @@ export const usePerformanceData = () => {
       const date = subMonths(today, index);
       return {
         month: format(date, 'MMM/yy', { locale: ptBR }),
-        joao: Math.floor(Math.random() * 60) + 20,
-        maria: Math.floor(Math.random() * 50) + 15,
+        joao: getRandomValue(monthlyMetric, true),
+        maria: getRandomValue(monthlyMetric, true),
       };
     }).reverse();
-  }, []);
+  }, [monthlyMetric]);
 
   return {
     dailyPerformanceData,
     monthlyPerformanceData,
     performanceDate,
     setPerformanceDate,
+    dailyMetric,
+    setDailyMetric,
+    monthlyMetric,
+    setMonthlyMetric,
   };
 };

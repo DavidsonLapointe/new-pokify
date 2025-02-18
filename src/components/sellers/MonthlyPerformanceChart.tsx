@@ -1,6 +1,13 @@
 
 import { Card } from "@/components/ui/card";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   LineChart,
   Line,
   XAxis,
@@ -10,6 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 
 interface MonthlyPerformanceChartProps {
   data: Array<{
@@ -17,7 +25,15 @@ interface MonthlyPerformanceChartProps {
     joao: number;
     maria: number;
   }>;
+  selectedMetric: PerformanceMetric;
+  onMetricChange: (value: PerformanceMetric) => void;
 }
+
+const metricLabels: Record<PerformanceMetric, string> = {
+  leads: "Leads Cadastrados",
+  uploads: "Uploads de Arquivos",
+  logins: "Logins no Sistema",
+};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -26,7 +42,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="font-medium">{label}</p>
         {payload.map((entry: any, index: number) => (
           <p key={index} style={{ color: entry.color }}>
-            {entry.name}: {entry.value} leads
+            {entry.name}: {entry.value} {entry.dataKey}
           </p>
         ))}
       </div>
@@ -35,10 +51,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const MonthlyPerformanceChart = ({ data }: MonthlyPerformanceChartProps) => (
+export const MonthlyPerformanceChart = ({
+  data,
+  selectedMetric,
+  onMetricChange,
+}: MonthlyPerformanceChartProps) => (
   <Card className="p-4">
-    <div className="space-y-2">
-      <h3 className="text-lg font-semibold">Performance Mensal dos Vendedores</h3>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Performance Mensal dos Vendedores</h3>
+        <Select value={selectedMetric} onValueChange={(value) => onMetricChange(value as PerformanceMetric)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Selecione o critério" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="leads">Leads Cadastrados</SelectItem>
+            <SelectItem value="uploads">Uploads de Arquivos</SelectItem>
+            <SelectItem value="logins">Logins no Sistema</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
