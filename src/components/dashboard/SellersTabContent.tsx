@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { User } from "@/types/organization";
+import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 
 interface SellersTabContentProps {
   sellers: User[];
@@ -22,17 +23,28 @@ export const SellersTabContent = ({ sellers }: SellersTabContentProps) => {
   const activeSellers = sellers.filter(seller => seller.status === "active").length;
   const inactiveSellers = sellers.filter(seller => seller.status === "inactive").length;
 
-  // Gerar dados dos últimos 13 meses
+  // Gerar dados dos últimos 13 meses com base nas datas reais de cadastro
   const generateMonthlyData = () => {
     const today = new Date();
     const data = [];
+
+    // Criar array com os últimos 13 meses
     for (let i = 12; i >= 0; i--) {
-      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthStart = startOfMonth(subMonths(today, i));
+      const monthEnd = endOfMonth(monthStart);
+
+      // Contar vendedores cadastrados neste mês
+      const sellersInMonth = sellers.filter(seller => {
+        const createdAt = new Date(seller.createdAt);
+        return isWithinInterval(createdAt, { start: monthStart, end: monthEnd });
+      });
+
       data.push({
-        month: date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
-        quantidade: Math.floor(Math.random() * 5) + (10 - i), // Simulação de dados
+        month: format(monthStart, 'MMM/yy'),
+        quantidade: sellersInMonth.length
       });
     }
+
     return data;
   };
 
