@@ -206,3 +206,13 @@ const LLMSettings = () => {
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
               className="bg-black text-white hover:bg-black"
             >
+              {isEditing ? "Salvar Alterações" : "Editar Informações"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default LLMSettings;
