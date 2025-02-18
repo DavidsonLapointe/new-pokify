@@ -110,7 +110,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       </header>
 
       <div className="flex pt-16">
-        <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+        <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
           <nav className="py-6">
             {menuItems.map((item) => {
               const Icon = item.icon;
