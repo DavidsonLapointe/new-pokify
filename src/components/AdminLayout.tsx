@@ -41,12 +41,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar - Ocupando toda a largura */}
-      <header className="h-16 bg-card border-b fixed top-0 left-0 right-0 z-40">
+      {/* Navbar - Com novo esquema de cores */}
+      <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
         <div className="h-full px-8 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Leadly</h1>
+          <h1 className="text-xl font-semibold text-white">Leadly</h1>
           <div className="flex items-center gap-4">
-            <p className="text-sm font-medium">{mockAdminUser.name}</p>
+            <p className="text-sm font-medium text-white">{mockAdminUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockAdminUser.avatar} alt={mockAdminUser.name} />
               <AvatarFallback>{mockAdminUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -56,8 +56,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </header>
 
       <div className="flex pt-16">
-        {/* Sidebar */}
-        <aside className="w-64 bg-card border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+        {/* Sidebar - Com novo esquema de cores */}
+        <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="py-6">
             <div className="px-3 py-2">
               <div className="space-y-1">
@@ -68,13 +68,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     <button
                       key={item.path}
                       onClick={() => navigate(item.path)}
-                      className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
-                        isActive
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground"
-                      }`}
+                      className={`w-full flex items-center px-6 py-3 text-sm transition-colors rounded-md
+                        ${isActive 
+                          ? "bg-primary-light text-primary" 
+                          : "text-gray-700 hover:bg-primary-lighter"
+                        }`}
                     >
-                      <Icon className="w-4 h-4 mr-3" />
+                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-primary" : "text-gray-500"}`} />
                       {item.label}
                     </button>
                   );
@@ -84,9 +84,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground mt-6"
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-primary-lighter text-gray-700 mt-6"
             >
-              <LogOut className="w-4 h-4 mr-3" />
+              <LogOut className="w-4 h-4 mr-3 text-gray-500" />
               Sair
             </button>
           </nav>
