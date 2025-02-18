@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { User } from "@/types/organization";
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface SellersTabContentProps {
   sellers: User[];
@@ -40,7 +41,7 @@ export const SellersTabContent = ({ sellers }: SellersTabContentProps) => {
       });
 
       data.push({
-        month: format(monthStart, 'MMM/yy'),
+        month: format(monthStart, 'MMM/yy', { locale: ptBR }),
         quantidade: sellersInMonth.length
       });
     }
