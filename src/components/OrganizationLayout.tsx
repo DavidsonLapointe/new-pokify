@@ -15,6 +15,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
@@ -100,53 +101,14 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar - Agora fixa */}
-      <aside className="w-64 bg-card border-r border-border fixed left-0 top-0 h-screen overflow-y-auto z-40">
-        {/* Logo ou Nome da Organização */}
-        <div className="p-6 border-b">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Building2 className="w-4 h-4" />
-            <span className="truncate">{mockLoggedUser.organization.name}</span>
+    <div className="min-h-screen bg-background">
+      {/* Navbar - Agora ocupa toda a largura */}
+      <header className="h-16 bg-card border-b fixed top-0 left-0 right-0 z-40">
+        <div className="h-full px-8 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            <span className="font-medium">{mockLoggedUser.organization.name}</span>
           </div>
-        </div>
-
-        {/* Menu de Navegação */}
-        <nav className="mt-6">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
-                  isActive
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                <Icon className="w-4 h-4 mr-3" />
-                {item.label}
-              </button>
-            );
-          })}
-
-          {/* Botão de Logout */}
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground mt-6"
-          >
-            <LogOut className="w-4 h-4 mr-3" />
-            Sair
-          </button>
-        </nav>
-      </aside>
-
-      {/* Main Content com margem à esquerda para compensar o sidebar fixo */}
-      <div className="flex-1 ml-64">
-        {/* Header com informações do usuário - Agora fixo */}
-        <div className="h-16 bg-card border-b px-8 flex items-center justify-end fixed top-0 right-0 left-64 z-30">
           <div className="flex items-center gap-4">
             <p className="text-sm font-medium">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
@@ -155,9 +117,50 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
             </Avatar>
           </div>
         </div>
-        
-        {/* Conteúdo da página com padding-top para compensar o header fixo */}
-        <div className="p-8 pt-24 animate-fadeIn">{children}</div>
+      </header>
+
+      <div className="flex pt-16">
+        {/* Sidebar */}
+        <aside className="w-64 bg-card border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+          <nav className="py-6">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
+                    isActive
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mr-3" />
+                  {item.label}
+                </button>
+              );
+            })}
+
+            <Separator className="my-6" />
+
+            {/* Botão de Logout */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground"
+            >
+              <LogOut className="w-4 h-4 mr-3" />
+              Sair
+            </button>
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 ml-64">
+          <div className="p-8 animate-fadeIn">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
