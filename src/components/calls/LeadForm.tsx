@@ -174,7 +174,7 @@ export function LeadForm({
                 name="razaoSocial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Razão Social</FormLabel>
+                    <FormLabel className="text-sm">Razão Social *</FormLabel>
                     <FormControl>
                       <Input className="h-8" {...field} />
                     </FormControl>
@@ -203,7 +203,7 @@ export function LeadForm({
               name="cnpj"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">CNPJ</FormLabel>
+                  <FormLabel className="text-sm">CNPJ *</FormLabel>
                   <FormControl>
                     <Input 
                       className="h-8"
@@ -345,3 +345,4 @@ export function LeadForm({
     </Form>
   );
 }
+
