@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { FunnelSection } from "@/components/settings/FunnelSection";
@@ -75,9 +76,16 @@ const OrganizationSettings = () => {
 
   const handleCreateFunnelFromAlert = () => {
     setIsNoFunnelAlertOpen(false);
-    setTimeout(() => {
-      setIsFunnelDialogOpen(true);
-    }, 100);
+    setIsFunnelDialogOpen(true);
+  };
+
+  // Handler para fechar o modal de funil
+  const handleFunnelDialogClose = (open: boolean) => {
+    setIsFunnelDialogOpen(open);
+    // Limpar o estado do novo funil quando fechar o modal
+    if (!open) {
+      setNewFunnel("");
+    }
   };
 
   return (
@@ -113,7 +121,7 @@ const OrganizationSettings = () => {
 
         <NewFunnelDialog
           isOpen={isFunnelDialogOpen}
-          onOpenChange={setIsFunnelDialogOpen}
+          onOpenChange={handleFunnelDialogClose}
           newFunnel={newFunnel}
           setNewFunnel={setNewFunnel}
           handleSaveFunnel={handleSaveFunnel}
