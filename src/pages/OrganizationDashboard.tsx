@@ -78,4 +78,51 @@ const OrganizationDashboard = () => {
             />
           </TabsContent>
 
-          <TabsContent value="calls" className="space
+          <TabsContent value="calls" className="space-y-6">
+            <CallsStats
+              total={monthStats.total}
+              processed={monthStats.processed}
+              failed={monthStats.failed}
+              subtitle="Total acumulado desde o início"
+            />
+            <div className="space-y-6">
+              <DailyCallsChart 
+                data={dailyCallsData}
+                selectedDate={callsDate}
+                onDateChange={setCallsDate}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="sellers" className="space-y-6">
+            <SellersStats
+              totalSellers={8}
+              activeSellers={6}
+              topPerformerLeads={42}
+            />
+            <DailyPerformanceChart 
+              data={dailyPerformanceData}
+              selectedDate={performanceDate}
+              onDateChange={setPerformanceDate}
+            />
+          </TabsContent>
+
+          <TabsContent value="objections" className="space-y-6">
+            <ObjectionsTabContent
+              objectionsData={objectionsData}
+              objectionTrendsData={[]}
+              objectionExamples={objectionExamples}
+              objectionsDate={objectionsDate}
+              setObjectionsDate={setObjectionsDate}
+              objectionsSeller={objectionsSeller}
+              setObjectionsSeller={setObjectionsSeller}
+              sellers={mockUsers}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </OrganizationLayout>
+  );
+};
+
+export default OrganizationDashboard;
