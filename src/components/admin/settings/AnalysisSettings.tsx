@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -6,9 +7,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useState } from "react";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 
 const formSchema = z.object({
   minConfidenceScore: z.coerce.number().min(0).max(100),
@@ -18,6 +19,11 @@ const formSchema = z.object({
 
 const AnalysisSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [enabledSettings, setEnabledSettings] = useState({
+    minConfidenceScore: true,
+    maxProcessingTime: true,
+    batchSize: true,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,13 +35,27 @@ const AnalysisSettings = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    const enabledValues = Object.keys(values).reduce((acc, key) => {
+      if (enabledSettings[key as keyof typeof enabledSettings]) {
+        acc[key] = values[key as keyof typeof values];
+      }
+      return acc;
+    }, {} as Partial<z.infer<typeof formSchema>>);
+
+    console.log(enabledValues);
     toast.success("Configurações de análise salvas com sucesso!");
     setIsEditing(false);
   };
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const toggleSetting = (setting: keyof typeof enabledSettings) => {
+    setEnabledSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting]
+    }));
   };
 
   return (
@@ -57,13 +77,19 @@ const AnalysisSettings = () => {
               name="minConfidenceScore"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Score Mínimo de Confiança (%)</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Score Mínimo de Confiança (%)</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.minConfidenceScore}
+                      onCheckedChange={() => toggleSetting('minConfidenceScore')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.minConfidenceScore}
+                      className={(!isEditing || !enabledSettings.minConfidenceScore) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -79,13 +105,19 @@ const AnalysisSettings = () => {
               name="maxProcessingTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tempo Máximo de Processamento (segundos)</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Tempo Máximo de Processamento (segundos)</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.maxProcessingTime}
+                      onCheckedChange={() => toggleSetting('maxProcessingTime')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.maxProcessingTime}
+                      className={(!isEditing || !enabledSettings.maxProcessingTime) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -101,13 +133,19 @@ const AnalysisSettings = () => {
               name="batchSize"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tamanho do Lote</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Tamanho do Lote</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.batchSize}
+                      onCheckedChange={() => toggleSetting('batchSize')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.batchSize}
+                      className={(!isEditing || !enabledSettings.batchSize) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>

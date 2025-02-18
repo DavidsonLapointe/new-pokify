@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HelpCircle, Lock } from "lucide-react";
 import { useState } from "react";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 
 const formSchema = z.object({
   creditAlertThreshold: z.coerce.number().min(1).max(100),
@@ -18,6 +20,11 @@ const formSchema = z.object({
 
 const AlertsLimitsSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [enabledSettings, setEnabledSettings] = useState({
+    creditAlertThreshold: true,
+    maxAlertFrequency: true,
+    maxAnalysisRetries: true,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,13 +36,27 @@ const AlertsLimitsSettings = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    const enabledValues = Object.keys(values).reduce((acc, key) => {
+      if (enabledSettings[key as keyof typeof enabledSettings]) {
+        acc[key] = values[key as keyof typeof values];
+      }
+      return acc;
+    }, {} as Partial<z.infer<typeof formSchema>>);
+
+    console.log(enabledValues);
     toast.success("Configurações salvas com sucesso!");
     setIsEditing(false);
   };
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const toggleSetting = (setting: keyof typeof enabledSettings) => {
+    setEnabledSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting]
+    }));
   };
 
   return (
@@ -57,27 +78,33 @@ const AlertsLimitsSettings = () => {
               name="creditAlertThreshold"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Threshold de Alerta de Créditos (%)</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Define o percentual mínimo de créditos restantes que, quando atingido, 
-                             dispara alertas automáticos para os administradores da empresa contratante. 
-                             Por exemplo: 20% significa que o alerta será enviado quando restar apenas 20% dos créditos.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <FormLabel>Threshold de Alerta de Créditos (%)</FormLabel>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Define o percentual mínimo de créditos restantes que, quando atingido, 
+                               dispara alertas automáticos para os administradores da empresa contratante. 
+                               Por exemplo: 20% significa que o alerta será enviado quando restar apenas 20% dos créditos.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <CustomSwitch
+                      checked={enabledSettings.creditAlertThreshold}
+                      onCheckedChange={() => toggleSetting('creditAlertThreshold')}
+                    />
                   </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.creditAlertThreshold}
+                      className={(!isEditing || !enabledSettings.creditAlertThreshold) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -93,27 +120,33 @@ const AlertsLimitsSettings = () => {
               name="maxAlertFrequency"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Frequência Máxima de Alertas (horas)</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Determina o intervalo mínimo entre envios de alertas do mesmo tipo para uma empresa.
-                             Evita o spam de notificações definindo um período de espera obrigatório entre alertas
-                             similares.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <FormLabel>Frequência Máxima de Alertas (horas)</FormLabel>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Determina o intervalo mínimo entre envios de alertas do mesmo tipo para uma empresa.
+                               Evita o spam de notificações definindo um período de espera obrigatório entre alertas
+                               similares.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <CustomSwitch
+                      checked={enabledSettings.maxAlertFrequency}
+                      onCheckedChange={() => toggleSetting('maxAlertFrequency')}
+                    />
                   </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.maxAlertFrequency}
+                      className={(!isEditing || !enabledSettings.maxAlertFrequency) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -129,27 +162,33 @@ const AlertsLimitsSettings = () => {
               name="maxAnalysisRetries"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Tentativas Máximas de Análise</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Define quantas vezes o sistema tentará processar um arquivo em caso de falha.
-                             Após atingir este limite, o arquivo será marcado como falha permanente e
-                             precisará ser submetido novamente.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <FormLabel>Tentativas Máximas de Análise</FormLabel>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Define quantas vezes o sistema tentará processar um arquivo em caso de falha.
+                               Após atingir este limite, o arquivo será marcado como falha permanente e
+                               precisará ser submetido novamente.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <CustomSwitch
+                      checked={enabledSettings.maxAnalysisRetries}
+                      onCheckedChange={() => toggleSetting('maxAnalysisRetries')}
+                    />
                   </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.maxAnalysisRetries}
+                      className={(!isEditing || !enabledSettings.maxAnalysisRetries) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
