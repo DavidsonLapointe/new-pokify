@@ -9,12 +9,20 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
+import { SellerSelector } from "@/components/dashboard/SellerSelector";
+import { User } from "@/types/organization";
 
 interface MonthlyLeadsChartProps {
   data: Array<{
     month: string;
     novos: number;
   }>;
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
+  selectedSeller: string;
+  onSellerChange: (sellerId: string) => void;
+  sellers: User[];
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -31,11 +39,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const MonthlyLeadsChart = ({ data }: MonthlyLeadsChartProps) => (
+export const MonthlyLeadsChart = ({ 
+  data, 
+  selectedDate, 
+  onDateChange,
+  selectedSeller,
+  onSellerChange,
+  sellers
+}: MonthlyLeadsChartProps) => (
   <Card className="p-4">
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
+        <div className="flex items-center gap-4">
+          <MonthYearSelector selectedDate={selectedDate} onDateChange={onDateChange} />
+          <SellerSelector 
+            selectedSeller={selectedSeller}
+            onSellerChange={onSellerChange}
+            sellers={sellers}
+          />
+        </div>
       </div>
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">

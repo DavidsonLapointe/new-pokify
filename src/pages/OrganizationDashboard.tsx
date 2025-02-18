@@ -243,11 +243,21 @@ const OrganizationDashboard = () => {
               pending={leadsStats.pending}
             />
             <div className="space-y-6">
-              <MonthlyLeadsChart data={monthlyLeadsData} />
+              <MonthlyLeadsChart 
+                data={monthlyLeadsData}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                selectedSeller={selectedSeller}
+                onSellerChange={setSelectedSeller}
+                sellers={mockUsers}
+              />
               <DailyLeadsChart 
                 data={dailyLeadsData}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
+                selectedSeller={selectedSeller}
+                onSellerChange={setSelectedSeller}
+                sellers={mockUsers}
               />
             </div>
           </TabsContent>
