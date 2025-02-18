@@ -1,3 +1,4 @@
+
 import AdminLayout from "@/components/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -179,7 +180,7 @@ const AdminPrompt = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="secondary" onClick={() => setIsViewModalOpen(false)}>
+              <Button variant="cancel" onClick={() => setIsViewModalOpen(false)}>
                 Fechar
               </Button>
             </DialogFooter>
@@ -236,7 +237,7 @@ const AdminPrompt = () => {
               </div>
             </div>
             <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={handleCancel}>
+              <Button variant="cancel" onClick={handleCancel}>
                 Cancelar
               </Button>
               <Button onClick={handleSavePrompt}>
