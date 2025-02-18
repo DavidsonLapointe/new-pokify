@@ -22,6 +22,9 @@ import {
 } from "recharts";
 import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
 import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
+import { ObjectionsFilters } from "@/components/objections/ObjectionsFilters";
+import { ObjectionDetails } from "@/components/objections/ObjectionDetails";
+import { ObjectionTrendsChart } from "@/components/objections/ObjectionTrendsChart";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
@@ -143,6 +146,34 @@ const OrganizationDashboard = () => {
     };
   }, []);
 
+  const objectionTrendsData = useMemo(() => {
+    const lastSixMonths = Array.from({ length: 6 }).map((_, index) => {
+      const date = subMonths(new Date(), index);
+      return {
+        month: format(date, 'MMM/yy'),
+        "Preço muito alto": Math.floor(Math.random() * 30) + 10,
+        "Não tenho orçamento": Math.floor(Math.random() * 25) + 8,
+        "Preciso consultar": Math.floor(Math.random() * 20) + 5,
+        "Já uso outro produto": Math.floor(Math.random() * 18) + 5,
+        "Não é prioridade": Math.floor(Math.random() * 15) + 5,
+      };
+    }).reverse();
+    return lastSixMonths;
+  }, []);
+
+  const objectionExamples = useMemo(() => ({
+    "Preço muito alto": [
+      "O valor está acima do nosso orçamento atual",
+      "Encontramos soluções mais baratas no mercado",
+      "Precisamos de um desconto maior para aprovar"
+    ],
+    "Não tenho orçamento no momento": [
+      "Nosso orçamento já foi definido para este ano",
+      "Precisamos esperar o próximo trimestre",
+      "Estamos com restrições orçamentárias"
+    ],
+  }), []);
+
   const MonthlyCallsChart = ({ data }: { data: any[] }) => (
     <Card className="p-4">
       <div className="space-y-4">
@@ -246,12 +277,33 @@ const OrganizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="objections" className="space-y-6">
+            <ObjectionsFilters
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+            />
             <ObjectionsStats
               totalObjections={objectionsStats.totalObjections}
               uniqueObjections={objectionsStats.uniqueObjections}
               mostFrequent={objectionsStats.mostFrequent}
             />
-            <MonthlyObjectionsChart data={objectionsData} />
+            <div className="grid grid-cols-1 gap-6">
+              <MonthlyObjectionsChart data={objectionsData} />
+              <ObjectionTrendsChart data={objectionTrendsData} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ObjectionDetails
+                  objection="Preço muito alto"
+                  count={28}
+                  previousCount={22}
+                  examples={objectionExamples["Preço muito alto"]}
+                />
+                <ObjectionDetails
+                  objection="Não tenho orçamento no momento"
+                  count={24}
+                  previousCount={28}
+                  examples={objectionExamples["Não tenho orçamento no momento"]}
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
