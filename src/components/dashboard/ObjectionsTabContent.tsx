@@ -12,8 +12,6 @@ interface ObjectionsTabContentProps {
   objectionExamples: Record<string, string[]>;
   monthlyObjectionsDate: Date;
   setMonthlyObjectionsDate: (date: Date) => void;
-  objectionTrendsDate: Date;
-  setObjectionTrendsDate: (date: Date) => void;
   monthlyObjectionsSeller: string;
   setMonthlyObjectionsSeller: (seller: string) => void;
   objectionTrendsSeller: string;
@@ -27,8 +25,6 @@ export const ObjectionsTabContent = ({
   objectionExamples,
   monthlyObjectionsDate,
   setMonthlyObjectionsDate,
-  objectionTrendsDate,
-  setObjectionTrendsDate,
   monthlyObjectionsSeller,
   setMonthlyObjectionsSeller,
   objectionTrendsSeller,
@@ -53,8 +49,6 @@ export const ObjectionsTabContent = ({
         />
         <ObjectionTrendsChart 
           data={objectionTrendsData}
-          selectedDate={objectionTrendsDate}
-          onDateChange={setObjectionTrendsDate}
           selectedSeller={objectionTrendsSeller}
           onSellerChange={setObjectionTrendsSeller}
           sellers={sellers}

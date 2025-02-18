@@ -10,7 +10,6 @@ export const useDashboardData = () => {
   const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(() => new Date());
   const [dailyLeadsDate, setDailyLeadsDate] = useState(() => new Date());
   const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(() => new Date());
-  const [objectionTrendsDate, setObjectionTrendsDate] = useState(() => new Date());
   const [callsDate, setCallsDate] = useState(() => new Date());
   const [performanceDate, setPerformanceDate] = useState(() => new Date());
   
@@ -132,7 +131,7 @@ export const useDashboardData = () => {
 
   const objectionTrendsData = useMemo(() => {
     const baseData = Array.from({ length: 6 }).map((_, index) => {
-      const date = subMonths(objectionTrendsDate, 5 - index);
+      const date = subMonths(new Date(), 5 - index);
       const monthSeed = parseInt(format(date, 'MMyyy'));
       
       return {
@@ -144,7 +143,7 @@ export const useDashboardData = () => {
     });
 
     return filterDataBySeller(baseData, objectionTrendsSeller);
-  }, [objectionTrendsDate, objectionTrendsSeller]);
+  }, [objectionTrendsSeller]);
 
   const objectionExamples = useMemo(() => ({
     "Preço muito alto": [
@@ -175,8 +174,6 @@ export const useDashboardData = () => {
     setDailyLeadsDate,
     monthlyObjectionsDate,
     setMonthlyObjectionsDate,
-    objectionTrendsDate,
-    setObjectionTrendsDate,
     callsDate,
     setCallsDate,
     performanceDate,
