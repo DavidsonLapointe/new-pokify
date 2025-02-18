@@ -164,8 +164,8 @@ const LLMSettings = () => {
             />
 
             <Button 
-              type={isEditing ? "submit" : "button"} 
-              onClick={!isEditing ? handleEditClick : undefined}
+              type="button"
+              onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
               variant={isEditing ? "default" : "secondary"}
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
