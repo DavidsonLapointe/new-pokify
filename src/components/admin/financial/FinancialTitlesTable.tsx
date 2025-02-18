@@ -146,8 +146,9 @@ export const FinancialTitlesTable = () => {
               <TableCell>
                 {title.status === "pending" && (
                   <Button
-                    variant="secondary"
+                    variant="default"
                     size="sm"
+                    className="bg-primary hover:bg-primary/90"
                     onClick={() => handlePayment(title)}
                   >
                     Baixar Título

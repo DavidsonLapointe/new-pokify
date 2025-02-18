@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TitleStatus, TitleType } from "@/types/financial";
-import { Trash2 } from "lucide-react";
+import { FilterX } from "lucide-react";
 
 export const FinancialFilters = () => {
   const [status, setStatus] = useState<TitleStatus | "all">("all");
@@ -54,10 +54,10 @@ export const FinancialFilters = () => {
         </Button>
         <Button 
           variant="outline" 
-          className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
           onClick={handleClearFilters}
         >
-          <Trash2 className="h-4 w-4" />
+          <FilterX className="h-4 w-4" />
           Limpar Filtros
         </Button>
       </div>
