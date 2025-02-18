@@ -15,6 +15,7 @@ interface DailyCallsChartProps {
   data: any[];
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
+  isMonthly?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -37,11 +38,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const DailyCallsChart = ({ data, selectedDate, onDateChange }: DailyCallsChartProps) => (
+export const DailyCallsChart = ({ data, selectedDate, onDateChange, isMonthly = false }: DailyCallsChartProps) => (
   <Card className="p-4">
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Uploads por dia</h3>
+        <h3 className="text-lg font-semibold">
+          {isMonthly ? "Uploads por mês" : "Uploads por dia"}
+        </h3>
         {selectedDate && onDateChange && (
           <MonthYearSelector
             selectedDate={selectedDate}
@@ -53,7 +56,7 @@ export const DailyCallsChart = ({ data, selectedDate, onDateChange }: DailyCalls
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" />
+            <XAxis dataKey={isMonthly ? "month" : "day"} />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
             <Bar dataKey="uploads" name="Uploads" fill="#2563eb" />
