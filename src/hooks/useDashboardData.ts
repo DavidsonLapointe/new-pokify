@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, addDays, subMonths, isWithinInterval, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -103,6 +104,20 @@ export const useDashboardData = () => {
     return filterDataBySeller(baseData, monthlyCallsSeller);
   }, [monthlyCallsSeller]);
 
+  const dailyPerformanceData = useMemo(() => {
+    const monthStart = startOfMonth(performanceDate);
+    const daysInMonth = endOfMonth(performanceDate).getDate();
+    
+    return Array.from({ length: daysInMonth }).map((_, index) => {
+      const date = addDays(monthStart, index);
+      return {
+        day: format(date, 'dd/MM'),
+        joao: Math.floor(Math.random() * 6) + 2,
+        maria: Math.floor(Math.random() * 5) + 1,
+      };
+    });
+  }, [performanceDate]);
+
   const monthlyPerformanceData = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 13 }).map((_, index) => {
@@ -167,6 +182,7 @@ export const useDashboardData = () => {
     monthlyLeadsData,
     dailyCallsData,
     monthlyCallsData,
+    dailyPerformanceData,
     monthlyPerformanceData,
     objectionsData,
     objectionTrendsData,
