@@ -4,11 +4,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TitleStatus, TitleType } from "@/types/financial";
+import { FilterX } from "lucide-react";
 
 export const FinancialFilters = () => {
   const [status, setStatus] = useState<TitleStatus | "all">("all");
   const [type, setType] = useState<TitleType | "all">("all");
   const [search, setSearch] = useState("");
+
+  const handleClearFilters = () => {
+    setStatus("all");
+    setType("all");
+    setSearch("");
+  };
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
@@ -42,12 +49,16 @@ export const FinancialFilters = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
         />
-        <Button variant="default" onClick={() => {
-          setStatus("all");
-          setType("all");
-          setSearch("");
-        }}>
+        <Button variant="default">
           Buscar
+        </Button>
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={handleClearFilters}
+          title="Limpar filtros"
+        >
+          <FilterX className="h-4 w-4" />
         </Button>
       </div>
     </div>
