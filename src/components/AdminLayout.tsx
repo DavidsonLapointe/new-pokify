@@ -62,35 +62,33 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex pt-16">
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
-          <nav className="py-6">
-            <div className="px-3 py-2">
-              <div className="space-y-1">
-                {adminMenuItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <button
-                      key={item.path}
-                      onClick={() => navigate(item.path)}
-                      className={`w-full flex items-center px-6 py-3 text-sm transition-colors rounded-md
-                        ${isActive 
-                          ? "bg-[#F1F0FB] text-[#9b87f5]" 
-                          : "text-gray-700 hover:bg-[#F1F0FB]"
-                        }`}
-                    >
-                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-500"}`} />
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </div>
+          <nav className="py-6 px-3">
+            <div className="space-y-1">
+              {adminMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
+                      isActive
+                        ? "bg-[#F1F0FB] text-[#9b87f5]"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#F1F0FB] text-gray-700 mt-6"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600 mt-6"
             >
-              <LogOut className="w-4 h-4 mr-3 text-gray-500" />
+              <LogOut className="w-4 h-4 mr-3" />
               Sair
             </button>
           </nav>
