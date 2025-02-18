@@ -19,13 +19,16 @@ const OrganizationDashboard = () => {
     monthlyCallsData,
     dailyPerformanceData,
     objectionsData,
+    objectionTrendsData,
     objectionExamples,
     monthlyLeadsDate,
     setMonthlyLeadsDate,
     dailyLeadsDate,
     setDailyLeadsDate,
-    objectionsDate,
-    setObjectionsDate,
+    monthlyObjectionsDate,
+    setMonthlyObjectionsDate,
+    objectionTrendsDate,
+    setObjectionTrendsDate,
     callsDate,
     setCallsDate,
     performanceDate,
@@ -33,8 +36,10 @@ const OrganizationDashboard = () => {
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
     setDailyLeadsSeller,
-    objectionsSeller,
-    setObjectionsSeller,
+    monthlyObjectionsSeller,
+    setMonthlyObjectionsSeller,
+    objectionTrendsSeller,
+    setObjectionTrendsSeller,
   } = useDashboardData();
 
   const leadsStats = {
@@ -108,12 +113,16 @@ const OrganizationDashboard = () => {
           <TabsContent value="objections" className="space-y-6">
             <ObjectionsTabContent
               objectionsData={objectionsData}
-              objectionTrendsData={[]}
+              objectionTrendsData={objectionTrendsData}
               objectionExamples={objectionExamples}
-              objectionsDate={objectionsDate}
-              setObjectionsDate={setObjectionsDate}
-              objectionsSeller={objectionsSeller}
-              setObjectionsSeller={setObjectionsSeller}
+              monthlyObjectionsDate={monthlyObjectionsDate}
+              setMonthlyObjectionsDate={setMonthlyObjectionsDate}
+              objectionTrendsDate={objectionTrendsDate}
+              setObjectionTrendsDate={setObjectionTrendsDate}
+              monthlyObjectionsSeller={monthlyObjectionsSeller}
+              setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
+              objectionTrendsSeller={objectionTrendsSeller}
+              setObjectionTrendsSeller={setObjectionTrendsSeller}
               sellers={mockUsers}
             />
           </TabsContent>

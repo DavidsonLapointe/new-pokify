@@ -4,17 +4,20 @@ import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
 import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
 import { ObjectionTrendsChart } from "@/components/objections/ObjectionTrendsChart";
 import { ObjectionDetails } from "@/components/objections/ObjectionDetails";
-import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types/organization";
 
 interface ObjectionsTabContentProps {
   objectionsData: any[];
   objectionTrendsData: any[];
   objectionExamples: Record<string, string[]>;
-  objectionsDate: Date;
-  setObjectionsDate: (date: Date) => void;
-  objectionsSeller: string;
-  setObjectionsSeller: (seller: string) => void;
+  monthlyObjectionsDate: Date;
+  setMonthlyObjectionsDate: (date: Date) => void;
+  objectionTrendsDate: Date;
+  setObjectionTrendsDate: (date: Date) => void;
+  monthlyObjectionsSeller: string;
+  setMonthlyObjectionsSeller: (seller: string) => void;
+  objectionTrendsSeller: string;
+  setObjectionTrendsSeller: (seller: string) => void;
   sellers: User[];
 }
 
@@ -22,25 +25,18 @@ export const ObjectionsTabContent = ({
   objectionsData,
   objectionTrendsData,
   objectionExamples,
-  objectionsDate,
-  setObjectionsDate,
-  objectionsSeller,
-  setObjectionsSeller,
+  monthlyObjectionsDate,
+  setMonthlyObjectionsDate,
+  objectionTrendsDate,
+  setObjectionTrendsDate,
+  monthlyObjectionsSeller,
+  setMonthlyObjectionsSeller,
+  objectionTrendsSeller,
+  setObjectionTrendsSeller,
   sellers,
 }: ObjectionsTabContentProps) => {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <ObjectionsFilters
-          selectedDate={objectionsDate}
-          onDateChange={setObjectionsDate}
-        />
-        <SellerSelector 
-          selectedSeller={objectionsSeller}
-          onSellerChange={setObjectionsSeller}
-          sellers={sellers}
-        />
-      </div>
       <ObjectionsStats
         totalObjections={127}
         uniqueObjections={7}
@@ -49,18 +45,18 @@ export const ObjectionsTabContent = ({
       <div className="grid grid-cols-1 gap-6">
         <MonthlyObjectionsChart 
           data={objectionsData}
-          selectedDate={objectionsDate}
-          onDateChange={setObjectionsDate}
-          selectedSeller={objectionsSeller}
-          onSellerChange={setObjectionsSeller}
+          selectedDate={monthlyObjectionsDate}
+          onDateChange={setMonthlyObjectionsDate}
+          selectedSeller={monthlyObjectionsSeller}
+          onSellerChange={setMonthlyObjectionsSeller}
           sellers={sellers}
         />
         <ObjectionTrendsChart 
           data={objectionTrendsData}
-          selectedDate={objectionsDate}
-          onDateChange={setObjectionsDate}
-          selectedSeller={objectionsSeller}
-          onSellerChange={setObjectionsSeller}
+          selectedDate={objectionTrendsDate}
+          onDateChange={setObjectionTrendsDate}
+          selectedSeller={objectionTrendsSeller}
+          onSellerChange={setObjectionTrendsSeller}
           sellers={sellers}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, addDays, subMonths, isWithinInterval } from "date-fns";
 import { useCallsPage } from "./useCallsPage";
@@ -10,13 +9,15 @@ export const useDashboardData = () => {
   // Estados separados para cada seletor
   const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(() => new Date());
   const [dailyLeadsDate, setDailyLeadsDate] = useState(() => new Date());
-  const [objectionsDate, setObjectionsDate] = useState(() => new Date());
+  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(() => new Date());
+  const [objectionTrendsDate, setObjectionTrendsDate] = useState(() => new Date());
   const [callsDate, setCallsDate] = useState(() => new Date());
   const [performanceDate, setPerformanceDate] = useState(() => new Date());
   
   const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
   const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
-  const [objectionsSeller, setObjectionsSeller] = useState("all");
+  const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
+  const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
 
   const filterDataBySeller = (data: any[], sellerId: string) => {
     if (sellerId === "all") return data;
@@ -120,8 +121,22 @@ export const useDashboardData = () => {
       { name: "Preciso de mais tempo para avaliar", count: 10 },
     ].sort((a, b) => b.count - a.count);
 
-    return filterDataBySeller(baseData, objectionsSeller);
-  }, [objectionsSeller]);
+    return filterDataBySeller(baseData, monthlyObjectionsSeller);
+  }, [monthlyObjectionsSeller]);
+
+  const objectionTrendsData = useMemo(() => {
+    const baseData = Array.from({ length: 6 }).map((_, index) => {
+      const date = subMonths(new Date(), index);
+      return {
+        month: format(date, 'MMM/yy'),
+        "Preço muito alto": Math.floor(Math.random() * 20) + 10,
+        "Não tenho orçamento": Math.floor(Math.random() * 15) + 8,
+        "Preciso consultar": Math.floor(Math.random() * 12) + 6,
+      };
+    }).reverse();
+
+    return filterDataBySeller(baseData, objectionTrendsSeller);
+  }, [objectionTrendsSeller]);
 
   const objectionExamples = useMemo(() => ({
     "Preço muito alto": [
@@ -144,13 +159,16 @@ export const useDashboardData = () => {
     monthlyCallsData,
     dailyPerformanceData,
     objectionsData,
+    objectionTrendsData,
     objectionExamples,
     monthlyLeadsDate,
     setMonthlyLeadsDate,
     dailyLeadsDate,
     setDailyLeadsDate,
-    objectionsDate,
-    setObjectionsDate,
+    monthlyObjectionsDate,
+    setMonthlyObjectionsDate,
+    objectionTrendsDate,
+    setObjectionTrendsDate,
     callsDate,
     setCallsDate,
     performanceDate,
@@ -159,7 +177,9 @@ export const useDashboardData = () => {
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
     setDailyLeadsSeller,
-    objectionsSeller,
-    setObjectionsSeller,
+    monthlyObjectionsSeller,
+    setMonthlyObjectionsSeller,
+    objectionTrendsSeller,
+    setObjectionTrendsSeller,
   };
 };
