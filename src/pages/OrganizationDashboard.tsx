@@ -30,6 +30,10 @@ const OrganizationDashboard = () => {
     callsDate,
     setCallsDate,
     performanceDate,
+    monthlyCallsSeller, // Adicionado
+    setMonthlyCallsSeller, // Adicionado
+    dailyCallsSeller, // Adicionado
+    setDailyCallsSeller, // Adicionado
     monthlyLeadsSeller,
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
@@ -92,16 +96,16 @@ const OrganizationDashboard = () => {
               <DailyCallsChart 
                 data={monthlyCallsData}
                 isMonthly={true}
-                selectedSeller={monthlyLeadsSeller}
-                onSellerChange={setMonthlyLeadsSeller}
+                selectedSeller={monthlyCallsSeller}
+                onSellerChange={setMonthlyCallsSeller}
                 sellers={mockUsers}
               />
               <DailyCallsChart 
                 data={dailyCallsData}
                 selectedDate={callsDate}
                 onDateChange={setCallsDate}
-                selectedSeller={dailyLeadsSeller}
-                onSellerChange={setDailyLeadsSeller}
+                selectedSeller={dailyCallsSeller}
+                onSellerChange={setDailyCallsSeller}
                 sellers={mockUsers}
               />
             </div>

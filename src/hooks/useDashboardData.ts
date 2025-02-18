@@ -15,6 +15,8 @@ export const useDashboardData = () => {
   
   const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
   const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
+  const [monthlyCallsSeller, setMonthlyCallsSeller] = useState("all");
+  const [dailyCallsSeller, setDailyCallsSeller] = useState("all");
   const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
   const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
 
@@ -84,19 +86,21 @@ export const useDashboardData = () => {
       };
     });
 
-    return daysInMonth;
-  }, [callsDate, filteredLeads]);
+    return filterDataBySeller(daysInMonth, dailyCallsSeller);
+  }, [callsDate, filteredLeads, dailyCallsSeller]);
 
   const monthlyCallsData = useMemo(() => {
     const today = new Date();
-    return Array.from({ length: 13 }).map((_, index) => {
+    const baseData = Array.from({ length: 13 }).map((_, index) => {
       const date = subMonths(today, index);
       return {
         month: format(date, 'MMM/yy'),
         uploads: Math.floor(Math.random() * 50) + 20,
       };
     }).reverse();
-  }, []);
+
+    return filterDataBySeller(baseData, monthlyCallsSeller);
+  }, [monthlyCallsSeller]);
 
   const dailyPerformanceData = useMemo(() => {
     const monthStart = startOfMonth(performanceDate);
@@ -182,6 +186,10 @@ export const useDashboardData = () => {
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
     setDailyLeadsSeller,
+    monthlyCallsSeller,
+    setMonthlyCallsSeller,
+    dailyCallsSeller,
+    setDailyCallsSeller,
     monthlyObjectionsSeller,
     setMonthlyObjectionsSeller,
     objectionTrendsSeller,
