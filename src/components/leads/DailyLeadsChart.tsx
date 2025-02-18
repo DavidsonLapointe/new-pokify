@@ -43,9 +43,16 @@ export const DailyLeadsChart = ({ data, onDateChange, selectedDate }: DailyLeads
       </div>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" />
+            <XAxis 
+              dataKey="day" 
+              angle={-45}
+              textAnchor="end"
+              height={70}
+              interval={0}
+              tick={{ fontSize: 12 }}
+            />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
             <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
