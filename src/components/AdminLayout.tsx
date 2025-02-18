@@ -74,11 +74,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       onClick={() => navigate(item.path)}
                       className={`w-full flex items-center px-6 py-3 text-sm transition-colors rounded-md
                         ${isActive 
-                          ? "bg-primary-light text-primary" 
-                          : "text-gray-700 hover:bg-primary-lighter"
+                          ? "bg-[#F1F0FB] text-gray-700" 
+                          : "text-gray-700 hover:bg-[#F1F0FB]"
                         }`}
                     >
-                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-primary" : "text-gray-500"}`} />
+                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-gray-700" : "text-gray-500"}`} />
                       {item.label}
                     </button>
                   );
@@ -88,7 +88,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-primary-lighter text-gray-700 mt-6"
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#F1F0FB] text-gray-700 mt-6"
             >
               <LogOut className="w-4 h-4 mr-3 text-gray-500" />
               Sair
