@@ -1,4 +1,6 @@
 
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -18,7 +20,9 @@ const formSchema = z.object({
   llmUsageCheckInterval: z.coerce.number().min(5),
 });
 
-const LLMSettings = () => {
+interface LLMSettingsProps {}
+
+const LLMSettings: React.FC<LLMSettingsProps> = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [enabledSettings, setEnabledSettings] = useState({
     llmCreditThreshold: true,
