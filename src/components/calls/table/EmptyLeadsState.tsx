@@ -29,7 +29,7 @@ export const EmptyLeadsState = ({
       </div>
       <h3 className="text-lg font-semibold mb-2">Nenhum lead encontrado</h3>
       <p className="text-muted-foreground text-center max-w-sm mb-6">
-        Cadastre um novo lead para começar a fazer upload de chamadas e análises.
+        Cadastre um novo lead para começar a fazer upload de arquivos de audio e video dele.
       </p>
       <Button 
         variant="default"
