@@ -105,7 +105,7 @@ export const SellersTabContent = ({ sellers }: SellersTabContentProps) => {
       <Card className="p-4">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">
-            Evolução de Vendedores Cadastrados
+            Cadastro de vendedores por mês
           </h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
