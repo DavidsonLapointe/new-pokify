@@ -8,7 +8,6 @@ import AdminPlans from "@/pages/AdminPlans";
 import AdminPrompt from "@/pages/AdminPrompt";
 import AdminIntegrations from "@/pages/AdminIntegrations";
 import AdminProfile from "@/pages/AdminProfile";
-import OrganizationCalls from "@/pages/OrganizationCalls";
 import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
 import OrganizationLeads from "@/pages/OrganizationLeads";
@@ -38,7 +37,6 @@ export default function App() {
 
         {/* Organization Routes */}
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/calls" element={<OrganizationCalls />} />
         <Route path="/organization/leads" element={<OrganizationLeads />} />
         <Route path="/organization/users" element={<OrganizationUsers />} />
         <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
@@ -54,3 +52,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
