@@ -39,8 +39,8 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <div className="space-y-2">
-        <Label htmlFor="status-select" className="text-sm font-medium text-gray-700">
+      <div className="space-y-1.5">
+        <Label htmlFor="status-select" className="text-sm text-muted-foreground">
           Status de Pagamento
         </Label>
         <Select value={status} onValueChange={(value: TitleStatus | "all") => setStatus(value)}>
@@ -56,8 +56,8 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
         </Select>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="type-select" className="text-sm font-medium text-gray-700">
+      <div className="space-y-1.5">
+        <Label htmlFor="type-select" className="text-sm text-muted-foreground">
           Tipo de Título
         </Label>
         <Select value={type} onValueChange={(value: TitleType | "all") => setType(value)}>
@@ -72,8 +72,8 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
         </Select>
       </div>
 
-      <div className="flex-1 space-y-2">
-        <Label htmlFor="search-input" className="text-sm font-medium text-gray-700">
+      <div className="flex-1 space-y-1.5">
+        <Label htmlFor="search-input" className="text-sm text-muted-foreground">
           Nome da Empresa
         </Label>
         <div className="flex gap-2">
