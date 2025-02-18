@@ -4,17 +4,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TitleStatus, TitleType } from "@/types/financial";
-import { FilterX } from "lucide-react";
+import { FilterX, Search } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-export const FinancialFilters = () => {
+interface FinancialFiltersProps {
+  onSearch: (filters: { status: TitleStatus | "all", type: TitleType | "all", search: string }) => void;
+}
+
+export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
+  const { toast } = useToast();
   const [status, setStatus] = useState<TitleStatus | "all">("all");
   const [type, setType] = useState<TitleType | "all">("all");
   const [search, setSearch] = useState("");
+
+  const handleSearch = () => {
+    onSearch({ status, type, search });
+    toast({
+      title: "Filtros aplicados",
+      description: "A lista foi atualizada com os filtros selecionados.",
+    });
+  };
 
   const handleClearFilters = () => {
     setStatus("all");
     setType("all");
     setSearch("");
+    onSearch({ status: "all", type: "all", search: "" });
+    toast({
+      title: "Filtros limpos",
+      description: "Todos os filtros foram removidos.",
+    });
   };
 
   return (
@@ -48,8 +67,18 @@ export const FinancialFilters = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
         />
-        <Button variant="default">
+        <Button 
+          variant="default"
+          onClick={handleSearch}
+          className="flex items-center gap-2"
+        >
+          <Search className="h-4 w-4" />
           Buscar
         </Button>
         <Button 
@@ -63,4 +92,4 @@ export const FinancialFilters = () => {
       </div>
     </div>
   );
-}
+};
