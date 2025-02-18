@@ -154,7 +154,10 @@ export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={handleModalClose} variant="cancel">
+                <AlertDialogCancel 
+                  onClick={handleModalClose} 
+                  className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]"
+                >
                   Manter assinatura
                 </AlertDialogCancel>
                 <AlertDialogAction
