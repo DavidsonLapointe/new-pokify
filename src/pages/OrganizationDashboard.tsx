@@ -65,7 +65,7 @@ const OrganizationDashboard = () => {
           <TabsList>
             <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="calls">Uploads</TabsTrigger>
-            <TabsTrigger value="sellers">Performance</TabsTrigger>
+            <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
             <TabsTrigger value="objections">Objeções</TabsTrigger>
             <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
           </TabsList>
