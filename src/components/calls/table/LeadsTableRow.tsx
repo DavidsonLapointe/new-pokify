@@ -21,13 +21,13 @@ export const LeadsTableRow = ({
   onShowHistory,
   onShowUpload
 }: LeadsTableRowProps) => {
-  // Remove o filtro de emptyLead pois todas as chamadas são válidas neste contexto
-  const validCalls = lead.calls;
-  const successfulCalls = validCalls.filter(call => call.status === "success").length;
-  const hasProcessed = validCalls.some(call => call.status === "success" && call.analysis);
+  // Todas as chamadas são válidas para contagem
+  const totalCalls = lead.calls.length;
+  const successfulCalls = lead.calls.filter(call => call.status === "success").length;
+  const hasProcessed = lead.calls.some(call => call.status === "success" && call.analysis);
   const leadStatus = getLeadStatus(lead);
 
-  console.log("Lead calls:", lead.calls.length); // Debug log
+  console.log("Lead:", lead.id, "Total calls:", totalCalls, "Calls array:", lead.calls); // Debug log mais detalhado
 
   return (
     <TableRow key={lead.id} className="text-xs">
@@ -42,18 +42,12 @@ export const LeadsTableRow = ({
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadTemperatureBadge 
-          calls={validCalls} 
+          calls={lead.calls} 
           hasProcessed={hasProcessed} 
         />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        <Button
-          variant="link"
-          onClick={() => onShowHistory(lead)}
-          className="p-0 h-auto font-medium"
-        >
-          {validCalls.length}
-        </Button>
+      <TableCell className="py-2 whitespace-nowrap text-center">
+        {totalCalls}
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadCRMInfo 
