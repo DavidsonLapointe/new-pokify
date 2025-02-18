@@ -47,7 +47,13 @@ export const LeadsTableRow = ({
         />
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap text-center">
-        {totalCalls}
+        <Button
+          variant="link"
+          onClick={() => onShowHistory(lead)}
+          className="p-0 h-auto font-medium text-[#7E69AB] hover:text-[#9b87f5]"
+        >
+          {totalCalls}
+        </Button>
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadCRMInfo 
