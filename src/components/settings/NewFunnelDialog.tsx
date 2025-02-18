@@ -19,9 +19,14 @@ export const NewFunnelDialog = ({
   setNewFunnel,
   handleSaveFunnel,
 }: NewFunnelDialogProps) => {
+  const handleSubmit = () => {
+    handleSaveFunnel();
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-50 relative">
         <DialogHeader>
           <DialogTitle>Novo Funil</DialogTitle>
           <DialogDescription>
@@ -42,7 +47,7 @@ export const NewFunnelDialog = ({
         <div className="flex justify-end">
           <Button
             type="submit"
-            onClick={handleSaveFunnel}
+            onClick={handleSubmit}
           >
             <Save className="h-4 w-4 mr-2" />
             Salvar Funil

@@ -76,23 +76,19 @@ const OrganizationSettings = () => {
 
   const handleCreateFunnelFromAlert = useCallback(() => {
     setIsNoFunnelAlertOpen(false);
-    requestAnimationFrame(() => {
-      setIsFunnelDialogOpen(true);
-    });
+    setIsFunnelDialogOpen(true);
   }, []);
 
   const handleFunnelDialogClose = useCallback((open: boolean) => {
+    setIsFunnelDialogOpen(open);
     if (!open) {
       setNewFunnel("");
-      setIsFunnelDialogOpen(false);
-    } else {
-      setIsFunnelDialogOpen(true);
     }
   }, [setNewFunnel]);
 
   return (
     <OrganizationLayout>
-      <div className="space-y-6 relative">
+      <div className="space-y-6">
         <SettingsHeader organization={mockCurrentOrganization} />
 
         <FunnelSection
