@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,7 +101,7 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
                 </p>
               </div>
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() => setShowUpdateForm(true)}
               >
                 Alterar cartão
