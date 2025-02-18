@@ -50,14 +50,14 @@ export const FunnelSection = ({
           </div>
           <div className="flex gap-2">
             <Button
-              className="bg-[#000000e6] hover:bg-black/80"
+              variant="default"
               onClick={() => setIsFunnelDialogOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
               Novo Funil
             </Button>
             <Button
-              className="bg-[#000000e6] hover:bg-black/80"
+              variant="default"
               onClick={() => setIsStageDialogOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -147,8 +147,9 @@ export const FunnelSection = ({
               </Button>
             ) : (
               <Button
+                variant="default"
                 onClick={onSaveDefaultConfig}
-                className="bg-[#000000e6] hover:bg-black/80 flex items-center gap-2"
+                className="flex items-center gap-2"
                 disabled={!selectedFunnel || !selectedStage}
               >
                 <Save className="h-4 w-4" />

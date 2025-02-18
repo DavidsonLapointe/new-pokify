@@ -40,7 +40,7 @@ export const NewFunnelDialog = ({
         </div>
         <div className="flex justify-end">
           <Button
-            className="bg-[#000000e6] hover:bg-black/80"
+            variant="default"
             onClick={handleSaveFunnel}
           >
             <Save className="h-4 w-4 mr-2" />
