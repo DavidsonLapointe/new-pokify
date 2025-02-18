@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import {
   Settings,
@@ -52,11 +51,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         label: "Análise de Leads", 
         path: "/organization/leads"
       },
-      { 
-        icon: PhoneCall, 
-        label: "Efetuar Ligação", 
-        path: "/organization/calls/new"  // Corrigido aqui
-      },
       {
         icon: CreditCard,
         label: "Meu Plano",
@@ -90,7 +84,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar - Agora ocupa toda a largura */}
       <header className="h-16 bg-card border-b fixed top-0 left-0 right-0 z-40">
         <div className="h-full px-8 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm">
@@ -108,7 +101,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       </header>
 
       <div className="flex pt-16">
-        {/* Sidebar */}
         <aside className="w-64 bg-card border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="py-6">
             {menuItems.map((item) => {
@@ -132,7 +124,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
             <Separator className="my-6" />
 
-            {/* Botão de Logout */}
             <button
               onClick={handleLogout}
               className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground"
@@ -143,7 +134,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           </nav>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 ml-64">
           <div className="p-8 animate-fadeIn">
             {children}

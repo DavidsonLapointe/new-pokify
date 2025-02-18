@@ -12,7 +12,6 @@ import OrganizationCalls from "@/pages/OrganizationCalls";
 import OrganizationDashboard from "@/pages/OrganizationDashboard";
 import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
 import OrganizationLeads from "@/pages/OrganizationLeads";
-import OrganizationNewCall from "@/pages/OrganizationNewCall";
 import OrganizationPlan from "@/pages/OrganizationPlan";
 import OrganizationProfile from "@/pages/OrganizationProfile";
 import OrganizationSettings from "@/pages/OrganizationSettings";
@@ -40,7 +39,6 @@ export default function App() {
         {/* Organization Routes */}
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
         <Route path="/organization/calls" element={<OrganizationCalls />} />
-        <Route path="/organization/calls/new" element={<OrganizationNewCall />} />
         <Route path="/organization/leads" element={<OrganizationLeads />} />
         <Route path="/organization/users" element={<OrganizationUsers />} />
         <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
