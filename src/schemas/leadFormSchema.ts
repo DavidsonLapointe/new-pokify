@@ -17,7 +17,6 @@ export const leadFormSchema = z.object({
     ),
   email: z
     .string()
-    .optional()
     .refine(
       (val) => {
         if (!val) return true;
@@ -26,9 +25,9 @@ export const leadFormSchema = z.object({
       { message: "Email inválido" }
     ),
   cpf: z.string().optional(),
-  razaoSocial: z.string().optional(),
+  razaoSocial: z.string(),
   nomeFantasia: z.string().optional(),
-  cnpj: z.string().optional(),
+  cnpj: z.string(),
   logradouro: z.string().optional(),
   numero: z.string().optional(),
   complemento: z.string().optional(),
@@ -38,13 +37,25 @@ export const leadFormSchema = z.object({
   cep: z.string().optional(),
 }).refine(
   (data) => {
-    // Pelo menos um meio de contato deve estar preenchido
-    return Boolean(data.phone) || Boolean(data.email);
+    if (data.personType === "pf") {
+      // Para PF: email é obrigatório
+      return Boolean(data.email);
+    } else {
+      // Para PJ: razaoSocial e cnpj são obrigatórios
+      return Boolean(data.razaoSocial) && Boolean(data.cnpj);
+    }
   },
   {
-    message: "É necessário fornecer pelo menos um meio de contato (telefone ou email)",
-    path: ["phone"], // Mostra o erro no campo telefone por padrão
+    message: (data) => {
+      if (data.personType === "pf") {
+        return "Email é obrigatório para Pessoa Física";
+      } else {
+        return "Razão Social e CNPJ são obrigatórios para Pessoa Jurídica";
+      }
+    },
+    path: ["email"], // Para PF o erro aparece no campo email
   }
 );
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;
+
