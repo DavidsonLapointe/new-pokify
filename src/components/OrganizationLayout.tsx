@@ -83,14 +83,14 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="h-16 bg-card border-b fixed top-0 left-0 right-0 z-40">
+      <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
         <div className="h-full px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm">
-            <Building2 className="w-4 h-4 text-muted-foreground" />
+          <div className="flex items-center gap-2 text-sm text-white">
+            <Building2 className="w-4 h-4 text-white" />
             <span className="font-medium">{mockLoggedUser.organization.name}</span>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-sm font-medium">{mockLoggedUser.name}</p>
+            <p className="text-sm font-medium text-white">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
               <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -100,7 +100,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       </header>
 
       <div className="flex pt-16">
-        <aside className="w-64 bg-card border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+        <aside className="w-64 bg-[#7E69AB] fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="py-6">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -109,10 +109,10 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent ${
+                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#9b87f5] ${
                     isActive
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
+                      ? "bg-[#9b87f5] text-white"
+                      : "text-white/80"
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-3" />
@@ -121,11 +121,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
               );
             })}
 
-            <Separator className="my-6" />
+            <Separator className="my-6 bg-white/10" />
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-accent text-muted-foreground"
+              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#9b87f5] text-white/80"
             >
               <LogOut className="w-4 h-4 mr-3" />
               Sair
@@ -144,4 +144,3 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 };
 
 export default OrganizationLayout;
-
