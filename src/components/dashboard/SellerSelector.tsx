@@ -6,8 +6,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/organization";
-import { Check, CircleDot } from "lucide-react";
+import { CircleDot } from "lucide-react";
 
 interface SellerSelectorProps {
   selectedSeller: string;
@@ -18,7 +19,7 @@ interface SellerSelectorProps {
 export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }: SellerSelectorProps) => {
   return (
     <Select value={selectedSeller} onValueChange={onSellerChange}>
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className="w-[240px]">
         <SelectValue placeholder="Todos vendedores" />
       </SelectTrigger>
       <SelectContent>
@@ -31,14 +32,18 @@ export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }:
         {sellers.map((seller) => (
           <SelectItem key={seller.id} value={seller.id.toString()}>
             <div className="flex items-center gap-2">
-              {seller.status === "active" ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <CircleDot className="h-4 w-4 text-gray-400" />
-              )}
-              <span className={seller.status === "active" ? "text-black" : "text-gray-500"}>
-                {seller.name}
-              </span>
+              <span>{seller.name}</span>
+              <Badge 
+                variant={seller.status === "active" ? "default" : "secondary"}
+                className={`
+                  text-xs py-0.5 px-2
+                  ${seller.status === "active" 
+                    ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                    : "bg-gray-100 text-gray-800 hover:bg-gray-100"}
+                `}
+              >
+                {seller.status === "active" ? "Ativo" : "Inativo"}
+              </Badge>
             </div>
           </SelectItem>
         ))}
