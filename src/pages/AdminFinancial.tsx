@@ -9,30 +9,59 @@ import { TitleStatus, TitleType, FinancialTitle } from "@/types/financial";
 const AdminFinancial = () => {
   const [filteredTitles, setFilteredTitles] = useState<FinancialTitle[]>([]);
 
+  // Mock data for testing
+  const mockTitles: FinancialTitle[] = [
+    {
+      id: "1",
+      organizationId: 1,
+      organizationName: "Empresa A",
+      type: "mensalidade",
+      value: 1000,
+      dueDate: "2024-03-25",
+      status: "pending",
+      referenceMonth: "2024-03-01",
+      createdAt: "2024-03-01",
+    },
+    {
+      id: "2",
+      organizationId: 2,
+      organizationName: "Empresa B",
+      type: "pro_rata",
+      value: 500,
+      dueDate: "2024-03-20",
+      status: "overdue",
+      createdAt: "2024-03-01",
+    }
+  ];
+
   const handleSearch = (filters: { 
     status: TitleStatus | "all", 
     type: TitleType | "all", 
     search: string 
   }) => {
-    console.log("Filtros recebidos:", filters);
+    // Se todos os filtros estiverem em seu estado inicial, mostre todos os títulos
+    if (filters.status === "all" && filters.type === "all" && filters.search === "") {
+      setFilteredTitles(mockTitles);
+      return;
+    }
 
-    // Simulação de dados (substitua por sua chamada API real)
-    const mockTitles: FinancialTitle[] = [];
-
-    // Aplica os filtros de forma combinada
+    // Aplica os filtros
     const filtered = mockTitles.filter(title => {
       const matchesStatus = filters.status === "all" || title.status === filters.status;
       const matchesType = filters.type === "all" || title.type === filters.type;
       const matchesSearch = filters.search === "" || 
         title.organizationName.toLowerCase().includes(filters.search.toLowerCase());
 
-      // Retorna true apenas se TODOS os filtros ativos correspondem
       return matchesStatus && matchesType && matchesSearch;
     });
 
-    console.log("Títulos filtrados:", filtered);
     setFilteredTitles(filtered);
   };
+
+  // Inicializa os títulos ao montar o componente
+  useState(() => {
+    setFilteredTitles(mockTitles);
+  });
 
   return (
     <AdminLayout>
