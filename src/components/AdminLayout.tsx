@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign, Package } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -84,7 +83,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600 mt-6"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600 mt-8"
             >
               <LogOut className="w-4 h-4 mr-3" />
               Sair
@@ -103,4 +102,3 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 };
 
 export default AdminLayout;
-
