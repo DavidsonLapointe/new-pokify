@@ -16,7 +16,7 @@ export const LeadActionButtons = ({ lead, onShowHistory, onShowUpload }: LeadAct
         variant="ghost"
         size="icon"
         onClick={() => onShowHistory(lead)}
-        className="text-[#D6BCFA] hover:text-[#9b87f5] h-7 w-7"
+        className="text-[#7E69AB] hover:text-[#9b87f5] h-7 w-7"
       >
         <Eye className="h-4 w-4" />
       </Button>
@@ -24,7 +24,7 @@ export const LeadActionButtons = ({ lead, onShowHistory, onShowUpload }: LeadAct
         variant="ghost"
         size="icon"
         onClick={() => onShowUpload(lead)}
-        className="text-[#D6BCFA] hover:text-[#9b87f5] h-7 w-7"
+        className="text-[#7E69AB] hover:text-[#9b87f5] h-7 w-7"
       >
         <Upload className="h-4 w-4" />
       </Button>
