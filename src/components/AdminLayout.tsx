@@ -62,7 +62,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex pt-16">
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
-          <nav className="py-6 px-3">
+          <nav className="py-6 px-3 space-y-0.5">
             {adminMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -103,3 +103,4 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 };
 
 export default AdminLayout;
+
