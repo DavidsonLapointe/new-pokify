@@ -88,7 +88,7 @@ export const ApiKeyModal = ({ integration, isOpen, onClose, onConfirm }: ApiKeyM
           )}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="cancel" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit">Concluir</Button>
