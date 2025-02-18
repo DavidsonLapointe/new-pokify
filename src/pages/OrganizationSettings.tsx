@@ -76,14 +76,17 @@ const OrganizationSettings = () => {
 
   const handleCreateFunnelFromAlert = useCallback(() => {
     setIsNoFunnelAlertOpen(false);
-    setIsFunnelDialogOpen(true);
+    // Pequeno delay para garantir que o primeiro modal está fechado
+    setTimeout(() => {
+      setIsFunnelDialogOpen(true);
+    }, 100);
   }, []);
 
   const handleFunnelDialogClose = useCallback((open: boolean) => {
-    setIsFunnelDialogOpen(open);
     if (!open) {
       setNewFunnel("");
     }
+    setIsFunnelDialogOpen(open);
   }, [setNewFunnel]);
 
   return (
