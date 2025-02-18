@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLayout from "@/components/AdminLayout";
 import { toast } from "sonner";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 // Mock de dados do usuário admin (depois será substituído pela autenticação real)
 const mockAdminUser = {
   name: "Admin Silva",
   email: "admin.silva@leadly.com",
   phone: "(11) 99999-9999",
+  avatar: "",
 };
 
 const AdminProfile = () => {
@@ -23,6 +25,7 @@ const AdminProfile = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    avatar: mockAdminUser.avatar,
   });
 
   useEffect(() => {
@@ -35,15 +38,36 @@ const AdminProfile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = async (file: File) => {
+    setIsLoading(true);
+    try {
+      // Mock da chamada de API para upload
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Em produção, aqui seria feito o upload real do arquivo
+      // e retornaria a URL da imagem do servidor
+      const mockImageUrl = URL.createObjectURL(file);
+      
+      setFormData(prev => ({
+        ...prev,
+        avatar: mockImageUrl
+      }));
+      
+      toast.success("Foto de perfil atualizada com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao atualizar foto de perfil");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Mock da atualização
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Validação da senha
       if (formData.newPassword) {
         if (formData.newPassword.length < 6) {
           toast.error("A nova senha deve ter pelo menos 6 caracteres");
@@ -61,7 +85,6 @@ const AdminProfile = () => {
 
       toast.success("Perfil atualizado com sucesso!");
       
-      // Limpa os campos de senha após a atualização
       setFormData((prev) => ({
         ...prev,
         currentPassword: "",
@@ -100,6 +123,12 @@ const AdminProfile = () => {
               <TabsContent value="contact" className="space-y-6 mt-6">
                 <div className="grid gap-6">
                   <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
+                    <AvatarUpload 
+                      currentImage={formData.avatar}
+                      name={mockAdminUser.name}
+                      onImageUpload={handleImageUpload}
+                    />
+
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                         Email

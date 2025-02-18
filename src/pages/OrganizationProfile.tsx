@@ -8,7 +8,7 @@ import { useProfileForm } from "@/components/organization/profile/useProfileForm
 
 const OrganizationProfile = () => {
   const [mounted, setMounted] = useState(false);
-  const { formData, isLoading, handleInputChange, handleUpdateProfile } = useProfileForm();
+  const { formData, isLoading, handleInputChange, handleUpdateProfile, handleImageUpload } = useProfileForm();
 
   useEffect(() => {
     setMounted(true);
@@ -42,6 +42,7 @@ const OrganizationProfile = () => {
                   formData={formData}
                   isLoading={isLoading}
                   onInputChange={handleInputChange}
+                  onImageUpload={handleImageUpload}
                 />
               </TabsContent>
 

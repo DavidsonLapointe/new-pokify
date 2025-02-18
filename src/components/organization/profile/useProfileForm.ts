@@ -7,8 +7,10 @@ import { mockUser } from "./types";
 export const useProfileForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
+    name: mockUser.name,
     email: mockUser.email,
     phone: mockUser.phone,
+    avatar: mockUser.avatar,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -17,6 +19,29 @@ export const useProfileForm = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setIsLoading(true);
+    try {
+      // Mock da chamada de API para upload
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Em produção, aqui seria feito o upload real do arquivo
+      // e retornaria a URL da imagem do servidor
+      const mockImageUrl = URL.createObjectURL(file);
+      
+      setFormData(prev => ({
+        ...prev,
+        avatar: mockImageUrl
+      }));
+      
+      toast.success("Foto de perfil atualizada com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao atualizar foto de perfil");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -61,5 +86,6 @@ export const useProfileForm = () => {
     isLoading,
     handleInputChange,
     handleUpdateProfile,
+    handleImageUpload,
   };
 };

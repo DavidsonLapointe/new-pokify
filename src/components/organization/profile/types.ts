@@ -5,10 +5,14 @@ export interface ProfileFormData {
   currentPassword: string;
   newPassword: string;
   confirmPassword: string;
+  avatar?: string;
+  name?: string;
 }
 
 export const mockUser = {
+  id: 1,
   name: "João Silva",
   email: "joao.silva@empresa.com",
-  phone: "(11) 98765-4321",
+  phone: "(11) 99999-9999",
+  avatar: "",
 };
