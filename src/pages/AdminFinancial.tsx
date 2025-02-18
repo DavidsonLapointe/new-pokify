@@ -39,7 +39,7 @@ const AdminFinancial = () => {
       <div className="space-y-6">
         <FinancialHeader />
         <FinancialFilters onSearch={handleSearch} />
-        <FinancialTitlesTable />
+        <FinancialTitlesTable titles={filteredTitles} />
       </div>
     </AdminLayout>
   );

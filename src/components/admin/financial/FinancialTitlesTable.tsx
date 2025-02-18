@@ -8,30 +8,41 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { handleTitlePayment } from "@/services/financialService";
 import { Organization } from "@/types/organization";
+import { SearchX } from "lucide-react";
 
-const mockTitles: FinancialTitle[] = [
-  {
-    id: "1",
-    organizationId: 1,
-    organizationName: "Tech Solutions Ltda",
-    type: "pro_rata",
-    value: 156.67,
-    dueDate: "2024-03-20",
-    status: "pending",
-    createdAt: "2024-03-15",
-  },
-  {
-    id: "2",
-    organizationId: 1,
-    organizationName: "Tech Solutions Ltda",
-    type: "mensalidade",
-    value: 500.00,
-    dueDate: "2024-04-05",
-    status: "pending",
-    referenceMonth: "2024-04",
-    createdAt: "2024-04-01",
-  },
-];
+interface FinancialTitlesTableProps {
+  titles: FinancialTitle[];
+}
+
+const mockOrganization: Organization = {
+  id: 1,
+  name: "Tech Solutions",
+  nomeFantasia: "Tech Solutions Ltda",
+  plan: "Enterprise",
+  users: [
+    {
+      id: 1,
+      name: "Admin",
+      email: "admin@example.com",
+      phone: "(11) 99999-9999",
+      role: "admin",
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      lastAccess: new Date().toISOString(),
+      permissions: {},
+      logs: [],
+    },
+  ],
+  status: "pending",
+  integratedCRM: null,
+  integratedLLM: null,
+  email: "contact@example.com",
+  phone: "(11) 99999-9999",
+  cnpj: "12.345.678/0001-00",
+  adminName: "Admin",
+  adminEmail: "admin@example.com",
+  createdAt: "2024-01-01T00:00:00.000Z",
+};
 
 const getStatusBadge = (status: TitleStatus) => {
   const variants: Record<TitleStatus, "default" | "secondary" | "destructive"> = {
@@ -66,56 +77,21 @@ const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
   return "pending";
 };
 
-const mockOrganization: Organization = {
-  id: 1,
-  name: "Tech Solutions",
-  nomeFantasia: "Tech Solutions Ltda",
-  plan: "Enterprise",
-  users: [
-    {
-      id: 1,
-      name: "Admin",
-      email: "admin@example.com",
-      phone: "(11) 99999-9999",
-      role: "admin",
-      status: "pending",
-      createdAt: new Date().toISOString(),
-      lastAccess: new Date().toISOString(),
-      permissions: {},
-      logs: [],
-    },
-  ],
-  status: "pending",
-  integratedCRM: null,
-  integratedLLM: null,
-  email: "contact@example.com",
-  phone: "(11) 99999-9999",
-  cnpj: "12.345.678/0001-00",
-  adminName: "Admin",
-  adminEmail: "admin@example.com",
-  createdAt: "2024-01-01T00:00:00.000Z",
-};
-
-export const FinancialTitlesTable = () => {
+export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
   const { toast } = useToast();
-  const [titles, setTitles] = useState<FinancialTitle[]>(mockTitles);
 
   useEffect(() => {
     const updateTitlesStatus = () => {
-      setTitles(prevTitles => 
-        prevTitles.map(title => ({
-          ...title,
-          status: checkTitleStatus(title)
-        }))
-      );
+      titles = titles.map(title => ({
+        ...title,
+        status: checkTitleStatus(title)
+      }));
     };
 
     updateTitlesStatus();
-
     const interval = setInterval(updateTitlesStatus, 60000);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [titles]);
 
   const handlePayment = async (title: FinancialTitle) => {
     try {
@@ -139,6 +115,20 @@ export const FinancialTitlesTable = () => {
       });
     }
   };
+
+  if (titles.length === 0) {
+    return (
+      <div className="rounded-md border border-dashed p-8">
+        <div className="flex flex-col items-center justify-center text-center">
+          <SearchX className="h-12 w-12 text-gray-400 mb-3" />
+          <h3 className="font-semibold text-lg mb-1">Nenhum título encontrado</h3>
+          <p className="text-sm text-gray-500">
+            Não foram encontrados títulos com os critérios de busca selecionados.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border">
