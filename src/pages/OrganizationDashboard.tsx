@@ -102,8 +102,6 @@ const OrganizationDashboard = () => {
             />
             <DailyPerformanceChart 
               data={dailyPerformanceData}
-              selectedDate={performanceDate}
-              onDateChange={setPerformanceDate}
             />
           </TabsContent>
 

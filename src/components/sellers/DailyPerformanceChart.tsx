@@ -12,7 +12,11 @@ import {
 } from "recharts";
 
 interface DailyPerformanceChartProps {
-  data: any[];
+  data: Array<{
+    day: string;
+    joao: number;
+    maria: number;
+  }>;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
