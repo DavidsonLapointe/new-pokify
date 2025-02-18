@@ -1,14 +1,14 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { LeadsStats } from "@/components/leads/LeadsStats";
 import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
+import { MonthlyLeadsChart } from "@/components/leads/MonthlyLeadsChart";
 import { SellersStats } from "@/components/sellers/SellersStats";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, startOfMonth, endOfMonth, isWithinInterval, addDays } from "date-fns";
+import { format, startOfMonth, endOfMonth, isWithinInterval, addDays, subMonths } from "date-fns";
 import { useState, useMemo } from "react";
 
 const OrganizationDashboard = () => {
@@ -48,7 +48,7 @@ const OrganizationDashboard = () => {
     return daysInMonth;
   }, [selectedDate, filteredLeads]);
 
-  // Gera dados para o mês atual (leads)
+  // Gera dados para o mês atual (leads diários)
   const dailyLeadsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const daysInMonth = endOfMonth(selectedDate).getDate();
@@ -61,6 +61,18 @@ const OrganizationDashboard = () => {
       };
     });
   }, [selectedDate]);
+
+  // Gera dados para os últimos 13 meses (leads mensais)
+  const monthlyLeadsData = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 13 }).map((_, index) => {
+      const date = subMonths(today, index);
+      return {
+        month: format(date, 'MMM/yy'),
+        novos: Math.floor(Math.random() * 50) + 20, // 20-70 novos leads por mês
+      };
+    }).reverse(); // Inverte para mostrar do mais antigo para o mais recente
+  }, []);
 
   // Mock data para performance dos vendedores
   const dailyPerformanceData = useMemo(() => {
@@ -86,13 +98,8 @@ const OrganizationDashboard = () => {
 
   // Estatísticas totais de leads (não mais baseadas no mês selecionado)
   const leadsStats = useMemo(() => {
-    // Calcula o total de todos os leads
     const totalLeads = filteredLeads.length;
-    
-    // Calcula total de leads ativos (com pelo menos um arquivo processado)
     const activeLeads = filteredLeads.filter(lead => !lead.emptyLead).length;
-    
-    // Calcula total de leads pendentes
     const pendingLeads = totalLeads - activeLeads;
 
     return {
@@ -100,7 +107,7 @@ const OrganizationDashboard = () => {
       active: activeLeads,
       pending: pendingLeads,
     };
-  }, [filteredLeads]); // Agora só depende dos leads filtrados, não do mês selecionado
+  }, [filteredLeads]);
 
   return (
     <OrganizationLayout>
@@ -125,11 +132,14 @@ const OrganizationDashboard = () => {
               active={leadsStats.active}
               pending={leadsStats.pending}
             />
-            <DailyLeadsChart 
-              data={dailyLeadsData}
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <MonthlyLeadsChart data={monthlyLeadsData} />
+              <DailyLeadsChart 
+                data={dailyLeadsData}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="calls" className="space-y-6">
