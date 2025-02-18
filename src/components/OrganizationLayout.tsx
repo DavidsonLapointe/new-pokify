@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import {
   Settings,
@@ -7,7 +8,6 @@ import {
   Network,
   UserCircle,
   Building2,
-  PhoneCall,
   LogOut,
   CreditCard,
 } from "lucide-react";
@@ -51,6 +51,17 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         label: "Análise de Leads", 
         path: "/organization/leads"
       },
+      { icon: Users, label: "Usuários", path: "/organization/users" },
+      {
+        icon: Network,
+        label: "Integrações",
+        path: "/organization/integrations",
+      },
+      {
+        icon: Settings,
+        label: "Configurações",
+        path: "/organization/settings",
+      },
       {
         icon: CreditCard,
         label: "Meu Plano",
@@ -63,21 +74,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       },
     ];
 
-    const adminItems = [
-      { icon: Users, label: "Usuários", path: "/organization/users" },
-      {
-        icon: Network,
-        label: "Integrações",
-        path: "/organization/integrations",
-      },
-      {
-        icon: Settings,
-        label: "Configurações",
-        path: "/organization/settings",
-      },
-    ];
-
-    return isAdmin ? [...commonItems, ...adminItems] : commonItems;
+    return isAdmin ? commonItems : commonItems.filter(item => 
+      !["Usuários", "Integrações", "Configurações"].includes(item.label)
+    );
   };
 
   const menuItems = getMenuItems();
@@ -145,3 +144,4 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 };
 
 export default OrganizationLayout;
+
