@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
+import { LeadFormData } from "@/schemas/leadFormSchema";
 
 // Mock do usuário logado - vendedor
 const mockLoggedUser = {
@@ -80,18 +82,27 @@ const OrganizationLeads = () => {
     confirmNewLead,
   } = useCallsPage();
 
+  const handleCreateLead = async (data: LeadFormData) => {
+    try {
+      const leadId = await createNewLead(data);
+      return leadId;
+    } catch (error) {
+      console.error("Erro ao criar lead:", error);
+      throw error;
+    }
+  };
+
   const {
     isUploadOpen,
     setIsUploadOpen,
     selectedLeadForUpload,
     setSelectedLeadForUpload,
     newLeadId,
-    handleCreateLead,
     handleUploadClick,
     handleUploadSuccess,
     handleUploadCancel,
     handleLeadFound,
-  } = useLeadUpload(createNewLead, confirmNewLead);
+  } = useLeadUpload(handleCreateLead, confirmNewLead);
 
   // Configuração inicial do searchQuery
   useState(() => {
