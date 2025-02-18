@@ -16,23 +16,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
 }
-
-// Mock do usuário logado - depois será substituído pela autenticação real
-const mockLoggedUser = {
-  id: 1,
-  name: "João Silva",
-  email: "joao.silva@empresa.com",
-  avatar: "", // URL da imagem do usuário
-  role: "admin", // ou "seller"
-  organization: {
-    id: 1,
-    name: "Tech Solutions Ltda",
-  },
-};
 
 const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();

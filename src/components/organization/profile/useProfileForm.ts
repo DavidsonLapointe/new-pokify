@@ -1,19 +1,38 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { ProfileFormData } from "./types";
-import { mockUser } from "./types";
+
+// Mock data (will be replaced with real auth data later)
+export const mockLoggedUser = {
+  id: 1,
+  name: "João Silva",
+  email: "joao.silva@empresa.com",
+  avatar: "",
+  role: "admin",
+  organization: {
+    id: 1,
+    name: "Tech Solutions Ltda",
+  },
+};
+
+export interface ProfileFormData {
+  email: string;
+  phone: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  avatar: string;
+}
 
 export const useProfileForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
-    name: mockUser.name,
-    email: mockUser.email,
-    phone: mockUser.phone,
-    avatar: mockUser.avatar,
+    email: mockLoggedUser.email,
+    phone: "(11) 99999-9999",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    avatar: mockLoggedUser.avatar,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,17 +43,16 @@ export const useProfileForm = () => {
   const handleImageUpload = async (file: File) => {
     setIsLoading(true);
     try {
-      // Mock da chamada de API para upload
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Em produção, aqui seria feito o upload real do arquivo
-      // e retornaria a URL da imagem do servidor
       const mockImageUrl = URL.createObjectURL(file);
       
       setFormData(prev => ({
         ...prev,
         avatar: mockImageUrl
       }));
+      
+      // Update the mockLoggedUser for the navbar
+      mockLoggedUser.avatar = mockImageUrl;
       
       toast.success("Foto de perfil atualizada com sucesso!");
     } catch (error) {
@@ -65,6 +83,9 @@ export const useProfileForm = () => {
           return;
         }
       }
+
+      // Update the mockLoggedUser data
+      mockLoggedUser.email = formData.email;
 
       toast.success("Perfil atualizado com sucesso!");
       
