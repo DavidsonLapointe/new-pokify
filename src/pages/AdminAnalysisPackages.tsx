@@ -1,4 +1,3 @@
-
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,8 +66,22 @@ const AdminAnalysisPackages = () => {
   const handleCreatePackage = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newPackage.name || !newPackage.credits || !newPackage.price) {
-      toast.error("Preencha todos os campos");
+    const emptyFields: string[] = [];
+    
+    if (!newPackage.name.trim()) {
+      emptyFields.push("Nome do pacote");
+    }
+    if (!newPackage.credits) {
+      emptyFields.push("Quantidade de créditos");
+    }
+    if (!newPackage.price) {
+      emptyFields.push("Preço");
+    }
+
+    if (emptyFields.length > 0) {
+      toast.error(
+        `Por favor, preencha os seguintes campos: ${emptyFields.join(", ")}`
+      );
       return;
     }
 
@@ -125,7 +138,6 @@ const AdminAnalysisPackages = () => {
         </div>
 
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          {/* Dialog para criar novo pacote */}
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <Card>
               <CardHeader>
@@ -157,28 +169,30 @@ const AdminAnalysisPackages = () => {
 
               <form onSubmit={handleCreatePackage} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome do Pacote</Label>
+                  <Label htmlFor="name">Nome do Pacote *</Label>
                   <Input
                     id="name"
                     value={newPackage.name}
                     onChange={(e) => setNewPackage({ ...newPackage, name: e.target.value })}
                     placeholder="Ex: Pacote Premium"
+                    required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="credits">Quantidade de Créditos</Label>
+                  <Label htmlFor="credits">Quantidade de Créditos *</Label>
                   <Input
                     id="credits"
                     type="number"
                     value={newPackage.credits}
                     onChange={(e) => setNewPackage({ ...newPackage, credits: e.target.value })}
                     placeholder="Ex: 100"
+                    required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Preço (R$)</Label>
+                  <Label htmlFor="price">Preço (R$) *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -186,8 +200,11 @@ const AdminAnalysisPackages = () => {
                     value={newPackage.price}
                     onChange={(e) => setNewPackage({ ...newPackage, price: e.target.value })}
                     placeholder="Ex: 199.90"
+                    required
                   />
                 </div>
+
+                <p className="text-sm text-muted-foreground">* Campos obrigatórios</p>
 
                 <div className="flex justify-end gap-4">
                   <Button
@@ -205,7 +222,6 @@ const AdminAnalysisPackages = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Lista de pacotes existentes */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
