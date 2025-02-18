@@ -45,7 +45,7 @@ export const FunnelSection = ({
               Funil do CRM
             </CardTitle>
             <CardDescription>
-              Define o funil e etapa padrão para novos leads no CRM
+              Defina o funil e etapa do seu CRM para envio dos novos leads.
             </CardDescription>
           </div>
           <div className="flex gap-2">
