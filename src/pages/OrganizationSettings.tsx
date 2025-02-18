@@ -10,7 +10,6 @@ import { SettingsHeader } from "@/components/settings/SettingsHeader";
 import { NoFunnelAlert } from "@/components/settings/NoFunnelAlert";
 import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
 import { useCustomFieldsManagement } from "@/hooks/settings/useCustomFieldsManagement";
-import { Dialog } from "@/components/ui/dialog";
 
 const mockFunnels = [];
 
@@ -93,7 +92,7 @@ const OrganizationSettings = () => {
 
   return (
     <OrganizationLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         <SettingsHeader organization={mockCurrentOrganization} />
 
         <FunnelSection
@@ -122,39 +121,33 @@ const OrganizationSettings = () => {
           }}
         />
 
-        <Dialog open={isFunnelDialogOpen} onOpenChange={handleFunnelDialogClose}>
-          <NewFunnelDialog
-            isOpen={isFunnelDialogOpen}
-            onOpenChange={handleFunnelDialogClose}
-            newFunnel={newFunnel}
-            setNewFunnel={setNewFunnel}
-            handleSaveFunnel={handleSaveFunnel}
-          />
-        </Dialog>
+        <NewFunnelDialog
+          isOpen={isFunnelDialogOpen}
+          onOpenChange={handleFunnelDialogClose}
+          newFunnel={newFunnel}
+          setNewFunnel={setNewFunnel}
+          handleSaveFunnel={handleSaveFunnel}
+        />
 
-        <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
-          <NewStageDialog
-            isOpen={isStageDialogOpen}
-            onOpenChange={setIsStageDialogOpen}
-            newStage={newStage}
-            setNewStage={setNewStage}
-            newStageFunnelId={newStageFunnelId}
-            setNewStageFunnelId={setNewStageFunnelId}
-            handleSaveStage={handleSaveStage}
-            funnels={funnels}
-          />
-        </Dialog>
+        <NewStageDialog
+          isOpen={isStageDialogOpen}
+          onOpenChange={setIsStageDialogOpen}
+          newStage={newStage}
+          setNewStage={setNewStage}
+          newStageFunnelId={newStageFunnelId}
+          setNewStageFunnelId={setNewStageFunnelId}
+          handleSaveStage={handleSaveStage}
+          funnels={funnels}
+        />
 
-        <Dialog open={isFieldsDialogOpen} onOpenChange={setIsFieldsDialogOpen}>
-          <CustomFieldDialog
-            isOpen={isFieldsDialogOpen}
-            onOpenChange={setIsFieldsDialogOpen}
-            isEditing={isEditingField}
-            newField={newField}
-            setNewField={setNewField}
-            handleSaveFieldsSettings={handleSaveFieldsSettings}
-          />
-        </Dialog>
+        <CustomFieldDialog
+          isOpen={isFieldsDialogOpen}
+          onOpenChange={setIsFieldsDialogOpen}
+          isEditing={isEditingField}
+          newField={newField}
+          setNewField={setNewField}
+          handleSaveFieldsSettings={handleSaveFieldsSettings}
+        />
 
         <NoFunnelAlert
           isOpen={isNoFunnelAlertOpen}
