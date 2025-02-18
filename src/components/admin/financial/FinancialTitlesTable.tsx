@@ -1,3 +1,4 @@
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format, isBefore } from "date-fns";
@@ -79,25 +80,34 @@ const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
 
 export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
   const { toast } = useToast();
+  const [localTitles, setLocalTitles] = useState<FinancialTitle[]>(titles);
 
+  // Update local titles when prop changes
+  useEffect(() => {
+    setLocalTitles(titles);
+  }, [titles]);
+
+  // Update status periodically
   useEffect(() => {
     const updateTitlesStatus = () => {
-      titles = titles.map(title => ({
-        ...title,
-        status: checkTitleStatus(title)
-      }));
+      setLocalTitles(prevTitles => 
+        prevTitles.map(title => ({
+          ...title,
+          status: checkTitleStatus(title)
+        }))
+      );
     };
 
     updateTitlesStatus();
     const interval = setInterval(updateTitlesStatus, 60000);
     return () => clearInterval(interval);
-  }, [titles]);
+  }, []);
 
   const handlePayment = async (title: FinancialTitle) => {
     try {
       const updatedTitle = await handleTitlePayment(title, mockOrganization);
       
-      setTitles(prev => prev.map(t => 
+      setLocalTitles(prev => prev.map(t => 
         t.id === title.id ? updatedTitle : t
       ));
 
@@ -116,7 +126,7 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
     }
   };
 
-  if (titles.length === 0) {
+  if (localTitles.length === 0) {
     return (
       <div className="rounded-md border border-dashed p-8">
         <div className="flex flex-col items-center justify-center text-center">
@@ -144,7 +154,7 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {titles.map((title) => (
+          {localTitles.map((title) => (
             <TableRow key={title.id}>
               <TableCell>{title.organizationName}</TableCell>
               <TableCell>
