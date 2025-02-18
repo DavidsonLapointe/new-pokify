@@ -100,7 +100,7 @@ export const CreateIntegrationDialog = ({
             <div className="flex justify-end space-x-4 pt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="cancel"
                 onClick={() => onOpenChange(false)}
               >
                 Cancelar
