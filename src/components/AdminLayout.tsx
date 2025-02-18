@@ -54,7 +54,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <p className="text-sm font-medium text-white">{mockAdminUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockAdminUser.avatar} alt={mockAdminUser.name} />
-              <AvatarFallback className="bg-[#8E9196] text-white">{getInitials(mockAdminUser.name)}</AvatarFallback>
+              <AvatarFallback>{getInitials(mockAdminUser.name)}</AvatarFallback>
             </Avatar>
           </div>
         </div>
