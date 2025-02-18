@@ -59,7 +59,6 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
     // You might want to call onImageUpload with null or handle this case in your parent component
   }
 
-  // Ajustando para pegar as duas primeiras letras do primeiro e último nome
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ')
     if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
@@ -108,7 +107,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
 
         <div className="space-y-3 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" className="relative" size="sm" asChild>
+            <Button size="sm" asChild>
               <label>
                 <input
                   type="file"
