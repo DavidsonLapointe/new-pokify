@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Lock } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   llmCreditThreshold: z.coerce.number().min(1).max(100),
@@ -17,6 +18,8 @@ const formSchema = z.object({
 });
 
 const LLMSettings = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,12 +32,20 @@ const LLMSettings = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
     toast.success("Configurações de LLM salvas com sucesso!");
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Configurações de LLM</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Configurações de LLM
+          {!isEditing && <Lock className="h-4 w-4 text-muted-foreground" />}
+        </CardTitle>
         <CardDescription>
           Configure os parâmetros de monitoramento e alertas para uso de LLM.
         </CardDescription>
@@ -64,7 +75,12 @@ const LLMSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field} 
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""}
+                    />
                   </FormControl>
                   <FormDescription>
                     Porcentagem mínima de créditos LLM para disparar alerta.
@@ -95,7 +111,12 @@ const LLMSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field} 
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""}
+                    />
                   </FormControl>
                   <FormDescription>
                     Intervalo entre alertas de saldo LLM para a mesma empresa.
@@ -127,7 +148,12 @@ const LLMSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field} 
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""}
+                    />
                   </FormControl>
                   <FormDescription>
                     Frequência de verificação do saldo de créditos LLM.
@@ -137,7 +163,13 @@ const LLMSettings = () => {
               )}
             />
 
-            <Button type="submit">Salvar Alterações</Button>
+            <Button 
+              type={isEditing ? "submit" : "button"} 
+              onClick={!isEditing ? handleEditClick : undefined}
+              variant={isEditing ? "default" : "secondary"}
+            >
+              {isEditing ? "Salvar Alterações" : "Editar Informações"}
+            </Button>
           </form>
         </Form>
       </CardContent>
