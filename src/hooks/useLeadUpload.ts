@@ -5,7 +5,7 @@ import { Lead } from "@/types/leads";
 import { Call } from "@/types/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 
-export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, confirmNewLead: (withUpload: boolean, newCall?: Call) => void) => {
+export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<string>, confirmNewLead: (withUpload: boolean, newCall?: Call) => void) => {
   const { toast } = useToast();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedLeadForUpload, setSelectedLeadForUpload] = useState<Lead | null>(null);
@@ -34,12 +34,18 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => string, con
     emptyLead: true
   });
 
-  const handleCreateLead = (data: LeadFormData) => {
-    const leadId = createNewLead(data);
-    setNewLeadId(leadId);
-    const newCall = createCallObject(leadId, data);
-    setPendingNewCall(newCall);
-    confirmNewLead(false); // Confirma criação do lead sem upload
+  const handleCreateLead = async (data: LeadFormData) => {
+    try {
+      const leadId = await createNewLead(data);
+      setNewLeadId(leadId);
+      const newCall = createCallObject(leadId, data);
+      setPendingNewCall(newCall);
+      confirmNewLead(false); // Confirma criação do lead sem upload
+      return leadId;
+    } catch (error) {
+      console.error("Erro ao criar lead:", error);
+      throw error;
+    }
   };
 
   const handleUploadClick = (data: LeadFormData) => {
