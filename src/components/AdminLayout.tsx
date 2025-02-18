@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSign, Package } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -61,29 +62,31 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex pt-16">
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
-          <nav className="py-6 px-3 space-y-0.5">
-            {adminMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <button
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
-                    isActive
-                      ? "bg-[#F1F0FB] text-[#9b87f5]"
-                      : "text-gray-600"
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
-                  {item.label}
-                </button>
-              );
-            })}
+          <nav className="flex flex-col h-full py-6 px-3">
+            <div className="space-y-0.5">
+              {adminMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
+                      isActive
+                        ? "bg-[#F1F0FB] text-[#9b87f5]"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600 mt-8"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600 mt-auto"
             >
               <LogOut className="w-4 h-4 mr-3" />
               Sair
