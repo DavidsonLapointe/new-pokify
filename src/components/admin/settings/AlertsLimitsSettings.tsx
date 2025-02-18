@@ -163,8 +163,7 @@ const AlertsLimitsSettings = () => {
             <Button 
               type="button"
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
-              variant={isEditing ? "default" : "secondary"}
-              className="bg-black text-white"
+              className="bg-black text-white hover:bg-black"
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
             </Button>
