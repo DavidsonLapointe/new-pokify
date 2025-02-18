@@ -6,6 +6,8 @@ export interface FinancialTitle {
   id: string;
   organizationId: number;
   organizationName: string;
+  organizationNomeFantasia?: string;
+  organizationCNPJ?: string;
   type: TitleType;
   value: number;
   dueDate: string;
