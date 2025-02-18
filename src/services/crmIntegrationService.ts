@@ -17,9 +17,18 @@ export const checkLeadExistsInCRM = async (
   integration: Integration,
   leadData: LeadFormData
 ): Promise<CRMLeadCheckResponse> => {
-  if (!leadData.razaoSocial && !leadData.cnpj) {
-    console.log("Dados insuficientes para verificação no CRM");
-    return { exists: false };
+  // Verifica se há dados suficientes para busca baseado no tipo de pessoa
+  if (leadData.personType === "pj") {
+    if (!leadData.razaoSocial && !leadData.cnpj) {
+      console.log("Dados insuficientes para verificação de PJ no CRM");
+      return { exists: false };
+    }
+  } else {
+    // personType === "pf"
+    if (!leadData.cpf && !leadData.email) {
+      console.log("Dados insuficientes para verificação de PF no CRM");
+      return { exists: false };
+    }
   }
 
   try {
@@ -44,10 +53,17 @@ const checkLeadInHubspot = async (
   leadData: LeadFormData
 ): Promise<CRMLeadCheckResponse> => {
   // Simula uma chamada à API do HubSpot
-  console.log("Verificando lead no HubSpot:", {
-    razaoSocial: leadData.razaoSocial,
-    cnpj: leadData.cnpj
-  });
+  if (leadData.personType === "pj") {
+    console.log("Verificando PJ no HubSpot:", {
+      razaoSocial: leadData.razaoSocial,
+      cnpj: leadData.cnpj
+    });
+  } else {
+    console.log("Verificando PF no HubSpot:", {
+      cpf: leadData.cpf,
+      email: leadData.email
+    });
+  }
 
   // Aqui implementaremos a chamada real à API do HubSpot
   return { exists: false };
@@ -58,10 +74,17 @@ const checkLeadInSalesforce = async (
   leadData: LeadFormData
 ): Promise<CRMLeadCheckResponse> => {
   // Simula uma chamada à API do Salesforce
-  console.log("Verificando lead no Salesforce:", {
-    razaoSocial: leadData.razaoSocial,
-    cnpj: leadData.cnpj
-  });
+  if (leadData.personType === "pj") {
+    console.log("Verificando PJ no Salesforce:", {
+      razaoSocial: leadData.razaoSocial,
+      cnpj: leadData.cnpj
+    });
+  } else {
+    console.log("Verificando PF no Salesforce:", {
+      cpf: leadData.cpf,
+      email: leadData.email
+    });
+  }
 
   // Aqui implementaremos a chamada real à API do Salesforce
   return { exists: false };
@@ -76,7 +99,8 @@ export const syncLeadWithCRM = async (
     const existingLead = await checkLeadExistsInCRM(integration, leadData);
 
     if (existingLead.exists) {
-      console.log("Lead já existe no CRM, não será criado novamente");
+      const tipoPessoa = leadData.personType === "pf" ? "Pessoa Física" : "Pessoa Jurídica";
+      console.log(`${tipoPessoa} já existe no CRM, não será criado novamente`);
       return {
         success: true,
         leadId: existingLead.id,
@@ -109,7 +133,10 @@ const createLeadInHubspot = async (
   leadData: LeadFormData
 ): Promise<CRMIntegrationResponse> => {
   // Simula criação no HubSpot
-  console.log("Criando lead no HubSpot:", leadData);
+  console.log("Criando lead no HubSpot:", {
+    tipo: leadData.personType === "pf" ? "Pessoa Física" : "Pessoa Jurídica",
+    ...leadData
+  });
   
   // Aqui implementaremos a chamada real à API do HubSpot
   return {
@@ -123,7 +150,10 @@ const createLeadInSalesforce = async (
   leadData: LeadFormData
 ): Promise<CRMIntegrationResponse> => {
   // Simula criação no Salesforce
-  console.log("Criando lead no Salesforce:", leadData);
+  console.log("Criando lead no Salesforce:", {
+    tipo: leadData.personType === "pf" ? "Pessoa Física" : "Pessoa Jurídica",
+    ...leadData
+  });
   
   // Aqui implementaremos a chamada real à API do Salesforce
   return {
