@@ -6,7 +6,7 @@ export interface ProfileFormData {
   newPassword: string;
   confirmPassword: string;
   avatar?: string;
-  name?: string;
+  name: string;
 }
 
 export const mockUser = {

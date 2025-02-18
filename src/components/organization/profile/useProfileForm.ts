@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { ProfileFormData } from "./types";
 
 // Mock data (will be replaced with real auth data later)
 export const mockLoggedUser = {
@@ -15,18 +16,10 @@ export const mockLoggedUser = {
   },
 };
 
-export interface ProfileFormData {
-  email: string;
-  phone: string;
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-  avatar: string;
-}
-
 export const useProfileForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
+    name: mockLoggedUser.name,
     email: mockLoggedUser.email,
     phone: "(11) 99999-9999",
     currentPassword: "",
@@ -86,6 +79,7 @@ export const useProfileForm = () => {
 
       // Update the mockLoggedUser data
       mockLoggedUser.email = formData.email;
+      mockLoggedUser.name = formData.name;
 
       toast.success("Perfil atualizado com sucesso!");
       
