@@ -80,8 +80,8 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
         >
           <Avatar className="h-28 w-28 ring-2 ring-gray-100">
             <AvatarImage src={previewUrl} alt={name} />
-            <AvatarFallback className="text-xl bg-[#9b87f5]">
-              <span className="text-white font-medium">{getInitials(name)}</span>
+            <AvatarFallback className="bg-[#9b87f5] flex items-center justify-center">
+              <span className="text-xl font-medium text-white">{getInitials(name)}</span>
             </AvatarFallback>
           </Avatar>
           <div className="absolute inset-0 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
