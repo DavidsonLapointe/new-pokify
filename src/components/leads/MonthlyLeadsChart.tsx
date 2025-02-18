@@ -37,17 +37,17 @@ export const MonthlyLeadsChart = ({ data }: MonthlyLeadsChartProps) => (
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
       </div>
-      <div className="h-[300px] w-full">
+      <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="month" 
-              angle={-45}
+              angle={-30}
               textAnchor="end"
-              height={70}
+              height={40}
               interval={0}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 13 }}
             />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
