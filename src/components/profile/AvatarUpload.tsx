@@ -107,11 +107,11 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
 
         <div className="space-y-3 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button size="sm" asChild>
-              <label>
+            <Button size="sm" className="relative">
+              <label className="flex items-center cursor-pointer w-full h-full">
                 <input
                   type="file"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="sr-only"
                   onChange={handleFileChange}
                   accept="image/*"
                 />
