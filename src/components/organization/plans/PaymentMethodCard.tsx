@@ -6,6 +6,13 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const stripePromise = loadStripe("pk_test_your_key");
 
@@ -52,7 +59,7 @@ const PaymentMethodForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <PaymentElement />
-      <Button disabled={!stripe || isLoading} className="w-full">
+      <Button disabled={!stripe || isLoading} variant="default" className="w-full">
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -67,7 +74,7 @@ const PaymentMethodForm = () => {
 };
 
 export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardProps) {
-  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
 
   const options = {
     mode: 'setup' as const,
@@ -90,37 +97,41 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
       </CardHeader>
       <CardContent>
         {currentPaymentMethod ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">
-                  Cartão atual: **** **** **** {currentPaymentMethod.last4}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Expira em {currentPaymentMethod.expMonth}/{currentPaymentMethod.expYear}
-                </p>
-              </div>
-              <Button
-                variant="default"
-                onClick={() => setShowUpdateForm(true)}
-              >
-                Alterar cartão
-              </Button>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                Cartão atual: **** **** **** {currentPaymentMethod.last4}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Expira em {currentPaymentMethod.expMonth}/{currentPaymentMethod.expYear}
+              </p>
             </div>
-
-            {showUpdateForm && (
-              <div className="mt-4 pt-4 border-t">
-                <Elements stripe={stripePromise} options={options}>
-                  <PaymentMethodForm />
-                </Elements>
-              </div>
-            )}
+            <Button
+              variant="default"
+              onClick={() => setShowUpdateDialog(true)}
+            >
+              Alterar cartão
+            </Button>
           </div>
         ) : (
           <Elements stripe={stripePromise} options={options}>
             <PaymentMethodForm />
           </Elements>
         )}
+
+        <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Alterar cartão</DialogTitle>
+              <DialogDescription>
+                Insira os dados do novo cartão de crédito
+              </DialogDescription>
+            </DialogHeader>
+            <Elements stripe={stripePromise} options={options}>
+              <PaymentMethodForm />
+            </Elements>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
