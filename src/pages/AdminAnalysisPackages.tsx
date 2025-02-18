@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 interface AnalysisPackage {
@@ -57,6 +57,7 @@ const AdminAnalysisPackages = () => {
 
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newPackage, setNewPackage] = useState({
     name: "",
     credits: "",
@@ -94,6 +95,7 @@ const AdminAnalysisPackages = () => {
 
     setPackages([...packages, package_]);
     setNewPackage({ name: "", credits: "", price: "" });
+    setIsCreateDialogOpen(false);
     toast.success("Pacote criado com sucesso");
   };
 
@@ -123,18 +125,36 @@ const AdminAnalysisPackages = () => {
         </div>
 
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          {/* Form para criar novo pacote */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="h-5 w-5 text-primary" />
-                Novo Pacote
-              </CardTitle>
-              <CardDescription>
-                Crie um novo pacote de créditos para análises
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          {/* Dialog para criar novo pacote */}
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Plus className="h-5 w-5 text-primary" />
+                  Novo Pacote
+                </CardTitle>
+                <CardDescription>
+                  Crie um novo pacote de créditos para análises
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  onClick={() => setIsCreateDialogOpen(true)} 
+                  className="w-full"
+                >
+                  Criar Pacote
+                </Button>
+              </CardContent>
+            </Card>
+
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Novo Pacote de Análise</DialogTitle>
+                <DialogDescription>
+                  Preencha as informações do novo pacote de créditos
+                </DialogDescription>
+              </DialogHeader>
+
               <form onSubmit={handleCreatePackage} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome do Pacote</Label>
@@ -169,12 +189,21 @@ const AdminAnalysisPackages = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Criar Pacote
-                </Button>
+                <div className="flex justify-end gap-4">
+                  <Button
+                    type="button"
+                    variant="cancel"
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button type="submit">
+                    Criar Pacote
+                  </Button>
+                </div>
               </form>
-            </CardContent>
-          </Card>
+            </DialogContent>
+          </Dialog>
 
           {/* Lista de pacotes existentes */}
           <Card>
@@ -212,19 +241,17 @@ const AdminAnalysisPackages = () => {
                       </p>
                       <div className="flex items-center gap-2">
                         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary"
-                              onClick={() => {
-                                setEditingPackage(pkg);
-                                setIsEditDialogOpen(true);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                            onClick={() => {
+                              setEditingPackage(pkg);
+                              setIsEditDialogOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
                           <DialogContent>
                             <DialogHeader>
                               <DialogTitle>Editar Pacote</DialogTitle>
@@ -270,9 +297,18 @@ const AdminAnalysisPackages = () => {
                                   />
                                 </div>
 
-                                <Button type="submit" className="w-full">
-                                  Salvar Alterações
-                                </Button>
+                                <div className="flex justify-end gap-4">
+                                  <Button
+                                    type="button"
+                                    variant="cancel"
+                                    onClick={() => setIsEditDialogOpen(false)}
+                                  >
+                                    Cancelar
+                                  </Button>
+                                  <Button type="submit">
+                                    Salvar Alterações
+                                  </Button>
+                                </div>
                               </form>
                             )}
                           </DialogContent>
