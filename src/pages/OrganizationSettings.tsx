@@ -1,6 +1,6 @@
 
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { FunnelSection } from "@/components/settings/FunnelSection";
 import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
 import { NewFunnelDialog } from "@/components/settings/NewFunnelDialog";
@@ -10,6 +10,7 @@ import { SettingsHeader } from "@/components/settings/SettingsHeader";
 import { NoFunnelAlert } from "@/components/settings/NoFunnelAlert";
 import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
 import { useCustomFieldsManagement } from "@/hooks/settings/useCustomFieldsManagement";
+import { DialogPortal } from "@/components/ui/dialog";
 
 const mockFunnels = [];
 
@@ -74,27 +75,21 @@ const OrganizationSettings = () => {
     }
   };
 
-  const handleCreateFunnelFromAlert = () => {
+  const handleCreateFunnelFromAlert = useCallback(() => {
     setIsNoFunnelAlertOpen(false);
-    // Adiciona um pequeno delay para garantir que o modal de alerta seja fechado antes
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       setIsFunnelDialogOpen(true);
-    }, 100);
-  };
+    });
+  }, []);
 
-  // Handler para fechar o modal de funil
-  const handleFunnelDialogClose = (open: boolean) => {
+  const handleFunnelDialogClose = useCallback((open: boolean) => {
     if (!open) {
-      // Primeiro limpa os estados
       setNewFunnel("");
-      // Depois fecha o modal
-      setTimeout(() => {
-        setIsFunnelDialogOpen(false);
-      }, 100);
+      setIsFunnelDialogOpen(false);
     } else {
       setIsFunnelDialogOpen(true);
     }
-  };
+  }, [setNewFunnel]);
 
   return (
     <OrganizationLayout>
@@ -127,39 +122,41 @@ const OrganizationSettings = () => {
           }}
         />
 
-        <NewFunnelDialog
-          isOpen={isFunnelDialogOpen}
-          onOpenChange={handleFunnelDialogClose}
-          newFunnel={newFunnel}
-          setNewFunnel={setNewFunnel}
-          handleSaveFunnel={handleSaveFunnel}
-        />
+        <DialogPortal>
+          <NewFunnelDialog
+            isOpen={isFunnelDialogOpen}
+            onOpenChange={handleFunnelDialogClose}
+            newFunnel={newFunnel}
+            setNewFunnel={setNewFunnel}
+            handleSaveFunnel={handleSaveFunnel}
+          />
 
-        <NewStageDialog
-          isOpen={isStageDialogOpen}
-          onOpenChange={setIsStageDialogOpen}
-          newStage={newStage}
-          setNewStage={setNewStage}
-          newStageFunnelId={newStageFunnelId}
-          setNewStageFunnelId={setNewStageFunnelId}
-          handleSaveStage={handleSaveStage}
-          funnels={funnels}
-        />
+          <NewStageDialog
+            isOpen={isStageDialogOpen}
+            onOpenChange={setIsStageDialogOpen}
+            newStage={newStage}
+            setNewStage={setNewStage}
+            newStageFunnelId={newStageFunnelId}
+            setNewStageFunnelId={setNewStageFunnelId}
+            handleSaveStage={handleSaveStage}
+            funnels={funnels}
+          />
 
-        <CustomFieldDialog
-          isOpen={isFieldsDialogOpen}
-          onOpenChange={setIsFieldsDialogOpen}
-          isEditing={isEditingField}
-          newField={newField}
-          setNewField={setNewField}
-          handleSaveFieldsSettings={handleSaveFieldsSettings}
-        />
+          <CustomFieldDialog
+            isOpen={isFieldsDialogOpen}
+            onOpenChange={setIsFieldsDialogOpen}
+            isEditing={isEditingField}
+            newField={newField}
+            setNewField={setNewField}
+            handleSaveFieldsSettings={handleSaveFieldsSettings}
+          />
 
-        <NoFunnelAlert
-          isOpen={isNoFunnelAlertOpen}
-          onClose={setIsNoFunnelAlertOpen}
-          onCreateFunnel={handleCreateFunnelFromAlert}
-        />
+          <NoFunnelAlert
+            isOpen={isNoFunnelAlertOpen}
+            onClose={setIsNoFunnelAlertOpen}
+            onCreateFunnel={handleCreateFunnelFromAlert}
+          />
+        </DialogPortal>
       </div>
     </OrganizationLayout>
   );
