@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format, subMonths } from "date-fns";
+import { format, subMonths, isValid } from "date-fns";
 
 interface MonthYearSelectorProps {
   selectedDate: Date;
@@ -14,6 +14,9 @@ interface MonthYearSelectorProps {
 }
 
 export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelectorProps) => {
+  // Garantir que temos uma data válida
+  const validDate = isValid(selectedDate) ? selectedDate : new Date();
+  
   // Gera os últimos 12 meses como opções
   const monthOptions = Array.from({ length: 12 }).map((_, index) => {
     const date = subMonths(new Date(), index);
@@ -24,7 +27,7 @@ export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelec
 
   return (
     <Select
-      value={format(selectedDate, "yyyy-MM")}
+      value={format(validDate, "yyyy-MM")}
       onValueChange={(newValue) => {
         const selectedOption = monthOptions.find(option => option.value === newValue);
         if (selectedOption) {

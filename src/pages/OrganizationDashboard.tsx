@@ -29,7 +29,7 @@ import { mockUsers } from "@/types/organization";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [selectedSeller, setSelectedSeller] = useState("all");
 
   const dailyCallsData = useMemo(() => {
@@ -249,7 +249,7 @@ const OrganizationDashboard = () => {
                 onDateChange={setSelectedDate}
                 selectedSeller={selectedSeller}
                 onSellerChange={setSelectedSeller}
-                sellers={mockUsers}
+                sellers={mockUsers ?? []}
               />
               <DailyLeadsChart 
                 data={dailyLeadsData}
@@ -257,7 +257,7 @@ const OrganizationDashboard = () => {
                 onDateChange={setSelectedDate}
                 selectedSeller={selectedSeller}
                 onSellerChange={setSelectedSeller}
-                sellers={mockUsers}
+                sellers={mockUsers ?? []}
               />
             </div>
           </TabsContent>
@@ -305,7 +305,7 @@ const OrganizationDashboard = () => {
                 onDateChange={setSelectedDate}
                 selectedSeller={selectedSeller}
                 onSellerChange={setSelectedSeller}
-                sellers={mockUsers}
+                sellers={mockUsers ?? []}
               />
               <ObjectionTrendsChart 
                 data={objectionTrendsData}
@@ -313,7 +313,7 @@ const OrganizationDashboard = () => {
                 onDateChange={setSelectedDate}
                 selectedSeller={selectedSeller}
                 onSellerChange={setSelectedSeller}
-                sellers={mockUsers}
+                sellers={mockUsers ?? []}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ObjectionDetails

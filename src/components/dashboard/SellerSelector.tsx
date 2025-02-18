@@ -12,10 +12,10 @@ import { Check, CircleDot } from "lucide-react";
 interface SellerSelectorProps {
   selectedSeller: string;
   onSellerChange: (value: string) => void;
-  sellers: User[];
+  sellers?: User[];
 }
 
-export const SellerSelector = ({ selectedSeller, onSellerChange, sellers }: SellerSelectorProps) => {
+export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }: SellerSelectorProps) => {
   return (
     <Select value={selectedSeller} onValueChange={onSellerChange}>
       <SelectTrigger className="w-[200px]">
