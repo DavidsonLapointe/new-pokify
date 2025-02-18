@@ -18,6 +18,7 @@ import OrganizationUsers from "@/pages/OrganizationUsers";
 import OrganizationSetup from "@/pages/OrganizationSetup";
 import AdminAnalysisPackages from "@/pages/AdminAnalysisPackages";
 import AdminFinancial from "@/pages/AdminFinancial";
+import AdminSettings from "@/pages/AdminSettings";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/admin/prompt" element={<AdminPrompt />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
         <Route path="/admin/financial" element={<AdminFinancial />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
 
         {/* Organization Routes */}
         <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
@@ -52,4 +54,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
