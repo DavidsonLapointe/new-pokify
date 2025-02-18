@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -165,7 +164,7 @@ const AlertsLimitsSettings = () => {
               type="button"
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
               variant={isEditing ? "default" : "secondary"}
-              className="hover:bg-secondary/80 transition-colors"
+              className="bg-black text-white"
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
             </Button>
