@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { useCallsPage } from "@/hooks/useCallsPage";
 import { CallsStats } from "@/components/calls/CallsStats";
@@ -21,6 +20,8 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
+import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
@@ -122,6 +123,26 @@ const OrganizationDashboard = () => {
     };
   }, [filteredLeads]);
 
+  const objectionsData = useMemo(() => {
+    return [
+      { name: "Preço muito alto", count: 28 },
+      { name: "Não tenho orçamento no momento", count: 24 },
+      { name: "Preciso consultar outras pessoas", count: 20 },
+      { name: "Já uso outro produto similar", count: 18 },
+      { name: "Não é prioridade agora", count: 15 },
+      { name: "Não entendi o valor agregado", count: 12 },
+      { name: "Preciso de mais tempo para avaliar", count: 10 },
+    ].sort((a, b) => b.count - a.count);
+  }, []);
+
+  const objectionsStats = useMemo(() => {
+    return {
+      totalObjections: 127,
+      uniqueObjections: 7,
+      mostFrequent: 28,
+    };
+  }, []);
+
   const MonthlyCallsChart = ({ data }: { data: any[] }) => (
     <Card className="p-4">
       <div className="space-y-4">
@@ -179,6 +200,7 @@ const OrganizationDashboard = () => {
             <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="calls">Uploads</TabsTrigger>
             <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
+            <TabsTrigger value="objections">Objeções</TabsTrigger>
           </TabsList>
           
           <TabsContent value="leads" className="space-y-6">
@@ -221,6 +243,15 @@ const OrganizationDashboard = () => {
               topPerformerLeads={sellersStats.topPerformerLeads}
             />
             <DailyPerformanceChart data={dailyPerformanceData} />
+          </TabsContent>
+
+          <TabsContent value="objections" className="space-y-6">
+            <ObjectionsStats
+              totalObjections={objectionsStats.totalObjections}
+              uniqueObjections={objectionsStats.uniqueObjections}
+              mostFrequent={objectionsStats.mostFrequent}
+            />
+            <MonthlyObjectionsChart data={objectionsData} />
           </TabsContent>
         </Tabs>
       </div>
