@@ -15,19 +15,16 @@ const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Processa os dados de uploads por dia para o mês selecionado
   const dailyCallsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const monthEnd = endOfMonth(selectedDate);
     
-    // Agrupa os uploads por dia
     const uploadsByDay = new Map();
     
     filteredLeads.forEach(call => {
       if (!call.emptyLead) {
         const callDate = new Date(call.date);
         
-        // Verifica se a chamada está dentro do mês selecionado
         if (isWithinInterval(callDate, { start: monthStart, end: monthEnd })) {
           const dayKey = format(callDate, 'dd/MM');
           uploadsByDay.set(dayKey, (uploadsByDay.get(dayKey) || 0) + 1);
@@ -35,7 +32,6 @@ const OrganizationDashboard = () => {
       }
     });
 
-    // Converte o Map para o formato esperado pelo gráfico
     const daysInMonth = Array.from({ length: monthEnd.getDate() }, (_, i) => {
       const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i + 1);
       const dayKey = format(date, 'dd/MM');
@@ -48,7 +44,6 @@ const OrganizationDashboard = () => {
     return daysInMonth;
   }, [selectedDate, filteredLeads]);
 
-  // Gera dados para o mês atual (leads diários)
   const dailyLeadsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const daysInMonth = endOfMonth(selectedDate).getDate();
@@ -57,24 +52,22 @@ const OrganizationDashboard = () => {
       const date = addDays(monthStart, index);
       return {
         day: format(date, 'dd/MM'),
-        novos: Math.floor(Math.random() * 5) + 1, // 1-5 novos leads por dia
+        novos: Math.floor(Math.random() * 5) + 1,
       };
     });
   }, [selectedDate]);
 
-  // Gera dados para os últimos 13 meses (leads mensais)
   const monthlyLeadsData = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 13 }).map((_, index) => {
       const date = subMonths(today, index);
       return {
         month: format(date, 'MMM/yy'),
-        novos: Math.floor(Math.random() * 50) + 20, // 20-70 novos leads por mês
+        novos: Math.floor(Math.random() * 50) + 20,
       };
-    }).reverse(); // Inverte para mostrar do mais antigo para o mais recente
+    }).reverse();
   }, []);
 
-  // Mock data para performance dos vendedores
   const dailyPerformanceData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const daysInMonth = endOfMonth(selectedDate).getDate();
@@ -83,20 +76,18 @@ const OrganizationDashboard = () => {
       const date = addDays(monthStart, index);
       return {
         day: format(date, 'dd/MM'),
-        joao: Math.floor(Math.random() * 6) + 2, // 2-7 leads por dia
-        maria: Math.floor(Math.random() * 5) + 1, // 1-5 leads por dia
+        joao: Math.floor(Math.random() * 6) + 2,
+        maria: Math.floor(Math.random() * 5) + 1,
       };
     });
   }, [selectedDate]);
 
-  // Mock data para estatísticas de vendedores
   const sellersStats = {
     totalSellers: 8,
     activeSellers: 6,
     topPerformerLeads: 42,
   };
 
-  // Estatísticas totais de leads (não mais baseadas no mês selecionado)
   const leadsStats = useMemo(() => {
     const totalLeads = filteredLeads.length;
     const activeLeads = filteredLeads.filter(lead => !lead.emptyLead).length;
@@ -132,7 +123,7 @@ const OrganizationDashboard = () => {
               active={leadsStats.active}
               pending={leadsStats.pending}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-6">
               <MonthlyLeadsChart data={monthlyLeadsData} />
               <DailyLeadsChart 
                 data={dailyLeadsData}
