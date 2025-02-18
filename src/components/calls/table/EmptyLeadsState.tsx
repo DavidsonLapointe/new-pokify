@@ -32,7 +32,8 @@ export const EmptyLeadsState = ({
         Cadastre um novo lead para começar a fazer upload de chamadas e análises.
       </p>
       <Button 
-        variant="secondary" 
+        variant="default"
+        className="bg-[#9b87f5] text-white hover:bg-[#8b76f4]"
         onClick={() => setIsCreateLeadOpen(true)}
       >
         <UserPlus className="w-4 h-4 mr-2" />
