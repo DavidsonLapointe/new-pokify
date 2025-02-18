@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Lock } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   creditAlertThreshold: z.coerce.number().min(1).max(100),
@@ -17,6 +18,8 @@ const formSchema = z.object({
 });
 
 const AlertsLimitsSettings = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,12 +32,20 @@ const AlertsLimitsSettings = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
     toast.success("Configurações salvas com sucesso!");
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Limites e Alertas</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Limites e Alertas
+          {!isEditing && <Lock className="h-4 w-4 text-muted-foreground" />}
+        </CardTitle>
         <CardDescription>
           Configure os parâmetros para alertas e limites do sistema.
         </CardDescription>
@@ -63,7 +74,12 @@ const AlertsLimitsSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
                     Porcentagem mínima de créditos restantes para disparar alerta.
@@ -94,7 +110,12 @@ const AlertsLimitsSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
                     Intervalo mínimo entre alertas para a mesma empresa.
@@ -125,7 +146,12 @@ const AlertsLimitsSettings = () => {
                     </TooltipProvider>
                   </div>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
                     Número máximo de tentativas para análise de um arquivo.
@@ -135,7 +161,14 @@ const AlertsLimitsSettings = () => {
               )}
             />
 
-            <Button type="submit">Salvar Alterações</Button>
+            <Button 
+              type="button"
+              onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
+              variant={isEditing ? "default" : "secondary"}
+              className="hover:bg-secondary/80 transition-colors"
+            >
+              {isEditing ? "Salvar Alterações" : "Editar Informações"}
+            </Button>
           </form>
         </Form>
       </CardContent>

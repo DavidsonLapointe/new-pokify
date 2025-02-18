@@ -167,6 +167,7 @@ const LLMSettings = () => {
               type="button"
               onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
               variant={isEditing ? "default" : "secondary"}
+              className="hover:bg-secondary/80 transition-colors"
             >
               {isEditing ? "Salvar Alterações" : "Editar Informações"}
             </Button>

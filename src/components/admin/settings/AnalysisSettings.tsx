@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -7,35 +8,46 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Lock } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
-  maxFileSize: z.coerce.number().min(1),
-  processingTimeout: z.coerce.number().min(30),
-  maxSimultaneousAnalysis: z.coerce.number().min(1),
+  minConfidenceScore: z.coerce.number().min(0).max(100),
+  maxProcessingTime: z.coerce.number().min(1),
+  batchSize: z.coerce.number().min(1).max(100),
 });
 
 const AnalysisSettings = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      maxFileSize: 50,
-      processingTimeout: 300,
-      maxSimultaneousAnalysis: 5,
+      minConfidenceScore: 80,
+      maxProcessingTime: 300,
+      batchSize: 10,
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    toast.success("Configurações salvas com sucesso!");
+    toast.success("Configurações de análise salvas com sucesso!");
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Parâmetros de Análise</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Parâmetros de Análise
+          {!isEditing && <Lock className="h-4 w-4 text-muted-foreground" />}
+        </CardTitle>
         <CardDescription>
-          Configure os limites e parâmetros para análise de arquivos.
+          Configure os parâmetros utilizados na análise de áudios.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -43,29 +55,20 @@ const AnalysisSettings = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="maxFileSize"
+              name="minConfidenceScore"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Tamanho Máximo de Arquivo (MB)</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Define o tamanho máximo permitido para upload de arquivos em megabytes.
-                             Arquivos maiores que este limite serão rejeitados automaticamente para
-                             evitar sobrecarga do sistema.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                  <FormLabel>Score Mínimo de Confiança (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
-                    Tamanho máximo permitido para upload de arquivos.
+                    Score mínimo de confiança para aceitar uma análise.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -74,29 +77,20 @@ const AnalysisSettings = () => {
 
             <FormField
               control={form.control}
-              name="processingTimeout"
+              name="maxProcessingTime"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Timeout de Processamento (segundos)</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Tempo máximo permitido para processar um único arquivo.
-                             Se a análise ultrapassar este limite, será interrompida e
-                             marcada como falha por timeout.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                  <FormLabel>Tempo Máximo de Processamento (segundos)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
-                    Tempo máximo para processamento de uma análise.
+                    Tempo máximo permitido para processamento de um áudio.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -105,36 +99,34 @@ const AnalysisSettings = () => {
 
             <FormField
               control={form.control}
-              name="maxSimultaneousAnalysis"
+              name="batchSize"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
-                    <FormLabel>Análises Simultâneas por Empresa</FormLabel>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Número máximo de análises que uma empresa pode executar simultaneamente.
-                             Limita o uso de recursos do sistema e garante um processamento justo
-                             entre todas as empresas contratantes.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                  <FormLabel>Tamanho do Lote</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input 
+                      type="number" 
+                      {...field}
+                      disabled={!isEditing}
+                      className={!isEditing ? "bg-muted" : ""} 
+                    />
                   </FormControl>
                   <FormDescription>
-                    Número máximo de análises simultâneas por empresa.
+                    Quantidade de áudios processados simultaneamente.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit">Salvar Alterações</Button>
+            <Button 
+              type="button"
+              onClick={isEditing ? form.handleSubmit(onSubmit) : handleEditClick}
+              variant={isEditing ? "default" : "secondary"}
+              className="hover:bg-secondary/80 transition-colors"
+            >
+              {isEditing ? "Salvar Alterações" : "Editar Informações"}
+            </Button>
           </form>
         </Form>
       </CardContent>
