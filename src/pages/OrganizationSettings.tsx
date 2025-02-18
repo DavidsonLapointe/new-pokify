@@ -10,7 +10,7 @@ import { SettingsHeader } from "@/components/settings/SettingsHeader";
 import { NoFunnelAlert } from "@/components/settings/NoFunnelAlert";
 import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
 import { useCustomFieldsManagement } from "@/hooks/settings/useCustomFieldsManagement";
-import { DialogPortal } from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 
 const mockFunnels = [];
 
@@ -122,7 +122,7 @@ const OrganizationSettings = () => {
           }}
         />
 
-        <DialogPortal>
+        <Dialog open={isFunnelDialogOpen} onOpenChange={handleFunnelDialogClose}>
           <NewFunnelDialog
             isOpen={isFunnelDialogOpen}
             onOpenChange={handleFunnelDialogClose}
@@ -130,7 +130,9 @@ const OrganizationSettings = () => {
             setNewFunnel={setNewFunnel}
             handleSaveFunnel={handleSaveFunnel}
           />
+        </Dialog>
 
+        <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
           <NewStageDialog
             isOpen={isStageDialogOpen}
             onOpenChange={setIsStageDialogOpen}
@@ -141,7 +143,9 @@ const OrganizationSettings = () => {
             handleSaveStage={handleSaveStage}
             funnels={funnels}
           />
+        </Dialog>
 
+        <Dialog open={isFieldsDialogOpen} onOpenChange={setIsFieldsDialogOpen}>
           <CustomFieldDialog
             isOpen={isFieldsDialogOpen}
             onOpenChange={setIsFieldsDialogOpen}
@@ -150,13 +154,13 @@ const OrganizationSettings = () => {
             setNewField={setNewField}
             handleSaveFieldsSettings={handleSaveFieldsSettings}
           />
+        </Dialog>
 
-          <NoFunnelAlert
-            isOpen={isNoFunnelAlertOpen}
-            onClose={setIsNoFunnelAlertOpen}
-            onCreateFunnel={handleCreateFunnelFromAlert}
-          />
-        </DialogPortal>
+        <NoFunnelAlert
+          isOpen={isNoFunnelAlertOpen}
+          onClose={setIsNoFunnelAlertOpen}
+          onCreateFunnel={handleCreateFunnelFromAlert}
+        />
       </div>
     </OrganizationLayout>
   );
