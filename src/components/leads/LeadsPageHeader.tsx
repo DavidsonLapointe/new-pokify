@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CallsHeader } from "@/components/calls/CallsHeader";
-import { Upload, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
 import { Organization, User } from "@/types/organization";
@@ -59,11 +59,6 @@ export const LeadsPageHeader = ({
         />
 
         <div className="flex gap-2">
-          <Button onClick={onUploadClick}>
-            <Upload className="w-4 h-4 mr-2" />
-            Upload
-          </Button>
-
           <Button onClick={handleNewLeadClick}>
             <UserPlus className="w-4 h-4 mr-2" />
             Novo Lead
@@ -84,3 +79,4 @@ export const LeadsPageHeader = ({
     </>
   );
 };
+
