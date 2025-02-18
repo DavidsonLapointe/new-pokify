@@ -29,8 +29,69 @@ import { mockUsers } from "@/types/organization";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const [selectedSeller, setSelectedSeller] = useState("all");
+  
+  // Estados separados para cada seletor
+  const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(() => new Date());
+  const [dailyLeadsDate, setDailyLeadsDate] = useState(() => new Date());
+  const [objectionsDate, setObjectionsDate] = useState(() => new Date());
+  
+  const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
+  const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
+  const [objectionsSeller, setObjectionsSeller] = useState("all");
+
+  const filterDataBySeller = (data: any[], sellerId: string) => {
+    if (sellerId === "all") return data;
+    
+    // Simular filtro por vendedor - multiplicador para diferenciar os dados
+    const multiplier = parseInt(sellerId) * 0.5;
+    return data.map(item => ({
+      ...item,
+      novos: Math.floor(item.novos * multiplier),
+      count: item.count ? Math.floor(item.count * multiplier) : undefined
+    }));
+  };
+
+  const dailyLeadsData = useMemo(() => {
+    const monthStart = startOfMonth(dailyLeadsDate);
+    const daysInMonth = endOfMonth(dailyLeadsDate).getDate();
+    
+    const baseData = Array.from({ length: daysInMonth }).map((_, index) => {
+      const date = addDays(monthStart, index);
+      return {
+        day: format(date, 'dd/MM'),
+        novos: Math.floor(Math.random() * 5) + 1,
+      };
+    });
+
+    return filterDataBySeller(baseData, dailyLeadsSeller);
+  }, [dailyLeadsDate, dailyLeadsSeller]);
+
+  const monthlyLeadsData = useMemo(() => {
+    const today = new Date();
+    const baseData = Array.from({ length: 13 }).map((_, index) => {
+      const date = subMonths(today, index);
+      return {
+        month: format(date, 'MMM/yy'),
+        novos: Math.floor(Math.random() * 50) + 20,
+      };
+    }).reverse();
+
+    return filterDataBySeller(baseData, monthlyLeadsSeller);
+  }, [monthlyLeadsSeller]);
+
+  const objectionsData = useMemo(() => {
+    const baseData = [
+      { name: "Preço muito alto", count: 28 },
+      { name: "Não tenho orçamento no momento", count: 24 },
+      { name: "Preciso consultar outras pessoas", count: 20 },
+      { name: "Já uso outro produto similar", count: 18 },
+      { name: "Não é prioridade agora", count: 15 },
+      { name: "Não entendi o valor agregado", count: 12 },
+      { name: "Preciso de mais tempo para avaliar", count: 10 },
+    ].sort((a, b) => b.count - a.count);
+
+    return filterDataBySeller(baseData, objectionsSeller);
+  }, [objectionsSeller]);
 
   const dailyCallsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
@@ -72,30 +133,6 @@ const OrganizationDashboard = () => {
     }).reverse();
   }, []);
 
-  const dailyLeadsData = useMemo(() => {
-    const monthStart = startOfMonth(selectedDate);
-    const daysInMonth = endOfMonth(selectedDate).getDate();
-    
-    return Array.from({ length: daysInMonth }).map((_, index) => {
-      const date = addDays(monthStart, index);
-      return {
-        day: format(date, 'dd/MM'),
-        novos: Math.floor(Math.random() * 5) + 1,
-      };
-    });
-  }, [selectedDate]);
-
-  const monthlyLeadsData = useMemo(() => {
-    const today = new Date();
-    return Array.from({ length: 13 }).map((_, index) => {
-      const date = subMonths(today, index);
-      return {
-        month: format(date, 'MMM/yy'),
-        novos: Math.floor(Math.random() * 50) + 20,
-      };
-    }).reverse();
-  }, []);
-
   const dailyPerformanceData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
     const daysInMonth = endOfMonth(selectedDate).getDate();
@@ -127,18 +164,6 @@ const OrganizationDashboard = () => {
       pending: pendingLeads,
     };
   }, [filteredLeads]);
-
-  const objectionsData = useMemo(() => {
-    return [
-      { name: "Preço muito alto", count: 28 },
-      { name: "Não tenho orçamento no momento", count: 24 },
-      { name: "Preciso consultar outras pessoas", count: 20 },
-      { name: "Já uso outro produto similar", count: 18 },
-      { name: "Não é prioridade agora", count: 15 },
-      { name: "Não entendi o valor agregado", count: 12 },
-      { name: "Preciso de mais tempo para avaliar", count: 10 },
-    ].sort((a, b) => b.count - a.count);
-  }, []);
 
   const objectionsStats = useMemo(() => {
     return {
@@ -245,18 +270,18 @@ const OrganizationDashboard = () => {
             <div className="space-y-6">
               <MonthlyLeadsChart 
                 data={monthlyLeadsData}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                selectedSeller={selectedSeller}
-                onSellerChange={setSelectedSeller}
+                selectedDate={monthlyLeadsDate}
+                onDateChange={setMonthlyLeadsDate}
+                selectedSeller={monthlyLeadsSeller}
+                onSellerChange={setMonthlyLeadsSeller}
                 sellers={mockUsers ?? []}
               />
               <DailyLeadsChart 
                 data={dailyLeadsData}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                selectedSeller={selectedSeller}
-                onSellerChange={setSelectedSeller}
+                selectedDate={dailyLeadsDate}
+                onDateChange={setDailyLeadsDate}
+                selectedSeller={dailyLeadsSeller}
+                onSellerChange={setDailyLeadsSeller}
                 sellers={mockUsers ?? []}
               />
             </div>
@@ -290,8 +315,8 @@ const OrganizationDashboard = () => {
 
           <TabsContent value="objections" className="space-y-6">
             <ObjectionsFilters
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
+              selectedDate={objectionsDate}
+              onDateChange={setObjectionsDate}
             />
             <ObjectionsStats
               totalObjections={objectionsStats.totalObjections}
@@ -301,18 +326,18 @@ const OrganizationDashboard = () => {
             <div className="grid grid-cols-1 gap-6">
               <MonthlyObjectionsChart 
                 data={objectionsData}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                selectedSeller={selectedSeller}
-                onSellerChange={setSelectedSeller}
+                selectedDate={objectionsDate}
+                onDateChange={setObjectionsDate}
+                selectedSeller={objectionsSeller}
+                onSellerChange={setObjectionsSeller}
                 sellers={mockUsers ?? []}
               />
               <ObjectionTrendsChart 
                 data={objectionTrendsData}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                selectedSeller={selectedSeller}
-                onSellerChange={setSelectedSeller}
+                selectedDate={objectionsDate}
+                onDateChange={setObjectionsDate}
+                selectedSeller={objectionsSeller}
+                onSellerChange={setObjectionsSeller}
                 sellers={mockUsers ?? []}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

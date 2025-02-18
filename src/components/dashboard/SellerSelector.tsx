@@ -19,13 +19,13 @@ export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }:
   return (
     <Select value={selectedSeller} onValueChange={onSellerChange}>
       <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="Todos os vendedores" />
+        <SelectValue placeholder="Todos vendedores" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">
           <div className="flex items-center gap-2">
             <CircleDot className="h-4 w-4 text-primary" />
-            <span>Todos os vendedores</span>
+            <span>Todos vendedores</span>
           </div>
         </SelectItem>
         {sellers.map((seller) => (
