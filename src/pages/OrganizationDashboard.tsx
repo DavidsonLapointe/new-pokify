@@ -25,10 +25,12 @@ import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjection
 import { ObjectionsFilters } from "@/components/objections/ObjectionsFilters";
 import { ObjectionDetails } from "@/components/objections/ObjectionDetails";
 import { ObjectionTrendsChart } from "@/components/objections/ObjectionTrendsChart";
+import { mockUsers } from "@/types/organization";
 
 const OrganizationDashboard = () => {
   const { monthStats, filteredLeads } = useCallsPage();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedSeller, setSelectedSeller] = useState("all");
 
   const dailyCallsData = useMemo(() => {
     const monthStart = startOfMonth(selectedDate);
@@ -287,8 +289,22 @@ const OrganizationDashboard = () => {
               mostFrequent={objectionsStats.mostFrequent}
             />
             <div className="grid grid-cols-1 gap-6">
-              <MonthlyObjectionsChart data={objectionsData} />
-              <ObjectionTrendsChart data={objectionTrendsData} />
+              <MonthlyObjectionsChart 
+                data={objectionsData}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                selectedSeller={selectedSeller}
+                onSellerChange={setSelectedSeller}
+                sellers={mockUsers}
+              />
+              <ObjectionTrendsChart 
+                data={objectionTrendsData}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                selectedSeller={selectedSeller}
+                onSellerChange={setSelectedSeller}
+                sellers={mockUsers}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ObjectionDetails
                   objection="Preço muito alto"
