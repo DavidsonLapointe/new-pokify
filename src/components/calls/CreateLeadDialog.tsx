@@ -113,8 +113,7 @@ export function CreateLeadDialog({
             <CardContent className="flex flex-col items-center gap-4 pt-4">
               <Button
                 onClick={handleUploadClick}
-                variant="secondary"
-                className="w-full max-w-sm"
+                className="w-full max-w-sm bg-[#9b87f5] text-white hover:bg-[#8b76f4]"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Fazer upload da primeira chamada
@@ -126,3 +125,4 @@ export function CreateLeadDialog({
     </Dialog>
   );
 }
+
