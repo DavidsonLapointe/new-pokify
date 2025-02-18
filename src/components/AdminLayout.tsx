@@ -4,18 +4,11 @@ import { Settings, Users, List, Database, User, LogOut, MessageSquare, DollarSig
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { mockAdminUser } from "@/components/admin/profile/useAdminProfileForm";
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
-
-const mockLoggedUser = {
-  id: 1,
-  name: "Maria Silva",
-  email: "maria.silva@leadly.com",
-  avatar: "",
-  role: "admin",
-};
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
@@ -53,10 +46,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="h-full px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Leadly</h1>
           <div className="flex items-center gap-4">
-            <p className="text-sm font-medium">{mockLoggedUser.name}</p>
+            <p className="text-sm font-medium">{mockAdminUser.name}</p>
             <Avatar className="h-10 w-10">
-              <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
-              <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage src={mockAdminUser.avatar} alt={mockAdminUser.name} />
+              <AvatarFallback>{mockAdminUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
           </div>
         </div>

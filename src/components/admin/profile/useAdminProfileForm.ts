@@ -4,10 +4,12 @@ import { toast } from "sonner";
 
 // Mock data (will be replaced with real auth data later)
 export const mockAdminUser = {
+  id: 1,
   name: "Admin Silva",
   email: "admin.silva@leadly.com",
   phone: "(11) 99999-9999",
   avatar: "",
+  role: "admin",
 };
 
 export interface AdminProfileFormData {
@@ -46,6 +48,9 @@ export const useAdminProfileForm = () => {
         avatar: mockImageUrl
       }));
       
+      // Update the mockAdminUser for the navbar
+      mockAdminUser.avatar = mockImageUrl;
+      
       toast.success("Foto de perfil atualizada com sucesso!");
     } catch (error) {
       toast.error("Erro ao atualizar foto de perfil");
@@ -75,6 +80,10 @@ export const useAdminProfileForm = () => {
           return;
         }
       }
+
+      // Update the mockAdminUser data
+      mockAdminUser.email = formData.email;
+      mockAdminUser.phone = formData.phone;
 
       toast.success("Perfil atualizado com sucesso!");
       
