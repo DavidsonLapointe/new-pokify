@@ -42,14 +42,14 @@ export const FinancialFilters = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
         />
-        <Button variant="secondary" onClick={() => {
+        <Button variant="default" onClick={() => {
           setStatus("all");
           setType("all");
           setSearch("");
         }}>
-          Limpar
+          Buscar
         </Button>
       </div>
     </div>
   );
-};
+}
