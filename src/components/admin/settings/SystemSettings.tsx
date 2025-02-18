@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -6,9 +7,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useState } from "react";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 
 const formSchema = z.object({
   maxConcurrentJobs: z.coerce.number().min(1),
@@ -18,6 +19,11 @@ const formSchema = z.object({
 
 const SystemSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [enabledSettings, setEnabledSettings] = useState({
+    maxConcurrentJobs: true,
+    jobQueueTimeout: true,
+    systemMaintenanceWindow: true,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,13 +35,28 @@ const SystemSettings = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    // Filtrar apenas os valores das configurações habilitadas
+    const enabledValues = Object.keys(values).reduce((acc, key) => {
+      if (enabledSettings[key as keyof typeof enabledSettings]) {
+        acc[key] = values[key as keyof typeof values];
+      }
+      return acc;
+    }, {} as Partial<z.infer<typeof formSchema>>);
+
+    console.log(enabledValues);
     toast.success("Configurações do sistema salvas com sucesso!");
     setIsEditing(false);
   };
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const toggleSetting = (setting: keyof typeof enabledSettings) => {
+    setEnabledSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting]
+    }));
   };
 
   return (
@@ -57,13 +78,19 @@ const SystemSettings = () => {
               name="maxConcurrentJobs"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Máximo de Jobs Concorrentes</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Máximo de Jobs Concorrentes</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.maxConcurrentJobs}
+                      onCheckedChange={() => toggleSetting('maxConcurrentJobs')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.maxConcurrentJobs}
+                      className={(!isEditing || !enabledSettings.maxConcurrentJobs) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -79,13 +106,19 @@ const SystemSettings = () => {
               name="jobQueueTimeout"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Timeout da Fila de Jobs (segundos)</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Timeout da Fila de Jobs (segundos)</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.jobQueueTimeout}
+                      onCheckedChange={() => toggleSetting('jobQueueTimeout')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.jobQueueTimeout}
+                      className={(!isEditing || !enabledSettings.jobQueueTimeout) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -101,13 +134,19 @@ const SystemSettings = () => {
               name="systemMaintenanceWindow"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Janela de Manutenção (horas)</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Janela de Manutenção (horas)</FormLabel>
+                    <CustomSwitch
+                      checked={enabledSettings.systemMaintenanceWindow}
+                      onCheckedChange={() => toggleSetting('systemMaintenanceWindow')}
+                    />
+                  </div>
                   <FormControl>
                     <Input 
                       type="number" 
                       {...field}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-muted" : ""} 
+                      disabled={!isEditing || !enabledSettings.systemMaintenanceWindow}
+                      className={(!isEditing || !enabledSettings.systemMaintenanceWindow) ? "bg-muted" : ""} 
                     />
                   </FormControl>
                   <FormDescription>
