@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
@@ -14,7 +13,6 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
 import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
 
 interface OrganizationLayoutProps {
@@ -116,7 +114,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
       <div className="flex pt-16">
         <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
-          <nav className="py-6">
+          <nav className="py-6 px-3">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -124,9 +122,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#E5DEFF] ${
+                  className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
                     isActive
-                      ? "bg-[#E5DEFF] text-[#9b87f5]"
+                      ? "bg-[#F1F0FB] text-[#9b87f5]"
                       : "text-gray-600"
                   }`}
                 >
@@ -138,7 +136,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-6 py-3 text-sm transition-colors hover:bg-[#E5DEFF] text-gray-600"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600"
             >
               <LogOut className="w-4 h-4 mr-3" />
               Sair
