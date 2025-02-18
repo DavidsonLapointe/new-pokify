@@ -11,6 +11,7 @@ import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
   title: string;
+  subtitle?: string;
   value: number;
   icon: LucideIcon;
   color?: string;
@@ -19,6 +20,7 @@ interface StatCardProps {
 
 export const StatCard = ({
   title,
+  subtitle,
   value,
   icon: Icon,
   color = "text-muted-foreground",
@@ -29,6 +31,9 @@ export const StatCard = ({
       <div className="flex items-start justify-between">
         <div className="space-y-0.5">
           <p className="text-sm text-muted-foreground">{title}</p>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground/60">{subtitle}</p>
+          )}
           <h3 className="text-xl font-semibold">{value}</h3>
         </div>
         <div className="flex items-center gap-2">
