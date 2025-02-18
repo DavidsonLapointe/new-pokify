@@ -19,7 +19,10 @@ export const NoFunnelAlert = ({ isOpen, onClose, onCreateFunnel }: NoFunnelAlert
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => onClose(false)}>
+          <AlertDialogCancel
+            onClick={() => onClose(false)}
+            className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]"
+          >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction onClick={onCreateFunnel}>
