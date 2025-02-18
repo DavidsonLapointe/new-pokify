@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
@@ -28,7 +27,6 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useEffect(() => {
-    // Pequeno delay para permitir que o layout se estabilize
     const timer = setTimeout(() => {
       setIsLayoutReady(true);
     }, 100);
@@ -91,6 +89,12 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
   const menuItems = getMenuItems();
 
+  const getInitials = (name: string) => {
+    const nameParts = name.trim().split(' ')
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
@@ -103,7 +107,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
             <p className="text-sm font-medium text-white">{mockLoggedUser.name}</p>
             <Avatar className="h-10 w-10">
               <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
-              <AvatarFallback>{mockLoggedUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>{getInitials(mockLoggedUser.name)}</AvatarFallback>
             </Avatar>
           </div>
         </div>

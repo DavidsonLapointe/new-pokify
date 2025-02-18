@@ -59,12 +59,12 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
     // You might want to call onImageUpload with null or handle this case in your parent component
   }
 
-  const initials = name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2)
+  // Ajustando para pegar as duas primeiras letras do primeiro e último nome
+  const getInitials = (name: string) => {
+    const nameParts = name.trim().split(' ')
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+  }
 
   return (
     <div className="space-y-4">
@@ -81,7 +81,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
         >
           <Avatar className="h-28 w-28 ring-2 ring-gray-100">
             <AvatarImage src={previewUrl} alt={name} />
-            <AvatarFallback className="text-xl bg-[#8E9196] text-white">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xl bg-[#8E9196] text-white">{getInitials(name)}</AvatarFallback>
           </Avatar>
           <div className="absolute inset-0 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <label className="cursor-pointer p-2" htmlFor="avatar-upload">
