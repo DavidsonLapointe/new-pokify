@@ -330,7 +330,7 @@ export function LeadForm({
           {showCancelButton && (
             <Button
               type="button"
-              variant="outline"
+              variant="cancel"
               onClick={onCancel}
               size="sm"
             >
