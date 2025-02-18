@@ -1,4 +1,8 @@
+
 import AdminLayout from "@/components/AdminLayout";
+import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
+import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
+import { PackagesList } from "@/components/admin/packages/PackagesList";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,12 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Package, Plus, Pencil, Infinity } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -20,14 +18,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-
-interface AnalysisPackage {
-  id: string;
-  name: string;
-  credits: number;
-  price: number;
-  active: boolean;
-}
+import { AnalysisPackage, NewPackageForm } from "@/types/packages";
+import { Infinity, Package, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const AdminAnalysisPackages = () => {
   const [packages, setPackages] = useState<AnalysisPackage[]>([
@@ -57,7 +51,7 @@ const AdminAnalysisPackages = () => {
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [newPackage, setNewPackage] = useState({
+  const [newPackage, setNewPackage] = useState<NewPackageForm>({
     name: "",
     credits: "",
     price: ""
@@ -167,58 +161,12 @@ const AdminAnalysisPackages = () => {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleCreatePackage} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome do Pacote *</Label>
-                  <Input
-                    id="name"
-                    value={newPackage.name}
-                    onChange={(e) => setNewPackage({ ...newPackage, name: e.target.value })}
-                    placeholder="Ex: Pacote Premium"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="credits">Quantidade de Créditos *</Label>
-                  <Input
-                    id="credits"
-                    type="number"
-                    value={newPackage.credits}
-                    onChange={(e) => setNewPackage({ ...newPackage, credits: e.target.value })}
-                    placeholder="Ex: 100"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="price">Preço (R$) *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={newPackage.price}
-                    onChange={(e) => setNewPackage({ ...newPackage, price: e.target.value })}
-                    placeholder="Ex: 199.90"
-                    required
-                  />
-                </div>
-
-                <p className="text-sm text-muted-foreground">* Campos obrigatórios</p>
-
-                <div className="flex justify-end gap-4">
-                  <Button
-                    type="button"
-                    variant="cancel"
-                    onClick={() => setIsCreateDialogOpen(false)}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button type="submit">
-                    Criar Pacote
-                  </Button>
-                </div>
-              </form>
+              <CreatePackageForm
+                newPackage={newPackage}
+                onSubmit={handleCreatePackage}
+                onChange={(field, value) => setNewPackage(prev => ({ ...prev, [field]: value }))}
+                onCancel={() => setIsCreateDialogOpen(false)}
+              />
             </DialogContent>
           </Dialog>
 
@@ -239,118 +187,37 @@ const AdminAnalysisPackages = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {packages.map((pkg) => (
-                  <div
-                    key={pkg.id}
-                    className="p-4 border rounded-lg flex items-center justify-between hover:bg-accent/50 transition-colors group"
-                  >
-                    <div>
-                      <h3 className="font-medium">{pkg.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {pkg.credits} {pkg.credits === 1 ? 'crédito' : 'créditos'} para análises de arquivos
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <p className="font-medium">
-                        R$ {pkg.price.toFixed(2)}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-primary"
-                            onClick={() => {
-                              setEditingPackage(pkg);
-                              setIsEditDialogOpen(true);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Editar Pacote</DialogTitle>
-                            </DialogHeader>
-                            {editingPackage && (
-                              <form onSubmit={handleUpdatePackage} className="space-y-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-name">Nome do Pacote</Label>
-                                  <Input
-                                    id="edit-name"
-                                    value={editingPackage.name}
-                                    onChange={(e) => setEditingPackage({
-                                      ...editingPackage,
-                                      name: e.target.value
-                                    })}
-                                  />
-                                </div>
-
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-credits">Quantidade de Créditos</Label>
-                                  <Input
-                                    id="edit-credits"
-                                    type="number"
-                                    value={editingPackage.credits}
-                                    onChange={(e) => setEditingPackage({
-                                      ...editingPackage,
-                                      credits: parseInt(e.target.value) || 0
-                                    })}
-                                  />
-                                </div>
-
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-price">Preço (R$)</Label>
-                                  <Input
-                                    id="edit-price"
-                                    type="number"
-                                    step="0.01"
-                                    value={editingPackage.price}
-                                    onChange={(e) => setEditingPackage({
-                                      ...editingPackage,
-                                      price: parseFloat(e.target.value) || 0
-                                    })}
-                                  />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
-                                  <Button
-                                    type="button"
-                                    variant="cancel"
-                                    onClick={() => setIsEditDialogOpen(false)}
-                                  >
-                                    Cancelar
-                                  </Button>
-                                  <Button type="submit">
-                                    Salvar Alterações
-                                  </Button>
-                                </div>
-                              </form>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={pkg.active}
-                            onCheckedChange={(checked) => {
-                              setPackages(packages.map(p => 
-                                p.id === pkg.id ? { ...p, active: checked } : p
-                              ));
-                              toast.success(`Pacote ${checked ? 'ativado' : 'desativado'} com sucesso`);
-                            }}
-                          />
-                          <span className={`text-sm ${pkg.active ? 'text-green-600' : 'text-red-600'}`}>
-                            {pkg.active ? 'Ativo' : 'Inativo'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <PackagesList 
+                packages={packages}
+                onEdit={(pkg) => {
+                  setEditingPackage(pkg);
+                  setIsEditDialogOpen(true);
+                }}
+                onToggleActive={(pkg, active) => {
+                  setPackages(packages.map(p => 
+                    p.id === pkg.id ? { ...p, active } : p
+                  ));
+                }}
+              />
             </CardContent>
           </Card>
         </div>
+
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Pacote</DialogTitle>
+            </DialogHeader>
+            {editingPackage && (
+              <EditPackageForm
+                package_={editingPackage}
+                onSubmit={handleUpdatePackage}
+                onChange={(field, value) => setEditingPackage(prev => ({ ...prev!, [field]: value }))}
+                onCancel={() => setIsEditDialogOpen(false)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
