@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { format, startOfMonth, endOfMonth, addDays, subMonths, isWithinInterval } from "date-fns";
+import { format, startOfMonth, endOfMonth, addDays, subMonths, isWithinInterval, parseISO } from "date-fns";
 import { useCallsPage } from "./useCallsPage";
 import { mockUsers } from "@/types/organization";
 
@@ -25,7 +25,10 @@ export const useDashboardData = () => {
     return data.map(item => ({
       ...item,
       novos: Math.floor(item.novos * multiplier),
-      count: item.count ? Math.floor(item.count * multiplier) : undefined
+      count: item.count ? Math.floor(item.count * multiplier) : undefined,
+      "Preço muito alto": item["Preço muito alto"] ? Math.floor(item["Preço muito alto"] * multiplier) : undefined,
+      "Não tenho orçamento": item["Não tenho orçamento"] ? Math.floor(item["Não tenho orçamento"] * multiplier) : undefined,
+      "Preciso consultar": item["Preciso consultar"] ? Math.floor(item["Preciso consultar"] * multiplier) : undefined,
     }));
   };
 
@@ -111,32 +114,37 @@ export const useDashboardData = () => {
   }, [performanceDate]);
 
   const objectionsData = useMemo(() => {
+    const monthYear = format(monthlyObjectionsDate, 'MM/yyyy');
+    const seed = parseInt(monthYear.replace('/', ''));
+    
     const baseData = [
-      { name: "Preço muito alto", count: 28 },
-      { name: "Não tenho orçamento no momento", count: 24 },
-      { name: "Preciso consultar outras pessoas", count: 20 },
-      { name: "Já uso outro produto similar", count: 18 },
-      { name: "Não é prioridade agora", count: 15 },
-      { name: "Não entendi o valor agregado", count: 12 },
-      { name: "Preciso de mais tempo para avaliar", count: 10 },
+      { name: "Preço muito alto", count: 28 + (seed % 10) },
+      { name: "Não tenho orçamento no momento", count: 24 + (seed % 8) },
+      { name: "Preciso consultar outras pessoas", count: 20 + (seed % 6) },
+      { name: "Já uso outro produto similar", count: 18 + (seed % 5) },
+      { name: "Não é prioridade agora", count: 15 + (seed % 7) },
+      { name: "Não entendi o valor agregado", count: 12 + (seed % 4) },
+      { name: "Preciso de mais tempo para avaliar", count: 10 + (seed % 3) },
     ].sort((a, b) => b.count - a.count);
 
     return filterDataBySeller(baseData, monthlyObjectionsSeller);
-  }, [monthlyObjectionsSeller]);
+  }, [monthlyObjectionsDate, monthlyObjectionsSeller]);
 
   const objectionTrendsData = useMemo(() => {
     const baseData = Array.from({ length: 6 }).map((_, index) => {
-      const date = subMonths(new Date(), index);
+      const date = subMonths(objectionTrendsDate, 5 - index);
+      const monthSeed = parseInt(format(date, 'MMyyy'));
+      
       return {
         month: format(date, 'MMM/yy'),
-        "Preço muito alto": Math.floor(Math.random() * 20) + 10,
-        "Não tenho orçamento": Math.floor(Math.random() * 15) + 8,
-        "Preciso consultar": Math.floor(Math.random() * 12) + 6,
+        "Preço muito alto": 10 + (monthSeed % 20),
+        "Não tenho orçamento": 8 + (monthSeed % 15),
+        "Preciso consultar": 6 + (monthSeed % 12),
       };
-    }).reverse();
+    });
 
     return filterDataBySeller(baseData, objectionTrendsSeller);
-  }, [objectionTrendsSeller]);
+  }, [objectionTrendsDate, objectionTrendsSeller]);
 
   const objectionExamples = useMemo(() => ({
     "Preço muito alto": [
