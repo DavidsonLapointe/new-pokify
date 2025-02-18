@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -7,6 +6,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 
 const formSchema = z.object({
   creditAlertThreshold: z.coerce.number().min(1).max(100),
@@ -45,7 +46,21 @@ const AlertsLimitsSettings = () => {
               name="creditAlertThreshold"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Threshold de Alerta de Créditos (%)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Threshold de Alerta de Créditos (%)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Define o percentual mínimo de créditos restantes que, quando atingido, 
+                             dispara alertas automáticos para os administradores da empresa contratante. 
+                             Por exemplo: 20% significa que o alerta será enviado quando restar apenas 20% dos créditos.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -62,7 +77,21 @@ const AlertsLimitsSettings = () => {
               name="maxAlertFrequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frequência Máxima de Alertas (horas)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Frequência Máxima de Alertas (horas)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Determina o intervalo mínimo entre envios de alertas do mesmo tipo para uma empresa.
+                             Evita o spam de notificações definindo um período de espera obrigatório entre alertas
+                             similares.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -79,7 +108,21 @@ const AlertsLimitsSettings = () => {
               name="maxAnalysisRetries"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tentativas Máximas de Análise</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Tentativas Máximas de Análise</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Define quantas vezes o sistema tentará processar um arquivo em caso de falha.
+                             Após atingir este limite, o arquivo será marcado como falha permanente e
+                             precisará ser submetido novamente.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>

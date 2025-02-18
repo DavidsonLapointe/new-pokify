@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -7,6 +6,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 
 const formSchema = z.object({
   analysisRetentionDays: z.coerce.number().min(1),
@@ -45,7 +46,21 @@ const RetentionSettings = () => {
               name="analysisRetentionDays"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Retenção de Análises (dias)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Retenção de Análises (dias)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Define por quantos dias os resultados das análises serão mantidos no sistema.
+                             Após este período, as análises antigas serão automaticamente arquivadas ou
+                             excluídas para otimizar o armazenamento.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -62,7 +77,21 @@ const RetentionSettings = () => {
               name="autoCleanupDays"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Limpeza Automática (dias)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Limpeza Automática (dias)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Frequência com que o sistema executará a limpeza automática de dados antigos.
+                             Esta rotina remove arquivos temporários, caches expirados e outros dados
+                             que não são mais necessários.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -79,7 +108,21 @@ const RetentionSettings = () => {
               name="logRetentionDays"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Retenção de Logs (dias)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Retenção de Logs (dias)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Período durante o qual os logs do sistema serão mantidos.
+                             Inclui logs de acesso, alterações de configuração e eventos do sistema.
+                             Após este período, os logs mais antigos são removidos.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>

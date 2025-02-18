@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -7,6 +6,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 
 const formSchema = z.object({
   maxFileSize: z.coerce.number().min(1),
@@ -45,7 +46,21 @@ const AnalysisSettings = () => {
               name="maxFileSize"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tamanho Máximo de Arquivo (MB)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Tamanho Máximo de Arquivo (MB)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Define o tamanho máximo permitido para upload de arquivos em megabytes.
+                             Arquivos maiores que este limite serão rejeitados automaticamente para
+                             evitar sobrecarga do sistema.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -62,7 +77,21 @@ const AnalysisSettings = () => {
               name="processingTimeout"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Timeout de Processamento (segundos)</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Timeout de Processamento (segundos)</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Tempo máximo permitido para processar um único arquivo.
+                             Se a análise ultrapassar este limite, será interrompida e
+                             marcada como falha por timeout.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -79,7 +108,21 @@ const AnalysisSettings = () => {
               name="maxSimultaneousAnalysis"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Análises Simultâneas por Empresa</FormLabel>
+                  <div className="flex items-center space-x-2">
+                    <FormLabel>Análises Simultâneas por Empresa</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Número máximo de análises que uma empresa pode executar simultaneamente.
+                             Limita o uso de recursos do sistema e garante um processamento justo
+                             entre todas as empresas contratantes.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
