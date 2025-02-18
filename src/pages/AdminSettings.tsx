@@ -7,6 +7,7 @@ import AlertsLimitsSettings from "@/components/admin/settings/AlertsLimitsSettin
 import RetentionSettings from "@/components/admin/settings/RetentionSettings";
 import AnalysisSettings from "@/components/admin/settings/AnalysisSettings";
 import SystemSettings from "@/components/admin/settings/SystemSettings";
+import LLMSettings from "@/components/admin/settings/LLMSettings";
 
 const AdminSettings = () => {
   return (
@@ -31,6 +32,7 @@ const AdminSettings = () => {
             <TabsTrigger value="alerts">Limites e Alertas</TabsTrigger>
             <TabsTrigger value="retention">Regras de Retenção</TabsTrigger>
             <TabsTrigger value="analysis">Parâmetros de Análise</TabsTrigger>
+            <TabsTrigger value="llm">LLM</TabsTrigger>
             <TabsTrigger value="system">Configurações de Sistema</TabsTrigger>
           </TabsList>
 
@@ -44,6 +46,10 @@ const AdminSettings = () => {
 
           <TabsContent value="analysis" className="space-y-4">
             <AnalysisSettings />
+          </TabsContent>
+
+          <TabsContent value="llm" className="space-y-4">
+            <LLMSettings />
           </TabsContent>
 
           <TabsContent value="system" className="space-y-4">
