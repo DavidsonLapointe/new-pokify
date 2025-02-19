@@ -15,7 +15,19 @@ export const useLeadsData = (initialCalls: Call[]) => {
 
     console.log("Processando chamadas:", callsData);
 
-    callsData.forEach(call => {
+    // Filtra chamadas vazias ou inválidas
+    const validCalls = callsData.filter(call => {
+      const isValid = !call.emptyLead && 
+                     call.leadId && 
+                     call.leadInfo && 
+                     call.status === "success";
+      if (!isValid) {
+        console.log("Chamada ignorada - inválida ou vazia:", call);
+      }
+      return isValid;
+    });
+
+    validCalls.forEach(call => {
       if (!call.leadId || !call.leadInfo) {
         console.log("Chamada ignorada - sem leadId ou leadInfo:", call);
         return;
@@ -65,10 +77,13 @@ export const useLeadsData = (initialCalls: Call[]) => {
 
   const updateLeadCalls = useCallback((leadId: string, newCall: Call) => {
     setCalls(prevCalls => {
-      // Adiciona a nova chamada ao início do array
-      const updatedCalls = [newCall, ...prevCalls];
-      console.log("Chamadas atualizadas:", updatedCalls);
-      return updatedCalls;
+      // Adiciona a nova chamada ao início do array apenas se for uma chamada válida
+      if (!newCall.emptyLead && newCall.status === "success") {
+        const updatedCalls = [newCall, ...prevCalls];
+        console.log("Chamadas atualizadas:", updatedCalls);
+        return updatedCalls;
+      }
+      return prevCalls;
     });
   }, []);
 
