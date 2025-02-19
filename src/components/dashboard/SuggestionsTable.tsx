@@ -13,57 +13,26 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { SuggestionTableProps, Suggestion } from "./types/suggestions";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
-import { Check, X, AlertCircle } from "lucide-react";
+import { Check, X, AlertCircle, PencilIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export const SuggestionsTable = ({ suggestions, onUpdateStatus }: SuggestionTableProps) => {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = React.useState<string | null>(null);
+  const [editStatusDialog, setEditStatusDialog] = React.useState(false);
+  const [selectedSuggestionForEdit, setSelectedSuggestionForEdit] = React.useState<Suggestion | null>(null);
 
-  const handleStatusUpdate = (id: string, newStatus: "pending" | "implemented" | "rejected") => {
-    onUpdateStatus?.(id, newStatus);
-    toast.success("Status atualizado com sucesso!");
+  const handleStatusUpdate = (newStatus: "pending" | "implemented" | "rejected") => {
+    if (selectedSuggestionForEdit) {
+      onUpdateStatus?.(selectedSuggestionForEdit.id, newStatus);
+      toast.success("Status atualizado com sucesso!");
+      setEditStatusDialog(false);
+    }
   };
 
   const truncateText = (text: string, maxLength: number = 100) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
-  };
-
-  const renderStatusActions = (suggestion: Suggestion) => {
-    const baseButtonClass = "h-8 px-3 text-xs";
-    const isActive = (status: string) => suggestion.status === status;
-
-    return (
-      <div className="flex gap-2">
-        <Button
-          size="sm"
-          variant={isActive("implemented") ? "default" : "outline"}
-          className={`${baseButtonClass} ${isActive("implemented") ? "bg-green-600" : "hover:bg-green-100"}`}
-          onClick={() => handleStatusUpdate(suggestion.id, "implemented")}
-        >
-          <Check className="h-4 w-4 mr-1" />
-          Implementada
-        </Button>
-        <Button
-          size="sm"
-          variant={isActive("pending") ? "default" : "outline"}
-          className={`${baseButtonClass} ${isActive("pending") ? "bg-yellow-600" : "hover:bg-yellow-100"}`}
-          onClick={() => handleStatusUpdate(suggestion.id, "pending")}
-        >
-          <AlertCircle className="h-4 w-4 mr-1" />
-          Pendente
-        </Button>
-        <Button
-          size="sm"
-          variant={isActive("rejected") ? "default" : "outline"}
-          className={`${baseButtonClass} ${isActive("rejected") ? "bg-red-600" : "hover:bg-red-100"}`}
-          onClick={() => handleStatusUpdate(suggestion.id, "rejected")}
-        >
-          <X className="h-4 w-4 mr-1" />
-          Rejeitada
-        </Button>
-      </div>
-    );
   };
 
   const renderStatusBadge = (status: string) => {
@@ -125,7 +94,18 @@ export const SuggestionsTable = ({ suggestions, onUpdateStatus }: SuggestionTabl
                     </button>
                   </TableCell>
                   <TableCell>{renderStatusBadge(suggestion.status)}</TableCell>
-                  <TableCell>{renderStatusActions(suggestion)}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedSuggestionForEdit(suggestion);
+                        setEditStatusDialog(true);
+                      }}
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -149,6 +129,45 @@ export const SuggestionsTable = ({ suggestions, onUpdateStatus }: SuggestionTabl
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={editStatusDialog} onOpenChange={setEditStatusDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Alterar Status da Sugestão</DialogTitle>
+          </DialogHeader>
+          <div className="py-6 space-y-4">
+            <Button
+              className="w-full justify-start"
+              variant="outline"
+              onClick={() => handleStatusUpdate("implemented")}
+            >
+              <Check className="h-4 w-4 mr-2 text-green-500" />
+              Implementada
+            </Button>
+            <Button
+              className="w-full justify-start"
+              variant="outline"
+              onClick={() => handleStatusUpdate("pending")}
+            >
+              <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
+              Pendente
+            </Button>
+            <Button
+              className="w-full justify-start"
+              variant="outline"
+              onClick={() => handleStatusUpdate("rejected")}
+            >
+              <X className="h-4 w-4 mr-2 text-red-500" />
+              Rejeitada
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditStatusDialog(false)}>
+              Cancelar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
