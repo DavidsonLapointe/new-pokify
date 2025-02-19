@@ -79,11 +79,11 @@ export const LeadsPageContent = ({
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 py-4">
           <Button
-            variant="outline"
+            variant="default"
             size="icon"
             onClick={() => setCurrentPage(1)}
             disabled={currentPage === 1}
-            className="w-8 h-8 p-0"
+            className="w-8 h-8 p-0 bg-primary text-white hover:bg-primary/90"
           >
             <ChevronFirst className="h-4 w-4" />
           </Button>
@@ -94,10 +94,10 @@ export const LeadsPageContent = ({
             ) : (
               <Button
                 key={page}
-                variant={currentPage === page ? "default" : "outline"}
+                variant="default"
                 size="sm"
                 onClick={() => setCurrentPage(Number(page))}
-                className={`w-8 h-8 p-0 ${currentPage === page ? 'bg-primary text-white hover:bg-primary/90' : ''}`}
+                className="w-8 h-8 p-0 bg-primary text-white hover:bg-primary/90"
               >
                 {page}
               </Button>
@@ -105,11 +105,11 @@ export const LeadsPageContent = ({
           ))}
 
           <Button
-            variant="outline"
+            variant="default"
             size="icon"
             onClick={() => setCurrentPage(totalPages)}
             disabled={currentPage === totalPages}
-            className="w-8 h-8 p-0"
+            className="w-8 h-8 p-0 bg-primary text-white hover:bg-primary/90"
           >
             <ChevronLast className="h-4 w-4" />
           </Button>
