@@ -53,7 +53,7 @@ const PaginationLink = ({
         variant: isActive ? "default" : "outline",
         size,
       }),
-      "text-white bg-[#9b87f5] hover:bg-[#7E69AB] border-[#9b87f5] h-6 w-6 min-w-6",
+      "text-white bg-[#9b87f5] hover:bg-[#7E69AB] border-[#9b87f5] h-8 w-8 min-w-8",
       className
     )}
     {...props}
@@ -97,7 +97,7 @@ const PaginationEllipsis = ({
 }: React.ComponentProps<"span">) => (
   <span
     aria-hidden
-    className={cn("flex h-6 w-6 items-center justify-center", className)}
+    className={cn("flex h-8 w-8 items-center justify-center", className)}
     {...props}
   >
     <MoreHorizontal className="h-[0.9rem] w-[0.9rem]" />
