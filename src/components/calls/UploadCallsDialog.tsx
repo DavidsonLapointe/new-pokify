@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -6,16 +5,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { LeadCalls } from "@/components/calls/types";
+import { LeadCalls, Call } from "@/components/calls/types";
 import { Upload } from "lucide-react";
 import { useState } from "react";
-import { Lead } from "@/types/calls";
 
 interface UploadCallsDialogProps {
   lead: LeadCalls;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpload: (calls: Lead[]) => void;
+  onUpload: (calls: Call[]) => void;
 }
 
 export const UploadCallsDialog = ({

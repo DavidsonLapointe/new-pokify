@@ -1,13 +1,13 @@
+
 import { useState, useEffect } from "react";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsTable } from "@/components/calls/table/LeadsTable";
-import { LeadCalls } from "@/components/calls/types";
 import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
 import { CallHistoryDialog } from "@/components/calls/CallHistoryDialog";
 import { UploadCallsDialog } from "@/components/calls/UploadCallsDialog";
 import { OrganizationLayout } from "@/components/OrganizationLayout";
 import { LeadFormData } from "@/schemas/leadFormSchema";
-import { Lead } from "@/types/calls";
+import { LeadCalls, Call } from "@/types/calls";
 import { Organization, User } from "@/types/organization";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -65,6 +65,7 @@ const mockLeads: LeadCalls[] = [
           summary: "O cliente demonstrou interesse no produto...",
           sentiment: {
             temperature: "warm",
+            reason: "Cliente demonstrou interesse"
           },
         },
         emptyLead: false,
@@ -151,7 +152,7 @@ const OrganizationLeads = () => {
     setIsUploadCallsOpen(true);
   };
 
-  const handleUploadCalls = (newCalls: Lead[]) => {
+  const handleUploadCalls = (newCalls: Call[]) => {
     if (!selectedLead) return;
 
     const updatedLead: LeadCalls = {
