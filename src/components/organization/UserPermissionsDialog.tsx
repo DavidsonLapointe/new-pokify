@@ -39,16 +39,18 @@ export const UserPermissionsDialog = ({
   // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
-      const initialPermissions: { [key: string]: string[] } = {};
-      
-      // Primeiro, verifica todas as rotas que o usuário tem acesso
-      availableRoutePermissions.forEach(route => {
-        if (route.isDefault || (user.permissions && user.permissions[route.id])) {
-          initialPermissions[route.id] = user.permissions?.[route.id] || [];
-        }
-      });
-      
-      setTempPermissions(initialPermissions);
+      if (user.permissions) {
+        setTempPermissions({...user.permissions});
+      } else {
+        // Se não houver permissões, inicializa apenas com as rotas padrão
+        const defaultPermissions: { [key: string]: string[] } = {};
+        availableRoutePermissions
+          .filter(route => route.isDefault)
+          .forEach(route => {
+            defaultPermissions[route.id] = [];
+          });
+        setTempPermissions(defaultPermissions);
+      }
     }
   }, [isOpen, user]);
 
@@ -88,17 +90,9 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
-      // Filtra as permissões vazias antes de salvar
-      const cleanPermissions = Object.entries(tempPermissions).reduce((acc, [key, value]) => {
-        if (value.length > 0 || availableRoutePermissions.find(r => r.id === key)?.isDefault) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as { [key: string]: string[] });
-
       onUserUpdate({
         ...user,
-        permissions: cleanPermissions,
+        permissions: tempPermissions,
       });
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
@@ -125,7 +119,7 @@ export const UserPermissionsDialog = ({
         </DialogHeader>
         <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
           {availableRoutePermissions.map((route) => {
-            const hasPermission = route.isDefault || (tempPermissions[route.id]?.length >= 0);
+            const hasPermission = route.isDefault || !!tempPermissions[route.id];
             
             return (
               <div key={route.id} className="space-y-4">
