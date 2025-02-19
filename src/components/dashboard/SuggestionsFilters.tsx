@@ -13,6 +13,7 @@ import { X } from "lucide-react";
 import { MonthYearSelector } from "./MonthYearSelector";
 import { SellerSelector } from "./SellerSelector";
 import { SuggestionsFiltersProps } from "./types/suggestions";
+import { Label } from "@/components/ui/label";
 
 export const SuggestionsFilters = ({
   typeFilter,
@@ -46,22 +47,31 @@ export const SuggestionsFilters = ({
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-5">
-          <div>
+          <div className="space-y-1.5">
+            <Label htmlFor="date-select" className="text-sm text-muted-foreground">
+              Período
+            </Label>
             <MonthYearSelector
               selectedDate={monthlySuggestionsDate}
               onDateChange={setMonthlySuggestionsDate}
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
+            <Label htmlFor="seller-select" className="text-sm text-muted-foreground">
+              Vendedor
+            </Label>
             <SellerSelector
               selectedSeller={monthlySuggestionsSeller}
               onSellerChange={setMonthlySuggestionsSeller}
               sellers={sellers}
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
+            <Label htmlFor="type-select" className="text-sm text-muted-foreground">
+              Tipo
+            </Label>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger>
+              <SelectTrigger id="type-select">
                 <SelectValue placeholder="Filtrar por Tipo" />
               </SelectTrigger>
               <SelectContent>
@@ -72,9 +82,12 @@ export const SuggestionsFilters = ({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="space-y-1.5">
+            <Label htmlFor="subtype-select" className="text-sm text-muted-foreground">
+              Sub-tipo
+            </Label>
             <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
-              <SelectTrigger>
+              <SelectTrigger id="subtype-select">
                 <SelectValue placeholder="Filtrar por Sub-tipo" />
               </SelectTrigger>
               <SelectContent>
@@ -85,9 +98,12 @@ export const SuggestionsFilters = ({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="space-y-1.5">
+            <Label htmlFor="status-select" className="text-sm text-muted-foreground">
+              Status
+            </Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
+              <SelectTrigger id="status-select">
                 <SelectValue placeholder="Filtrar por Status" />
               </SelectTrigger>
               <SelectContent>
