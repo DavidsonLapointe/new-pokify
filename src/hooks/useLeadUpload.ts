@@ -11,6 +11,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
   const [selectedLeadForUpload, setSelectedLeadForUpload] = useState<Lead | null>(null);
   const [newLeadId, setNewLeadId] = useState<string | null>(null);
   const [pendingNewCall, setPendingNewCall] = useState<Call | null>(null);
+  const [isCreateLeadSuccessOpen, setIsCreateLeadSuccessOpen] = useState(false);
 
   const createCallObject = (leadId: string, data: LeadFormData): Call => ({
     id: leadId,
@@ -41,6 +42,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
       const newCall = createCallObject(leadId, data);
       setPendingNewCall(newCall);
       confirmNewLead(false); // Confirma criação do lead sem upload
+      setIsCreateLeadSuccessOpen(true);
       return leadId;
     } catch (error) {
       console.error("Erro ao criar lead:", error);
@@ -49,6 +51,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
   };
 
   const handleUploadClick = (data: LeadFormData) => {
+    setIsCreateLeadSuccessOpen(false);
     setIsUploadOpen(true);
   };
 
@@ -64,6 +67,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
+    setIsCreateLeadSuccessOpen(false);
     
     toast({
       title: "Lead criado com sucesso",
@@ -75,6 +79,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
+    setIsCreateLeadSuccessOpen(false);
     
     toast({
       title: "Operação cancelada",
@@ -93,6 +98,8 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     selectedLeadForUpload,
     setSelectedLeadForUpload,
     newLeadId,
+    isCreateLeadSuccessOpen,
+    setIsCreateLeadSuccessOpen,
     handleCreateLead,
     handleUploadClick,
     handleUploadSuccess,

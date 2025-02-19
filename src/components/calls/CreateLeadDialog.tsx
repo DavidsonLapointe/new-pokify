@@ -54,7 +54,7 @@ export function CreateLeadDialog({
     hasPhoneIntegration,
     hasEmailIntegration,
     onCreateLead: (data) => {
-      onCreateLead(data); // Chama onCreateLead imediatamente
+      onCreateLead(data);
       setLeadData(data);
       setShowSuccessCard(true);
     },
@@ -62,19 +62,17 @@ export function CreateLeadDialog({
 
   const handleClose = () => {
     if (!showSuccessCard) {
-      // Se fechou sem completar o cadastro, reseta tudo
       form.reset();
       setLeadData(null);
+      setShowSuccessCard(false);
     }
     setOpen(false);
-    setShowSuccessCard(false);
   };
 
   const handleUploadClick = () => {
     if (leadData && onUploadClick) {
       onUploadClick(leadData);
     }
-    handleClose();
   };
 
   return (
@@ -125,4 +123,3 @@ export function CreateLeadDialog({
     </Dialog>
   );
 }
-
