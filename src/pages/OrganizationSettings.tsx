@@ -1,5 +1,5 @@
 
-import OrganizationLayout from "@/components/OrganizationLayout";
+import { OrganizationLayout } from "@/components/OrganizationLayout";
 import { FunnelSection } from "@/components/settings/FunnelSection";
 import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
 import { CustomFieldDialog } from "@/components/settings/CustomFieldDialog";

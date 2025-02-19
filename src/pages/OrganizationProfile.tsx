@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import OrganizationLayout from "@/components/OrganizationLayout";
+import { OrganizationLayout } from "@/components/OrganizationLayout";
 import { ContactForm } from "@/components/organization/profile/ContactForm";
 import { PasswordForm } from "@/components/organization/profile/PasswordForm";
 import { useProfileForm } from "@/components/organization/profile/useProfileForm";

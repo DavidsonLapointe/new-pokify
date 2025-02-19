@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import OrganizationLayout from "@/components/OrganizationLayout";
+import { OrganizationLayout } from "@/components/OrganizationLayout";
 import { UsersTable } from "@/components/organization/UsersTable";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
 import { EditUserDialog } from "@/components/organization/EditUserDialog";
