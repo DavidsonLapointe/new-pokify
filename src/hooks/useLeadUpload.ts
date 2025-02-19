@@ -52,7 +52,9 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
 
   const handleUploadClick = (data: LeadFormData) => {
     setIsCreateLeadSuccessOpen(false);
-    setIsUploadOpen(true);
+    setTimeout(() => {
+      setIsUploadOpen(true);
+    }, 100);
   };
 
   const handleUploadSuccess = () => {
