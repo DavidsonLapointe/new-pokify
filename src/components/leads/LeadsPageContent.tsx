@@ -5,6 +5,7 @@ import { CallsTable } from "@/components/calls/CallsTable";
 import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface LeadsPageContentProps {
   searchQuery: string;
@@ -58,26 +59,30 @@ export const LeadsPageContent = ({
       
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="flex justify-center space-x-2 mt-4">
-          <button
+        <div className="flex items-center justify-center gap-4 py-4">
+          <Button
+            variant="outline"
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 rounded bg-secondary text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50"
+            size="sm"
           >
             Anterior
-          </button>
+          </Button>
           
-          <span className="px-3 py-1">
-            Página {currentPage} de {totalPages}
-          </span>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-medium">
+              Página {currentPage} de {totalPages}
+            </span>
+          </div>
           
-          <button
+          <Button
+            variant="outline"
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded bg-secondary text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50"
+            size="sm"
           >
             Próxima
-          </button>
+          </Button>
         </div>
       )}
     </Card>
