@@ -24,8 +24,8 @@ export const EmptyLeadsState = ({
 
   return (
     <div className="flex flex-col items-center justify-center py-8 px-4">
-      <div className="bg-muted/50 rounded-full p-3 mb-4">
-        <UserPlus className="w-6 h-6 text-muted-foreground" />
+      <div className="bg-[#F1F0FB] rounded-full p-3 mb-4">
+        <UserPlus className="w-6 h-6 text-[#9b87f5]" />
       </div>
       <h3 className="text-lg font-semibold mb-2">Nenhum lead encontrado</h3>
       <p className="text-muted-foreground text-center max-w-sm mb-6">
