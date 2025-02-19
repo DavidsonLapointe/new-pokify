@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -24,7 +25,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { integrations: ["view", "edit"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization, // Será atualizado após a criação
+        avatar: ""
       },
       {
         id: 2,
@@ -36,7 +39,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { integrations: ["view"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization,
+        avatar: ""
       },
       {
         id: 3,
@@ -48,7 +53,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { calls: ["view"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization,
+        avatar: ""
       },
     ],
     status: "active",
@@ -77,7 +84,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { integrations: ["view", "edit"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization,
+        avatar: ""
       },
       {
         id: 5,
@@ -89,7 +98,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { calls: ["view"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization,
+        avatar: ""
       },
     ],
     status: "active",
@@ -118,7 +129,9 @@ const mockOrganizations: Organization[] = [
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { integrations: ["view", "edit"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization,
+        avatar: ""
       },
     ],
     status: "inactive",

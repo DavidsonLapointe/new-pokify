@@ -1,8 +1,24 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
-import { User, UserRole } from "@/types/organization";
+import { User, UserRole, Organization } from "@/types/organization";
+
+const mockOrganization: Organization = {
+  id: 1,
+  name: "Tech Solutions Ltda",
+  nomeFantasia: "Tech Solutions",
+  plan: "Enterprise",
+  users: [],
+  status: "active",
+  integratedCRM: null,
+  integratedLLM: "GPT-4",
+  email: "contato@techsolutions.com",
+  phone: "(11) 1234-5678",
+  cnpj: "12.345.678/0001-90",
+  adminName: "João Silva",
+  adminEmail: "joao@empresa.com",
+  createdAt: "2024-01-01T00:00:00.000Z"
+};
 
 // Mock data (will be replaced with real auth data later)
 export const mockLoggedUser: User = {
@@ -28,10 +44,7 @@ export const mockLoggedUser: User = {
     },
   ],
   avatar: "",
-  organization: {
-    id: 1,
-    name: "Tech Solutions Ltda",
-  },
+  organization: mockOrganization,
 };
 
 export const useProfileForm = () => {

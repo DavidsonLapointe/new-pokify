@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format, isBefore } from "date-fns";
@@ -20,20 +19,7 @@ const mockOrganization: Organization = {
   name: "Tech Solutions",
   nomeFantasia: "Tech Solutions Ltda",
   plan: "Enterprise",
-  users: [
-    {
-      id: 1,
-      name: "Admin",
-      email: "admin@example.com",
-      phone: "(11) 99999-9999",
-      role: "company_admin",
-      status: "pending",
-      createdAt: new Date().toISOString(),
-      lastAccess: new Date().toISOString(),
-      permissions: {},
-      logs: [],
-    },
-  ],
+  users: [],
   status: "pending",
   integratedCRM: null,
   integratedLLM: null,
@@ -42,7 +28,7 @@ const mockOrganization: Organization = {
   cnpj: "12.345.678/0001-00",
   adminName: "Admin",
   adminEmail: "admin@example.com",
-  createdAt: "2024-01-01T00:00:00.000Z",
+  createdAt: "2024-01-01T00:00:00.000Z"
 };
 
 const getStatusBadge = (status: TitleStatus) => {
@@ -82,12 +68,10 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
   const { toast } = useToast();
   const [localTitles, setLocalTitles] = useState<FinancialTitle[]>(titles);
 
-  // Update local titles when prop changes
   useEffect(() => {
     setLocalTitles(titles);
   }, [titles]);
 
-  // Update status periodically
   useEffect(() => {
     const updateTitlesStatus = () => {
       setLocalTitles(prevTitles => 
