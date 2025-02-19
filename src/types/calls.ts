@@ -18,10 +18,7 @@ export interface LeadInfo {
   phone: string;
   company?: string;
   position?: string;
-  budget?: string;
-  interests?: string[];
-  painPoints?: string[];
-  nextSteps?: string;
+  name?: string;
 }
 
 export interface Lead {
@@ -63,10 +60,7 @@ export interface Call {
   mediaType: "audio" | "video";
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
-  leadInfo: {
-    name: string;
-    email: string;
-  };
+  leadInfo: LeadInfo;
   emptyLead?: boolean;
   isNewLead?: boolean;
 }

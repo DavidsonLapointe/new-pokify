@@ -152,6 +152,11 @@ const OrganizationLeads = () => {
     setIsUploadCallsOpen(true);
   };
 
+  const handleUploadClick = () => {
+    console.log("Upload clicked");
+    setIsUploadCallsOpen(true);
+  };
+
   const handleUploadCalls = (newCalls: Call[]) => {
     if (!selectedLead) return;
 
@@ -171,9 +176,7 @@ const OrganizationLeads = () => {
     if (lead.personType === "pf") {
       return (
         (lead.firstName && lead.firstName.toLowerCase().includes(searchTerm)) ||
-        (lead.lastName && lead.lastName.toLowerCase().includes(searchTerm)) ||
-        (lead.calls && lead.calls.some(call => call.leadInfo.email.toLowerCase().includes(searchTerm))) ||
-        (lead.calls && lead.calls.some(call => call.phone.toLowerCase().includes(searchTerm)))
+        (lead.lastName && lead.lastName.toLowerCase().includes(searchTerm))
       );
     } else {
       return (
@@ -188,6 +191,7 @@ const OrganizationLeads = () => {
       <div className="container mx-auto py-10">
         <LeadsPageHeader
           onNewLeadClick={() => setIsCreateLeadOpen(true)}
+          onUploadClick={handleUploadClick}
           currentUser={currentUser}
           organization={mockCurrentOrganization}
         />
