@@ -16,13 +16,15 @@ export const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
   const { hasRoutePermission } = usePermissions(user);
 
   // Encontra a rota atual baseada no path
+  const currentPath = location.pathname;
   const currentRoute = availableRoutePermissions.find(
-    route => location.pathname === route.path
+    route => currentPath === route.path
   );
 
-  // Se não encontrou a rota nas configurações, permite o acesso (pode ser uma rota pública)
+  // Se não encontrou a rota nas configurações, redireciona para o perfil
   if (!currentRoute) {
-    return <>{children}</>;
+    toast.error("Rota não encontrada");
+    return <Navigate to="/organization/profile" replace />;
   }
 
   // Verifica se o usuário tem permissão para acessar a rota

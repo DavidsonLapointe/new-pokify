@@ -11,7 +11,9 @@ export const usePermissions = (user: User) => {
     if (!user?.permissions) return false;
 
     // Verifica se a rota está nas permissões do usuário
-    return routeId in user.permissions;
+    const hasPermission = routeId in user.permissions;
+    console.log(`Verificando permissão para rota ${routeId}:`, hasPermission);
+    return hasPermission;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
@@ -37,22 +39,9 @@ export const usePermissions = (user: User) => {
     
     // Adiciona apenas as rotas que existem nas permissões do usuário
     if (user?.permissions) {
-      // Mapeia as rotas de acordo com as permissões do backend para as rotas da aplicação
-      const routeMapping: { [key: string]: string } = {
-        'dashboard': 'dashboard',
-        'calls': 'calls',
-        'leads': 'leads',
-        'users': 'users',
-        'integrations': 'integrations',
-        'settings': 'settings',
-        'plan': 'plan'
-      };
-
-      // Adiciona as rotas que o usuário tem permissão
-      Object.keys(user.permissions).forEach(permissionKey => {
-        const routeId = routeMapping[permissionKey];
-        if (routeId && !routes.includes(routeId)) {
-          routes.push(routeId);
+      Object.keys(user.permissions).forEach(route => {
+        if (!routes.includes(route)) {
+          routes.push(route);
         }
       });
     }
@@ -75,7 +64,8 @@ export const usePermissions = (user: User) => {
       }
     });
 
-    console.log('Permissões filtradas:', tabs);
+    console.log('Rotas permitidas:', routes);
+    console.log('Tabs permitidas:', tabs);
     return { routes, tabs };
   };
 
