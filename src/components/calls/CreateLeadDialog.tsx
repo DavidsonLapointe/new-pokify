@@ -69,17 +69,16 @@ export function CreateLeadDialog({
   });
 
   const handleClose = () => {
-    if (!showSuccessCard) {
-      form.reset();
-      setLeadData(null);
-      setShowSuccessCard(false);
-    }
+    form.reset();
+    setLeadData(null);
+    setShowSuccessCard(false);
     setOpen(false);
   };
 
   const handleUploadClick = () => {
     if (leadData && onUploadClick) {
-      onUploadClick(leadData);
+      handleClose(); // Fecha o modal atual antes de abrir o modal de upload
+      onUploadClick(leadData); // Chama a função de upload com os dados do lead
     }
   };
 
