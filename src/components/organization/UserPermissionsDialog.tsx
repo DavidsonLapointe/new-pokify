@@ -77,15 +77,6 @@ export const UserPermissionsDialog = ({
         }
       });
 
-      // Inicializa permissões padrão para rotas que queremos adicionar
-      const routesToAdd = ["users", "settings", "plan"];
-      routesToAdd.forEach(routeId => {
-        const route = availableRoutePermissions.find(r => r.id === routeId);
-        if (route?.tabs && !initialPermissions[routeId]) {
-          initialPermissions[routeId] = route.tabs.map(tab => tab.value);
-        }
-      });
-
       setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
@@ -96,15 +87,19 @@ export const UserPermissionsDialog = ({
 
     setTempPermissions(prev => {
       const newPermissions = { ...prev };
+      
+      // Se já existe a rota, remove ela e suas tabs
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
+        // Se não existe, adiciona a rota com todas as suas tabs
         if (route?.tabs) {
           newPermissions[routeId] = route.tabs.map(tab => tab.value);
         } else {
           newPermissions[routeId] = ["view"];
         }
       }
+      
       return newPermissions;
     });
   };
@@ -121,6 +116,7 @@ export const UserPermissionsDialog = ({
         currentPermissions.push(tabValue);
       }
 
+      // Se não sobrou nenhuma permissão e não é uma rota padrão, remove a rota completamente
       if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
         delete newPermissions[routeId];
       } else {
@@ -148,10 +144,23 @@ export const UserPermissionsDialog = ({
         }
       });
 
-      onUserUpdate({
+      const updatedUser = {
         ...user,
         permissions: validPermissions,
-      });
+      };
+
+      onUserUpdate(updatedUser);
+      
+      // Força atualização imediata do localStorage se for o usuário logado
+      if (user.id === JSON.parse(localStorage.getItem('user') || '{}').id) {
+        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedStoredUser = {
+          ...storedUser,
+          permissions: validPermissions
+        };
+        localStorage.setItem('user', JSON.stringify(updatedStoredUser));
+      }
+
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
     } catch (error) {
