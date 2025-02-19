@@ -26,32 +26,32 @@ const menuItems = [
     url: "/organization/dashboard",
   },
   {
-    title: "Leads",
-    icon: FileText,
-    url: "/organization/leads",
-  },
-  {
-    title: "Calls",
+    title: "Ligações",
     icon: Building2,
     url: "/organization/calls",
   },
   {
-    title: "Users",
+    title: "Oportunidades",
+    icon: FileText,
+    url: "/organization/leads",
+  },
+  {
+    title: "Usuários",
     icon: Users2,
     url: "/organization/users",
   },
   {
-    title: "Plan",
+    title: "Planos",
     icon: FileText,
     url: "/organization/plan",
   },
   {
-    title: "Integrations",
+    title: "Integrações",
     icon: Network,
     url: "/organization/integrations",
   },
   {
-    title: "Settings",
+    title: "Configurações",
     icon: Settings,
     url: "/organization/settings",
   },
