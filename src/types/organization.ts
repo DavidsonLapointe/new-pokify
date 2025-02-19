@@ -1,4 +1,3 @@
-
 export type UserRole = "leadly_employee" | "company_admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
@@ -8,6 +7,11 @@ export interface UserLog {
   id: number;
   date: string;
   action: string;
+}
+
+export interface Organization {
+  id: number;
+  name: string;
 }
 
 export interface User {
@@ -23,6 +27,8 @@ export interface User {
     [key: string]: string[];
   };
   logs: UserLog[];
+  organization: Organization;
+  avatar: string;
 }
 
 export interface Organization {
@@ -72,6 +78,11 @@ export const mockUsers: User[] = [
         action: "Uploadou uma nova chamada",
       },
     ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Tech Solutions Ltda",
+    },
   },
   {
     id: 2,
@@ -95,6 +106,11 @@ export const mockUsers: User[] = [
         action: "Acessou o sistema",
       },
     ],
+    avatar: "",
+    organization: {
+      id: 2,
+      name: "Tech Solutions Ltda",
+    },
   },
   {
     id: 3,
@@ -118,6 +134,11 @@ export const mockUsers: User[] = [
         action: "Último acesso ao sistema",
       },
     ],
+    avatar: "",
+    organization: {
+      id: 3,
+      name: "Tech Solutions Ltda",
+    },
   },
 ];
 

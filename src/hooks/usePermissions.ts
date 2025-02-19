@@ -9,7 +9,7 @@ export const usePermissions = (user: User) => {
     if (route?.isDefault) return true;
 
     // Verifica se o usuário tem permissão para a rota
-    return (user.permissions[routeId] || []).includes("view");
+    return (user?.permissions?.[routeId] || []).includes("view");
   };
 
   const hasTabPermission = (routeId: string, tabId: string): boolean => {
@@ -17,7 +17,7 @@ export const usePermissions = (user: User) => {
     if (!hasRoutePermission(routeId)) return false;
 
     // Verifica se tem permissão específica para a tab
-    return (user.permissions[routeId] || []).includes(tabId);
+    return (user?.permissions?.[routeId] || []).includes(tabId);
   };
 
   const getUserPermissions = (): UserRoutePermissions => {
