@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { FilterX } from "lucide-react";
 import { MonthYearSelector } from "./MonthYearSelector";
 import { SellerSelector } from "./SellerSelector";
 import { SuggestionsFiltersProps } from "./types/suggestions";
@@ -42,8 +42,8 @@ export const SuggestionsFilters = ({
             onClick={onClearFilters}
             className="text-muted-foreground hover:text-foreground"
           >
-            <X className="h-4 w-4 mr-2" />
-            Limpar filtros
+            <FilterX className="h-4 w-4 mr-2" />
+            Limpar Filtros
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-5">
