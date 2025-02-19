@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Clock, Database, Quote } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Database, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import LoginModal from "@/components/auth/LoginModal";
 
 const Index = () => {
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const features = [
     {
@@ -31,21 +32,50 @@ const Index = () => {
       content: "A automatização das chamadas revolucionou nosso processo de vendas. Reduzimos o tempo de processamento em 75%.",
       author: "Maria Silva",
       role: "Gerente de Vendas",
-      company: "TechCorp Brasil"
+      company: "TechCorp Brasil",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100"
     },
     {
       content: "Desde que implementamos o Leadly, nossa equipe consegue focar mais em fechar negócios e menos em tarefas administrativas.",
       author: "João Santos",
       role: "Diretor Comercial",
-      company: "Inova Solutions"
+      company: "Inova Solutions",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100"
     },
     {
       content: "A precisão na extração de dados é impressionante. Não temos mais problemas com informações incorretas no CRM.",
       author: "Ana Costa",
       role: "SDR Leader",
-      company: "Global Sales"
+      company: "Global Sales",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100"
+    },
+    {
+      content: "O suporte da equipe é excepcional. Sempre prontos para ajudar e resolver qualquer questão rapidamente.",
+      author: "Ricardo Oliveira",
+      role: "Head de Vendas",
+      company: "Digital One",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100"
+    },
+    {
+      content: "A implementação foi muito mais rápida do que esperávamos. Em poucos dias já estávamos utilizando todas as funcionalidades.",
+      author: "Patrícia Lima",
+      role: "COO",
+      company: "StartUp BR",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100"
     }
   ];
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 400;
+      const container = scrollContainerRef.current;
+      if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,7 +213,7 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">O que nossos clientes dizem</h2>
@@ -192,27 +222,66 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+          <div className="relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full shadow-lg bg-white hover:bg-gray-50"
+                onClick={() => scroll('left')}
               >
-                <Quote className="h-8 w-8 text-blue-600 mb-4" />
-                <p className="text-gray-700 mb-6 italic">
-                  "{testimonial.content}"
-                </p>
-                <div className="border-t pt-4">
-                  <div className="font-semibold">{testimonial.author}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {testimonial.role}
-                  </div>
-                  <div className="text-sm text-blue-600">
-                    {testimonial.company}
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full shadow-lg bg-white hover:bg-gray-50"
+                onClick={() => scroll('right')}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div 
+              ref={scrollContainerRef}
+              className="overflow-x-auto hide-scrollbar flex gap-6 px-8 pb-4 -mx-4 snap-x snap-mandatory"
+            >
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="min-w-[380px] flex-shrink-0 snap-center"
+                >
+                  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div className="flex items-center gap-4 mb-6">
+                      <img
+                        src={testimonial.avatar}
+                        alt={testimonial.author}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-100"
+                      />
+                      <div>
+                        <div className="font-semibold text-gray-900">{testimonial.author}</div>
+                        <div className="text-sm text-gray-500">{testimonial.role}</div>
+                      </div>
+                    </div>
+                    
+                    <Quote className="h-8 w-8 text-blue-600/20 mb-4 absolute top-6 right-6" />
+                    
+                    <p className="text-gray-700 mb-6 relative">
+                      "{testimonial.content}"
+                    </p>
+                    
+                    <div className="pt-4 border-t border-gray-100">
+                      <div className="text-sm text-blue-600 font-medium">
+                        {testimonial.company}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -248,3 +317,15 @@ const Index = () => {
 };
 
 export default Index;
+
+<style>
+  {`
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  `}
+</style>
