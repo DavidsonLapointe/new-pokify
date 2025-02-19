@@ -38,53 +38,45 @@ export const UserPermissionsDialog = ({
   // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
-      // Mostra informações de debug
       const debug = `
         Nome do usuário: ${user.name}
         Permissões atuais: ${JSON.stringify(user.permissions, null, 2)}
       `;
       setDebugInfo(debug);
       
-      // Primeiro inicializa as rotas padrão
-      const initialPermissions: { [key: string]: string[] } = {};
-      
-      // Adiciona rotas padrão
-      availableRoutePermissions
-        .filter(route => route.isDefault)
-        .forEach(route => {
-          initialPermissions[route.id] = [];
-        });
-      
-      // Adiciona as permissões específicas do usuário
+      // Copia as permissões atuais do usuário
       if (user.permissions) {
-        Object.entries(user.permissions).forEach(([routeId, tabs]) => {
-          initialPermissions[routeId] = [...tabs];
-        });
+        setTempPermissions({...user.permissions});
+      } else {
+        // Se não tiver permissões, inicializa com as rotas padrão
+        const defaultPermissions: { [key: string]: string[] } = {};
+        availableRoutePermissions
+          .filter(route => route.isDefault)
+          .forEach(route => {
+            defaultPermissions[route.id] = [];
+          });
+        setTempPermissions(defaultPermissions);
       }
-
-      setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (route?.isDefault) return; // Não permite alterar rotas padrão
+    if (route?.isDefault) return;
 
-    console.log('Changing permission for route:', routeId);
     setTempPermissions(prev => {
       const newPermissions = { ...prev };
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
-        newPermissions[routeId] = [];
+        // Quando adiciona uma rota, inicializa com permissão de visualização
+        newPermissions[routeId] = ["view"];
       }
-      console.log('New permissions after change:', newPermissions);
       return newPermissions;
     });
   };
 
   const handleTabPermissionChange = (routeId: string, tabId: string) => {
-    console.log('Changing tab permission:', routeId, tabId);
     setTempPermissions(prev => {
       const currentPermissions = [...(prev[routeId] || [])];
       const tabIndex = currentPermissions.indexOf(tabId);
@@ -95,20 +87,23 @@ export const UserPermissionsDialog = ({
         currentPermissions.push(tabId);
       }
 
-      const newPermissions = {
+      // Se não houver mais permissões e não for uma rota padrão, remove a rota
+      const route = availableRoutePermissions.find(r => r.id === routeId);
+      if (currentPermissions.length === 0 && !route?.isDefault) {
+        const { [routeId]: _, ...rest } = prev;
+        return rest;
+      }
+
+      return {
         ...prev,
         [routeId]: currentPermissions
       };
-      
-      console.log('New permissions after tab change:', newPermissions);
-      return newPermissions;
     });
   };
 
   const handleSave = () => {
     setSaving(true);
     try {
-      console.log('Saving permissions:', tempPermissions);
       onUserUpdate({
         ...user,
         permissions: tempPermissions,
@@ -148,7 +143,7 @@ export const UserPermissionsDialog = ({
 
         <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
           {availableRoutePermissions.map((route) => {
-            const isRouteEnabled = route.isDefault || !!tempPermissions[route.id];
+            const isRouteEnabled = route.isDefault || Object.keys(tempPermissions).includes(route.id);
             
             return (
               <div key={route.id} className="space-y-4">
@@ -169,7 +164,8 @@ export const UserPermissionsDialog = ({
                 {route.tabs && isRouteEnabled && (
                   <div className="ml-8 grid grid-cols-2 gap-4">
                     {route.tabs.map((tab) => {
-                      const isTabEnabled = (tempPermissions[route.id] || []).includes(tab.id);
+                      const routePermissions = tempPermissions[route.id] || [];
+                      const isTabEnabled = routePermissions.includes(tab.value);
                       
                       return (
                         <div key={tab.id} className="flex items-center space-x-2">
@@ -177,7 +173,7 @@ export const UserPermissionsDialog = ({
                             type="checkbox"
                             id={`${route.id}-${tab.id}`}
                             checked={isTabEnabled}
-                            onChange={() => handleTabPermissionChange(route.id, tab.id)}
+                            onChange={() => handleTabPermissionChange(route.id, tab.value)}
                             className="h-4 w-4 rounded border-gray-300"
                           />
                           <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
