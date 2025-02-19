@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
@@ -35,6 +36,10 @@ export const mockLoggedUser: User = {
     calls: ["view", "upload", "delete"],
     leads: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
+    users: ["view", "edit", "delete"],
+    settings: ["view", "edit"],
+    plan: ["view", "edit"],
+    profile: ["view", "edit"]
   },
   logs: [
     {
@@ -75,7 +80,6 @@ export const useProfileForm = () => {
         avatar: mockImageUrl
       }));
       
-      // Update the mockLoggedUser for the navbar
       mockLoggedUser.avatar = mockImageUrl;
       
       toast.success("Foto de perfil atualizada com sucesso!");
@@ -108,7 +112,6 @@ export const useProfileForm = () => {
         }
       }
 
-      // Update the mockLoggedUser data
       mockLoggedUser.email = formData.email;
       mockLoggedUser.name = formData.name;
       mockLoggedUser.phone = formData.phone;
