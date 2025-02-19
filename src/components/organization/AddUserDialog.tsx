@@ -62,6 +62,14 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
         }
       });
+    } else if (newUser.role === 'admin') {
+      // Para administradores, adiciona todas as funções do ambiente empresa
+      availableRoutePermissions.forEach(route => {
+        // Adiciona todas as rotas exceto as do ambiente administrativo
+        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
+          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+        }
+      });
     } else if (newUser.role === 'seller') {
       // Para sellers, adiciona todas as permissões exceto 'plan'
       availableRoutePermissions.forEach(route => {
@@ -174,3 +182,4 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
     </Dialog>
   );
 };
+
