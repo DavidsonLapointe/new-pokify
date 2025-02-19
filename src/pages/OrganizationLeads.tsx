@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Call } from "@/types/calls";
+import { mockCalls } from "@/mocks/calls";
 
 const mockLoggedUser = {
   id: 2,
