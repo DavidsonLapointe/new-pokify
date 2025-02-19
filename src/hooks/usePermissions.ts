@@ -10,11 +10,8 @@ export const usePermissions = (user: User) => {
     // Se não tem usuário ou permissões definidas, não tem acesso
     if (!user?.permissions) return false;
 
-    // Permissões do usuário
-    const userPermissions = user.permissions;
-    
     // Verifica se a rota está nas permissões do usuário
-    return routeId in userPermissions;
+    return routeId in user.permissions;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
@@ -35,21 +32,35 @@ export const usePermissions = (user: User) => {
   };
 
   const getUserPermissions = () => {
-    // Sempre inclui profile nas rotas
+    // Começa com a rota profile
     const routes = ['profile'];
     
-    // Se tem permissões, adiciona as outras rotas
+    // Adiciona apenas as rotas que existem nas permissões do usuário
     if (user?.permissions) {
-      routes.push(...Object.keys(user.permissions));
-    }
+      // Mapeia as rotas de acordo com as permissões do backend para as rotas da aplicação
+      const routeMapping: { [key: string]: string } = {
+        'dashboard': 'dashboard',
+        'calls': 'calls',
+        'leads': 'leads',
+        'users': 'users',
+        'integrations': 'integrations',
+        'settings': 'settings',
+        'plan': 'plan'
+      };
 
-    // Remove duplicatas e ordena
-    const uniqueRoutes = [...new Set(routes)].sort();
+      // Adiciona as rotas que o usuário tem permissão
+      Object.keys(user.permissions).forEach(permissionKey => {
+        const routeId = routeMapping[permissionKey];
+        if (routeId && !routes.includes(routeId)) {
+          routes.push(routeId);
+        }
+      });
+    }
 
     // Monta o objeto de tabs permitidas
     const tabs: { [routeId: string]: string[] } = {};
     
-    uniqueRoutes.forEach(routeId => {
+    routes.forEach(routeId => {
       if (routeId === 'profile') {
         // Para profile, permite todas as tabs
         const profileTabs = availableRoutePermissions
@@ -64,7 +75,8 @@ export const usePermissions = (user: User) => {
       }
     });
 
-    return { routes: uniqueRoutes, tabs };
+    console.log('Permissões filtradas:', tabs);
+    return { routes, tabs };
   };
 
   return {
