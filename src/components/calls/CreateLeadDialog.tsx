@@ -24,7 +24,7 @@ interface CreateLeadDialogProps {
   hasPhoneIntegration: boolean;
   hasEmailIntegration: boolean;
   onCreateLead: (data: LeadFormData) => void;
-  onUploadClick?: (data: LeadFormData) => void;
+  onUploadClick?: () => void;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -39,7 +39,6 @@ export function CreateLeadDialog({
 }: CreateLeadDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [showSuccessCard, setShowSuccessCard] = useState(false);
-  const [leadData, setLeadData] = useState<LeadFormData | null>(null);
 
   const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledIsOpen : uncontrolledOpen;
@@ -48,7 +47,6 @@ export function CreateLeadDialog({
   useEffect(() => {
     if (open) {
       setShowSuccessCard(false);
-      setLeadData(null);
     }
   }, [open]);
 
@@ -63,23 +61,21 @@ export function CreateLeadDialog({
     hasEmailIntegration,
     onCreateLead: (data) => {
       onCreateLead(data);
-      setLeadData(data);
       setShowSuccessCard(true);
     },
   });
 
   const handleClose = () => {
     form.reset();
-    setLeadData(null);
     setShowSuccessCard(false);
     setOpen(false);
   };
 
   const handleUploadClick = () => {
-    if (leadData && onUploadClick) {
-      setOpen(false); // Primeiro fechamos este modal
+    if (onUploadClick) {
+      setOpen(false);
       setTimeout(() => {
-        onUploadClick(leadData); // Depois chamamos o onUploadClick
+        onUploadClick();
       }, 100);
     }
   };
