@@ -43,8 +43,17 @@ export const UserPermissionsDialog = ({
       `;
       setDebugInfo(debug);
       
-      // Copia as permissões atuais do usuário ou inicializa com objeto vazio
-      setTempPermissions(user.permissions ? {...user.permissions} : {});
+      // Garantir que rotas padrão estejam sempre presentes
+      const initialPermissions = { ...(user.permissions || {}) };
+      availableRoutePermissions
+        .filter(route => route.isDefault)
+        .forEach(route => {
+          if (!initialPermissions[route.id]) {
+            initialPermissions[route.id] = [];
+          }
+        });
+      
+      setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
 
@@ -64,15 +73,15 @@ export const UserPermissionsDialog = ({
     });
   };
 
-  const handleTabPermissionChange = (routeId: string, tabValue: string) => {
+  const handleTabPermissionChange = (routeId: string, permission: string) => {
     setTempPermissions(prev => {
       const currentPermissions = [...(prev[routeId] || [])];
-      const permissionIndex = currentPermissions.indexOf(tabValue);
+      const permissionIndex = currentPermissions.indexOf(permission);
       
       if (permissionIndex > -1) {
         currentPermissions.splice(permissionIndex, 1);
       } else {
-        currentPermissions.push(tabValue);
+        currentPermissions.push(permission);
       }
 
       // Se não houver mais permissões e não for uma rota padrão, remove a rota
@@ -80,6 +89,14 @@ export const UserPermissionsDialog = ({
       if (currentPermissions.length === 0 && !route?.isDefault) {
         const { [routeId]: _, ...rest } = prev;
         return rest;
+      }
+
+      // Se for uma rota padrão, garantir que ela permaneça no objeto mesmo sem permissões
+      if (route?.isDefault) {
+        return {
+          ...prev,
+          [routeId]: currentPermissions
+        };
       }
 
       return {
