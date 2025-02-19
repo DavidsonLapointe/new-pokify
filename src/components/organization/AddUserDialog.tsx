@@ -30,9 +30,9 @@ interface AddUserDialogProps {
 export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: "Sandra Bueno",
+    email: "sandra.bueno@empresa.com",
+    phone: "(11) 99999-9999",
     role: "seller" as UserRole,
   });
 
@@ -72,9 +72,9 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button onClick={handleAddUser}>
           <UserPlus className="w-4 h-4 mr-2" />
-          Novo Usuário
+          Adicionar Sandra Bueno
         </Button>
       </DialogTrigger>
       <DialogContent>
