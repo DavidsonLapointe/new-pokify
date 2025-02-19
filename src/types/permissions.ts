@@ -28,36 +28,58 @@ export const availableRoutePermissions: RoutePermission[] = [
     path: "/organization/dashboard",
     tabs: [
       { id: "leads", label: "Leads", value: "leads" },
-      { id: "calls", label: "Uploads", value: "calls" },
-      { id: "performance", label: "Performance Vendedores", value: "sellers" },
+      { id: "uploads", label: "Uploads", value: "uploads" },
+      { id: "performance", label: "Performance Vendedores", value: "performance" },
       { id: "objections", label: "Objeções", value: "objections" },
       { id: "suggestions", label: "Sugestões", value: "suggestions" },
-      { id: "sellers-info", label: "Vendedores", value: "sellers-info" }
+      { id: "sellers", label: "Vendedores", value: "sellers" }
     ]
   },
   {
     id: "leads",
     label: "Análise de Leads",
-    path: "/organization/leads"
+    path: "/organization/leads",
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "edit", label: "Editar", value: "edit" },
+      { id: "delete", label: "Excluir", value: "delete" }
+    ]
   },
   {
     id: "users",
     label: "Usuários",
-    path: "/organization/users"
+    path: "/organization/users",
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "edit", label: "Editar", value: "edit" },
+      { id: "delete", label: "Excluir", value: "delete" }
+    ]
   },
   {
     id: "integrations",
     label: "Integrações",
-    path: "/organization/integrations"
+    path: "/organization/integrations",
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "edit", label: "Editar", value: "edit" }
+    ]
   },
   {
     id: "settings",
     label: "Configurações",
-    path: "/organization/settings"
+    path: "/organization/settings",
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "edit", label: "Editar", value: "edit" }
+    ]
   },
   {
     id: "plan",
     label: "Meu Plano",
-    path: "/organization/plan"
+    path: "/organization/plan",
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "upgrade", label: "Alterar Plano", value: "upgrade" }
+    ]
   }
 ];
