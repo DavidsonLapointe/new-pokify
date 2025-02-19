@@ -15,7 +15,7 @@ export const usePermissions = (user: User) => {
     return Object.keys(user.permissions).includes(routeId);
   };
 
-  const hasTabPermission = (routeId: string, tabId: string): boolean => {
+  const hasTabPermission = (routeId: string, tabValue: string): boolean => {
     // Se não tem permissão para a rota, não tem permissão para as tabs
     if (!hasRoutePermission(routeId)) return false;
 
@@ -25,7 +25,7 @@ export const usePermissions = (user: User) => {
 
     // Verifica se o usuário tem permissão específica para a tab
     const permissions = user.permissions[routeId] || [];
-    return permissions.includes(tabId);
+    return permissions.includes(tabValue);
   };
 
   const getUserPermissions = () => {
@@ -38,8 +38,8 @@ export const usePermissions = (user: User) => {
     availableRoutePermissions.forEach(route => {
       if (route.tabs) {
         const allowedTabs = route.tabs
-          .filter(tab => hasTabPermission(route.id, tab.id))
-          .map(tab => tab.id);
+          .filter(tab => hasTabPermission(route.id, tab.value))
+          .map(tab => tab.value);
         
         if (allowedTabs.length > 0) {
           tabs[route.id] = allowedTabs;
@@ -50,20 +50,9 @@ export const usePermissions = (user: User) => {
     return { routes, tabs };
   };
 
-  // Retorna a lista de tabs permitidas para uma rota específica
-  const getAllowedTabsForRoute = (routeId: string): string[] => {
-    const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (!route?.tabs) return [];
-
-    return route.tabs
-      .filter(tab => hasTabPermission(routeId, tab.id))
-      .map(tab => tab.id);
-  };
-
   return {
     hasRoutePermission,
     hasTabPermission,
-    getUserPermissions,
-    getAllowedTabsForRoute
+    getUserPermissions
   };
 };

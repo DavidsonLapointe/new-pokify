@@ -30,14 +30,26 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
-  const { hasRoutePermission } = usePermissions(user);
+  const { hasRoutePermission, hasTabPermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
   const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (isOpen && user) {
-      setTempPermissions(user.permissions || {});
+      // Clone as permissões existentes
+      const initialPermissions = { ...user.permissions };
+      
+      // Garante que rotas padrão estejam presentes com suas tabs
+      availableRoutePermissions
+        .filter(route => route.isDefault)
+        .forEach(route => {
+          if (route.tabs) {
+            initialPermissions[route.id] = route.tabs.map(tab => tab.value);
+          }
+        });
+      
+      setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
 
