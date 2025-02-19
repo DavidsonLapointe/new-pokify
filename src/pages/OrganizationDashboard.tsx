@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
 import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabContent";
 import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
+import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { mockUsers } from "@/types/organization";
 
@@ -48,6 +49,11 @@ const OrganizationDashboard = () => {
     setDailyMetric,
     monthlyMetric,
     setMonthlyMetric,
+    suggestionsData,
+    monthlySuggestionsDate,
+    setMonthlySuggestionsDate,
+    monthlySuggestionsSeller,
+    setMonthlySuggestionsSeller,
   } = useDashboardData();
 
   const leadsStats = {
@@ -72,6 +78,7 @@ const OrganizationDashboard = () => {
             <TabsTrigger value="calls">Uploads</TabsTrigger>
             <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
             <TabsTrigger value="objections">Objeções</TabsTrigger>
+            <TabsTrigger value="suggestions">Sugestões</TabsTrigger>
             <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
           </TabsList>
           
@@ -144,6 +151,17 @@ const OrganizationDashboard = () => {
               setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
               objectionTrendsSeller={objectionTrendsSeller}
               setObjectionTrendsSeller={setObjectionTrendsSeller}
+              sellers={mockUsers}
+            />
+          </TabsContent>
+
+          <TabsContent value="suggestions" className="space-y-6">
+            <SuggestionsTabContent
+              suggestions={suggestionsData}
+              monthlySuggestionsDate={monthlySuggestionsDate}
+              setMonthlySuggestionsDate={setMonthlySuggestionsDate}
+              monthlySuggestionsSeller={monthlySuggestionsSeller}
+              setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
               sellers={mockUsers}
             />
           </TabsContent>
