@@ -5,12 +5,12 @@ import { UserCircle } from "lucide-react";
 
 export function OrganizationNavbar() {
   return (
-    <div className="border-b">
-      <div className="flex h-16 items-center px-4">
+    <div className="border-b bg-white">
+      <div className="flex h-16 items-center px-6">
         <div className="ml-auto flex items-center space-x-4">
           <Button variant="ghost" size="icon" asChild>
             <Link to="/organization/profile">
-              <UserCircle className="h-5 w-5" />
+              <UserCircle className="h-5 w-5 text-gray-600" />
               <span className="sr-only">Profile</span>
             </Link>
           </Button>
