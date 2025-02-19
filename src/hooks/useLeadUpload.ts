@@ -12,6 +12,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
   const [newLeadId, setNewLeadId] = useState<string | null>(null);
   const [pendingNewCall, setPendingNewCall] = useState<Call | null>(null);
   const [isCreateLeadSuccessOpen, setIsCreateLeadSuccessOpen] = useState(false);
+  const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
 
   const createCallObject = (leadId: string, data: LeadFormData): Call => ({
     id: leadId,
@@ -39,9 +40,10 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     try {
       const leadId = await createNewLead(data);
       setNewLeadId(leadId);
+      setPendingLeadData(data);
       const newCall = createCallObject(leadId, data);
       setPendingNewCall(newCall);
-      confirmNewLead(false, newCall); // Agora passamos a chamada vazia inicial
+      confirmNewLead(false, newCall); // Passamos a chamada vazia inicial
       setIsCreateLeadSuccessOpen(true);
       return leadId;
     } catch (error) {
@@ -51,9 +53,13 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
   };
 
   const handleUploadClick = (data: LeadFormData) => {
-    // Garantimos que temos os dados necessários antes de abrir o modal de upload
-    if (newLeadId && pendingNewCall) {
-      setIsUploadOpen(true);
+    console.log("handleUploadClick chamado com:", { newLeadId, pendingNewCall, data });
+    if (newLeadId) {
+      setPendingLeadData(data);
+      // Pequeno delay para garantir que o modal anterior fechou
+      setTimeout(() => {
+        setIsUploadOpen(true);
+      }, 100);
     } else {
       console.error("Dados do lead não encontrados para upload");
     }
@@ -71,6 +77,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
+    setPendingLeadData(null);
     setIsCreateLeadSuccessOpen(false);
     
     toast({
@@ -83,6 +90,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsUploadOpen(false);
     setNewLeadId(null);
     setPendingNewCall(null);
+    setPendingLeadData(null);
     setIsCreateLeadSuccessOpen(false);
     
     toast({
@@ -102,6 +110,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     selectedLeadForUpload,
     setSelectedLeadForUpload,
     newLeadId,
+    pendingLeadData,
     isCreateLeadSuccessOpen,
     setIsCreateLeadSuccessOpen,
     handleCreateLead,
