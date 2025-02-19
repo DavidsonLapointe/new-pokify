@@ -22,6 +22,7 @@ import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { UserRole } from "@/types/organization";
 import { mockUsers } from "@/types/organization";
+import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddUserDialogProps {
   onUserAdded: () => void;
@@ -40,6 +41,16 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
     // Cria um novo usuário com ID único
     const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
     
+    // Gera as permissões baseadas no papel do usuário
+    const userPermissions: { [key: string]: string[] } = {};
+    
+    // Para sellers, adiciona todas as permissões exceto 'plan'
+    availableRoutePermissions.forEach(route => {
+      if (route.id !== 'profile' && route.id !== 'plan') { // profile já é sempre permitido
+        userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+      }
+    });
+
     const user = {
       id: newUserId,
       name: newUser.name,
@@ -49,11 +60,7 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
       status: "active" as const,
       createdAt: new Date().toISOString(),
       lastAccess: new Date().toISOString(),
-      permissions: {
-        // Definindo apenas integrações e configurações como permissões iniciais
-        integrations: ["view", "edit"],
-        settings: ["view", "edit"]
-      },
+      permissions: userPermissions,
       logs: [],
       avatar: "",
       organization: mockUsers[0].organization // Usa a mesma organização do primeiro usuário
