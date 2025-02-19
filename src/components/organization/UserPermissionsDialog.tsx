@@ -35,7 +35,6 @@ export const UserPermissionsDialog = ({
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
   const [debugInfo, setDebugInfo] = useState("");
 
-  // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
       const debug = `
@@ -44,19 +43,8 @@ export const UserPermissionsDialog = ({
       `;
       setDebugInfo(debug);
       
-      // Copia as permissões atuais do usuário
-      if (user.permissions) {
-        setTempPermissions({...user.permissions});
-      } else {
-        // Se não tiver permissões, inicializa com as rotas padrão
-        const defaultPermissions: { [key: string]: string[] } = {};
-        availableRoutePermissions
-          .filter(route => route.isDefault)
-          .forEach(route => {
-            defaultPermissions[route.id] = [];
-          });
-        setTempPermissions(defaultPermissions);
-      }
+      // Copia as permissões atuais do usuário ou inicializa com objeto vazio
+      setTempPermissions(user.permissions ? {...user.permissions} : {});
     }
   }, [isOpen, user]);
 
@@ -76,15 +64,15 @@ export const UserPermissionsDialog = ({
     });
   };
 
-  const handleTabPermissionChange = (routeId: string, tabId: string) => {
+  const handleTabPermissionChange = (routeId: string, tabValue: string) => {
     setTempPermissions(prev => {
       const currentPermissions = [...(prev[routeId] || [])];
-      const tabIndex = currentPermissions.indexOf(tabId);
+      const permissionIndex = currentPermissions.indexOf(tabValue);
       
-      if (tabIndex > -1) {
-        currentPermissions.splice(tabIndex, 1);
+      if (permissionIndex > -1) {
+        currentPermissions.splice(permissionIndex, 1);
       } else {
-        currentPermissions.push(tabId);
+        currentPermissions.push(tabValue);
       }
 
       // Se não houver mais permissões e não for uma rota padrão, remove a rota
@@ -104,9 +92,19 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
+      // Garantir que rotas padrão estejam sempre presentes
+      const updatedPermissions = { ...tempPermissions };
+      availableRoutePermissions
+        .filter(route => route.isDefault)
+        .forEach(route => {
+          if (!updatedPermissions[route.id]) {
+            updatedPermissions[route.id] = [];
+          }
+        });
+
       onUserUpdate({
         ...user,
-        permissions: tempPermissions,
+        permissions: updatedPermissions,
       });
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
