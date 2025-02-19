@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { User } from "@/types/organization";
-import { availableRoutePermissions, UserRoutePermissions } from "@/types/permissions";
+import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toast } from "sonner";
@@ -30,17 +30,20 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
-  console.log('User permissions when dialog opens:', user.name, user.permissions);
-
-  const { hasRoutePermission, hasTabPermission } = usePermissions(user);
+  const { hasRoutePermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
-  const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({}); // Inicializa vazio
+  const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
+  const [debugInfo, setDebugInfo] = useState("");
 
   // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
-      console.log('Setting initial permissions for:', user.name);
-      console.log('Current user permissions:', user.permissions);
+      // Mostra informações de debug
+      const debug = `
+        Nome do usuário: ${user.name}
+        Permissões atuais: ${JSON.stringify(user.permissions, null, 2)}
+      `;
+      setDebugInfo(debug);
       
       // Primeiro inicializa as rotas padrão
       const initialPermissions: { [key: string]: string[] } = {};
@@ -59,7 +62,6 @@ export const UserPermissionsDialog = ({
         });
       }
 
-      console.log('Initial permissions set to:', initialPermissions);
       setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
@@ -121,12 +123,10 @@ export const UserPermissionsDialog = ({
   };
 
   const handleClose = () => {
-    setTempPermissions({}); // Limpa as permissões temporárias
+    setTempPermissions({});
+    setDebugInfo("");
     onClose();
   };
-
-  // Debug render
-  console.log('Current temp permissions:', tempPermissions);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -137,14 +137,18 @@ export const UserPermissionsDialog = ({
             Gerencie as permissões de acesso para {user.name}
           </DialogDescription>
         </DialogHeader>
+
+        {/* Debug Info */}
+        <div className="mb-4 p-4 bg-gray-100 rounded text-xs font-mono whitespace-pre-wrap">
+          {debugInfo}
+          <div className="mt-2">
+            Permissões temporárias: {JSON.stringify(tempPermissions, null, 2)}
+          </div>
+        </div>
+
         <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
           {availableRoutePermissions.map((route) => {
             const isRouteEnabled = route.isDefault || !!tempPermissions[route.id];
-            console.log(`Route ${route.id}:`, { 
-              isDefault: route.isDefault, 
-              hasPermission: !!tempPermissions[route.id],
-              isEnabled: isRouteEnabled 
-            });
             
             return (
               <div key={route.id} className="space-y-4">
@@ -166,7 +170,6 @@ export const UserPermissionsDialog = ({
                   <div className="ml-8 grid grid-cols-2 gap-4">
                     {route.tabs.map((tab) => {
                       const isTabEnabled = (tempPermissions[route.id] || []).includes(tab.id);
-                      console.log(`Tab ${tab.id} in route ${route.id}:`, { isEnabled: isTabEnabled });
                       
                       return (
                         <div key={tab.id} className="flex items-center space-x-2">
