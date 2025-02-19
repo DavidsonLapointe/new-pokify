@@ -26,7 +26,10 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const { hasRoutePermission } = usePermissions(mockLoggedUser);
+  const { getUserPermissions } = usePermissions(mockLoggedUser);
+
+  // Pega as rotas permitidas para o usuário
+  const allowedRoutes = getUserPermissions().routes;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,8 +98,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       },
     ];
 
-    // Filtra apenas os itens do menu que o usuário tem permissão para acessar
-    return allMenuItems.filter(item => hasRoutePermission(item.permissionId));
+    // Filtra apenas os itens do menu que estão na lista de rotas permitidas
+    return allMenuItems.filter(item => allowedRoutes.includes(item.permissionId));
   };
 
   const menuItems = getMenuItems();
@@ -172,4 +175,3 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 };
 
 export default OrganizationLayout;
-
