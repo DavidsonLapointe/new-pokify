@@ -67,7 +67,7 @@ const Index = () => {
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 400;
+      const scrollAmount = 300;
       const container = scrollContainerRef.current;
       if (direction === 'left') {
         container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
@@ -252,29 +252,29 @@ const Index = () => {
               {testimonials.map((testimonial, index) => (
                 <div
                   key={index}
-                  className="min-w-[380px] flex-shrink-0 snap-center"
+                  className="min-w-[300px] max-w-[300px] flex-shrink-0 snap-center"
                 >
-                  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-                    <div className="flex items-center gap-4 mb-6">
+                  <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-4">
                       <img
                         src={testimonial.avatar}
                         alt={testimonial.author}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-100"
+                        className="w-10 h-10 rounded-full object-cover border-2 border-blue-100"
                       />
                       <div>
-                        <div className="font-semibold text-gray-900">{testimonial.author}</div>
-                        <div className="text-sm text-gray-500">{testimonial.role}</div>
+                        <div className="font-semibold text-gray-900 text-sm">{testimonial.author}</div>
+                        <div className="text-xs text-gray-500">{testimonial.role}</div>
                       </div>
                     </div>
                     
-                    <Quote className="h-8 w-8 text-blue-600/20 mb-4 absolute top-6 right-6" />
+                    <Quote className="h-6 w-6 text-blue-600/20 mb-3 absolute top-5 right-5" />
                     
-                    <p className="text-gray-700 mb-6 relative">
+                    <p className="text-gray-700 mb-4 relative text-sm leading-relaxed">
                       "{testimonial.content}"
                     </p>
                     
-                    <div className="pt-4 border-t border-gray-100">
-                      <div className="text-sm text-blue-600 font-medium">
+                    <div className="pt-3 border-t border-gray-100">
+                      <div className="text-xs text-blue-600 font-medium">
                         {testimonial.company}
                       </div>
                     </div>
