@@ -99,10 +99,14 @@ export const LeadsPageContent = ({
             ) : (
               <Button
                 key={page}
-                variant="default"
+                variant={currentPage === Number(page) ? "default" : "outline"}
                 size="sm"
                 onClick={() => setCurrentPage(Number(page))}
-                className="w-8 h-8 p-0 bg-primary text-white hover:bg-primary/90"
+                className={`w-8 h-8 p-0 ${
+                  currentPage === Number(page)
+                    ? "bg-[#7E69AB] text-white hover:bg-[#7E69AB]/90" // Cor mais escura para página atual
+                    : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#F1F0FB] hover:text-[#9b87f5]" // Estilo outline para outras páginas
+                }`}
               >
                 {page}
               </Button>
