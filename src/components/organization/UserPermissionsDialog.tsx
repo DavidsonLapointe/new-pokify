@@ -43,7 +43,20 @@ export const UserPermissionsDialog = ({
         Permissões atuais: ${JSON.stringify(user.permissions, null, 2)}
       `;
       setDebugInfo(debug);
-      setTempPermissions(user.permissions || {});
+      
+      // Inicializa com as permissões do usuário
+      const initialPermissions = { ...(user.permissions || {}) };
+      
+      // Garante que rotas padrão estejam presentes
+      availableRoutePermissions
+        .filter(route => route.isDefault)
+        .forEach(route => {
+          if (!initialPermissions[route.id]) {
+            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+          }
+        });
+      
+      setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
 
@@ -56,7 +69,13 @@ export const UserPermissionsDialog = ({
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
-        newPermissions[routeId] = ["view"];
+        // Se a rota tem tabs, adiciona todas como permitidas
+        if (route?.tabs) {
+          newPermissions[routeId] = route.tabs.map(tab => tab.value);
+        } else {
+          // Se não tem tabs, adiciona apenas "view"
+          newPermissions[routeId] = ["view"];
+        }
       }
       return newPermissions;
     });
@@ -74,6 +93,7 @@ export const UserPermissionsDialog = ({
         currentPermissions.push(tabValue);
       }
 
+      // Se não houver mais permissões e não for uma rota padrão, remove a rota
       if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
         delete newPermissions[routeId];
       } else {
@@ -107,8 +127,8 @@ export const UserPermissionsDialog = ({
   };
 
   const isTabEnabled = (routeId: string, tabValue: string) => {
-    const routePermissions = tempPermissions[routeId] || [];
-    return routePermissions.includes(tabValue);
+    const permissions = tempPermissions[routeId] || [];
+    return permissions.includes(tabValue);
   };
 
   return (

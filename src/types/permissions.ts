@@ -16,7 +16,7 @@ export const availableRoutePermissions: RoutePermission[] = [
     id: "profile",
     label: "Meu Perfil",
     path: "/organization/profile",
-    isDefault: true, // Todos os usuários têm acesso
+    isDefault: true,
     tabs: [
       { id: "contact", label: "Informações de Contato", value: "contact" },
       { id: "password", label: "Alterar Senha", value: "password" }
@@ -61,9 +61,3 @@ export const availableRoutePermissions: RoutePermission[] = [
     path: "/organization/plan"
   }
 ];
-
-// Atualiza a interface User para incluir o novo formato de permissões
-export interface UserRoutePermissions {
-  routes: string[]; // Array com os IDs das rotas permitidas 
-  tabs: { [routeId: string]: string[] }; // Mapa de routeId para array de tabIds permitidos
-}
