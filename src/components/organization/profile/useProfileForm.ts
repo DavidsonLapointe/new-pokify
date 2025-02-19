@@ -2,14 +2,32 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
+import { User, UserRole } from "@/types/organization";
 
 // Mock data (will be replaced with real auth data later)
-export const mockLoggedUser = {
+export const mockLoggedUser: User = {
   id: 1,
   name: "João Silva",
   email: "joao.silva@empresa.com",
+  phone: "(11) 99999-9999",
+  role: "company_admin" as UserRole,
+  status: "active",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: "2024-03-15T14:30:00.000Z",
+  permissions: {
+    dashboard: ["view", "export"],
+    calls: ["view", "upload", "delete"],
+    leads: ["view", "edit", "delete"],
+    integrations: ["view", "edit"],
+  },
+  logs: [
+    {
+      id: 1,
+      date: "2024-03-15T14:30:00.000Z",
+      action: "Acessou o sistema",
+    },
+  ],
   avatar: "",
-  role: "admin",
   organization: {
     id: 1,
     name: "Tech Solutions Ltda",
@@ -21,7 +39,7 @@ export const useProfileForm = () => {
   const [formData, setFormData] = useState<ProfileFormData>({
     name: mockLoggedUser.name,
     email: mockLoggedUser.email,
-    phone: "(11) 99999-9999",
+    phone: mockLoggedUser.phone,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -80,6 +98,7 @@ export const useProfileForm = () => {
       // Update the mockLoggedUser data
       mockLoggedUser.email = formData.email;
       mockLoggedUser.name = formData.name;
+      mockLoggedUser.phone = formData.phone;
 
       toast.success("Perfil atualizado com sucesso!");
       
