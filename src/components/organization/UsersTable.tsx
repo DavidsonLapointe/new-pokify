@@ -110,14 +110,14 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                     size="icon"
                     onClick={() => onEditUser(user)}
                   >
-                    <PencilIcon className="h-4 w-4" />
+                    <PencilIcon className="h-4 w-4 text-primary" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => onEditPermissions(user)}
                   >
-                    <LockIcon className="h-4 w-4" />
+                    <LockIcon className="h-4 w-4 text-primary" />
                   </Button>
                 </div>
               </TableCell>
