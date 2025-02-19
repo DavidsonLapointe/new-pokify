@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { CreateLeadDialog } from "../CreateLeadDialog";
+import { LeadFormData } from "@/schemas/leadFormSchema";
 
 interface EmptyLeadsStateProps {
   isCreateLeadOpen: boolean;
@@ -12,13 +13,13 @@ export const EmptyLeadsState = ({
   isCreateLeadOpen,
   setIsCreateLeadOpen
 }: EmptyLeadsStateProps) => {
-  const handleCreateLead = (data: any) => {
+  const handleCreateLead = (data: LeadFormData) => {
     console.log("Novo lead:", data);
     setIsCreateLeadOpen(false);
   };
 
-  const handleUploadClick = (data: any) => {
-    console.log("Upload para novo lead:", data);
+  const handleUploadClick = () => {
+    console.log("Upload para novo lead");
     setIsCreateLeadOpen(false);
   };
 
