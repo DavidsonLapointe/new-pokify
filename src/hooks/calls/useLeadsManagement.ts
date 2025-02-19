@@ -1,29 +1,40 @@
 import { Call } from "@/types/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { LeadWithCalls } from "@/types/leads";
-import { syncLeadWithCRM } from "@/services/crmIntegrationService";
+import { syncLeadWithCRM, syncCallWithCRM } from "@/services/crmIntegrationService";
 import { Integration } from "@/types/integration";
+
+interface CRMConfig {
+  integration?: Integration;
+  funnelName?: string;
+  stageName?: string;
+}
 
 export const useLeadsManagement = (
   setLeads: React.Dispatch<React.SetStateAction<LeadWithCalls[]>>,
   setPendingLeadData: React.Dispatch<React.SetStateAction<LeadFormData | null>>,
-  crmIntegration?: Integration
+  crmConfig?: CRMConfig
 ) => {
   const createNewLead = async (leadData: LeadFormData) => {
     console.log("Dados do lead recebidos em createNewLead:", leadData);
     const leadId = uuidv4();
 
-    // Se houver integração com CRM, sincroniza o lead
-    if (crmIntegration) {
-      const syncResult = await syncLeadWithCRM(crmIntegration, leadData);
+    // Se houver integração com CRM e configuração de funil
+    if (crmConfig?.integration && crmConfig.funnelName && crmConfig.stageName) {
+      const syncResult = await syncLeadWithCRM(
+        crmConfig.integration, 
+        leadData,
+        {
+          funnelName: crmConfig.funnelName,
+          stageName: crmConfig.stageName
+        }
+      );
       
       if (!syncResult.success) {
-        toast({
-          title: "Erro na sincronização com CRM",
-          description: syncResult.error,
-          variant: "destructive",
+        toast.error("Erro na sincronização com CRM", {
+          description: syncResult.error
         });
       } else if (syncResult.leadId) {
         console.log("Lead sincronizado com CRM, ID:", syncResult.leadId);
@@ -41,7 +52,11 @@ export const useLeadsManagement = (
         phone: leadData.phone || "",
       },
       calls: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      crmInfo: crmConfig?.funnelName ? {
+        funnel: crmConfig.funnelName,
+        stage: crmConfig.stageName || ""
+      } : undefined
     };
 
     setLeads(prevLeads => {
@@ -52,6 +67,51 @@ export const useLeadsManagement = (
 
     setPendingLeadData(leadData);
     return leadId;
+  };
+
+  const handleUploadSuccess = async (leadId: string, uploadedCall: Call) => {
+    // Sincroniza a chamada com o CRM se houver integração e configuração de funil
+    if (crmConfig?.integration && crmConfig.funnelName && crmConfig.stageName) {
+      const syncResult = await syncCallWithCRM(
+        crmConfig.integration,
+        uploadedCall,
+        {
+          funnelName: crmConfig.funnelName,
+          stageName: crmConfig.stageName
+        }
+      );
+
+      if (!syncResult.success) {
+        toast.error("Erro ao sincronizar chamada com CRM", {
+          description: syncResult.error
+        });
+      }
+    }
+
+    setLeads(prevLeads => {
+      return prevLeads.map(lead => {
+        if (lead.id === leadId) {
+          const updatedCalls = [
+            uploadedCall,
+            ...lead.calls.filter(call => !call.emptyLead)
+          ];
+          
+          return {
+            ...lead,
+            calls: updatedCalls,
+            crmInfo: crmConfig?.funnelName ? {
+              funnel: crmConfig.funnelName,
+              stage: crmConfig.stageName || ""
+            } : lead.crmInfo
+          };
+        }
+        return lead;
+      });
+    });
+
+    toast.success("Upload realizado com sucesso", {
+      description: "A chamada foi adicionada ao histórico do lead."
+    });
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
@@ -72,30 +132,6 @@ export const useLeadsManagement = (
     toast({
       title: "Lead atualizado com sucesso",
       description: withUpload ? "Upload da chamada realizado com sucesso." : "Lead criado com sucesso.",
-    });
-  };
-
-  const handleUploadSuccess = (leadId: string, uploadedCall: Call) => {
-    setLeads(prevLeads => {
-      return prevLeads.map(lead => {
-        if (lead.id === leadId) {
-          const updatedCalls = [
-            uploadedCall,
-            ...lead.calls.filter(call => !call.emptyLead)
-          ];
-          
-          return {
-            ...lead,
-            calls: updatedCalls
-          };
-        }
-        return lead;
-      });
-    });
-
-    toast({
-      title: "Upload realizado com sucesso",
-      description: "A chamada foi adicionada ao histórico do lead.",
     });
   };
 
