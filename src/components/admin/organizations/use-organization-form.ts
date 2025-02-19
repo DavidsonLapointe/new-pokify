@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Organization } from "@/types/organization";
 import { sendInitialContract } from "@/services/organizationService";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
+import { availableRoutePermissions } from "@/types/permissions";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { toast } = useToast();
@@ -24,6 +25,16 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   });
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
+    // Gera todas as permissões disponíveis para o admin
+    const adminPermissions: { [key: string]: string[] } = {};
+    
+    // Para cada rota disponível, adiciona todas as suas tabs como permissões
+    availableRoutePermissions.forEach(route => {
+      if (route.id !== 'profile') { // profile já é sempre permitido
+        adminPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+      }
+    });
+
     const newOrganization: Organization = {
       id: Math.random(),
       name: values.razaoSocial,
@@ -38,7 +49,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         status: "pending",
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
-        permissions: { integrations: ["view", "edit"] },
+        permissions: adminPermissions,
         logs: [],
         organization: {} as Organization, // Será atualizado após a criação
         avatar: "",
