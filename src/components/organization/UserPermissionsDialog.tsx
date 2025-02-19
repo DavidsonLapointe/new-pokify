@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { User } from "@/types/organization";
-import { availableRoutePermissions } from "@/types/permissions";
+import { availableRoutePermissions, UserRoutePermissions } from "@/types/permissions";
+import { useState } from "react";
+import { usePermissions } from "@/hooks/usePermissions";
+import { toast } from "sonner";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -27,7 +30,13 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
+  const { hasRoutePermission, hasTabPermission } = usePermissions(user);
+  const [saving, setSaving] = useState(false);
+
   const handlePermissionChange = (routeId: string) => {
+    const route = availableRoutePermissions.find(r => r.id === routeId);
+    if (route?.isDefault) return; // Não permite alterar rotas padrão
+
     const currentPermissions = user.permissions[routeId] || [];
     const hasPermission = currentPermissions.includes("view");
     
@@ -55,12 +64,16 @@ export const UserPermissionsDialog = ({
     });
   };
 
-  const hasRoutePermission = (routeId: string) => {
-    return (user.permissions[routeId] || []).includes("view");
-  };
-
-  const hasTabPermission = (routeId: string, tabId: string) => {
-    return (user.permissions[routeId] || []).includes(tabId);
+  const handleSave = () => {
+    setSaving(true);
+    try {
+      onClose();
+      toast.success("Permissões atualizadas com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao atualizar permissões");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -109,10 +122,12 @@ export const UserPermissionsDialog = ({
           ))}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancelar
           </Button>
-          <Button onClick={onClose}>Salvar Permissões</Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Salvando..." : "Salvar Permissões"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
