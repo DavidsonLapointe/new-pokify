@@ -71,7 +71,7 @@ const AdminFinancial = () => {
     setFilteredTitles(filtered);
   };
 
-  // Inicializa os títulos ao montar o componente
+  // Initialize titles when component mounts
   useState(() => {
     setFilteredTitles(mockTitles);
   });
@@ -86,10 +86,18 @@ const AdminFinancial = () => {
           organization={{
             id: 1,
             name: "Organization",
+            nomeFantasia: "Organization Ltda",
             status: "active",
             plan: "professional",
             users: [],
             pendingReason: null,
+            integratedCRM: null,
+            integratedLLM: null,
+            email: "contact@organization.com",
+            phone: "(11) 1234-5678",
+            cnpj: "12.345.678/0001-90",
+            adminName: "John Doe",
+            adminEmail: "john@organization.com",
             createdAt: new Date().toISOString(),
           }}
         />
