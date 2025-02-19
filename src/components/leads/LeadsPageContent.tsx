@@ -4,7 +4,7 @@ import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronFirst, ChevronLast } from "lucide-react";
 
@@ -33,6 +33,11 @@ export const LeadsPageContent = ({
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Reseta a página para 1 sempre que a página for recarregada ou quando calls mudar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, []);
   
   // Calcula o índice inicial e final dos itens na página atual
   const startIndex = (currentPage - 1) * itemsPerPage;
