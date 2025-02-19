@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { SuggestionTableProps, Suggestion } from "./types/suggestions";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Check, X, AlertCircle, PencilIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -122,7 +122,12 @@ export const SuggestionsTable = ({ suggestions, onUpdateStatus }: SuggestionTabl
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
         <AlertDialogContent className="max-w-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Texto completo da sugestão</AlertDialogTitle>
+            <div className="flex justify-between items-start">
+              <AlertDialogTitle>Texto completo da sugestão</AlertDialogTitle>
+              <AlertDialogCancel className="h-8 w-8 p-0">
+                <X className="h-4 w-4" />
+              </AlertDialogCancel>
+            </div>
             <AlertDialogDescription className="mt-4 text-foreground">
               {selectedSuggestion}
             </AlertDialogDescription>
