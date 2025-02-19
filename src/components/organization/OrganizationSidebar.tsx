@@ -26,6 +26,11 @@ const menuItems = [
     url: "/organization/dashboard",
   },
   {
+    title: "Análise de Leads",
+    icon: FileText,
+    url: "/organization/analysis",
+  },
+  {
     title: "Ligações",
     icon: Building2,
     url: "/organization/calls",
