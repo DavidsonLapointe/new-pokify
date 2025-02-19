@@ -14,6 +14,8 @@ export const useSuggestionsData = () => {
         date: "2024-02-19",
         leadName: "João Silva",
         suggestion: "Seria interessante ter uma opção de pagamento em boleto parcelado",
+        type: "Financeiro",
+        subType: "Formas de Pagamento",
         status: "pending"
       },
       {
@@ -21,6 +23,8 @@ export const useSuggestionsData = () => {
         date: "2024-02-18",
         leadName: "Maria Santos",
         suggestion: "Poderiam oferecer um plano mais básico com menos recursos",
+        type: "Produto",
+        subType: "Planos e Preços",
         status: "implemented"
       },
       {
@@ -28,6 +32,8 @@ export const useSuggestionsData = () => {
         date: "2024-02-17",
         leadName: "Pedro Oliveira",
         suggestion: "O processo de cadastro poderia ser mais simplificado",
+        type: "UX/UI",
+        subType: "Cadastro",
         status: "rejected"
       }
     ];

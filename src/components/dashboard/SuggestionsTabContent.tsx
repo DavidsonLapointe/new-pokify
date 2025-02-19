@@ -18,6 +18,8 @@ interface Suggestion {
   date: string;
   leadName: string;
   suggestion: string;
+  type: string;
+  subType: string;
   status: "pending" | "implemented" | "rejected";
 }
 
@@ -79,6 +81,8 @@ export const SuggestionsTabContent = ({
             <TableRow>
               <TableHead>Data</TableHead>
               <TableHead>Lead</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Sub-tipo</TableHead>
               <TableHead className="max-w-[500px]">Sugestão</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
@@ -89,6 +93,16 @@ export const SuggestionsTabContent = ({
                 <TableRow key={suggestion.id}>
                   <TableCell>{new Date(suggestion.date).toLocaleDateString()}</TableCell>
                   <TableCell>{suggestion.leadName}</TableCell>
+                  <TableCell>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                      {suggestion.type}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                      {suggestion.subType}
+                    </span>
+                  </TableCell>
                   <TableCell className="max-w-[500px] whitespace-normal">
                     {suggestion.suggestion}
                   </TableCell>
@@ -97,7 +111,7 @@ export const SuggestionsTabContent = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   Nenhuma sugestão encontrada para o período selecionado.
                 </TableCell>
               </TableRow>
