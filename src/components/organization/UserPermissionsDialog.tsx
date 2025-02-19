@@ -11,7 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { User } from "@/types/organization";
 import { availableRoutePermissions, UserRoutePermissions } from "@/types/permissions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toast } from "sonner";
 
@@ -35,6 +35,13 @@ export const UserPermissionsDialog = ({
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>(
     user.permissions || {}
   );
+
+  // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
+  useEffect(() => {
+    if (isOpen && user) {
+      setTempPermissions(user.permissions || {});
+    }
+  }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
@@ -100,40 +107,44 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
-          {availableRoutePermissions.map((route) => (
-            <div key={route.id} className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id={route.id}
-                  checked={route.isDefault || Object.keys(tempPermissions).includes(route.id)}
-                  onChange={() => !route.isDefault && handlePermissionChange(route.id)}
-                  disabled={route.isDefault}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-                <Label htmlFor={route.id} className="font-medium text-lg">
-                  {route.label}
-                </Label>
-              </div>
-
-              {route.tabs && Object.keys(tempPermissions).includes(route.id) && (
-                <div className="ml-8 grid grid-cols-2 gap-4">
-                  {route.tabs.map((tab) => (
-                    <div key={tab.id} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id={`${route.id}-${tab.id}`}
-                        checked={(tempPermissions[route.id] || []).includes(tab.id)}
-                        onChange={() => handleTabPermissionChange(route.id, tab.id)}
-                        className="h-4 w-4 rounded border-gray-300"
-                      />
-                      <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
-                    </div>
-                  ))}
+          {availableRoutePermissions.map((route) => {
+            const hasPermission = route.isDefault || Object.keys(tempPermissions).includes(route.id);
+            
+            return (
+              <div key={route.id} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={route.id}
+                    checked={hasPermission}
+                    onChange={() => !route.isDefault && handlePermissionChange(route.id)}
+                    disabled={route.isDefault}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <Label htmlFor={route.id} className="font-medium text-lg">
+                    {route.label}
+                  </Label>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {route.tabs && hasPermission && (
+                  <div className="ml-8 grid grid-cols-2 gap-4">
+                    {route.tabs.map((tab) => (
+                      <div key={tab.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`${route.id}-${tab.id}`}
+                          checked={(tempPermissions[route.id] || []).includes(tab.id)}
+                          onChange={() => handleTabPermissionChange(route.id, tab.id)}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={saving}>
