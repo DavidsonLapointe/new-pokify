@@ -14,9 +14,8 @@ import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
 import { LeadFormData } from "@/schemas/leadFormSchema";
-import { mockCalls } from "@/mocks/calls";
+import { Call } from "@/types/calls";
 
-// Mock do usuário logado - vendedor
 const mockLoggedUser = {
   id: 2,
   name: "Maria Santos",
@@ -41,7 +40,6 @@ const mockLoggedUser = {
   ],
 };
 
-// Mock da organização - agora com ambas integrações
 const mockOrganization = {
   id: 1,
   name: "Tech Solutions Ltda",
@@ -49,8 +47,8 @@ const mockOrganization = {
   plan: "enterprise",
   users: mockUsers,
   status: "active" as const,
-  integratedCRM: "HubSpot", // CRM integrado
-  integratedLLM: "OpenAI", // LLM agora está integrado
+  integratedCRM: "HubSpot",
+  integratedLLM: "OpenAI",
   email: "contato@techsolutions.com",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
@@ -67,6 +65,7 @@ const OrganizationLeads = () => {
   const [isFindLeadOpen, setIsFindLeadOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
+  const [currentCalls, setCurrentCalls] = useState(mockCalls);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);
@@ -99,12 +98,17 @@ const OrganizationLeads = () => {
     handleUploadCancel,
     handleLeadFound,
     handleCreateLead,
-  } = useLeadUpload(createNewLead, confirmNewLead);
+  } = useLeadUpload(createNewLead, (withUpload: boolean, newCall?: Call) => {
+    if (newCall) {
+      setCurrentCalls(prev => [newCall, ...prev]);
+      confirmNewLead(withUpload, newCall);
+    }
+  });
 
   const monthStats = {
-    total: mockCalls.length,
-    processed: mockCalls.filter(call => call.status === "success").length,
-    failed: mockCalls.filter(call => call.status === "failed").length,
+    total: currentCalls.length,
+    processed: currentCalls.filter(call => call.status === "success").length,
+    failed: currentCalls.filter(call => call.status === "failed").length,
     pending: 0
   };
 
@@ -123,7 +127,7 @@ const OrganizationLeads = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             monthStats={monthStats}
-            calls={mockCalls}
+            calls={currentCalls}
             statusMap={statusMap}
             onPlayAudio={handlePlayAudio}
             onViewAnalysis={handleViewAnalysis}
