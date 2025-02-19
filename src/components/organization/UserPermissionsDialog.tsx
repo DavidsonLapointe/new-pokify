@@ -33,30 +33,11 @@ export const UserPermissionsDialog = ({
   const { hasRoutePermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
-  const [debugInfo, setDebugInfo] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
 
-  // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
-      const debug = `
-        Nome do usuário: ${user.name}
-        Permissões atuais: ${JSON.stringify(user.permissions, null, 2)}
-      `;
-      setDebugInfo(debug);
-      
-      // Inicializa com as permissões do usuário
-      const initialPermissions = { ...(user.permissions || {}) };
-      
-      // Garante que rotas padrão estejam presentes
-      availableRoutePermissions
-        .filter(route => route.isDefault)
-        .forEach(route => {
-          if (!initialPermissions[route.id]) {
-            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-          }
-        });
-      
-      setTempPermissions(initialPermissions);
+      setTempPermissions(user.permissions || {});
     }
   }, [isOpen, user]);
 
@@ -69,11 +50,9 @@ export const UserPermissionsDialog = ({
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
-        // Se a rota tem tabs, adiciona todas como permitidas
         if (route?.tabs) {
           newPermissions[routeId] = route.tabs.map(tab => tab.value);
         } else {
-          // Se não tem tabs, adiciona apenas "view"
           newPermissions[routeId] = ["view"];
         }
       }
@@ -93,7 +72,6 @@ export const UserPermissionsDialog = ({
         currentPermissions.push(tabValue);
       }
 
-      // Se não houver mais permissões e não for uma rota padrão, remove a rota
       if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
         delete newPermissions[routeId];
       } else {
@@ -122,7 +100,6 @@ export const UserPermissionsDialog = ({
 
   const handleClose = () => {
     setTempPermissions({});
-    setDebugInfo("");
     onClose();
   };
 
@@ -133,7 +110,7 @@ export const UserPermissionsDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl" onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Permissões do Usuário</DialogTitle>
           <DialogDescription>
@@ -141,15 +118,24 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Debug Info */}
-        <div className="mb-4 p-4 bg-gray-100 rounded text-xs font-mono whitespace-pre-wrap">
-          {debugInfo}
-          <div className="mt-2">
-            Permissões temporárias: {JSON.stringify(tempPermissions, null, 2)}
-          </div>
-        </div>
+        {/* Debug Toggle */}
+        <button 
+          onClick={() => setShowDebug(prev => !prev)}
+          className="text-xs text-gray-500 hover:text-gray-700 transition-colors mb-2 text-left"
+        >
+          {showDebug ? "Ocultar Debug" : "Mostrar Debug"}
+        </button>
 
-        <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
+        {/* Debug Info - Collapsible */}
+        {showDebug && (
+          <div className="mb-4 p-2 bg-gray-100 rounded text-xs font-mono whitespace-pre-wrap max-h-32 overflow-y-auto">
+            <div>Nome do usuário: {user.name}</div>
+            <div>Permissões atuais: {JSON.stringify(user.permissions, null, 2)}</div>
+            <div>Permissões temporárias: {JSON.stringify(tempPermissions, null, 2)}</div>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto py-4 space-y-6">
           {availableRoutePermissions.map((route) => {
             const hasPermissions = Object.keys(tempPermissions).includes(route.id);
             const isRouteEnabled = route.isDefault || hasPermissions;
@@ -163,7 +149,7 @@ export const UserPermissionsDialog = ({
                     checked={isRouteEnabled}
                     onChange={() => !route.isDefault && handlePermissionChange(route.id)}
                     disabled={route.isDefault}
-                    className="h-4 w-4 rounded border-gray-300"
+                    className="h-4 w-4 rounded border-gray-300 accent-primary"
                   />
                   <Label htmlFor={route.id} className="font-medium text-lg">
                     {route.label}
@@ -179,7 +165,7 @@ export const UserPermissionsDialog = ({
                           id={`${route.id}-${tab.id}`}
                           checked={isTabEnabled(route.id, tab.value)}
                           onChange={() => handleTabPermissionChange(route.id, tab.value)}
-                          className="h-4 w-4 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-gray-300 accent-primary"
                         />
                         <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
                       </div>
@@ -190,7 +176,8 @@ export const UserPermissionsDialog = ({
             );
           })}
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="mt-4">
           <Button variant="outline" onClick={handleClose} disabled={saving}>
             Cancelar
           </Button>
