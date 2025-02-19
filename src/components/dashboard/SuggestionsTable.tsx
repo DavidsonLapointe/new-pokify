@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { SuggestionTableProps } from "./types/suggestions";
+import { SuggestionTableProps, Suggestion } from "./types/suggestions";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Check, X, AlertCircle } from "lucide-react";
 
