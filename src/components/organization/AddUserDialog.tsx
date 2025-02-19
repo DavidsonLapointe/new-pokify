@@ -44,12 +44,22 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
     // Gera as permissões baseadas no papel do usuário
     const userPermissions: { [key: string]: string[] } = {};
     
-    // Para sellers, adiciona todas as permissões exceto 'plan'
-    availableRoutePermissions.forEach(route => {
-      if (route.id !== 'profile' && route.id !== 'plan') { // profile já é sempre permitido
-        userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-      }
-    });
+    if (newUser.role === 'leadly_employee') {
+      // Para funcionários Leadly, adiciona apenas permissões do ambiente administrativo
+      const adminRoutes = ['dashboard', 'integrations', 'plans', 'organizations', 'settings', 'prompt'];
+      availableRoutePermissions.forEach(route => {
+        if (adminRoutes.includes(route.id)) {
+          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+        }
+      });
+    } else if (newUser.role === 'seller') {
+      // Para sellers, adiciona todas as permissões exceto 'plan'
+      availableRoutePermissions.forEach(route => {
+        if (route.id !== 'profile' && route.id !== 'plan') {
+          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+        }
+      });
+    }
 
     const user = {
       id: newUserId,
@@ -139,6 +149,7 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
               <SelectContent>
                 <SelectItem value="admin">Administrador</SelectItem>
                 <SelectItem value="seller">Vendedor</SelectItem>
+                <SelectItem value="leadly_employee">Funcionário Leadly</SelectItem>
               </SelectContent>
             </Select>
           </div>
