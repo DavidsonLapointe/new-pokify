@@ -28,9 +28,11 @@ export const availableRoutePermissions: RoutePermission[] = [
     path: "/organization/dashboard",
     tabs: [
       { id: "leads", label: "Leads", value: "leads" },
-      { id: "sellers", label: "Vendedores", value: "sellers" },
+      { id: "calls", label: "Uploads", value: "calls" },
+      { id: "performance", label: "Performance Vendedores", value: "sellers" },
       { id: "objections", label: "Objeções", value: "objections" },
-      { id: "suggestions", label: "Sugestões", value: "suggestions" }
+      { id: "suggestions", label: "Sugestões", value: "suggestions" },
+      { id: "sellers-info", label: "Vendedores", value: "sellers-info" }
     ]
   },
   {
@@ -62,6 +64,6 @@ export const availableRoutePermissions: RoutePermission[] = [
 
 // Atualiza a interface User para incluir o novo formato de permissões
 export interface UserRoutePermissions {
-  routes: string[]; // Array com os IDs das rotas permitidas
+  routes: string[]; // Array com os IDs das rotas permitidas 
   tabs: { [routeId: string]: string[] }; // Mapa de routeId para array de tabIds permitidos
 }
