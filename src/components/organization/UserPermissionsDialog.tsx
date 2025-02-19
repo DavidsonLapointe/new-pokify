@@ -56,14 +56,24 @@ export const UserPermissionsDialog = ({
           }
         });
 
-      // Adiciona tabs válidas para rotas que o usuário já tem acesso
+      // Para o dashboard, se o usuário tem acesso, adiciona todas as tabs
+      if (initialPermissions["dashboard"]) {
+        const dashboardRoute = availableRoutePermissions.find(r => r.id === "dashboard");
+        if (dashboardRoute?.tabs) {
+          initialPermissions["dashboard"] = dashboardRoute.tabs.map(tab => tab.value);
+        }
+      }
+
+      // Adiciona tabs válidas para outras rotas que o usuário já tem acesso
       Object.keys(initialPermissions).forEach(routeId => {
-        const route = availableRoutePermissions.find(r => r.id === routeId);
-        if (route?.tabs) {
-          const validTabs = route.tabs.map(tab => tab.value);
-          initialPermissions[routeId] = initialPermissions[routeId].filter(tab => 
-            validTabs.includes(tab)
-          );
+        if (routeId !== "dashboard") { // Pula o dashboard pois já foi tratado
+          const route = availableRoutePermissions.find(r => r.id === routeId);
+          if (route?.tabs) {
+            const validTabs = route.tabs.map(tab => tab.value);
+            initialPermissions[routeId] = initialPermissions[routeId].filter(tab => 
+              validTabs.includes(tab)
+            );
+          }
         }
       });
 
