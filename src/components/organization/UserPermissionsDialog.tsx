@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,19 +55,15 @@ export const UserPermissionsDialog = ({
           }
         });
 
-      // Para o dashboard, se o usuário tem acesso, adiciona todas as tabs
-      if (initialPermissions["dashboard"]) {
-        const dashboardRoute = availableRoutePermissions.find(r => r.id === "dashboard");
-        if (dashboardRoute?.tabs) {
-          initialPermissions["dashboard"] = dashboardRoute.tabs.map(tab => tab.value);
-        }
-      }
-
-      // Adiciona tabs válidas para outras rotas que o usuário já tem acesso
+      // Para o dashboard e outras rotas que o usuário já tem acesso
       Object.keys(initialPermissions).forEach(routeId => {
-        if (routeId !== "dashboard") { // Pula o dashboard pois já foi tratado
-          const route = availableRoutePermissions.find(r => r.id === routeId);
-          if (route?.tabs) {
+        const route = availableRoutePermissions.find(r => r.id === routeId);
+        if (route?.tabs) {
+          // Para o dashboard, sempre inclui todas as tabs
+          if (routeId === "dashboard") {
+            initialPermissions[routeId] = route.tabs.map(tab => tab.value);
+          } else {
+            // Para outras rotas, mantém apenas as tabs válidas
             const validTabs = route.tabs.map(tab => tab.value);
             initialPermissions[routeId] = initialPermissions[routeId].filter(tab => 
               validTabs.includes(tab)
@@ -77,9 +72,17 @@ export const UserPermissionsDialog = ({
         }
       });
 
+      // Inicializa permissões padrão para rotas que o usuário já tem acesso
+      availableRoutePermissions.forEach(route => {
+        if (route.tabs && hasRoutePermission(route.id) && !initialPermissions[route.id]) {
+          initialPermissions[route.id] = route.tabs.map(tab => tab.value);
+        }
+      });
+
+      console.log("Initial permissions:", initialPermissions);
       setTempPermissions(initialPermissions);
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, hasRoutePermission]);
 
   const handlePermissionChange = (routeId: string) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
