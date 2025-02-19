@@ -18,8 +18,8 @@ export interface SuggestionsFiltersProps {
   setSubTypeFilter: (value: string) => void;
   statusFilter: string;
   setStatusFilter: (value: string) => void;
-  monthlySuggestionsDate: Date;
-  setMonthlySuggestionsDate: (date: Date) => void;
+  monthlySuggestionsDate: Date | null;
+  setMonthlySuggestionsDate: (date: Date | null) => void;
   monthlySuggestionsSeller: string;
   setMonthlySuggestionsSeller: (seller: string) => void;
   sellers: User[];

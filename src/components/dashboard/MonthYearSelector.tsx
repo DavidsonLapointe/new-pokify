@@ -9,14 +9,11 @@ import {
 import { format, subMonths, isValid } from "date-fns";
 
 interface MonthYearSelectorProps {
-  selectedDate: Date;
-  onDateChange: (date: Date) => void;
+  selectedDate: Date | null;
+  onDateChange: (date: Date | null) => void;
 }
 
 export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelectorProps) => {
-  // Garantir que temos uma data válida
-  const validDate = isValid(selectedDate) ? selectedDate : new Date();
-  
   // Gera os últimos 12 meses como opções
   const monthOptions = Array.from({ length: 12 }).map((_, index) => {
     const date = subMonths(new Date(), index);
@@ -27,18 +24,23 @@ export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelec
 
   return (
     <Select
-      value={format(validDate, "yyyy-MM")}
+      value={selectedDate ? format(selectedDate, "yyyy-MM") : "all"}
       onValueChange={(newValue) => {
-        const selectedOption = monthOptions.find(option => option.value === newValue);
-        if (selectedOption) {
-          onDateChange(selectedOption.date);
+        if (newValue === "all") {
+          onDateChange(null);
+        } else {
+          const selectedOption = monthOptions.find(option => option.value === newValue);
+          if (selectedOption) {
+            onDateChange(selectedOption.date);
+          }
         }
       }}
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger>
         <SelectValue placeholder="Selecione o mês/ano" />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value="all">Todos os meses</SelectItem>
         {monthOptions.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
