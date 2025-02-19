@@ -61,7 +61,8 @@ export const mockUsers: User[] = [
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      plan: ["view", "edit"]
+      plan: ["view", "edit"],
+      users: ["view", "edit", "delete"]  // Adicionado permissões de usuários
     },
     logs: [
       {
@@ -102,7 +103,8 @@ export const mockUsers: User[] = [
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      plan: ["view", "edit"]
+      plan: ["view", "edit"],
+      users: ["view", "edit", "delete"]  // Adicionado permissões de usuários
     },
     logs: [
       {
