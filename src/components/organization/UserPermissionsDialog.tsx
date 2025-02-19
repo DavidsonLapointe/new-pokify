@@ -30,22 +30,39 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
-  const { hasRoutePermission, hasTabPermission } = usePermissions(user);
+  const { hasRoutePermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
   const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (isOpen && user) {
-      // Clone as permissões existentes
-      const initialPermissions = { ...user.permissions };
+      // Inicializa com um objeto vazio
+      const initialPermissions: { [key: string]: string[] } = {};
       
-      // Garante que rotas padrão estejam presentes com suas tabs
+      // Adiciona as permissões padrão primeiro
       availableRoutePermissions
         .filter(route => route.isDefault)
         .forEach(route => {
           if (route.tabs) {
             initialPermissions[route.id] = route.tabs.map(tab => tab.value);
+          }
+        });
+      
+      // Adiciona as permissões do usuário, removendo as antigas que não existem mais
+      availableRoutePermissions
+        .filter(route => !route.isDefault)
+        .forEach(route => {
+          if (user.permissions?.[route.id]) {
+            // Filtra apenas as tabs válidas para a rota
+            const validTabs = route.tabs?.map(tab => tab.value) || [];
+            const userTabs = user.permissions[route.id].filter(tab => 
+              validTabs.includes(tab)
+            );
+            
+            if (userTabs.length > 0) {
+              initialPermissions[route.id] = userTabs;
+            }
           }
         });
       
@@ -97,9 +114,24 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
+      // Remove permissões antigas que não existem mais (como "calls")
+      const validPermissions: { [key: string]: string[] } = {};
+      
+      // Copia apenas as permissões para rotas que existem
+      Object.entries(tempPermissions).forEach(([routeId, tabs]) => {
+        const route = availableRoutePermissions.find(r => r.id === routeId);
+        if (route) {
+          const validTabs = route.tabs?.map(tab => tab.value) || [];
+          const filteredTabs = tabs.filter(tab => validTabs.includes(tab));
+          if (filteredTabs.length > 0) {
+            validPermissions[routeId] = filteredTabs;
+          }
+        }
+      });
+
       onUserUpdate({
         ...user,
-        permissions: tempPermissions,
+        permissions: validPermissions,
       });
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
