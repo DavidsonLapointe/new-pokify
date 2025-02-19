@@ -17,6 +17,23 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 
+const mockOrganization = {
+  id: 1,
+  name: "Tech Solutions Ltda",
+  nomeFantasia: "Tech Solutions",
+  plan: "enterprise",
+  users: mockUsers,
+  status: "active" as const,
+  integratedCRM: "HubSpot",
+  integratedLLM: "OpenAI",
+  email: "contato@techsolutions.com",
+  phone: "(11) 3333-3333",
+  cnpj: "12.345.678/0001-90",
+  adminName: "João Silva",
+  adminEmail: "joao@empresa.com",
+  createdAt: "2024-01-01T00:00:00.000Z",
+};
+
 const mockLoggedUser = {
   id: 2,
   name: "Maria Santos",
@@ -39,23 +56,8 @@ const mockLoggedUser = {
       action: "Acessou o sistema",
     },
   ],
-};
-
-const mockOrganization = {
-  id: 1,
-  name: "Tech Solutions Ltda",
-  nomeFantasia: "Tech Solutions",
-  plan: "enterprise",
-  users: mockUsers,
-  status: "active" as const,
-  integratedCRM: "HubSpot",
-  integratedLLM: "OpenAI",
-  email: "contato@techsolutions.com",
-  phone: "(11) 3333-3333",
-  cnpj: "12.345.678/0001-90",
-  adminName: "João Silva",
-  adminEmail: "joao@empresa.com",
-  createdAt: "2024-01-01T00:00:00.000Z",
+  organization: mockOrganization,
+  avatar: "",
 };
 
 const OrganizationLeads = () => {
