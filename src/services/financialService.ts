@@ -1,11 +1,10 @@
-
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types/organization";
 import { updateOrganizationStatus } from "./organizationService";
 
 export const createProRataTitle = (organization: Organization, proRataValue: number): FinancialTitle => {
   const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 3); // Due in 3 days
+  dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
 
   return {
     id: Math.random().toString(36).substring(7),
@@ -13,8 +12,6 @@ export const createProRataTitle = (organization: Organization, proRataValue: num
     organizationName: organization.name,
     type: "pro_rata",
     value: proRataValue,
-    amount: proRataValue, // Amount is the same as value
-    description: `Pro Rata - ${organization.name}`,
     dueDate: dueDate.toISOString(),
     status: "pending",
     createdAt: new Date().toISOString(),
@@ -22,19 +19,17 @@ export const createProRataTitle = (organization: Organization, proRataValue: num
 };
 
 export const generateMonthlyTitles = async () => {
-  // In production, this would be a scheduled job to run every 1st day of the month
-  const activeOrganizations: Organization[] = []; // Fetch active organizations
+  // Em produção, isso seria um job agendado para rodar todo dia 1
+  const activeOrganizations: Organization[] = []; // Buscar organizações ativas
   const dueDate = new Date();
-  dueDate.setDate(5); // Due on the 5th
+  dueDate.setDate(5); // Vencimento dia 5
 
   const titles: FinancialTitle[] = activeOrganizations.map(org => ({
     id: Math.random().toString(36).substring(7),
     organizationId: org.id,
     organizationName: org.name,
     type: "mensalidade",
-    value: 500, // Organization's plan value
-    amount: 500, // Same as value
-    description: `Mensalidade ${org.name} - ${new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}`,
+    value: 500, // Valor do plano da organização
     dueDate: dueDate.toISOString(),
     status: "pending",
     referenceMonth: new Date().toISOString().substring(0, 7),

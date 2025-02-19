@@ -1,3 +1,4 @@
+
 export type UserRole = "leadly_employee" | "company_admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
@@ -19,10 +20,7 @@ export interface User {
   createdAt: string;
   lastAccess: string;
   permissions: {
-    menuAccess: {
-      [key: string]: boolean;
-    };
-    [key: string]: any;
+    [key: string]: string[];
   };
   logs: UserLog[];
 }
@@ -57,15 +55,10 @@ export const mockUsers: User[] = [
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-15T14:30:00.000Z",
     permissions: {
-      menuAccess: {
-        dashboard: true,
-        calls: true,
-        leads: true,
-        integrations: true,
-        settings: true,
-        plan: true,
-        profile: true,
-      }
+      dashboard: ["view", "export"],
+      calls: ["view", "upload", "delete"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {
@@ -90,15 +83,10 @@ export const mockUsers: User[] = [
     createdAt: "2024-02-01T00:00:00.000Z",
     lastAccess: "2024-03-15T13:00:00.000Z",
     permissions: {
-      menuAccess: {
-        dashboard: true,
-        calls: true,
-        leads: true,
-        integrations: false,
-        settings: false,
-        plan: true,
-        profile: true,
-      }
+      dashboard: ["view"],
+      calls: ["view", "upload"],
+      leads: ["view", "edit"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {
@@ -118,15 +106,10 @@ export const mockUsers: User[] = [
     createdAt: "2024-01-15T00:00:00.000Z",
     lastAccess: "2024-02-28T16:45:00.000Z",
     permissions: {
-      menuAccess: {
-        dashboard: true,
-        calls: true,
-        leads: true,
-        integrations: false,
-        settings: false,
-        plan: true,
-        profile: true,
-      }
+      dashboard: ["view", "export"],
+      calls: ["view", "upload", "delete"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {

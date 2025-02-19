@@ -5,7 +5,7 @@ const firstNames = ["Carlos", "Ana", "João", "Maria", "Pedro", "Julia", "Lucas"
 const lastNames = ["Silva", "Santos", "Oliveira", "Pereira", "Rodrigues", "Lima", "Costa", "Ferreira", "Almeida", "Souza"];
 const companies = ["Tech Solutions", "Inovação Digital", "Empresa XYZ", "Comércio ABC", "Indústria 123"];
 
-// Base template for a call
+// Base template para uma chamada
 const baseCall: Partial<Call> = {
   duration: "2:35",
   status: "success",
@@ -27,12 +27,13 @@ const baseCall: Partial<Call> = {
       phone: "(11) 98765-4321",
       company: "Empresa XYZ Ltda",
       position: "Diretor Comercial",
+      budget: "R$ 5.000 - R$ 10.000 / mês",
       interests: ["Gestão de Vendas", "Automação", "Relatórios"],
       painPoints: [
         "Dificuldade em acompanhar performance dos vendedores",
         "Perda de oportunidades por falta de follow-up",
       ],
-      nextSteps: "Agendar demonstração técnica"
+      nextSteps: "Agendar demonstração técnica",
     },
   },
   crmInfo: {
@@ -41,7 +42,7 @@ const baseCall: Partial<Call> = {
   }
 };
 
-// Function to generate a new call with unique data
+// Função para gerar uma nova chamada com dados únicos
 const generateCall = (id: string, leadId: string, date: Date): Call => {
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
@@ -68,10 +69,12 @@ const generateCall = (id: string, leadId: string, date: Date): Call => {
   } as Call;
 };
 
-// Generate mock calls
+// Gerar 18 leads com chamadas
 export const mockCalls: Call[] = Array.from({ length: 18 }).map((_, index) => {
   const leadId = `lead_${index + 1}`;
   const date = new Date();
-  date.setDate(date.getDate() - Math.floor(Math.random() * 30)); // Last 30 days
+  date.setDate(date.getDate() - Math.floor(Math.random() * 30)); // Últimos 30 dias
+  
   return generateCall(`call_${index + 1}`, leadId, date);
 });
+

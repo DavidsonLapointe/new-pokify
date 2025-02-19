@@ -8,9 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { User } from "@/types/organization";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { User, availablePermissions } from "@/types/organization";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -18,17 +17,6 @@ interface UserPermissionsDialogProps {
   user: User | null;
   onUserUpdate: (user: User) => void;
 }
-
-// Definição das funções do menu lateral
-const menuFunctions = [
-  { id: "dashboard", label: "Dashboard", icon: "BarChart3" },
-  { id: "leads", label: "Análise de Leads", icon: "Headphones" },
-  { id: "users", label: "Usuários", icon: "Users", adminOnly: true },
-  { id: "integrations", label: "Integrações", icon: "Network", adminOnly: true },
-  { id: "settings", label: "Configurações", icon: "Settings", adminOnly: true },
-  { id: "plan", label: "Meu Plano", icon: "CreditCard" },
-  { id: "profile", label: "Meu Perfil", icon: "UserCircle", alwaysEnabled: true }
-];
 
 export const UserPermissionsDialog = ({
   isOpen,
@@ -38,61 +26,48 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
-  const handlePermissionChange = (functionId: string, checked: boolean) => {
-    // Não permite alteração se for a função "Meu Perfil"
-    if (functionId === "profile") return;
-
-    const updatedPermissions = {
-      ...user.permissions,
-      menuAccess: {
-        ...user.permissions.menuAccess,
-        [functionId]: checked
-      }
-    };
+  const handlePermissionChange = (module: string, permission: string) => {
+    const currentPermissions = user.permissions[module] || [];
+    const updatedPermissions = currentPermissions.includes(permission)
+      ? currentPermissions.filter((p) => p !== permission)
+      : [...currentPermissions, permission];
 
     onUserUpdate({
       ...user,
-      permissions: updatedPermissions
+      permissions: {
+        ...user.permissions,
+        [module]: updatedPermissions,
+      },
     });
-  };
-
-  const handleSave = () => {
-    toast.success("Permissões atualizadas com sucesso!");
-    onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Permissões do Usuário</DialogTitle>
           <DialogDescription>
-            Configure as funções que {user.name} poderá acessar
+            Gerencie as permissões de acesso para {user.name}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          {menuFunctions.map((menuItem) => (
-            <div key={menuItem.id} className="flex items-center space-x-3">
-              <Checkbox
-                id={menuItem.id}
-                checked={menuItem.alwaysEnabled || user.permissions?.menuAccess?.[menuItem.id]}
-                onCheckedChange={(checked) => handlePermissionChange(menuItem.id, checked as boolean)}
-                disabled={menuItem.alwaysEnabled || (menuItem.adminOnly && user.role !== "company_admin")}
-              />
-              <label
-                htmlFor={menuItem.id}
-                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-                  menuItem.alwaysEnabled ? "text-primary" : ""
-                }`}
-              >
-                {menuItem.label}
-                {menuItem.alwaysEnabled && (
-                  <span className="ml-2 text-xs text-muted-foreground">(Sempre ativo)</span>
-                )}
-                {menuItem.adminOnly && user.role !== "company_admin" && (
-                  <span className="ml-2 text-xs text-muted-foreground">(Apenas administradores)</span>
-                )}
-              </label>
+        <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
+          {Object.entries(availablePermissions).map(([module, { label, permissions }]) => (
+            <div key={module} className="space-y-4">
+              <h3 className="font-medium text-lg border-b pb-2">{label}</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(permissions).map(([key, description]) => (
+                  <div key={key} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`${module}-${key}`}
+                      checked={user.permissions[module]?.includes(key)}
+                      onChange={() => handlePermissionChange(module, key)}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <Label htmlFor={`${module}-${key}`}>{description}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -100,7 +75,7 @@ export const UserPermissionsDialog = ({
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave}>Salvar</Button>
+          <Button onClick={onClose}>Salvar Permissões</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

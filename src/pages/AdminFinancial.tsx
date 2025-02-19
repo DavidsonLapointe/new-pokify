@@ -19,8 +19,6 @@ const AdminFinancial = () => {
       organizationCNPJ: "12.345.678/0001-90",
       type: "mensalidade",
       value: 1000,
-      amount: 1000,
-      description: "Mensalidade Plano Professional",
       dueDate: "2024-03-25",
       status: "pending",
       referenceMonth: "2024-03-01",
@@ -34,8 +32,6 @@ const AdminFinancial = () => {
       organizationCNPJ: "98.765.432/0001-10",
       type: "pro_rata",
       value: 500,
-      amount: 500,
-      description: "Pro Rata Plano Professional",
       dueDate: "2024-03-20",
       status: "overdue",
       createdAt: "2024-03-01",
@@ -71,7 +67,7 @@ const AdminFinancial = () => {
     setFilteredTitles(filtered);
   };
 
-  // Initialize titles when component mounts
+  // Inicializa os títulos ao montar o componente
   useState(() => {
     setFilteredTitles(mockTitles);
   });
@@ -81,26 +77,7 @@ const AdminFinancial = () => {
       <div className="space-y-6">
         <FinancialHeader />
         <FinancialFilters onSearch={handleSearch} />
-        <FinancialTitlesTable 
-          titles={filteredTitles}
-          organization={{
-            id: 1,
-            name: "Organization",
-            nomeFantasia: "Organization Ltda",
-            status: "active",
-            plan: "professional",
-            users: [],
-            pendingReason: null,
-            integratedCRM: null,
-            integratedLLM: null,
-            email: "contact@organization.com",
-            phone: "(11) 1234-5678",
-            cnpj: "12.345.678/0001-90",
-            adminName: "John Doe",
-            adminEmail: "john@organization.com",
-            createdAt: new Date().toISOString(),
-          }}
-        />
+        <FinancialTitlesTable titles={filteredTitles} />
       </div>
     </AdminLayout>
   );

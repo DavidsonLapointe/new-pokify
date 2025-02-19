@@ -1,5 +1,5 @@
 
-import { OrganizationLayout } from "@/components/OrganizationLayout";
+import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";

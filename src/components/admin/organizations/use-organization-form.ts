@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -38,17 +37,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         status: "pending",
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
-        permissions: {
-          menuAccess: {
-            dashboard: true,
-            calls: true,
-            leads: true,
-            integrations: true,
-            settings: true,
-            plan: true,
-            profile: true
-          }
-        },
+        permissions: { integrations: ["view", "edit"] },
         logs: []
       }],
       status: "pending",

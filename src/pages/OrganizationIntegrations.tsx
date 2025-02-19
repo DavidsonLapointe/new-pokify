@@ -1,6 +1,6 @@
 
 import { Building2, BrainCircuit, Network } from "lucide-react";
-import { OrganizationLayout } from "@/components/OrganizationLayout";
+import OrganizationLayout from "@/components/OrganizationLayout";
 import { mockAvailableIntegrations, getIntegrationDescription } from "@/constants/integrations";
 import { Integration } from "@/types/integration";
 import { useState } from "react";

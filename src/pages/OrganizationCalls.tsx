@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { OrganizationLayout } from "@/components/OrganizationLayout";
+
+import OrganizationLayout from "@/components/OrganizationLayout";
 
 const OrganizationCalls = () => {
   return (

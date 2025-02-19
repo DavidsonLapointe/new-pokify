@@ -12,10 +12,8 @@ export interface FinancialTitle {
   value: number;
   dueDate: string;
   status: TitleStatus;
-  referenceMonth?: string;
+  referenceMonth?: string; // Para títulos do tipo mensalidade
   paymentDate?: string;
   paymentMethod?: "pix" | "boleto";
   createdAt: string;
-  description: string;
-  amount: number;
 }
