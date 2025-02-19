@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
@@ -25,6 +26,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const { hasRoutePermission } = usePermissions(mockLoggedUser);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,45 +50,53 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   };
 
   const getMenuItems = () => {
-    const menuItems = [
+    const allMenuItems = [
       {
         icon: BarChart3,
         label: "Dashboard",
         path: "/organization/dashboard",
+        permissionId: "dashboard"
       },
       { 
         icon: Headphones, 
         label: "Análise de Leads", 
-        path: "/organization/leads"
+        path: "/organization/leads",
+        permissionId: "leads"
       },
       { 
         icon: Users, 
         label: "Usuários", 
-        path: "/organization/users" 
+        path: "/organization/users",
+        permissionId: "users"
       },
       {
         icon: Network,
         label: "Integrações",
         path: "/organization/integrations",
+        permissionId: "integrations"
       },
       {
         icon: Settings,
         label: "Configurações",
         path: "/organization/settings",
+        permissionId: "settings"
       },
       {
         icon: CreditCard,
         label: "Meu Plano",
         path: "/organization/plan",
+        permissionId: "plan"
       },
       {
         icon: UserCircle,
         label: "Meu Perfil",
         path: "/organization/profile",
+        permissionId: "profile"
       },
     ];
 
-    return menuItems;
+    // Filtra apenas os itens do menu que o usuário tem permissão para acessar
+    return allMenuItems.filter(item => hasRoutePermission(item.permissionId));
   };
 
   const menuItems = getMenuItems();
@@ -162,3 +172,4 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 };
 
 export default OrganizationLayout;
+
