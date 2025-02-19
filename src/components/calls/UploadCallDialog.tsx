@@ -128,7 +128,7 @@ export const UploadCallDialog = ({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Upload de Chamada - {getLeadName()}</DialogTitle>
+            <DialogTitle>Upload de Arquivo {getLeadName() ? `- ${getLeadName()}` : ''}</DialogTitle>
             <DialogDescription>
               Faça o upload do arquivo de áudio ou vídeo da chamada para processamento.
             </DialogDescription>
@@ -155,15 +155,17 @@ export const UploadCallDialog = ({
 
             <div className="flex justify-end gap-3">
               <Button
-                variant="outline"
+                variant="default"
                 onClick={handleCancel}
                 disabled={isUploading}
+                className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]"
               >
                 Cancelar
               </Button>
               <Button
                 onClick={handleProcess}
                 disabled={!file || isUploading}
+                className="bg-primary text-white hover:bg-primary/90"
               >
                 {isUploading ? (
                   <>
