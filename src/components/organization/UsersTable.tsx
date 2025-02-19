@@ -92,7 +92,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
               <TableCell>
                 <Button
                   variant="ghost"
-                  className="px-2 font-medium"
+                  className="px-2 font-medium text-primary hover:text-primary/90"
                   onClick={() => handleViewLogs(user)}
                 >
                   {getUniqueDaysCount(user.logs)} dias
