@@ -40,25 +40,33 @@ export const UserPermissionsDialog = ({
     const route = availableRoutePermissions.find(r => r.id === routeId);
     if (route?.isDefault) return; // Não permite alterar rotas padrão
 
-    const currentPermissions = tempPermissions[routeId] || [];
-    const hasPermission = currentPermissions.includes("view");
-    
-    setTempPermissions(prev => ({
-      ...prev,
-      [routeId]: hasPermission ? [] : ["view"],
-    }));
+    setTempPermissions(prev => {
+      const newPermissions = { ...prev };
+      if (newPermissions[routeId]) {
+        delete newPermissions[routeId];
+      } else {
+        newPermissions[routeId] = ["view"];
+      }
+      return newPermissions;
+    });
   };
 
   const handleTabPermissionChange = (routeId: string, tabId: string) => {
-    const currentPermissions = tempPermissions[routeId] || [];
-    const updatedPermissions = currentPermissions.includes(tabId)
-      ? currentPermissions.filter((p) => p !== tabId)
-      : [...currentPermissions, tabId];
+    setTempPermissions(prev => {
+      const currentPermissions = [...(prev[routeId] || [])];
+      const tabIndex = currentPermissions.indexOf(tabId);
+      
+      if (tabIndex > -1) {
+        currentPermissions.splice(tabIndex, 1);
+      } else {
+        currentPermissions.push(tabId);
+      }
 
-    setTempPermissions(prev => ({
-      ...prev,
-      [routeId]: updatedPermissions,
-    }));
+      return {
+        ...prev,
+        [routeId]: currentPermissions
+      };
+    });
   };
 
   const handleSave = () => {
