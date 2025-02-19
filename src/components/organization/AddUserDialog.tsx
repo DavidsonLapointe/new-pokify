@@ -46,7 +46,17 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
     
     if (newUser.role === 'leadly_employee') {
       // Para funcionários Leadly, adiciona apenas permissões do ambiente administrativo
-      const adminRoutes = ['dashboard', 'integrations', 'plans', 'organizations', 'settings', 'prompt'];
+      const adminRoutes = [
+        'dashboard',
+        'integrations',
+        'plans',
+        'organizations',
+        'settings',
+        'prompt',
+        'companies',
+        'analysis_packages',
+        'financial'
+      ];
       availableRoutePermissions.forEach(route => {
         if (adminRoutes.includes(route.id)) {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
