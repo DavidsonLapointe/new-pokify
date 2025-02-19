@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -89,16 +88,6 @@ const OrganizationLeads = () => {
     confirmNewLead,
   } = useCallsPage();
 
-  const handleCreateLead = async (data: LeadFormData) => {
-    try {
-      const leadId = await createNewLead(data);
-      return leadId;
-    } catch (error) {
-      console.error("Erro ao criar lead:", error);
-      throw error;
-    }
-  };
-
   const {
     isUploadOpen,
     setIsUploadOpen,
@@ -109,7 +98,8 @@ const OrganizationLeads = () => {
     handleUploadSuccess,
     handleUploadCancel,
     handleLeadFound,
-  } = useLeadUpload(handleCreateLead, confirmNewLead);
+    handleCreateLead,
+  } = useLeadUpload(createNewLead, confirmNewLead);
 
   const monthStats = {
     total: mockCalls.length,

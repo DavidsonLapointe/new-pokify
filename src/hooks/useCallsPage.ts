@@ -5,6 +5,7 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { useMockData } from "./calls/useMockData";
 import { useCallsFilter } from "./calls/useCallsFilter";
 import { useLeadsManagement } from "./calls/useLeadsManagement";
+import { v4 as uuidv4 } from "uuid";
 
 export const useCallsPage = () => {
   const { generateMockData } = useMockData();
@@ -20,7 +21,6 @@ export const useCallsPage = () => {
   });
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
-  const [pendingLeadData, setPendingLeadData] = useState<LeadFormData | null>(null);
 
   const handlePlayAudio = useCallback((audioUrl: string) => {
     console.log(`Reproduzindo áudio: ${audioUrl}`);
@@ -47,14 +47,25 @@ export const useCallsPage = () => {
     }).format(date);
   }, []);
 
+  const createNewLead = useCallback(async (data: LeadFormData) => {
+    const leadId = uuidv4();
+    console.log("Criando novo lead:", { leadId, data });
+    return leadId;
+  }, []);
+
+  const confirmNewLead = useCallback((withUpload: boolean, newCall?: Call) => {
+    if (newCall) {
+      setLeads(prevLeads => {
+        const updatedLeads = [newCall, ...prevLeads];
+        console.log("Leads atualizados após confirmação:", updatedLeads);
+        return updatedLeads;
+      });
+    }
+  }, []);
+
   const { filterLeads, processCallsData } = useCallsFilter(leads, searchQuery);
   const filteredLeads = useMemo(() => filterLeads(), [leads, searchQuery]);
   const processedCalls = useMemo(() => processCallsData(filteredLeads), [filteredLeads]);
-
-  const { createNewLead, confirmNewLead, handleUploadSuccess } = useLeadsManagement(
-    setLeads,
-    setPendingLeadData
-  );
 
   return {
     searchQuery,
@@ -69,6 +80,5 @@ export const useCallsPage = () => {
     formatDate,
     createNewLead,
     confirmNewLead,
-    handleUploadSuccess,
   };
 };
