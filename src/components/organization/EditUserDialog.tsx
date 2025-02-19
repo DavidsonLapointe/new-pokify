@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -71,14 +72,14 @@ export const EditUserDialog = ({
             <Select
               value={user.role}
               onValueChange={(value) =>
-                onUserUpdate({ ...user, role: value as "company_admin" | "seller" })
+                onUserUpdate({ ...user, role: value as "admin" | "seller" })
               }
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="company_admin">Administrador</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
                 <SelectItem value="seller">Vendedor</SelectItem>
               </SelectContent>
             </Select>

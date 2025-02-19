@@ -1,3 +1,4 @@
+
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types/organization";
 import { updateOrganizationStatus } from "./organizationService";
@@ -56,7 +57,7 @@ export const handleTitlePayment = async (title: FinancialTitle, organization: Or
 
   // Se for pagamento pro rata, ativa a organização e o usuário admin
   if (title.type === "pro_rata") {
-    const adminUser = organization.users.find(user => user.role === "company_admin");
+    const adminUser = organization.users.find(user => user.role === "admin");
     if (adminUser) {
       adminUser.status = "active";
     }

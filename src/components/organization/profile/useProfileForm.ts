@@ -27,7 +27,7 @@ export const mockLoggedUser: User = {
   name: "João Silva",
   email: "joao.silva@empresa.com",
   phone: "(11) 99999-9999",
-  role: "company_admin",
+  role: "admin",
   status: "active",
   createdAt: "2024-01-01T00:00:00.000Z",
   lastAccess: "2024-03-15T14:30:00.000Z",

@@ -67,7 +67,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
               </TableCell>
               <TableCell>
                 <span className="capitalize">
-                  {user.role === "company_admin" ? "Administrador" : "Vendedor"}
+                  {user.role === "admin" ? "Administrador" : "Vendedor"}
                 </span>
               </TableCell>
               <TableCell>

@@ -1,3 +1,4 @@
+
 import { Organization } from "@/types/organization";
 import { createProRataTitle } from "./financialService";
 
@@ -9,7 +10,7 @@ export const updateOrganizationStatus = async (organizationId: number, newStatus
 
 export const sendInitialContract = async (organization: Organization) => {
   try {
-    const adminUser = organization.users.find(user => user.role === "company_admin");
+    const adminUser = organization.users.find(user => user.role === "admin");
     if (!adminUser) {
       throw new Error("Usuário admin não encontrado");
     }
