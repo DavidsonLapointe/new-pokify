@@ -26,7 +26,7 @@ const mockOrganization: Organization = {
       name: "Admin",
       email: "admin@example.com",
       phone: "(11) 99999-9999",
-      role: "admin",
+      role: "company_admin",
       status: "pending",
       createdAt: new Date().toISOString(),
       lastAccess: new Date().toISOString(),

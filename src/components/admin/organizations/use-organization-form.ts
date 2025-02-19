@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +33,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         name: values.adminName,
         email: values.adminEmail,
         phone: values.phone,
-        role: "admin",
+        role: "company_admin",
         status: "pending",
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
@@ -50,7 +49,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       cnpj: values.cnpj,
       adminName: values.adminName,
       adminEmail: values.adminEmail,
-      createdAt: new Date().toISOString(), // Adicionando createdAt
+      createdAt: new Date().toISOString(),
     };
 
     try {

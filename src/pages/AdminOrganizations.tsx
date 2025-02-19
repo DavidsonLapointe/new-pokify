@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -20,7 +19,7 @@ const mockOrganizations: Organization[] = [
         name: "Admin User 1",
         email: "admin1@tech.com",
         phone: "(11) 99999-9999",
-        role: "admin",
+        role: "company_admin",
         status: "active",
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
@@ -32,7 +31,7 @@ const mockOrganizations: Organization[] = [
         name: "Admin User 2",
         email: "admin2@tech.com",
         phone: "(11) 99999-9998",
-        role: "admin",
+        role: "company_admin",
         status: "inactive",
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
@@ -73,7 +72,7 @@ const mockOrganizations: Organization[] = [
         name: "Admin User 3",
         email: "admin3@vendas.com",
         phone: "(11) 99999-9996",
-        role: "admin",
+        role: "company_admin",
         status: "active",
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",
@@ -114,7 +113,7 @@ const mockOrganizations: Organization[] = [
         name: "Admin User 4",
         email: "admin4@global.com",
         phone: "(11) 99999-9994",
-        role: "admin",
+        role: "company_admin",
         status: "active",
         createdAt: "2024-01-01T00:00:00.000Z",
         lastAccess: "2024-03-15T14:30:00.000Z",

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { Building2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
   }, []);
 
   const activeUsers = organization.users.filter(user => user.status === "active");
-  const activeAdmins = activeUsers.filter(user => user.role === "admin").length;
+  const activeAdmins = activeUsers.filter(user => user.role === "company_admin").length;
   const activeSellers = activeUsers.filter(user => user.role === "seller").length;
 
   const getPendingReason = (reason?: string | null) => {
