@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -30,11 +29,14 @@ export const useOrganizationForm = (onSuccess: () => void) => {
     
     // Para cada rota disponível, adiciona todas as suas tabs como permissões
     availableRoutePermissions.forEach(route => {
-      // Exclui rotas administrativas e a rota 'calls' que foi removida
-      if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt', 'calls'].includes(route.id)) {
+      // Exclui rotas administrativas
+      if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
         adminPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
       }
     });
+
+    // Adiciona explicitamente as permissões de usuários para o admin inicial
+    adminPermissions.users = ['view', 'edit', 'delete'];
 
     const newOrganization: Organization = {
       id: Math.random(),

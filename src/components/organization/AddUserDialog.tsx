@@ -65,11 +65,12 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
       // Para administradores, adiciona todas as funções do ambiente empresa
       availableRoutePermissions.forEach(route => {
         // Adiciona todas as rotas exceto as do ambiente administrativo
-        // E exceto 'calls' que foi removida
-        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt', 'calls'].includes(route.id)) {
+        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
         }
       });
+      // Adiciona explicitamente as permissões de usuários para admins
+      userPermissions.users = ['view', 'edit', 'delete'];
     } else if (newUser.role === 'seller') {
       // Para sellers, adiciona permissões básicas
       const sellerRoutes = {
