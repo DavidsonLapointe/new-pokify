@@ -32,41 +32,42 @@ export const UserPermissionsDialog = ({
 
   const { hasRoutePermission, hasTabPermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
+  const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>(
+    user.permissions || {}
+  );
 
   const handlePermissionChange = (routeId: string) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
     if (route?.isDefault) return; // Não permite alterar rotas padrão
 
-    const currentPermissions = user.permissions[routeId] || [];
+    const currentPermissions = tempPermissions[routeId] || [];
     const hasPermission = currentPermissions.includes("view");
     
-    onUserUpdate({
-      ...user,
-      permissions: {
-        ...user.permissions,
-        [routeId]: hasPermission ? [] : ["view"],
-      },
-    });
+    setTempPermissions(prev => ({
+      ...prev,
+      [routeId]: hasPermission ? [] : ["view"],
+    }));
   };
 
   const handleTabPermissionChange = (routeId: string, tabId: string) => {
-    const currentPermissions = user.permissions[routeId] || [];
+    const currentPermissions = tempPermissions[routeId] || [];
     const updatedPermissions = currentPermissions.includes(tabId)
       ? currentPermissions.filter((p) => p !== tabId)
       : [...currentPermissions, tabId];
 
-    onUserUpdate({
-      ...user,
-      permissions: {
-        ...user.permissions,
-        [routeId]: updatedPermissions,
-      },
-    });
+    setTempPermissions(prev => ({
+      ...prev,
+      [routeId]: updatedPermissions,
+    }));
   };
 
   const handleSave = () => {
     setSaving(true);
     try {
+      onUserUpdate({
+        ...user,
+        permissions: tempPermissions,
+      });
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
     } catch (error) {
@@ -76,9 +77,14 @@ export const UserPermissionsDialog = ({
     }
   };
 
+  const handleClose = () => {
+    setTempPermissions(user.permissions || {}); // Reset das permissões temporárias
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-3xl" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Permissões do Usuário</DialogTitle>
           <DialogDescription>
@@ -92,7 +98,7 @@ export const UserPermissionsDialog = ({
                 <input
                   type="checkbox"
                   id={route.id}
-                  checked={route.isDefault || hasRoutePermission(route.id)}
+                  checked={route.isDefault || Object.keys(tempPermissions).includes(route.id)}
                   onChange={() => !route.isDefault && handlePermissionChange(route.id)}
                   disabled={route.isDefault}
                   className="h-4 w-4 rounded border-gray-300"
@@ -102,14 +108,14 @@ export const UserPermissionsDialog = ({
                 </Label>
               </div>
 
-              {route.tabs && hasRoutePermission(route.id) && (
+              {route.tabs && Object.keys(tempPermissions).includes(route.id) && (
                 <div className="ml-8 grid grid-cols-2 gap-4">
                   {route.tabs.map((tab) => (
                     <div key={tab.id} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         id={`${route.id}-${tab.id}`}
-                        checked={hasTabPermission(route.id, tab.id)}
+                        checked={(tempPermissions[route.id] || []).includes(tab.id)}
                         onChange={() => handleTabPermissionChange(route.id, tab.id)}
                         className="h-4 w-4 rounded border-gray-300"
                       />
@@ -122,7 +128,7 @@ export const UserPermissionsDialog = ({
           ))}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={saving}>
+          <Button variant="outline" onClick={handleClose} disabled={saving}>
             Cancelar
           </Button>
           <Button onClick={handleSave} disabled={saving}>
