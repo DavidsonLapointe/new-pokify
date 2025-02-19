@@ -39,6 +39,7 @@ export function CreateLeadDialog({
 }: CreateLeadDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [showSuccessCard, setShowSuccessCard] = useState(false);
+  const [leadName, setLeadName] = useState("");
 
   const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledIsOpen : uncontrolledOpen;
@@ -60,6 +61,10 @@ export function CreateLeadDialog({
     hasPhoneIntegration,
     hasEmailIntegration,
     onCreateLead: (data) => {
+      const name = data.personType === "pf" 
+        ? `${data.firstName} ${data.lastName || ""}`.trim()
+        : data.razaoSocial || "";
+      setLeadName(name);
       onCreateLead(data);
       setShowSuccessCard(true);
     },
@@ -119,7 +124,7 @@ export function CreateLeadDialog({
               </div>
               <CardTitle className="text-xl">Lead cadastrado com sucesso!</CardTitle>
               <CardDescription>
-                Que tal começar agora mesmo com o upload da primeira chamada?
+                Que tal começar agora mesmo com o upload do primeiro arquivo do lead {leadName}?
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4 pt-4">
@@ -128,7 +133,7 @@ export function CreateLeadDialog({
                 className="w-full max-w-sm bg-[#9b87f5] text-white hover:bg-[#8b76f4]"
               >
                 <Upload className="w-4 h-4 mr-2" />
-                Fazer upload da primeira chamada
+                Fazer upload do primeiro arquivo
               </Button>
             </CardContent>
           </Card>
