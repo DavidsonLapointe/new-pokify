@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CallsHeader } from "@/components/calls/CallsHeader";
-import { Headphones, Upload, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
 import { Organization, User } from "@/types/organization";
@@ -41,33 +41,24 @@ export const LeadsPageHeader = ({
     }
   };
 
+  // Verifica se o usuário tem acesso às integrações
   const hasIntegrationsAccess = currentUser.permissions?.integrations?.includes("edit") || false;
 
+  // Filtra usuários ativos com acesso a integrações
   const integrationUsers = organization.users.filter(user => 
-    user.role === "admin" || 
+    user.role === "company_admin" || 
     (user.permissions?.integrations?.includes("edit") && user.status === "active")
   );
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Headphones className="h-6 w-6 text-muted-foreground" />
-          <CallsHeader 
-            title="Análise de Leads"
-            description="Visualize e gerencie todos os leads e suas chamadas"
-          />
-        </div>
+        <CallsHeader 
+          title="Análise de Leads"
+          description="Visualize e gerencie todos os seus leads."
+        />
 
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={onUploadClick}
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Upload
-          </Button>
-
           <Button onClick={handleNewLeadClick}>
             <UserPlus className="w-4 h-4 mr-2" />
             Novo Lead

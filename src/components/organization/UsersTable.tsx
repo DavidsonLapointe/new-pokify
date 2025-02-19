@@ -70,7 +70,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
               </TableCell>
               <TableCell>
                 <span className="capitalize">
-                  {user.role === "admin" ? "Administrador" : "Vendedor"}
+                  {user.role === "company_admin" ? "Administrador" : "Vendedor"}
                 </span>
               </TableCell>
               <TableCell>
@@ -136,3 +136,4 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     </div>
   );
 };
+
