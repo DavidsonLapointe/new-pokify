@@ -8,6 +8,7 @@ import { UserPermissionsDialog } from "@/components/organization/UserPermissions
 import { mockUsers } from "@/types/organization";
 import type { User } from "@/types/organization";
 import { toast } from "sonner";
+import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
 
 const OrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>(mockUsers);
@@ -45,6 +46,18 @@ const OrganizationUsers = () => {
         user.id === updatedUser.id ? updatedUser : user
       )
     );
+
+    // Se o usuário atualizado for o usuário logado, atualiza o localStorage
+    if (updatedUser.id === mockLoggedUser.id) {
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify({
+        ...currentUser,
+        permissions: updatedUser.permissions
+      }));
+      // Força o recarregamento da página para atualizar o menu
+      window.location.reload();
+    }
+
     setPermissionsDialogOpen(false);
     toast.success("Permissões atualizadas com sucesso!");
   };
