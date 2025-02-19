@@ -1,4 +1,3 @@
-
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Integration } from "@/types/integration";
 import { Call } from "@/types/calls";
@@ -102,7 +101,6 @@ export const syncLeadWithCRM = async (
   funnelConfig: CRMFunnelConfig
 ): Promise<CRMIntegrationResponse> => {
   try {
-    // Primeiro, verifica se o lead já existe
     const existingLead = await checkLeadExistsInCRM(integration, leadData);
 
     if (existingLead.exists) {
@@ -113,7 +111,6 @@ export const syncLeadWithCRM = async (
       };
     }
 
-    // Se não existe, cria o lead no CRM com o funil e etapa configurados
     console.log("Lead não encontrado no CRM, criando novo registro");
     console.log("Usando configurações de funil:", funnelConfig);
     
@@ -146,7 +143,6 @@ const createLeadInHubspot = async (
     ...leadData
   });
   
-  // Aqui implementaremos a chamada real à API do HubSpot
   return {
     success: true,
     leadId: "hubspot_" + Date.now()
@@ -165,7 +161,6 @@ const createLeadInSalesforce = async (
     ...leadData
   });
   
-  // Aqui implementaremos a chamada real à API do Salesforce
   return {
     success: true,
     leadId: "salesforce_" + Date.now()
@@ -178,18 +173,15 @@ export const syncCallWithCRM = async (
   funnelConfig: CRMFunnelConfig
 ): Promise<CRMIntegrationResponse> => {
   try {
-    // Converte os dados do call para o formato do lead
     const leadData: LeadFormData = {
       personType: call.leadInfo.personType,
       firstName: call.leadInfo.firstName,
       lastName: call.leadInfo.lastName || "",
       email: call.leadInfo.email || "",
       phone: call.leadInfo.phone || "",
-      company: call.leadInfo.company,
-      position: call.leadInfo.position,
+      razaoSocial: call.leadInfo.razaoSocial || "",
     };
 
-    // Sincroniza com o CRM
     return await syncLeadWithCRM(integration, leadData, funnelConfig);
   } catch (error) {
     console.error("Erro ao sincronizar chamada com CRM:", error);

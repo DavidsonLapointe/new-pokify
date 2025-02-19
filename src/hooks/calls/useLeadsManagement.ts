@@ -1,3 +1,4 @@
+
 import { Call } from "@/types/calls";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { v4 as uuidv4 } from "uuid";
@@ -33,9 +34,7 @@ export const useLeadsManagement = (
       );
       
       if (!syncResult.success) {
-        toast.error("Erro na sincronização com CRM", {
-          description: syncResult.error
-        });
+        toast.error("Erro na sincronização com CRM: " + syncResult.error);
       } else if (syncResult.leadId) {
         console.log("Lead sincronizado com CRM, ID:", syncResult.leadId);
       }
@@ -82,9 +81,7 @@ export const useLeadsManagement = (
       );
 
       if (!syncResult.success) {
-        toast.error("Erro ao sincronizar chamada com CRM", {
-          description: syncResult.error
-        });
+        toast.error("Erro ao sincronizar chamada com CRM: " + syncResult.error);
       }
     }
 
@@ -109,9 +106,7 @@ export const useLeadsManagement = (
       });
     });
 
-    toast.success("Upload realizado com sucesso", {
-      description: "A chamada foi adicionada ao histórico do lead."
-    });
+    toast.success("Upload e sincronização realizados com sucesso");
   };
 
   const confirmNewLead = (withUpload: boolean = false, newCall?: Call) => {
@@ -129,10 +124,7 @@ export const useLeadsManagement = (
       });
     }
 
-    toast({
-      title: "Lead atualizado com sucesso",
-      description: withUpload ? "Upload da chamada realizado com sucesso." : "Lead criado com sucesso.",
-    });
+    toast.success(withUpload ? "Upload da chamada realizado com sucesso" : "Lead criado com sucesso");
   };
 
   return { createNewLead, confirmNewLead, handleUploadSuccess };
