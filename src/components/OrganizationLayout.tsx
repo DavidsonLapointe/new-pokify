@@ -24,7 +24,7 @@ interface OrganizationLayoutProps {
 const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAdmin = mockLoggedUser.role === "admin";
+  const isAdmin = mockLoggedUser.role === "leadly_employee"; // Corrigido para usar o tipo correto
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useEffect(() => {

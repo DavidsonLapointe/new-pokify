@@ -12,6 +12,20 @@ export interface UserLog {
 export interface Organization {
   id: number;
   name: string;
+  nomeFantasia: string;
+  plan: string;
+  users: User[];
+  status: UserStatus;
+  pendingReason?: OrganizationPendingReason;
+  integratedCRM: string | null;
+  integratedLLM: string | null;
+  email: string;
+  phone: string;
+  cnpj: string;
+  adminName: string;
+  adminEmail: string;
+  contractSignedAt?: string;
+  createdAt: string;
 }
 
 export interface User {
@@ -29,25 +43,6 @@ export interface User {
   logs: UserLog[];
   organization: Organization;
   avatar: string;
-}
-
-export interface Organization {
-  id: number;
-  name: string;
-  nomeFantasia: string;
-  plan: string;
-  users: User[];
-  status: UserStatus;
-  pendingReason?: OrganizationPendingReason;
-  integratedCRM: string | null;
-  integratedLLM: string | null;
-  email: string;
-  phone: string;
-  cnpj: string;
-  adminName: string;
-  adminEmail: string;
-  contractSignedAt?: string;
-  createdAt: string;
 }
 
 export const mockUsers: User[] = [
@@ -82,6 +77,18 @@ export const mockUsers: User[] = [
     organization: {
       id: 1,
       name: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: "GPT-4",
+      email: "contato@techsolutions.com",
+      phone: "(11) 1234-5678",
+      cnpj: "12.345.678/0001-90",
+      adminName: "João Silva",
+      adminEmail: "joao@empresa.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
   {
@@ -110,6 +117,18 @@ export const mockUsers: User[] = [
     organization: {
       id: 2,
       name: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: "GPT-4",
+      email: "contato@techsolutions.com",
+      phone: "(11) 1234-5678",
+      cnpj: "12.345.678/0001-90",
+      adminName: "João Silva",
+      adminEmail: "joao@empresa.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
   {
@@ -138,6 +157,18 @@ export const mockUsers: User[] = [
     organization: {
       id: 3,
       name: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: "GPT-4",
+      email: "contato@techsolutions.com",
+      phone: "(11) 1234-5678",
+      cnpj: "12.345.678/0001-90",
+      adminName: "João Silva",
+      adminEmail: "joao@empresa.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
 ];

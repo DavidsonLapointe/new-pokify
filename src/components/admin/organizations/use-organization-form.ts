@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -38,7 +39,9 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),
         permissions: { integrations: ["view", "edit"] },
-        logs: []
+        logs: [],
+        organization: {} as Organization, // Será atualizado após a criação
+        avatar: "",
       }],
       status: "pending",
       pendingReason: "contract_signature",
