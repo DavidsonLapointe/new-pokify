@@ -56,8 +56,8 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableRow key={user.id}>
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <UserCircle className="w-5 h-5 text-muted-foreground" />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <div className="font-medium">{user.name}</div>
@@ -136,4 +136,3 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     </div>
   );
 };
-
