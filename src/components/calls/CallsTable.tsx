@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -12,7 +11,7 @@ import { EmptyLeadsState } from "./table/EmptyLeadsState";
 import { LeadsTableHeader } from "./table/LeadsTableHeader";
 import { LeadsTableRow } from "./table/LeadsTableRow";
 import { useLeadsData } from "./table/useLeadsData";
-import { Call } from "@/types/calls";
+import { Call, LeadInfo } from "@/types/calls";
 
 export const CallsTable = ({
   calls,
@@ -25,13 +24,20 @@ export const CallsTable = ({
   const [showCallsHistory, setShowCallsHistory] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
-  const [uploadLeadInfo, setUploadLeadInfo] = useState<Call["leadInfo"] | undefined>();
+  const [uploadLeadInfo, setUploadLeadInfo] = useState<LeadInfo | undefined>();
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
 
   const { leadsWithCalls, updateLeadCalls } = useLeadsData(calls);
 
   const handleShowCallHistory = (lead: LeadCalls) => {
-    console.log("Mostrando histórico para lead:", lead);
+    setUploadLeadInfo({
+      personType: lead.personType,
+      firstName: lead.firstName || "",
+      lastName: lead.lastName || "",
+      razaoSocial: lead.razaoSocial || "",
+      phone: lead.calls[0]?.phone || "",
+      email: lead.calls[0]?.leadInfo?.email || ""
+    });
     setSelectedLead(lead);
     setShowCallsHistory(true);
   };
@@ -43,7 +49,8 @@ export const CallsTable = ({
       firstName: lead.firstName,
       lastName: lead.lastName,
       razaoSocial: lead.razaoSocial,
-      phone: lead.calls[0]?.phone || ""
+      phone: lead.calls[0]?.phone || "",
+      email: lead.calls[0]?.leadInfo?.email || ""
     });
     setShowUpload(true);
   };
@@ -56,9 +63,6 @@ export const CallsTable = ({
     setUploadLeadId(null);
     setUploadLeadInfo(undefined);
   };
-
-  console.log("CallsTable - calls:", calls);
-  console.log("CallsTable - leadsWithCalls:", leadsWithCalls);
 
   if (!calls || calls.length === 0) {
     return (

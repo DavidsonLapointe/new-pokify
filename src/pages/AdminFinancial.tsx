@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { FinancialTitlesTable } from "@/components/admin/financial/FinancialTitlesTable";

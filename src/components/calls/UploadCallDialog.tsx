@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProcessingOverlay } from "./ProcessingOverlay";
-import { Call } from "@/types/calls";
-import { v4 as uuidv4 } from "uuid";
+import { Call, LeadInfo } from "@/types/calls";
 
 interface UploadCallDialogProps {
   leadId: string;
@@ -22,7 +20,7 @@ interface UploadCallDialogProps {
   onOpenChange: (open: boolean) => void;
   onUploadSuccess?: (call?: Call) => void;
   onCancel?: () => void;
-  leadInfo?: Call["leadInfo"];
+  leadInfo?: LeadInfo;
 }
 
 export const UploadCallDialog = ({
@@ -59,48 +57,31 @@ export const UploadCallDialog = ({
     }
   };
 
-  const handleCancel = () => {
-    if (!isUploading) {
-      onCancel?.();
-      onOpenChange(false);
-      setFile(null);
-    }
-  };
-
   const handleProcess = async () => {
-    if (!file) return;
+    if (!file || !leadInfo) return;
 
     setIsUploading(true);
     try {
-      // Simula o upload e processamento
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Cria o objeto da nova chamada
       const newCall: Call = {
-        id: uuidv4(),
+        id: Math.random().toString(),
         leadId,
         date: new Date().toISOString(),
         duration: "0:00",
-        status: "success" as const,
-        phone: leadInfo?.phone || "",
+        status: "success",
+        phone: leadInfo.phone,
         seller: "Sistema",
         audioUrl: URL.createObjectURL(file),
         mediaType: file.type.startsWith('video/') ? "video" : "audio",
-        leadInfo: leadInfo || {
-          personType: "pf",
-          firstName: "",
-          phone: ""
-        },
+        leadInfo: {
+          ...leadInfo,
+          email: leadInfo.email || ""  // Ensure email is provided
+        }
       };
-      
-      // Chama o callback de sucesso que vai atualizar o lead
+
       onUploadSuccess?.(newCall);
-      
-      // Fecha o modal e limpa o estado
       onOpenChange(false);
       setFile(null);
-      
-      // Mostra mensagem de sucesso
+
       toast({
         title: "Chamada processada com sucesso",
         description: "O arquivo foi processado e adicionado ao histórico do lead.",
@@ -122,7 +103,9 @@ export const UploadCallDialog = ({
         open={isOpen} 
         onOpenChange={(open) => {
           if (!open && !isUploading) {
-            handleCancel();
+            onCancel?.();
+            onOpenChange(false);
+            setFile(null);
           }
         }}
       >
@@ -156,7 +139,13 @@ export const UploadCallDialog = ({
             <div className="flex justify-end gap-3">
               <Button
                 variant="default"
-                onClick={handleCancel}
+                onClick={() => {
+                  if (!isUploading) {
+                    onCancel?.();
+                    onOpenChange(false);
+                    setFile(null);
+                  }
+                }}
                 disabled={isUploading}
                 className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]"
               >
