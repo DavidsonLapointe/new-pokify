@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { FinancialTitlesTable } from "@/components/admin/financial/FinancialTitlesTable";
@@ -18,6 +19,8 @@ const AdminFinancial = () => {
       organizationCNPJ: "12.345.678/0001-90",
       type: "mensalidade",
       value: 1000,
+      amount: 1000,
+      description: "Mensalidade Plano Professional",
       dueDate: "2024-03-25",
       status: "pending",
       referenceMonth: "2024-03-01",
@@ -31,6 +34,8 @@ const AdminFinancial = () => {
       organizationCNPJ: "98.765.432/0001-10",
       type: "pro_rata",
       value: 500,
+      amount: 500,
+      description: "Pro Rata Plano Professional",
       dueDate: "2024-03-20",
       status: "overdue",
       createdAt: "2024-03-01",
@@ -76,7 +81,18 @@ const AdminFinancial = () => {
       <div className="space-y-6">
         <FinancialHeader />
         <FinancialFilters onSearch={handleSearch} />
-        <FinancialTitlesTable titles={filteredTitles} />
+        <FinancialTitlesTable 
+          titles={filteredTitles}
+          organization={{
+            id: 1,
+            name: "Organization",
+            status: "active",
+            plan: "professional",
+            users: [],
+            pendingReason: null,
+            createdAt: new Date().toISOString(),
+          }}
+        />
       </div>
     </AdminLayout>
   );
