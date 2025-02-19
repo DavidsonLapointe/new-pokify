@@ -6,12 +6,13 @@ import { useMockData } from "./calls/useMockData";
 import { useCallsFilter } from "./calls/useCallsFilter";
 import { useLeadsManagement } from "./calls/useLeadsManagement";
 import { v4 as uuidv4 } from "uuid";
+import { LeadWithCalls } from "@/types/leads";
 
 export const useCallsPage = () => {
   const { generateMockData } = useMockData();
   const initialLeads = useMemo(() => generateMockData(), []);
   
-  const [leads, setLeads] = useState(initialLeads);
+  const [leads, setLeads] = useState<LeadWithCalls[]>(initialLeads);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [monthStats] = useState({
     total: 45,
@@ -56,7 +57,15 @@ export const useCallsPage = () => {
   const confirmNewLead = useCallback((withUpload: boolean, newCall?: Call) => {
     if (newCall) {
       setLeads(prevLeads => {
-        const updatedLeads = [newCall, ...prevLeads];
+        // Converter a chamada para o formato LeadWithCalls
+        const newLeadWithCalls: LeadWithCalls = {
+          id: newCall.leadId,
+          leadInfo: newCall.leadInfo,
+          calls: [newCall],
+          createdAt: newCall.date
+        };
+        
+        const updatedLeads = [newLeadWithCalls, ...prevLeads];
         console.log("Leads atualizados após confirmação:", updatedLeads);
         return updatedLeads;
       });
