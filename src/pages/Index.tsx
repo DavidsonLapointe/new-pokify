@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Clock, Database } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Database, Quote } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginModal from "@/components/auth/LoginModal";
@@ -25,6 +24,27 @@ const Index = () => {
       title: "Integração Total",
       description: "Funciona com seu CRM atual e ferramentas de chamada",
     },
+  ];
+
+  const testimonials = [
+    {
+      content: "A automatização das chamadas revolucionou nosso processo de vendas. Reduzimos o tempo de processamento em 75%.",
+      author: "Maria Silva",
+      role: "Gerente de Vendas",
+      company: "TechCorp Brasil"
+    },
+    {
+      content: "Desde que implementamos o Leadly, nossa equipe consegue focar mais em fechar negócios e menos em tarefas administrativas.",
+      author: "João Santos",
+      role: "Diretor Comercial",
+      company: "Inova Solutions"
+    },
+    {
+      content: "A precisão na extração de dados é impressionante. Não temos mais problemas com informações incorretas no CRM.",
+      author: "Ana Costa",
+      role: "SDR Leader",
+      company: "Global Sales"
+    }
   ];
 
   return (
@@ -158,6 +178,41 @@ const Index = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold">O que nossos clientes dizem</h2>
+            <p className="text-muted-foreground mt-2">
+              Empresas que transformaram seu processo de vendas com nossa solução
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <Quote className="h-8 w-8 text-blue-600 mb-4" />
+                <p className="text-gray-700 mb-6 italic">
+                  "{testimonial.content}"
+                </p>
+                <div className="border-t pt-4">
+                  <div className="font-semibold">{testimonial.author}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {testimonial.role}
+                  </div>
+                  <div className="text-sm text-blue-600">
+                    {testimonial.company}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
