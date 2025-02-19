@@ -30,11 +30,8 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     setLogsDialogOpen(true);
   };
 
-  const getUniqueDaysCount = (logs: User["logs"]) => {
-    const uniqueDays = new Set(
-      logs.map((log) => new Date(log.date).toDateString())
-    );
-    return uniqueDays.size;
+  const getLogsCount = (logs: User["logs"]) => {
+    return logs.length;
   };
 
   return (
@@ -95,7 +92,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                   className="px-2 font-medium text-primary hover:text-primary/90"
                   onClick={() => handleViewLogs(user)}
                 >
-                  {getUniqueDaysCount(user.logs)} dias
+                  {getLogsCount(user.logs)}
                 </Button>
               </TableCell>
               <TableCell>
