@@ -77,8 +77,10 @@ export function CreateLeadDialog({
 
   const handleUploadClick = () => {
     if (leadData && onUploadClick) {
-      handleClose(); // Fecha o modal atual antes de abrir o modal de upload
-      onUploadClick(leadData); // Chama a função de upload com os dados do lead
+      onUploadClick(leadData); // Primeiro chama a função de upload
+      setTimeout(() => {
+        handleClose(); // Fecha o modal atual depois que o modal de upload estiver aberto
+      }, 100);
     }
   };
 
