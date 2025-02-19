@@ -4,15 +4,20 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 
 export const usePermissions = (user: User) => {
   const hasRoutePermission = (routeId: string): boolean => {
-    // Verifica se é uma rota padrão (todos têm acesso)
-    const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (route?.isDefault) return true;
+    // Se não tem permissões definidas, não tem acesso (exceto para rotas padrão)
+    if (!user?.permissions) {
+      const route = availableRoutePermissions.find(r => r.id === routeId);
+      return route?.isDefault || false;
+    }
 
-    // Se não tem permissões definidas, não tem acesso
-    if (!user?.permissions) return false;
-
-    // Verifica se o usuário tem acesso à rota
-    return Object.keys(user.permissions).includes(routeId);
+    // Verifica explicitamente quais rotas o usuário tem permissão
+    const userPermissions = user.permissions || {};
+    
+    // Profile é uma rota padrão
+    if (routeId === 'profile') return true;
+    
+    // Para outras rotas, verifica se existe na lista de permissões do usuário
+    return routeId in userPermissions;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
@@ -23,26 +28,38 @@ export const usePermissions = (user: User) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
     if (!route?.tabs) return true;
 
+    // Para o perfil, permite acesso a todas as tabs
+    if (routeId === 'profile') return true;
+
     // Verifica se o usuário tem permissão específica para a tab
-    const permissions = user.permissions[routeId] || [];
+    const permissions = user.permissions?.[routeId] || [];
     return permissions.includes(tabValue);
   };
 
   const getUserPermissions = () => {
-    const routes = availableRoutePermissions
-      .filter(route => hasRoutePermission(route.id))
-      .map(route => route.id);
+    // Começa com a rota profile que é padrão
+    const routes = ['profile'];
+    
+    // Adiciona as outras rotas que o usuário tem permissão
+    if (user?.permissions) {
+      Object.keys(user.permissions).forEach(routeId => {
+        if (!routes.includes(routeId)) {
+          routes.push(routeId);
+        }
+      });
+    }
 
     const tabs: { [routeId: string]: string[] } = {};
     
-    availableRoutePermissions.forEach(route => {
-      if (route.tabs) {
+    routes.forEach(routeId => {
+      const route = availableRoutePermissions.find(r => r.id === routeId);
+      if (route?.tabs) {
         const allowedTabs = route.tabs
-          .filter(tab => hasTabPermission(route.id, tab.value))
+          .filter(tab => hasTabPermission(routeId, tab.value))
           .map(tab => tab.value);
         
         if (allowedTabs.length > 0) {
-          tabs[route.id] = allowedTabs;
+          tabs[routeId] = allowedTabs;
         }
       }
     });
@@ -56,4 +73,3 @@ export const usePermissions = (user: User) => {
     getUserPermissions
   };
 };
-
