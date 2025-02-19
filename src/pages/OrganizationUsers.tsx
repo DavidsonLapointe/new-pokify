@@ -41,21 +41,26 @@ const OrganizationUsers = () => {
   };
 
   const handlePermissionsUpdated = (updatedUser: User) => {
+    // Atualiza a lista de usuários
     setUsers((currentUsers) =>
       currentUsers.map((user) =>
         user.id === updatedUser.id ? updatedUser : user
       )
     );
 
-    // Se o usuário atualizado for o usuário logado, atualiza o localStorage
+    // Se o usuário atualizado for o usuário logado, atualiza o localStorage e força recarga
     if (updatedUser.id === mockLoggedUser.id) {
-      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      localStorage.setItem('user', JSON.stringify({
-        ...currentUser,
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedStoredUser = {
+        ...storedUser,
         permissions: updatedUser.permissions
-      }));
-      // Força o recarregamento da página para atualizar o menu
-      window.location.reload();
+      };
+      localStorage.setItem('user', JSON.stringify(updatedStoredUser));
+      
+      // Força recarga após um pequeno delay para garantir que o localStorage foi atualizado
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
 
     setPermissionsDialogOpen(false);
