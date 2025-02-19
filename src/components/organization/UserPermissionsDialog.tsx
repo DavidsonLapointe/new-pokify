@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,51 +37,45 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Inicializa mantendo as permissões existentes do usuário
-      const initialPermissions: { [key: string]: string[] } = { ...user.permissions };
+      // Filtra apenas as permissões que correspondem a rotas disponíveis
+      const validPermissions: { [key: string]: string[] } = {};
       
-      // Remove permissões que não existem mais (como "calls")
-      Object.keys(initialPermissions).forEach(routeId => {
-        if (!availableRoutePermissions.find(r => r.id === routeId)) {
-          delete initialPermissions[routeId];
-        }
-      });
-
-      // Garante que rotas padrão estejam presentes com suas tabs
-      availableRoutePermissions
-        .filter(route => route.isDefault)
-        .forEach(route => {
-          if (route.tabs) {
-            initialPermissions[route.id] = route.tabs.map(tab => tab.value);
-          }
-        });
-
-      // Para o dashboard e outras rotas que o usuário já tem acesso
-      Object.keys(initialPermissions).forEach(routeId => {
-        const route = availableRoutePermissions.find(r => r.id === routeId);
-        if (route?.tabs) {
-          // Para o dashboard, sempre inclui todas as tabs
-          if (routeId === "dashboard") {
-            initialPermissions[routeId] = route.tabs.map(tab => tab.value);
-          } else {
-            // Para outras rotas, mantém apenas as tabs válidas
-            const validTabs = route.tabs.map(tab => tab.value);
-            initialPermissions[routeId] = initialPermissions[routeId].filter(tab => 
-              validTabs.includes(tab)
-            );
-          }
-        }
-      });
-
-      // Inicializa permissões padrão para rotas que o usuário já tem acesso
+      // Adiciona apenas rotas que existem em availableRoutePermissions
       availableRoutePermissions.forEach(route => {
-        if (route.tabs && hasRoutePermission(route.id) && !initialPermissions[route.id]) {
-          initialPermissions[route.id] = route.tabs.map(tab => tab.value);
+        if (route.isDefault) {
+          // Rotas padrão sempre recebem todas as tabs
+          if (route.tabs) {
+            validPermissions[route.id] = route.tabs.map(tab => tab.value);
+          }
+        } else if (user.permissions[route.id]) {
+          // Para rotas não padrão, mantém apenas se o usuário já tem acesso
+          if (route.tabs) {
+            // Para o dashboard, sempre inclui todas as tabs se tiver acesso
+            if (route.id === "dashboard") {
+              validPermissions[route.id] = route.tabs.map(tab => tab.value);
+            } else {
+              // Para outras rotas, mantém apenas as tabs válidas
+              const validTabs = route.tabs.map(tab => tab.value);
+              const userTabs = user.permissions[route.id].filter(tab => validTabs.includes(tab));
+              if (userTabs.length > 0) {
+                validPermissions[route.id] = userTabs;
+              }
+            }
+          }
         }
       });
 
-      console.log("Initial permissions:", initialPermissions);
-      setTempPermissions(initialPermissions);
+      // Verifica se há rotas não padrão que o usuário tem acesso mas não estão nas permissões
+      availableRoutePermissions.forEach(route => {
+        if (!route.isDefault && !validPermissions[route.id] && hasRoutePermission(route.id)) {
+          if (route.tabs) {
+            validPermissions[route.id] = route.tabs.map(tab => tab.value);
+          }
+        }
+      });
+
+      console.log("Filtered permissions:", validPermissions);
+      setTempPermissions(validPermissions);
     }
   }, [isOpen, user, hasRoutePermission]);
 
@@ -91,15 +86,11 @@ export const UserPermissionsDialog = ({
     setTempPermissions(prev => {
       const newPermissions = { ...prev };
       
-      // Se já existe a rota, remove ela e suas tabs
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
-        // Se não existe, adiciona a rota com todas as suas tabs
         if (route?.tabs) {
           newPermissions[routeId] = route.tabs.map(tab => tab.value);
-        } else {
-          newPermissions[routeId] = ["view"];
         }
       }
       
@@ -119,7 +110,6 @@ export const UserPermissionsDialog = ({
         currentPermissions.push(tabValue);
       }
 
-      // Se não sobrou nenhuma permissão e não é uma rota padrão, remove a rota completamente
       if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
         delete newPermissions[routeId];
       } else {
@@ -133,38 +123,27 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
-      // Assegura que apenas permissões válidas sejam salvas
-      const validPermissions: { [key: string]: string[] } = {};
-      
-      Object.entries(tempPermissions).forEach(([routeId, tabs]) => {
-        const route = availableRoutePermissions.find(r => r.id === routeId);
-        if (route) {
-          const validTabs = route.tabs?.map(tab => tab.value) || [];
-          const filteredTabs = tabs.filter(tab => validTabs.includes(tab));
-          if (filteredTabs.length > 0) {
-            validPermissions[routeId] = filteredTabs;
-          }
-        }
-      });
-
       const updatedUser = {
         ...user,
-        permissions: validPermissions,
+        permissions: tempPermissions,
       };
 
-      onUserUpdate(updatedUser);
-      
-      // Força atualização imediata do localStorage se for o usuário logado
-      if (user.id === JSON.parse(localStorage.getItem('user') || '{}').id) {
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const updatedStoredUser = {
-          ...storedUser,
-          permissions: validPermissions
-        };
-        localStorage.setItem('user', JSON.stringify(updatedStoredUser));
+      // Atualiza o localStorage se for o usuário logado
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.id === storedUser.id) {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
       }
 
+      onUserUpdate(updatedUser);
       onClose();
+      
+      // Se for o usuário logado, força um reload após um pequeno delay
+      if (user.id === storedUser.id) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
+
       toast.success("Permissões atualizadas com sucesso!");
     } catch (error) {
       toast.error("Erro ao atualizar permissões");
@@ -193,7 +172,6 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Debug Toggle */}
         <button 
           onClick={() => setShowDebug(prev => !prev)}
           className="text-xs text-gray-500 hover:text-gray-700 transition-colors mb-2 text-left"
@@ -201,7 +179,6 @@ export const UserPermissionsDialog = ({
           {showDebug ? "Ocultar Debug" : "Mostrar Debug"}
         </button>
 
-        {/* Debug Info - Collapsible */}
         {showDebug && (
           <div className="mb-4 p-2 bg-gray-100 rounded text-xs font-mono whitespace-pre-wrap max-h-32 overflow-y-auto">
             <div>Nome do usuário: {user.name}</div>
