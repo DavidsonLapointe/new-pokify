@@ -19,7 +19,7 @@ import {
 import { MonthYearSelector } from "./MonthYearSelector";
 import { SellerSelector } from "./SellerSelector";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Clock } from "lucide-react";
+import { X } from "lucide-react";
 import { User } from "@/types/organization";
 import { toast } from "sonner";
 
@@ -54,6 +54,7 @@ export const SuggestionsTabContent = ({
 }: SuggestionsTabContentProps) => {
   const [typeFilter, setTypeFilter] = React.useState("all");
   const [subTypeFilter, setSubTypeFilter] = React.useState("all");
+  const [statusFilter, setStatusFilter] = React.useState("all");
 
   // Extrair tipos e subtipos únicos
   const types = React.useMemo(() => {
@@ -71,9 +72,18 @@ export const SuggestionsTabContent = ({
     return suggestions.filter(suggestion => {
       if (typeFilter !== "all" && suggestion.type !== typeFilter) return false;
       if (subTypeFilter !== "all" && suggestion.subType !== subTypeFilter) return false;
+      if (statusFilter !== "all" && suggestion.status !== statusFilter) return false;
       return true;
     });
-  }, [suggestions, typeFilter, subTypeFilter]);
+  }, [suggestions, typeFilter, subTypeFilter, statusFilter]);
+
+  // Limpar todos os filtros
+  const handleClearFilters = () => {
+    setTypeFilter("all");
+    setSubTypeFilter("all");
+    setStatusFilter("all");
+    setMonthlySuggestionsSeller("all");
+  };
 
   // Função para renderizar o badge de status
   const renderStatusBadge = (status: string) => {
@@ -100,47 +110,76 @@ export const SuggestionsTabContent = ({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="p-4">
-          <MonthYearSelector
-            selectedDate={monthlySuggestionsDate}
-            onDateChange={setMonthlySuggestionsDate}
-          />
-        </Card>
-        <Card className="p-4">
-          <SellerSelector
-            selectedSeller={monthlySuggestionsSeller}
-            onSellerChange={setMonthlySuggestionsSeller}
-            sellers={sellers}
-          />
-        </Card>
-        <Card className="p-4">
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os Tipos</SelectItem>
-              {types.map((type) => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Card>
-        <Card className="p-4">
-          <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por Sub-tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os Sub-tipos</SelectItem>
-              {subTypes.map((subType) => (
-                <SelectItem key={subType} value={subType}>{subType}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Card>
-      </div>
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Filtros</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearFilters}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Limpar filtros
+            </Button>
+          </div>
+          <div className="grid gap-4 md:grid-cols-5">
+            <div>
+              <MonthYearSelector
+                selectedDate={monthlySuggestionsDate}
+                onDateChange={setMonthlySuggestionsDate}
+              />
+            </div>
+            <div>
+              <SellerSelector
+                selectedSeller={monthlySuggestionsSeller}
+                onSellerChange={setMonthlySuggestionsSeller}
+                sellers={sellers}
+              />
+            </div>
+            <div>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Tipos</SelectItem>
+                  {types.map((type) => (
+                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por Sub-tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Sub-tipos</SelectItem>
+                  {subTypes.map((subType) => (
+                    <SelectItem key={subType} value={subType}>{subType}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Status</SelectItem>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                  <SelectItem value="implemented">Implementada</SelectItem>
+                  <SelectItem value="rejected">Rejeitada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <Card className="p-4">
         <Table>
@@ -176,32 +215,21 @@ export const SuggestionsTabContent = ({
                   </TableCell>
                   <TableCell>{renderStatusBadge(suggestion.status)}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleStatusUpdate(suggestion.id, "implemented")}
-                        className="text-green-600 hover:text-green-700"
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleStatusUpdate(suggestion.id, "rejected")}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <XCircle className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleStatusUpdate(suggestion.id, "pending")}
-                        className="text-yellow-600 hover:text-yellow-700"
-                      >
-                        <Clock className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Select
+                      value={suggestion.status}
+                      onValueChange={(value: "pending" | "implemented" | "rejected") => 
+                        handleStatusUpdate(suggestion.id, value)
+                      }
+                    >
+                      <SelectTrigger className="w-[130px]">
+                        <SelectValue placeholder="Alterar status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pendente</SelectItem>
+                        <SelectItem value="implemented">Implementada</SelectItem>
+                        <SelectItem value="rejected">Rejeitada</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                 </TableRow>
               ))
