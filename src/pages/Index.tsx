@@ -247,7 +247,7 @@ const Index = () => {
 
             <div 
               ref={scrollContainerRef}
-              className="overflow-x-auto hide-scrollbar flex gap-6 px-8 pb-4 -mx-4 snap-x snap-mandatory"
+              className="overflow-hidden flex gap-6 px-8 -mx-4 snap-x snap-mandatory"
             >
               {testimonials.map((testimonial, index) => (
                 <div
