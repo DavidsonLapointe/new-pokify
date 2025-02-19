@@ -50,10 +50,9 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
         'dashboard',
         'integrations',
         'plans',
-        'organizations',
+        'organizations', // Mantemos apenas organizations, removendo companies por ser duplicado
         'settings',
         'prompt',
-        'companies',
         'analysis_packages',
         'financial'
       ];
@@ -66,16 +65,21 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
       // Para administradores, adiciona todas as funções do ambiente empresa
       availableRoutePermissions.forEach(route => {
         // Adiciona todas as rotas exceto as do ambiente administrativo
-        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
+        // E exceto 'calls' que foi removida
+        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt', 'calls'].includes(route.id)) {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
         }
       });
     } else if (newUser.role === 'seller') {
-      // Para sellers, adiciona todas as permissões exceto 'plan'
-      availableRoutePermissions.forEach(route => {
-        if (route.id !== 'profile' && route.id !== 'plan') {
-          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-        }
+      // Para sellers, adiciona permissões básicas
+      const sellerRoutes = {
+        'dashboard': ['view'],
+        'leads': ['view', 'edit'],
+        'integrations': ['view']
+      };
+      
+      Object.entries(sellerRoutes).forEach(([route, permissions]) => {
+        userPermissions[route] = permissions;
       });
     }
 
@@ -182,4 +186,3 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
     </Dialog>
   );
 };
-

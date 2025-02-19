@@ -25,12 +25,13 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   });
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
-    // Gera todas as permissões disponíveis para o admin
+    // Gera as permissões para o admin inicial
     const adminPermissions: { [key: string]: string[] } = {};
     
     // Para cada rota disponível, adiciona todas as suas tabs como permissões
     availableRoutePermissions.forEach(route => {
-      if (route.id !== 'profile') { // profile já é sempre permitido
+      // Exclui rotas administrativas e a rota 'calls' que foi removida
+      if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt', 'calls'].includes(route.id)) {
         adminPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
       }
     });
