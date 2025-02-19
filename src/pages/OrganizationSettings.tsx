@@ -1,17 +1,12 @@
 
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { useState, useCallback } from "react";
 import { FunnelSection } from "@/components/settings/FunnelSection";
 import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
-import { NewFunnelDialog } from "@/components/settings/NewFunnelDialog";
-import { NewStageDialog } from "@/components/settings/NewStageDialog";
 import { CustomFieldDialog } from "@/components/settings/CustomFieldDialog";
 import { SettingsHeader } from "@/components/settings/SettingsHeader";
-import { NoFunnelAlert } from "@/components/settings/NoFunnelAlert";
+import { useState } from "react";
 import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
 import { useCustomFieldsManagement } from "@/hooks/settings/useCustomFieldsManagement";
-
-const mockFunnels = [];
 
 const mockCurrentOrganization = {
   id: 1,
@@ -31,30 +26,18 @@ const mockCurrentOrganization = {
 };
 
 const OrganizationSettings = () => {
-  const [isFunnelDialogOpen, setIsFunnelDialogOpen] = useState(false);
-  const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
-  const [isNoFunnelAlertOpen, setIsNoFunnelAlertOpen] = useState(false);
 
   const {
-    funnels,
-    selectedFunnel,
-    selectedStage,
-    newFunnel,
-    newStage,
-    newStageFunnelId,
+    funnelName,
+    stageName,
     isDefaultConfigSaved,
     isEditing,
-    setSelectedFunnel,
-    setSelectedStage,
-    setNewFunnel,
-    setNewStage,
-    setNewStageFunnelId,
-    handleSaveFunnel,
-    handleSaveStage,
+    setFunnelName,
+    setStageName,
     handleSaveDefaultConfig,
     handleToggleEdit,
-  } = useFunnelManagement(mockFunnels);
+  } = useFunnelManagement();
 
   const {
     customFields,
@@ -66,42 +49,16 @@ const OrganizationSettings = () => {
     handleSaveFieldsSettings,
   } = useCustomFieldsManagement();
 
-  const handleNewStageClick = () => {
-    if (funnels.length === 0) {
-      setIsNoFunnelAlertOpen(true);
-    } else {
-      setIsStageDialogOpen(true);
-    }
-  };
-
-  const handleCreateFunnelFromAlert = useCallback(() => {
-    setIsNoFunnelAlertOpen(false);
-    // Pequeno delay para garantir que o primeiro modal está fechado
-    setTimeout(() => {
-      setIsFunnelDialogOpen(true);
-    }, 100);
-  }, []);
-
-  const handleFunnelDialogClose = useCallback((open: boolean) => {
-    if (!open) {
-      setNewFunnel("");
-    }
-    setIsFunnelDialogOpen(open);
-  }, [setNewFunnel]);
-
   return (
     <OrganizationLayout>
       <div className="space-y-6">
         <SettingsHeader organization={mockCurrentOrganization} />
 
         <FunnelSection
-          funnels={funnels}
-          selectedFunnel={selectedFunnel}
-          selectedStage={selectedStage}
-          setSelectedFunnel={setSelectedFunnel}
-          setSelectedStage={setSelectedStage}
-          setIsFunnelDialogOpen={setIsFunnelDialogOpen}
-          setIsStageDialogOpen={handleNewStageClick}
+          funnelName={funnelName}
+          stageName={stageName}
+          setFunnelName={setFunnelName}
+          setStageName={setStageName}
           isDefaultConfigSaved={isDefaultConfigSaved}
           isEditing={isEditing}
           onSaveDefaultConfig={handleSaveDefaultConfig}
@@ -120,25 +77,6 @@ const OrganizationSettings = () => {
           }}
         />
 
-        <NewFunnelDialog
-          isOpen={isFunnelDialogOpen}
-          onOpenChange={handleFunnelDialogClose}
-          newFunnel={newFunnel}
-          setNewFunnel={setNewFunnel}
-          handleSaveFunnel={handleSaveFunnel}
-        />
-
-        <NewStageDialog
-          isOpen={isStageDialogOpen}
-          onOpenChange={setIsStageDialogOpen}
-          newStage={newStage}
-          setNewStage={setNewStage}
-          newStageFunnelId={newStageFunnelId}
-          setNewStageFunnelId={setNewStageFunnelId}
-          handleSaveStage={handleSaveStage}
-          funnels={funnels}
-        />
-
         <CustomFieldDialog
           isOpen={isFieldsDialogOpen}
           onOpenChange={setIsFieldsDialogOpen}
@@ -146,12 +84,6 @@ const OrganizationSettings = () => {
           newField={newField}
           setNewField={setNewField}
           handleSaveFieldsSettings={handleSaveFieldsSettings}
-        />
-
-        <NoFunnelAlert
-          isOpen={isNoFunnelAlertOpen}
-          onClose={setIsNoFunnelAlertOpen}
-          onCreateFunnel={handleCreateFunnelFromAlert}
         />
       </div>
     </OrganizationLayout>
