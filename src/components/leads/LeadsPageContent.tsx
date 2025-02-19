@@ -6,6 +6,7 @@ import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ChevronFirst, ChevronLast } from "lucide-react";
 
 interface LeadsPageContentProps {
   searchQuery: string;
@@ -42,6 +43,23 @@ export const LeadsPageContent = ({
   
   // Calcula o número total de páginas
   const totalPages = Math.ceil(calls.length / itemsPerPage);
+
+  // Gera array de páginas para exibição
+  const getPageNumbers = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
+        pages.push(i);
+      } else if (i === currentPage - 2 || i === currentPage + 2) {
+        pages.push('...');
+      }
+    }
+    return pages;
+  };
   
   return (
     <Card className="p-4 space-y-4">
@@ -59,29 +77,41 @@ export const LeadsPageContent = ({
       
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 py-4">
+        <div className="flex items-center justify-center gap-2 py-4">
           <Button
             variant="outline"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            size="icon"
+            onClick={() => setCurrentPage(1)}
             disabled={currentPage === 1}
-            size="sm"
+            className="w-8 h-8 p-0"
           >
-            Anterior
+            <ChevronFirst className="h-4 w-4" />
           </Button>
-          
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium">
-              Página {currentPage} de {totalPages}
-            </span>
-          </div>
-          
+
+          {getPageNumbers().map((page, index) => (
+            page === '...' ? (
+              <span key={`ellipsis-${index}`} className="px-2">...</span>
+            ) : (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(Number(page))}
+                className={`w-8 h-8 p-0 ${currentPage === page ? 'bg-primary text-white hover:bg-primary/90' : ''}`}
+              >
+                {page}
+              </Button>
+            )
+          ))}
+
           <Button
             variant="outline"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            size="icon"
+            onClick={() => setCurrentPage(totalPages)}
             disabled={currentPage === totalPages}
-            size="sm"
+            className="w-8 h-8 p-0"
           >
-            Próxima
+            <ChevronLast className="h-4 w-4" />
           </Button>
         </div>
       )}
