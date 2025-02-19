@@ -39,17 +39,11 @@ export const LeadsPageContent = ({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Calcula o número total de páginas
   const totalPages = Math.ceil(calls.length / itemsPerPage);
-  
-  // Calcula os índices dos itens a serem exibidos
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  
-  // Obtém apenas os calls da página atual
   const currentCalls = calls.slice(startIndex, endIndex);
 
-  // Gera array com números das páginas para navegação
   const getPageNumbers = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -63,7 +57,7 @@ export const LeadsPageContent = ({
   console.log("LeadsPageContent - itens por página:", itemsPerPage);
   
   return (
-    <Card className="p-6 space-y-6">
+    <Card className="p-4 space-y-4">
       <CallsFilters
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}
@@ -77,7 +71,7 @@ export const LeadsPageContent = ({
       />
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-2">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
