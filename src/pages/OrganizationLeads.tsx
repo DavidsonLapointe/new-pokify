@@ -1,189 +1,231 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import OrganizationLayout from "@/components/OrganizationLayout";
-import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
-import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
-import { UploadCallDialog } from "@/components/calls/UploadCallDialog";
-import { FindLeadDialog } from "@/components/calls/FindLeadDialog";
-import { statusMap } from "@/constants/callStatus";
-import { useCallsPage } from "@/hooks/useCallsPage";
-import { useLeadUpload } from "@/hooks/useLeadUpload";
+import { useState, useEffect } from "react";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
-import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
-import { Toaster } from "@/components/ui/toaster";
-import { mockUsers } from "@/types/organization";
+import { LeadsTable } from "@/components/calls/table/LeadsTable";
+import { LeadCalls } from "@/components/calls/types";
+import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
+import { CallHistoryDialog } from "@/components/calls/CallHistoryDialog";
+import { UploadCallsDialog } from "@/components/calls/UploadCallsDialog";
+import { OrganizationLayout } from "@/components/OrganizationLayout";
 import { LeadFormData } from "@/schemas/leadFormSchema";
-import { Call } from "@/types/calls";
-import { mockCalls } from "@/mocks/calls";
+import { Lead } from "@/types/calls";
+import { Organization, User } from "@/types/organization";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-const mockLoggedUser = {
-  id: 2,
-  name: "Maria Santos",
-  email: "maria@empresa.com",
-  phone: "(11) 98888-8888",
-  role: "seller" as const,
-  status: "active" as const,
-  createdAt: "2024-01-01T00:00:00.000Z",
-  lastAccess: "2024-03-15T14:30:00.000Z",
-  permissions: {
-    dashboard: ["view"],
-    calls: ["view", "upload"],
-    leads: ["view", "edit"],
-    integrations: ["view"],
-  },
-  logs: [
-    {
-      id: 1,
-      date: "2024-03-15T14:30:00.000Z",
-      action: "Acessou o sistema",
+const mockUsers = [
+  {
+    id: 1,
+    name: "João Silva",
+    email: "joao@empresa.com",
+    phone: "(11) 99999-9999",
+    role: "seller" as const,
+    status: "active" as const,
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: "2024-03-15T14:30:00.000Z",
+    permissions: {
+      menuAccess: {
+        dashboard: true,
+        calls: true,
+        leads: true,
+        integrations: false,
+        settings: false,
+        plan: true,
+        profile: true
+      }
     },
-  ],
-};
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-15T14:30:00.000Z",
+        action: "Acessou o sistema"
+      }
+    ]
+  }
+];
 
-const mockOrganization = {
+const mockLeads: LeadCalls[] = [
+  {
+    id: "1",
+    personType: "pf",
+    firstName: "João",
+    lastName: "Silva",
+    calls: [
+      {
+        id: "1",
+        date: "2024-03-10T10:00:00.000Z",
+        duration: "05:23",
+        mediaType: "audio",
+        status: "success",
+        phone: "(11) 99999-9999",
+        leadInfo: {
+          name: "João Silva",
+          email: "joao@email.com",
+        },
+        analysis: {
+          summary: "O cliente demonstrou interesse no produto...",
+          sentiment: {
+            temperature: "warm",
+          },
+        },
+        emptyLead: false,
+      },
+    ],
+    crmInfo: {
+      funnel: "Funil de Vendas",
+      stage: "Prospecção",
+    },
+    createdAt: "2024-03-01T00:00:00.000Z",
+  },
+  {
+    id: "2",
+    personType: "pj",
+    razaoSocial: "Empresa XPTO",
+    cnpj: "12.345.678/0001-00",
+    calls: [],
+    crmInfo: {
+      funnel: "Funil de Vendas B2B",
+      stage: "Qualificação",
+    },
+    createdAt: "2024-03-05T00:00:00.000Z",
+  },
+];
+
+const mockCurrentOrganization: Organization = {
   id: 1,
-  name: "Tech Solutions Ltda",
-  nomeFantasia: "Tech Solutions",
-  plan: "enterprise",
+  name: "Empresa ABC",
+  nomeFantasia: "ABC Ltda",
+  plan: "professional",
   users: mockUsers,
-  status: "active" as const,
+  status: "active",
+  pendingReason: null,
   integratedCRM: "HubSpot",
-  integratedLLM: "OpenAI",
-  email: "contato@techsolutions.com",
+  integratedLLM: "GPT-4",
+  email: "contato@abc.com",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
-  adminName: "João Silva",
-  adminEmail: "joao@empresa.com",
+  adminName: "Admin ABC",
+  adminEmail: "admin@abc.com",
+  contractSignedAt: "2024-01-01T00:00:00.000Z",
   createdAt: "2024-01-01T00:00:00.000Z",
 };
 
 const OrganizationLeads = () => {
-  const location = useLocation();
-  const showCreateLeadFromState = location.state?.showCreateLead || false;
-  const searchQueryFromState = location.state?.searchQuery || "";
+  const [leads, setLeads] = useState<LeadCalls[]>(mockLeads);
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
+  const [isCallHistoryOpen, setIsCallHistoryOpen] = useState(false);
+  const [isUploadCallsOpen, setIsUploadCallsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentUser] = useState<User>(mockUsers[0]);
 
-  const [isFindLeadOpen, setIsFindLeadOpen] = useState(false);
-  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
-  const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
-  const [currentCalls, setCurrentCalls] = useState(mockCalls);
-
-  const handlePlayAudio = (audioUrl: string) => {
-    console.log("Playing audio:", audioUrl);
-  };
-
-  const handleViewAnalysis = (call: any) => {
-    console.log("Viewing analysis for call:", call);
-  };
+  useEffect(() => {
+    console.log("currentUser:", currentUser);
+  }, [currentUser]);
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pt-BR');
+    return format(new Date(date), "dd 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR });
   };
 
-  const {
-    selectedCall,
-    isAnalysisOpen,
-    handleCloseAnalysis,
-    createNewLead,
-    confirmNewLead,
-  } = useCallsPage();
+  const handleCreateLead = (data: LeadFormData) => {
+    const newLead: LeadCalls = {
+      id: Math.random().toString(),
+      personType: data.personType,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      razaoSocial: data.razaoSocial,
+      cnpj: data.cnpj,
+      calls: [],
+      createdAt: new Date().toISOString(),
+    };
+    setLeads([...leads, newLead]);
+    setIsCreateLeadOpen(false);
+  };
 
-  const {
-    isUploadOpen,
-    setIsUploadOpen,
-    selectedLeadForUpload,
-    setSelectedLeadForUpload,
-    newLeadId,
-    handleUploadClick,
-    handleUploadSuccess,
-    handleUploadCancel,
-    handleLeadFound,
-    handleCreateLead,
-  } = useLeadUpload(createNewLead, (withUpload: boolean, newCall?: Call) => {
-    if (newCall) {
-      setCurrentCalls(prev => [newCall, ...prev]);
-      confirmNewLead(withUpload, newCall);
+  const handleShowHistory = (lead: LeadCalls) => {
+    setSelectedLead(lead);
+    setIsCallHistoryOpen(true);
+  };
+
+  const handleShowUpload = (lead: LeadCalls) => {
+    setSelectedLead(lead);
+    setIsUploadCallsOpen(true);
+  };
+
+  const handleUploadCalls = (newCalls: Lead[]) => {
+    if (!selectedLead) return;
+
+    const updatedLead: LeadCalls = {
+      ...selectedLead,
+      calls: [...(selectedLead.calls || []), ...newCalls],
+    };
+
+    setLeads(
+      leads.map((lead) => (lead.id === selectedLead.id ? updatedLead : lead))
+    );
+    setIsUploadCallsOpen(false);
+  };
+
+  const filteredLeads = leads.filter((lead) => {
+    const searchTerm = searchQuery.toLowerCase();
+    if (lead.personType === "pf") {
+      return (
+        (lead.firstName && lead.firstName.toLowerCase().includes(searchTerm)) ||
+        (lead.lastName && lead.lastName.toLowerCase().includes(searchTerm)) ||
+        (lead.calls && lead.calls.some(call => call.leadInfo.email.toLowerCase().includes(searchTerm))) ||
+        (lead.calls && lead.calls.some(call => call.phone.toLowerCase().includes(searchTerm)))
+      );
+    } else {
+      return (
+        (lead.razaoSocial && lead.razaoSocial.toLowerCase().includes(searchTerm)) ||
+        (lead.cnpj && lead.cnpj.toLowerCase().includes(searchTerm))
+      );
     }
   });
 
-  const monthStats = {
-    total: currentCalls.length,
-    processed: currentCalls.filter(call => call.status === "success").length,
-    failed: currentCalls.filter(call => call.status === "failed").length,
-    pending: 0
-  };
-
   return (
     <OrganizationLayout>
-      <TooltipProvider>
-        <div className="space-y-8">
-          <LeadsPageHeader
-            onUploadClick={() => setIsFindLeadOpen(true)}
-            onNewLeadClick={() => setIsCreateLeadOpen(true)}
-            currentUser={mockLoggedUser}
-            organization={mockOrganization}
-          />
+      <div className="container mx-auto py-10">
+        <LeadsPageHeader
+          onNewLeadClick={() => setIsCreateLeadOpen(true)}
+          currentUser={currentUser}
+          organization={mockCurrentOrganization}
+        />
 
-          <LeadsPageContent
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            monthStats={monthStats}
-            calls={currentCalls}
-            statusMap={statusMap}
-            onPlayAudio={handlePlayAudio}
-            onViewAnalysis={handleViewAnalysis}
-            formatDate={formatDate}
-          />
+        <LeadsTable
+          leads={filteredLeads}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          formatDate={formatDate}
+          onShowHistory={handleShowHistory}
+          onShowUpload={handleShowUpload}
+        />
 
-          <CallAnalysisDialog
-            isOpen={isAnalysisOpen}
-            onClose={handleCloseAnalysis}
-            analysis={selectedCall?.analysis}
-            call={{
-              date: selectedCall?.date || "",
-              duration: selectedCall?.duration || "",
-            }}
-          />
+        <CreateLeadDialog
+          hasPhoneIntegration={true}
+          hasEmailIntegration={true}
+          onCreateLead={handleCreateLead}
+          isOpen={isCreateLeadOpen}
+          onOpenChange={setIsCreateLeadOpen}
+        />
 
-          <FindLeadDialog
-            isOpen={isFindLeadOpen}
-            onOpenChange={setIsFindLeadOpen}
-            onLeadFound={handleLeadFound}
-          />
-
-          {(selectedLeadForUpload || newLeadId) && (
-            <UploadCallDialog
-              leadId={selectedLeadForUpload?.id || newLeadId || ""}
-              isOpen={isUploadOpen}
-              onOpenChange={(open) => {
-                setIsUploadOpen(open);
-                if (!open && newLeadId) {
-                  handleUploadCancel();
-                }
-              }}
-              onUploadSuccess={() => {
-                if (selectedLeadForUpload) {
-                  setSelectedLeadForUpload(null);
-                } else {
-                  handleUploadSuccess();
-                }
-                setIsUploadOpen(false);
-              }}
-              onCancel={handleUploadCancel}
+        {selectedLead && (
+          <>
+            <CallHistoryDialog
+              lead={selectedLead}
+              isOpen={isCallHistoryOpen}
+              onOpenChange={setIsCallHistoryOpen}
+              formatDate={formatDate}
             />
-          )}
 
-          <CreateLeadDialog
-            hasPhoneIntegration={true}
-            hasEmailIntegration={true}
-            onCreateLead={handleCreateLead}
-            onUploadClick={handleUploadClick}
-            isOpen={isCreateLeadOpen}
-            onOpenChange={setIsCreateLeadOpen}
-          />
-        </div>
-      </TooltipProvider>
-      <Toaster />
+            <UploadCallsDialog
+              lead={selectedLead}
+              isOpen={isUploadCallsOpen}
+              onOpenChange={setIsUploadCallsOpen}
+              onUpload={handleUploadCalls}
+            />
+          </>
+        )}
+      </div>
     </OrganizationLayout>
   );
 };

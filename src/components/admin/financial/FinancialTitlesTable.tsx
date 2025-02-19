@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format, isBefore } from "date-fns";
@@ -45,6 +44,31 @@ const mockOrganization: Organization = {
   createdAt: "2024-01-01T00:00:00.000Z",
 };
 
+const mockUsers = [
+  {
+    id: 1,
+    name: "Admin Financeiro",
+    email: "admin.financeiro@leadly.com",
+    phone: "(11) 99999-9999",
+    role: "leadly_employee" as const,
+    status: "active" as const,
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: "2024-03-15T14:30:00.000Z",
+    permissions: {
+      menuAccess: {
+        dashboard: true,
+        calls: true,
+        leads: true,
+        integrations: true,
+        settings: true,
+        plan: true,
+        profile: true
+      }
+    },
+    logs: []
+  }
+];
+
 const getStatusBadge = (status: TitleStatus) => {
   const variants: Record<TitleStatus, "default" | "secondary" | "destructive"> = {
     pending: "default",
@@ -82,12 +106,10 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
   const { toast } = useToast();
   const [localTitles, setLocalTitles] = useState<FinancialTitle[]>(titles);
 
-  // Update local titles when prop changes
   useEffect(() => {
     setLocalTitles(titles);
   }, [titles]);
 
-  // Update status periodically
   useEffect(() => {
     const updateTitlesStatus = () => {
       setLocalTitles(prevTitles => 
