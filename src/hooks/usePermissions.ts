@@ -4,15 +4,11 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 
 export const usePermissions = (user: User) => {
   const hasRoutePermission = (routeId: string): boolean => {
-    // Verifica se é uma rota padrão (todos têm acesso)
-    const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (route?.isDefault) return true;
-
-    // Se não tem permissões definidas, não tem acesso
+    // Se o usuário não tem objeto de permissões definido, não tem acesso
     if (!user?.permissions) return false;
 
-    // Verifica se o usuário tem acesso à rota
-    return Object.keys(user.permissions).includes(routeId);
+    // Verifica se o usuário tem a permissão na sua lista de permissões
+    return routeId in user.permissions;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
@@ -29,21 +25,18 @@ export const usePermissions = (user: User) => {
   };
 
   const getUserPermissions = () => {
-    const routes = availableRoutePermissions
-      .filter(route => hasRoutePermission(route.id))
-      .map(route => route.id);
+    if (!user?.permissions) {
+      return { routes: [], tabs: {} };
+    }
+
+    // Pega apenas as rotas que existem nas permissões do usuário
+    const routes = Object.keys(user.permissions);
 
     const tabs: { [routeId: string]: string[] } = {};
-    
-    availableRoutePermissions.forEach(route => {
-      if (route.tabs) {
-        const allowedTabs = route.tabs
-          .filter(tab => hasTabPermission(route.id, tab.value))
-          .map(tab => tab.value);
-        
-        if (allowedTabs.length > 0) {
-          tabs[route.id] = allowedTabs;
-        }
+    routes.forEach(routeId => {
+      const permissions = user.permissions[routeId];
+      if (permissions && permissions.length > 0) {
+        tabs[routeId] = permissions;
       }
     });
 
