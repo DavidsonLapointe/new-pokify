@@ -15,6 +15,7 @@ import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { mockUsers } from "@/types/organization";
 import { LeadFormData } from "@/schemas/leadFormSchema";
+import { mockCalls } from "@/mocks/calls";
 
 // Mock do usuário logado - vendedor
 const mockLoggedUser = {
@@ -66,18 +67,24 @@ const OrganizationLeads = () => {
 
   const [isFindLeadOpen, setIsFindLeadOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
+  const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
+
+  const handlePlayAudio = (audioUrl: string) => {
+    console.log("Playing audio:", audioUrl);
+  };
+
+  const handleViewAnalysis = (call: any) => {
+    console.log("Viewing analysis for call:", call);
+  };
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('pt-BR');
+  };
 
   const {
-    searchQuery,
-    monthStats,
     selectedCall,
     isAnalysisOpen,
-    filteredLeads,
-    setSearchQuery,
-    handlePlayAudio,
-    handleViewAnalysis,
     handleCloseAnalysis,
-    formatDate,
     createNewLead,
     confirmNewLead,
   } = useCallsPage();
@@ -104,12 +111,12 @@ const OrganizationLeads = () => {
     handleLeadFound,
   } = useLeadUpload(handleCreateLead, confirmNewLead);
 
-  // Configuração inicial do searchQuery
-  useState(() => {
-    if (searchQueryFromState && searchQuery !== searchQueryFromState) {
-      setSearchQuery(searchQueryFromState);
-    }
-  });
+  const monthStats = {
+    total: mockCalls.length,
+    processed: mockCalls.filter(call => call.status === "success").length,
+    failed: mockCalls.filter(call => call.status === "failed").length,
+    pending: 0
+  };
 
   return (
     <OrganizationLayout>
@@ -123,10 +130,10 @@ const OrganizationLeads = () => {
           />
 
           <LeadsPageContent
-            searchQuery={searchQuery || ""}
+            searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             monthStats={monthStats}
-            calls={filteredLeads}
+            calls={mockCalls}
             statusMap={statusMap}
             onPlayAudio={handlePlayAudio}
             onViewAnalysis={handleViewAnalysis}
