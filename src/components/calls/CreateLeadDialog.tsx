@@ -80,7 +80,6 @@ export function CreateLeadDialog({
   const handleUploadClick = () => {
     if (leadData && onUploadClick) {
       onUploadClick(leadData);
-      setOpen(false);
     }
   };
 

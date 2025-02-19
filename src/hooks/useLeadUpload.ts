@@ -41,7 +41,7 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
       setNewLeadId(leadId);
       const newCall = createCallObject(leadId, data);
       setPendingNewCall(newCall);
-      confirmNewLead(false); // Confirma criação do lead sem upload
+      confirmNewLead(false, newCall); // Agora passamos a chamada vazia inicial
       setIsCreateLeadSuccessOpen(true);
       return leadId;
     } catch (error) {
@@ -51,7 +51,12 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
   };
 
   const handleUploadClick = (data: LeadFormData) => {
-    setIsUploadOpen(true);
+    // Garantimos que temos os dados necessários antes de abrir o modal de upload
+    if (newLeadId && pendingNewCall) {
+      setIsUploadOpen(true);
+    } else {
+      console.error("Dados do lead não encontrados para upload");
+    }
   };
 
   const handleUploadSuccess = () => {
