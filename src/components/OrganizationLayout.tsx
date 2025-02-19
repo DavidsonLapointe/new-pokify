@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
@@ -14,6 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
@@ -95,64 +97,66 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
-        <div className="h-full px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-white">
-            <Building2 className="w-4 h-4 text-white" />
-            <span className="font-medium">{mockLoggedUser.organization.name}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <p className="text-sm font-medium text-white">{mockLoggedUser.name}</p>
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
-              <AvatarFallback>{getInitials(mockLoggedUser.name)}</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex pt-16">
-        <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
-          <nav className="flex flex-col h-full py-6 px-3">
-            <div className="space-y-0.5">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                    className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
-                      isActive
-                        ? "bg-[#F1F0FB] text-[#9b87f5]"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
-                    {item.label}
-                  </button>
-                );
-              })}
+    <ProtectedRoute user={mockLoggedUser}>
+      <div className="min-h-screen bg-background">
+        <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
+          <div className="h-full px-8 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-white">
+              <Building2 className="w-4 h-4 text-white" />
+              <span className="font-medium">{mockLoggedUser.organization.name}</span>
             </div>
-
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
-            >
-              <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
-              Sair
-            </button>
-          </nav>
-        </aside>
-
-        <main className="flex-1 ml-64">
-          <div className="p-8 animate-fadeIn">
-            {isLayoutReady ? children : null}
+            <div className="flex items-center gap-4">
+              <p className="text-sm font-medium text-white">{mockLoggedUser.name}</p>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
+                <AvatarFallback>{getInitials(mockLoggedUser.name)}</AvatarFallback>
+              </Avatar>
+            </div>
           </div>
-        </main>
+        </header>
+
+        <div className="flex pt-16">
+          <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
+            <nav className="flex flex-col h-full py-6 px-3">
+              <div className="space-y-0.5">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <button
+                      key={item.path}
+                      onClick={() => navigate(item.path)}
+                      className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
+                        isActive
+                          ? "bg-[#F1F0FB] text-[#9b87f5]"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
+              >
+                <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
+                Sair
+              </button>
+            </nav>
+          </aside>
+
+          <main className="flex-1 ml-64">
+            <div className="p-8 animate-fadeIn">
+              {isLayoutReady ? children : null}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 
