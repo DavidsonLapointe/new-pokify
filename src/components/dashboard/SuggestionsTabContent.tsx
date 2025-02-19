@@ -9,9 +9,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MonthYearSelector } from "./MonthYearSelector";
 import { SellerSelector } from "./SellerSelector";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { User } from "@/types/organization";
+import { toast } from "sonner";
 
 interface Suggestion {
   id: string;
@@ -30,6 +40,7 @@ interface SuggestionsTabContentProps {
   monthlySuggestionsSeller: string;
   setMonthlySuggestionsSeller: (seller: string) => void;
   sellers: User[];
+  onUpdateStatus?: (id: string, newStatus: "pending" | "implemented" | "rejected") => void;
 }
 
 export const SuggestionsTabContent = ({
@@ -39,7 +50,31 @@ export const SuggestionsTabContent = ({
   monthlySuggestionsSeller,
   setMonthlySuggestionsSeller,
   sellers,
+  onUpdateStatus,
 }: SuggestionsTabContentProps) => {
+  const [typeFilter, setTypeFilter] = React.useState("all");
+  const [subTypeFilter, setSubTypeFilter] = React.useState("all");
+
+  // Extrair tipos e subtipos únicos
+  const types = React.useMemo(() => {
+    const uniqueTypes = new Set(suggestions.map(s => s.type));
+    return Array.from(uniqueTypes);
+  }, [suggestions]);
+
+  const subTypes = React.useMemo(() => {
+    const uniqueSubTypes = new Set(suggestions.map(s => s.subType));
+    return Array.from(uniqueSubTypes);
+  }, [suggestions]);
+
+  // Filtrar sugestões
+  const filteredSuggestions = React.useMemo(() => {
+    return suggestions.filter(suggestion => {
+      if (typeFilter !== "all" && suggestion.type !== typeFilter) return false;
+      if (subTypeFilter !== "all" && suggestion.subType !== subTypeFilter) return false;
+      return true;
+    });
+  }, [suggestions, typeFilter, subTypeFilter]);
+
   // Função para renderizar o badge de status
   const renderStatusBadge = (status: string) => {
     const statusClasses = {
@@ -57,9 +92,15 @@ export const SuggestionsTabContent = ({
     );
   };
 
+  // Função para atualizar o status
+  const handleStatusUpdate = (id: string, newStatus: "pending" | "implemented" | "rejected") => {
+    onUpdateStatus?.(id, newStatus);
+    toast.success("Status atualizado com sucesso!");
+  };
+
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="p-4">
           <MonthYearSelector
             selectedDate={monthlySuggestionsDate}
@@ -73,6 +114,32 @@ export const SuggestionsTabContent = ({
             sellers={sellers}
           />
         </Card>
+        <Card className="p-4">
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filtrar por Tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Tipos</SelectItem>
+              {types.map((type) => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Card>
+        <Card className="p-4">
+          <Select value={subTypeFilter} onValueChange={setSubTypeFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filtrar por Sub-tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Sub-tipos</SelectItem>
+              {subTypes.map((subType) => (
+                <SelectItem key={subType} value={subType}>{subType}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Card>
       </div>
 
       <Card className="p-4">
@@ -85,11 +152,12 @@ export const SuggestionsTabContent = ({
               <TableHead>Sub-tipo</TableHead>
               <TableHead className="max-w-[500px]">Sugestão</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {suggestions.length > 0 ? (
-              suggestions.map((suggestion) => (
+            {filteredSuggestions.length > 0 ? (
+              filteredSuggestions.map((suggestion) => (
                 <TableRow key={suggestion.id}>
                   <TableCell>{new Date(suggestion.date).toLocaleDateString()}</TableCell>
                   <TableCell>{suggestion.leadName}</TableCell>
@@ -107,11 +175,39 @@ export const SuggestionsTabContent = ({
                     {suggestion.suggestion}
                   </TableCell>
                   <TableCell>{renderStatusBadge(suggestion.status)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatusUpdate(suggestion.id, "implemented")}
+                        className="text-green-600 hover:text-green-700"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatusUpdate(suggestion.id, "rejected")}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatusUpdate(suggestion.id, "pending")}
+                        className="text-yellow-600 hover:text-yellow-700"
+                      >
+                        <Clock className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   Nenhuma sugestão encontrada para o período selecionado.
                 </TableCell>
               </TableRow>
