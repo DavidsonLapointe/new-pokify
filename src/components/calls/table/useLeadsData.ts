@@ -15,30 +15,24 @@ export const useLeadsData = (initialCalls: Call[]) => {
 
     console.log("Processando chamadas:", callsData);
 
-    // Filtra chamadas vazias ou inválidas
-    const validCalls = callsData.filter(call => {
-      const isValid = !call.emptyLead && 
-                     call.leadId && 
-                     call.leadInfo && 
-                     call.status === "success";
-      if (!isValid) {
-        console.log("Chamada ignorada - inválida ou vazia:", call);
-      }
-      return isValid;
-    });
-
-    validCalls.forEach(call => {
+    // Primeiro, processa todas as chamadas para criar/atualizar leads
+    callsData.forEach(call => {
       if (!call.leadId || !call.leadInfo) {
         console.log("Chamada ignorada - sem leadId ou leadInfo:", call);
         return;
       }
 
+      // Determina se a chamada é válida para contagem
+      const isValidCall = !call.emptyLead && call.status === "success";
+
       const existingLead = leadsMap.get(call.leadId);
       
       if (existingLead) {
-        // Sempre adiciona a chamada ao lead existente
-        existingLead.calls.push(call);
-        console.log(`Chamada ${call.id} adicionada ao lead ${call.leadId}`);
+        // Adiciona apenas chamadas válidas ao array de calls
+        if (isValidCall) {
+          existingLead.calls.push(call);
+          console.log(`Chamada válida ${call.id} adicionada ao lead ${call.leadId}`);
+        }
         
         // Atualiza a data de criação se esta chamada for mais antiga
         if (new Date(call.date) < new Date(existingLead.createdAt)) {
@@ -49,14 +43,14 @@ export const useLeadsData = (initialCalls: Call[]) => {
           existingLead.crmInfo = call.crmInfo;
         }
       } else {
-        // Cria um novo lead com a primeira chamada
+        // Cria um novo lead
         const newLead: LeadCalls = {
           id: call.leadId,
           personType: call.leadInfo.personType,
           firstName: call.leadInfo.firstName,
           lastName: call.leadInfo.lastName,
           razaoSocial: call.leadInfo.razaoSocial,
-          calls: [call],
+          calls: isValidCall ? [call] : [], // Adiciona a chamada apenas se for válida
           crmInfo: call.crmInfo,
           createdAt: call.date,
         };
@@ -82,6 +76,10 @@ export const useLeadsData = (initialCalls: Call[]) => {
         const updatedCalls = [newCall, ...prevCalls];
         console.log("Chamadas atualizadas:", updatedCalls);
         return updatedCalls;
+      }
+      // Se não for uma chamada válida, ainda precisamos incluir o lead
+      if (!prevCalls.some(call => call.leadId === newCall.leadId)) {
+        return [...prevCalls, newCall];
       }
       return prevCalls;
     });
