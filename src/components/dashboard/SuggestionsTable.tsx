@@ -103,7 +103,7 @@ export const SuggestionsTable = ({ suggestions, onUpdateStatus }: SuggestionTabl
                         setEditStatusDialog(true);
                       }}
                     >
-                      <PencilIcon className="h-4 w-4" />
+                      <PencilIcon className="h-4 w-4 text-[#9b87f5] hover:text-[#7E69AB]" />
                     </Button>
                   </TableCell>
                 </TableRow>
