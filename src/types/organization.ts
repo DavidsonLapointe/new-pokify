@@ -1,5 +1,5 @@
 
-export type UserRole = "admin" | "seller";
+export type UserRole = "leadly_employee" | "company_admin" | "seller";
 export type UserStatus = "active" | "inactive" | "pending";
 
 export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | null;
@@ -50,7 +50,7 @@ export const mockUsers: User[] = [
     name: "João Silva",
     email: "joao@empresa.com",
     phone: "(11) 99999-9999",
-    role: "admin",
+    role: "company_admin",
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-15T14:30:00.000Z",
@@ -98,18 +98,18 @@ export const mockUsers: User[] = [
   },
   {
     id: 3,
-    name: "Pedro Oliveira",
-    email: "pedro@empresa.com",
+    name: "Ana Costa",
+    email: "ana@leadly.com",
     phone: "(11) 77777-7777",
-    role: "seller",
-    status: "inactive",
+    role: "leadly_employee",
+    status: "active",
     createdAt: "2024-01-15T00:00:00.000Z",
     lastAccess: "2024-02-28T16:45:00.000Z",
     permissions: {
-      dashboard: ["view"],
-      calls: ["view", "upload"],
-      leads: ["view", "edit"],
-      integrations: ["view"],
+      dashboard: ["view", "export"],
+      calls: ["view", "upload", "delete"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
     },
     logs: [
       {
