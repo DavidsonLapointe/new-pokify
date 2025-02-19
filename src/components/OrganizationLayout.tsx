@@ -24,7 +24,6 @@ interface OrganizationLayoutProps {
 const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAdmin = mockLoggedUser.role === "leadly_employee"; // Corrigido para usar o tipo correto
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useEffect(() => {
@@ -49,7 +48,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   };
 
   const getMenuItems = () => {
-    const commonItems = [
+    const menuItems = [
       {
         icon: BarChart3,
         label: "Dashboard",
@@ -60,7 +59,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
         label: "Análise de Leads", 
         path: "/organization/leads"
       },
-      { icon: Users, label: "Usuários", path: "/organization/users" },
+      { 
+        icon: Users, 
+        label: "Usuários", 
+        path: "/organization/users" 
+      },
       {
         icon: Network,
         label: "Integrações",
@@ -83,9 +86,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
       },
     ];
 
-    return isAdmin ? commonItems : commonItems.filter(item => 
-      !["Usuários", "Integrações", "Configurações"].includes(item.label)
-    );
+    return menuItems;
   };
 
   const menuItems = getMenuItems();
