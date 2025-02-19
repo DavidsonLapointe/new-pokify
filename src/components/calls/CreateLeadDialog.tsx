@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +43,14 @@ export function CreateLeadDialog({
   const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledIsOpen : uncontrolledOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setUncontrolledOpen;
+
+  // Reseta o estado do modal quando ele é aberto
+  useEffect(() => {
+    if (open) {
+      setShowSuccessCard(false);
+      setLeadData(null);
+    }
+  }, [open]);
 
   const {
     form,
