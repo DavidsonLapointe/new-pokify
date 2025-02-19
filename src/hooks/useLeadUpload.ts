@@ -77,8 +77,8 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsCreateLeadSuccessOpen(false);
     
     toast({
-      title: "Lead criado com sucesso",
-      description: "O novo lead foi adicionado à lista com a primeira chamada.",
+      title: "Arquivo processado com sucesso",
+      description: "O arquivo foi processado e adicionado ao histórico do lead.",
     });
   };
 
@@ -89,8 +89,8 @@ export const useLeadUpload = (createNewLead: (data: LeadFormData) => Promise<str
     setIsCreateLeadSuccessOpen(false);
     
     toast({
-      title: "Operação cancelada",
-      description: "O lead foi mantido sem chamadas.",
+      title: "Lead criado com sucesso",
+      description: "O lead foi mantido sem nenhum upload.",
     });
   };
 
