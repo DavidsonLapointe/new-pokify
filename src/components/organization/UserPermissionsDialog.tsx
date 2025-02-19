@@ -37,10 +37,17 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Inicializa com um objeto vazio
-      const initialPermissions: { [key: string]: string[] } = {};
+      // Inicializa mantendo as permissões existentes do usuário
+      const initialPermissions: { [key: string]: string[] } = { ...user.permissions };
       
-      // Adiciona as permissões padrão primeiro
+      // Remove permissões que não existem mais (como "calls")
+      Object.keys(initialPermissions).forEach(routeId => {
+        if (!availableRoutePermissions.find(r => r.id === routeId)) {
+          delete initialPermissions[routeId];
+        }
+      });
+
+      // Garante que rotas padrão estejam presentes com suas tabs
       availableRoutePermissions
         .filter(route => route.isDefault)
         .forEach(route => {
@@ -48,24 +55,27 @@ export const UserPermissionsDialog = ({
             initialPermissions[route.id] = route.tabs.map(tab => tab.value);
           }
         });
-      
-      // Adiciona as permissões do usuário, removendo as antigas que não existem mais
-      availableRoutePermissions
-        .filter(route => !route.isDefault)
-        .forEach(route => {
-          if (user.permissions?.[route.id]) {
-            // Filtra apenas as tabs válidas para a rota
-            const validTabs = route.tabs?.map(tab => tab.value) || [];
-            const userTabs = user.permissions[route.id].filter(tab => 
-              validTabs.includes(tab)
-            );
-            
-            if (userTabs.length > 0) {
-              initialPermissions[route.id] = userTabs;
-            }
-          }
-        });
-      
+
+      // Adiciona tabs válidas para rotas que o usuário já tem acesso
+      Object.keys(initialPermissions).forEach(routeId => {
+        const route = availableRoutePermissions.find(r => r.id === routeId);
+        if (route?.tabs) {
+          const validTabs = route.tabs.map(tab => tab.value);
+          initialPermissions[routeId] = initialPermissions[routeId].filter(tab => 
+            validTabs.includes(tab)
+          );
+        }
+      });
+
+      // Inicializa permissões padrão para rotas que queremos adicionar
+      const routesToAdd = ["users", "settings", "plan"];
+      routesToAdd.forEach(routeId => {
+        const route = availableRoutePermissions.find(r => r.id === routeId);
+        if (route?.tabs && !initialPermissions[routeId]) {
+          initialPermissions[routeId] = route.tabs.map(tab => tab.value);
+        }
+      });
+
       setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
@@ -114,10 +124,9 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
-      // Remove permissões antigas que não existem mais (como "calls")
+      // Assegura que apenas permissões válidas sejam salvas
       const validPermissions: { [key: string]: string[] } = {};
       
-      // Copia apenas as permissões para rotas que existem
       Object.entries(tempPermissions).forEach(([routeId, tabs]) => {
         const route = availableRoutePermissions.find(r => r.id === routeId);
         if (route) {
