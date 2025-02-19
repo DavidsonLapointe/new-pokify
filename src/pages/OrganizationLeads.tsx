@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsTable } from "@/components/calls/table/LeadsTable";
@@ -58,8 +57,12 @@ const mockLeads: LeadCalls[] = [
         status: "success",
         phone: "(11) 99999-9999",
         leadInfo: {
+          personType: "pf",
+          firstName: "João",
+          lastName: "Silva",
           name: "João Silva",
           email: "joao@email.com",
+          phone: "(11) 99999-9999"
         },
         analysis: {
           summary: "O cliente demonstrou interesse no produto...",

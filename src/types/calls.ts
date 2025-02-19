@@ -1,4 +1,3 @@
-
 import { LucideIcon } from "lucide-react";
 
 export type LeadTemperature = "cold" | "warm" | "hot";
@@ -19,6 +18,10 @@ export interface LeadInfo {
   company?: string;
   position?: string;
   name?: string;
+  interests?: string[];
+  painPoints?: string[];
+  budget?: string;
+  nextSteps?: string;
 }
 
 export interface Lead {

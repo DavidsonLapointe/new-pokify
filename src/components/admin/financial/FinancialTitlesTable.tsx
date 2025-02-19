@@ -1,3 +1,4 @@
+
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Organization } from "@/types/organization";
 import { Button } from "@/components/ui/button";
@@ -15,31 +16,8 @@ interface FinancialTitle {
 
 interface FinancialTitlesTableProps {
   organization: Organization;
+  titles: FinancialTitle[];
 }
-
-const mockTitles: FinancialTitle[] = [
-  {
-    id: "1",
-    description: "Mensalidade Plano Professional",
-    dueDate: "2024-03-15",
-    amount: 299.90,
-    status: "pending"
-  },
-  {
-    id: "2",
-    description: "Mensalidade Plano Professional",
-    dueDate: "2024-02-15",
-    amount: 299.90,
-    status: "paid"
-  },
-  {
-    id: "3",
-    description: "Mensalidade Plano Professional",
-    dueDate: "2024-01-15",
-    amount: 299.90,
-    status: "paid"
-  }
-];
 
 const getStatusColor = (status: FinancialTitle["status"]) => {
   switch (status) {
@@ -67,7 +45,7 @@ const getStatusText = (status: FinancialTitle["status"]) => {
   }
 };
 
-export const FinancialTitlesTable = ({ organization }: FinancialTitlesTableProps) => {
+export const FinancialTitlesTable = ({ organization, titles }: FinancialTitlesTableProps) => {
   const formatDate = (date: string) => {
     return format(new Date(date), "dd 'de' MMMM, yyyy", { locale: ptBR });
   };
@@ -91,7 +69,7 @@ export const FinancialTitlesTable = ({ organization }: FinancialTitlesTableProps
         </TableRow>
       </TableHeader>
       <TableBody>
-        {mockTitles.map((title) => (
+        {titles.map((title) => (
           <TableRow key={title.id}>
             <TableCell>{title.description}</TableCell>
             <TableCell>{formatDate(title.dueDate)}</TableCell>
