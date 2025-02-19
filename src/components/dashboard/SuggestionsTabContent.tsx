@@ -61,13 +61,13 @@ export const SuggestionsTabContent = ({
         <Card className="p-4">
           <MonthYearSelector
             selectedDate={monthlySuggestionsDate}
-            onChange={setMonthlySuggestionsDate}
+            onDateChange={setMonthlySuggestionsDate}
           />
         </Card>
         <Card className="p-4">
           <SellerSelector
             selectedSeller={monthlySuggestionsSeller}
-            onChange={setMonthlySuggestionsSeller}
+            onSellerChange={setMonthlySuggestionsSeller}
             sellers={sellers}
           />
         </Card>
