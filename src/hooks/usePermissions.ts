@@ -1,6 +1,6 @@
 
 import { User } from "@/types/organization";
-import { UserRoutePermissions, RoutePermission, availableRoutePermissions } from "@/types/permissions";
+import { RoutePermission, availableRoutePermissions } from "@/types/permissions";
 
 export const usePermissions = (user: User) => {
   const hasRoutePermission = (routeId: string): boolean => {
@@ -28,7 +28,7 @@ export const usePermissions = (user: User) => {
     return permissions.includes(tabId);
   };
 
-  const getUserPermissions = (): UserRoutePermissions => {
+  const getUserPermissions = () => {
     const routes = availableRoutePermissions
       .filter(route => hasRoutePermission(route.id))
       .map(route => route.id);
