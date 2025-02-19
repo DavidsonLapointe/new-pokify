@@ -35,6 +35,7 @@ export const UserPermissionsDialog = ({
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
   const [debugInfo, setDebugInfo] = useState("");
 
+  // Atualiza as permissões temporárias quando o modal é aberto ou o usuário muda
   useEffect(() => {
     if (isOpen && user) {
       const debug = `
@@ -42,18 +43,7 @@ export const UserPermissionsDialog = ({
         Permissões atuais: ${JSON.stringify(user.permissions, null, 2)}
       `;
       setDebugInfo(debug);
-      
-      // Garantir que rotas padrão estejam sempre presentes
-      const initialPermissions = { ...(user.permissions || {}) };
-      availableRoutePermissions
-        .filter(route => route.isDefault)
-        .forEach(route => {
-          if (!initialPermissions[route.id]) {
-            initialPermissions[route.id] = [];
-          }
-        });
-      
-      setTempPermissions(initialPermissions);
+      setTempPermissions(user.permissions || {});
     }
   }, [isOpen, user]);
 
@@ -66,62 +56,40 @@ export const UserPermissionsDialog = ({
       if (newPermissions[routeId]) {
         delete newPermissions[routeId];
       } else {
-        // Quando adiciona uma rota, inicializa com permissão de visualização
         newPermissions[routeId] = ["view"];
       }
       return newPermissions;
     });
   };
 
-  const handleTabPermissionChange = (routeId: string, permission: string) => {
+  const handleTabPermissionChange = (routeId: string, tabValue: string) => {
     setTempPermissions(prev => {
+      const newPermissions = { ...prev };
       const currentPermissions = [...(prev[routeId] || [])];
-      const permissionIndex = currentPermissions.indexOf(permission);
+      const permissionIndex = currentPermissions.indexOf(tabValue);
       
       if (permissionIndex > -1) {
         currentPermissions.splice(permissionIndex, 1);
       } else {
-        currentPermissions.push(permission);
+        currentPermissions.push(tabValue);
       }
 
-      // Se não houver mais permissões e não for uma rota padrão, remove a rota
-      const route = availableRoutePermissions.find(r => r.id === routeId);
-      if (currentPermissions.length === 0 && !route?.isDefault) {
-        const { [routeId]: _, ...rest } = prev;
-        return rest;
+      if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
+        delete newPermissions[routeId];
+      } else {
+        newPermissions[routeId] = currentPermissions;
       }
 
-      // Se for uma rota padrão, garantir que ela permaneça no objeto mesmo sem permissões
-      if (route?.isDefault) {
-        return {
-          ...prev,
-          [routeId]: currentPermissions
-        };
-      }
-
-      return {
-        ...prev,
-        [routeId]: currentPermissions
-      };
+      return newPermissions;
     });
   };
 
   const handleSave = () => {
     setSaving(true);
     try {
-      // Garantir que rotas padrão estejam sempre presentes
-      const updatedPermissions = { ...tempPermissions };
-      availableRoutePermissions
-        .filter(route => route.isDefault)
-        .forEach(route => {
-          if (!updatedPermissions[route.id]) {
-            updatedPermissions[route.id] = [];
-          }
-        });
-
       onUserUpdate({
         ...user,
-        permissions: updatedPermissions,
+        permissions: tempPermissions,
       });
       onClose();
       toast.success("Permissões atualizadas com sucesso!");
@@ -136,6 +104,11 @@ export const UserPermissionsDialog = ({
     setTempPermissions({});
     setDebugInfo("");
     onClose();
+  };
+
+  const isTabEnabled = (routeId: string, tabValue: string) => {
+    const routePermissions = tempPermissions[routeId] || [];
+    return routePermissions.includes(tabValue);
   };
 
   return (
@@ -158,7 +131,8 @@ export const UserPermissionsDialog = ({
 
         <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
           {availableRoutePermissions.map((route) => {
-            const isRouteEnabled = route.isDefault || Object.keys(tempPermissions).includes(route.id);
+            const hasPermissions = Object.keys(tempPermissions).includes(route.id);
+            const isRouteEnabled = route.isDefault || hasPermissions;
             
             return (
               <div key={route.id} className="space-y-4">
@@ -178,23 +152,18 @@ export const UserPermissionsDialog = ({
 
                 {route.tabs && isRouteEnabled && (
                   <div className="ml-8 grid grid-cols-2 gap-4">
-                    {route.tabs.map((tab) => {
-                      const routePermissions = tempPermissions[route.id] || [];
-                      const isTabEnabled = routePermissions.includes(tab.value);
-                      
-                      return (
-                        <div key={tab.id} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id={`${route.id}-${tab.id}`}
-                            checked={isTabEnabled}
-                            onChange={() => handleTabPermissionChange(route.id, tab.value)}
-                            className="h-4 w-4 rounded border-gray-300"
-                          />
-                          <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
-                        </div>
-                      );
-                    })}
+                    {route.tabs.map((tab) => (
+                      <div key={tab.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`${route.id}-${tab.id}`}
+                          checked={isTabEnabled(route.id, tab.value)}
+                          onChange={() => handleTabPermissionChange(route.id, tab.value)}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
