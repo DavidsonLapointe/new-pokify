@@ -40,29 +40,6 @@ export const useLeadsManagement = (
       }
     }
 
-    // Criar uma chamada vazia inicial para o lead
-    const emptyCall: Call = {
-      id: uuidv4(),
-      leadId: leadId,
-      date: new Date().toISOString(),
-      duration: "0:00",
-      status: "failed",
-      phone: leadData.phone || "",
-      seller: "Sistema",
-      audioUrl: "",
-      mediaType: "audio",
-      leadInfo: {
-        personType: leadData.personType,
-        firstName: leadData.firstName,
-        lastName: leadData.lastName || "",
-        razaoSocial: leadData.razaoSocial || "",
-        email: leadData.email || "",
-        phone: leadData.phone || "",
-      },
-      isNewLead: true,
-      emptyLead: true
-    };
-
     const newLead: LeadWithCalls = {
       id: leadId,
       leadInfo: {
@@ -73,7 +50,7 @@ export const useLeadsManagement = (
         email: leadData.email || "",
         phone: leadData.phone || "",
       },
-      calls: [emptyCall], // Inicializa com a chamada vazia
+      calls: [], // Inicializa com array vazio de chamadas
       createdAt: new Date().toISOString(),
       crmInfo: crmConfig?.funnelName ? {
         funnel: crmConfig.funnelName,
@@ -112,7 +89,7 @@ export const useLeadsManagement = (
         if (lead.id === leadId) {
           const updatedCalls = [
             uploadedCall,
-            ...lead.calls.filter(call => !call.emptyLead)
+            ...lead.calls
           ];
           
           return {
@@ -138,7 +115,7 @@ export const useLeadsManagement = (
           if (lead.id === newCall.leadId) {
             return {
               ...lead,
-              calls: [newCall, ...lead.calls.filter(call => !call.emptyLead)]
+              calls: [newCall]
             };
           }
           return lead;
