@@ -49,8 +49,8 @@ export interface User {
 export const mockUsers: User[] = [
   {
     id: 1,
-    name: "Roberto Silva",
-    email: "roberto.silva@empresa.com",
+    name: "Alexandre Rodrigues",
+    email: "alexandre.rodrigues@empresa.com",
     phone: "(11) 98765-4321",
     role: "admin",
     status: "active",
@@ -62,7 +62,7 @@ export const mockUsers: User[] = [
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
       plan: ["view", "edit"],
-      users: ["view", "edit", "delete"]  // Adicionado permissões de usuários
+      users: ["view", "edit", "delete"]
     },
     logs: [
       {
@@ -84,15 +84,15 @@ export const mockUsers: User[] = [
       email: "contato@techsolutions.com",
       phone: "(11) 3333-4444",
       cnpj: "12.345.678/0001-90",
-      adminName: "Roberto Silva",
-      adminEmail: "roberto.silva@empresa.com",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
       createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
   {
     id: 2,
-    name: "Mariana Santos",
-    email: "mariana.santos@empresa.com",
+    name: "Patricia Mendes",
+    email: "patricia.mendes@empresa.com",
     phone: "(11) 98888-7777",
     role: "admin",
     status: "active",
@@ -104,7 +104,7 @@ export const mockUsers: User[] = [
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
       plan: ["view", "edit"],
-      users: ["view", "edit", "delete"]  // Adicionado permissões de usuários
+      users: ["view", "edit", "delete"]
     },
     logs: [
       {
@@ -126,30 +126,33 @@ export const mockUsers: User[] = [
       email: "contato@techsolutions.com",
       phone: "(11) 3333-4444",
       cnpj: "12.345.678/0001-90",
-      adminName: "Roberto Silva",
-      adminEmail: "roberto.silva@empresa.com",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
       createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
   {
     id: 3,
-    name: "Carlos Oliveira",
-    email: "carlos.oliveira@empresa.com",
+    name: "Fernando Costa",
+    email: "fernando.costa@empresa.com",
     phone: "(11) 97777-6666",
-    role: "seller",
+    role: "admin",
     status: "active",
     createdAt: "2024-02-01T00:00:00.000Z",
     lastAccess: "2024-03-18T11:15:00.000Z",
     permissions: {
-      dashboard: ["view"],
-      leads: ["view", "edit"],
-      integrations: ["view"]
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      plan: ["view", "edit"],
+      users: ["view", "edit", "delete"]
     },
     logs: [
       {
         id: 1,
         date: "2024-03-18T11:15:00.000Z",
-        action: "Registrou novo lead",
+        action: "Adicionou novo usuário",
       }
     ],
     avatar: "",
@@ -165,8 +168,8 @@ export const mockUsers: User[] = [
       email: "contato@techsolutions.com",
       phone: "(11) 3333-4444",
       cnpj: "12.345.678/0001-90",
-      adminName: "Roberto Silva",
-      adminEmail: "roberto.silva@empresa.com",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
       createdAt: "2024-01-01T00:00:00.000Z"
     },
   },
@@ -204,8 +207,86 @@ export const mockUsers: User[] = [
       email: "contato@techsolutions.com",
       phone: "(11) 3333-4444",
       cnpj: "12.345.678/0001-90",
-      adminName: "Roberto Silva",
-      adminEmail: "roberto.silva@empresa.com",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    },
+  },
+  {
+    id: 5,
+    name: "Marcos Santos",
+    email: "marcos.santos@empresa.com",
+    phone: "(11) 95555-4444",
+    role: "seller",
+    status: "active",
+    createdAt: "2024-02-20T00:00:00.000Z",
+    lastAccess: "2024-03-18T14:30:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      leads: ["view", "edit"],
+      integrations: ["view"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-18T14:30:00.000Z",
+        action: "Registrou novo lead",
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: "HubSpot",
+      integratedLLM: "GPT-4",
+      email: "contato@techsolutions.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    },
+  },
+  {
+    id: 6,
+    name: "Ana Paula Silva",
+    email: "ana.silva@empresa.com",
+    phone: "(11) 94444-3333",
+    role: "seller",
+    status: "active",
+    createdAt: "2024-03-01T00:00:00.000Z",
+    lastAccess: "2024-03-18T15:45:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      leads: ["view", "edit"],
+      integrations: ["view"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-18T15:45:00.000Z",
+        action: "Acessou o sistema",
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: "HubSpot",
+      integratedLLM: "GPT-4",
+      email: "contato@techsolutions.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Alexandre Rodrigues",
+      adminEmail: "alexandre.rodrigues@empresa.com",
       createdAt: "2024-01-01T00:00:00.000Z"
     },
   }
