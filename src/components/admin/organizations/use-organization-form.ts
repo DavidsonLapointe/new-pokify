@@ -45,7 +45,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         name: values.adminName,
         email: values.adminEmail,
         phone: values.phone,
-        role: "company_admin",
+        role: "admin",
         status: "pending",
         createdAt: new Date().toISOString(),
         lastAccess: new Date().toISOString(),

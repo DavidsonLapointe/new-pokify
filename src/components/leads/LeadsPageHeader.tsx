@@ -46,7 +46,7 @@ export const LeadsPageHeader = ({
 
   // Filtra usuários ativos com acesso a integrações
   const integrationUsers = organization.users.filter(user => 
-    user.role === "company_admin" || 
+    user.role === "admin" || 
     (user.permissions?.integrations?.includes("edit") && user.status === "active")
   );
 
@@ -79,4 +79,3 @@ export const LeadsPageHeader = ({
     </>
   );
 };
-
