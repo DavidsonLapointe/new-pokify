@@ -21,6 +21,7 @@ import {
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { UserRole } from "@/types/organization";
+import { mockUsers } from "@/types/organization";
 
 interface AddUserDialogProps {
   onUserAdded: () => void;
@@ -36,7 +37,32 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
   });
 
   const handleAddUser = () => {
-    console.log("Novo usuário:", newUser);
+    // Cria um novo usuário com ID único
+    const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
+    
+    const user = {
+      id: newUserId,
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      role: newUser.role,
+      status: "active" as const,
+      createdAt: new Date().toISOString(),
+      lastAccess: new Date().toISOString(),
+      permissions: {
+        // Definindo apenas integrações e configurações como permissões iniciais
+        integrations: ["view", "edit"],
+        settings: ["view", "edit"]
+      },
+      logs: [],
+      avatar: "",
+      organization: mockUsers[0].organization // Usa a mesma organização do primeiro usuário
+    };
+
+    // Adiciona o novo usuário à lista mockada
+    mockUsers.push(user);
+
+    console.log("Novo usuário:", user);
     toast.success("Usuário adicionado com sucesso!");
     setIsOpen(false);
     setNewUser({ name: "", email: "", phone: "", role: "seller" });
