@@ -19,9 +19,6 @@ export const usePermissions = (user: User) => {
     // Se não tem permissão para a rota, não tem permissão para as tabs
     if (!hasRoutePermission(routeId)) return false;
 
-    // Se for admin da empresa, tem acesso a todas as tabs
-    if (user.role === "company_admin") return true;
-
     // Se a rota não tem tabs definidas, permite acesso
     const route = availableRoutePermissions.find(r => r.id === routeId);
     if (!route?.tabs) return true;
