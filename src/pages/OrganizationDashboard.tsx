@@ -1,3 +1,4 @@
+
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
@@ -9,6 +10,8 @@ import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabConten
 import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { mockUsers } from "@/types/organization";
+import { mockCalls } from "@/mocks/calls";
+import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 
 const OrganizationDashboard = () => {
   const {
@@ -49,6 +52,33 @@ const OrganizationDashboard = () => {
     setMonthlyMetric,
   } = useDashboardData();
 
+  const statusMap = {
+    success: {
+      label: "Sucesso",
+      color: "text-green-500",
+      icon: null,
+      tooltip: "Chamada processada com sucesso"
+    },
+    failed: {
+      label: "Falha",
+      color: "text-red-500",
+      icon: null,
+      tooltip: "Falha no processamento"
+    }
+  };
+
+  const handlePlayAudio = (audioUrl: string) => {
+    console.log("Playing audio:", audioUrl);
+  };
+
+  const handleViewAnalysis = (call: any) => {
+    console.log("Viewing analysis for call:", call);
+  };
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('pt-BR');
+  };
+
   const leadsStats = {
     total: monthStats.total,
     active: monthStats.processed,
@@ -75,19 +105,15 @@ const OrganizationDashboard = () => {
           </TabsList>
           
           <TabsContent value="leads">
-            <LeadsTabContent
-              leadsStats={leadsStats}
-              monthlyLeadsData={monthlyLeadsData}
-              dailyLeadsData={dailyLeadsData}
-              monthlyLeadsDate={monthlyLeadsDate}
-              setMonthlyLeadsDate={setMonthlyLeadsDate}
-              dailyLeadsDate={dailyLeadsDate}
-              setDailyLeadsDate={setDailyLeadsDate}
-              monthlyLeadsSeller={monthlyLeadsSeller}
-              setMonthlyLeadsSeller={setMonthlyLeadsSeller}
-              dailyLeadsSeller={dailyLeadsSeller}
-              setDailyLeadsSeller={setDailyLeadsSeller}
-              sellers={mockUsers}
+            <LeadsPageContent
+              searchQuery=""
+              onSearchChange={() => {}}
+              monthStats={monthStats}
+              calls={mockCalls}
+              statusMap={statusMap}
+              onPlayAudio={handlePlayAudio}
+              onViewAnalysis={handleViewAnalysis}
+              formatDate={formatDate}
             />
           </TabsContent>
 
