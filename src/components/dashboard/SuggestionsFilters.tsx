@@ -37,10 +37,10 @@ export const SuggestionsFilters = ({
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium">Filtros</h3>
           <Button
-            variant="outline"
+            variant="cancel"
             size="sm"
             onClick={onClearFilters}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2"
           >
             <FilterX className="h-4 w-4" />
             Limpar Filtros
@@ -119,4 +119,3 @@ export const SuggestionsFilters = ({
     </Card>
   );
 };
-
