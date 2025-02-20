@@ -1,5 +1,4 @@
-
-import AdminLayout from "@/components/AdminLayout";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Plus, FileText } from "lucide-react";
-import { useState } from "react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 
 const mockPlans = [
@@ -121,41 +119,39 @@ const Plans = () => {
   );
 
   return (
-    <AdminLayout>
-      <div className="space-y-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-semibold">Planos</h1>
-            <p className="text-muted-foreground mt-1">
-              Gerencie os planos disponíveis na plataforma
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Plano
-          </Button>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-semibold">Planos</h1>
+          <p className="text-muted-foreground mt-1">
+            Gerencie os planos disponíveis na plataforma
+          </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} />
-          ))}
-        </div>
-
-        <EditPlanDialog
-          open={!!editingPlan}
-          onOpenChange={(open) => !open && setEditingPlan(null)}
-          plan={editingPlan}
-          onSave={handleSavePlan}
-        />
-
-        <EditPlanDialog
-          open={isCreateDialogOpen}
-          onOpenChange={setIsCreateDialogOpen}
-          onSave={handleSavePlan}
-        />
+        <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Plano
+        </Button>
       </div>
-    </AdminLayout>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {plans.map((plan) => (
+          <PlanCard key={plan.id} plan={plan} />
+        ))}
+      </div>
+
+      <EditPlanDialog
+        open={!!editingPlan}
+        onOpenChange={(open) => !open && setEditingPlan(null)}
+        plan={editingPlan}
+        onSave={handleSavePlan}
+      />
+
+      <EditPlanDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onSave={handleSavePlan}
+      />
+    </div>
   );
 };
 

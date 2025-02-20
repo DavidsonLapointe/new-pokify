@@ -1,5 +1,3 @@
-
-import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -86,51 +84,49 @@ const AdminPrompt = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-semibold">Prompts</h1>
-            <p className="text-muted-foreground mt-1">
-              Gerencie seus prompts de IA
-            </p>
-          </div>
-          <Button onClick={handleNewPrompt}>
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Prompt
-          </Button>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-semibold">Prompts</h1>
+          <p className="text-muted-foreground mt-1">
+            Gerencie seus prompts de IA
+          </p>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {prompts.map((prompt) => (
-            <PromptCard
-              key={prompt.id}
-              prompt={prompt}
-              onEdit={handleEdit}
-              onView={handleView}
-            />
-          ))}
-        </div>
-
-        {prompts.length === 0 && <EmptyPromptState />}
-
-        <ViewPromptDialog
-          open={isViewModalOpen}
-          onOpenChange={setIsViewModalOpen}
-          prompt={selectedPrompt}
-        />
-
-        <PromptFormDialog
-          open={isModalOpen}
-          onOpenChange={setIsModalOpen}
-          prompt={newPrompt}
-          onPromptChange={setNewPrompt}
-          onSave={handleSavePrompt}
-          onCancel={handleCancel}
-          isEditing={isEditing}
-        />
+        <Button onClick={handleNewPrompt}>
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Prompt
+        </Button>
       </div>
-    </AdminLayout>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {prompts.map((prompt) => (
+          <PromptCard
+            key={prompt.id}
+            prompt={prompt}
+            onEdit={handleEdit}
+            onView={handleView}
+          />
+        ))}
+      </div>
+
+      {prompts.length === 0 && <EmptyPromptState />}
+
+      <ViewPromptDialog
+        open={isViewModalOpen}
+        onOpenChange={setIsViewModalOpen}
+        prompt={selectedPrompt}
+      />
+
+      <PromptFormDialog
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        prompt={newPrompt}
+        onPromptChange={setNewPrompt}
+        onSave={handleSavePrompt}
+        onCancel={handleCancel}
+        isEditing={isEditing}
+      />
+    </div>
   );
 };
 

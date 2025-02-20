@@ -1,5 +1,3 @@
-
-import AdminLayout from "@/components/AdminLayout";
 import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
@@ -122,104 +120,102 @@ const AdminAnalysisPackages = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-semibold">Pacotes de Análise</h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie os pacotes de créditos adicionais para análises
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-semibold">Pacotes de Análise</h1>
+        <p className="text-muted-foreground mt-1">
+          Gerencie os pacotes de créditos adicionais para análises
+        </p>
+      </div>
 
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="h-5 w-5 text-primary" />
-                  Novo Pacote
-                </CardTitle>
-                <CardDescription>
-                  Crie um novo pacote de créditos para análises
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => setIsCreateDialogOpen(true)} 
-                  className="w-full"
-                >
-                  Criar Pacote
-                </Button>
-              </CardContent>
-            </Card>
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Novo Pacote de Análise</DialogTitle>
-                <DialogDescription>
-                  Preencha as informações do novo pacote de créditos
-                </DialogDescription>
-              </DialogHeader>
-
-              <CreatePackageForm
-                newPackage={newPackage}
-                onSubmit={handleCreatePackage}
-                onChange={(field, value) => setNewPackage(prev => ({ ...prev, [field]: value }))}
-                onCancel={() => setIsCreateDialogOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
-
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-primary" />
-                Pacotes Disponíveis
+                <Plus className="h-5 w-5 text-primary" />
+                Novo Pacote
               </CardTitle>
               <CardDescription>
-                Pacotes de créditos atualmente disponíveis para venda
+                Crie um novo pacote de créditos para análises
               </CardDescription>
-              <div className="mt-4 flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
-                <Infinity className="h-4 w-4 text-primary shrink-0" />
-                <p className="text-sm text-muted-foreground">
-                  Os créditos adquiridos não expiram ao final do mês, ficando disponíveis até serem utilizados
-                </p>
-              </div>
             </CardHeader>
             <CardContent>
-              <PackagesList 
-                packages={packages}
-                onEdit={(pkg) => {
-                  setEditingPackage(pkg);
-                  setIsEditDialogOpen(true);
-                }}
-                onToggleActive={(pkg, active) => {
-                  setPackages(packages.map(p => 
-                    p.id === pkg.id ? { ...p, active } : p
-                  ));
-                }}
-              />
+              <Button 
+                onClick={() => setIsCreateDialogOpen(true)} 
+                className="w-full"
+              >
+                Criar Pacote
+              </Button>
             </CardContent>
           </Card>
-        </div>
 
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Pacote</DialogTitle>
+              <DialogTitle>Novo Pacote de Análise</DialogTitle>
+              <DialogDescription>
+                Preencha as informações do novo pacote de créditos
+              </DialogDescription>
             </DialogHeader>
-            {editingPackage && (
-              <EditPackageForm
-                package_={editingPackage}
-                onSubmit={handleUpdatePackage}
-                onChange={(field, value) => setEditingPackage(prev => ({ ...prev!, [field]: value }))}
-                onCancel={() => setIsEditDialogOpen(false)}
-              />
-            )}
+
+            <CreatePackageForm
+              newPackage={newPackage}
+              onSubmit={handleCreatePackage}
+              onChange={(field, value) => setNewPackage(prev => ({ ...prev, [field]: value }))}
+              onCancel={() => setIsCreateDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" />
+              Pacotes Disponíveis
+            </CardTitle>
+            <CardDescription>
+              Pacotes de créditos atualmente disponíveis para venda
+            </CardDescription>
+            <div className="mt-4 flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
+              <Infinity className="h-4 w-4 text-primary shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                Os créditos adquiridos não expiram ao final do mês, ficando disponíveis até serem utilizados
+              </p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <PackagesList 
+              packages={packages}
+              onEdit={(pkg) => {
+                setEditingPackage(pkg);
+                setIsEditDialogOpen(true);
+              }}
+              onToggleActive={(pkg, active) => {
+                setPackages(packages.map(p => 
+                  p.id === pkg.id ? { ...p, active } : p
+                ));
+              }}
+            />
+          </CardContent>
+        </Card>
       </div>
-    </AdminLayout>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Pacote</DialogTitle>
+          </DialogHeader>
+          {editingPackage && (
+            <EditPackageForm
+              package_={editingPackage}
+              onSubmit={handleUpdatePackage}
+              onChange={(field, value) => setEditingPackage(prev => ({ ...prev!, [field]: value }))}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
