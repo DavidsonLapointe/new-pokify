@@ -41,6 +41,32 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
   };
 
+  const getStatusBadgeClasses = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-700";
+      case "inactive":
+        return "bg-red-100 text-red-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const getStatusLabel = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="border rounded-lg">
       <Table>
@@ -82,13 +108,9 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
               </TableCell>
               <TableCell>
                 <span
-                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    user.status === "active"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(user.status)}`}
                 >
-                  {user.status === "active" ? "Ativo" : "Inativo"}
+                  {getStatusLabel(user.status)}
                 </span>
               </TableCell>
               <TableCell>
