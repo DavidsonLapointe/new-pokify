@@ -1,56 +1,18 @@
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Admin from "@/pages/Admin";
-import Index from "@/pages/Index";
-import NotFound from "@/pages/NotFound";
-import AdminOrganizations from "@/pages/AdminOrganizations";
-import AdminPlans from "@/pages/AdminPlans";
-import AdminPrompt from "@/pages/AdminPrompt";
-import AdminIntegrations from "@/pages/AdminIntegrations";
-import AdminProfile from "@/pages/AdminProfile";
-import OrganizationDashboard from "@/pages/OrganizationDashboard";
-import OrganizationIntegrations from "@/pages/OrganizationIntegrations";
-import OrganizationLeads from "@/pages/OrganizationLeads";
-import OrganizationPlan from "@/pages/OrganizationPlan";
-import OrganizationProfile from "@/pages/OrganizationProfile";
-import OrganizationSettings from "@/pages/OrganizationSettings";
-import OrganizationUsers from "@/pages/OrganizationUsers";
-import OrganizationSetup from "@/pages/OrganizationSetup";
-import AdminAnalysisPackages from "@/pages/AdminAnalysisPackages";
-import AdminFinancial from "@/pages/AdminFinancial";
-import AdminSettings from "@/pages/AdminSettings";
+import { BrowserRouter } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
+import { UserProvider } from "./contexts/UserContext";
+import Routes from "./Routes";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-
-        {/* Admin Routes */}
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/organizations" element={<AdminOrganizations />} />
-        <Route path="/admin/plans" element={<AdminPlans />} />
-        <Route path="/admin/analysis-packages" element={<AdminAnalysisPackages />} />
-        <Route path="/admin/integrations" element={<AdminIntegrations />} />
-        <Route path="/admin/prompt" element={<AdminPrompt />} />
-        <Route path="/admin/profile" element={<AdminProfile />} />
-        <Route path="/admin/financial" element={<AdminFinancial />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
-
-        {/* Organization Routes */}
-        <Route path="/organization/dashboard" element={<OrganizationDashboard />} />
-        <Route path="/organization/leads" element={<OrganizationLeads />} />
-        <Route path="/organization/users" element={<OrganizationUsers />} />
-        <Route path="/organization/integrations" element={<OrganizationIntegrations />} />
-        <Route path="/organization/plan" element={<OrganizationPlan />} />
-        <Route path="/organization/profile" element={<OrganizationProfile />} />
-        <Route path="/organization/settings" element={<OrganizationSettings />} />
-
-        {/* Setup Route */}
-        <Route path="/setup/:setupToken" element={<OrganizationSetup />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <UserProvider>
+        <Routes />
+        <Toaster />
+      </UserProvider>
     </BrowserRouter>
   );
 }
+
+export default App;

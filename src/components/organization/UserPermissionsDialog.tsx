@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +13,7 @@ import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -30,6 +30,7 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
+  const { user: currentUser, updateUser: updateCurrentUser } = useUser();
   const { hasRoutePermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
@@ -90,20 +91,8 @@ export const UserPermissionsDialog = ({
         permissions: tempPermissions,
       };
 
-      // Atualiza o localStorage se for o usuário logado
-      const mockLoggedUserData = JSON.parse(localStorage.getItem('mockLoggedUser') || '{}');
-      if (user.id === mockLoggedUserData.id) {
-        localStorage.setItem('mockLoggedUser', JSON.stringify(updatedUser));
-        
-        // Dispara um evento customizado para notificar a mudança
-        window.dispatchEvent(new CustomEvent('userPermissionsChanged', {
-          detail: updatedUser
-        }));
-
-        // Força o reload da página após um pequeno delay
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
+      if (user.id === currentUser.id) {
+        updateCurrentUser(updatedUser);
       }
 
       onUserUpdate(updatedUser);

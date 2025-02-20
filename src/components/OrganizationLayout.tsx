@@ -14,9 +14,9 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useUser } from "@/contexts/UserContext";
 
 interface OrganizationLayoutProps {
   children: ReactNode;
@@ -26,8 +26,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const [currentUser, setCurrentUser] = useState(mockLoggedUser);
-  const { getUserPermissions } = usePermissions(currentUser);
+  const { user } = useUser();
+  const { getUserPermissions } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
   const allowedRoutes = getUserPermissions().routes;
@@ -40,30 +40,11 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Novo useEffect para atualizar o usuário quando houver mudanças no localStorage
-  useEffect(() => {
-    const updateUserFromStorage = () => {
-      const storedUser = JSON.parse(localStorage.getItem('mockLoggedUser') || '{}');
-      if (storedUser.id === currentUser.id && JSON.stringify(storedUser) !== JSON.stringify(currentUser)) {
-        setCurrentUser(storedUser);
-      }
-    };
-
-    // Atualiza imediatamente
-    updateUserFromStorage();
-
-    // Adiciona listener para mudanças no localStorage
-    window.addEventListener('storage', updateUserFromStorage);
-
-    return () => {
-      window.removeEventListener('storage', updateUserFromStorage);
-    };
-  }, [currentUser]);
-
   const handleLogout = () => {
     try {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
+      localStorage.removeItem('mockLoggedUser');
       sessionStorage.clear();
       toast.success("Logout realizado com sucesso");
       navigate("/");
@@ -132,19 +113,19 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   }
 
   return (
-    <ProtectedRoute user={currentUser}>
+    <ProtectedRoute user={user}>
       <div className="min-h-screen bg-background">
         <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
           <div className="h-full px-8 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-white">
               <Building2 className="w-4 h-4 text-white" />
-              <span className="font-medium">{currentUser.organization.name}</span>
+              <span className="font-medium">{user.organization.name}</span>
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-sm font-medium text-white">{currentUser.name}</p>
+              <p className="text-sm font-medium text-white">{user.name}</p>
               <Avatar className="h-10 w-10">
-                <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                <AvatarFallback>{getInitials(currentUser.name)}</AvatarFallback>
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>
             </div>
           </div>
