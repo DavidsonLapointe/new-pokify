@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Upload, Camera, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "sonner"
 
 interface AvatarUploadProps {
@@ -15,6 +15,10 @@ interface AvatarUploadProps {
 export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentImage)
   const [isDragging, setIsDragging] = useState(false)
+
+  useEffect(() => {
+    setPreviewUrl(currentImage)
+  }, [currentImage])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -56,14 +60,13 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
 
   const handleRemoveImage = () => {
     setPreviewUrl(undefined)
+    onImageUpload(new File([], "removed"))
   }
 
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ')
-    const initials = nameParts.length === 1 
-      ? nameParts[0].substring(0, 2).toUpperCase()
-      : (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
-    return initials
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
   return (
@@ -96,7 +99,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
                 accept="image/*"
               />
             </label>
-            {previewUrl && (
+            {currentImage && (
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -122,7 +125,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
                 Escolher arquivo
               </label>
             </Button>
-            {previewUrl && (
+            {currentImage && (
               <Button 
                 variant="cancel"
                 size="sm"
