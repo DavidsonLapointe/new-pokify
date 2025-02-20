@@ -10,6 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { User } from "@/types";
 import { toast } from "sonner";
 
@@ -52,6 +59,22 @@ export const EditLeadlyEmployeeDialog = ({
 
     onUserUpdate(updatedUser);
     toast.success("Usuário atualizado com sucesso!");
+  };
+
+  const getStatusOptions = () => {
+    switch (editedUser.status) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [
+          { value: "active", label: "Ativo" },
+          { value: "inactive", label: "Inativo" }
+        ];
+      default:
+        return [];
+    }
   };
 
   return (
@@ -100,6 +123,35 @@ export const EditLeadlyEmployeeDialog = ({
               disabled
               className="bg-gray-50"
             />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Status</label>
+            <Select
+              value={editedUser.status}
+              onValueChange={(value) =>
+                setEditedUser({
+                  ...editedUser,
+                  status: value as User["status"],
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue>
+                  {editedUser.status === "active"
+                    ? "Ativo"
+                    : editedUser.status === "pending"
+                    ? "Pendente"
+                    : "Inativo"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {getStatusOptions().map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
