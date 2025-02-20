@@ -73,14 +73,10 @@ export const EditUserDialog = ({
   };
 
   const getRoleLabel = (role: User["role"]) => {
-    switch (role) {
-      case "admin":
-        return "Administrador";
-      case "seller":
-        return "Vendedor";
-      default:
-        return "";
-    }
+    // Como estamos na página da empresa contratante, só mostramos admin e seller
+    if (role === "admin") return "Administrador";
+    if (role === "seller") return "Vendedor";
+    return ""; // Retorna vazio para outras funções que não devem aparecer neste contexto
   };
 
   const getAvailableStatusOptions = (currentStatus: User["status"]) => {
@@ -100,10 +96,17 @@ export const EditUserDialog = ({
   };
 
   const handleSave = () => {
-    console.log("Salvando usuário com dados:", editedUser);
-    onUserUpdate(editedUser);
+    const updatedUser = { ...editedUser };
+    if (selectedStatus) {
+      updatedUser.status = selectedStatus as User["status"];
+    }
+    console.log("Salvando usuário com dados:", updatedUser);
+    onUserUpdate(updatedUser);
     onClose();
   };
+
+  // Verificar se é um usuário que pode ser editado neste contexto
+  const isEditableUser = editedUser.role === "admin" || editedUser.role === "seller";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -139,26 +142,28 @@ export const EditUserDialog = ({
               }
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Função</label>
-            <Select
-              value={editedUser.role}
-              onValueChange={(value) => {
-                console.log("Nova função selecionada:", value);
-                setEditedUser({ ...editedUser, role: value as "admin" | "seller" });
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue>
-                  {getRoleLabel(editedUser.role)}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="seller">Vendedor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {isEditableUser && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Função</label>
+              <Select
+                value={editedUser.role}
+                onValueChange={(value) => {
+                  console.log("Nova função selecionada:", value);
+                  setEditedUser({ ...editedUser, role: value as "admin" | "seller" });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue>
+                    {getRoleLabel(editedUser.role)}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="seller">Vendedor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="space-y-2">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -169,8 +174,11 @@ export const EditUserDialog = ({
               </div>
             </div>
             <Select
-              defaultValue=""
-              onValueChange={setSelectedStatus}
+              value={selectedStatus}
+              onValueChange={(value) => {
+                console.log("Novo status selecionado:", value);
+                setSelectedStatus(value);
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
