@@ -11,18 +11,14 @@ import {
   LogOut,
   CreditCard,
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
 
-interface OrganizationLayoutProps {
-  children?: ReactNode;
-}
-
-const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
+const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
@@ -168,7 +164,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
           <main className="flex-1 ml-64">
             <div className="p-8">
-              {children}
+              <Outlet />
             </div>
           </main>
         </div>
