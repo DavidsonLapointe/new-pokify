@@ -1,13 +1,16 @@
+
 import { LeadsStats } from "@/components/leads/LeadsStats";
 import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { MonthlyLeadsChart } from "@/components/leads/MonthlyLeadsChart";
 import { User } from "@/types";
 
 interface LeadsTabContentProps {
-  leadsStats: {
+  monthStats: {
     total: number;
     active: number;
     pending: number;
+    processed?: number;
+    failed?: number;
   };
   monthlyLeadsData: any[];
   dailyLeadsData: any[];
@@ -23,7 +26,7 @@ interface LeadsTabContentProps {
 }
 
 export const LeadsTabContent = ({
-  leadsStats,
+  monthStats,
   monthlyLeadsData,
   dailyLeadsData,
   monthlyLeadsDate,
@@ -39,9 +42,9 @@ export const LeadsTabContent = ({
   return (
     <div className="space-y-6">
       <LeadsStats
-        total={leadsStats.total}
-        active={leadsStats.active}
-        pending={leadsStats.pending}
+        total={monthStats.total}
+        active={monthStats.active}
+        pending={monthStats.pending}
       />
       <div className="space-y-6">
         <MonthlyLeadsChart 

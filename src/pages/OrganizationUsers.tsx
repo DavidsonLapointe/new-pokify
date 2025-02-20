@@ -55,6 +55,11 @@ const OrganizationUsers = () => {
     setIsPermissionsDialogOpen(true);
   };
 
+  const handlePermissionsUpdate = (updatedUser: User) => {
+    handleUserUpdate(updatedUser);
+    setIsPermissionsDialogOpen(false);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -95,6 +100,7 @@ const OrganizationUsers = () => {
             isOpen={isPermissionsDialogOpen}
             onClose={() => setIsPermissionsDialogOpen(false)}
             user={selectedUser}
+            onUserUpdate={handlePermissionsUpdate}
           />
         </>
       )}
