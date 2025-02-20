@@ -1,5 +1,5 @@
 
-import { User } from "./user-types";
+import type { User } from "./user-types";
 import type { UserStatus, OrganizationPendingReason } from "./user-types";
 
 export interface Organization {

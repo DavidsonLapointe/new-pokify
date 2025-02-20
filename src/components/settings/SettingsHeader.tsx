@@ -2,7 +2,7 @@
 import { AlertCircle, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Organization } from "@/types/organization";
+import { Organization } from "@/types";
 
 interface SettingsHeaderProps {
   organization: Organization;

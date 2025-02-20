@@ -9,6 +9,9 @@ export interface UserLog {
   action: string;
 }
 
+// Importa apenas o tipo, não a implementação
+import type { Organization } from "./organization-types";
+
 export interface User {
   id: number;
   name: string;
@@ -25,5 +28,3 @@ export interface User {
   organization: Organization;
   avatar: string;
 }
-
-import type { Organization } from "./organization-types";

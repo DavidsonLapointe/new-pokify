@@ -11,8 +11,14 @@ export type {
   UserRole,
   UserStatus,
   UserLog,
+} from './user-types';
+
+export type {
   Organization,
-  OrganizationPendingReason
+} from './organization-types';
+
+export type {
+  OrganizationPendingReason,
 } from './user-types';
 
 // Re-export mock data
