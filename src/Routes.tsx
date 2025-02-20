@@ -21,6 +21,7 @@ import AdminProfile from "./pages/AdminProfile";
 import AdminIntegrations from "./pages/AdminIntegrations";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminFinancial from "./pages/AdminFinancial";
+import AdminUsers from "./pages/AdminUsers";
 
 const Routes = () => {
   return (
@@ -54,6 +55,7 @@ const Routes = () => {
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="analysis-packages" element={<AdminAnalysisPackages />} />
           <Route path="financial" element={<AdminFinancial />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
       </Route>
 

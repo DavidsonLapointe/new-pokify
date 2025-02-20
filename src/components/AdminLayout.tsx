@@ -17,6 +17,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin" },
     { icon: Users, label: "Empresas", path: "/admin/organizations" },
+    { icon: Users, label: "Usuários", path: "/admin/users" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans" },
     { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages" },
     { icon: DollarSign, label: "Financeiro", path: "/admin/financial" },
