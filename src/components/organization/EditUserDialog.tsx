@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -88,7 +89,7 @@ export const EditUserDialog = ({
           <div className="space-y-2">
             <label className="text-sm font-medium">Nome*</label>
             <Input
-              value={editedUser.name}
+              value={editedUser?.name}
               disabled
               className="bg-gray-50"
             />
@@ -97,7 +98,7 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Email*</label>
             <Input
               type="email"
-              value={editedUser.email}
+              value={editedUser?.email}
               onChange={(e) =>
                 setEditedUser({ ...editedUser, email: e.target.value })
               }
@@ -107,16 +108,37 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Telefone</label>
             <Input
               type="tel"
-              value={editedUser.phone}
+              value={editedUser?.phone}
               onChange={(e) =>
                 setEditedUser({ ...editedUser, phone: e.target.value })
               }
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium">Status</label>
+            <Select
+              value={editedUser?.status}
+              onValueChange={(value) =>
+                setEditedUser({
+                  ...editedUser,
+                  status: value as "active" | "inactive" | "pending",
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Ativo</SelectItem>
+                <SelectItem value="inactive">Inativo</SelectItem>
+                <SelectItem value="pending">Pendente</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
             <Select
-              value={editedUser.role}
+              value={editedUser?.role}
               onValueChange={(value) =>
                 setEditedUser({
                   ...editedUser,
@@ -130,7 +152,6 @@ export const EditUserDialog = ({
               <SelectContent>
                 <SelectItem value="admin">Administrador</SelectItem>
                 <SelectItem value="seller">Vendedor</SelectItem>
-                <SelectItem value="leadly_employee">Funcionário Leadly</SelectItem>
               </SelectContent>
             </Select>
           </div>
