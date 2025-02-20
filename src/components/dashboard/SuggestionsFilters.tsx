@@ -40,9 +40,9 @@ export const SuggestionsFilters = ({
             variant="outline"
             size="sm"
             onClick={onClearFilters}
-            className="text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
-            <FilterX className="h-4 w-4 mr-2" />
+            <FilterX className="h-4 w-4" />
             Limpar Filtros
           </Button>
         </div>
@@ -119,3 +119,4 @@ export const SuggestionsFilters = ({
     </Card>
   );
 };
+
