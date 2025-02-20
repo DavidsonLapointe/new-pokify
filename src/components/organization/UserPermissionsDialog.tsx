@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,7 +35,6 @@ export const UserPermissionsDialog = ({
   const { hasRoutePermission } = usePermissions(user);
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
-  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -125,21 +125,6 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <button 
-          onClick={() => setShowDebug(prev => !prev)}
-          className="text-xs text-gray-500 hover:text-gray-700 transition-colors mb-2 text-left"
-        >
-          {showDebug ? "Ocultar Debug" : "Mostrar Debug"}
-        </button>
-
-        {showDebug && (
-          <div className="mb-4 p-2 bg-gray-100 rounded text-xs font-mono whitespace-pre-wrap max-h-32 overflow-y-auto">
-            <div>Nome do usuário: {user.name}</div>
-            <div>Permissões atuais: {JSON.stringify(user.permissions, null, 2)}</div>
-            <div>Permissões temporárias: {JSON.stringify(tempPermissions, null, 2)}</div>
-          </div>
-        )}
-
         <div className="flex-1 overflow-y-auto py-4 space-y-6">
           {availableRoutePermissions.map((route) => {
             const hasPermissions = Object.keys(tempPermissions).includes(route.id);
@@ -183,7 +168,7 @@ export const UserPermissionsDialog = ({
         </div>
 
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={handleClose} disabled={saving}>
+          <Button variant="cancel" onClick={handleClose} disabled={saving}>
             Cancelar
           </Button>
           <Button onClick={handleSave} disabled={saving}>
