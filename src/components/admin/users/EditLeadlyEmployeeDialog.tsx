@@ -34,9 +34,11 @@ export const EditLeadlyEmployeeDialog = ({
   onUserUpdate,
 }: EditLeadlyEmployeeDialogProps) => {
   const [editedUser, setEditedUser] = useState(user);
+  const [selectedNewStatus, setSelectedNewStatus] = useState<string | null>(null);
 
   useEffect(() => {
     setEditedUser(user);
+    setSelectedNewStatus(null);
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -47,6 +49,7 @@ export const EditLeadlyEmployeeDialog = ({
 
     const updatedUser = {
       ...editedUser,
+      status: selectedNewStatus as User["status"] || editedUser.status,
       logs: [
         ...editedUser.logs,
         {
@@ -145,12 +148,8 @@ export const EditLeadlyEmployeeDialog = ({
               </div>
             </div>
             <Select
-              onValueChange={(value) =>
-                setEditedUser({
-                  ...editedUser,
-                  status: value as User["status"],
-                })
-              }
+              value={selectedNewStatus || ""}
+              onValueChange={setSelectedNewStatus}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
