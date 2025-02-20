@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface EditUserDialogProps {
   isOpen: boolean;
@@ -33,10 +33,17 @@ export const EditUserDialog = ({
   user,
   onUserUpdate,
 }: EditUserDialogProps) => {
-  if (!user) return null;
-
-  const [editedUser, setEditedUser] = useState(user);
+  const [editedUser, setEditedUser] = useState<User | null>(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setEditedUser(user);
+      setSelectedStatus("");
+    }
+  }, [user]);
+
+  if (!user || !editedUser) return null;
 
   const getStatusBadgeVariant = (status: User["status"]) => {
     switch (status) {
