@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { User, UserRole } from "@/types";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface EditUserDialogProps {
   isOpen: boolean;
@@ -25,6 +26,24 @@ interface EditUserDialogProps {
   user: User | null;
   onUserUpdate: (user: User) => void;
 }
+
+// Definição das permissões padrão por função
+const DEFAULT_PERMISSIONS = {
+  admin: {
+    dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
+    leads: ["view", "edit", "delete"],
+    users: ["view", "edit", "delete"],
+    integrations: ["view", "edit"],
+    settings: ["view", "edit"],
+    plan: ["view", "upgrade"],
+    profile: ["contact", "password"]
+  },
+  seller: {
+    dashboard: ["leads", "uploads"],
+    leads: ["view"],
+    profile: ["contact", "password"]
+  }
+};
 
 export const EditUserDialog = ({
   isOpen,
@@ -34,7 +53,6 @@ export const EditUserDialog = ({
 }: EditUserDialogProps) => {
   if (!user) return null;
 
-  // Estado temporário para armazenar todas as alterações
   const [tempChanges, setTempChanges] = useState({
     email: user.email,
     phone: user.phone,
@@ -42,7 +60,6 @@ export const EditUserDialog = ({
     status: "",
   });
 
-  // Resetar as alterações temporárias quando o usuário mudar ou o modal for fechado
   useEffect(() => {
     setTempChanges({
       email: user.email,
@@ -94,17 +111,39 @@ export const EditUserDialog = ({
     }
   };
 
+  const handleRoleChange = (value: string) => {
+    const newRole = value as UserRole;
+    
+    // Se a função está mudando, mostra um aviso
+    if (newRole !== user.role) {
+      toast.info(`As permissões serão atualizadas de acordo com a função de ${newRole === 'admin' ? 'Administrador' : 'Vendedor'}`);
+    }
+
+    setTempChanges({ ...tempChanges, role: newRole });
+  };
+
   const handleSave = () => {
-    // Criar o objeto atualizado do usuário com todas as alterações
+    // Se a função mudou, atualiza as permissões
+    const newPermissions = tempChanges.role !== user.role 
+      ? DEFAULT_PERMISSIONS[tempChanges.role as keyof typeof DEFAULT_PERMISSIONS]
+      : user.permissions;
+
     const updatedUser: User = {
       ...user,
       email: tempChanges.email,
       phone: tempChanges.phone,
       role: tempChanges.role as UserRole,
       status: tempChanges.status ? (tempChanges.status as "active" | "inactive" | "pending") : user.status,
+      permissions: newPermissions
     };
+
     onUserUpdate(updatedUser);
     onClose();
+
+    // Notifica sobre a mudança de permissões se a função foi alterada
+    if (tempChanges.role !== user.role) {
+      toast.success(`Permissões atualizadas para ${tempChanges.role === 'admin' ? 'Administrador' : 'Vendedor'}`);
+    }
   };
 
   return (
@@ -145,9 +184,7 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Função</label>
             <Select
               value={tempChanges.role}
-              onValueChange={(value) =>
-                setTempChanges({ ...tempChanges, role: value as UserRole })
-              }
+              onValueChange={handleRoleChange}
             >
               <SelectTrigger>
                 <SelectValue />
