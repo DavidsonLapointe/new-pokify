@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +19,7 @@ import {
 } from "@/components/ui/select";
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import { UserRole } from "@/types/organization";
-import { mockUsers } from "@/types/organization";
+import { UserRole, mockUsers } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddUserDialogProps {
@@ -38,19 +36,16 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
   });
 
   const handleAddUser = () => {
-    // Cria um novo usuário com ID único
     const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
     
-    // Gera as permissões baseadas no papel do usuário
     const userPermissions: { [key: string]: string[] } = {};
     
     if (newUser.role === 'leadly_employee') {
-      // Para funcionários Leadly, adiciona apenas permissões do ambiente administrativo
       const adminRoutes = [
         'dashboard',
         'integrations',
         'plans',
-        'organizations', // Mantemos apenas organizations, removendo companies por ser duplicado
+        'organizations',
         'settings',
         'prompt',
         'analysis_packages',
@@ -62,17 +57,13 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
         }
       });
     } else if (newUser.role === 'admin') {
-      // Para administradores, adiciona todas as funções do ambiente empresa
       availableRoutePermissions.forEach(route => {
-        // Adiciona todas as rotas exceto as do ambiente administrativo
         if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
         }
       });
-      // Adiciona explicitamente as permissões de usuários para admins
       userPermissions.users = ['view', 'edit', 'delete'];
     } else if (newUser.role === 'seller') {
-      // Para sellers, adiciona permissões básicas
       const sellerRoutes = {
         'dashboard': ['view'],
         'leads': ['view', 'edit'],
@@ -96,10 +87,9 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
       permissions: userPermissions,
       logs: [],
       avatar: "",
-      organization: mockUsers[0].organization // Usa a mesma organização do primeiro usuário
+      organization: mockUsers[0].organization
     };
 
-    // Adiciona o novo usuário à lista mockada
     mockUsers.push(user);
 
     console.log("Novo usuário:", user);

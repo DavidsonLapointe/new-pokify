@@ -1,5 +1,5 @@
 
-import { User } from "@/types/organization";
+import { User } from "@/types"; // Atualizado
 import { RoutePermission, availableRoutePermissions } from "@/types/permissions";
 
 export const usePermissions = (user: User) => {

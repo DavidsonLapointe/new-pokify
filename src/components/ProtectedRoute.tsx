@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 import { useLocation, Navigate } from "react-router-dom";
-import { User } from "@/types/organization";
+import { User } from "@/types"; // Atualizado
 import { usePermissions } from "@/hooks/usePermissions";
 import { availableRoutePermissions } from "@/types/permissions";
 import { toast } from "sonner";
