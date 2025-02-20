@@ -137,7 +137,7 @@ export const EditUserDialog = ({
               </div>
             </div>
             <Select
-              value={user.status}
+              defaultValue=""
               onValueChange={(value) =>
                 onUserUpdate({
                   ...user,
