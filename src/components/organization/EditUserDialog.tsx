@@ -36,10 +36,13 @@ export const EditUserDialog = ({
 
   // Estado local para armazenar as alterações antes de salvar
   const [editedUser, setEditedUser] = useState<User>(user);
+  // Estado para controlar se um novo status foi selecionado
+  const [selectedNewStatus, setSelectedNewStatus] = useState<string>("");
 
   // Atualiza o estado local quando o usuário mudar
   useEffect(() => {
     setEditedUser(user);
+    setSelectedNewStatus(""); // Reseta o status selecionado quando o usuário muda
   }, [user]);
 
   const getStatusLabel = (status: string) => {
@@ -69,7 +72,7 @@ export const EditUserDialog = ({
   };
 
   const getStatusOptions = () => {
-    switch (editedUser.status) {
+    switch (user.status) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
       case "inactive":
@@ -82,6 +85,14 @@ export const EditUserDialog = ({
       default:
         return [];
     }
+  };
+
+  const handleStatusChange = (value: string) => {
+    setSelectedNewStatus(value);
+    setEditedUser({
+      ...editedUser,
+      status: value as "active" | "inactive" | "pending",
+    });
   };
 
   const handleSave = () => {
@@ -148,13 +159,8 @@ export const EditUserDialog = ({
               </span>
             </div>
             <Select
-              value={editedUser.status}
-              onValueChange={(value) =>
-                setEditedUser({
-                  ...editedUser,
-                  status: value as "active" | "inactive" | "pending",
-                })
-              }
+              value={selectedNewStatus}
+              onValueChange={handleStatusChange}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione o novo status" />
