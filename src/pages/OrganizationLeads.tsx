@@ -12,11 +12,10 @@ import { useLeadUpload } from "@/hooks/useLeadUpload";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
-import { mockUsers } from "@/types/organization";
-import { LeadFormData } from "@/schemas/leadFormSchema";
+import { User } from "@/types";
+import { mockUsers } from "@/types/mock-users";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
-import { User } from "@/types";
 
 const mockOrganization = {
   id: 1,

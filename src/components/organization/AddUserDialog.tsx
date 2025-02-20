@@ -23,11 +23,12 @@ import { UserRole, mockUsers } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddUserDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
   onUserAdded: () => void;
 }
 
-export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogProps) => {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -94,19 +95,13 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
 
     console.log("Novo usuário:", user);
     toast.success("Usuário adicionado com sucesso!");
-    setIsOpen(false);
+    onClose();
     setNewUser({ name: "", email: "", phone: "", role: "seller" });
     onUserAdded();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <UserPlus className="w-4 h-4 mr-2" />
-          Novo Usuário
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Adicionar Novo Usuário</DialogTitle>
@@ -168,7 +163,7 @@ export const AddUserDialog = ({ onUserAdded }: AddUserDialogProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button variant="outline" onClick={() => onClose()}>
             Cancelar
           </Button>
           <Button onClick={handleAddUser}>Adicionar Usuário</Button>

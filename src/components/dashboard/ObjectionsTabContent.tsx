@@ -1,3 +1,4 @@
+
 import { ObjectionsFilters } from "@/components/objections/ObjectionsFilters";
 import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
 import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
@@ -43,6 +44,8 @@ export const ObjectionsTabContent = ({
         />
         <ObjectionTrendsChart 
           data={objectionTrendsData}
+          selectedDate={monthlyObjectionsDate}
+          onDateChange={setMonthlyObjectionsDate}
           selectedSeller={objectionTrendsSeller}
           onSellerChange={setObjectionTrendsSeller}
           sellers={sellers}

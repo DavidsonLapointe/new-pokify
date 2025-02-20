@@ -77,8 +77,8 @@ const OrganizationUsers = () => {
         />
 
         <AddUserDialog
-          open={isAddDialogOpen}
-          onOpenChange={setIsAddDialogOpen}
+          isOpen={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
           onUserAdded={handleAddUser}
         />
 
