@@ -37,47 +37,10 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Filtra apenas as permissões que correspondem a rotas disponíveis
-      const validPermissions: { [key: string]: string[] } = {};
-      
-      // Adiciona apenas rotas que existem em availableRoutePermissions
-      availableRoutePermissions.forEach(route => {
-        if (route.isDefault) {
-          // Rotas padrão sempre recebem todas as tabs
-          if (route.tabs) {
-            validPermissions[route.id] = route.tabs.map(tab => tab.value);
-          }
-        } else if (user.permissions[route.id]) {
-          // Para rotas não padrão, mantém apenas se o usuário já tem acesso
-          if (route.tabs) {
-            // Para o dashboard, sempre inclui todas as tabs se tiver acesso
-            if (route.id === "dashboard") {
-              validPermissions[route.id] = route.tabs.map(tab => tab.value);
-            } else {
-              // Para outras rotas, mantém apenas as tabs válidas
-              const validTabs = route.tabs.map(tab => tab.value);
-              const userTabs = user.permissions[route.id].filter(tab => validTabs.includes(tab));
-              if (userTabs.length > 0) {
-                validPermissions[route.id] = userTabs;
-              }
-            }
-          }
-        }
-      });
-
-      // Verifica se há rotas não padrão que o usuário tem acesso mas não estão nas permissões
-      availableRoutePermissions.forEach(route => {
-        if (!route.isDefault && !validPermissions[route.id] && hasRoutePermission(route.id)) {
-          if (route.tabs) {
-            validPermissions[route.id] = route.tabs.map(tab => tab.value);
-          }
-        }
-      });
-
-      console.log("Filtered permissions:", validPermissions);
-      setTempPermissions(validPermissions);
+      // Inicializa com as permissões atuais do usuário
+      setTempPermissions(user.permissions);
     }
-  }, [isOpen, user, hasRoutePermission]);
+  }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
     const route = availableRoutePermissions.find(r => r.id === routeId);
@@ -166,7 +129,7 @@ export const UserPermissionsDialog = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Permissões do Usuário</DialogTitle>
+          <DialogTitle>Permissões do Usuário - {user.name}</DialogTitle>
           <DialogDescription>
             Gerencie as permissões de acesso para {user.name}
           </DialogDescription>
