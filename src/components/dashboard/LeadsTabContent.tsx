@@ -1,8 +1,7 @@
-
 import { LeadsStats } from "@/components/leads/LeadsStats";
 import { DailyLeadsChart } from "@/components/leads/DailyLeadsChart";
 import { MonthlyLeadsChart } from "@/components/leads/MonthlyLeadsChart";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 
 interface LeadsTabContentProps {
   leadsStats: {

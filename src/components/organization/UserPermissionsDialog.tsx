@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { usePermissions } from "@/hooks/usePermissions";

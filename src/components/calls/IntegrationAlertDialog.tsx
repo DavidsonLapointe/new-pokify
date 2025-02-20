@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 import { X } from "lucide-react";
 
 interface IntegrationAlertDialogProps {

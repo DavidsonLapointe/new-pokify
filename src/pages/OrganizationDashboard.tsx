@@ -1,4 +1,3 @@
-
 import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
@@ -10,7 +9,7 @@ import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabConten
 import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { mockUsers } from "@/types/organization";
+import { mockUsers } from "@/types";
 
 const OrganizationDashboard = () => {
   const {

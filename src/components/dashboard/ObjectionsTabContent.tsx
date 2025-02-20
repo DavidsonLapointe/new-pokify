@@ -1,10 +1,9 @@
-
 import { ObjectionsFilters } from "@/components/objections/ObjectionsFilters";
 import { ObjectionsStats } from "@/components/objections/ObjectionsStats";
 import { MonthlyObjectionsChart } from "@/components/objections/MonthlyObjectionsChart";
 import { ObjectionTrendsChart } from "@/components/objections/ObjectionTrendsChart";
 import { ObjectionDetails } from "@/components/objections/ObjectionDetails";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 
 interface ObjectionsTabContentProps {
   objectionsData: any[];

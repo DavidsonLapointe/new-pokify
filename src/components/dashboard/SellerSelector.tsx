@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 import { CircleDot } from "lucide-react";
 
 interface SellerSelectorProps {

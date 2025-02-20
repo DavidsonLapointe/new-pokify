@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { User } from "@/types/organization";
+import type { User } from "@/types";
 
 interface UserLogsDialogProps {
   isOpen: boolean;

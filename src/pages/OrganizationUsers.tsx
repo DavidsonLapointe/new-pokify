@@ -1,83 +1,116 @@
-
 import { useState } from "react";
 import OrganizationLayout from "@/components/OrganizationLayout";
-import { UsersTable } from "@/components/organization/UsersTable";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
 import { EditUserDialog } from "@/components/organization/EditUserDialog";
-import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
-import { mockUsers } from "@/types/organization";
-import type { User } from "@/types/organization";
-import { toast } from "sonner";
-import { mockLoggedUser } from "@/components/organization/profile/useProfileForm";
+import { UsersTable } from "@/components/organization/UsersTable";
+import { User } from "@/types";
+import { Organization } from "@/types";
+
+const mockOrganization: Organization = {
+  id: 1,
+  name: "Leadly",
+  nomeFantasia: "Leadly",
+  plan: "Professional",
+  users: [
+    {
+      id: 1,
+      name: "Admin User",
+      email: "admin@leadly.com",
+      phone: "(11) 99999-9999",
+      role: "admin",
+      status: "active",
+      createdAt: "2024-01-01T00:00:00.000Z",
+      lastAccess: "2024-03-15T14:30:00.000Z",
+      permissions: { integrations: ["view", "edit"] },
+      logs: [],
+      organization: {} as Organization,
+      avatar: ""
+    },
+    {
+      id: 2,
+      name: "Seller 1",
+      email: "seller1@leadly.com",
+      phone: "(11) 99999-9998",
+      role: "seller",
+      status: "active",
+      createdAt: "2024-01-01T00:00:00.000Z",
+      lastAccess: "2024-03-15T14:30:00.000Z",
+      permissions: { calls: ["view"] },
+      logs: [],
+      organization: {} as Organization,
+      avatar: ""
+    },
+    {
+      id: 3,
+      name: "Seller 2",
+      email: "seller2@leadly.com",
+      phone: "(11) 99999-9997",
+      role: "seller",
+      status: "inactive",
+      createdAt: "2024-01-01T00:00:00.000Z",
+      lastAccess: "2024-03-15T14:30:00.000Z",
+      permissions: { calls: ["view"] },
+      logs: [],
+      organization: {} as Organization,
+      avatar: ""
+    },
+  ],
+  status: "active",
+  integratedCRM: "Salesforce",
+  integratedLLM: "GPT-4",
+  email: "contato@leadly.com",
+  phone: "(11) 99999-9999",
+  cnpj: "00.000.000/0000-01",
+  adminName: "João Silva",
+  adminEmail: "joao@leadly.com",
+  createdAt: "2024-01-01T00:00:00.000Z"
+};
 
 const OrganizationUsers = () => {
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+  const [users, setUsers] = useState<User[]>(mockOrganization.users);
+
+  const handleAddUser = (newUser: User) => {
+    setUsers([...users, newUser]);
+    setIsAddDialogOpen(false);
+  };
 
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
-    setEditDialogOpen(true);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUserUpdate = (updatedUser: User) => {
+    const updatedUsers = users.map((user) =>
+      user.id === updatedUser.id ? updatedUser : user
+    );
+    setUsers(updatedUsers);
+    setIsEditDialogOpen(false);
   };
 
   const handleEditPermissions = (user: User) => {
     setSelectedUser(user);
-    setPermissionsDialogOpen(true);
-  };
-
-  const handleUserAdded = () => {
-    toast.success("Usuário adicionado com sucesso!");
-  };
-
-  const handleUserUpdated = (updatedUser: User) => {
-    setUsers((currentUsers) =>
-      currentUsers.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      )
-    );
-    setEditDialogOpen(false);
-    toast.success("Usuário atualizado com sucesso!");
-  };
-
-  const handlePermissionsUpdated = (updatedUser: User) => {
-    // Atualiza a lista de usuários
-    setUsers((currentUsers) =>
-      currentUsers.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      )
-    );
-
-    // Se o usuário atualizado for o usuário logado, atualiza o localStorage e força recarga
-    if (updatedUser.id === mockLoggedUser.id) {
-      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-      const updatedStoredUser = {
-        ...storedUser,
-        permissions: updatedUser.permissions
-      };
-      localStorage.setItem('user', JSON.stringify(updatedStoredUser));
-      
-      // Força recarga após um pequeno delay para garantir que o localStorage foi atualizado
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    }
-
-    setPermissionsDialogOpen(false);
-    toast.success("Permissões atualizadas com sucesso!");
+    setIsEditDialogOpen(true);
   };
 
   return (
     <OrganizationLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Usuários</h1>
             <p className="text-muted-foreground">
               Gerencie os usuários da sua organização
             </p>
           </div>
-          <AddUserDialog onUserAdded={handleUserAdded} />
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            <UserPlus className="w-4 h-4 mr-2" />
+            Adicionar Usuário
+          </Button>
         </div>
 
         <UsersTable
@@ -86,21 +119,19 @@ const OrganizationUsers = () => {
           onEditPermissions={handleEditPermissions}
         />
 
+        <AddUserDialog
+          isOpen={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
+          onAddUser={handleAddUser}
+        />
+
         {selectedUser && (
-          <>
-            <EditUserDialog
-              isOpen={editDialogOpen}
-              onClose={() => setEditDialogOpen(false)}
-              user={selectedUser}
-              onUserUpdate={handleUserUpdated}
-            />
-            <UserPermissionsDialog
-              isOpen={permissionsDialogOpen}
-              onClose={() => setPermissionsDialogOpen(false)}
-              user={selectedUser}
-              onUserUpdate={handlePermissionsUpdated}
-            />
-          </>
+          <EditUserDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => setIsEditDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
         )}
       </div>
     </OrganizationLayout>
