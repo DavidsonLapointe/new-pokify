@@ -1,5 +1,5 @@
 
-import { Routes as RouterRoutes, Route, Outlet } from "react-router-dom";
+import { Routes as RouterRoutes, Route } from "react-router-dom";
 import OrganizationLayout from "./components/OrganizationLayout";
 import OrganizationCalls from "./pages/OrganizationCalls";
 import OrganizationDashboard from "./pages/OrganizationDashboard";
@@ -18,15 +18,17 @@ const Routes = () => {
       <Route path="/" element={<Index />} />
       
       {/* Organization Routes */}
-      <Route path="/organization" element={<OrganizationLayout><Outlet /></OrganizationLayout>}>
-        <Route path="dashboard" element={<OrganizationDashboard />} />
-        <Route path="leads" element={<OrganizationLeads />} />
-        <Route path="calls" element={<OrganizationCalls />} />
-        <Route path="users" element={<OrganizationUsers />} />
-        <Route path="integrations" element={<OrganizationIntegrations />} />
-        <Route path="settings" element={<OrganizationSettings />} />
-        <Route path="plan" element={<OrganizationPlan />} />
-        <Route path="profile" element={<OrganizationProfile />} />
+      <Route element={<OrganizationLayout />}>
+        <Route path="/organization">
+          <Route path="dashboard" element={<OrganizationDashboard />} />
+          <Route path="leads" element={<OrganizationLeads />} />
+          <Route path="calls" element={<OrganizationCalls />} />
+          <Route path="users" element={<OrganizationUsers />} />
+          <Route path="integrations" element={<OrganizationIntegrations />} />
+          <Route path="settings" element={<OrganizationSettings />} />
+          <Route path="plan" element={<OrganizationPlan />} />
+          <Route path="profile" element={<OrganizationProfile />} />
+        </Route>
       </Route>
 
       {/* 404 Page */}

@@ -1,5 +1,5 @@
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import {
   Settings,
   Users,
@@ -11,13 +11,12 @@ import {
   LogOut,
   CreditCard,
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
-import { Outlet } from "react-router-dom";
 
 interface OrganizationLayoutProps {
   children?: ReactNode;
@@ -26,20 +25,11 @@ interface OrganizationLayoutProps {
 const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLayoutReady, setIsLayoutReady] = useState(false);
   const { user } = useUser();
   const { getUserPermissions } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
   const allowedRoutes = getUserPermissions().routes;
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLayoutReady(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleLogout = () => {
     try {
@@ -167,8 +157,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
           </aside>
 
           <main className="flex-1 ml-64">
-            <div className="p-8 animate-fadeIn">
-              {isLayoutReady && <Outlet />}
+            <div className="p-8">
+              <Outlet />
             </div>
           </main>
         </div>
