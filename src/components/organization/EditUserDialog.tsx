@@ -34,16 +34,23 @@ export const EditUserDialog = ({
 }: EditUserDialogProps) => {
   if (!user) return null;
 
-  // Estado local para armazenar as alterações antes de salvar
-  const [editedUser, setEditedUser] = useState<User>(user);
-  // Estado para controlar se um novo status foi selecionado
-  const [selectedNewStatus, setSelectedNewStatus] = useState<string>("");
+  // Estado temporário para armazenar todas as alterações
+  const [tempChanges, setTempChanges] = useState({
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    status: "",
+  });
 
-  // Atualiza o estado local quando o usuário mudar
+  // Resetar as alterações temporárias quando o usuário mudar ou o modal for fechado
   useEffect(() => {
-    setEditedUser(user);
-    setSelectedNewStatus(""); // Reseta o status selecionado quando o usuário muda
-  }, [user]);
+    setTempChanges({
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      status: "",
+    });
+  }, [user, isOpen]);
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -87,16 +94,16 @@ export const EditUserDialog = ({
     }
   };
 
-  const handleStatusChange = (value: string) => {
-    setSelectedNewStatus(value);
-    setEditedUser({
-      ...editedUser,
-      status: value as "active" | "inactive" | "pending",
-    });
-  };
-
   const handleSave = () => {
-    onUserUpdate(editedUser);
+    // Criar o objeto atualizado do usuário com todas as alterações
+    const updatedUser: User = {
+      ...user,
+      email: tempChanges.email,
+      phone: tempChanges.phone,
+      role: tempChanges.role as "admin" | "seller",
+      status: tempChanges.status ? (tempChanges.status as "active" | "inactive" | "pending") : user.status,
+    };
+    onUserUpdate(updatedUser);
     onClose();
   };
 
@@ -112,15 +119,15 @@ export const EditUserDialog = ({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Nome</label>
-            <Input value={editedUser.name} disabled className="bg-muted" />
+            <Input value={user.name} disabled className="bg-muted" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Email</label>
             <Input
               type="email"
-              value={editedUser.email}
+              value={tempChanges.email}
               onChange={(e) =>
-                setEditedUser({ ...editedUser, email: e.target.value })
+                setTempChanges({ ...tempChanges, email: e.target.value })
               }
             />
           </div>
@@ -128,18 +135,18 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Telefone</label>
             <Input
               type="tel"
-              value={editedUser.phone}
+              value={tempChanges.phone}
               onChange={(e) =>
-                setEditedUser({ ...editedUser, phone: e.target.value })
+                setTempChanges({ ...tempChanges, phone: e.target.value })
               }
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
             <Select
-              value={editedUser.role}
+              value={tempChanges.role}
               onValueChange={(value) =>
-                setEditedUser({ ...editedUser, role: value as "admin" | "seller" })
+                setTempChanges({ ...tempChanges, role: value })
               }
             >
               <SelectTrigger>
@@ -159,8 +166,10 @@ export const EditUserDialog = ({
               </span>
             </div>
             <Select
-              value={selectedNewStatus}
-              onValueChange={handleStatusChange}
+              value={tempChanges.status}
+              onValueChange={(value) =>
+                setTempChanges({ ...tempChanges, status: value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione o novo status" />
