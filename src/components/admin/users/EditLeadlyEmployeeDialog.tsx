@@ -182,7 +182,7 @@ export const EditLeadlyEmployeeDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="cancel" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={handleUpdateUser}>Salvar Alterações</Button>
