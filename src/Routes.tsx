@@ -1,16 +1,16 @@
 
 import { Routes as RouterRoutes, Route } from "react-router-dom";
 import OrganizationLayout from "./components/OrganizationLayout";
-import { OrganizationCalls } from "./pages/OrganizationCalls";
-import { OrganizationDashboard } from "./pages/OrganizationDashboard";
-import { OrganizationIntegrations } from "./pages/OrganizationIntegrations";
-import { OrganizationLeads } from "./pages/OrganizationLeads";
-import { OrganizationPlan } from "./pages/OrganizationPlan";
-import { OrganizationProfile } from "./pages/OrganizationProfile";
-import { OrganizationSettings } from "./pages/OrganizationSettings";
-import { OrganizationUsers } from "./pages/OrganizationUsers";
-import { Index } from "./pages/Index";
-import { NotFound } from "./pages/NotFound";
+import OrganizationCalls from "./pages/OrganizationCalls";
+import OrganizationDashboard from "./pages/OrganizationDashboard";
+import OrganizationIntegrations from "./pages/OrganizationIntegrations";
+import OrganizationLeads from "./pages/OrganizationLeads";
+import OrganizationPlan from "./pages/OrganizationPlan";
+import OrganizationProfile from "./pages/OrganizationProfile";
+import OrganizationSettings from "./pages/OrganizationSettings";
+import OrganizationUsers from "./pages/OrganizationUsers";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
 const Routes = () => {
   return (
