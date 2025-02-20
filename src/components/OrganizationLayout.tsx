@@ -29,7 +29,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const { getUserPermissions } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
-  const allowedRoutes = getUserPermissions().routes;
+  const { routes: allowedRoutes } = getUserPermissions();
+  console.log("Rotas permitidas:", allowedRoutes);
 
   const handleLogout = () => {
     try {
@@ -92,7 +93,9 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     ];
 
     // Filtra apenas os itens do menu que estão na lista de rotas permitidas
-    return allMenuItems.filter(item => allowedRoutes.includes(item.permissionId));
+    const filteredItems = allMenuItems.filter(item => allowedRoutes.includes(item.permissionId));
+    console.log("Itens filtrados do menu:", filteredItems);
+    return filteredItems;
   };
 
   const menuItems = getMenuItems();
@@ -103,7 +106,12 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    return location.pathname === path || (path === '/organization/dashboard' && location.pathname === '/organization');
+  };
+
+  console.log("Current location:", location.pathname);
+  console.log("Menu items:", menuItems);
 
   return (
     <ProtectedRoute user={user}>
