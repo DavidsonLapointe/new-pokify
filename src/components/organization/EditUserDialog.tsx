@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
+import { useState } from "react";
 
 interface EditUserDialogProps {
   isOpen: boolean;
@@ -33,6 +34,9 @@ export const EditUserDialog = ({
   onUserUpdate,
 }: EditUserDialogProps) => {
   if (!user) return null;
+
+  const [editedUser, setEditedUser] = useState(user);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const getStatusBadgeVariant = (status: User["status"]) => {
     switch (status) {
@@ -76,6 +80,16 @@ export const EditUserDialog = ({
     }
   };
 
+  const handleSave = () => {
+    if (selectedStatus) {
+      onUserUpdate({
+        ...editedUser,
+        status: selectedStatus as "active" | "inactive",
+      });
+    }
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -88,15 +102,15 @@ export const EditUserDialog = ({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Nome</label>
-            <Input value={user.name} disabled className="bg-muted" />
+            <Input value={editedUser.name} disabled className="bg-muted" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Email</label>
             <Input
               type="email"
-              value={user.email}
+              value={editedUser.email}
               onChange={(e) =>
-                onUserUpdate({ ...user, email: e.target.value })
+                setEditedUser({ ...editedUser, email: e.target.value })
               }
             />
           </div>
@@ -104,18 +118,18 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Telefone</label>
             <Input
               type="tel"
-              value={user.phone}
+              value={editedUser.phone}
               onChange={(e) =>
-                onUserUpdate({ ...user, phone: e.target.value })
+                setEditedUser({ ...editedUser, phone: e.target.value })
               }
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
             <Select
-              value={user.role}
+              value={editedUser.role}
               onValueChange={(value) =>
-                onUserUpdate({ ...user, role: value as "admin" | "seller" })
+                setEditedUser({ ...editedUser, role: value as "admin" | "seller" })
               }
             >
               <SelectTrigger>
@@ -131,25 +145,20 @@ export const EditUserDialog = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium">Status atual:</label>
-                <Badge variant={getStatusBadgeVariant(user.status)}>
-                  {getCurrentStatusLabel(user.status)}
+                <Badge variant={getStatusBadgeVariant(editedUser.status)}>
+                  {getCurrentStatusLabel(editedUser.status)}
                 </Badge>
               </div>
             </div>
             <Select
               defaultValue=""
-              onValueChange={(value) =>
-                onUserUpdate({
-                  ...user,
-                  status: value as "active" | "inactive",
-                })
-              }
+              onValueChange={setSelectedStatus}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
               <SelectContent>
-                {getAvailableStatusOptions(user.status).map((option) => (
+                {getAvailableStatusOptions(editedUser.status).map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
@@ -162,7 +171,7 @@ export const EditUserDialog = ({
           <Button variant="cancel" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={onClose}>Salvar Alterações</Button>
+          <Button onClick={handleSave}>Salvar Alterações</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
