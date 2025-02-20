@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
@@ -15,21 +16,21 @@ const mockOrganization: Organization = {
   email: "contato@techsolutions.com",
   phone: "(11) 1234-5678",
   cnpj: "12.345.678/0001-90",
-  adminName: "João Silva",
-  adminEmail: "joao@empresa.com",
+  adminName: "Alexandre Rodrigues",
+  adminEmail: "alexandre.rodrigues@empresa.com",
   createdAt: "2024-01-01T00:00:00.000Z"
 };
 
 // Mock data (will be replaced with real auth data later)
 export const mockLoggedUser: User = {
   id: 1,
-  name: "João Silva",
-  email: "joao.silva@empresa.com",
-  phone: "(11) 99999-9999",
+  name: "Alexandre Rodrigues",
+  email: "alexandre.rodrigues@empresa.com",
+  phone: "(11) 98765-4321",
   role: "admin",
   status: "active",
   createdAt: "2024-01-01T00:00:00.000Z",
-  lastAccess: "2024-03-15T14:30:00.000Z",
+  lastAccess: "2024-03-18T10:30:00.000Z",
   permissions: {
     dashboard: ["view", "export"],
     calls: ["view", "upload", "delete"],
@@ -43,7 +44,7 @@ export const mockLoggedUser: User = {
   logs: [
     {
       id: 1,
-      date: "2024-03-15T14:30:00.000Z",
+      date: "2024-03-18T10:30:00.000Z",
       action: "Acessou o sistema",
     },
   ],
