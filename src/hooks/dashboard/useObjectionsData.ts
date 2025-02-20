@@ -31,15 +31,19 @@ export const useObjectionsData = () => {
   const objectionTrendsData = useMemo(() => {
     const currentDate = new Date();
     
-    return Array.from({ length: 6 }).map((_, index) => {
+    const baseData = Array.from({ length: 6 }).map((_, index) => {
       const date = subMonths(currentDate, 5 - index);
       const monthSeed = parseInt(format(date, 'MMyyy'));
       
       return {
-        date: format(date, 'MMM/yy', { locale: ptBR }),
-        count: 15 + (monthSeed % 25) // Random count between 15 and 40
+        month: format(date, 'MMM/yy', { locale: ptBR }),
+        "Preço muito alto": 10 + (monthSeed % 20),
+        "Não tenho orçamento": 8 + (monthSeed % 15),
+        "Preciso consultar": 6 + (monthSeed % 12),
       };
     });
+
+    return filterDataBySeller(baseData, objectionTrendsSeller);
   }, [objectionTrendsSeller]);
 
   const objectionExamples = useMemo(() => ({
