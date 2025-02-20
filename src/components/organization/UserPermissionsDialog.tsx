@@ -131,7 +131,7 @@ export const UserPermissionsDialog = ({
         <DialogHeader>
           <DialogTitle>Permissões do Usuário - {user.name}</DialogTitle>
           <DialogDescription>
-            Gerencie as permissões de acesso para {user.name}
+            Gerencie as permissões de acesso deste usuário
           </DialogDescription>
         </DialogHeader>
 
