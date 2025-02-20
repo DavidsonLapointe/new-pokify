@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -53,11 +52,11 @@ export const EditUserDialog = ({
   onUserUpdate,
 }: EditUserDialogProps) => {
   const [editedUser, setEditedUser] = useState<User | null>(user);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [pendingStatus, setPendingStatus] = useState<string>("");
 
   useEffect(() => {
     setEditedUser(user);
-    setSelectedStatus(""); // Reset selected status when user changes
+    setPendingStatus(""); // Reset pending status when user changes
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -65,6 +64,7 @@ export const EditUserDialog = ({
 
     const updatedUser = {
       ...editedUser,
+      status: pendingStatus ? (pendingStatus as "active" | "inactive" | "pending") : editedUser.status,
       logs: [
         ...editedUser.logs,
         {
@@ -107,14 +107,6 @@ export const EditUserDialog = ({
         return [];
     }
   })();
-
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
-    setEditedUser(prev => prev ? {
-      ...prev,
-      status: value as "active" | "inactive" | "pending"
-    } : null);
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -159,7 +151,10 @@ export const EditUserDialog = ({
               <label className="text-sm font-medium">Status atual:</label>
               {editedUser?.status && getStatusBadge(editedUser.status)}
             </div>
-            <Select value={selectedStatus} onValueChange={handleStatusChange}>
+            <Select 
+              value={pendingStatus} 
+              onValueChange={setPendingStatus}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
