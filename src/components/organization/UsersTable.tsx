@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@/types";
 import { UserCircle, Mail, PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -34,6 +35,12 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     return logs.length;
   };
 
+  const getInitials = (name: string) => {
+    const nameParts = name.trim().split(' ');
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase();
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+  };
+
   return (
     <div className="border rounded-lg">
       <Table>
@@ -53,9 +60,12 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableRow key={user.id}>
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <UserCircle className="w-5 h-5 text-primary" />
-                  </div>
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="bg-primary/10">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <div className="font-medium">{user.name}</div>
                     <div className="text-sm text-muted-foreground flex items-center gap-1">
