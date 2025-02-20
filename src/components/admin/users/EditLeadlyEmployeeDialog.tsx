@@ -61,7 +61,7 @@ export const EditLeadlyEmployeeDialog = ({
     toast.success("Usuário atualizado com sucesso!");
   };
 
-  const getStatusOptions = () => {
+  const getAvailableStatusOptions = () => {
     switch (editedUser.status) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
@@ -74,6 +74,19 @@ export const EditLeadlyEmployeeDialog = ({
         ];
       default:
         return [];
+    }
+  };
+
+  const getCurrentStatusLabel = () => {
+    switch (editedUser.status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return "";
     }
   };
 
@@ -125,9 +138,13 @@ export const EditLeadlyEmployeeDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Status</label>
+              <div className="text-sm text-muted-foreground">
+                Status atual: {getCurrentStatusLabel()}
+              </div>
+            </div>
             <Select
-              value={editedUser.status}
               onValueChange={(value) =>
                 setEditedUser({
                   ...editedUser,
@@ -136,16 +153,10 @@ export const EditLeadlyEmployeeDialog = ({
               }
             >
               <SelectTrigger>
-                <SelectValue>
-                  {editedUser.status === "active"
-                    ? "Ativo"
-                    : editedUser.status === "pending"
-                    ? "Pendente"
-                    : "Inativo"}
-                </SelectValue>
+                <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
               <SelectContent>
-                {getStatusOptions().map((option) => (
+                {getAvailableStatusOptions().map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
