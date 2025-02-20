@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
 
 interface EditUserDialogProps {
@@ -31,6 +33,32 @@ export const EditUserDialog = ({
   onUserUpdate,
 }: EditUserDialogProps) => {
   if (!user) return null;
+
+  const getStatusBadgeVariant = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "secondary";
+      case "inactive":
+        return "destructive";
+      case "pending":
+        return "default";
+      default:
+        return "default";
+    }
+  };
+
+  const getCurrentStatusLabel = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return "";
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -84,7 +112,14 @@ export const EditUserDialog = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium">Status atual:</label>
+                <Badge variant={getStatusBadgeVariant(user.status)}>
+                  {getCurrentStatusLabel(user.status)}
+                </Badge>
+              </div>
+            </div>
             <Select
               value={user.status}
               onValueChange={(value) =>
@@ -105,7 +140,7 @@ export const EditUserDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="cancel" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={onClose}>Salvar Alterações</Button>
