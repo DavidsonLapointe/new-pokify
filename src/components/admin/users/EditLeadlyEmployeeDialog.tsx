@@ -91,9 +91,8 @@ export const EditLeadlyEmployeeDialog = ({
             <label className="text-sm font-medium">Nome*</label>
             <Input
               value={editedUser.name}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, name: e.target.value })
-              }
+              disabled
+              className="bg-gray-50"
             />
           </div>
           <div className="space-y-2">
@@ -164,3 +163,4 @@ export const EditLeadlyEmployeeDialog = ({
     </Dialog>
   );
 };
+
