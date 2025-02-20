@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { User, UserRole } from "@/types";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -76,6 +77,19 @@ export const EditUserDialog = ({
     toast.success("Usuário atualizado com sucesso!");
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active":
+        return <Badge variant="secondary">Ativo</Badge>;
+      case "inactive":
+        return <Badge variant="destructive">Inativo</Badge>;
+      case "pending":
+        return <Badge variant="default">Pendente</Badge>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -115,7 +129,10 @@ export const EditUserDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">Status atual:</label>
+              {editedUser?.status && getStatusBadge(editedUser.status)}
+            </div>
             <Select
               value={editedUser?.status}
               onValueChange={(value) =>
