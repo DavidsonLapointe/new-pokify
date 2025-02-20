@@ -1,4 +1,3 @@
-
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -168,6 +167,122 @@ export const mockUsers: User[] = [
         id: 1,
         date: "2024-03-18T15:45:00.000Z",
         action: "Acessou o sistema",
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization,
+  },
+  {
+    id: 7,
+    name: "Marina Silva",
+    email: "marina.silva@leadly.com",
+    phone: "(11) 97777-8888",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-02-15T00:00:00.000Z",
+    lastAccess: "2024-03-19T14:30:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      organizations: ["view", "edit"],
+      plans: ["view", "edit"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-15T00:00:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization,
+  },
+  {
+    id: 8,
+    name: "Rafael Santos",
+    email: "rafael.santos@leadly.com",
+    phone: "(11) 96666-7777",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-02-20T00:00:00.000Z",
+    lastAccess: "2024-03-19T15:45:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      organizations: ["view", "edit"],
+      plans: ["view", "edit"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-20T00:00:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization,
+  },
+  {
+    id: 9,
+    name: "Carolina Lima",
+    email: "carolina.lima@leadly.com",
+    phone: "(11) 95555-6666",
+    role: "leadly_employee",
+    status: "inactive",
+    createdAt: "2024-01-10T00:00:00.000Z",
+    lastAccess: "2024-03-15T09:20:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      organizations: ["view", "edit"],
+      plans: ["view", "edit"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-01-10T00:00:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization,
+  },
+  {
+    id: 10,
+    name: "Lucas Oliveira",
+    email: "lucas.oliveira@leadly.com",
+    phone: "(11) 94444-5555",
+    role: "leadly_employee",
+    status: "pending",
+    createdAt: "2024-03-18T00:00:00.000Z",
+    lastAccess: "2024-03-18T00:00:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      organizations: ["view", "edit"],
+      plans: ["view", "edit"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-18T00:00:00.000Z",
+        action: "Usuário criado"
       }
     ],
     avatar: "",
