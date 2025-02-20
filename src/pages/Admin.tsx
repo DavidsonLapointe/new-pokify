@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Phone, Database, ArrowUpRight } from "lucide-react";
+import { Users, Phone, Database, ArrowUpRight, Building2 } from "lucide-react";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
@@ -66,7 +66,7 @@ const AdminDashboard = () => {
         <StatCard
           title="Total de Empresas"
           value={stats.organizations}
-          icon={Users}
+          icon={Building2}
         />
         <StatCard
           title="Chamadas Ativas"
@@ -110,3 +110,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
