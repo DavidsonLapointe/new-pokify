@@ -17,7 +17,6 @@ const Routes = () => {
     <RouterRoutes>
       <Route path="/" element={<Index />} />
       
-      {/* Organization Routes */}
       <Route path="/organization" element={<OrganizationLayout />}>
         <Route index element={<OrganizationDashboard />} />
         <Route path="dashboard" element={<OrganizationDashboard />} />
@@ -30,7 +29,6 @@ const Routes = () => {
         <Route path="profile" element={<OrganizationProfile />} />
       </Route>
 
-      {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
