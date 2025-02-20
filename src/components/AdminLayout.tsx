@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { mockAdminUser } from "@/components/admin/profile/useAdminProfileForm";
 
 interface AdminLayoutProps {
-  children?: ReactNode; // Tornando children opcional com o operador ?
+  children?: ReactNode;
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
@@ -96,7 +96,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
         <main className="flex-1 ml-64">
           <div className="p-8 animate-fadeIn">
-            {children || <Outlet />}
+            {children ?? <Outlet />}
           </div>
         </main>
       </div>
