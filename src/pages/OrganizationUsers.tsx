@@ -8,6 +8,7 @@ import { EditUserDialog } from "@/components/organization/EditUserDialog";
 import { UsersTable } from "@/components/organization/UsersTable";
 import { User, Organization } from "@/types";
 import { mockUsers } from "@/types/mock-users";
+import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
 
 const mockOrganization: Organization = {
   id: 1,
@@ -29,6 +30,7 @@ const mockOrganization: Organization = {
 const OrganizationUsers = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockOrganization.users);
 
@@ -51,7 +53,7 @@ const OrganizationUsers = () => {
 
   const handleEditPermissions = (user: User) => {
     setSelectedUser(user);
-    setIsEditDialogOpen(true);
+    setIsPermissionsDialogOpen(true);
   };
 
   return (
@@ -83,12 +85,27 @@ const OrganizationUsers = () => {
         />
 
         {selectedUser && (
-          <EditUserDialog
-            isOpen={isEditDialogOpen}
-            onClose={() => setIsEditDialogOpen(false)}
-            user={selectedUser}
-            onUserUpdate={handleUserUpdate}
-          />
+          <>
+            <EditUserDialog
+              isOpen={isEditDialogOpen}
+              onClose={() => setIsEditDialogOpen(false)}
+              user={selectedUser}
+              onUserUpdate={handleUserUpdate}
+            />
+
+            <UserPermissionsDialog
+              isOpen={isPermissionsDialogOpen}
+              onClose={() => setIsPermissionsDialogOpen(false)}
+              user={selectedUser}
+              onPermissionsUpdate={(updatedUser) => {
+                const updatedUsers = users.map((user) =>
+                  user.id === updatedUser.id ? updatedUser : user
+                );
+                setUsers(updatedUsers);
+                setIsPermissionsDialogOpen(false);
+              }}
+            />
+          </>
         )}
       </div>
     </OrganizationLayout>
