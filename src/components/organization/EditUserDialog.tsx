@@ -156,7 +156,7 @@ export const EditUserDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="cancel" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={onClose}>Salvar Alterações</Button>
