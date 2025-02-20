@@ -30,11 +30,13 @@ export const mockUsers: User[] = [
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-20T10:30:00.000Z",
     permissions: {
-      dashboard: ["view", "export"],
+      dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      users: ["view", "edit", "delete"]
+      users: ["view", "edit", "delete"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -56,11 +58,13 @@ export const mockUsers: User[] = [
     createdAt: "2024-01-15T00:00:00.000Z",
     lastAccess: "2024-03-20T09:45:00.000Z",
     permissions: {
-      dashboard: ["view", "export"],
+      dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      users: ["view", "edit", "delete"]
+      users: ["view", "edit", "delete"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -82,11 +86,13 @@ export const mockUsers: User[] = [
     createdAt: "2024-02-01T00:00:00.000Z",
     lastAccess: "2024-03-20T11:15:00.000Z",
     permissions: {
-      dashboard: ["view", "export"],
+      dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      users: ["view", "edit", "delete"]
+      users: ["view", "edit", "delete"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -110,7 +116,8 @@ export const mockUsers: User[] = [
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
-      integrations: ["view"]
+      integrations: ["view"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -134,7 +141,8 @@ export const mockUsers: User[] = [
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
-      integrations: ["view"]
+      integrations: ["view"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -158,12 +166,41 @@ export const mockUsers: User[] = [
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
-      integrations: ["view"]
+      integrations: ["view"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
         id: 1,
         date: "2024-03-20T15:45:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  },
+  {
+    id: 7,
+    name: "Renato Teste",
+    email: "renato.teste@techcorp.com.br",
+    phone: "(11) 93333-2222",
+    role: "admin",
+    status: "active",
+    createdAt: "2024-03-21T00:00:00.000Z",
+    lastAccess: "2024-03-21T00:00:00.000Z",
+    permissions: {
+      dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      users: ["view", "edit", "delete"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-21T00:00:00.000Z",
         action: "Usuário criado"
       }
     ],
