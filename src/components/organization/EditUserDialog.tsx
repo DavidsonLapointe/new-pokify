@@ -134,7 +134,7 @@ export const EditUserDialog = ({
               </span>
             </div>
             <Select
-              value={user.status}
+              defaultValue=""
               onValueChange={(value) =>
                 onUserUpdate({
                   ...user,
@@ -142,7 +142,7 @@ export const EditUserDialog = ({
                 })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
               <SelectContent>
