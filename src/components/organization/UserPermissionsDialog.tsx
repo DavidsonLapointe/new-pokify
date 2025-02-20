@@ -155,7 +155,7 @@ export const UserPermissionsDialog = ({
                           id={`${route.id}-${tab.id}`}
                           checked={isTabEnabled(route.id, tab.value)}
                           onChange={() => handleTabPermissionChange(route.id, tab.value)}
-                          className="h-4 w-4 rounded border-gray-300 [&:checked]:bg-primary [&:checked]:border-primary checked:text-white appearance-none checked:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D%270%200%2016%2016%27%20fill%3D%27white%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cpath%20d%3D%27M12.207%204.793a1%201%200%20010%201.414l-5%205a1%201%200%2001-1.414%200l-2-2a1%201%200%20011.414-1.414L6.5%209.086l4.293-4.293a1%201%200%20011.414%200z%27%2F%3E%3C%2Fsvg%3E')]"
+                          className="h-4 w-4 rounded border-gray-300 [&:checked]:bg-primary [&:checked]:border-primary appearance-none bg-white checked:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D%270%200%2016%2016%27%20fill%3D%27white%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cpath%20d%3D%27M12.207%204.793a1%201%200%20010%201.414l-5%205a1%201%200%2001-1.414%200l-2-2a1%201%200%20011.414-1.414L6.5%209.086l4.293-4.293a1%201%200%20011.414%200z%27%2F%3E%3C%2Fsvg%3E')]"
                         />
                         <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
                       </div>
