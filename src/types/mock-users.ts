@@ -1,3 +1,4 @@
+
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -19,15 +20,16 @@ const mockOrganization: Organization = {
 };
 
 export const mockUsers: User[] = [
+  // Administradores
   {
     id: 1,
-    name: "Alexandre Rodrigues",
-    email: "alexandre.rodrigues@empresa.com",
+    name: "Roberto Silva",
+    email: "roberto.silva@empresa.com",
     phone: "(11) 98765-4321",
     role: "admin",
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
-    lastAccess: "2024-03-18T10:30:00.000Z",
+    lastAccess: "2024-03-20T10:30:00.000Z",
     permissions: {
       dashboard: ["view", "export"],
       leads: ["view", "edit", "delete"],
@@ -39,7 +41,7 @@ export const mockUsers: User[] = [
     logs: [
       {
         id: 1,
-        date: "2024-03-18T10:30:00.000Z",
+        date: "2024-03-20T10:30:00.000Z",
         action: "Acessou o sistema",
       }
     ],
@@ -48,13 +50,13 @@ export const mockUsers: User[] = [
   },
   {
     id: 2,
-    name: "Patricia Mendes",
-    email: "patricia.mendes@empresa.com",
+    name: "Carla Mendes",
+    email: "carla.mendes@empresa.com",
     phone: "(11) 98888-7777",
     role: "admin",
-    status: "active",
+    status: "inactive",
     createdAt: "2024-01-15T00:00:00.000Z",
-    lastAccess: "2024-03-18T09:45:00.000Z",
+    lastAccess: "2024-03-19T09:45:00.000Z",
     permissions: {
       dashboard: ["view", "export"],
       leads: ["view", "edit", "delete"],
@@ -66,7 +68,7 @@ export const mockUsers: User[] = [
     logs: [
       {
         id: 1,
-        date: "2024-03-18T09:45:00.000Z",
+        date: "2024-03-19T09:45:00.000Z",
         action: "Atualizou configurações do sistema",
       }
     ],
@@ -75,12 +77,12 @@ export const mockUsers: User[] = [
   },
   {
     id: 3,
-    name: "Fernando Costa",
-    email: "fernando.costa@empresa.com",
+    name: "Paulo Costa",
+    email: "paulo.costa@empresa.com",
     phone: "(11) 97777-6666",
     role: "admin",
-    status: "active",
-    createdAt: "2024-02-01T00:00:00.000Z",
+    status: "pending",
+    createdAt: "2024-03-18T00:00:00.000Z",
     lastAccess: "2024-03-18T11:15:00.000Z",
     permissions: {
       dashboard: ["view", "export"],
@@ -94,21 +96,23 @@ export const mockUsers: User[] = [
       {
         id: 1,
         date: "2024-03-18T11:15:00.000Z",
-        action: "Adicionou novo usuário",
+        action: "Usuário criado",
       }
     ],
     avatar: "",
     organization: mockOrganization,
   },
+
+  // Vendedores
   {
     id: 4,
-    name: "Julia Costa",
-    email: "julia.costa@empresa.com",
+    name: "Ana Santos",
+    email: "ana.santos@empresa.com",
     phone: "(11) 96666-5555",
     role: "seller",
     status: "active",
-    createdAt: "2024-02-15T00:00:00.000Z",
-    lastAccess: "2024-03-18T10:00:00.000Z",
+    createdAt: "2024-02-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T10:00:00.000Z",
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
@@ -117,7 +121,7 @@ export const mockUsers: User[] = [
     logs: [
       {
         id: 1,
-        date: "2024-03-18T10:00:00.000Z",
+        date: "2024-03-20T10:00:00.000Z",
         action: "Atualizou informações de lead",
       }
     ],
@@ -126,13 +130,13 @@ export const mockUsers: User[] = [
   },
   {
     id: 5,
-    name: "Marcos Santos",
-    email: "marcos.santos@empresa.com",
+    name: "Lucas Oliveira",
+    email: "lucas.oliveira@empresa.com",
     phone: "(11) 95555-4444",
     role: "seller",
-    status: "active",
-    createdAt: "2024-02-20T00:00:00.000Z",
-    lastAccess: "2024-03-18T14:30:00.000Z",
+    status: "inactive",
+    createdAt: "2024-02-15T00:00:00.000Z",
+    lastAccess: "2024-03-19T14:30:00.000Z",
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
@@ -141,7 +145,7 @@ export const mockUsers: User[] = [
     logs: [
       {
         id: 1,
-        date: "2024-03-18T14:30:00.000Z",
+        date: "2024-03-19T14:30:00.000Z",
         action: "Registrou novo lead",
       }
     ],
@@ -150,13 +154,13 @@ export const mockUsers: User[] = [
   },
   {
     id: 6,
-    name: "Ana Paula Silva",
-    email: "ana.silva@empresa.com",
+    name: "Maria Pereira",
+    email: "maria.pereira@empresa.com",
     phone: "(11) 94444-3333",
     role: "seller",
-    status: "active",
-    createdAt: "2024-03-01T00:00:00.000Z",
-    lastAccess: "2024-03-18T15:45:00.000Z",
+    status: "pending",
+    createdAt: "2024-03-15T00:00:00.000Z",
+    lastAccess: "2024-03-15T15:45:00.000Z",
     permissions: {
       dashboard: ["view"],
       leads: ["view", "edit"],
@@ -165,13 +169,15 @@ export const mockUsers: User[] = [
     logs: [
       {
         id: 1,
-        date: "2024-03-18T15:45:00.000Z",
-        action: "Acessou o sistema",
+        date: "2024-03-15T15:45:00.000Z",
+        action: "Usuário criado",
       }
     ],
     avatar: "",
     organization: mockOrganization,
   },
+
+  // Funcionários Leadly (mantidos do arquivo original)
   {
     id: 7,
     name: "Marina Silva",
@@ -261,8 +267,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 10,
-    name: "Lucas Oliveira",
-    email: "lucas.oliveira@leadly.com",
+    name: "Pedro Oliveira",
+    email: "pedro.oliveira@leadly.com",
     phone: "(11) 94444-5555",
     role: "leadly_employee",
     status: "pending",
