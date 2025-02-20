@@ -1,65 +1,173 @@
-import { User } from "@/types";
 
-// Permissões padrão para administradores
-const adminPermissions = {
-  dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
-  leads: ["view", "edit", "delete"],
-  users: ["view", "edit", "delete"],
-  integrations: ["view", "edit"],
-  settings: ["view", "edit"],
-  plan: ["view", "upgrade"],
-  profile: ["contact", "password"]
+import { User } from "./user-types";
+import { Organization } from "./organization-types";
+
+const mockOrganization: Organization = {
+  id: 1,
+  name: "TechCorp Brasil",
+  nomeFantasia: "TechCorp",
+  plan: "Professional",
+  users: [],
+  status: "active",
+  integratedCRM: "Salesforce",
+  integratedLLM: "GPT-4",
+  email: "contato@techcorp.com.br",
+  phone: "(11) 99999-9999",
+  cnpj: "00.000.000/0000-01",
+  adminName: "João Silva",
+  adminEmail: "joao.silva@techcorp.com.br",
+  createdAt: "2024-01-01T00:00:00.000Z"
 };
 
 export const mockUsers: User[] = [
   {
     id: 1,
     name: "João Silva",
-    email: "joao.silva@empresa.com",
-    phone: "(11) 99999-9999",
-    role: "admin",
-    status: "active",
-    createdAt: "2024-01-01T10:00:00.000Z",
-    lastAccess: "2024-01-01T10:00:00.000Z",
-    permissions: adminPermissions,
-    logs: [],
-    avatar: "",
-    organization: {} as any,
-  },
-  {
-    id: 2,
-    name: "Maria Oliveira",
-    email: "maria.oliveira@empresa.com",
-    phone: "(11) 98888-8888",
-    role: "seller",
-    status: "active",
-    createdAt: "2024-01-02T10:00:00.000Z",
-    lastAccess: "2024-01-02T10:00:00.000Z",
-    permissions: {
-      dashboard: ["leads", "uploads"],
-      leads: ["view"],
-      profile: ["contact", "password"]
-    },
-    logs: [],
-    avatar: "",
-    organization: {} as any,
-  },
-  {
-    id: 3,
-    name: "Renato Dleizer",
-    email: "renato.dleizer@empresa.com",
+    email: "joao.silva@techcorp.com.br",
     phone: "(11) 98765-4321",
     role: "admin",
     status: "active",
-    createdAt: new Date().toISOString(),
-    lastAccess: new Date().toISOString(),
-    permissions: adminPermissions,
-    logs: [{
-      id: 1,
-      date: new Date().toISOString(),
-      action: "Usuário criado"
-    }],
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T10:30:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      users: ["view", "edit", "delete"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T10:30:00.000Z",
+        action: "Acessou o sistema"
+      }
+    ],
     avatar: "",
-    organization: {} as any,
+    organization: mockOrganization
   },
+  {
+    id: 2,
+    name: "Maria Santos",
+    email: "maria.santos@techcorp.com.br",
+    phone: "(11) 98888-7777",
+    role: "admin",
+    status: "inactive",
+    createdAt: "2024-01-15T00:00:00.000Z",
+    lastAccess: "2024-03-20T09:45:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      users: ["view", "edit", "delete"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T09:45:00.000Z",
+        action: "Usuário desativado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  },
+  {
+    id: 3,
+    name: "Carlos Oliveira",
+    email: "carlos.oliveira@techcorp.com.br",
+    phone: "(11) 97777-6666",
+    role: "admin",
+    status: "pending",
+    createdAt: "2024-02-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T11:15:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      users: ["view", "edit", "delete"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T11:15:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  },
+  {
+    id: 4,
+    name: "Ana Costa",
+    email: "ana.costa@techcorp.com.br",
+    phone: "(11) 96666-5555",
+    role: "seller",
+    status: "active",
+    createdAt: "2024-02-15T00:00:00.000Z",
+    lastAccess: "2024-03-20T10:00:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      leads: ["view", "edit"],
+      integrations: ["view"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T10:00:00.000Z",
+        action: "Acessou o sistema"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  },
+  {
+    id: 5,
+    name: "Pedro Souza",
+    email: "pedro.souza@techcorp.com.br",
+    phone: "(11) 95555-4444",
+    role: "seller",
+    status: "inactive",
+    createdAt: "2024-02-20T00:00:00.000Z",
+    lastAccess: "2024-03-20T14:30:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      leads: ["view", "edit"],
+      integrations: ["view"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T14:30:00.000Z",
+        action: "Usuário desativado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  },
+  {
+    id: 6,
+    name: "Julia Lima",
+    email: "julia.lima@techcorp.com.br",
+    phone: "(11) 94444-3333",
+    role: "seller",
+    status: "pending",
+    createdAt: "2024-03-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T15:45:00.000Z",
+    permissions: {
+      dashboard: ["view"],
+      leads: ["view", "edit"],
+      integrations: ["view"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T15:45:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: mockOrganization
+  }
 ];
