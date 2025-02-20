@@ -9,6 +9,7 @@ import { User, Organization } from "@/types";
 import { mockUsers } from "@/types/mock-users";
 import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "sonner";
 
 const mockOrganization: Organization = {
   id: 1,
@@ -57,6 +58,7 @@ const OrganizationUsers = () => {
     );
     setUsers(updatedUsers);
     setIsEditDialogOpen(false);
+    toast.success("Usuário atualizado com sucesso!");
   };
 
   const handleEditPermissions = (user: User) => {
