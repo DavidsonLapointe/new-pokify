@@ -1,6 +1,6 @@
 
 import { FinancialTitle } from "@/types/financial";
-import { Organization } from "@/types/organization";
+import { Organization } from "@/types";
 import { updateOrganizationStatus } from "./organizationService";
 
 export const createProRataTitle = (organization: Organization, proRataValue: number): FinancialTitle => {

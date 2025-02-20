@@ -1,7 +1,8 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import { Organization } from "@/types/organization";
+import { Organization } from "@/types";
 import { sendInitialContract } from "@/services/organizationService";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
 import { availableRoutePermissions } from "@/types/permissions";

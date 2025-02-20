@@ -1,3 +1,4 @@
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format, isBefore } from "date-fns";
@@ -7,7 +8,7 @@ import { FinancialTitle, TitleStatus } from "@/types/financial";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { handleTitlePayment } from "@/services/financialService";
-import { Organization } from "@/types/organization";
+import { Organization } from "@/types";
 import { SearchX } from "lucide-react";
 
 interface FinancialTitlesTableProps {

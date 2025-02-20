@@ -1,10 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { CallsHeader } from "@/components/calls/CallsHeader";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
-import { Organization, User } from "@/types/organization";
+import { Organization, User } from "@/types";
 
 interface LeadsPageHeaderProps {
   onUploadClick: () => void;

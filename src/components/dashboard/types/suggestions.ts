@@ -1,5 +1,4 @@
-
-import { User } from "@/types/organization";
+import { User } from "@/types";
 
 export interface Suggestion {
   id: string;

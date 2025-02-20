@@ -15,7 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Organization, User } from "@/types/organization";
+import { Organization, User } from "@/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 

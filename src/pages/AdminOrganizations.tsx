@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -6,7 +5,7 @@ import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrg
 import { OrganizationCard } from "@/components/admin/organizations/OrganizationCard";
 import { OrganizationsHeader } from "@/components/admin/organizations/OrganizationsHeader";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
-import { Organization, User } from "@/types/organization";
+import { Organization, User } from "@/types";
 
 const mockOrganizations: Organization[] = [
   {
@@ -26,7 +25,7 @@ const mockOrganizations: Organization[] = [
         lastAccess: "2024-03-15T14:30:00.000Z",
         permissions: { integrations: ["view", "edit"] },
         logs: [],
-        organization: {} as Organization, // Será atualizado após a criação
+        organization: {} as Organization,
         avatar: ""
       },
       {

@@ -1,5 +1,5 @@
 
-import { Organization } from "@/types/organization";
+import { Organization } from "@/types";
 import { createProRataTitle } from "./financialService";
 
 export const updateOrganizationStatus = async (organizationId: number, newStatus: "active" | "inactive" | "pending") => {
