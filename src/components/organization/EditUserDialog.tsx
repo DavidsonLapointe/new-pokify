@@ -90,11 +90,21 @@ export const EditUserDialog = ({
     }
   };
 
-  const statusOptions = [
-    { value: "active", label: "Ativo" },
-    { value: "inactive", label: "Inativo" },
-    { value: "pending", label: "Pendente" }
-  ].filter(option => option.value !== editedUser?.status);
+  const statusOptions = (() => {
+    switch (editedUser?.status) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [
+          { value: "active", label: "Ativo" },
+          { value: "inactive", label: "Inativo" }
+        ];
+      default:
+        return [];
+    }
+  })();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
