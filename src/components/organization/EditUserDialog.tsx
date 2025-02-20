@@ -111,11 +111,6 @@ export const EditUserDialog = ({
     }
   };
 
-  const handleRoleChange = (value: string) => {
-    const newRole = value as UserRole;
-    setTempChanges({ ...tempChanges, role: newRole });
-  };
-
   const handleSave = () => {
     // Se a função mudou, atualiza as permissões
     const newPermissions = tempChanges.role !== user.role 
@@ -178,7 +173,9 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Função</label>
             <Select
               value={tempChanges.role}
-              onValueChange={handleRoleChange}
+              onValueChange={(value) =>
+                setTempChanges({ ...tempChanges, role: value as UserRole })
+              }
             >
               <SelectTrigger>
                 <SelectValue />
