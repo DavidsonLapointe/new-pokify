@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
 import { toast } from "sonner";
 
@@ -35,11 +34,9 @@ export const EditLeadlyEmployeeDialog = ({
   onUserUpdate,
 }: EditLeadlyEmployeeDialogProps) => {
   const [editedUser, setEditedUser] = useState(user);
-  const [selectedNewStatus, setSelectedNewStatus] = useState<string | null>(null);
 
   useEffect(() => {
     setEditedUser(user);
-    setSelectedNewStatus(null);
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -50,7 +47,6 @@ export const EditLeadlyEmployeeDialog = ({
 
     const updatedUser = {
       ...editedUser,
-      status: selectedNewStatus as User["status"] || editedUser.status,
       logs: [
         ...editedUser.logs,
         {
@@ -65,7 +61,7 @@ export const EditLeadlyEmployeeDialog = ({
     toast.success("Usuário atualizado com sucesso!");
   };
 
-  const getAvailableStatusOptions = () => {
+  const getStatusOptions = () => {
     switch (editedUser.status) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
@@ -78,32 +74,6 @@ export const EditLeadlyEmployeeDialog = ({
         ];
       default:
         return [];
-    }
-  };
-
-  const getStatusBadgeVariant = (status: User["status"]) => {
-    switch (status) {
-      case "active":
-        return "secondary";
-      case "inactive":
-        return "destructive";
-      case "pending":
-        return "default";
-      default:
-        return "default";
-    }
-  };
-
-  const getCurrentStatusLabel = () => {
-    switch (editedUser.status) {
-      case "active":
-        return "Ativo";
-      case "inactive":
-        return "Inativo";
-      case "pending":
-        return "Pendente";
-      default:
-        return "";
     }
   };
 
@@ -155,24 +125,27 @@ export const EditLeadlyEmployeeDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">Status atual:</label>
-                <Badge variant={getStatusBadgeVariant(editedUser.status)}>
-                  {getCurrentStatusLabel()}
-                </Badge>
-              </div>
-            </div>
+            <label className="text-sm font-medium">Status</label>
             <Select
-              value={selectedNewStatus || ""}
-              onValueChange={setSelectedNewStatus}
-              defaultValue=""
+              value={editedUser.status}
+              onValueChange={(value) =>
+                setEditedUser({
+                  ...editedUser,
+                  status: value as User["status"],
+                })
+              }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o novo status" />
+                <SelectValue>
+                  {editedUser.status === "active"
+                    ? "Ativo"
+                    : editedUser.status === "pending"
+                    ? "Pendente"
+                    : "Inativo"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {getAvailableStatusOptions().map((option) => (
+                {getStatusOptions().map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
@@ -9,7 +9,6 @@ import { User, Organization } from "@/types";
 import { mockUsers } from "@/types/mock-users";
 import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
 import { useUser } from "@/contexts/UserContext";
-import { toast } from "sonner";
 
 const mockOrganization: Organization = {
   id: 1,
@@ -34,8 +33,14 @@ const OrganizationUsers = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  // Inicializa o estado com mockUsers diretamente, sem depender do useEffect
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    // Atualiza a lista de usuários com o usuário logado atualizado
+    setUsers(mockUsers.map(mockUser => 
+      mockUser.id === user.id ? user : mockUser
+    ));
+  }, [user]);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(false);
@@ -47,13 +52,11 @@ const OrganizationUsers = () => {
   };
 
   const handleUserUpdate = (updatedUser: User) => {
-    setUsers(currentUsers => 
-      currentUsers.map(user => 
-        user.id === updatedUser.id ? updatedUser : user
-      )
+    const updatedUsers = users.map((user) =>
+      user.id === updatedUser.id ? updatedUser : user
     );
+    setUsers(updatedUsers);
     setIsEditDialogOpen(false);
-    toast.success("Usuário atualizado com sucesso!");
   };
 
   const handleEditPermissions = (user: User) => {
