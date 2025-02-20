@@ -91,4 +91,15 @@ const OrganizationUsers = () => {
             onUserUpdate={handleUserUpdate}
           />
 
-          <UserPerm
+          <UserPermissionsDialog
+            isOpen={isPermissionsDialogOpen}
+            onClose={() => setIsPermissionsDialogOpen(false)}
+            user={selectedUser}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default OrganizationUsers;
