@@ -97,7 +97,7 @@ const OrganizationUsers = () => {
               isOpen={isPermissionsDialogOpen}
               onClose={() => setIsPermissionsDialogOpen(false)}
               user={selectedUser}
-              onPermissionsUpdate={(updatedUser) => {
+              onUserUpdate={(updatedUser) => {
                 const updatedUsers = users.map((user) =>
                   user.id === updatedUser.id ? updatedUser : user
                 );
