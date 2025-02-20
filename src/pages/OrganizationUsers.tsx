@@ -5,30 +5,11 @@ import { UserPlus } from "lucide-react";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
 import { EditUserDialog } from "@/components/organization/EditUserDialog";
 import { UsersTable } from "@/components/organization/UsersTable";
-import { User, Organization } from "@/types";
+import { User } from "@/types";
 import { mockUsers } from "@/types/mock-users";
 import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
-import { useUser } from "@/contexts/UserContext";
-
-const mockOrganization: Organization = {
-  id: 1,
-  name: "Leadly",
-  nomeFantasia: "Leadly",
-  plan: "Professional",
-  users: mockUsers,
-  status: "active",
-  integratedCRM: "Salesforce",
-  integratedLLM: "GPT-4",
-  email: "contato@leadly.com",
-  phone: "(11) 99999-9999",
-  cnpj: "00.000.000/0000-01",
-  adminName: "João Silva",
-  adminEmail: "joao@leadly.com",
-  createdAt: "2024-01-01T00:00:00.000Z"
-};
 
 const OrganizationUsers = () => {
-  const { user } = useUser();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
@@ -36,11 +17,9 @@ const OrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // Atualiza a lista de usuários com o usuário logado atualizado
-    setUsers(mockUsers.map(mockUser => 
-      mockUser.id === user.id ? user : mockUser
-    ));
-  }, [user]);
+    // Carrega diretamente os usuários mockados sem modificação
+    setUsers(mockUsers);
+  }, []);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(false);
@@ -118,3 +97,4 @@ const OrganizationUsers = () => {
 };
 
 export default OrganizationUsers;
+
