@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -53,24 +54,33 @@ export const EditUserDialog = ({
 }: EditUserDialogProps) => {
   const [editedUser, setEditedUser] = useState<User | null>(user);
   const [pendingStatus, setPendingStatus] = useState<string>("");
+  const [pendingRole, setPendingRole] = useState<UserRole | "">("");
 
   useEffect(() => {
     setEditedUser(user);
     setPendingStatus(""); // Reset pending status when user changes
+    setPendingRole(""); // Reset pending role when user changes
   }, [user]);
 
   const handleUpdateUser = () => {
     if (!editedUser) return;
 
+    const newRole = pendingRole || editedUser.role;
+    
+    // Atualiza as permissões baseado na nova função
+    const newPermissions = DEFAULT_PERMISSIONS[newRole];
+
     const updatedUser = {
       ...editedUser,
+      role: newRole,
       status: pendingStatus ? (pendingStatus as "active" | "inactive" | "pending") : editedUser.status,
+      permissions: newPermissions,
       logs: [
         ...editedUser.logs,
         {
           id: Math.max(...editedUser.logs.map(log => log.id)) + 1,
           date: new Date().toISOString(),
-          action: "Usuário atualizado"
+          action: `Usuário atualizado${pendingRole ? ` - Função alterada para ${newRole}` : ''}`
         }
       ]
     };
@@ -170,13 +180,8 @@ export const EditUserDialog = ({
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
             <Select
-              value={editedUser?.role}
-              onValueChange={(value) =>
-                setEditedUser(prev => prev ? {
-                  ...prev,
-                  role: value as UserRole,
-                } : null)
-              }
+              value={pendingRole || editedUser?.role}
+              onValueChange={(value: UserRole) => setPendingRole(value)}
             >
               <SelectTrigger>
                 <SelectValue />
