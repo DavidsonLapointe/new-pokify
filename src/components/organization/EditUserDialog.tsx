@@ -46,6 +46,19 @@ export const EditUserDialog = ({
     }
   };
 
+  const getStatusBadgeClasses = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-700";
+      case "inactive":
+        return "bg-red-100 text-red-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
   const getStatusOptions = () => {
     switch (user.status) {
       case "active":
@@ -114,13 +127,18 @@ export const EditUserDialog = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status Atual: {getStatusLabel(user.status)}</label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">Status Atual:</label>
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(user.status)}`}>
+                {getStatusLabel(user.status)}
+              </span>
+            </div>
             <Select
               value={user.status}
               onValueChange={(value) =>
                 onUserUpdate({
                   ...user,
-                  status: value as "active" | "inactive",
+                  status: value as "active" | "inactive" | "pending",
                 })
               }
             >
@@ -147,4 +165,3 @@ export const EditUserDialog = ({
     </Dialog>
   );
 };
-
