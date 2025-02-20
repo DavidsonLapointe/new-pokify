@@ -38,6 +38,7 @@ export const EditUserDialog = ({
 
   useEffect(() => {
     if (user) {
+      console.log("Usuário recebido no modal:", user);
       setEditedUser(user);
       setSelectedStatus("");
     }
@@ -88,12 +89,8 @@ export const EditUserDialog = ({
   };
 
   const handleSave = () => {
-    if (selectedStatus) {
-      onUserUpdate({
-        ...editedUser,
-        status: selectedStatus as "active" | "inactive",
-      });
-    }
+    console.log("Salvando usuário com dados:", editedUser);
+    onUserUpdate(editedUser);
     onClose();
   };
 
@@ -135,9 +132,10 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Função</label>
             <Select
               value={editedUser.role}
-              onValueChange={(value) =>
-                setEditedUser({ ...editedUser, role: value as "admin" | "seller" })
-              }
+              onValueChange={(value) => {
+                console.log("Nova função selecionada:", value);
+                setEditedUser({ ...editedUser, role: value as "admin" | "seller" });
+              }}
             >
               <SelectTrigger>
                 <SelectValue />
