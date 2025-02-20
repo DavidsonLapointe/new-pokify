@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,6 +32,22 @@ export const EditUserDialog = ({
   onUserUpdate,
 }: EditUserDialogProps) => {
   if (!user) return null;
+
+  const getStatusOptions = () => {
+    switch (user.status) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [
+          { value: "active", label: "Ativo" },
+          { value: "inactive", label: "Inativo" }
+        ];
+      default:
+        return [];
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -98,8 +115,11 @@ export const EditUserDialog = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Ativo</SelectItem>
-                <SelectItem value="inactive">Inativo</SelectItem>
+                {getStatusOptions().map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -114,3 +134,4 @@ export const EditUserDialog = ({
     </Dialog>
   );
 };
+
