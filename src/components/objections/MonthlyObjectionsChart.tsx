@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import {
   BarChart,
@@ -11,7 +10,7 @@ import {
 } from "recharts";
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 
 interface ObjectionData {
   name: string;

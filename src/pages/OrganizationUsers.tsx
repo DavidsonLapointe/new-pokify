@@ -7,6 +7,24 @@ import { AddUserDialog } from "@/components/organization/AddUserDialog";
 import { EditUserDialog } from "@/components/organization/EditUserDialog";
 import { UsersTable } from "@/components/organization/UsersTable";
 import { User, Organization } from "@/types";
+import { mockUsers } from "@/types/mock-users";
+
+const mockOrganization: Organization = {
+  id: 1,
+  name: "Leadly",
+  nomeFantasia: "Leadly",
+  plan: "Professional",
+  users: mockUsers,
+  status: "active",
+  integratedCRM: "Salesforce",
+  integratedLLM: "GPT-4",
+  email: "contato@leadly.com",
+  phone: "(11) 99999-9999",
+  cnpj: "00.000.000/0000-01",
+  adminName: "João Silva",
+  adminEmail: "joao@leadly.com",
+  createdAt: "2024-01-01T00:00:00.000Z"
+};
 
 const OrganizationUsers = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -14,8 +32,7 @@ const OrganizationUsers = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockOrganization.users);
 
-  const handleAddUser = (newUser: User) => {
-    setUsers([...users, newUser]);
+  const handleAddUser = () => {
     setIsAddDialogOpen(false);
   };
 

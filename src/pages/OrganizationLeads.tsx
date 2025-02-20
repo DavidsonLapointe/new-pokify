@@ -16,6 +16,7 @@ import { mockUsers } from "@/types/organization";
 import { LeadFormData } from "@/schemas/leadFormSchema";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
+import { User } from "@/types";
 
 const mockOrganization = {
   id: 1,

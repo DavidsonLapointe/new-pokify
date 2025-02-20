@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import {
   LineChart,
@@ -8,18 +7,20 @@ import {
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 
-interface TrendData {
-  month: string;
-  [key: string]: number | string;
+interface ObjectionData {
+  date: string;
+  count: number;
 }
 
 interface ObjectionTrendsChartProps {
-  data: TrendData[];
+  data: ObjectionData[];
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
   selectedSeller: string;
   onSellerChange: (sellerId: string) => void;
   sellers: User[];
@@ -29,12 +30,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border rounded-lg shadow-lg p-4">
-        <p className="font-medium mb-2">{label}</p>
-        {payload.map((entry: any) => (
-          <p key={entry.name} style={{ color: entry.color }}>
-            {entry.name}: {entry.value}
-          </p>
-        ))}
+        <p className="font-medium">{label}</p>
+        <p className="text-primary">
+          Ocorrências: {payload[0].value}
+        </p>
       </div>
     );
   }
@@ -42,53 +41,37 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const ObjectionTrendsChart = ({ 
-  data,
+  data, 
+  selectedDate, 
+  onDateChange, 
   selectedSeller,
   onSellerChange,
-  sellers
-}: ObjectionTrendsChartProps) => {
-  const colors = ["#2563eb", "#f97316", "#22c55e", "#8b5cf6", "#ef4444"];
-  const topObjections = Object.keys(data[0] || {}).filter(key => key !== "month").slice(0, 5);
-
-  return (
-    <Card className="p-4">
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Tendências das Principais Objeções</h3>
+  sellers 
+}: ObjectionTrendsChartProps) => (
+  <Card className="p-4">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Tendências de Objeções</h3>
+        <div className="flex items-center gap-4">
+          <MonthYearSelector selectedDate={selectedDate} onDateChange={onDateChange} />
           <SellerSelector 
             selectedSeller={selectedSeller}
             onSellerChange={onSellerChange}
             sellers={sellers}
           />
         </div>
-        <div className="h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="month"
-                angle={-30}
-                textAnchor="end"
-                height={60}
-                interval={0}
-              />
-              <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} />
-              <Legend />
-              {topObjections.map((objection, index) => (
-                <Line
-                  key={objection}
-                  type="monotone"
-                  dataKey={objection}
-                  name={objection}
-                  stroke={colors[index % colors.length]}
-                  strokeWidth={2}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
       </div>
-    </Card>
-  );
-};
+      <div className="h-[400px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <RechartsTooltip content={<CustomTooltip />} />
+            <Line type="monotone" dataKey="count" stroke="#2563eb" activeDot={{ r: 8 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </Card>
+);
