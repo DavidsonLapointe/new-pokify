@@ -5,12 +5,14 @@ import { ptBR } from "date-fns/locale";
 import { filterDataBySeller } from "./utils";
 
 export const useObjectionsData = () => {
-  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(() => new Date());
+  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState<Date>(() => new Date());
   const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
   const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
 
   const objectionsData = useMemo(() => {
-    const monthYear = format(monthlyObjectionsDate, 'MM/yyyy');
+    // Ensure we have a valid date object
+    const date = monthlyObjectionsDate instanceof Date ? monthlyObjectionsDate : new Date();
+    const monthYear = format(date, 'MM/yyyy');
     const seed = parseInt(monthYear.replace('/', ''));
     
     const baseData = [
@@ -27,8 +29,11 @@ export const useObjectionsData = () => {
   }, [monthlyObjectionsDate, monthlyObjectionsSeller]);
 
   const objectionTrendsData = useMemo(() => {
+    // Ensure we're working with a valid date
+    const currentDate = new Date();
+    
     const baseData = Array.from({ length: 6 }).map((_, index) => {
-      const date = subMonths(new Date(), 5 - index);
+      const date = subMonths(currentDate, 5 - index);
       const monthSeed = parseInt(format(date, 'MMyyy'));
       
       return {
