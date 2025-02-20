@@ -92,21 +92,15 @@ export const UserPermissionsDialog = ({
       };
 
       // Atualiza o localStorage se for o usuário logado
-      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user.id === storedUser.id) {
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+      const mockLoggedUserData = JSON.parse(localStorage.getItem('mockLoggedUser') || '{}');
+      if (user.id === mockLoggedUserData.id) {
+        localStorage.setItem('mockLoggedUser', JSON.stringify(updatedUser));
+        // Força o reload da página para atualizar o menu lateral
+        window.location.reload();
       }
 
       onUserUpdate(updatedUser);
       onClose();
-      
-      // Se for o usuário logado, força um reload após um pequeno delay
-      if (user.id === storedUser.id) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
-      }
-
       toast.success("Permissões atualizadas com sucesso!");
     } catch (error) {
       toast.error("Erro ao atualizar permissões");
