@@ -143,8 +143,8 @@ export const EditUserDialog = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Status Atual:</label>
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(editedUser.status)}`}>
-                {getStatusLabel(editedUser.status)}
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(user.status)}`}>
+                {getStatusLabel(user.status)}
               </span>
             </div>
             <Select
