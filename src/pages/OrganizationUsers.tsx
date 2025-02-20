@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
@@ -8,6 +8,7 @@ import { UsersTable } from "@/components/organization/UsersTable";
 import { User, Organization } from "@/types";
 import { mockUsers } from "@/types/mock-users";
 import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
+import { useUser } from "@/contexts/UserContext";
 
 const mockOrganization: Organization = {
   id: 1,
@@ -27,11 +28,19 @@ const mockOrganization: Organization = {
 };
 
 const OrganizationUsers = () => {
+  const { user } = useUser();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>(mockOrganization.users);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    // Atualiza a lista de usuários com o usuário logado atualizado
+    setUsers(mockUsers.map(mockUser => 
+      mockUser.id === user.id ? user : mockUser
+    ));
+  }, [user]);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(false);
