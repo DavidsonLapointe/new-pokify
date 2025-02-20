@@ -37,7 +37,6 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Inicializa com as permissões atuais do usuário
       setTempPermissions(user.permissions);
     }
   }, [isOpen, user]);
@@ -95,8 +94,16 @@ export const UserPermissionsDialog = ({
       const mockLoggedUserData = JSON.parse(localStorage.getItem('mockLoggedUser') || '{}');
       if (user.id === mockLoggedUserData.id) {
         localStorage.setItem('mockLoggedUser', JSON.stringify(updatedUser));
-        // Força o reload da página para atualizar o menu lateral
-        window.location.reload();
+        
+        // Dispara um evento customizado para notificar a mudança
+        window.dispatchEvent(new CustomEvent('userPermissionsChanged', {
+          detail: updatedUser
+        }));
+
+        // Força o reload da página após um pequeno delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       }
 
       onUserUpdate(updatedUser);
