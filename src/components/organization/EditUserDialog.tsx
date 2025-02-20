@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User } from "@/types";
+import { User, UserRole } from "@/types";
 import { useState, useEffect } from "react";
 
 interface EditUserDialogProps {
@@ -100,7 +100,7 @@ export const EditUserDialog = ({
       ...user,
       email: tempChanges.email,
       phone: tempChanges.phone,
-      role: tempChanges.role as "admin" | "seller",
+      role: tempChanges.role as UserRole,
       status: tempChanges.status ? (tempChanges.status as "active" | "inactive" | "pending") : user.status,
     };
     onUserUpdate(updatedUser);
@@ -146,7 +146,7 @@ export const EditUserDialog = ({
             <Select
               value={tempChanges.role}
               onValueChange={(value) =>
-                setTempChanges({ ...tempChanges, role: value })
+                setTempChanges({ ...tempChanges, role: value as UserRole })
               }
             >
               <SelectTrigger>
