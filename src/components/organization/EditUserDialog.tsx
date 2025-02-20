@@ -33,6 +33,19 @@ export const EditUserDialog = ({
 }: EditUserDialogProps) => {
   if (!user) return null;
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return status;
+    }
+  };
+
   const getStatusOptions = () => {
     switch (user.status) {
       case "active":
@@ -101,7 +114,7 @@ export const EditUserDialog = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
+            <label className="text-sm font-medium">Status Atual: {getStatusLabel(user.status)}</label>
             <Select
               value={user.status}
               onValueChange={(value) =>
@@ -112,7 +125,7 @@ export const EditUserDialog = ({
               }
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
               <SelectContent>
                 {getStatusOptions().map((option) => (
