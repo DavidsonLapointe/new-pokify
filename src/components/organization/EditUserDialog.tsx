@@ -60,6 +60,22 @@ export const EditUserDialog = ({
     }
   };
 
+  const getAvailableStatusOptions = (currentStatus: User["status"]) => {
+    switch (currentStatus) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [
+          { value: "active", label: "Ativo" },
+          { value: "inactive", label: "Inativo" }
+        ];
+      default:
+        return [];
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -130,11 +146,14 @@ export const EditUserDialog = ({
               }
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Ativo</SelectItem>
-                <SelectItem value="inactive">Inativo</SelectItem>
+                {getAvailableStatusOptions(user.status).map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
