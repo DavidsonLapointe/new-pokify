@@ -17,9 +17,10 @@ import { toast } from "sonner";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
+import { Outlet } from "react-router-dom";
 
 interface OrganizationLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
@@ -167,7 +168,7 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
           <main className="flex-1 ml-64">
             <div className="p-8 animate-fadeIn">
-              {isLayoutReady ? children : null}
+              {isLayoutReady && <Outlet />}
             </div>
           </main>
         </div>
