@@ -72,6 +72,19 @@ export const EditUserDialog = ({
     }
   };
 
+  const getRoleLabel = (role: User["role"]) => {
+    switch (role) {
+      case "admin":
+        return "Administrador";
+      case "seller":
+        return "Vendedor";
+      case "leadly_employee":
+        return "Funcionário Leadly";
+      default:
+        return "";
+    }
+  };
+
   const getAvailableStatusOptions = (currentStatus: User["status"]) => {
     switch (currentStatus) {
       case "active":
@@ -138,7 +151,9 @@ export const EditUserDialog = ({
               }}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue>
+                  {getRoleLabel(editedUser.role)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="admin">Administrador</SelectItem>
