@@ -150,6 +150,7 @@ export const EditLeadlyEmployeeDialog = ({
             <Select
               value={selectedNewStatus || ""}
               onValueChange={setSelectedNewStatus}
+              defaultValue=""
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
@@ -165,7 +166,7 @@ export const EditLeadlyEmployeeDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="cancel" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={handleUpdateUser}>Salvar Alterações</Button>
