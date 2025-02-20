@@ -113,12 +113,6 @@ export const EditUserDialog = ({
 
   const handleRoleChange = (value: string) => {
     const newRole = value as UserRole;
-    
-    // Se a função está mudando, mostra um aviso
-    if (newRole !== user.role) {
-      toast.info(`As permissões serão atualizadas de acordo com a função de ${newRole === 'admin' ? 'Administrador' : 'Vendedor'}`);
-    }
-
     setTempChanges({ ...tempChanges, role: newRole });
   };
 
@@ -137,13 +131,13 @@ export const EditUserDialog = ({
       permissions: newPermissions
     };
 
-    onUserUpdate(updatedUser);
-    onClose();
-
     // Notifica sobre a mudança de permissões se a função foi alterada
     if (tempChanges.role !== user.role) {
       toast.success(`Permissões atualizadas para ${tempChanges.role === 'admin' ? 'Administrador' : 'Vendedor'}`);
     }
+
+    onUserUpdate(updatedUser);
+    onClose();
   };
 
   return (
