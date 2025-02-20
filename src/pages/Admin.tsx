@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import AdminLayout from "@/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Phone, Database, ArrowUpRight } from "lucide-react";
 
@@ -55,60 +54,58 @@ const AdminDashboard = () => {
   );
 
   return (
-    <AdminLayout>
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-semibold">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Monitore o desempenho da sua plataforma
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-semibold">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Monitore o desempenho da sua plataforma
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard
-            title="Total de Empresas"
-            value={stats.organizations}
-            icon={Users}
-          />
-          <StatCard
-            title="Chamadas Ativas"
-            value={stats.activeCalls}
-            icon={Phone}
-          />
-          <StatCard
-            title="Leads Processados"
-            value={stats.leadsProcessed}
-            icon={Database}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard
+          title="Total de Empresas"
+          value={stats.organizations}
+          icon={Users}
+        />
+        <StatCard
+          title="Chamadas Ativas"
+          value={stats.activeCalls}
+          icon={Phone}
+        />
+        <StatCard
+          title="Leads Processados"
+          value={stats.leadsProcessed}
+          icon={Database}
+        />
+      </div>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <QuickAction
-              title="Adicionar Empresa"
-              description="Registre uma nova empresa na plataforma"
-              onClick={() => {
-                toast({
-                  title: "Em Breve",
-                  description: "Esta funcionalidade estará disponível em breve.",
-                });
-              }}
-            />
-            <QuickAction
-              title="Configurar Integração"
-              description="Configure CRM e serviços de chamadas"
-              onClick={() => {
-                toast({
-                  title: "Em Breve",
-                  description: "Esta funcionalidade estará disponível em breve.",
-                });
-              }}
-            />
-          </div>
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <QuickAction
+            title="Adicionar Empresa"
+            description="Registre uma nova empresa na plataforma"
+            onClick={() => {
+              toast({
+                title: "Em Breve",
+                description: "Esta funcionalidade estará disponível em breve.",
+              });
+            }}
+          />
+          <QuickAction
+            title="Configurar Integração"
+            description="Configure CRM e serviços de chamadas"
+            onClick={() => {
+              toast({
+                title: "Em Breve",
+                description: "Esta funcionalidade estará disponível em breve.",
+              });
+            }}
+          />
         </div>
       </div>
-    </AdminLayout>
+    </div>
   );
 };
 
