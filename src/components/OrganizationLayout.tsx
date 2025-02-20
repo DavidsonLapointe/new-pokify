@@ -26,7 +26,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const { getUserPermissions } = usePermissions(mockLoggedUser);
+  const [currentUser, setCurrentUser] = useState(mockLoggedUser);
+  const { getUserPermissions } = usePermissions(currentUser);
 
   // Pega as rotas permitidas para o usuário
   const allowedRoutes = getUserPermissions().routes;
@@ -38,6 +39,26 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Novo useEffect para atualizar o usuário quando houver mudanças no localStorage
+  useEffect(() => {
+    const updateUserFromStorage = () => {
+      const storedUser = JSON.parse(localStorage.getItem('mockLoggedUser') || '{}');
+      if (storedUser.id === currentUser.id && JSON.stringify(storedUser) !== JSON.stringify(currentUser)) {
+        setCurrentUser(storedUser);
+      }
+    };
+
+    // Atualiza imediatamente
+    updateUserFromStorage();
+
+    // Adiciona listener para mudanças no localStorage
+    window.addEventListener('storage', updateUserFromStorage);
+
+    return () => {
+      window.removeEventListener('storage', updateUserFromStorage);
+    };
+  }, [currentUser]);
 
   const handleLogout = () => {
     try {
@@ -111,19 +132,19 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
   }
 
   return (
-    <ProtectedRoute user={mockLoggedUser}>
+    <ProtectedRoute user={currentUser}>
       <div className="min-h-screen bg-background">
         <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
           <div className="h-full px-8 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-white">
               <Building2 className="w-4 h-4 text-white" />
-              <span className="font-medium">{mockLoggedUser.organization.name}</span>
+              <span className="font-medium">{currentUser.organization.name}</span>
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-sm font-medium text-white">{mockLoggedUser.name}</p>
+              <p className="text-sm font-medium text-white">{currentUser.name}</p>
               <Avatar className="h-10 w-10">
-                <AvatarImage src={mockLoggedUser.avatar} alt={mockLoggedUser.name} />
-                <AvatarFallback>{getInitials(mockLoggedUser.name)}</AvatarFallback>
+                <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                <AvatarFallback>{getInitials(currentUser.name)}</AvatarFallback>
               </Avatar>
             </div>
           </div>
