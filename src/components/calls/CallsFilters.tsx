@@ -27,8 +27,8 @@ export const CallsFilters = ({
           />
         </div>
         <Button 
-          variant="outline" 
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          variant="cancel"
+          className="flex items-center gap-2"
           onClick={handleClearSearch}
         >
           <FilterX className="h-4 w-4" />

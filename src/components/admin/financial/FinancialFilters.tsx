@@ -98,8 +98,8 @@ export const FinancialFilters = ({ onSearch }: FinancialFiltersProps) => {
             Buscar
           </Button>
           <Button 
-            variant="outline" 
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+            variant="cancel" 
+            className="flex items-center gap-2"
             onClick={handleClearFilters}
           >
             <FilterX className="h-4 w-4" />
