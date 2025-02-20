@@ -13,6 +13,8 @@ import { User } from "@/types";
 import { PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useState } from "react";
+import { UserLogsDialog } from "@/components/organization/UserLogsDialog";
 
 interface UsersTableProps {
   users: User[];
@@ -21,6 +23,18 @@ interface UsersTableProps {
 }
 
 export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableProps) => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [logsDialogOpen, setLogsDialogOpen] = useState(false);
+
+  const handleViewLogs = (user: User) => {
+    setSelectedUser(user);
+    setLogsDialogOpen(true);
+  };
+
+  const getLogsCount = (logs: User["logs"]) => {
+    return logs.length;
+  };
+
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ');
     if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase();
@@ -33,8 +47,10 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
         <TableHeader>
           <TableRow>
             <TableHead>Usuário</TableHead>
+            <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Data de Cadastro</TableHead>
+            <TableHead>Qtde de Logs</TableHead>
             <TableHead>Último Acesso</TableHead>
             <TableHead className="w-[150px]">Ações</TableHead>
           </TableRow>
@@ -57,6 +73,11 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                 </div>
               </TableCell>
               <TableCell>
+                <span className="capitalize">
+                  {"Funcionário Leadly"}
+                </span>
+              </TableCell>
+              <TableCell>
                 <span
                   className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                     user.status === "active"
@@ -73,6 +94,15 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                 {format(new Date(user.createdAt), "dd/MM/yyyy", {
                   locale: ptBR,
                 })}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  className="px-2 font-medium text-primary hover:text-primary/90"
+                  onClick={() => handleViewLogs(user)}
+                >
+                  {getLogsCount(user.logs)}
+                </Button>
               </TableCell>
               <TableCell>
                 {format(new Date(user.lastAccess), "dd/MM/yyyy HH:mm", {
@@ -101,6 +131,14 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
           ))}
         </TableBody>
       </Table>
+
+      {selectedUser && (
+        <UserLogsDialog
+          isOpen={logsDialogOpen}
+          onClose={() => setLogsDialogOpen(false)}
+          user={selectedUser}
+        />
+      )}
     </div>
   );
 };
