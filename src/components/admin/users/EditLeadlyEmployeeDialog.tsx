@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
 import { toast } from "sonner";
 
@@ -77,6 +78,19 @@ export const EditLeadlyEmployeeDialog = ({
         ];
       default:
         return [];
+    }
+  };
+
+  const getStatusBadgeVariant = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "secondary";
+      case "inactive":
+        return "destructive";
+      case "pending":
+        return "default";
+      default:
+        return "default";
     }
   };
 
@@ -142,9 +156,11 @@ export const EditLeadlyEmployeeDialog = ({
           </div>
           <div className="space-y-2">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Status</label>
-              <div className="text-sm text-muted-foreground">
-                Status atual: {getCurrentStatusLabel()}
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium">Status atual:</label>
+                <Badge variant={getStatusBadgeVariant(editedUser.status)}>
+                  {getCurrentStatusLabel()}
+                </Badge>
               </div>
             </div>
             <Select
