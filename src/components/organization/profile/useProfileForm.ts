@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
-import { User, UserRole, Organization } from "@/types/organization";
+import { User, UserRole, Organization } from "@/types";
 
 const mockOrganization: Organization = {
   id: 1,

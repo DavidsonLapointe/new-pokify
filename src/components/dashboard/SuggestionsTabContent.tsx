@@ -1,6 +1,6 @@
 
 import React from "react";
-import { User } from "@/types/organization";
+import { User } from "@/types";
 import { SuggestionsFilters } from "./SuggestionsFilters";
 import { SuggestionsTable } from "./SuggestionsTable";
 import { Suggestion } from "./types/suggestions";
