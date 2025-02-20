@@ -78,8 +78,6 @@ export const EditUserDialog = ({
         return "Administrador";
       case "seller":
         return "Vendedor";
-      case "leadly_employee":
-        return "Funcionário Leadly";
       default:
         return "";
     }
