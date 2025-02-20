@@ -53,9 +53,11 @@ export const EditUserDialog = ({
   onUserUpdate,
 }: EditUserDialogProps) => {
   const [editedUser, setEditedUser] = useState<User | null>(user);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   useEffect(() => {
     setEditedUser(user);
+    setSelectedStatus(""); // Reset selected status when user changes
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -106,6 +108,14 @@ export const EditUserDialog = ({
     }
   })();
 
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+    setEditedUser(prev => prev ? {
+      ...prev,
+      status: value as "active" | "inactive" | "pending"
+    } : null);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -130,7 +140,7 @@ export const EditUserDialog = ({
               type="email"
               value={editedUser?.email}
               onChange={(e) =>
-                setEditedUser({ ...editedUser, email: e.target.value })
+                setEditedUser(prev => prev ? { ...prev, email: e.target.value } : null)
               }
             />
           </div>
@@ -140,7 +150,7 @@ export const EditUserDialog = ({
               type="tel"
               value={editedUser?.phone}
               onChange={(e) =>
-                setEditedUser({ ...editedUser, phone: e.target.value })
+                setEditedUser(prev => prev ? { ...prev, phone: e.target.value } : null)
               }
             />
           </div>
@@ -149,15 +159,7 @@ export const EditUserDialog = ({
               <label className="text-sm font-medium">Status atual:</label>
               {editedUser?.status && getStatusBadge(editedUser.status)}
             </div>
-            <Select
-              value={editedUser?.status}
-              onValueChange={(value) =>
-                setEditedUser({
-                  ...editedUser,
-                  status: value as "active" | "inactive" | "pending",
-                })
-              }
-            >
+            <Select value={selectedStatus} onValueChange={handleStatusChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
               </SelectTrigger>
@@ -175,10 +177,10 @@ export const EditUserDialog = ({
             <Select
               value={editedUser?.role}
               onValueChange={(value) =>
-                setEditedUser({
-                  ...editedUser,
+                setEditedUser(prev => prev ? {
+                  ...prev,
                   role: value as UserRole,
-                })
+                } : null)
               }
             >
               <SelectTrigger>
