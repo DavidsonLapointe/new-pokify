@@ -1,5 +1,4 @@
 
-import OrganizationLayout from "@/components/OrganizationLayout";
 import { FunnelSection } from "@/components/settings/FunnelSection";
 import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
 import { CustomFieldDialog } from "@/components/settings/CustomFieldDialog";
@@ -50,43 +49,41 @@ const OrganizationSettings = () => {
   } = useCustomFieldsManagement();
 
   return (
-    <OrganizationLayout>
-      <div className="space-y-6">
-        <SettingsHeader organization={mockCurrentOrganization} />
+    <div className="space-y-6">
+      <SettingsHeader organization={mockCurrentOrganization} />
 
-        <FunnelSection
-          funnelName={funnelName}
-          stageName={stageName}
-          setFunnelName={setFunnelName}
-          setStageName={setStageName}
-          isDefaultConfigSaved={isDefaultConfigSaved}
-          isEditing={isEditing}
-          onSaveDefaultConfig={handleSaveDefaultConfig}
-          onToggleEdit={handleToggleEdit}
-        />
+      <FunnelSection
+        funnelName={funnelName}
+        stageName={stageName}
+        setFunnelName={setFunnelName}
+        setStageName={setStageName}
+        isDefaultConfigSaved={isDefaultConfigSaved}
+        isEditing={isEditing}
+        onSaveDefaultConfig={handleSaveDefaultConfig}
+        onToggleEdit={handleToggleEdit}
+      />
 
-        <CustomFieldsSection
-          customFields={customFields}
-          handleOpenNewField={() => {
-            handleOpenNewField();
-            setIsFieldsDialogOpen(true);
-          }}
-          handleOpenEditField={(field) => {
-            handleOpenEditField(field);
-            setIsFieldsDialogOpen(true);
-          }}
-        />
+      <CustomFieldsSection
+        customFields={customFields}
+        handleOpenNewField={() => {
+          handleOpenNewField();
+          setIsFieldsDialogOpen(true);
+        }}
+        handleOpenEditField={(field) => {
+          handleOpenEditField(field);
+          setIsFieldsDialogOpen(true);
+        }}
+      />
 
-        <CustomFieldDialog
-          isOpen={isFieldsDialogOpen}
-          onOpenChange={setIsFieldsDialogOpen}
-          isEditing={isEditingField}
-          newField={newField}
-          setNewField={setNewField}
-          handleSaveFieldsSettings={handleSaveFieldsSettings}
-        />
-      </div>
-    </OrganizationLayout>
+      <CustomFieldDialog
+        isOpen={isFieldsDialogOpen}
+        onOpenChange={setIsFieldsDialogOpen}
+        isEditing={isEditingField}
+        newField={newField}
+        setNewField={setNewField}
+        handleSaveFieldsSettings={handleSaveFieldsSettings}
+      />
+    </div>
   );
 };
 

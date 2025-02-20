@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import OrganizationLayout from "@/components/OrganizationLayout";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
@@ -57,59 +56,39 @@ const OrganizationUsers = () => {
   };
 
   return (
-    <OrganizationLayout>
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Usuários</h1>
-            <p className="text-muted-foreground">
-              Gerencie os usuários da sua organização
-            </p>
-          </div>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
-            <UserPlus className="w-4 h-4 mr-2" />
-            Adicionar Usuário
-          </Button>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Usuários</h1>
+          <p className="text-muted-foreground">
+            Gerencie os usuários da sua organização
+          </p>
         </div>
-
-        <UsersTable
-          users={users}
-          onEditUser={handleEditUser}
-          onEditPermissions={handleEditPermissions}
-        />
-
-        <AddUserDialog
-          isOpen={isAddDialogOpen}
-          onClose={() => setIsAddDialogOpen(false)}
-          onUserAdded={handleAddUser}
-        />
-
-        {selectedUser && (
-          <>
-            <EditUserDialog
-              isOpen={isEditDialogOpen}
-              onClose={() => setIsEditDialogOpen(false)}
-              user={selectedUser}
-              onUserUpdate={handleUserUpdate}
-            />
-
-            <UserPermissionsDialog
-              isOpen={isPermissionsDialogOpen}
-              onClose={() => setIsPermissionsDialogOpen(false)}
-              user={selectedUser}
-              onUserUpdate={(updatedUser) => {
-                const updatedUsers = users.map((user) =>
-                  user.id === updatedUser.id ? updatedUser : user
-                );
-                setUsers(updatedUsers);
-                setIsPermissionsDialogOpen(false);
-              }}
-            />
-          </>
-        )}
+        <Button onClick={() => setIsAddDialogOpen(true)}>
+          <UserPlus className="w-4 h-4 mr-2" />
+          Adicionar Usuário
+        </Button>
       </div>
-    </OrganizationLayout>
-  );
-};
 
-export default OrganizationUsers;
+      <UsersTable
+        users={users}
+        onEditUser={handleEditUser}
+        onEditPermissions={handleEditPermissions}
+      />
+
+      <AddUserDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onUserAdded={handleAddUser}
+      />
+
+      {selectedUser && (
+        <>
+          <EditUserDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => setIsEditDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
+
+          <UserPerm

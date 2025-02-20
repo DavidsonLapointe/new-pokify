@@ -1,7 +1,7 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import OrganizationLayout from "@/components/OrganizationLayout";
 import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
 import { CreateLeadDialog } from "@/components/calls/CreateLeadDialog";
 import { UploadCallDialog } from "@/components/calls/UploadCallDialog";
@@ -12,7 +12,6 @@ import { useLeadUpload } from "@/hooks/useLeadUpload";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
-import { User } from "@/types";
 import { mockUsers } from "@/types/mock-users";
 import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
@@ -116,77 +115,75 @@ const OrganizationLeads = () => {
   };
 
   return (
-    <OrganizationLayout>
-      <TooltipProvider>
-        <div className="space-y-8">
-          <LeadsPageHeader
-            onUploadClick={() => setIsFindLeadOpen(true)}
-            onNewLeadClick={() => setIsCreateLeadOpen(true)}
-            currentUser={mockLoggedUser}
-            organization={mockOrganization}
-          />
+    <TooltipProvider>
+      <div className="space-y-8">
+        <LeadsPageHeader
+          onUploadClick={() => setIsFindLeadOpen(true)}
+          onNewLeadClick={() => setIsCreateLeadOpen(true)}
+          currentUser={mockLoggedUser}
+          organization={mockOrganization}
+        />
 
-          <LeadsPageContent
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            monthStats={monthStats}
-            calls={currentCalls}
-            statusMap={statusMap}
-            onPlayAudio={handlePlayAudio}
-            onViewAnalysis={handleViewAnalysis}
-            formatDate={formatDate}
-          />
+        <LeadsPageContent
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          monthStats={monthStats}
+          calls={currentCalls}
+          statusMap={statusMap}
+          onPlayAudio={handlePlayAudio}
+          onViewAnalysis={handleViewAnalysis}
+          formatDate={formatDate}
+        />
 
-          <CallAnalysisDialog
-            isOpen={isAnalysisOpen}
-            onClose={handleCloseAnalysis}
-            analysis={selectedCall?.analysis}
-            call={{
-              date: selectedCall?.date || "",
-              duration: selectedCall?.duration || "",
+        <CallAnalysisDialog
+          isOpen={isAnalysisOpen}
+          onClose={handleCloseAnalysis}
+          analysis={selectedCall?.analysis}
+          call={{
+            date: selectedCall?.date || "",
+            duration: selectedCall?.duration || "",
+          }}
+        />
+
+        <FindLeadDialog
+          isOpen={isFindLeadOpen}
+          onOpenChange={setIsFindLeadOpen}
+          onLeadFound={handleLeadFound}
+        />
+
+        {(selectedLeadForUpload || newLeadId) && (
+          <UploadCallDialog
+            leadId={selectedLeadForUpload?.id || newLeadId || ""}
+            isOpen={isUploadOpen}
+            onOpenChange={(open) => {
+              setIsUploadOpen(open);
+              if (!open && newLeadId) {
+                handleUploadCancel();
+              }
             }}
+            onUploadSuccess={() => {
+              if (selectedLeadForUpload) {
+                setSelectedLeadForUpload(null);
+              } else {
+                handleUploadSuccess();
+              }
+              setIsUploadOpen(false);
+            }}
+            onCancel={handleUploadCancel}
           />
+        )}
 
-          <FindLeadDialog
-            isOpen={isFindLeadOpen}
-            onOpenChange={setIsFindLeadOpen}
-            onLeadFound={handleLeadFound}
-          />
-
-          {(selectedLeadForUpload || newLeadId) && (
-            <UploadCallDialog
-              leadId={selectedLeadForUpload?.id || newLeadId || ""}
-              isOpen={isUploadOpen}
-              onOpenChange={(open) => {
-                setIsUploadOpen(open);
-                if (!open && newLeadId) {
-                  handleUploadCancel();
-                }
-              }}
-              onUploadSuccess={() => {
-                if (selectedLeadForUpload) {
-                  setSelectedLeadForUpload(null);
-                } else {
-                  handleUploadSuccess();
-                }
-                setIsUploadOpen(false);
-              }}
-              onCancel={handleUploadCancel}
-            />
-          )}
-
-          <CreateLeadDialog
-            hasPhoneIntegration={true}
-            hasEmailIntegration={true}
-            onCreateLead={handleCreateLead}
-            onUploadClick={handleUploadClick}
-            isOpen={isCreateLeadOpen}
-            onOpenChange={setIsCreateLeadOpen}
-          />
-        </div>
-      </TooltipProvider>
+        <CreateLeadDialog
+          hasPhoneIntegration={true}
+          hasEmailIntegration={true}
+          onCreateLead={handleCreateLead}
+          onUploadClick={handleUploadClick}
+          isOpen={isCreateLeadOpen}
+          onOpenChange={setIsCreateLeadOpen}
+        />
+      </div>
       <Toaster />
-    </OrganizationLayout>
+    </TooltipProvider>
   );
 };
 

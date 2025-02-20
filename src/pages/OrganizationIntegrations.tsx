@@ -1,6 +1,5 @@
 
 import { Building2, BrainCircuit, Network } from "lucide-react";
-import OrganizationLayout from "@/components/OrganizationLayout";
 import { mockAvailableIntegrations, getIntegrationDescription } from "@/constants/integrations";
 import { Integration } from "@/types/integration";
 import { useState } from "react";
@@ -44,43 +43,41 @@ const OrganizationIntegrations = () => {
   };
 
   return (
-    <OrganizationLayout>
-      <div className="space-y-12">
-        <div className="flex items-center gap-2">
-          <Network className="w-6 h-6" />
-          <div>
-            <h1 className="text-3xl font-bold">Integrações</h1>
-            <p className="text-muted-foreground">
-              Configure as integrações com outras ferramentas
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-8">
-          <IntegrationSection
-            type="crm"
-            title="CRM"
-            icon={<Building2 className="w-6 h-6" />}
-            availableTools={mockAvailableIntegrations.crm}
-            isActive={!!integrations.crm?.isConnected}
-            selectedIntegration={integrations.crm}
-            onSelect={handleSelectIntegration}
-            onToggle={handleToggleIntegration}
-          />
-
-          <IntegrationSection
-            type="llm"
-            title="Modelo LLM"
-            icon={<BrainCircuit className="w-6 h-6" />}
-            availableTools={mockAvailableIntegrations.llm}
-            isActive={!!integrations.llm?.isConnected}
-            selectedIntegration={integrations.llm}
-            onSelect={handleSelectIntegration}
-            onToggle={handleToggleIntegration}
-          />
+    <div className="space-y-12">
+      <div className="flex items-center gap-2">
+        <Network className="w-6 h-6" />
+        <div>
+          <h1 className="text-3xl font-bold">Integrações</h1>
+          <p className="text-muted-foreground">
+            Configure as integrações com outras ferramentas
+          </p>
         </div>
       </div>
-    </OrganizationLayout>
+
+      <div className="space-y-8">
+        <IntegrationSection
+          type="crm"
+          title="CRM"
+          icon={<Building2 className="w-6 h-6" />}
+          availableTools={mockAvailableIntegrations.crm}
+          isActive={!!integrations.crm?.isConnected}
+          selectedIntegration={integrations.crm}
+          onSelect={handleSelectIntegration}
+          onToggle={handleToggleIntegration}
+        />
+
+        <IntegrationSection
+          type="llm"
+          title="Modelo LLM"
+          icon={<BrainCircuit className="w-6 h-6" />}
+          availableTools={mockAvailableIntegrations.llm}
+          isActive={!!integrations.llm?.isConnected}
+          selectedIntegration={integrations.llm}
+          onSelect={handleSelectIntegration}
+          onToggle={handleToggleIntegration}
+        />
+      </div>
+    </div>
   );
 };
 

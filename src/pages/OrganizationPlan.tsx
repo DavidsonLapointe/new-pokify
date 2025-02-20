@@ -1,5 +1,3 @@
-
-import OrganizationLayout from "@/components/OrganizationLayout";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
@@ -102,47 +100,45 @@ const OrganizationPlan = () => {
   };
 
   return (
-    <OrganizationLayout>
-      <div className="space-y-2">
-        <div className="mb-2">
-          <h1 className="text-2xl font-bold">Meu Plano</h1>
-          <p className="text-muted-foreground text-sm">
-            Gerencie seu plano e consumo de análises
-          </p>
-        </div>
+    <div className="space-y-2">
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold">Meu Plano</h1>
+        <p className="text-muted-foreground text-sm">
+          Gerencie seu plano e consumo de análises
+        </p>
+      </div>
 
-        <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
-          <CurrentPlanCard 
-            planInfo={planInfo}
-            onChangePlan={() => setIsChangePlanDialogOpen(true)}
-          />
-          <CreditsBalanceCard
-            monthlyQuota={usageInfo.monthlyQuota}
-            used={usageInfo.used}
-            additionalCredits={usageInfo.additionalCredits}
-            onBuyMoreCredits={handleBuyMoreAnalyses}
-            isLoading={isLoading}
-          />
-        </div>
-
-        <div className="mt-2">
-          <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
-        </div>
-
-        <AnalysisPackagesDialog
-          open={isPackagesDialogOpen}
-          onOpenChange={setIsPackagesDialogOpen}
-          onSelectPackage={handleSelectPackage}
+      <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
+        <CurrentPlanCard 
+          planInfo={planInfo}
+          onChangePlan={() => setIsChangePlanDialogOpen(true)}
         />
-
-        <ChangePlanDialog
-          open={isChangePlanDialogOpen}
-          onOpenChange={setIsChangePlanDialogOpen}
-          currentPlan={planInfo}
-          availablePlans={availablePlans}
+        <CreditsBalanceCard
+          monthlyQuota={usageInfo.monthlyQuota}
+          used={usageInfo.used}
+          additionalCredits={usageInfo.additionalCredits}
+          onBuyMoreCredits={handleBuyMoreAnalyses}
+          isLoading={isLoading}
         />
       </div>
-    </OrganizationLayout>
+
+      <div className="mt-2">
+        <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
+      </div>
+
+      <AnalysisPackagesDialog
+        open={isPackagesDialogOpen}
+        onOpenChange={setIsPackagesDialogOpen}
+        onSelectPackage={handleSelectPackage}
+      />
+
+      <ChangePlanDialog
+        open={isChangePlanDialogOpen}
+        onOpenChange={setIsChangePlanDialogOpen}
+        currentPlan={planInfo}
+        availablePlans={availablePlans}
+      />
+    </div>
   );
 };
 

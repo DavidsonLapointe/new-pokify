@@ -1,4 +1,4 @@
-import OrganizationLayout from "@/components/OrganizationLayout";
+
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
@@ -55,122 +55,114 @@ const OrganizationDashboard = () => {
     setMonthlySuggestionsSeller,
   } = useDashboardData();
 
-  const leadsStats = {
-    total: monthStats.total,
-    active: monthStats.processed,
-    pending: monthStats.pending,
-  };
-
   return (
-    <OrganizationLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Visão geral da sua organização
-          </p>
-        </div>
-
-        <Tabs defaultValue="leads" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="leads">Leads</TabsTrigger>
-            <TabsTrigger value="calls">Uploads</TabsTrigger>
-            <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
-            <TabsTrigger value="objections">Objeções</TabsTrigger>
-            <TabsTrigger value="suggestions">Sugestões</TabsTrigger>
-            <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="leads">
-            <LeadsTabContent
-              leadsStats={leadsStats}
-              monthlyLeadsData={monthlyLeadsData}
-              dailyLeadsData={dailyLeadsData}
-              monthlyLeadsDate={monthlyLeadsDate}
-              setMonthlyLeadsDate={setMonthlyLeadsDate}
-              dailyLeadsDate={dailyLeadsDate}
-              setDailyLeadsDate={setDailyLeadsDate}
-              monthlyLeadsSeller={monthlyLeadsSeller}
-              setMonthlyLeadsSeller={setMonthlyLeadsSeller}
-              dailyLeadsSeller={dailyLeadsSeller}
-              setDailyLeadsSeller={setDailyLeadsSeller}
-              sellers={mockUsers}
-            />
-          </TabsContent>
-
-          <TabsContent value="calls" className="space-y-6">
-            <CallsStats
-              total={monthStats.total}
-              processed={monthStats.processed}
-              failed={monthStats.failed}
-              subtitle="Total acumulado desde o início"
-            />
-            <div className="grid gap-6">
-              <DailyCallsChart 
-                data={monthlyCallsData}
-                isMonthly={true}
-                selectedSeller={monthlyCallsSeller}
-                onSellerChange={setMonthlyCallsSeller}
-                sellers={mockUsers}
-              />
-              <DailyCallsChart 
-                data={dailyCallsData}
-                selectedDate={callsDate}
-                onDateChange={setCallsDate}
-                selectedSeller={dailyCallsSeller}
-                onSellerChange={setDailyCallsSeller}
-                sellers={mockUsers}
-              />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="sellers" className="space-y-6">
-            <div className="grid gap-6">
-              <DailyPerformanceChart 
-                data={dailyPerformanceData}
-                selectedMetric={dailyMetric}
-                onMetricChange={setDailyMetric}
-              />
-              <MonthlyPerformanceChart 
-                data={monthlyPerformanceData}
-                selectedMetric={monthlyMetric}
-                onMetricChange={setMonthlyMetric}
-              />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="objections" className="space-y-6">
-            <ObjectionsTabContent
-              objectionsData={objectionsData}
-              objectionTrendsData={objectionTrendsData}
-              objectionExamples={objectionExamples}
-              monthlyObjectionsDate={monthlyObjectionsDate}
-              setMonthlyObjectionsDate={setMonthlyObjectionsDate}
-              monthlyObjectionsSeller={monthlyObjectionsSeller}
-              setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
-              objectionTrendsSeller={objectionTrendsSeller}
-              setObjectionTrendsSeller={setObjectionTrendsSeller}
-              sellers={mockUsers}
-            />
-          </TabsContent>
-
-          <TabsContent value="suggestions" className="space-y-6">
-            <SuggestionsTabContent
-              suggestions={suggestionsData}
-              monthlySuggestionsDate={monthlySuggestionsDate}
-              setMonthlySuggestionsDate={setMonthlySuggestionsDate}
-              monthlySuggestionsSeller={monthlySuggestionsSeller}
-              setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-              sellers={mockUsers}
-            />
-          </TabsContent>
-
-          <TabsContent value="sellers-info">
-            <SellersTabContent sellers={mockUsers} />
-          </TabsContent>
-        </Tabs>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Visão geral da sua organização
+        </p>
       </div>
-    </OrganizationLayout>
+
+      <Tabs defaultValue="leads" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="leads">Leads</TabsTrigger>
+          <TabsTrigger value="calls">Uploads</TabsTrigger>
+          <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
+          <TabsTrigger value="objections">Objeções</TabsTrigger>
+          <TabsTrigger value="suggestions">Sugestões</TabsTrigger>
+          <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="leads">
+          <LeadsTabContent
+            monthStats={monthStats}
+            monthlyLeadsData={monthlyLeadsData}
+            dailyLeadsData={dailyLeadsData}
+            monthlyLeadsDate={monthlyLeadsDate}
+            setMonthlyLeadsDate={setMonthlyLeadsDate}
+            dailyLeadsDate={dailyLeadsDate}
+            setDailyLeadsDate={setDailyLeadsDate}
+            monthlyLeadsSeller={monthlyLeadsSeller}
+            setMonthlyLeadsSeller={setMonthlyLeadsSeller}
+            dailyLeadsSeller={dailyLeadsSeller}
+            setDailyLeadsSeller={setDailyLeadsSeller}
+            sellers={mockUsers}
+          />
+        </TabsContent>
+
+        <TabsContent value="calls" className="space-y-6">
+          <CallsStats
+            total={monthStats.total}
+            processed={monthStats.processed}
+            failed={monthStats.failed}
+            subtitle="Total acumulado desde o início"
+          />
+          <div className="grid gap-6">
+            <DailyCallsChart 
+              data={monthlyCallsData}
+              isMonthly={true}
+              selectedSeller={monthlyCallsSeller}
+              onSellerChange={setMonthlyCallsSeller}
+              sellers={mockUsers}
+            />
+            <DailyCallsChart 
+              data={dailyCallsData}
+              selectedDate={callsDate}
+              onDateChange={setCallsDate}
+              selectedSeller={dailyCallsSeller}
+              onSellerChange={setDailyCallsSeller}
+              sellers={mockUsers}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="sellers" className="space-y-6">
+          <div className="grid gap-6">
+            <DailyPerformanceChart 
+              data={dailyPerformanceData}
+              selectedMetric={dailyMetric}
+              onMetricChange={setDailyMetric}
+            />
+            <MonthlyPerformanceChart 
+              data={monthlyPerformanceData}
+              selectedMetric={monthlyMetric}
+              onMetricChange={setMonthlyMetric}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="objections" className="space-y-6">
+          <ObjectionsTabContent
+            objectionsData={objectionsData}
+            objectionTrendsData={objectionTrendsData}
+            objectionExamples={objectionExamples}
+            monthlyObjectionsDate={monthlyObjectionsDate}
+            setMonthlyObjectionsDate={setMonthlyObjectionsDate}
+            monthlyObjectionsSeller={monthlyObjectionsSeller}
+            setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
+            objectionTrendsSeller={objectionTrendsSeller}
+            setObjectionTrendsSeller={setObjectionTrendsSeller}
+            sellers={mockUsers}
+          />
+        </TabsContent>
+
+        <TabsContent value="suggestions" className="space-y-6">
+          <SuggestionsTabContent
+            suggestions={suggestionsData}
+            monthlySuggestionsDate={monthlySuggestionsDate}
+            setMonthlySuggestionsDate={setMonthlySuggestionsDate}
+            monthlySuggestionsSeller={monthlySuggestionsSeller}
+            setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
+            sellers={mockUsers}
+          />
+        </TabsContent>
+
+        <TabsContent value="sellers-info">
+          <SellersTabContent sellers={mockUsers} />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
