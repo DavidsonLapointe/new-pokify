@@ -4,18 +4,18 @@ import { Organization } from "./organization-types";
 
 const mockOrganization: Organization = {
   id: 1,
-  name: "Leadly",
-  nomeFantasia: "Leadly",
+  name: "TechCorp Brasil",
+  nomeFantasia: "TechCorp",
   plan: "Professional",
   users: [],
   status: "active",
   integratedCRM: "Salesforce",
   integratedLLM: "GPT-4",
-  email: "contato@leadly.com",
+  email: "contato@techcorp.com.br",
   phone: "(11) 99999-9999",
   cnpj: "00.000.000/0000-01",
   adminName: "João Silva",
-  adminEmail: "joao@leadly.com",
+  adminEmail: "joao.silva@techcorp.com.br",
   createdAt: "2024-01-01T00:00:00.000Z"
 };
 
@@ -23,7 +23,7 @@ export const mockUsers: User[] = [
   {
     id: 1,
     name: "João Silva",
-    email: "joao.silva@leadly.com",
+    email: "joao.silva@techcorp.com.br",
     phone: "(11) 98765-4321",
     role: "admin",
     status: "active",
@@ -49,7 +49,7 @@ export const mockUsers: User[] = [
   {
     id: 2,
     name: "Maria Santos",
-    email: "maria.santos@leadly.com",
+    email: "maria.santos@techcorp.com.br",
     phone: "(11) 98888-7777",
     role: "admin",
     status: "inactive",
@@ -75,7 +75,7 @@ export const mockUsers: User[] = [
   {
     id: 3,
     name: "Carlos Oliveira",
-    email: "carlos.oliveira@leadly.com",
+    email: "carlos.oliveira@techcorp.com.br",
     phone: "(11) 97777-6666",
     role: "admin",
     status: "pending",
@@ -101,7 +101,7 @@ export const mockUsers: User[] = [
   {
     id: 4,
     name: "Ana Costa",
-    email: "ana.costa@leadly.com",
+    email: "ana.costa@techcorp.com.br",
     phone: "(11) 96666-5555",
     role: "seller",
     status: "active",
@@ -125,7 +125,7 @@ export const mockUsers: User[] = [
   {
     id: 5,
     name: "Pedro Souza",
-    email: "pedro.souza@leadly.com",
+    email: "pedro.souza@techcorp.com.br",
     phone: "(11) 95555-4444",
     role: "seller",
     status: "inactive",
@@ -149,7 +149,7 @@ export const mockUsers: User[] = [
   {
     id: 6,
     name: "Julia Lima",
-    email: "julia.lima@leadly.com",
+    email: "julia.lima@techcorp.com.br",
     phone: "(11) 94444-3333",
     role: "seller",
     status: "pending",
