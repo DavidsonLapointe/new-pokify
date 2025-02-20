@@ -103,6 +103,8 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <ProtectedRoute user={user}>
       <div className="min-h-screen bg-background">
@@ -128,18 +130,18 @@ const OrganizationLayout = ({ children }: OrganizationLayoutProps) => {
               <div className="space-y-0.5">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = location.pathname === item.path;
+                  const active = isActive(item.path);
                   return (
                     <button
                       key={item.path}
                       onClick={() => navigate(item.path)}
                       className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
-                        isActive
+                        active
                           ? "bg-[#F1F0FB] text-[#9b87f5]"
                           : "text-gray-600"
                       }`}
                     >
-                      <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
+                      <Icon className={`w-4 h-4 mr-3 ${active ? "text-[#9b87f5]" : "text-gray-600"}`} />
                       {item.label}
                     </button>
                   );

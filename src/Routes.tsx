@@ -18,17 +18,16 @@ const Routes = () => {
       <Route path="/" element={<Index />} />
       
       {/* Organization Routes */}
-      <Route element={<OrganizationLayout />}>
-        <Route path="/organization">
-          <Route path="dashboard" element={<OrganizationDashboard />} />
-          <Route path="leads" element={<OrganizationLeads />} />
-          <Route path="calls" element={<OrganizationCalls />} />
-          <Route path="users" element={<OrganizationUsers />} />
-          <Route path="integrations" element={<OrganizationIntegrations />} />
-          <Route path="settings" element={<OrganizationSettings />} />
-          <Route path="plan" element={<OrganizationPlan />} />
-          <Route path="profile" element={<OrganizationProfile />} />
-        </Route>
+      <Route path="/organization" element={<OrganizationLayout />}>
+        <Route index element={<OrganizationDashboard />} />
+        <Route path="dashboard" element={<OrganizationDashboard />} />
+        <Route path="leads" element={<OrganizationLeads />} />
+        <Route path="calls" element={<OrganizationCalls />} />
+        <Route path="users" element={<OrganizationUsers />} />
+        <Route path="integrations" element={<OrganizationIntegrations />} />
+        <Route path="settings" element={<OrganizationSettings />} />
+        <Route path="plan" element={<OrganizationPlan />} />
+        <Route path="profile" element={<OrganizationProfile />} />
       </Route>
 
       {/* 404 Page */}
