@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -51,88 +50,29 @@ export const EditUserDialog = ({
   user,
   onUserUpdate,
 }: EditUserDialogProps) => {
-  if (!user) return null;
-
-  const [tempChanges, setTempChanges] = useState({
-    email: user.email,
-    phone: user.phone,
-    role: user.role,
-    status: "",
-  });
+  const [editedUser, setEditedUser] = useState<User | null>(user);
 
   useEffect(() => {
-    setTempChanges({
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: "",
-    });
-  }, [user, isOpen]);
+    setEditedUser(user);
+  }, [user]);
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Ativo";
-      case "inactive":
-        return "Inativo";
-      case "pending":
-        return "Pendente";
-      default:
-        return status;
-    }
-  };
+  const handleUpdateUser = () => {
+    if (!editedUser) return;
 
-  const getStatusBadgeClasses = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-700";
-      case "inactive":
-        return "bg-red-100 text-red-700";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  const getStatusOptions = () => {
-    switch (user.status) {
-      case "active":
-        return [{ value: "inactive", label: "Inativo" }];
-      case "inactive":
-        return [{ value: "active", label: "Ativo" }];
-      case "pending":
-        return [
-          { value: "active", label: "Ativo" },
-          { value: "inactive", label: "Inativo" }
-        ];
-      default:
-        return [];
-    }
-  };
-
-  const handleSave = () => {
-    // Se a função mudou, atualiza as permissões
-    const newPermissions = tempChanges.role !== user.role 
-      ? DEFAULT_PERMISSIONS[tempChanges.role as keyof typeof DEFAULT_PERMISSIONS]
-      : user.permissions;
-
-    const updatedUser: User = {
-      ...user,
-      email: tempChanges.email,
-      phone: tempChanges.phone,
-      role: tempChanges.role as UserRole,
-      status: tempChanges.status ? (tempChanges.status as "active" | "inactive" | "pending") : user.status,
-      permissions: newPermissions
+    const updatedUser = {
+      ...editedUser,
+      logs: [
+        ...editedUser.logs,
+        {
+          id: Math.max(...editedUser.logs.map(log => log.id)) + 1,
+          date: new Date().toISOString(),
+          action: "Usuário atualizado"
+        }
+      ]
     };
 
-    // Notifica sobre a mudança de permissões se a função foi alterada
-    if (tempChanges.role !== user.role) {
-      toast.success(`Permissões atualizadas para ${tempChanges.role === 'admin' ? 'Administrador' : 'Vendedor'}`);
-    }
-
     onUserUpdate(updatedUser);
-    onClose();
+    toast.success("Usuário atualizado com sucesso!");
   };
 
   return (
@@ -141,21 +81,25 @@ export const EditUserDialog = ({
         <DialogHeader>
           <DialogTitle>Editar Usuário</DialogTitle>
           <DialogDescription>
-            Atualize os dados do usuário. Alguns campos não podem ser alterados.
+            Atualize as informações do usuário.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Nome</label>
-            <Input value={user.name} disabled className="bg-muted" />
+            <label className="text-sm font-medium">Nome*</label>
+            <Input
+              value={editedUser.name}
+              disabled
+              className="bg-gray-50"
+            />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
+            <label className="text-sm font-medium">Email*</label>
             <Input
               type="email"
-              value={tempChanges.email}
+              value={editedUser.email}
               onChange={(e) =>
-                setTempChanges({ ...tempChanges, email: e.target.value })
+                setEditedUser({ ...editedUser, email: e.target.value })
               }
             />
           </div>
@@ -163,18 +107,21 @@ export const EditUserDialog = ({
             <label className="text-sm font-medium">Telefone</label>
             <Input
               type="tel"
-              value={tempChanges.phone}
+              value={editedUser.phone}
               onChange={(e) =>
-                setTempChanges({ ...tempChanges, phone: e.target.value })
+                setEditedUser({ ...editedUser, phone: e.target.value })
               }
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
             <Select
-              value={tempChanges.role}
+              value={editedUser.role}
               onValueChange={(value) =>
-                setTempChanges({ ...tempChanges, role: value as UserRole })
+                setEditedUser({
+                  ...editedUser,
+                  role: value as UserRole,
+                })
               }
             >
               <SelectTrigger>
@@ -183,31 +130,7 @@ export const EditUserDialog = ({
               <SelectContent>
                 <SelectItem value="admin">Administrador</SelectItem>
                 <SelectItem value="seller">Vendedor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Status Atual:</label>
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(user.status)}`}>
-                {getStatusLabel(user.status)}
-              </span>
-            </div>
-            <Select
-              value={tempChanges.status}
-              onValueChange={(value) =>
-                setTempChanges({ ...tempChanges, status: value })
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecione o novo status" />
-              </SelectTrigger>
-              <SelectContent>
-                {getStatusOptions().map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="leadly_employee">Funcionário Leadly</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -216,7 +139,7 @@ export const EditUserDialog = ({
           <Button variant="cancel" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave}>Salvar Alterações</Button>
+          <Button onClick={handleUpdateUser}>Salvar Alterações</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
