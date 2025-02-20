@@ -56,7 +56,6 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
 
   const handleRemoveImage = () => {
     setPreviewUrl(undefined)
-    // You might want to call onImageUpload with null or handle this case in your parent component
   }
 
   const getInitials = (name: string) => {
@@ -125,12 +124,12 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
             </Button>
             {previewUrl && (
               <Button 
-                variant="outline" 
+                variant="cancel"
                 size="sm"
                 onClick={handleRemoveImage}
-                className="text-red-600 hover:text-red-700"
+                className="flex items-center gap-2"
               >
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 className="w-4 h-4" />
                 Remover
               </Button>
             )}
