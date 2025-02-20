@@ -139,7 +139,7 @@ export const UserPermissionsDialog = ({
                     checked={isRouteEnabled}
                     onChange={() => !route.isDefault && handlePermissionChange(route.id)}
                     disabled={route.isDefault}
-                    className="h-4 w-4 rounded border-gray-300 accent-primary"
+                    className="h-4 w-4 rounded border-gray-300 accent-primary [&:checked]:bg-primary [&:checked]:border-primary checked:text-white"
                   />
                   <Label htmlFor={route.id} className="font-medium text-lg">
                     {route.label}
@@ -155,7 +155,7 @@ export const UserPermissionsDialog = ({
                           id={`${route.id}-${tab.id}`}
                           checked={isTabEnabled(route.id, tab.value)}
                           onChange={() => handleTabPermissionChange(route.id, tab.value)}
-                          className="h-4 w-4 rounded border-gray-300 accent-primary"
+                          className="h-4 w-4 rounded border-gray-300 accent-primary [&:checked]:bg-primary [&:checked]:border-primary checked:text-white"
                         />
                         <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
                       </div>
