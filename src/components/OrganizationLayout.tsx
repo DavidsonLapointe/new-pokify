@@ -176,4 +176,3 @@ const OrganizationLayout = () => {
 };
 
 export default OrganizationLayout;
-
