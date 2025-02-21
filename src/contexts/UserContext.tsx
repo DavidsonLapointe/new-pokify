@@ -74,7 +74,7 @@ const mockOrgUser: User = {
     users: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
     settings: ["view", "edit"],
-    plan: ["view", "upgrade"],  // Adicionando permissão explícita para "plan"
+    plan: ["view", "upgrade"],
     profile: ["contact", "password"]
   },
   logs: [
