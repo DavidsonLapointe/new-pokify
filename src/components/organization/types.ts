@@ -25,7 +25,7 @@ export const DEFAULT_PERMISSIONS = {
     users: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
     settings: ["view", "edit"],
-    plan: ["view", "upgrade"],  // Garantindo que 'plan' está definido aqui
+    plan: ["view", "upgrade"],
     profile: ["contact", "password"]
   },
   seller: {
@@ -35,4 +35,3 @@ export const DEFAULT_PERMISSIONS = {
     profile: ["contact", "password"]
   }
 };
-

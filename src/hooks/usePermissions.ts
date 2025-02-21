@@ -13,21 +13,16 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Normaliza o ID da rota (converte hífens para underscores e vice-versa)
-    const normalizedRouteId = routeId.replace(/_/g, '-');
-    const permissions = user.permissions;
+    console.log('Permissões do usuário:', user.permissions);
+    console.log('Verificando permissão para rota:', routeId);
 
-    // Verifica se a rota está nas permissões do usuário
-    const hasPermission = normalizedRouteId in permissions;
+    // Verifica se a rota está nas permissões do usuário e tem pelo menos uma permissão
+    const hasPermission = user.permissions[routeId]?.length > 0;
     
-    // Se tem a rota mas não tem permissões ou tem array vazio, não mostra
-    if (!hasPermission || permissions[normalizedRouteId]?.length === 0) {
-      console.log(`Rota ${normalizedRouteId} não tem permissões ou está vazia`);
-      return false;
-    }
+    console.log(`Rota ${routeId} tem permissões?`, hasPermission);
+    console.log(`Permissões da rota ${routeId}:`, user.permissions[routeId]);
     
-    console.log(`Verificando permissão para rota ${normalizedRouteId}:`, true);
-    return true;
+    return hasPermission;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
@@ -40,31 +35,28 @@ export const usePermissions = (user: User) => {
     // Se não tem usuário ou permissões definidas, não tem acesso
     if (!user?.permissions) return false;
 
-    // Normaliza o ID da rota
-    const normalizedRouteId = routeId.replace(/_/g, '-');
-
     // Pega as permissões da rota
-    const routePermissions = user.permissions[normalizedRouteId] || [];
+    const routePermissions = user.permissions[routeId] || [];
     
     // Verifica se a tab está nas permissões da rota
     return routePermissions.includes(tabValue);
   };
 
   const getUserPermissions = () => {
-    // Começa com a rota profile
-    const routes = ['profile'];
+    // Começa com a rota profile que é sempre permitida
+    const routes: string[] = ['profile'];
     
-    // Adiciona apenas as rotas que existem nas permissões do usuário
-    // e que têm pelo menos uma permissão
     if (user?.permissions) {
+      // Adiciona todas as rotas que têm permissões definidas
       Object.entries(user.permissions).forEach(([route, permissions]) => {
-        // Normaliza o ID da rota
-        const normalizedRoute = route.replace(/_/g, '-');
-        if (!routes.includes(normalizedRoute) && permissions.length > 0) {
-          routes.push(normalizedRoute);
+        if (permissions.length > 0 && !routes.includes(route)) {
+          routes.push(route);
         }
       });
     }
+
+    console.log('Permissões do usuário:', user?.permissions);
+    console.log('Rotas permitidas:', routes);
 
     // Monta o objeto de tabs permitidas
     const tabs: { [routeId: string]: string[] } = {};
@@ -84,8 +76,6 @@ export const usePermissions = (user: User) => {
       }
     });
 
-    console.log('Rotas permitidas:', routes);
-    console.log('Tabs permitidas:', tabs);
     return { routes, tabs };
   };
 
