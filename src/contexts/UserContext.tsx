@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 
@@ -27,7 +28,7 @@ const mockAdminUser: User = {
     prompt: ["view", "edit"],
     "analysis-packages": ["view", "edit"],
     financial: ["view", "edit"],
-    users: ["view", "edit", "delete"],
+    users: ["view", "edit", "delete"], // Garantindo que as permissões de usuários estão definidas corretamente
     profile: ["contact", "password"]
   },
   logs: [
