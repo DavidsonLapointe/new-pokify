@@ -1,4 +1,3 @@
-
 import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
@@ -17,29 +16,21 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
-
-      const planRoute = availableRoutePermissions.find(r => r.id === 'plan');
-      const planPermissions = planRoute?.tabs?.map(tab => tab.value) || [];
-
-      // Clona as permissões do usuário e garante que são inicializadas corretamente
+      // Inicializa as permissões com as do usuário
       let initialPermissions = { ...user.permissions };
 
-      // Garante que as permissões do dashboard são inicializadas corretamente
-      if (user.permissions.dashboard) {
-        initialPermissions.dashboard = dashboardPermissions;
-      }
-
-      // Garante que as permissões do plano são inicializadas corretamente
-      if (user.permissions.plan) {
-        initialPermissions.plan = planPermissions;
-      }
-
-      // Para todas as outras rotas, mantém as permissões existentes
+      // Para cada rota, verifica se precisa inicializar com todas as tabs
       availableRoutePermissions.forEach(route => {
-        if (route.id !== 'dashboard' && route.id !== 'plan' && user.permissions[route.id]) {
-          initialPermissions[route.id] = user.permissions[route.id];
+        // Se o usuário tem permissão para a rota
+        if (user.permissions[route.id]) {
+          // Para dashboard e plan, sempre inicializa com todas as tabs disponíveis
+          if (route.id === 'dashboard' || route.id === 'plan') {
+            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+          }
+          // Para outras rotas, mantém as permissões existentes
+          else {
+            initialPermissions[route.id] = user.permissions[route.id];
+          }
         }
       });
 
