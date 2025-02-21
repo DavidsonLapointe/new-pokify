@@ -17,9 +17,13 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
+      // Primeiro, pega todas as permissões possíveis para o dashboard
+      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
+      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
+
       // Garante que todas as rotas e suas permissões estejam inicializadas corretamente
       const initialPermissions: { [key: string]: string[] } = {
-        dashboard: ["view", "export"],
+        dashboard: dashboardPermissions, // Todas as permissões do dashboard
         leads: ["view", "edit", "delete"],
         users: ["view", "edit", "delete"],
         integrations: ["view", "edit"],
@@ -82,9 +86,13 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
+      // Pega todas as permissões possíveis para o dashboard
+      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
+      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
+
       // Garante que todas as permissões estejam presentes ao salvar
       const updatedPermissions = {
-        dashboard: tempPermissions.dashboard || ["view", "export"],
+        dashboard: tempPermissions.dashboard || dashboardPermissions,
         leads: tempPermissions.leads || ["view", "edit", "delete"],
         users: tempPermissions.users || ["view", "edit", "delete"],
         integrations: tempPermissions.integrations || ["view", "edit"],
