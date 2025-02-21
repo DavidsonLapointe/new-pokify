@@ -13,13 +13,14 @@ export const usePermissions = (user: User) => {
     // Verifica se a rota está nas permissões do usuário
     const hasPermission = routeId in user.permissions;
     
-    // Se tem a rota mas não tem permissões, não mostra
-    if (hasPermission && user.permissions[routeId].length === 0) {
+    // Se tem a rota mas não tem permissões ou tem array vazio, não mostra
+    if (!hasPermission || user.permissions[routeId].length === 0) {
+      console.log(`Rota ${routeId} não tem permissões ou está vazia`);
       return false;
     }
     
-    console.log(`Verificando permissão para rota ${routeId}:`, hasPermission);
-    return hasPermission;
+    console.log(`Verificando permissão para rota ${routeId}:`, true);
+    return true;
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {

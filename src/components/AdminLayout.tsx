@@ -5,6 +5,7 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -14,24 +15,25 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
+  const { hasRoutePermission } = usePermissions(user);
 
   const adminMenuItems = [
-    { icon: List, label: "Dashboard", path: "/admin" },
-    { icon: Building2, label: "Empresas", path: "/admin/organizations" },
-    { icon: Users, label: "Usuários", path: "/admin/users" },
-    { icon: DollarSign, label: "Planos", path: "/admin/plans" },
-    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages" },
-    { icon: DollarSign, label: "Financeiro", path: "/admin/financial" },
-    { icon: Database, label: "Integrações", path: "/admin/integrations" },
-    { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
-    { icon: Settings, label: "Configurações", path: "/admin/settings" },
-    { icon: User, label: "Meu Perfil", path: "/admin/profile" },
+    { icon: List, label: "Dashboard", path: "/admin", permissionId: "dashboard" },
+    { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
+    { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
+    { icon: DollarSign, label: "Planos", path: "/admin/plans", permissionId: "plans" },
+    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages", permissionId: "analysis_packages" },
+    { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionId: "financial" },
+    { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
+    { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
+    { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
+    { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },
   ];
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
+      localStorage.removeItem('adminUser');
+      localStorage.removeItem('orgUser');
       sessionStorage.clear();
       toast.success("Logout realizado com sucesso");
       navigate("/");
@@ -46,6 +48,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
+
+  // Filtra os itens do menu baseado nas permissões
+  const filteredMenuItems = adminMenuItems.filter(item => 
+    hasRoutePermission(item.permissionId)
+  );
+
+  console.log("Menu items:", filteredMenuItems);
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,7 +75,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="flex flex-col h-full py-6 px-3">
             <div className="space-y-0.5">
-              {adminMenuItems.map((item) => {
+              {filteredMenuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
