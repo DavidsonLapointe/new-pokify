@@ -28,6 +28,7 @@ const mockAdminUser: User = {
     prompt: ["view", "edit"],
     analysis_packages: ["view", "edit"],
     financial: ["view", "edit"],
+    users: ["view", "edit", "delete"],
     profile: ["contact", "password"]
   },
   logs: [
