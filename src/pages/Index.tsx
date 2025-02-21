@@ -249,12 +249,25 @@ const Index = () => {
 
                 {/* Arrow and Processing */}
                 <div className="flex-1 relative">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-2">
-                    <div className="h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 w-full relative">
-                      <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500"></div>
-                      <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-500"></div>
+                  {/* Seta da esquerda para o centro */}
+                  <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-full">
+                    <div className="absolute left-[-4rem] w-[4rem] h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500">
+                      <div className="absolute right-0 -translate-y-1/2 w-3 h-3 rotate-45 border-t-2 border-r-2 border-indigo-500"></div>
                     </div>
                   </div>
+
+                  {/* Seta do centro para a direita */}
+                  <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-full">
+                    <div className="absolute right-[-4rem] w-[4rem] h-0.5 bg-gradient-to-r from-indigo-500 to-green-500">
+                      <div className="absolute right-0 -translate-y-1/2 w-3 h-3 rotate-45 border-t-2 border-r-2 border-green-500"></div>
+                    </div>
+                  </div>
+
+                  {/* Indicador de fluxo móvel */}
+                  <div className="lg:hidden flex justify-center my-4">
+                    <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse" />
+                  </div>
+
                   <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg relative">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
                       Processamento IA
