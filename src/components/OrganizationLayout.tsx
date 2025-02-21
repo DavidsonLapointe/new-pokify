@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Settings,
   Users,
@@ -22,13 +22,8 @@ const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
-  const { getUserPermissions } = usePermissions(user);
-
-  // Pega as rotas permitidas para o usuário
-  const { routes: allowedRoutes } = getUserPermissions();
-  console.log("\n=== Menu Lateral ===");
-  console.log("Usuário:", user?.name);
-  console.log("Rotas permitidas:", allowedRoutes);
+  const { getUserPermissions, hasRoutePermission } = usePermissions(user);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
 
   const handleLogout = () => {
     try {
@@ -89,15 +84,23 @@ const OrganizationLayout = () => {
     },
   ];
 
-  // Filtra os itens do menu baseado nas rotas permitidas
-  const menuItems = allMenuItems.filter(item => {
-    const isAllowed = allowedRoutes.includes(item.permissionId);
-    console.log(`Item ${item.label}: permitido? ${isAllowed}`);
-    return isAllowed;
-  });
+  useEffect(() => {
+    if (user) {
+      console.log("\n=== Atualizando Menu Lateral ===");
+      console.log("Usuário:", user.name);
+      
+      const filteredItems = allMenuItems.filter(item => {
+        const isAllowed = hasRoutePermission(item.permissionId);
+        console.log(`Item ${item.label}: permitido? ${isAllowed}`);
+        return isAllowed;
+      });
 
-  console.log("Menu items final:", menuItems);
-  console.log("==================\n");
+      console.log("Menu items filtrados:", filteredItems);
+      console.log("=========================\n");
+
+      setMenuItems(filteredItems);
+    }
+  }, [user, hasRoutePermission]);
 
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ')
