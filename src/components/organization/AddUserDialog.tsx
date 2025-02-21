@@ -40,17 +40,27 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
   const handleAddUser = () => {
     const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
     
-    const userPermissions: { [key: string]: string[] } = {};
+    const userPermissions: { [key: string]: string[] } = {
+      // Adicionamos o profile por padrão para todos os usuários
+      profile: ["contact", "password"]
+    };
     
     if (newUser.role === 'admin') {
-      availableRoutePermissions.forEach(route => {
-        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
-          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-        }
+      // Permissões padrão para admin
+      const adminRoutes = {
+        'dashboard': ['view', 'export'],
+        'leads': ['view', 'edit', 'delete'],
+        'users': ['view', 'edit', 'delete'],
+        'integrations': ['view', 'edit'],
+        'settings': ['view', 'edit'],
+        'plans': ['view', 'upgrade']  // Mudamos de 'plan' para 'plans'
+      };
+      
+      Object.entries(adminRoutes).forEach(([route, permissions]) => {
+        userPermissions[route] = permissions;
       });
-      userPermissions.users = ['view', 'edit', 'delete'];
-      userPermissions.plan = ['view', 'upgrade'];  // Adicionando explicitamente as permissões do plano
     } else if (newUser.role === 'seller') {
+      // Permissões padrão para seller
       const sellerRoutes = {
         'dashboard': ['view'],
         'leads': ['view', 'edit'],
