@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 
@@ -73,7 +74,7 @@ const mockOrgUser: User = {
     users: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
     settings: ["view", "edit"],
-    plan: ["view", "upgrade"],
+    plan: ["view", "upgrade"],  // Adicionando permissão explícita para "plan"
     profile: ["contact", "password"]
   },
   logs: [
