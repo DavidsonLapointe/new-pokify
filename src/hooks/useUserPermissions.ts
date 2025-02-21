@@ -3,6 +3,7 @@ import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "sonner";
 
 export const useUserPermissions = (
   user: User | null,
@@ -107,7 +108,7 @@ export const useUserPermissions = (
     onClose();
   };
 
-  const isTabEnabled = (routeId: string, tabValue: string) => {
+  const isTabEnabled = (routeId: string, tabValue: string): boolean => { // Adicionado retorno explícito boolean
     const permissions = tempPermissions[routeId] || [];
     return permissions.includes(tabValue);
   };

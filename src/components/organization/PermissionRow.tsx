@@ -8,7 +8,7 @@ interface PermissionRowProps {
   isProfile: boolean;
   onPermissionChange: (routeId: string) => void;
   onTabPermissionChange: (routeId: string, tabValue: string) => void;
-  isTabEnabled: (routeId: string, tabValue: string) => void;
+  isTabEnabled: (routeId: string, tabValue: string) => boolean; // Corrigido para retornar boolean
 }
 
 export const PermissionRow = ({
