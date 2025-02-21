@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useNavigate } from "react-router-dom";
 
 interface LoginModalProps {
   open: boolean;
@@ -14,7 +13,6 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
@@ -30,7 +28,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       // Simular verificação de status da empresa
       const mockCheckOrganizationStatus = async () => {
         const mockResponse = {
-          status: "active",
+          status: "pending",
           email: "admin@empresa.com"
         };
         return mockResponse;
@@ -48,9 +46,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       console.log("Login efetuado com sucesso:", { email, password });
       setIsLoading(false);
       onOpenChange(false);
-      
-      // Redireciona para a área da organização
-      navigate('/organization');
     } catch (error) {
       setError("Ocorreu um erro ao tentar fazer login. Tente novamente.");
       setIsLoading(false);
@@ -73,16 +68,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       setError("Ocorreu um erro ao solicitar a recuperação de senha. Tente novamente.");
       setIsLoading(false);
     }
-  };
-
-  // Função para fazer login automático (ambiente de demonstração)
-  const handleDemoLogin = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      onOpenChange(false);
-      navigate('/organization');
-    }, 1000);
   };
 
   return (
@@ -140,26 +125,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               {mode === "login" ? "Esqueceu sua senha?" : "Voltar para login"}
             </Button>
           </div>
-
-          {/* Botão de login automático para ambiente de demonstração */}
-          <Button 
-            type="button"
-            className="w-full bg-green-600 hover:bg-green-700 mb-2"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aguarde...
-              </>
-            ) : (
-              <>
-                Entrar (Demonstração)
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </Button>
 
           <Button 
             type="submit" 
