@@ -29,7 +29,28 @@ export const AdminUserPermissionsDialog = ({
     setSelectedPermissions(user.permissions || {});
   }, [user]);
 
+  const handleSectionPermissionChange = (routeId: string, checked: boolean) => {
+    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
+    if (!route || routeId === 'profile') return;
+
+    setSelectedPermissions((prev) => {
+      if (checked) {
+        // Ativa todas as permissões da seção
+        return {
+          ...prev,
+          [routeId]: route.tabs?.map(tab => tab.value) || []
+        };
+      } else {
+        // Remove todas as permissões da seção
+        const { [routeId]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+  };
+
   const handlePermissionChange = (routeId: string, tabValue: string) => {
+    if (routeId === 'profile') return; // Não permite alteração para "Meu Perfil"
+
     setSelectedPermissions((prev) => {
       const currentPermissions = prev[routeId] || [];
       const newPermissions = currentPermissions.includes(tabValue)
@@ -43,10 +64,27 @@ export const AdminUserPermissionsDialog = ({
     });
   };
 
+  const isSectionFullyChecked = (routeId: string): boolean => {
+    if (routeId === 'profile') return true;
+    
+    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
+    if (!route) return false;
+
+    const currentPermissions = selectedPermissions[routeId] || [];
+    return route.tabs?.every(tab => currentPermissions.includes(tab.value)) || false;
+  };
+
   const handleSave = () => {
+    // Garante que as permissões do perfil estão sempre presentes
+    const profileRoute = availableAdminRoutePermissions.find(r => r.id === 'profile');
+    const profilePermissions = profileRoute?.tabs?.map(tab => tab.value) || [];
+
     const updatedUser = {
       ...user,
-      permissions: selectedPermissions,
+      permissions: {
+        ...selectedPermissions,
+        profile: profilePermissions, // Sempre inclui as permissões do perfil
+      },
       logs: [
         ...user.logs,
         {
@@ -65,9 +103,9 @@ export const AdminUserPermissionsDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Permissões do Usuário</DialogTitle>
+          <DialogTitle>Permissões do Usuário - {user.name}</DialogTitle>
           <DialogDescription>
-            Gerencie as permissões de acesso do usuário {user.name}.
+            Gerencie as permissões de acesso deste usuário.
           </DialogDescription>
         </DialogHeader>
 
@@ -75,18 +113,34 @@ export const AdminUserPermissionsDialog = ({
           <div className="space-y-6">
             {availableAdminRoutePermissions.map((route) => (
               <div key={route.id} className="space-y-3">
-                <h3 className="font-medium">{route.label}</h3>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`section-${route.id}`}
+                    checked={isSectionFullyChecked(route.id)}
+                    onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
+                    disabled={route.id === 'profile'}
+                    className="h-4 w-4 rounded-[4px] border border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                  />
+                  <label
+                    htmlFor={`section-${route.id}`}
+                    className="font-medium"
+                  >
+                    {route.label}
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2 ml-6">
                   {route.tabs?.map((tab) => (
                     <div key={tab.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={`${route.id}-${tab.id}`}
-                        checked={(selectedPermissions[route.id] || []).includes(
-                          tab.value
-                        )}
+                        checked={
+                          route.id === 'profile' || 
+                          (selectedPermissions[route.id] || []).includes(tab.value)
+                        }
                         onCheckedChange={() =>
                           handlePermissionChange(route.id, tab.value)
                         }
+                        disabled={route.id === 'profile'}
                         className="h-4 w-4 rounded-[4px] border border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                       />
                       <label
