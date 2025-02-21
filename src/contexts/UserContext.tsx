@@ -56,7 +56,7 @@ const mockAdminUser: User = {
   }
 };
 
-// Usuário da TechCorp
+// Usuário da TechCorp (João Silva)
 const mockOrgUser: User = {
   id: 201,
   name: "João Silva",
@@ -103,6 +103,10 @@ const mockOrgUser: User = {
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
+    // Limpa o localStorage na inicialização
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('orgUser');
+    
     const path = window.location.pathname;
     const isAdminRoute = path.startsWith('/admin');
     return isAdminRoute ? mockAdminUser : mockOrgUser;
@@ -127,7 +131,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(storageKey, JSON.stringify(defaultUser));
       setUser(defaultUser);
     } else {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      // Verifica se o usuário armazenado é o correto para a rota
+      if (isAdminRoute && parsedUser.name !== mockAdminUser.name) {
+        setUser(mockAdminUser);
+        localStorage.setItem(storageKey, JSON.stringify(mockAdminUser));
+      } else if (!isAdminRoute && parsedUser.name !== mockOrgUser.name) {
+        setUser(mockOrgUser);
+        localStorage.setItem(storageKey, JSON.stringify(mockOrgUser));
+      } else {
+        setUser(parsedUser);
+      }
     }
   }, [window.location.pathname]);
 
