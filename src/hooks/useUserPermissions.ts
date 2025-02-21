@@ -17,13 +17,28 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Clona as permissões do usuário
+      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
+      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
+
+      const planRoute = availableRoutePermissions.find(r => r.id === 'plan');
+      const planPermissions = planRoute?.tabs?.map(tab => tab.value) || [];
+
+      // Clona as permissões do usuário e garante que são inicializadas corretamente
       let initialPermissions = { ...user.permissions };
 
-      // Para cada rota disponível, verifica se o usuário tem permissões
+      // Garante que as permissões do dashboard são inicializadas corretamente
+      if (user.permissions.dashboard) {
+        initialPermissions.dashboard = dashboardPermissions;
+      }
+
+      // Garante que as permissões do plano são inicializadas corretamente
+      if (user.permissions.plan) {
+        initialPermissions.plan = planPermissions;
+      }
+
+      // Para todas as outras rotas, mantém as permissões existentes
       availableRoutePermissions.forEach(route => {
-        if (user.permissions[route.id]) {
-          // Se tem permissões, mantém as tabs existentes
+        if (route.id !== 'dashboard' && route.id !== 'plan' && user.permissions[route.id]) {
           initialPermissions[route.id] = user.permissions[route.id];
         }
       });
