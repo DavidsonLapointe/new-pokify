@@ -17,22 +17,13 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Primeiro, pega todas as permissões possíveis para o dashboard
-      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
+      // Usa as permissões atuais do usuário como base
+      const initialPermissions = { ...user.permissions };
+      
+      // Garante que o profile sempre tenha suas permissões
+      initialPermissions.profile = ["contact", "password"];
 
-      // Garante que todas as rotas e suas permissões estejam inicializadas corretamente
-      const initialPermissions: { [key: string]: string[] } = {
-        dashboard: dashboardPermissions, // Todas as permissões do dashboard
-        leads: ["view", "edit", "delete"],
-        users: ["view", "edit", "delete"],
-        integrations: ["view", "edit"],
-        settings: ["view", "edit"],
-        plan: ["view", "upgrade"],
-        profile: ["contact", "password"]
-      };
-
-      console.log('Inicializando permissões:', initialPermissions);
+      console.log('Inicializando permissões do usuário:', initialPermissions);
       setTempPermissions(initialPermissions);
     } else {
       setTempPermissions({});
@@ -86,25 +77,15 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
-      // Pega todas as permissões possíveis para o dashboard
-      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
-
-      // Garante que todas as permissões estejam presentes ao salvar
-      const updatedPermissions = {
-        dashboard: tempPermissions.dashboard || dashboardPermissions,
-        leads: tempPermissions.leads || ["view", "edit", "delete"],
-        users: tempPermissions.users || ["view", "edit", "delete"],
-        integrations: tempPermissions.integrations || ["view", "edit"],
-        settings: tempPermissions.settings || ["view", "edit"],
-        plan: tempPermissions.plan || ["view", "upgrade"],
-        profile: ["contact", "password"] // Profile é sempre mantido
-      };
-
       const updatedUser = {
         ...user,
-        permissions: updatedPermissions
+        permissions: {
+          ...tempPermissions,
+          profile: ["contact", "password"] // Garante que profile sempre tenha suas permissões
+        }
       };
+
+      console.log('Salvando usuário com permissões:', updatedUser.permissions);
 
       if (user.id === currentUser.id) {
         updateCurrentUser(updatedUser);
