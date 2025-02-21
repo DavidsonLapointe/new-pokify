@@ -248,7 +248,7 @@ const Index = () => {
                 </div>
 
                 {/* Processing Element */}
-                <div className="flex-1 relative mt-12">
+                <div className="flex-1 relative mt-24">
                   {/* Indicador de fluxo móvel */}
                   <div className="lg:hidden flex justify-center my-4">
                     <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse" />
