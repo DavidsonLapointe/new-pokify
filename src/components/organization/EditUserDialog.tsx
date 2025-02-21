@@ -58,8 +58,8 @@ export const EditUserDialog = ({
 
   useEffect(() => {
     setEditedUser(user);
-    setPendingStatus(""); // Reset pending status when user changes
-    setPendingRole(""); // Reset pending role when user changes
+    setPendingStatus("");
+    setPendingRole("");
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -103,7 +103,9 @@ export const EditUserDialog = ({
   };
 
   const statusOptions = (() => {
-    switch (editedUser?.status) {
+    if (!editedUser) return [];
+    
+    switch (editedUser.status) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
       case "inactive":
@@ -157,6 +159,21 @@ export const EditUserDialog = ({
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium">Função</label>
+            <Select
+              value={pendingRole || editedUser?.role}
+              onValueChange={(value: UserRole) => setPendingRole(value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Administrador</SelectItem>
+                <SelectItem value="seller">Vendedor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Status atual:</label>
               {editedUser?.status && getStatusBadge(editedUser.status)}
@@ -174,21 +191,6 @@ export const EditUserDialog = ({
                     {option.label}
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Função</label>
-            <Select
-              value={pendingRole || editedUser?.role}
-              onValueChange={(value: UserRole) => setPendingRole(value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="seller">Vendedor</SelectItem>
               </SelectContent>
             </Select>
           </div>
