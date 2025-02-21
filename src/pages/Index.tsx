@@ -248,25 +248,19 @@ const Index = () => {
                 </div>
 
                 {/* Colchetes e Processing */}
-                <div className="flex-1 relative flex items-center">
-                  {/* Colchete esquerdo - Estilo mais pronunciado */}
-                  <div className="hidden lg:block absolute left-[-2rem] h-full">
-                    <div className="absolute left-0 top-0 w-4 h-[2px] bg-blue-500"></div>
+                <div className="flex-1 relative">
+                  {/* Colchete esquerdo */}
+                  <div className="hidden lg:block absolute left-[-2rem] top-0 h-full w-4">
+                    <div className="absolute left-0 top-0 w-full h-[2px] bg-blue-500"></div>
                     <div className="absolute left-0 top-0 w-[2px] h-full bg-blue-500"></div>
-                    <div className="absolute left-0 bottom-0 w-4 h-[2px] bg-blue-500"></div>
-                    {/* Curvas do colchete */}
-                    <div className="absolute left-0 top-0 w-[2px] h-4 bg-blue-500 transform -translate-y-1"></div>
-                    <div className="absolute left-0 bottom-0 w-[2px] h-4 bg-blue-500 transform translate-y-1"></div>
+                    <div className="absolute left-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
                   </div>
 
-                  {/* Colchete direito - Estilo mais pronunciado */}
-                  <div className="hidden lg:block absolute right-[-2rem] h-full">
-                    <div className="absolute right-0 top-0 w-4 h-[2px] bg-blue-500"></div>
+                  {/* Colchete direito */}
+                  <div className="hidden lg:block absolute right-[-2rem] top-0 h-full w-4">
+                    <div className="absolute right-0 top-0 w-full h-[2px] bg-blue-500"></div>
                     <div className="absolute right-0 top-0 w-[2px] h-full bg-blue-500"></div>
-                    <div className="absolute right-0 bottom-0 w-4 h-[2px] bg-blue-500"></div>
-                    {/* Curvas do colchete */}
-                    <div className="absolute right-0 top-0 w-[2px] h-4 bg-blue-500 transform -translate-y-1"></div>
-                    <div className="absolute right-0 bottom-0 w-[2px] h-4 bg-blue-500 transform translate-y-1"></div>
+                    <div className="absolute right-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
                   </div>
 
                   {/* Indicador de fluxo móvel */}
@@ -274,7 +268,7 @@ const Index = () => {
                     <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse" />
                   </div>
 
-                  <div className="bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-lg w-full">
+                  <div className="bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-lg relative">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <div className="whitespace-nowrap bg-blue-600 text-white px-6 py-1 rounded-full text-sm font-medium">
                         Processamento IA
