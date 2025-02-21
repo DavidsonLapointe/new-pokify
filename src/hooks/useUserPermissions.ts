@@ -19,7 +19,15 @@ export const useUserPermissions = (
     if (isOpen && user) {
       // Usa as permissões atuais do usuário como base
       const initialPermissions = { ...user.permissions };
-      
+
+      // Se não houver permissões do dashboard, adiciona todas
+      if (!initialPermissions.dashboard) {
+        const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
+        if (dashboardRoute?.tabs) {
+          initialPermissions.dashboard = dashboardRoute.tabs.map(tab => tab.value);
+        }
+      }
+
       // Garante que o profile sempre tenha suas permissões
       initialPermissions.profile = ["contact", "password"];
 
