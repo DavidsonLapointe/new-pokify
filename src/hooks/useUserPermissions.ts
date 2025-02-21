@@ -25,15 +25,17 @@ export const useUserPermissions = (
 
       let initialPermissions = { ...user.permissions };
 
+      // Inicializa as permissões do dashboard se existirem
       if (initialPermissions.dashboard?.length > 0) {
         initialPermissions.dashboard = dashboardPermissions;
       }
 
-      // Garante que as permissões do plano sejam inicializadas corretamente
-      if (Object.keys(initialPermissions).includes('plan')) {
+      // Inicializa as permissões do plano se a rota existir nas permissões
+      if ('plan' in initialPermissions || initialPermissions.plan) {
         initialPermissions.plan = planPermissions;
       }
 
+      console.log('Initial permissions:', initialPermissions);
       setTempPermissions(initialPermissions);
     }
   }, [isOpen, user]);
@@ -84,9 +86,6 @@ export const useUserPermissions = (
     setSaving(true);
     try {
       const updatedPermissions = { ...tempPermissions };
-      if (updatedPermissions.plan && updatedPermissions.plan.length === 0) {
-        delete updatedPermissions.plan;
-      }
 
       const updatedUser = {
         ...user,
