@@ -22,7 +22,7 @@ const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
-  const { getUserPermissions, hasRoutePermission } = usePermissions(user);
+  const { getUserPermissions } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
   const { routes: allowedRoutes } = getUserPermissions();
@@ -42,61 +42,54 @@ const OrganizationLayout = () => {
     }
   };
 
-  const getMenuItems = () => {
-    const allMenuItems = [
-      {
-        icon: BarChart3,
-        label: "Dashboard",
-        path: "/organization/dashboard",
-        permissionId: "dashboard"
-      },
-      { 
-        icon: Headphones, 
-        label: "Análise de Leads", 
-        path: "/organization/leads",
-        permissionId: "leads"
-      },
-      { 
-        icon: Users, 
-        label: "Usuários", 
-        path: "/organization/users",
-        permissionId: "users"
-      },
-      {
-        icon: Network,
-        label: "Integrações",
-        path: "/organization/integrations",
-        permissionId: "integrations"
-      },
-      {
-        icon: Settings,
-        label: "Configurações",
-        path: "/organization/settings",
-        permissionId: "settings"
-      },
-      {
-        icon: CreditCard,
-        label: "Meu Plano",
-        path: "/organization/plan",
-        permissionId: "plan"
-      },
-      {
-        icon: UserCircle,
-        label: "Meu Perfil",
-        path: "/organization/profile",
-        permissionId: "profile"
-      },
-    ];
+  const allMenuItems = [
+    {
+      icon: BarChart3,
+      label: "Dashboard",
+      path: "/organization/dashboard",
+      permissionId: "dashboard"
+    },
+    { 
+      icon: Headphones, 
+      label: "Análise de Leads", 
+      path: "/organization/leads",
+      permissionId: "leads"
+    },
+    { 
+      icon: Users, 
+      label: "Usuários", 
+      path: "/organization/users",
+      permissionId: "users"
+    },
+    {
+      icon: Network,
+      label: "Integrações",
+      path: "/organization/integrations",
+      permissionId: "integrations"
+    },
+    {
+      icon: Settings,
+      label: "Configurações",
+      path: "/organization/settings",
+      permissionId: "settings"
+    },
+    {
+      icon: CreditCard,
+      label: "Meu Plano",
+      path: "/organization/plan",
+      permissionId: "plan"
+    },
+    {
+      icon: UserCircle,
+      label: "Meu Perfil",
+      path: "/organization/profile",
+      permissionId: "profile"
+    },
+  ];
 
-    // Filtra os itens do menu baseado nas permissões do usuário
-    return allMenuItems.filter(item => {
-      const hasPermission = hasRoutePermission(item.permissionId);
-      console.log(`Verificando permissão para ${item.label}:`, hasPermission);
-      return hasPermission;
-    });
-  };
-
-  const menuItems = getMenuItems();
+  // Filtra os itens do menu baseado nas rotas permitidas
+  const menuItems = allMenuItems.filter(item => allowedRoutes.includes(item.permissionId));
+  console.log("Menu items após filtro:", menuItems);
 
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ')
