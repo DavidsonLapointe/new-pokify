@@ -42,12 +42,18 @@ export const UserPermissionsDialog = ({
       const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
       const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
 
-      // Garante que as permissões incluam 'plan' e 'dashboard' com suas permissões padrão
-      const initialPermissions = {
-        ...user.permissions,
-        plan: user.permissions.plan || ['view', 'upgrade'],
-        dashboard: user.permissions.dashboard || dashboardPermissions // Inicializa com todas as permissões do dashboard
-      };
+      let initialPermissions = { ...user.permissions };
+
+      // Se já existe permissão de dashboard, mantém todas as permissões
+      if (initialPermissions.dashboard?.length > 0) {
+        initialPermissions.dashboard = dashboardPermissions;
+      }
+
+      // Garante que as permissões do plano estejam presentes
+      if (initialPermissions.plan?.length > 0) {
+        initialPermissions.plan = ['view', 'upgrade'];
+      }
+
       setTempPermissions(initialPermissions);
       console.log("Permissões iniciais:", initialPermissions);
     }
