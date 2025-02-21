@@ -222,7 +222,7 @@ const Index = () => {
             
             {/* Main Flow Card */}
             <div className="relative bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-blue-100">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative">
+              <div className="flex flex-col lg:flex-row items-start justify-between gap-12 relative">
                 {/* Input Column */}
                 <div className="flex-1">
                   <div className="text-center mb-6">
@@ -247,28 +247,14 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Colchetes e Processing */}
-                <div className="flex-1 relative">
-                  {/* Colchete esquerdo */}
-                  <div className="hidden lg:block absolute left-[-2rem] top-0 h-full w-4">
-                    <div className="absolute left-0 top-0 w-full h-[2px] bg-blue-500"></div>
-                    <div className="absolute left-0 top-0 w-[2px] h-full bg-blue-500"></div>
-                    <div className="absolute left-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
-                  </div>
-
-                  {/* Colchete direito */}
-                  <div className="hidden lg:block absolute right-[-2rem] top-0 h-full w-4">
-                    <div className="absolute right-0 top-0 w-full h-[2px] bg-blue-500"></div>
-                    <div className="absolute right-0 top-0 w-[2px] h-full bg-blue-500"></div>
-                    <div className="absolute right-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
-                  </div>
-
+                {/* Processing Element */}
+                <div className="flex-1 relative mt-12">
                   {/* Indicador de fluxo móvel */}
                   <div className="lg:hidden flex justify-center my-4">
                     <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse" />
                   </div>
 
-                  <div className="bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-lg relative">
+                  <div className="bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-lg w-full">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <div className="whitespace-nowrap bg-blue-600 text-white px-6 py-1 rounded-full text-sm font-medium">
                         Processamento IA
