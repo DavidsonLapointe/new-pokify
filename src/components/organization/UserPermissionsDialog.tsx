@@ -38,10 +38,15 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Garante que as permissões incluam 'plan' com suas permissões padrão
+      // Obtém todas as permissões do dashboard
+      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
+      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
+
+      // Garante que as permissões incluam 'plan' e 'dashboard' com suas permissões padrão
       const initialPermissions = {
         ...user.permissions,
-        plan: user.permissions.plan || ['view', 'upgrade'] // Inicializa com as permissões padrão
+        plan: user.permissions.plan || ['view', 'upgrade'],
+        dashboard: user.permissions.dashboard || dashboardPermissions // Inicializa com todas as permissões do dashboard
       };
       setTempPermissions(initialPermissions);
       console.log("Permissões iniciais:", initialPermissions);
