@@ -63,7 +63,7 @@ export const AdminUserPermissionsDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Permissões do Usuário</DialogTitle>
           <DialogDescription>
@@ -71,7 +71,7 @@ export const AdminUserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
+        <ScrollArea className="flex-1 pr-4 h-full">
           <div className="space-y-6">
             {availableAdminRoutePermissions.map((route) => (
               <div key={route.id} className="space-y-3">
@@ -87,6 +87,7 @@ export const AdminUserPermissionsDialog = ({
                         onCheckedChange={() =>
                           handlePermissionChange(route.id, tab.value)
                         }
+                        className="h-4 w-4 rounded-[4px] border border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                       />
                       <label
                         htmlFor={`${route.id}-${tab.id}`}
