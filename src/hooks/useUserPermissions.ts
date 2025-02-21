@@ -17,21 +17,16 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Inicializa as permissões com as do usuário
-      let initialPermissions = { ...user.permissions };
-
-      // Para cada rota, verifica se precisa inicializar
-      availableRoutePermissions.forEach(route => {
-        // Se o usuário tem permissão para a rota ou é uma rota padrão (profile)
-        if (user.permissions[route.id] || route.isDefault) {
-          initialPermissions[route.id] = user.permissions[route.id] || [];
-          
-          // Se for dashboard e tiver pelo menos uma permissão, adiciona todas
-          if (route.id === 'dashboard' && user.permissions[route.id]?.length > 0) {
-            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-          }
-        }
-      });
+      // Garante que todas as rotas e suas permissões estejam inicializadas corretamente
+      const initialPermissions: { [key: string]: string[] } = {
+        dashboard: ["view", "export"],
+        leads: ["view", "edit", "delete"],
+        users: ["view", "edit", "delete"],
+        integrations: ["view", "edit"],
+        settings: ["view", "edit"],
+        plan: ["view", "upgrade"],
+        profile: ["contact", "password"]
+      };
 
       console.log('Inicializando permissões:', initialPermissions);
       setTempPermissions(initialPermissions);
@@ -87,9 +82,20 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
+      // Garante que todas as permissões estejam presentes ao salvar
+      const updatedPermissions = {
+        dashboard: tempPermissions.dashboard || ["view", "export"],
+        leads: tempPermissions.leads || ["view", "edit", "delete"],
+        users: tempPermissions.users || ["view", "edit", "delete"],
+        integrations: tempPermissions.integrations || ["view", "edit"],
+        settings: tempPermissions.settings || ["view", "edit"],
+        plan: tempPermissions.plan || ["view", "upgrade"],
+        profile: ["contact", "password"] // Profile é sempre mantido
+      };
+
       const updatedUser = {
         ...user,
-        permissions: { ...tempPermissions }
+        permissions: updatedPermissions
       };
 
       if (user.id === currentUser.id) {
