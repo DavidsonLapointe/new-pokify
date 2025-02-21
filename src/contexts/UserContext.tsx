@@ -103,40 +103,63 @@ const mockOrgUser: User = {
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
-    // Limpa o localStorage na inicialização
-    localStorage.removeItem('adminUser');
-    localStorage.removeItem('orgUser');
-    
     const path = window.location.pathname;
     const isAdminRoute = path.startsWith('/admin');
+    
+    // Usa chaves diferentes para cada ambiente
+    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
+    const storedUser = localStorage.getItem(storageKey);
+    
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      // Verifica se o usuário armazenado corresponde ao ambiente
+      if (isAdminRoute && parsedUser.role === 'leadly_employee') {
+        return parsedUser;
+      } else if (!isAdminRoute && parsedUser.role !== 'leadly_employee') {
+        return parsedUser;
+      }
+    }
+    
+    // Se não encontrou usuário válido, retorna o padrão
     return isAdminRoute ? mockAdminUser : mockOrgUser;
   });
 
   const updateUser = (newUser: User) => {
-    setUser(newUser);
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
+    
+    // Verifica se a atualização é válida para o ambiente atual
+    if (isAdminRoute && newUser.role !== 'leadly_employee') {
+      console.error('Tentativa inválida de atualizar usuário admin com usuário não-Leadly');
+      return;
+    }
+    if (!isAdminRoute && newUser.role === 'leadly_employee') {
+      console.error('Tentativa inválida de atualizar usuário da organização com usuário Leadly');
+      return;
+    }
+    
+    setUser(newUser);
     localStorage.setItem(storageKey, JSON.stringify(newUser));
   };
 
+  // Mantém os ambientes sincronizados com as rotas
   useEffect(() => {
     const path = window.location.pathname;
     const isAdminRoute = path.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
+    const defaultUser = isAdminRoute ? mockAdminUser : mockOrgUser;
+    
     const storedUser = localStorage.getItem(storageKey);
-
     if (!storedUser) {
-      // Se não houver usuário armazenado, define o padrão baseado na rota
-      const defaultUser = isAdminRoute ? mockAdminUser : mockOrgUser;
-      localStorage.setItem(storageKey, JSON.stringify(defaultUser));
       setUser(defaultUser);
+      localStorage.setItem(storageKey, JSON.stringify(defaultUser));
     } else {
       const parsedUser = JSON.parse(storedUser);
-      // Verifica se o usuário armazenado é o correto para a rota
-      if (isAdminRoute && parsedUser.name !== mockAdminUser.name) {
+      // Verifica se o usuário armazenado é válido para o ambiente
+      if (isAdminRoute && parsedUser.role !== 'leadly_employee') {
         setUser(mockAdminUser);
         localStorage.setItem(storageKey, JSON.stringify(mockAdminUser));
-      } else if (!isAdminRoute && parsedUser.name !== mockOrgUser.name) {
+      } else if (!isAdminRoute && parsedUser.role === 'leadly_employee') {
         setUser(mockOrgUser);
         localStorage.setItem(storageKey, JSON.stringify(mockOrgUser));
       } else {

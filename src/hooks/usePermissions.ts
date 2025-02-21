@@ -1,5 +1,5 @@
 
-import { User } from "@/types"; // Atualizado
+import { User } from "@/types";
 import { RoutePermission, availableRoutePermissions } from "@/types/permissions";
 
 export const usePermissions = (user: User) => {
@@ -12,6 +12,12 @@ export const usePermissions = (user: User) => {
 
     // Verifica se a rota está nas permissões do usuário
     const hasPermission = routeId in user.permissions;
+    
+    // Se tem a rota mas não tem permissões, não mostra
+    if (hasPermission && user.permissions[routeId].length === 0) {
+      return false;
+    }
+    
     console.log(`Verificando permissão para rota ${routeId}:`, hasPermission);
     return hasPermission;
   };
@@ -38,9 +44,10 @@ export const usePermissions = (user: User) => {
     const routes = ['profile'];
     
     // Adiciona apenas as rotas que existem nas permissões do usuário
+    // e que têm pelo menos uma permissão
     if (user?.permissions) {
-      Object.keys(user.permissions).forEach(route => {
-        if (!routes.includes(route)) {
+      Object.entries(user.permissions).forEach(([route, permissions]) => {
+        if (!routes.includes(route) && permissions.length > 0) {
           routes.push(route);
         }
       });
