@@ -38,7 +38,13 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      setTempPermissions(user.permissions);
+      // Garante que as permissões incluam 'plan' se existirem
+      const initialPermissions = {
+        ...user.permissions,
+        plan: user.permissions.plan || []
+      };
+      setTempPermissions(initialPermissions);
+      console.log("Permissões iniciais:", initialPermissions);
     }
   }, [isOpen, user]);
 
