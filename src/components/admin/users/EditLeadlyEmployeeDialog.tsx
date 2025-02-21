@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { User } from "@/types";
 import { toast } from "sonner";
+import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
 
 interface EditLeadlyEmployeeDialogProps {
   isOpen: boolean;
@@ -77,6 +78,19 @@ export const EditLeadlyEmployeeDialog = ({
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return status;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -124,7 +138,10 @@ export const EditLeadlyEmployeeDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">Status atual:</label>
+              <LeadStatusBadge status={editedUser.status === "inactive" ? "pending" : "active"} />
+            </div>
             <Select
               value={editedUser.status}
               onValueChange={(value) =>
@@ -136,11 +153,7 @@ export const EditLeadlyEmployeeDialog = ({
             >
               <SelectTrigger>
                 <SelectValue>
-                  {editedUser.status === "active"
-                    ? "Ativo"
-                    : editedUser.status === "pending"
-                    ? "Pendente"
-                    : "Inativo"}
+                  {getStatusLabel(editedUser.status)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -163,4 +176,3 @@ export const EditLeadlyEmployeeDialog = ({
     </Dialog>
   );
 };
-
