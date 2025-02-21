@@ -8,18 +8,24 @@ export const usePermissions = (user: User) => {
     if (routeId === 'profile') return true;
 
     // Se não tem usuário ou permissões definidas, não tem acesso
-    if (!user?.permissions) return false;
+    if (!user?.permissions) {
+      console.log(`Sem usuário ou permissões definidas para rota ${routeId}`);
+      return false;
+    }
+
+    // Ajusta o ID da rota para corresponder às permissões (caso analysis-packages)
+    const adjustedRouteId = routeId.replace('-', '_');
 
     // Verifica se a rota está nas permissões do usuário
-    const hasPermission = routeId in user.permissions;
+    const hasPermission = adjustedRouteId in user.permissions;
     
     // Se tem a rota mas não tem permissões ou tem array vazio, não mostra
-    if (!hasPermission || user.permissions[routeId].length === 0) {
-      console.log(`Rota ${routeId} não tem permissões ou está vazia`);
+    if (!hasPermission || user.permissions[adjustedRouteId].length === 0) {
+      console.log(`Rota ${adjustedRouteId} não tem permissões ou está vazia`);
       return false;
     }
     
-    console.log(`Verificando permissão para rota ${routeId}:`, true);
+    console.log(`Verificando permissão para rota ${adjustedRouteId}:`, true);
     return true;
   };
 
@@ -33,8 +39,11 @@ export const usePermissions = (user: User) => {
     // Se não tem usuário ou permissões definidas, não tem acesso
     if (!user?.permissions) return false;
 
+    // Ajusta o ID da rota para corresponder às permissões
+    const adjustedRouteId = routeId.replace('-', '_');
+
     // Pega as permissões da rota
-    const routePermissions = user.permissions[routeId] || [];
+    const routePermissions = user.permissions[adjustedRouteId] || [];
     
     // Verifica se a tab está nas permissões da rota
     return routePermissions.includes(tabValue);
