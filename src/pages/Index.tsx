@@ -120,7 +120,7 @@ const Index = () => {
               </h1>
               
               <p className="text-lg text-slate-600 leading-relaxed">
-                Nossa plataforma integra IA avançada para converter chamadas em leads qualificados automaticamente. 
+                Nossa plataforma integra IA avançada para converter arquivos de áudio, vídeo e textos em leads qualificados automaticamente. 
                 Aumente sua produtividade e foque no que realmente importa: fechar negócios.
               </p>
 
