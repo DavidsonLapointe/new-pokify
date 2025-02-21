@@ -34,27 +34,35 @@ export const EditLeadlyEmployeeDialog = ({
   user,
   onUserUpdate,
 }: EditLeadlyEmployeeDialogProps) => {
-  const [editedUser, setEditedUser] = useState(user);
-  const [selectedStatus, setSelectedStatus] = useState<UserStatus | undefined>(undefined);
+  // Estado original do usuário
+  const [originalUser, setOriginalUser] = useState(user);
+  // Estados temporários para as alterações
+  const [pendingEmail, setPendingEmail] = useState(user.email);
+  const [pendingPhone, setPendingPhone] = useState(user.phone);
+  const [pendingStatus, setPendingStatus] = useState<UserStatus | undefined>(undefined);
 
   useEffect(() => {
-    setEditedUser(user);
-    setSelectedStatus(undefined);
+    setOriginalUser(user);
+    setPendingEmail(user.email);
+    setPendingPhone(user.phone);
+    setPendingStatus(undefined);
   }, [user]);
 
   const handleUpdateUser = () => {
-    if (!editedUser.name || !editedUser.email) {
+    if (!pendingEmail) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
     const updatedUser = {
-      ...editedUser,
-      status: selectedStatus || editedUser.status,
+      ...originalUser,
+      email: pendingEmail,
+      phone: pendingPhone,
+      status: pendingStatus || originalUser.status,
       logs: [
-        ...editedUser.logs,
+        ...originalUser.logs,
         {
-          id: Math.max(...editedUser.logs.map(log => log.id)) + 1,
+          id: Math.max(...originalUser.logs.map(log => log.id)) + 1,
           date: new Date().toISOString(),
           action: "Usuário atualizado"
         }
@@ -66,7 +74,7 @@ export const EditLeadlyEmployeeDialog = ({
   };
 
   const getStatusOptions = () => {
-    switch (editedUser.status) {
+    switch (originalUser.status) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
       case "inactive":
@@ -120,7 +128,7 @@ export const EditLeadlyEmployeeDialog = ({
           <div className="space-y-2">
             <label className="text-sm font-medium">Nome*</label>
             <Input
-              value={editedUser.name}
+              value={originalUser.name}
               disabled
               className="bg-gray-50"
             />
@@ -129,20 +137,16 @@ export const EditLeadlyEmployeeDialog = ({
             <label className="text-sm font-medium">Email*</label>
             <Input
               type="email"
-              value={editedUser.email}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, email: e.target.value })
-              }
+              value={pendingEmail}
+              onChange={(e) => setPendingEmail(e.target.value)}
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Telefone</label>
             <Input
               type="tel"
-              value={editedUser.phone}
-              onChange={(e) =>
-                setEditedUser({ ...editedUser, phone: e.target.value })
-              }
+              value={pendingPhone}
+              onChange={(e) => setPendingPhone(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -158,14 +162,14 @@ export const EditLeadlyEmployeeDialog = ({
               <label className="text-sm font-medium">Status atual:</label>
               <Badge
                 variant="secondary"
-                className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${getStatusBadgeStyles(editedUser.status)}`}
+                className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${getStatusBadgeStyles(originalUser.status)}`}
               >
-                {getStatusLabel(editedUser.status)}
+                {getStatusLabel(originalUser.status)}
               </Badge>
             </div>
             <Select
-              value={selectedStatus}
-              onValueChange={(value: UserStatus) => setSelectedStatus(value)}
+              value={pendingStatus}
+              onValueChange={(value: UserStatus) => setPendingStatus(value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
