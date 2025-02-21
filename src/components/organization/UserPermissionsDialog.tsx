@@ -8,13 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
-import { useState, useEffect } from "react";
-import { usePermissions } from "@/hooks/usePermissions";
-import { toast } from "sonner";
-import { useUser } from "@/contexts/UserContext";
+import { PermissionRow } from "./PermissionRow";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -31,112 +28,15 @@ export const UserPermissionsDialog = ({
 }: UserPermissionsDialogProps) => {
   if (!user) return null;
 
-  const { user: currentUser, updateUser: updateCurrentUser } = useUser();
-  const { hasRoutePermission } = usePermissions(user);
-  const [saving, setSaving] = useState(false);
-  const [tempPermissions, setTempPermissions] = useState<{ [key: string]: string[] }>({});
-
-  useEffect(() => {
-    if (isOpen && user) {
-      // Obtém todas as permissões do dashboard
-      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
-
-      let initialPermissions = { ...user.permissions };
-
-      // Se já existe permissão de dashboard, mantém todas as permissões
-      if (initialPermissions.dashboard?.length > 0) {
-        initialPermissions.dashboard = dashboardPermissions;
-      }
-
-      // Garante que as permissões do plano estejam presentes
-      if (Object.keys(initialPermissions).includes('plan')) {
-        initialPermissions.plan = ['view', 'upgrade'];
-      }
-
-      setTempPermissions(initialPermissions);
-      console.log("Permissões iniciais:", initialPermissions);
-    }
-  }, [isOpen, user]);
-
-  const handlePermissionChange = (routeId: string) => {
-    const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (route?.isDefault) return;
-
-    setTempPermissions(prev => {
-      const newPermissions = { ...prev };
-      
-      if (newPermissions[routeId]) {
-        delete newPermissions[routeId];
-      } else {
-        if (route?.tabs) {
-          newPermissions[routeId] = route.tabs.map(tab => tab.value);
-        }
-      }
-      
-      return newPermissions;
-    });
-  };
-
-  const handleTabPermissionChange = (routeId: string, tabValue: string) => {
-    setTempPermissions(prev => {
-      const newPermissions = { ...prev };
-      const currentPermissions = [...(prev[routeId] || [])];
-      const permissionIndex = currentPermissions.indexOf(tabValue);
-      
-      if (permissionIndex > -1) {
-        currentPermissions.splice(permissionIndex, 1);
-      } else {
-        currentPermissions.push(tabValue);
-      }
-
-      if (currentPermissions.length === 0 && !availableRoutePermissions.find(r => r.id === routeId)?.isDefault) {
-        delete newPermissions[routeId];
-      } else {
-        newPermissions[routeId] = currentPermissions;
-      }
-
-      return newPermissions;
-    });
-  };
-
-  const handleSave = () => {
-    setSaving(true);
-    try {
-      // Garante que as permissões do plano estejam corretas antes de salvar
-      const updatedPermissions = { ...tempPermissions };
-      if (updatedPermissions.plan && updatedPermissions.plan.length === 0) {
-        delete updatedPermissions.plan;
-      }
-
-      const updatedUser = {
-        ...user,
-        permissions: updatedPermissions,
-      };
-
-      if (user.id === currentUser.id) {
-        updateCurrentUser(updatedUser);
-      }
-
-      onUserUpdate(updatedUser);
-      onClose();
-      toast.success("Permissões atualizadas com sucesso!");
-    } catch (error) {
-      toast.error("Erro ao atualizar permissões");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleClose = () => {
-    setTempPermissions({});
-    onClose();
-  };
-
-  const isTabEnabled = (routeId: string, tabValue: string) => {
-    const permissions = tempPermissions[routeId] || [];
-    return permissions.includes(tabValue);
-  };
+  const {
+    saving,
+    tempPermissions,
+    handlePermissionChange,
+    handleTabPermissionChange,
+    handleSave,
+    handleClose,
+    isTabEnabled,
+  } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -155,47 +55,15 @@ export const UserPermissionsDialog = ({
             const isProfile = route.id === 'profile';
             
             return (
-              <div key={route.id} className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={route.id}
-                    checked={isRouteEnabled}
-                    onChange={() => !route.isDefault && handlePermissionChange(route.id)}
-                    disabled={route.isDefault}
-                    className={`h-4 w-4 rounded border appearance-none ${
-                      isProfile
-                        ? 'bg-gray-100 border-gray-200 checked:bg-gray-300 checked:border-gray-300 cursor-not-allowed checked:bg-check'
-                        : 'border-primary checked:bg-primary hover:border-primary/80 checked:bg-check'
-                    }`}
-                  />
-                  <Label htmlFor={route.id} className="font-medium text-lg">
-                    {route.label}
-                  </Label>
-                </div>
-
-                {route.tabs && (
-                  <div className="ml-8 grid grid-cols-2 gap-4">
-                    {route.tabs.map((tab) => (
-                      <div key={tab.id} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={`${route.id}-${tab.id}`}
-                          checked={isTabEnabled(route.id, tab.value)}
-                          onChange={() => !isProfile && handleTabPermissionChange(route.id, tab.value)}
-                          disabled={isProfile}
-                          className={`h-4 w-4 rounded border appearance-none ${
-                            isProfile
-                              ? 'bg-gray-100 border-gray-200 checked:bg-gray-300 checked:border-gray-300 cursor-not-allowed checked:bg-check'
-                              : 'border-primary checked:bg-primary hover:border-primary/80 checked:bg-check'
-                          }`}
-                        />
-                        <Label htmlFor={`${route.id}-${tab.id}`}>{tab.label}</Label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <PermissionRow
+                key={route.id}
+                route={route}
+                isRouteEnabled={isRouteEnabled}
+                isProfile={isProfile}
+                onPermissionChange={handlePermissionChange}
+                onTabPermissionChange={handleTabPermissionChange}
+                isTabEnabled={isTabEnabled}
+              />
             );
           })}
         </div>
