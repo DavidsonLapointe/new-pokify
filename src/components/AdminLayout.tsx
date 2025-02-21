@@ -16,16 +16,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { user } = useUser();
 
   const adminMenuItems = [
-    { icon: List, label: "Dashboard", path: "/admin", permissionKey: "dashboard" },
-    { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionKey: "organizations" },
-    { icon: Users, label: "Usuários", path: "/admin/users", permissionKey: "users" },
-    { icon: DollarSign, label: "Planos", path: "/admin/plans", permissionKey: "plans" },
-    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages", permissionKey: "analysis_packages" },
-    { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionKey: "financial" },
-    { icon: Database, label: "Integrações", path: "/admin/integrations", permissionKey: "integrations" },
-    { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionKey: "prompt" },
-    { icon: Settings, label: "Configurações", path: "/admin/settings", permissionKey: "settings" },
-    { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionKey: "profile" },
+    { icon: List, label: "Dashboard", path: "/admin" },
+    { icon: Building2, label: "Empresas", path: "/admin/organizations" },
+    { icon: Users, label: "Usuários", path: "/admin/users" },
+    { icon: DollarSign, label: "Planos", path: "/admin/plans" },
+    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages" },
+    { icon: DollarSign, label: "Financeiro", path: "/admin/financial" },
+    { icon: Database, label: "Integrações", path: "/admin/integrations" },
+    { icon: MessageSquare, label: "Prompt", path: "/admin/prompt" },
+    { icon: Settings, label: "Configurações", path: "/admin/settings" },
+    { icon: User, label: "Meu Perfil", path: "/admin/profile" },
   ];
 
   const handleLogout = () => {
@@ -47,12 +47,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
-  // Filtra os itens do menu baseado nas permissões do usuário
-  const filteredMenuItems = adminMenuItems.filter(item => {
-    if (item.permissionKey === 'profile') return true; // Perfil sempre visível
-    return user.permissions && user.permissions[item.permissionKey];
-  });
-
   return (
     <div className="min-h-screen bg-background">
       <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
@@ -72,7 +66,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="flex flex-col h-full py-6 px-3">
             <div className="space-y-0.5">
-              {filteredMenuItems.map((item) => {
+              {adminMenuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
