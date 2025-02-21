@@ -247,20 +247,20 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Arrow and Processing */}
+                {/* Colchetes e Processing */}
                 <div className="flex-1 relative">
-                  {/* Seta da esquerda para o centro */}
-                  <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-full">
-                    <div className="absolute left-[-4rem] w-[4rem] h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500">
-                      <div className="absolute right-0 -translate-y-1/2 w-3 h-3 rotate-45 border-t-2 border-r-2 border-indigo-500"></div>
-                    </div>
+                  {/* Colchete esquerdo */}
+                  <div className="hidden lg:block absolute left-[-2rem] top-0 h-full w-4">
+                    <div className="absolute left-0 top-0 w-full h-[2px] bg-blue-500"></div>
+                    <div className="absolute left-0 top-0 w-[2px] h-full bg-blue-500"></div>
+                    <div className="absolute left-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
                   </div>
 
-                  {/* Seta do centro para a direita */}
-                  <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-full">
-                    <div className="absolute right-[-4rem] w-[4rem] h-0.5 bg-gradient-to-r from-indigo-500 to-green-500">
-                      <div className="absolute right-0 -translate-y-1/2 w-3 h-3 rotate-45 border-t-2 border-r-2 border-green-500"></div>
-                    </div>
+                  {/* Colchete direito */}
+                  <div className="hidden lg:block absolute right-[-2rem] top-0 h-full w-4">
+                    <div className="absolute right-0 top-0 w-full h-[2px] bg-blue-500"></div>
+                    <div className="absolute right-0 top-0 w-[2px] h-full bg-blue-500"></div>
+                    <div className="absolute right-0 bottom-0 w-full h-[2px] bg-blue-500"></div>
                   </div>
 
                   {/* Indicador de fluxo móvel */}
@@ -268,20 +268,22 @@ const Index = () => {
                     <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse" />
                   </div>
 
-                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg relative">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                      Processamento IA
+                  <div className="bg-white border-2 border-blue-500 p-6 rounded-2xl shadow-lg relative">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <div className="whitespace-nowrap bg-blue-600 text-white px-6 py-1 rounded-full text-sm font-medium">
+                        Processamento IA
+                      </div>
                     </div>
                     <div className="flex justify-center mb-4 mt-2">
                       <div className="relative">
-                        <Brain className="h-12 w-12 text-white" />
-                        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
+                        <Brain className="h-12 w-12 text-blue-500" />
+                        <div className="absolute inset-0 bg-blue-200/20 rounded-full animate-ping"></div>
                       </div>
                     </div>
                     <div className="space-y-2 text-center">
-                      <p className="text-blue-100 text-sm">Análise Avançada</p>
-                      <p className="text-blue-100 text-sm">Extração de Dados</p>
-                      <p className="text-blue-100 text-sm">Identificação de Padrões</p>
+                      <p className="text-slate-600 text-sm">Análise Avançada</p>
+                      <p className="text-slate-600 text-sm">Extração de Dados</p>
+                      <p className="text-slate-600 text-sm">Identificação de Padrões</p>
                     </div>
                   </div>
                 </div>
