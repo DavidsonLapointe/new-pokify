@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,23 +42,7 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     
     const userPermissions: { [key: string]: string[] } = {};
     
-    if (newUser.role === 'leadly_employee') {
-      const adminRoutes = [
-        'dashboard',
-        'integrations',
-        'plans',
-        'organizations',
-        'settings',
-        'prompt',
-        'analysis_packages',
-        'financial'
-      ];
-      availableRoutePermissions.forEach(route => {
-        if (adminRoutes.includes(route.id)) {
-          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-        }
-      });
-    } else if (newUser.role === 'admin') {
+    if (newUser.role === 'admin') {
       availableRoutePermissions.forEach(route => {
         if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
           userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
@@ -157,7 +142,6 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
               <SelectContent>
                 <SelectItem value="admin">Administrador</SelectItem>
                 <SelectItem value="seller">Vendedor</SelectItem>
-                <SelectItem value="leadly_employee">Funcionário Leadly</SelectItem>
               </SelectContent>
             </Select>
           </div>
