@@ -50,10 +50,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   }
 
   // Filtra os itens do menu baseado nas permissões
-  const filteredMenuItems = adminMenuItems.filter(item => 
-    hasRoutePermission(item.permissionId)
-  );
+  const filteredMenuItems = adminMenuItems.filter(item => {
+    const hasPermission = hasRoutePermission(item.permissionId);
+    console.log(`Verificando permissão do menu para ${item.permissionId}:`, hasPermission);
+    return hasPermission;
+  });
 
+  console.log("User permissions:", user.permissions);
   console.log("Menu items:", filteredMenuItems);
 
   return (
