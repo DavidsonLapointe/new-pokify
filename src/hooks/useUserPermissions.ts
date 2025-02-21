@@ -1,3 +1,4 @@
+
 import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
@@ -21,16 +22,9 @@ export const useUserPermissions = (
 
       // Para cada rota, verifica se precisa inicializar com todas as tabs
       availableRoutePermissions.forEach(route => {
-        // Se o usuário tem permissão para a rota
+        // Se o usuário tem permissão para a rota, mantém as permissões existentes
         if (user.permissions[route.id]) {
-          // Para dashboard e plan, sempre inicializa com todas as tabs disponíveis
-          if (route.id === 'dashboard' || route.id === 'plan') {
-            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-          }
-          // Para outras rotas, mantém as permissões existentes
-          else {
-            initialPermissions[route.id] = user.permissions[route.id];
-          }
+          initialPermissions[route.id] = user.permissions[route.id];
         }
       });
 
