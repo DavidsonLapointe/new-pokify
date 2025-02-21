@@ -21,16 +21,13 @@ import { useUser } from "@/contexts/UserContext";
 const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser();
+  const { user, logout: contextLogout } = useUser();
   const { getUserPermissions, hasRoutePermission } = usePermissions(user);
   const [menuItems, setMenuItems] = useState<any[]>([]);
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      localStorage.removeItem('mockLoggedUser');
-      sessionStorage.clear();
+      contextLogout(); // Usa o logout do contexto
       toast.success("Logout realizado com sucesso");
       navigate("/");
     } catch (error) {
@@ -88,11 +85,12 @@ const OrganizationLayout = () => {
     if (user) {
       console.log("\n=== Atualizando Menu Lateral ===");
       console.log("Usuário:", user.name);
+      console.log("Permissões do usuário:", user.permissions);
       
       const filteredItems = allMenuItems.filter(item => {
-        const isAllowed = hasRoutePermission(item.permissionId);
-        console.log(`Item ${item.label}: permitido? ${isAllowed}`);
-        return isAllowed;
+        const hasPermission = hasRoutePermission(item.permissionId);
+        console.log(`Item ${item.label}: permitido? ${hasPermission}`);
+        return hasPermission;
       });
 
       console.log("Menu items filtrados:", filteredItems);
