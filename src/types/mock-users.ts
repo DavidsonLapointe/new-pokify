@@ -1,3 +1,4 @@
+
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -59,7 +60,9 @@ export const mockUsers: User[] = [
       leads: ["view", "edit", "delete"],
       integrations: ["view", "edit"],
       settings: ["view", "edit"],
-      users: ["view", "edit", "delete"]
+      users: ["view", "edit", "delete"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
