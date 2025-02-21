@@ -20,14 +20,18 @@ export const useUserPermissions = (
       const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
       const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
 
+      const planRoute = availableRoutePermissions.find(r => r.id === 'plan');
+      const planPermissions = planRoute?.tabs?.map(tab => tab.value) || [];
+
       let initialPermissions = { ...user.permissions };
 
       if (initialPermissions.dashboard?.length > 0) {
         initialPermissions.dashboard = dashboardPermissions;
       }
 
+      // Garante que as permissões do plano sejam inicializadas corretamente
       if (Object.keys(initialPermissions).includes('plan')) {
-        initialPermissions.plan = ['view', 'upgrade'];
+        initialPermissions.plan = planPermissions;
       }
 
       setTempPermissions(initialPermissions);
@@ -108,7 +112,7 @@ export const useUserPermissions = (
     onClose();
   };
 
-  const isTabEnabled = (routeId: string, tabValue: string): boolean => { // Adicionado retorno explícito boolean
+  const isTabEnabled = (routeId: string, tabValue: string): boolean => {
     const permissions = tempPermissions[routeId] || [];
     return permissions.includes(tabValue);
   };
