@@ -20,22 +20,20 @@ export const useUserPermissions = (
       // Inicializa as permissões com as do usuário
       let initialPermissions = { ...user.permissions };
 
-      // Para cada rota, verifica se precisa inicializar com todas as tabs
+      // Para cada rota, verifica se precisa inicializar
       availableRoutePermissions.forEach(route => {
-        // Se o usuário tem permissão para a rota
-        if (user.permissions[route.id]) {
-          // Para dashboard, se o usuário já tem essas permissões, 
-          // inicializa com todas as tabs disponíveis
+        // Se o usuário tem permissão para a rota ou é uma rota padrão (profile)
+        if (user.permissions[route.id] || route.isDefault) {
+          initialPermissions[route.id] = user.permissions[route.id] || [];
+          
+          // Se for dashboard e tiver pelo menos uma permissão, adiciona todas
           if (route.id === 'dashboard' && user.permissions[route.id]?.length > 0) {
             initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-          } else {
-            // Para outras rotas (incluindo 'plan'), mantém as permissões existentes
-            initialPermissions[route.id] = user.permissions[route.id];
           }
         }
       });
 
-      console.log('Initializing permissions:', initialPermissions);
+      console.log('Inicializando permissões:', initialPermissions);
       setTempPermissions(initialPermissions);
     } else {
       setTempPermissions({});
@@ -57,7 +55,7 @@ export const useUserPermissions = (
         }
       }
       
-      console.log('Permissions after change:', newPermissions);
+      console.log('Permissões após mudança:', newPermissions);
       return newPermissions;
     });
   };
@@ -80,7 +78,7 @@ export const useUserPermissions = (
         newPermissions[routeId] = currentPermissions;
       }
 
-      console.log('Permissions after tab change:', newPermissions);
+      console.log('Permissões após mudança de tab:', newPermissions);
       return newPermissions;
     });
   };
@@ -116,7 +114,7 @@ export const useUserPermissions = (
   const isTabEnabled = (routeId: string, tabValue: string): boolean => {
     const permissions = tempPermissions[routeId] || [];
     const isEnabled = permissions.includes(tabValue);
-    console.log(`Checking tab ${tabValue} for route ${routeId}:`, isEnabled);
+    console.log(`Verificando tab ${tabValue} para rota ${routeId}:`, isEnabled);
     return isEnabled;
   };
 
