@@ -161,17 +161,23 @@ const Index = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-6 pt-8 border-t">
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">98%</div>
-                  <div className="text-sm text-slate-600">Precisão na extração</div>
+                <div className="group p-4 rounded-2xl transition-all duration-300 hover:bg-white/50 hover:shadow-lg">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">98%</div>
+                  <div className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">
+                    Precisão na extração
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">2.5x</div>
-                  <div className="text-sm text-slate-600">Mais produtividade</div>
+                <div className="group p-4 rounded-2xl transition-all duration-300 hover:bg-white/50 hover:shadow-lg">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">2.5x</div>
+                  <div className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">
+                    Mais produtividade
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">24/7</div>
-                  <div className="text-sm text-slate-600">Suporte dedicado</div>
+                <div className="group p-4 rounded-2xl transition-all duration-300 hover:bg-white/50 hover:shadow-lg">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">24/7</div>
+                  <div className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">
+                    Suporte dedicado
+                  </div>
                 </div>
               </div>
             </div>
