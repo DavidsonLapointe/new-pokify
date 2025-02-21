@@ -4,7 +4,7 @@ import { Settings, Building2, List, Database, User, LogOut, MessageSquare, Dolla
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { mockAdminUser } from "@/components/admin/profile/useAdminProfileForm";
+import { useUser } from "@/contexts/UserContext";
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -13,6 +13,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useUser();
 
   const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin" },
@@ -52,10 +53,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="h-full px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">Leadly</h1>
           <div className="flex items-center gap-4">
-            <p className="text-sm font-medium text-white">{mockAdminUser.name}</p>
+            <p className="text-sm font-medium text-white">{user.name}</p>
             <Avatar className="h-10 w-10">
-              <AvatarImage src={mockAdminUser.avatar} alt={mockAdminUser.name} />
-              <AvatarFallback>{getInitials(mockAdminUser.name)}</AvatarFallback>
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
             </Avatar>
           </div>
         </div>
@@ -106,4 +107,3 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 };
 
 export default AdminLayout;
-
