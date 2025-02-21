@@ -1,10 +1,10 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 
 interface UserContextType {
   user: User;
   updateUser: (newUser: User) => void;
+  logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -104,20 +104,9 @@ const mockOrgUser: User = {
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
-    // Força limpeza do localStorage ao inicializar
-    localStorage.removeItem('adminUser');
-    localStorage.removeItem('orgUser');
-    
     const path = window.location.pathname;
     const isAdminRoute = path.startsWith('/admin');
-    
-    // Define o usuário padrão baseado na rota
     const defaultUser = isAdminRoute ? mockAdminUser : mockOrgUser;
-    
-    // Salva o usuário padrão no localStorage
-    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
-    localStorage.setItem(storageKey, JSON.stringify(defaultUser));
-    
     return defaultUser;
   });
 
@@ -138,19 +127,25 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(storageKey, JSON.stringify(newUser));
   };
 
+  const logout = () => {
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('orgUser');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('mockLoggedUser');
+    
+    window.location.href = '/';
+  };
+
   useEffect(() => {
     const path = window.location.pathname;
     const isAdminRoute = path.startsWith('/admin');
-    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
     const defaultUser = isAdminRoute ? mockAdminUser : mockOrgUser;
-    
-    // Força a atualização do usuário ao mudar de rota
     setUser(defaultUser);
-    localStorage.setItem(storageKey, JSON.stringify(defaultUser));
   }, [window.location.pathname]);
 
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ user, updateUser, logout }}>
       {children}
     </UserContext.Provider>
   );
