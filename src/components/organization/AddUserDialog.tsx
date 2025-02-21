@@ -21,7 +21,7 @@ import {
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { UserRole, mockUsers } from "@/types";
-import { DEFAULT_PERMISSIONS } from "./types";
+import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddUserDialogProps {
   isOpen: boolean;
@@ -40,8 +40,27 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
   const handleAddUser = () => {
     const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
     
-    // Pega as permissões padrão baseado na role
-    const userPermissions = DEFAULT_PERMISSIONS[newUser.role === 'admin' ? 'admin' : 'seller'];
+    const userPermissions: { [key: string]: string[] } = {};
+    
+    if (newUser.role === 'admin') {
+      availableRoutePermissions.forEach(route => {
+        if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
+          userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+        }
+      });
+      userPermissions.users = ['view', 'edit', 'delete'];
+      userPermissions.plan = ['view', 'upgrade'];  // Adicionando explicitamente as permissões do plano
+    } else if (newUser.role === 'seller') {
+      const sellerRoutes = {
+        'dashboard': ['view'],
+        'leads': ['view', 'edit'],
+        'integrations': ['view']
+      };
+      
+      Object.entries(sellerRoutes).forEach(([route, permissions]) => {
+        userPermissions[route] = permissions;
+      });
+    }
 
     const user = {
       id: newUserId,
