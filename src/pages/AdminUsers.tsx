@@ -8,7 +8,7 @@ import { useUser } from "@/contexts/UserContext";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { AddLeadlyEmployeeDialog } from "@/components/admin/users/AddLeadlyEmployeeDialog";
 import { EditLeadlyEmployeeDialog } from "@/components/admin/users/EditLeadlyEmployeeDialog";
-import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
+import { AdminUserPermissionsDialog } from "@/components/admin/users/AdminUserPermissionsDialog";
 
 const AdminUsers = () => {
   const { user } = useUser();
@@ -88,7 +88,7 @@ const AdminUsers = () => {
             onUserUpdate={handleUserUpdate}
           />
 
-          <UserPermissionsDialog
+          <AdminUserPermissionsDialog
             isOpen={isPermissionsDialogOpen}
             onClose={() => setIsPermissionsDialogOpen(false)}
             user={selectedUser}
