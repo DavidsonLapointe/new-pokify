@@ -181,10 +181,10 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 rounded-3xl animate-pulse"></div>
                 <img
-                  src="/lovable-uploads/a6f95a9f-b22e-4925-94e8-c48a07388c46.png"
-                  alt="Equipe moderna trabalhando em um escritório com vários computadores"
+                  src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&q=80&w=1200&h=800"
+                  alt="Equipe de vendas trabalhando no escritório"
                   className="rounded-3xl shadow-2xl object-cover h-[600px] w-full"
-                  style={{ objectPosition: "center center" }}
+                  style={{ objectPosition: "center 25%" }}
                 />
               </div>
               <div className="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl max-w-[280px]">
