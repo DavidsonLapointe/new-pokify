@@ -38,6 +38,9 @@ export const UserPermissionsDialog = ({
     isTabEnabled,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
+  console.log("Current permissions:", tempPermissions);
+  console.log("User permissions:", user.permissions);
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
@@ -50,6 +53,11 @@ export const UserPermissionsDialog = ({
 
         <div className="flex-1 overflow-y-auto py-4 space-y-6">
           {availableRoutePermissions.map((route) => {
+            console.log(`Checking route ${route.id}:`, {
+              hasPermissions: Object.keys(tempPermissions).includes(route.id),
+              tempPermissions: tempPermissions[route.id]
+            });
+
             const hasPermissions = Object.keys(tempPermissions).includes(route.id);
             const isRouteEnabled = route.isDefault || hasPermissions;
             const isProfile = route.id === 'profile';
