@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { User, UserStatus } from "@/types";
 import { toast } from "sonner";
-import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
+import { Badge } from "@/components/ui/badge";
 
 interface EditLeadlyEmployeeDialogProps {
   isOpen: boolean;
@@ -94,6 +94,19 @@ export const EditLeadlyEmployeeDialog = ({
     }
   };
 
+  const getStatusBadgeStyles = (status: UserStatus) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "";
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -143,7 +156,12 @@ export const EditLeadlyEmployeeDialog = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Status atual:</label>
-              <LeadStatusBadge status={editedUser.status === "inactive" ? "pending" : "active"} />
+              <Badge
+                variant="secondary"
+                className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${getStatusBadgeStyles(editedUser.status)}`}
+              >
+                {getStatusLabel(editedUser.status)}
+              </Badge>
             </div>
             <Select
               value={selectedStatus}
