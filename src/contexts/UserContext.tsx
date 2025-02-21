@@ -59,13 +59,13 @@ const mockAdminUser: User = {
 // Usuário da TechCorp
 const mockOrgUser: User = {
   id: 201,
-  name: "Carlos Santos",
-  email: "carlos.santos@techcorp.com",
-  phone: "(11) 97777-8888",
+  name: "João Silva",
+  email: "joao.silva@techcorp.com",
+  phone: "(11) 98765-4321",
   role: "admin",
   status: "active",
-  createdAt: "2024-01-15T10:00:00.000Z",
-  lastAccess: "2024-03-11T09:30:00.000Z",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: "2024-03-20T10:30:00.000Z",
   permissions: {
     dashboard: ["view", "export"],
     leads: ["view", "edit", "delete"],
@@ -78,25 +78,25 @@ const mockOrgUser: User = {
   logs: [
     {
       id: 1,
-      date: "2024-01-15T10:00:00.000Z",
-      action: "Usuário criado"
+      date: "2024-03-20T10:30:00.000Z",
+      action: "Acessou o sistema"
     }
   ],
   avatar: "",
   organization: {
     id: 2,
-    name: "TechCorp Solutions",
+    name: "TechCorp Brasil",
     nomeFantasia: "TechCorp",
     plan: "Professional",
     users: [],
     status: "active",
-    integratedCRM: null,
-    integratedLLM: null,
-    email: "contato@techcorp.com",
-    phone: "(11) 5555-6666",
-    cnpj: "98.765.432/0001-10",
-    adminName: "Carlos Santos",
-    adminEmail: "carlos.santos@techcorp.com",
+    integratedCRM: "Salesforce",
+    integratedLLM: "GPT-4",
+    email: "contato@techcorp.com.br",
+    phone: "(11) 99999-9999",
+    cnpj: "00.000.000/0000-01",
+    adminName: "João Silva",
+    adminEmail: "joao.silva@techcorp.com.br",
     createdAt: "2024-01-01T00:00:00.000Z"
   }
 };
