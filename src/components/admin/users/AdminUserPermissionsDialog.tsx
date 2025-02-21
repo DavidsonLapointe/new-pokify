@@ -119,7 +119,11 @@ export const AdminUserPermissionsDialog = ({
                     checked={isSectionFullyChecked(route.id)}
                     onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
                     disabled={route.id === 'profile'}
-                    className="h-4 w-4 rounded-[4px] border border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    className={`h-4 w-4 rounded-[4px] border ${
+                      route.id === 'profile'
+                        ? 'border-gray-300 data-[state=checked]:bg-gray-300'
+                        : 'border-primary data-[state=checked]:bg-primary'
+                    } data-[state=checked]:text-primary-foreground`}
                   />
                   <label
                     htmlFor={`section-${route.id}`}
@@ -141,7 +145,11 @@ export const AdminUserPermissionsDialog = ({
                           handlePermissionChange(route.id, tab.value)
                         }
                         disabled={route.id === 'profile'}
-                        className="h-4 w-4 rounded-[4px] border border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                        className={`h-4 w-4 rounded-[4px] border ${
+                          route.id === 'profile'
+                            ? 'border-gray-300 data-[state=checked]:bg-gray-300'
+                            : 'border-primary data-[state=checked]:bg-primary'
+                        } data-[state=checked]:text-primary-foreground`}
                       />
                       <label
                         htmlFor={`${route.id}-${tab.id}`}
