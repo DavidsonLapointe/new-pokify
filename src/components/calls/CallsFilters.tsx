@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
+import { useEffect } from "react";
 
 interface CallsFiltersProps {
   searchQuery: string;
@@ -15,6 +16,18 @@ export const CallsFilters = ({
   const handleClearSearch = () => {
     onSearchChange("");
   };
+
+  // Efeito para fazer debounce da busca
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      // Atualiza a busca após 300ms de inatividade na digitação
+      onSearchChange(searchQuery);
+    }, 300);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery, onSearchChange]);
 
   return (
     <div className="mb-6">
@@ -38,3 +51,4 @@ export const CallsFilters = ({
     </div>
   );
 };
+

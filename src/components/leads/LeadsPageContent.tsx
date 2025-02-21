@@ -32,22 +32,41 @@ export const LeadsPageContent = ({
   console.log("LeadsPageContent - calls recebidos:", calls);
   
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredCalls, setFilteredCalls] = useState(calls);
   const itemsPerPage = 10;
 
-  // Reseta a página para 1 sempre que a página for recarregada ou quando calls mudar
+  // Reseta a página para 1 sempre que a busca mudar
   useEffect(() => {
     setCurrentPage(1);
-  }, []);
+  }, [searchQuery]);
+  
+  // Filtra os calls baseado na busca
+  useEffect(() => {
+    const filtered = calls.filter((call) => {
+      const searchLower = searchQuery.toLowerCase();
+      const leadInfo = call.leadInfo;
+      
+      return (
+        leadInfo.firstName?.toLowerCase().includes(searchLower) ||
+        leadInfo.lastName?.toLowerCase().includes(searchLower) ||
+        leadInfo.email?.toLowerCase().includes(searchLower) ||
+        leadInfo.phone?.toLowerCase().includes(searchLower) ||
+        leadInfo.razaoSocial?.toLowerCase().includes(searchLower)
+      );
+    });
+    
+    setFilteredCalls(filtered);
+  }, [calls, searchQuery]);
   
   // Calcula o índice inicial e final dos itens na página atual
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   
   // Filtra os calls para a página atual
-  const currentCalls = calls.slice(startIndex, endIndex);
+  const currentCalls = filteredCalls.slice(startIndex, endIndex);
   
   // Calcula o número total de páginas
-  const totalPages = Math.ceil(calls.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCalls.length / itemsPerPage);
 
   // Gera array de páginas para exibição
   const getPageNumbers = () => {
@@ -104,8 +123,8 @@ export const LeadsPageContent = ({
                 onClick={() => setCurrentPage(Number(page))}
                 className={`w-8 h-8 p-0 ${
                   currentPage === Number(page)
-                    ? "bg-[#7E69AB] text-white hover:bg-[#7E69AB]/90" // Cor mais escura para página atual
-                    : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#F1F0FB] hover:text-[#9b87f5]" // Estilo outline para outras páginas
+                    ? "bg-[#7E69AB] text-white hover:bg-[#7E69AB]/90"
+                    : "border-[#9b87f5] text-[#9b87f5] hover:bg-[#F1F0FB] hover:text-[#9b87f5]"
                 }`}
               >
                 {page}
@@ -127,3 +146,4 @@ export const LeadsPageContent = ({
     </Card>
   );
 };
+
