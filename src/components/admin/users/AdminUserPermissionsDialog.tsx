@@ -31,7 +31,13 @@ export const AdminUserPermissionsDialog = ({
   useEffect(() => {
     if (isOpen) {
       console.log("Permissões iniciais:", user.permissions);
-      setSelectedPermissions(user.permissions || {});
+      // Garante que todas as permissões usam hífen
+      const normalizedPermissions: { [key: string]: string[] } = {};
+      Object.entries(user.permissions || {}).forEach(([key, value]) => {
+        const normalizedKey = key.replace(/_/g, '-');
+        normalizedPermissions[normalizedKey] = value;
+      });
+      setSelectedPermissions(normalizedPermissions);
     }
   }, [isOpen, user]);
 
@@ -90,7 +96,8 @@ export const AdminUserPermissionsDialog = ({
     const route = availableAdminRoutePermissions.find(r => r.id === routeId);
     if (!route?.tabs) return false;
 
-    const currentPermissions = selectedPermissions[routeId] || [];
+    const normalizedRouteId = routeId.replace(/_/g, '-');
+    const currentPermissions = selectedPermissions[normalizedRouteId] || [];
     return route.tabs.every(tab => currentPermissions.includes(tab.value));
   };
 
@@ -100,13 +107,15 @@ export const AdminUserPermissionsDialog = ({
     const route = availableAdminRoutePermissions.find(r => r.id === routeId);
     if (!route?.tabs) return false;
 
-    const currentPermissions = selectedPermissions[routeId] || [];
+    const normalizedRouteId = routeId.replace(/_/g, '-');
+    const currentPermissions = selectedPermissions[normalizedRouteId] || [];
     const hasAny = route.tabs.some(tab => currentPermissions.includes(tab.value));
     return hasAny && !isSectionFullyChecked(routeId);
   };
 
   const isTabChecked = (routeId: string, tabValue: string): boolean => {
-    return (selectedPermissions[routeId] || []).includes(tabValue);
+    const normalizedRouteId = routeId.replace(/_/g, '-');
+    return (selectedPermissions[normalizedRouteId] || []).includes(tabValue);
   };
 
   const handleSave = () => {
