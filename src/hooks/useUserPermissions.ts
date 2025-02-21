@@ -17,22 +17,8 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Usa as permissões atuais do usuário como base
-      const initialPermissions = { ...user.permissions };
-
-      // Se não houver permissões do dashboard, adiciona todas
-      if (!initialPermissions.dashboard) {
-        const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-        if (dashboardRoute?.tabs) {
-          initialPermissions.dashboard = dashboardRoute.tabs.map(tab => tab.value);
-        }
-      }
-
-      // Garante que o profile sempre tenha suas permissões
-      initialPermissions.profile = ["contact", "password"];
-
-      console.log('Inicializando permissões do usuário:', initialPermissions);
-      setTempPermissions(initialPermissions);
+      console.log('Permissões atuais do usuário:', user.permissions);
+      setTempPermissions(user.permissions);
     } else {
       setTempPermissions({});
     }
@@ -87,10 +73,7 @@ export const useUserPermissions = (
     try {
       const updatedUser = {
         ...user,
-        permissions: {
-          ...tempPermissions,
-          profile: ["contact", "password"] // Garante que profile sempre tenha suas permissões
-        }
+        permissions: tempPermissions
       };
 
       console.log('Salvando usuário com permissões:', updatedUser.permissions);
