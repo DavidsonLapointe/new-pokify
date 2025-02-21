@@ -17,8 +17,9 @@ const OrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // Carrega diretamente os usuários mockados sem modificação
-    setUsers(mockUsers);
+    // Filtra apenas usuários que não são do tipo leadly_employee
+    const organizationUsers = mockUsers.filter(user => user.role !== "leadly_employee");
+    setUsers(organizationUsers);
   }, []);
 
   const handleAddUser = () => {
@@ -97,4 +98,3 @@ const OrganizationUsers = () => {
 };
 
 export default OrganizationUsers;
-
