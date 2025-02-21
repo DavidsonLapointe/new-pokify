@@ -12,11 +12,53 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Pegando o João Silva dos mockUsers
-  const joaoSilva = mockUsers.find(user => user.id === 1);
+  // Usando o João Silva com todas as permissões corretas
+  const mockOrgUser: User = {
+    id: 201,
+    name: "João Silva",
+    email: "joao.silva@techcorp.com",
+    phone: "(11) 98765-4321",
+    role: "admin",
+    status: "active",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T10:30:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      users: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T10:30:00.000Z",
+        action: "Acessou o sistema"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 2,
+      name: "TechCorp Brasil",
+      nomeFantasia: "TechCorp",
+      plan: "Professional",
+      users: [],
+      status: "active",
+      integratedCRM: "Salesforce",
+      integratedLLM: "GPT-4",
+      email: "contato@techcorp.com.br",
+      phone: "(11) 99999-9999",
+      cnpj: "00.000.000/0000-01",
+      adminName: "João Silva",
+      adminEmail: "joao.silva@techcorp.com.br",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  };
   
   const [user, setUser] = useState<User>(() => {
-    return joaoSilva!;
+    return mockOrgUser;
   });
 
   const updateUser = (newUser: User) => {
