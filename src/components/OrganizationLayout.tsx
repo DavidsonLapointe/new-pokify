@@ -21,19 +21,58 @@ import { useUser } from "@/contexts/UserContext";
 const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser();
-  const { getUserPermissions, hasRoutePermission } = usePermissions(user);
+  const { user, logout } = useUser();
+  const { hasRoutePermission } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
-  const { routes: allowedRoutes } = getUserPermissions();
-  console.log("Rotas permitidas:", allowedRoutes);
+  const menuItems = [
+    {
+      icon: BarChart3,
+      label: "Dashboard",
+      path: "/organization/dashboard",
+      permissionId: "dashboard"
+    },
+    { 
+      icon: Headphones, 
+      label: "Análise de Leads", 
+      path: "/organization/leads",
+      permissionId: "leads"
+    },
+    { 
+      icon: Users, 
+      label: "Usuários", 
+      path: "/organization/users",
+      permissionId: "users"
+    },
+    {
+      icon: Network,
+      label: "Integrações",
+      path: "/organization/integrations",
+      permissionId: "integrations"
+    },
+    {
+      icon: Settings,
+      label: "Configurações",
+      path: "/organization/settings",
+      permissionId: "settings"
+    },
+    {
+      icon: CreditCard,
+      label: "Meu Plano",
+      path: "/organization/plan",
+      permissionId: "plan"
+    },
+    {
+      icon: UserCircle,
+      label: "Meu Perfil",
+      path: "/organization/profile",
+      permissionId: "profile"
+    },
+  ];
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      localStorage.removeItem('mockLoggedUser');
-      sessionStorage.clear();
+      logout();
       toast.success("Logout realizado com sucesso");
       navigate("/");
     } catch (error) {
@@ -41,62 +80,6 @@ const OrganizationLayout = () => {
       console.error("Erro no logout:", error);
     }
   };
-
-  const getMenuItems = () => {
-    const allMenuItems = [
-      {
-        icon: BarChart3,
-        label: "Dashboard",
-        path: "/organization/dashboard",
-        permissionId: "dashboard"
-      },
-      { 
-        icon: Headphones, 
-        label: "Análise de Leads", 
-        path: "/organization/leads",
-        permissionId: "leads"
-      },
-      { 
-        icon: Users, 
-        label: "Usuários", 
-        path: "/organization/users",
-        permissionId: "users"
-      },
-      {
-        icon: Network,
-        label: "Integrações",
-        path: "/organization/integrations",
-        permissionId: "integrations"
-      },
-      {
-        icon: Settings,
-        label: "Configurações",
-        path: "/organization/settings",
-        permissionId: "settings"
-      },
-      {
-        icon: CreditCard,
-        label: "Meu Plano",
-        path: "/organization/plan",
-        permissionId: "plan"
-      },
-      {
-        icon: UserCircle,
-        label: "Meu Perfil",
-        path: "/organization/profile",
-        permissionId: "profile"
-      },
-    ];
-
-    // Filtra os itens do menu baseado nas permissões do usuário
-    return allMenuItems.filter(item => {
-      const hasPermission = hasRoutePermission(item.permissionId);
-      console.log(`Verificando permissão para ${item.label}:`, hasPermission);
-      return hasPermission;
-    });
-  };
-
-  const menuItems = getMenuItems();
 
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ')
@@ -108,8 +91,11 @@ const OrganizationLayout = () => {
     return location.pathname === path || (path === '/organization/dashboard' && location.pathname === '/organization');
   };
 
+  // Filtra os itens do menu baseado nas permissões do usuário
+  const filteredMenuItems = menuItems.filter(item => hasRoutePermission(item.permissionId));
+
   console.log("Current location:", location.pathname);
-  console.log("Menu items:", menuItems);
+  console.log("Menu items:", filteredMenuItems);
 
   return (
     <ProtectedRoute user={user}>
@@ -134,7 +120,7 @@ const OrganizationLayout = () => {
           <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
             <nav className="flex flex-col h-full py-6 px-3">
               <div className="space-y-0.5">
-                {menuItems.map((item) => {
+                {filteredMenuItems.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
                   return (
@@ -176,4 +162,3 @@ const OrganizationLayout = () => {
 };
 
 export default OrganizationLayout;
-

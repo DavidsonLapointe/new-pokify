@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
@@ -6,6 +7,7 @@ import { PaymentMethodCard } from "@/components/organization/plans/PaymentMethod
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
 import { ChangePlanDialog } from "@/components/organization/plans/ChangePlanDialog";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
+import { useUser } from "@/contexts/UserContext";
 
 // Mock data - em produção viria da API
 // Agora usando a mesma estrutura do admin
@@ -78,6 +80,10 @@ const usageInfo = {
 };
 
 const OrganizationPlan = () => {
+  console.log("Rendering OrganizationPlan component");
+  const { user } = useUser();
+  console.log("Current user permissions:", user.permissions);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
