@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User } from "@/types";
+import { User, UserStatus } from "@/types";
 import { toast } from "sonner";
 import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
 
@@ -35,7 +35,7 @@ export const EditLeadlyEmployeeDialog = ({
   onUserUpdate,
 }: EditLeadlyEmployeeDialogProps) => {
   const [editedUser, setEditedUser] = useState(user);
-  const [selectedStatus, setSelectedStatus] = useState<string | undefined>(undefined);
+  const [selectedStatus, setSelectedStatus] = useState<UserStatus | undefined>(undefined);
 
   useEffect(() => {
     setEditedUser(user);
@@ -147,7 +147,7 @@ export const EditLeadlyEmployeeDialog = ({
             </div>
             <Select
               value={selectedStatus}
-              onValueChange={setSelectedStatus}
+              onValueChange={(value: UserStatus) => setSelectedStatus(value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o novo status" />
