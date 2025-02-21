@@ -1,5 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Clock, Database, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  ArrowRight, 
+  CheckCircle2, 
+  Clock, 
+  Database, 
+  Quote, 
+  ChevronLeft, 
+  ChevronRight,
+  FileAudio2,
+  FileVideo,
+  FileText,
+  Brain,
+  ArrowRight as ArrowRightIcon,
+  Users,
+  TrendingUp,
+  BarChart3,
+  MessageSquare,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import LoginModal from "@/components/auth/LoginModal";
@@ -181,6 +198,106 @@ const Index = () => {
                 </div>
                 <div className="h-2 bg-blue-100 rounded-full">
                   <div className="h-2 w-4/5 bg-blue-600 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Como Funciona Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Como Funciona</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Nossa plataforma processa seus dados de vendas usando IA avançada e gera insights acionáveis, 
+              integrando-se perfeitamente com seu CRM.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
+            {/* Input Section */}
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl">
+              <h3 className="text-xl font-semibold mb-6">Inputs</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <FileAudio2 className="text-blue-500 h-6 w-6" />
+                  <span>Áudios de Vendas</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <FileVideo className="text-blue-500 h-6 w-6" />
+                  <span>Vídeos de Reuniões</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <FileText className="text-blue-500 h-6 w-6" />
+                  <span>Textos e Mensagens</span>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-center">
+                <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse hidden lg:block" />
+              </div>
+            </div>
+
+            {/* Processing Section */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl relative">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                Processamento IA
+              </div>
+              <div className="mt-4 flex justify-center mb-6">
+                <div className="relative">
+                  <Brain className="h-16 w-16 text-blue-600" />
+                  <div className="absolute inset-0 bg-blue-500/10 animate-ping rounded-full"></div>
+                </div>
+              </div>
+              <div className="space-y-3 text-center">
+                <p className="text-sm text-slate-600">Análise Avançada</p>
+                <p className="text-sm text-slate-600">Extração de Dados</p>
+                <p className="text-sm text-slate-600">Identificação de Padrões</p>
+              </div>
+              <div className="mt-6 flex justify-center">
+                <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse hidden lg:block" />
+              </div>
+            </div>
+
+            {/* Output Section */}
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl">
+              <h3 className="text-xl font-semibold mb-6">Benefícios</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <Users className="text-green-500 h-6 w-6" />
+                  <span>Leads Qualificados</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <TrendingUp className="text-green-500 h-6 w-6" />
+                  <span>Insights de Vendas</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <BarChart3 className="text-green-500 h-6 w-6" />
+                  <span>Métricas Detalhadas</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+                  <MessageSquare className="text-green-500 h-6 w-6" />
+                  <span>Sugestões de Ação</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CRM Integration Banner */}
+            <div className="col-span-1 lg:col-span-3 mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl text-white">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <Database className="h-8 w-8" />
+                  <div>
+                    <h4 className="font-semibold text-lg">Integração com CRMs</h4>
+                    <p className="text-blue-100">Compatível com as principais plataformas do mercado</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="bg-white/20 px-4 py-2 rounded-lg">Salesforce</div>
+                  <div className="bg-white/20 px-4 py-2 rounded-lg">HubSpot</div>
+                  <div className="bg-white/20 px-4 py-2 rounded-lg">Pipedrive</div>
+                  <div className="bg-white/20 px-4 py-2 rounded-lg">RD Station</div>
                 </div>
               </div>
             </div>
