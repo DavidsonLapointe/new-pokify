@@ -220,10 +220,9 @@ const Index = () => {
               <div className="w-[600px] h-[600px] bg-gradient-to-r from-blue-100/20 to-indigo-100/20 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div className="relative grid lg:grid-cols-3 gap-8 items-stretch">
               {/* Input Section */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                 <div className="relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 h-full">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -232,34 +231,24 @@ const Index = () => {
                     <h3 className="text-xl font-semibold">Inputs</h3>
                   </div>
                   <div className="space-y-4">
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <FileAudio2 className="text-blue-500 h-5 w-5" />
-                        <span className="text-slate-700">Áudios de Vendas</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <FileAudio2 className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700">Áudios de Vendas</span>
                     </div>
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <FileVideo className="text-blue-500 h-5 w-5" />
-                        <span className="text-slate-700">Vídeos de Reuniões</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <FileVideo className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700">Vídeos de Reuniões</span>
                     </div>
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <FileText className="text-blue-500 h-5 w-5" />
-                        <span className="text-slate-700">Textos e Mensagens</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <FileText className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700">Textos e Mensagens</span>
                     </div>
-                  </div>
-                  <div className="flex justify-end mt-6">
-                    <ArrowRightIcon className="h-6 w-6 text-blue-500 animate-pulse hidden lg:block" />
                   </div>
                 </div>
               </div>
 
               {/* Processing Section */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                 <div className="relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 h-full">
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
@@ -285,15 +274,11 @@ const Index = () => {
                       <p className="text-slate-700 text-center">Identificação de Padrões</p>
                     </div>
                   </div>
-                  <div className="flex justify-end mt-6">
-                    <ArrowRightIcon className="h-6 w-6 text-blue-500 animate-pulse hidden lg:block" />
-                  </div>
                 </div>
               </div>
 
               {/* Output Section */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-green-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                 <div className="relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 h-full">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-12 w-12 rounded-lg bg-green-50 flex items-center justify-center">
@@ -302,30 +287,36 @@ const Index = () => {
                     <h3 className="text-xl font-semibold">Benefícios</h3>
                   </div>
                   <div className="space-y-4">
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <Users className="text-green-500 h-5 w-5" />
-                        <span className="text-slate-700">Leads Qualificados</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700">Leads Qualificados</span>
                     </div>
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <TrendingUp className="text-green-500 h-5 w-5" />
-                        <span className="text-slate-700">Insights de Vendas</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700">Insights de Vendas</span>
                     </div>
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <BarChart3 className="text-green-500 h-5 w-5" />
-                        <span className="text-slate-700">Métricas Detalhadas</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <BarChart3 className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700">Métricas Detalhadas</span>
                     </div>
-                    <div className="group/item p-4 rounded-xl border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <MessageSquare className="text-green-500 h-5 w-5" />
-                        <span className="text-slate-700">Sugestões de Ação</span>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700">Sugestões de Ação</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Connecting Lines */}
+              <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 pointer-events-none hidden lg:block">
+                <div className="relative h-2">
+                  {/* Left to Center Line */}
+                  <div className="absolute left-[33%] w-[calc(16.7%-2rem)] h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></div>
+                  </div>
+                  {/* Center to Right Line */}
+                  <div className="absolute left-[66.7%] w-[calc(16.7%-2rem)] h-0.5 bg-gradient-to-r from-indigo-500 to-green-500">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
                   </div>
                 </div>
               </div>
