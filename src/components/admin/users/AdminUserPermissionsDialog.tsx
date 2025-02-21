@@ -7,6 +7,7 @@ import { availableAdminRoutePermissions } from "@/types/admin-permissions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
 
 interface AdminUserPermissionsDialogProps {
   isOpen: boolean;
@@ -21,61 +22,65 @@ export const AdminUserPermissionsDialog = ({
   user,
   onUserUpdate,
 }: AdminUserPermissionsDialogProps) => {
+  const { user: currentUser, updateUser: updateCurrentUser } = useUser();
   const [selectedPermissions, setSelectedPermissions] = useState<{
     [key: string]: string[];
   }>(user.permissions || {});
 
+  // Atualiza o estado quando o modal abre ou o usuário muda
   useEffect(() => {
-    setSelectedPermissions(user.permissions || {});
-  }, [user]);
+    if (isOpen) {
+      console.log("Permissões iniciais:", user.permissions);
+      setSelectedPermissions(user.permissions || {});
+    }
+  }, [isOpen, user]);
 
   const handleSectionPermissionChange = (routeId: string, checked: boolean) => {
     const route = availableAdminRoutePermissions.find(r => r.id === routeId);
     if (!route || routeId === 'profile') return;
 
-    setSelectedPermissions((prev) => {
+    setSelectedPermissions(prev => {
+      const newPermissions = { ...prev };
       if (checked) {
         // Ativa todas as permissões da seção
-        return {
-          ...prev,
-          [routeId]: route.tabs?.map(tab => tab.value) || []
-        };
+        newPermissions[routeId] = route.tabs?.map(tab => tab.value) || [];
       } else {
         // Remove todas as permissões da seção
-        const { [routeId]: _, ...rest } = prev;
-        return rest;
+        delete newPermissions[routeId];
       }
+      console.log(`Alterando permissões da seção ${routeId}:`, newPermissions);
+      return newPermissions;
     });
   };
 
   const handlePermissionChange = (routeId: string, tabValue: string) => {
-    if (routeId === 'profile') return; // Não permite alteração para "Meu Perfil"
+    if (routeId === 'profile') return;
 
-    setSelectedPermissions((prev) => {
-      const currentPermissions = prev[routeId] || [];
+    setSelectedPermissions(prev => {
+      const currentPermissions = [...(prev[routeId] || [])];
       const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-      const totalTabsInRoute = route?.tabs?.length || 0;
-      
-      let newPermissions: string[];
       
       if (currentPermissions.includes(tabValue)) {
-        // Removendo uma permissão
-        newPermissions = currentPermissions.filter((p) => p !== tabValue);
-      } else {
-        // Adicionando uma permissão
-        newPermissions = [...currentPermissions, tabValue];
+        // Remove a permissão
+        const newPermissions = currentPermissions.filter(p => p !== tabValue);
         
-        // Se ao adicionar esta permissão completamos todas as permissões da seção,
-        // adicionamos todas as permissões para manter consistência
-        if (newPermissions.length === totalTabsInRoute) {
-          newPermissions = route?.tabs?.map(tab => tab.value) || [];
+        if (newPermissions.length === 0) {
+          const { [routeId]: _, ...rest } = prev;
+          console.log(`Removendo todas as permissões de ${routeId}`);
+          return rest;
         }
+        
+        return {
+          ...prev,
+          [routeId]: newPermissions
+        };
+      } else {
+        // Adiciona a permissão
+        return {
+          ...prev,
+          [routeId]: [...currentPermissions, tabValue]
+        };
       }
-
-      return {
-        ...prev,
-        [routeId]: newPermissions,
-      };
     });
   };
 
@@ -83,52 +88,53 @@ export const AdminUserPermissionsDialog = ({
     if (routeId === 'profile') return true;
     
     const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-    if (!route) return false;
+    if (!route?.tabs) return false;
 
     const currentPermissions = selectedPermissions[routeId] || [];
-    const allTabValues = route.tabs?.map(tab => tab.value) || [];
-    
-    // Retorna true se TODAS as permissões da seção estiverem selecionadas
-    return allTabValues.every(value => currentPermissions.includes(value));
+    return route.tabs.every(tab => currentPermissions.includes(tab.value));
   };
 
   const isSectionPartiallyChecked = (routeId: string): boolean => {
     if (routeId === 'profile') return false;
     
     const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-    if (!route) return false;
+    if (!route?.tabs) return false;
 
     const currentPermissions = selectedPermissions[routeId] || [];
-    const allTabValues = route.tabs?.map(tab => tab.value) || [];
-    
-    // Retorna true se ALGUMAS (mas não todas) as permissões da seção estiverem selecionadas
-    const hasAnyChecked = allTabValues.some(value => currentPermissions.includes(value));
-    return hasAnyChecked && !isSectionFullyChecked(routeId);
+    const hasAny = route.tabs.some(tab => currentPermissions.includes(tab.value));
+    return hasAny && !isSectionFullyChecked(routeId);
+  };
+
+  const isTabChecked = (routeId: string, tabValue: string): boolean => {
+    return (selectedPermissions[routeId] || []).includes(tabValue);
   };
 
   const handleSave = () => {
-    // Garante que as permissões do perfil estão sempre presentes
-    const profileRoute = availableAdminRoutePermissions.find(r => r.id === 'profile');
-    const profilePermissions = profileRoute?.tabs?.map(tab => tab.value) || [];
+    try {
+      // Garante que as permissões do perfil estão sempre presentes
+      const profileRoute = availableAdminRoutePermissions.find(r => r.id === 'profile');
+      const profilePermissions = profileRoute?.tabs?.map(tab => tab.value) || [];
 
-    const updatedUser = {
-      ...user,
-      permissions: {
-        ...selectedPermissions,
-        profile: profilePermissions, // Sempre inclui as permissões do perfil
-      },
-      logs: [
-        ...user.logs,
-        {
-          id: Math.max(...user.logs.map((log) => log.id)) + 1,
-          date: new Date().toISOString(),
-          action: "Permissões atualizadas",
-        },
-      ],
-    };
+      const updatedUser = {
+        ...user,
+        permissions: {
+          ...selectedPermissions,
+          profile: profilePermissions
+        }
+      };
 
-    onUserUpdate(updatedUser);
-    toast.success("Permissões atualizadas com sucesso!");
+      // Se estiver atualizando o usuário atual, atualiza o contexto
+      if (user.id === currentUser.id) {
+        updateCurrentUser(updatedUser);
+      }
+
+      onUserUpdate(updatedUser);
+      toast.success("Permissões atualizadas com sucesso!");
+      onClose();
+    } catch (error) {
+      console.error("Erro ao salvar permissões:", error);
+      toast.error("Erro ao atualizar permissões");
+    }
   };
 
   return (
@@ -141,7 +147,7 @@ export const AdminUserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4 h-full">
+        <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6">
             {availableAdminRoutePermissions.map((route) => {
               const isFullyChecked = isSectionFullyChecked(route.id);
@@ -174,13 +180,8 @@ export const AdminUserPermissionsDialog = ({
                       <div key={tab.id} className="flex items-center space-x-2">
                         <Checkbox
                           id={`${route.id}-${tab.id}`}
-                          checked={
-                            route.id === 'profile' || 
-                            (selectedPermissions[route.id] || []).includes(tab.value)
-                          }
-                          onCheckedChange={() =>
-                            handlePermissionChange(route.id, tab.value)
-                          }
+                          checked={isTabChecked(route.id, tab.value)}
+                          onCheckedChange={() => handlePermissionChange(route.id, tab.value)}
                           disabled={route.id === 'profile'}
                           className={`h-4 w-4 rounded-[4px] border ${
                             route.id === 'profile'
@@ -204,10 +205,12 @@ export const AdminUserPermissionsDialog = ({
         </ScrollArea>
 
         <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="cancel" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave}>Salvar Alterações</Button>
+          <Button onClick={handleSave}>
+            Salvar Alterações
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
