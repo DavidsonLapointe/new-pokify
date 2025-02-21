@@ -22,9 +22,16 @@ export const useUserPermissions = (
 
       // Para cada rota, verifica se precisa inicializar com todas as tabs
       availableRoutePermissions.forEach(route => {
-        // Se o usuário tem permissão para a rota, mantém as permissões existentes
+        // Se o usuário tem permissão para a rota
         if (user.permissions[route.id]) {
-          initialPermissions[route.id] = user.permissions[route.id];
+          // Para dashboard e plan, se o usuário já tem essas permissões, 
+          // inicializa com todas as tabs disponíveis
+          if ((route.id === 'dashboard' || route.id === 'plan') && user.permissions[route.id]?.length > 0) {
+            initialPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
+          } else {
+            // Para outras rotas, mantém as permissões existentes
+            initialPermissions[route.id] = user.permissions[route.id];
+          }
         }
       });
 
