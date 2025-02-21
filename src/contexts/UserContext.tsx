@@ -21,14 +21,15 @@ const mockAdminUser: User = {
   lastAccess: "2024-03-10T15:30:00.000Z",
   permissions: {
     dashboard: ["view", "export"],
-    integrations: ["view", "edit"],
-    plans: ["view", "edit"],
     organizations: ["view", "edit"],
-    settings: ["view", "edit"],
-    prompt: ["view", "edit"],
-    analysis_packages: ["view", "edit"],
-    financial: ["view", "edit"],
     users: ["view", "edit", "delete"],
+    // Removidas as permissões de:
+    // - plans
+    // - analysis_packages
+    // - financial
+    // - integrations
+    // - prompt
+    // - settings
     profile: ["contact", "password"]
   },
   logs: [
