@@ -17,26 +17,21 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      const dashboardRoute = availableRoutePermissions.find(r => r.id === 'dashboard');
-      const dashboardPermissions = dashboardRoute?.tabs?.map(tab => tab.value) || [];
-
-      const planRoute = availableRoutePermissions.find(r => r.id === 'plan');
-      const planPermissions = planRoute?.tabs?.map(tab => tab.value) || [];
-
+      // Clona as permissões do usuário
       let initialPermissions = { ...user.permissions };
 
-      // Inicializa as permissões do dashboard se existirem
-      if (initialPermissions.dashboard?.length > 0) {
-        initialPermissions.dashboard = dashboardPermissions;
-      }
+      // Para cada rota disponível, verifica se o usuário tem permissões
+      availableRoutePermissions.forEach(route => {
+        if (user.permissions[route.id]) {
+          // Se tem permissões, mantém as tabs existentes
+          initialPermissions[route.id] = user.permissions[route.id];
+        }
+      });
 
-      // Inicializa as permissões do plano se a rota existir nas permissões
-      if ('plan' in initialPermissions || initialPermissions.plan) {
-        initialPermissions.plan = planPermissions;
-      }
-
-      console.log('Initial permissions:', initialPermissions);
+      console.log('Initializing permissions:', initialPermissions);
       setTempPermissions(initialPermissions);
+    } else {
+      setTempPermissions({});
     }
   }, [isOpen, user]);
 
@@ -55,6 +50,7 @@ export const useUserPermissions = (
         }
       }
       
+      console.log('Permissions after change:', newPermissions);
       return newPermissions;
     });
   };
@@ -77,6 +73,7 @@ export const useUserPermissions = (
         newPermissions[routeId] = currentPermissions;
       }
 
+      console.log('Permissions after tab change:', newPermissions);
       return newPermissions;
     });
   };
@@ -85,11 +82,9 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
-      const updatedPermissions = { ...tempPermissions };
-
       const updatedUser = {
         ...user,
-        permissions: updatedPermissions,
+        permissions: { ...tempPermissions }
       };
 
       if (user.id === currentUser.id) {
@@ -113,7 +108,9 @@ export const useUserPermissions = (
 
   const isTabEnabled = (routeId: string, tabValue: string): boolean => {
     const permissions = tempPermissions[routeId] || [];
-    return permissions.includes(tabValue);
+    const isEnabled = permissions.includes(tabValue);
+    console.log(`Checking tab ${tabValue} for route ${routeId}:`, isEnabled);
+    return isEnabled;
   };
 
   return {
