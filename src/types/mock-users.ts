@@ -1,3 +1,4 @@
+
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -29,10 +30,10 @@ export const mockUsers: User[] = [
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-20T10:30:00.000Z",
     permissions: {
-      dashboard: ["view", "export"],
-      leads: ["view", "edit", "delete"],
-      users: ["view", "edit", "delete"],
-      plan: ["view", "upgrade"],
+      dashboard: ["view"],
+      leads: ["view"],
+      users: ["view"],
+      plan: ["view"],
       profile: ["contact", "password"]
     },
     logs: [
