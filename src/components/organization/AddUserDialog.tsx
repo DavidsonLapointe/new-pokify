@@ -53,7 +53,7 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
         'users': ['view', 'edit', 'delete'],
         'integrations': ['view', 'edit'],
         'settings': ['view', 'edit'],
-        'plans': ['view', 'upgrade']  // Mudamos de 'plan' para 'plans'
+        'plan': ['view', 'upgrade']  // Ajustado para 'plan' conforme definido em availableRoutePermissions
       };
       
       Object.entries(adminRoutes).forEach(([route, permissions]) => {
@@ -167,4 +167,3 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     </Dialog>
   );
 };
-
