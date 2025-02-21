@@ -34,3 +34,4 @@ export const DEFAULT_PERMISSIONS = {
     profile: ["contact", "password"]
   }
 };
+
