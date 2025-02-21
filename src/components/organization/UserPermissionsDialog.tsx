@@ -38,10 +38,10 @@ export const UserPermissionsDialog = ({
 
   useEffect(() => {
     if (isOpen && user) {
-      // Garante que as permissões incluam 'plan' se existirem
+      // Garante que as permissões incluam 'plan' com suas permissões padrão
       const initialPermissions = {
         ...user.permissions,
-        plan: user.permissions.plan || []
+        plan: user.permissions.plan || ['view', 'upgrade'] // Inicializa com as permissões padrão
       };
       setTempPermissions(initialPermissions);
       console.log("Permissões iniciais:", initialPermissions);
@@ -92,9 +92,15 @@ export const UserPermissionsDialog = ({
   const handleSave = () => {
     setSaving(true);
     try {
+      // Garante que as permissões do plano estejam corretas antes de salvar
+      const updatedPermissions = { ...tempPermissions };
+      if (updatedPermissions.plan && updatedPermissions.plan.length === 0) {
+        delete updatedPermissions.plan;
+      }
+
       const updatedUser = {
         ...user,
-        permissions: tempPermissions,
+        permissions: updatedPermissions,
       };
 
       if (user.id === currentUser.id) {
