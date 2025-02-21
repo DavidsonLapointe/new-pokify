@@ -22,7 +22,7 @@ const OrganizationLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
-  const { getUserPermissions } = usePermissions(user);
+  const { getUserPermissions, hasRoutePermission } = usePermissions(user);
 
   // Pega as rotas permitidas para o usuário
   const { routes: allowedRoutes } = getUserPermissions();
@@ -88,10 +88,12 @@ const OrganizationLayout = () => {
       },
     ];
 
-    // Filtra apenas os itens do menu que estão na lista de rotas permitidas
-    const filteredItems = allMenuItems.filter(item => allowedRoutes.includes(item.permissionId));
-    console.log("Itens filtrados do menu:", filteredItems);
-    return filteredItems;
+    // Filtra os itens do menu baseado nas permissões do usuário
+    return allMenuItems.filter(item => {
+      const hasPermission = hasRoutePermission(item.permissionId);
+      console.log(`Verificando permissão para ${item.label}:`, hasPermission);
+      return hasPermission;
+    });
   };
 
   const menuItems = getMenuItems();
@@ -174,3 +176,4 @@ const OrganizationLayout = () => {
 };
 
 export default OrganizationLayout;
+

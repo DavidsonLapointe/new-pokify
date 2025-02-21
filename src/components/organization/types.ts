@@ -20,17 +20,18 @@ export interface UserFormProps {
 // Definição das permissões padrão por função
 export const DEFAULT_PERMISSIONS = {
   admin: {
-    dashboard: ["leads", "uploads", "performance", "objections", "suggestions", "sellers"],
+    dashboard: ["view", "export"],
     leads: ["view", "edit", "delete"],
     users: ["view", "edit", "delete"],
     integrations: ["view", "edit"],
     settings: ["view", "edit"],
-    plan: ["view", "upgrade"],
+    plan: ["view", "upgrade"],  // Garantindo que 'plan' está definido aqui
     profile: ["contact", "password"]
   },
   seller: {
-    dashboard: ["leads", "uploads"],
-    leads: ["view"],
+    dashboard: ["view"],
+    leads: ["view", "edit"],
+    integrations: ["view"],
     profile: ["contact", "password"]
   }
 };
