@@ -1,12 +1,12 @@
 
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
-    dashboard: ["view"],
+    dashboard: ["view", "export"],
     organizations: ["view", "edit", "delete"],
     users: ["view", "edit", "delete"],
     plans: ["view", "edit"],
     "analysis-packages": ["view", "edit"],
-    financial: ["view"],
+    financial: ["view", "edit"],
     integrations: ["view", "edit"],
     prompt: ["view", "edit"],
     settings: ["view", "edit"],
@@ -107,3 +107,4 @@ export const availableAdminRoutePermissions = [
     ]
   }
 ];
+

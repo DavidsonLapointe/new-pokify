@@ -182,11 +182,13 @@ export const mockUsers: User[] = [
       dashboard: ["view", "export"],
       integrations: ["view", "edit"],
       plans: ["view", "edit"],
-      organizations: ["view", "edit"],
+      organizations: ["view", "edit", "delete"],
       settings: ["view", "edit"],
       prompt: ["view", "edit"],
-      analysis_packages: ["view", "edit"],
-      financial: ["view", "edit"]
+      "analysis-packages": ["view", "edit"],
+      financial: ["view", "edit"],
+      users: ["view", "edit", "delete"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -231,11 +233,13 @@ export const mockUsers: User[] = [
       dashboard: ["view", "export"],
       integrations: ["view", "edit"],
       plans: ["view", "edit"],
-      organizations: ["view", "edit"],
+      organizations: ["view", "edit", "delete"],
       settings: ["view", "edit"],
       prompt: ["view", "edit"],
-      analysis_packages: ["view", "edit"],
-      financial: ["view", "edit"]
+      "analysis-packages": ["view", "edit"],
+      financial: ["view", "edit"],
+      users: ["view", "edit", "delete"],
+      profile: ["contact", "password"]
     },
     logs: [
       {
@@ -283,7 +287,7 @@ export const mockUsers: User[] = [
       organizations: ["view", "edit"],
       settings: ["view", "edit"],
       prompt: ["view", "edit"],
-      analysis_packages: ["view", "edit"],
+      "analysis-packages": ["view", "edit"],
       financial: ["view", "edit"]
     },
     logs: [
@@ -332,7 +336,7 @@ export const mockUsers: User[] = [
       organizations: ["view", "edit"],
       settings: ["view", "edit"],
       prompt: ["view", "edit"],
-      analysis_packages: ["view", "edit"],
+      "analysis-packages": ["view", "edit"],
       financial: ["view", "edit"]
     },
     logs: [
