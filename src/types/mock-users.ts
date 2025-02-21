@@ -1,4 +1,3 @@
-
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -169,5 +168,196 @@ export const mockUsers: User[] = [
     ],
     avatar: "",
     organization: mockOrganization
+  },
+  {
+    id: 101,
+    name: "Ana Silva",
+    email: "ana.silva@leadly.com",
+    phone: "(11) 98765-4321",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-02-15T10:00:00.000Z",
+    lastAccess: "2024-03-10T15:30:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      integrations: ["view", "edit"],
+      plans: ["view", "edit"],
+      organizations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-15T10:00:00.000Z",
+        action: "Usuário criado"
+      },
+      {
+        id: 2,
+        date: "2024-03-10T15:30:00.000Z",
+        action: "Login realizado"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly Technologies",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@leadly.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Admin Leadly",
+      adminEmail: "admin@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    id: 102,
+    name: "Pedro Santos",
+    email: "pedro.santos@leadly.com",
+    phone: "(11) 97654-3210",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-02-20T09:00:00.000Z",
+    lastAccess: "2024-03-11T14:20:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      integrations: ["view", "edit"],
+      plans: ["view", "edit"],
+      organizations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-20T09:00:00.000Z",
+        action: "Usuário criado"
+      },
+      {
+        id: 2,
+        date: "2024-03-11T14:20:00.000Z",
+        action: "Login realizado"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly Technologies",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@leadly.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Admin Leadly",
+      adminEmail: "admin@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    id: 103,
+    name: "Mariana Costa",
+    email: "mariana.costa@leadly.com",
+    phone: "(11) 96543-2109",
+    role: "leadly_employee",
+    status: "inactive",
+    createdAt: "2024-02-25T11:00:00.000Z",
+    lastAccess: "2024-03-01T16:45:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      integrations: ["view", "edit"],
+      plans: ["view", "edit"],
+      organizations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-02-25T11:00:00.000Z",
+        action: "Usuário criado"
+      },
+      {
+        id: 2,
+        date: "2024-03-01T16:45:00.000Z",
+        action: "Status alterado para inativo"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly Technologies",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@leadly.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Admin Leadly",
+      adminEmail: "admin@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    id: 104,
+    name: "Lucas Oliveira",
+    email: "lucas.oliveira@leadly.com",
+    phone: "(11) 95432-1098",
+    role: "leadly_employee",
+    status: "pending",
+    createdAt: "2024-03-10T08:00:00.000Z",
+    lastAccess: "2024-03-10T08:00:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      integrations: ["view", "edit"],
+      plans: ["view", "edit"],
+      organizations: ["view", "edit"],
+      settings: ["view", "edit"],
+      prompt: ["view", "edit"],
+      analysis_packages: ["view", "edit"],
+      financial: ["view", "edit"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-10T08:00:00.000Z",
+        action: "Usuário criado"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly Technologies",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@leadly.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Admin Leadly",
+      adminEmail: "admin@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
   }
 ];
