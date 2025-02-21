@@ -13,19 +13,20 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Ajusta o ID da rota para corresponder às permissões (caso analysis-packages)
-    const adjustedRouteId = routeId.replace('-', '_');
+    // Normaliza o ID da rota (converte hífens para underscores e vice-versa)
+    const normalizedRouteId = routeId.replace(/_/g, '-');
+    const permissions = user.permissions;
 
     // Verifica se a rota está nas permissões do usuário
-    const hasPermission = adjustedRouteId in user.permissions;
+    const hasPermission = normalizedRouteId in permissions;
     
     // Se tem a rota mas não tem permissões ou tem array vazio, não mostra
-    if (!hasPermission || user.permissions[adjustedRouteId].length === 0) {
-      console.log(`Rota ${adjustedRouteId} não tem permissões ou está vazia`);
+    if (!hasPermission || permissions[normalizedRouteId]?.length === 0) {
+      console.log(`Rota ${normalizedRouteId} não tem permissões ou está vazia`);
       return false;
     }
     
-    console.log(`Verificando permissão para rota ${adjustedRouteId}:`, true);
+    console.log(`Verificando permissão para rota ${normalizedRouteId}:`, true);
     return true;
   };
 
@@ -39,11 +40,11 @@ export const usePermissions = (user: User) => {
     // Se não tem usuário ou permissões definidas, não tem acesso
     if (!user?.permissions) return false;
 
-    // Ajusta o ID da rota para corresponder às permissões
-    const adjustedRouteId = routeId.replace('-', '_');
+    // Normaliza o ID da rota
+    const normalizedRouteId = routeId.replace(/_/g, '-');
 
     // Pega as permissões da rota
-    const routePermissions = user.permissions[adjustedRouteId] || [];
+    const routePermissions = user.permissions[normalizedRouteId] || [];
     
     // Verifica se a tab está nas permissões da rota
     return routePermissions.includes(tabValue);
@@ -57,8 +58,10 @@ export const usePermissions = (user: User) => {
     // e que têm pelo menos uma permissão
     if (user?.permissions) {
       Object.entries(user.permissions).forEach(([route, permissions]) => {
-        if (!routes.includes(route) && permissions.length > 0) {
-          routes.push(route);
+        // Normaliza o ID da rota
+        const normalizedRoute = route.replace(/_/g, '-');
+        if (!routes.includes(normalizedRoute) && permissions.length > 0) {
+          routes.push(normalizedRoute);
         }
       });
     }
