@@ -26,7 +26,7 @@ const mockAdminUser: User = {
     organizations: ["view", "edit"],
     settings: ["view", "edit"],
     prompt: ["view", "edit"],
-    "analysis-packages": ["view", "edit"], // Corrigido o ID para corresponder ao admin-permissions.ts
+    "analysis-packages": ["view", "edit"],
     financial: ["view", "edit"],
     users: ["view", "edit", "delete"],
     profile: ["contact", "password"]
