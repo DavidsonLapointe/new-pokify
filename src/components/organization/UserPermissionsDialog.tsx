@@ -50,7 +50,7 @@ export const UserPermissionsDialog = ({
       }
 
       // Garante que as permissões do plano estejam presentes
-      if (initialPermissions.plan?.length > 0) {
+      if (Object.keys(initialPermissions).includes('plan')) {
         initialPermissions.plan = ['view', 'upgrade'];
       }
 
