@@ -53,9 +53,24 @@ export const AdminUserPermissionsDialog = ({
 
     setSelectedPermissions((prev) => {
       const currentPermissions = prev[routeId] || [];
-      const newPermissions = currentPermissions.includes(tabValue)
-        ? currentPermissions.filter((p) => p !== tabValue)
-        : [...currentPermissions, tabValue];
+      const route = availableAdminRoutePermissions.find(r => r.id === routeId);
+      const totalTabsInRoute = route?.tabs?.length || 0;
+      
+      let newPermissions: string[];
+      
+      if (currentPermissions.includes(tabValue)) {
+        // Removendo uma permissão
+        newPermissions = currentPermissions.filter((p) => p !== tabValue);
+      } else {
+        // Adicionando uma permissão
+        newPermissions = [...currentPermissions, tabValue];
+        
+        // Se ao adicionar esta permissão completamos todas as permissões da seção,
+        // adicionamos todas as permissões para manter consistência
+        if (newPermissions.length === totalTabsInRoute) {
+          newPermissions = route?.tabs?.map(tab => tab.value) || [];
+        }
+      }
 
       return {
         ...prev,
@@ -71,7 +86,24 @@ export const AdminUserPermissionsDialog = ({
     if (!route) return false;
 
     const currentPermissions = selectedPermissions[routeId] || [];
-    return route.tabs?.every(tab => currentPermissions.includes(tab.value)) || false;
+    const allTabValues = route.tabs?.map(tab => tab.value) || [];
+    
+    // Retorna true se TODAS as permissões da seção estiverem selecionadas
+    return allTabValues.every(value => currentPermissions.includes(value));
+  };
+
+  const isSectionPartiallyChecked = (routeId: string): boolean => {
+    if (routeId === 'profile') return false;
+    
+    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
+    if (!route) return false;
+
+    const currentPermissions = selectedPermissions[routeId] || [];
+    const allTabValues = route.tabs?.map(tab => tab.value) || [];
+    
+    // Retorna true se ALGUMAS (mas não todas) as permissões da seção estiverem selecionadas
+    const hasAnyChecked = allTabValues.some(value => currentPermissions.includes(value));
+    return hasAnyChecked && !isSectionFullyChecked(routeId);
   };
 
   const handleSave = () => {
@@ -117,6 +149,7 @@ export const AdminUserPermissionsDialog = ({
                   <Checkbox
                     id={`section-${route.id}`}
                     checked={isSectionFullyChecked(route.id)}
+                    data-state={isSectionPartiallyChecked(route.id) ? "indeterminate" : undefined}
                     onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
                     disabled={route.id === 'profile'}
                     className={`h-4 w-4 rounded-[4px] border ${
