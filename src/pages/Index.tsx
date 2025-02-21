@@ -206,7 +206,7 @@ const Index = () => {
       </section>
 
       {/* Como Funciona Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-white to-slate-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Como Funciona</h2>
@@ -216,88 +216,110 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-            {/* Input Section */}
-            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-semibold mb-6">Inputs</h3>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <FileAudio2 className="text-blue-500 h-6 w-6" />
-                  <span>Áudios de Vendas</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <FileVideo className="text-blue-500 h-6 w-6" />
-                  <span>Vídeos de Reuniões</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <FileText className="text-blue-500 h-6 w-6" />
-                  <span>Textos e Mensagens</span>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-center">
-                <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse hidden lg:block" />
-              </div>
-            </div>
-
-            {/* Processing Section */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-                Processamento IA
-              </div>
-              <div className="mt-4 flex justify-center mb-6">
-                <div className="relative">
-                  <Brain className="h-16 w-16 text-blue-600" />
-                  <div className="absolute inset-0 bg-blue-500/10 animate-ping rounded-full"></div>
-                </div>
-              </div>
-              <div className="space-y-3 text-center">
-                <p className="text-sm text-slate-600">Análise Avançada</p>
-                <p className="text-sm text-slate-600">Extração de Dados</p>
-                <p className="text-sm text-slate-600">Identificação de Padrões</p>
-              </div>
-              <div className="mt-6 flex justify-center">
-                <ArrowRightIcon className="h-8 w-8 text-blue-500 animate-pulse hidden lg:block" />
-              </div>
-            </div>
-
-            {/* Output Section */}
-            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-semibold mb-6">Benefícios</h3>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <Users className="text-green-500 h-6 w-6" />
-                  <span>Leads Qualificados</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <TrendingUp className="text-green-500 h-6 w-6" />
-                  <span>Insights de Vendas</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <BarChart3 className="text-green-500 h-6 w-6" />
-                  <span>Métricas Detalhadas</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <MessageSquare className="text-green-500 h-6 w-6" />
-                  <span>Sugestões de Ação</span>
-                </div>
-              </div>
-            </div>
-
-            {/* CRM Integration Banner */}
-            <div className="col-span-1 lg:col-span-3 mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl text-white">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <Database className="h-8 w-8" />
-                  <div>
-                    <h4 className="font-semibold text-lg">Integração com CRMs</h4>
-                    <p className="text-blue-100">Compatível com as principais plataformas do mercado</p>
+          <div className="relative max-w-5xl mx-auto">
+            {/* Background Decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl"></div>
+            
+            {/* Main Flow Card */}
+            <div className="relative bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-blue-100">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative">
+                {/* Input Column */}
+                <div className="flex-1">
+                  <div className="text-center mb-6">
+                    <div className="bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <FileAudio2 className="h-7 w-7 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-900">Inputs</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <FileAudio2 className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Áudios de Vendas</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <FileVideo className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Vídeos de Reuniões</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <FileText className="text-blue-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Textos e Mensagens</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="bg-white/20 px-4 py-2 rounded-lg">Salesforce</div>
-                  <div className="bg-white/20 px-4 py-2 rounded-lg">HubSpot</div>
-                  <div className="bg-white/20 px-4 py-2 rounded-lg">Pipedrive</div>
-                  <div className="bg-white/20 px-4 py-2 rounded-lg">RD Station</div>
+
+                {/* Arrow and Processing */}
+                <div className="flex-1 relative">
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-2">
+                    <div className="h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 w-full relative">
+                      <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500"></div>
+                      <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-500"></div>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg relative">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                      Processamento IA
+                    </div>
+                    <div className="flex justify-center mb-4 mt-2">
+                      <div className="relative">
+                        <Brain className="h-12 w-12 text-white" />
+                        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-center">
+                      <p className="text-blue-100 text-sm">Análise Avançada</p>
+                      <p className="text-blue-100 text-sm">Extração de Dados</p>
+                      <p className="text-blue-100 text-sm">Identificação de Padrões</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Output Column */}
+                <div className="flex-1">
+                  <div className="text-center mb-6">
+                    <div className="bg-green-50 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="h-7 w-7 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-900">Outputs</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <Users className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Leads Qualificados</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <TrendingUp className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Insights de Vendas</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <BarChart3 className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Métricas Detalhadas</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/80 p-3 rounded-lg shadow-sm">
+                      <MessageSquare className="text-green-500 h-5 w-5" />
+                      <span className="text-slate-700 text-sm">Sugestões de Ação</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CRM Integration Banner */}
+              <div className="mt-12 pt-8 border-t border-blue-100">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                      <Database className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-lg">Integração com CRMs</h4>
+                      <p className="text-slate-600 text-sm">Compatível com as principais plataformas do mercado</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <div className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">Salesforce</div>
+                    <div className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">HubSpot</div>
+                    <div className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">Pipedrive</div>
+                    <div className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium">RD Station</div>
+                  </div>
                 </div>
               </div>
             </div>
