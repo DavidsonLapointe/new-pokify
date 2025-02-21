@@ -62,6 +62,12 @@ const mockLoggedUser: User = {
 };
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  // Limpar dados antigos do localStorage ao inicializar
+  useEffect(() => {
+    localStorage.clear(); // Limpa todos os dados antigos
+    localStorage.setItem('mockLoggedUser', JSON.stringify(mockLoggedUser));
+  }, []);
+
   const [user, setUser] = useState<User>(mockLoggedUser);
 
   const updateUser = (newUser: User) => {
