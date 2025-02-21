@@ -143,58 +143,63 @@ export const AdminUserPermissionsDialog = ({
 
         <ScrollArea className="flex-1 pr-4 h-full">
           <div className="space-y-6">
-            {availableAdminRoutePermissions.map((route) => (
-              <div key={route.id} className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`section-${route.id}`}
-                    checked={isSectionFullyChecked(route.id)}
-                    data-state={isSectionPartiallyChecked(route.id) ? "indeterminate" : undefined}
-                    onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
-                    disabled={route.id === 'profile'}
-                    className={`h-4 w-4 rounded-[4px] border ${
-                      route.id === 'profile'
-                        ? 'border-gray-300 data-[state=checked]:bg-gray-300 data-[state=indeterminate]:bg-gray-300'
-                        : 'border-primary data-[state=checked]:bg-[#9b87f5] data-[state=indeterminate]:bg-[#9b87f5]'
-                    } data-[state=checked]:text-primary-foreground data-[state=indeterminate]:text-primary-foreground`}
-                  />
-                  <label
-                    htmlFor={`section-${route.id}`}
-                    className="font-medium"
-                  >
-                    {route.label}
-                  </label>
+            {availableAdminRoutePermissions.map((route) => {
+              const isFullyChecked = isSectionFullyChecked(route.id);
+              const isPartiallyChecked = isSectionPartiallyChecked(route.id);
+              
+              return (
+                <div key={route.id} className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`section-${route.id}`}
+                      checked={isFullyChecked || isPartiallyChecked}
+                      data-state={isPartiallyChecked ? "indeterminate" : isFullyChecked ? "checked" : "unchecked"}
+                      onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
+                      disabled={route.id === 'profile'}
+                      className={`h-4 w-4 rounded-[4px] border ${
+                        route.id === 'profile'
+                          ? 'border-gray-300 data-[state=checked]:bg-gray-300 data-[state=indeterminate]:bg-gray-300'
+                          : 'border-primary data-[state=checked]:bg-[#9b87f5] data-[state=indeterminate]:bg-[#9b87f5]'
+                      } data-[state=checked]:text-primary-foreground data-[state=indeterminate]:text-primary-foreground`}
+                    />
+                    <label
+                      htmlFor={`section-${route.id}`}
+                      className="font-medium"
+                    >
+                      {route.label}
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 ml-6">
+                    {route.tabs?.map((tab) => (
+                      <div key={tab.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`${route.id}-${tab.id}`}
+                          checked={
+                            route.id === 'profile' || 
+                            (selectedPermissions[route.id] || []).includes(tab.value)
+                          }
+                          onCheckedChange={() =>
+                            handlePermissionChange(route.id, tab.value)
+                          }
+                          disabled={route.id === 'profile'}
+                          className={`h-4 w-4 rounded-[4px] border ${
+                            route.id === 'profile'
+                              ? 'border-gray-300 data-[state=checked]:bg-gray-300'
+                              : 'border-primary data-[state=checked]:bg-[#9b87f5]'
+                          } data-[state=checked]:text-primary-foreground`}
+                        />
+                        <label
+                          htmlFor={`${route.id}-${tab.id}`}
+                          className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {tab.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 ml-6">
-                  {route.tabs?.map((tab) => (
-                    <div key={tab.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`${route.id}-${tab.id}`}
-                        checked={
-                          route.id === 'profile' || 
-                          (selectedPermissions[route.id] || []).includes(tab.value)
-                        }
-                        onCheckedChange={() =>
-                          handlePermissionChange(route.id, tab.value)
-                        }
-                        disabled={route.id === 'profile'}
-                        className={`h-4 w-4 rounded-[4px] border ${
-                          route.id === 'profile'
-                            ? 'border-gray-300 data-[state=checked]:bg-gray-300'
-                            : 'border-primary data-[state=checked]:bg-[#9b87f5]'
-                        } data-[state=checked]:text-primary-foreground`}
-                      />
-                      <label
-                        htmlFor={`${route.id}-${tab.id}`}
-                        className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {tab.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </ScrollArea>
 
