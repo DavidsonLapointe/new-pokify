@@ -46,14 +46,14 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     };
     
     if (newUser.role === 'admin') {
-      // Permissões padrão para admin
+      // Permissões padrão para admin, incluindo explicitamente 'plan'
       const adminRoutes = {
         'dashboard': ['view', 'export'],
         'leads': ['view', 'edit', 'delete'],
         'users': ['view', 'edit', 'delete'],
         'integrations': ['view', 'edit'],
         'settings': ['view', 'edit'],
-        'plan': ['view', 'upgrade']  // Ajustado para 'plan' conforme definido em availableRoutePermissions
+        'plan': ['view', 'upgrade']  // Garantindo que todo admin tenha acesso ao Meu Plano
       };
       
       Object.entries(adminRoutes).forEach(([route, permissions]) => {
@@ -86,8 +86,6 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
       avatar: "",
       organization: mockUsers[0].organization
     };
-
-    mockUsers.push(user);
 
     console.log("Novo usuário:", user);
     toast.success("Usuário adicionado com sucesso!");
