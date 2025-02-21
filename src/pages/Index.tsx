@@ -179,11 +179,15 @@ const Index = () => {
             {/* Right Image/Illustration */}
             <div className="relative lg:block">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-indigo-600/20 rounded-3xl animate-pulse"></div>
+                <div className="absolute inset-0 bg-white/30 mix-blend-overlay rounded-3xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/40 to-white/40 rounded-3xl"></div>
+                
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-200/10 to-indigo-200/10 rounded-3xl animate-pulse"></div>
+                
                 <img
                   src="/lovable-uploads/a6f95a9f-b22e-4925-94e8-c48a07388c46.png"
                   alt="Equipe moderna trabalhando em um escritório com vários computadores"
-                  className="rounded-3xl shadow-2xl object-cover h-[600px] w-full"
+                  className="rounded-3xl shadow-2xl object-cover h-[600px] w-full brightness-105 contrast-95"
                   style={{ objectPosition: "center center" }}
                 />
               </div>
