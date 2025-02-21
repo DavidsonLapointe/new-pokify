@@ -154,9 +154,9 @@ export const AdminUserPermissionsDialog = ({
                     disabled={route.id === 'profile'}
                     className={`h-4 w-4 rounded-[4px] border ${
                       route.id === 'profile'
-                        ? 'border-gray-300 data-[state=checked]:bg-gray-300'
-                        : 'border-primary data-[state=checked]:bg-primary'
-                    } data-[state=checked]:text-primary-foreground`}
+                        ? 'border-gray-300 data-[state=checked]:bg-gray-300 data-[state=indeterminate]:bg-gray-300'
+                        : 'border-primary data-[state=checked]:bg-[#9b87f5] data-[state=indeterminate]:bg-[#9b87f5]'
+                    } data-[state=checked]:text-primary-foreground data-[state=indeterminate]:text-primary-foreground`}
                   />
                   <label
                     htmlFor={`section-${route.id}`}
@@ -181,7 +181,7 @@ export const AdminUserPermissionsDialog = ({
                         className={`h-4 w-4 rounded-[4px] border ${
                           route.id === 'profile'
                             ? 'border-gray-300 data-[state=checked]:bg-gray-300'
-                            : 'border-primary data-[state=checked]:bg-primary'
+                            : 'border-primary data-[state=checked]:bg-[#9b87f5]'
                         } data-[state=checked]:text-primary-foreground`}
                       />
                       <label
