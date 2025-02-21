@@ -22,7 +22,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
     { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans", permissionId: "plans" },
-    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages", permissionId: "analysis_packages" },
+    { icon: Package, label: "Pacote de Análises", path: "/admin/analysis-packages", permissionId: "analysis-packages" },
     { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionId: "financial" },
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
