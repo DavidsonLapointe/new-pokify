@@ -11,6 +11,7 @@ import OrganizationProfile from "./pages/OrganizationProfile";
 import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationCompany from "./pages/OrganizationCompany";
+import ConfirmRegistration from "./pages/ConfirmRegistration";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
@@ -28,6 +29,9 @@ const Routes = () => {
   return (
     <RouterRoutes>
       <Route path="/" element={<Index />} />
+      
+      {/* Rota de Confirmação de Registro */}
+      <Route path="/confirm-registration" element={<ConfirmRegistration />} />
       
       {/* Rotas da Organização */}
       <Route element={<OrganizationLayout />}>
