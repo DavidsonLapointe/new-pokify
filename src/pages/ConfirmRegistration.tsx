@@ -165,7 +165,7 @@ export default function ConfirmRegistration() {
           </DialogHeader>
           <form onSubmit={handleSupportSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Seu Nome</Label>
+              <Label htmlFor="name">Seu Nome *</Label>
               <Input
                 id="name"
                 value={supportForm.name}
@@ -174,7 +174,7 @@ export default function ConfirmRegistration() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Seu Email</Label>
+              <Label htmlFor="email">Seu Email *</Label>
               <Input
                 id="email"
                 type="email"
@@ -184,7 +184,7 @@ export default function ConfirmRegistration() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="message">Mensagem</Label>
+              <Label htmlFor="message">Mensagem *</Label>
               <Textarea
                 id="message"
                 value={supportForm.message}
