@@ -2,10 +2,22 @@
 import React, { useState } from "react";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
-import { OrganizationCard } from "@/components/admin/organizations/OrganizationCard";
 import { OrganizationsHeader } from "@/components/admin/organizations/OrganizationsHeader";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { Organization } from "@/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
+import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Mock data for example organizations
 const mockOrganizations: Organization[] = [
@@ -76,6 +88,32 @@ const Organizations = () => {
     )
   );
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "pending":
+        return "Pendente";
+      case "inactive":
+        return "Inativo";
+      default:
+        return status;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   return (
     <div className="space-y-8">
       <OrganizationsHeader onCreateNew={() => setIsCreateDialogOpen(true)} />
@@ -85,14 +123,66 @@ const Organizations = () => {
         onChange={setSearchTerm}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredOrganizations.map((org) => (
-          <OrganizationCard 
-            key={org.id} 
-            organization={org}
-            onEdit={handleEditOrganization}
-          />
-        ))}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Empresa</TableHead>
+              <TableHead>Plano</TableHead>
+              <TableHead>Admin</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Data de Cadastro</TableHead>
+              <TableHead>Integrações</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredOrganizations.map((org) => (
+              <TableRow key={org.id}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{org.name}</p>
+                    <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
+                  </div>
+                </TableCell>
+                <TableCell>{org.plan}</TableCell>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{org.adminName}</p>
+                    <p className="text-sm text-muted-foreground">{org.adminEmail}</p>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge className={getStatusColor(org.status)}>
+                    {getStatusLabel(org.status)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {format(new Date(org.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    <Badge variant="outline" className="mr-1">
+                      CRM: {org.integratedCRM || "Não integrado"}
+                    </Badge>
+                    <Badge variant="outline">
+                      LLM: {org.integratedLLM || "Não integrado"}
+                    </Badge>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEditOrganization(org)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       <CreateOrganizationDialog 
