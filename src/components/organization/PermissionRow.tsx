@@ -24,6 +24,9 @@ export const PermissionRow = ({
     isProfile
   });
 
+  // Verifica se é uma rota padrão (profile ou company)
+  const isDefaultRoute = route.id === 'profile' || route.id === 'company';
+
   return (
     <div className="space-y-4">
       <div className="flex items-center space-x-2">
@@ -34,7 +37,7 @@ export const PermissionRow = ({
           onChange={() => !route.isDefault && onPermissionChange(route.id)}
           disabled={route.isDefault}
           className={`h-4 w-4 rounded border appearance-none ${
-            isProfile
+            isDefaultRoute
               ? 'bg-gray-100 border-gray-200 checked:bg-gray-300 checked:border-gray-300 cursor-not-allowed checked:bg-check'
               : 'border-primary checked:bg-primary hover:border-primary/80 checked:bg-check'
           }`}
@@ -56,10 +59,10 @@ export const PermissionRow = ({
                   type="checkbox"
                   id={`${route.id}-${tab.id}`}
                   checked={isEnabled}
-                  onChange={() => !isProfile && onTabPermissionChange(route.id, tab.value)}
-                  disabled={isProfile}
+                  onChange={() => !isDefaultRoute && onTabPermissionChange(route.id, tab.value)}
+                  disabled={isDefaultRoute}
                   className={`h-4 w-4 rounded border appearance-none ${
-                    isProfile
+                    isDefaultRoute
                       ? 'bg-gray-100 border-gray-200 checked:bg-gray-300 checked:border-gray-300 cursor-not-allowed checked:bg-check'
                       : 'border-primary checked:bg-primary hover:border-primary/80 checked:bg-check'
                   }`}
