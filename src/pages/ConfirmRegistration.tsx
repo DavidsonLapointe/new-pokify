@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization } from "@/types";
@@ -87,7 +86,6 @@ export default function ConfirmRegistration() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
       <div className="max-w-4xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-        {/* Logo e Mensagem de Boas-vindas */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <img 
@@ -166,12 +164,12 @@ export default function ConfirmRegistration() {
           <DialogHeader>
             <DialogTitle>Envie sua mensagem</DialogTitle>
             <DialogDescription>
-              Nossa equipe responderá o mais breve possível.
+              Sua mensagem será enviada para suporte@leadly.com.br. Nossa equipe responderá o mais breve possível.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSupportSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nome</Label>
+              <Label htmlFor="name">Seu Nome</Label>
               <Input
                 id="name"
                 value={supportForm.name}
@@ -180,7 +178,7 @@ export default function ConfirmRegistration() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Seu Email</Label>
               <Input
                 id="email"
                 type="email"
