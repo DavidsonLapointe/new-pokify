@@ -49,6 +49,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       plan: "Enterprise",
       users: [],
       status: "active",
+      integratedCRM: null, // Adicionando a propriedade requerida
+      integratedLLM: null, // Adicionando a propriedade requerida
       email: "contato@leadly.com",
       phone: "(11) 99999-9999",
       cnpj: "00.000.000/0001-00",
