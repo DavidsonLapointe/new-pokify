@@ -12,7 +12,10 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Usando o João Silva com todas as permissões corretas
+  // Usando a Ana Silva para ambiente administrativo
+  const mockAdminUser: User = mockUsers.find(u => u.id === 101) || mockUsers[0];
+  
+  // Usando o João Silva para ambiente da organização
   const mockOrgUser: User = {
     id: 201,
     name: "João Silva",
@@ -58,7 +61,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
   
   const [user, setUser] = useState<User>(() => {
-    return mockOrgUser;
+    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
+    const storedUser = localStorage.getItem(storageKey);
+    
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+    
+    return isAdminRoute ? mockAdminUser : mockOrgUser;
   });
 
   const updateUser = (newUser: User) => {
