@@ -12,7 +12,53 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Usando o João Silva com todas as permissões corretas
+  // Mock do usuário admin (Ana Silva)
+  const mockAdminUser: User = {
+    id: 1,
+    name: "Ana Silva",
+    email: "ana.silva@leadly.com",
+    phone: "(11) 99999-9999",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: "2024-03-20T10:30:00.000Z",
+    permissions: {
+      dashboard: ["view", "export"],
+      organizations: ["view", "edit", "delete"],
+      users: ["view", "edit", "delete"],
+      plans: ["view", "edit"],
+      "analysis-packages": ["view", "edit"],
+      financial: ["view", "edit"],
+      integrations: ["view", "edit"],
+      prompt: ["view", "edit"],
+      settings: ["view", "edit"],
+      profile: ["contact", "password"]
+    },
+    logs: [
+      {
+        id: 1,
+        date: "2024-03-20T10:30:00.000Z",
+        action: "Acessou o sistema"
+      }
+    ],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      email: "contato@leadly.com",
+      phone: "(11) 99999-9999",
+      cnpj: "00.000.000/0001-00",
+      adminName: "Ana Silva",
+      adminEmail: "ana.silva@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  };
+
+  // Mock do usuário da organização (João Silva)
   const mockOrgUser: User = {
     id: 201,
     name: "João Silva",
@@ -58,8 +104,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
   
   const [user, setUser] = useState<User>(() => {
-    return mockOrgUser;
+    // Verifica se está no ambiente administrativo ou organizacional
+    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    return isAdminRoute ? mockAdminUser : mockOrgUser;
   });
+
+  useEffect(() => {
+    // Atualiza o usuário quando a rota muda
+    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    setUser(isAdminRoute ? mockAdminUser : mockOrgUser);
+  }, [window.location.pathname]);
 
   const updateUser = (newUser: User) => {
     const isAdminRoute = window.location.pathname.startsWith('/admin');
