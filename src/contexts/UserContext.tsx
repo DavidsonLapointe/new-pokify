@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 import { mockUsers } from '@/types/mock-users';
+import { useLocation } from 'react-router-dom';
 
 interface UserContextType {
   user: User;
@@ -12,6 +13,8 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  
   // Mock do usuário admin (Ana Silva)
   const mockAdminUser: User = {
     id: 1,
@@ -49,8 +52,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       plan: "Enterprise",
       users: [],
       status: "active",
-      integratedCRM: null, // Adicionando a propriedade requerida
-      integratedLLM: null, // Adicionando a propriedade requerida
+      integratedCRM: null,
+      integratedLLM: null,
       email: "contato@leadly.com",
       phone: "(11) 99999-9999",
       cnpj: "00.000.000/0001-00",
@@ -107,18 +110,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
   
   const [user, setUser] = useState<User>(() => {
     // Verifica se está no ambiente administrativo ou organizacional
-    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    const isAdminRoute = location.pathname.startsWith('/admin');
     return isAdminRoute ? mockAdminUser : mockOrgUser;
   });
 
   useEffect(() => {
-    // Atualiza o usuário quando a rota muda
-    const isAdminRoute = window.location.pathname.startsWith('/admin');
-    setUser(isAdminRoute ? mockAdminUser : mockOrgUser);
-  }, [window.location.pathname]);
+    // Atualiza o usuário quando muda entre ambientes admin e organization
+    const isAdminRoute = location.pathname.startsWith('/admin');
+    const isCurrentlyAdmin = user.role === 'leadly_employee';
+    
+    // Só atualiza se houve mudança de ambiente
+    if (isAdminRoute !== isCurrentlyAdmin) {
+      setUser(isAdminRoute ? mockAdminUser : mockOrgUser);
+    }
+  }, [location.pathname, user.role]);
 
   const updateUser = (newUser: User) => {
-    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    const isAdminRoute = location.pathname.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
     
     if (isAdminRoute && newUser.role !== 'leadly_employee') {
