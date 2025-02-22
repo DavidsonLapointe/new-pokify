@@ -114,7 +114,7 @@ const OrganizationLayout = () => {
   }
 
   const isActive = (path: string) => {
-    return location.pathname === path || (path === '/organization/dashboard' && location.pathname === '/organization');
+    return location.pathname === path;
   };
 
   return (
@@ -156,7 +156,10 @@ const OrganizationLayout = () => {
                   return (
                     <button
                       key={item.path}
-                      onClick={() => navigate(item.path)}
+                      onClick={() => {
+                        console.log("Navegando para:", item.path);
+                        navigate(item.path);
+                      }}
                       className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
                         active
                           ? "bg-[#F1F0FB] text-[#9b87f5]"
