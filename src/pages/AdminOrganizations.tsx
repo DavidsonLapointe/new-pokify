@@ -30,7 +30,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Mock data for example organizations
 const mockOrganizations: Organization[] = [
   {
     id: 1,
@@ -134,25 +133,16 @@ const Organizations = () => {
     const totalIntegrations = 2;
     const completedIntegrations = [org.integratedCRM, org.integratedLLM].filter(Boolean).length;
     
-    const getTooltipContent = () => {
-      if (completedIntegrations === 0) {
-        return "Integrações pendentes: CRM e LLM";
-      }
-
-      const integrations = [];
-      if (org.integratedCRM) {
-        integrations.push(`CRM: ${org.integratedCRM}`);
-      } else {
-        integrations.push("CRM: Pendente");
-      }
+    const tooltipText = () => {
+      const crmStatus = org.integratedCRM 
+        ? `CRM: ${org.integratedCRM}` 
+        : "CRM: Pendente";
       
-      if (org.integratedLLM) {
-        integrations.push(`LLM: ${org.integratedLLM}`);
-      } else {
-        integrations.push("LLM: Pendente");
-      }
+      const llmStatus = org.integratedLLM 
+        ? `LLM: ${org.integratedLLM}` 
+        : "LLM: Pendente";
 
-      return integrations.join('\n');
+      return `${crmStatus}\n${llmStatus}`;
     };
 
     return (
@@ -167,7 +157,11 @@ const Organizations = () => {
             </Badge>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="whitespace-pre-line">{getTooltipContent()}</p>
+            <div className="text-sm">
+              {tooltipText().split('\n').map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
