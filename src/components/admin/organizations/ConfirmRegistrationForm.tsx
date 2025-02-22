@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,9 +15,16 @@ import { confirmRegistrationSchema, ConfirmRegistrationFormData } from "./types"
 interface ConfirmRegistrationFormProps {
   organization: Organization;
   onSubmit: (data: ConfirmRegistrationFormData) => void;
+  onShowTerms: () => void;
+  onShowPrivacyPolicy: () => void;
 }
 
-export function ConfirmRegistrationForm({ organization, onSubmit }: ConfirmRegistrationFormProps) {
+export function ConfirmRegistrationForm({ 
+  organization, 
+  onSubmit,
+  onShowTerms,
+  onShowPrivacyPolicy 
+}: ConfirmRegistrationFormProps) {
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
     defaultValues: {
@@ -69,7 +75,22 @@ export function ConfirmRegistrationForm({ organization, onSubmit }: ConfirmRegis
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel className="text-sm text-[#6E59A5]">
-                  Li e aceito os termos de uso e política de privacidade
+                  Li e aceito os{" "}
+                  <button
+                    type="button"
+                    onClick={onShowTerms}
+                    className="text-[#9b87f5] hover:underline"
+                  >
+                    termos de uso
+                  </button>{" "}
+                  e{" "}
+                  <button
+                    type="button"
+                    onClick={onShowPrivacyPolicy}
+                    className="text-[#9b87f5] hover:underline"
+                  >
+                    política de privacidade
+                  </button>
                 </FormLabel>
                 <FormMessage />
               </div>
