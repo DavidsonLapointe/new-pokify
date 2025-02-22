@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -42,7 +43,7 @@ export default function ConfirmRegistration() {
       });
 
       // Redireciona para o login
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       toast({
         title: "Erro ao confirmar cadastro",
@@ -52,5 +53,16 @@ export default function ConfirmRegistration() {
     }
   };
 
-  return <ConfirmRegistrationForm organization={organization} onSubmit={handleSubmit} />;
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <CardTitle>Confirmar Registro</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ConfirmRegistrationForm organization={organization} onSubmit={handleSubmit} />
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
