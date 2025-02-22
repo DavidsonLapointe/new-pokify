@@ -19,7 +19,11 @@ export const sendInitialContract = async (organization: Organization) => {
     const proRataTitle = createProRataTitle(organization, 99.90);
     console.log("Título pro rata criado:", proRataTitle);
 
-    // Enviar email com contrato
+    // Em produção, aqui você geraria um token único para o link de confirmação
+    const confirmationToken = "abc123";
+    const confirmationLink = `/confirm-registration?token=${confirmationToken}`;
+
+    // Enviar email com contrato e link de confirmação
     console.log("Enviando email com contrato para:", organization.adminEmail);
     
     // Em produção, aqui teríamos a lógica real de envio do email
@@ -33,8 +37,10 @@ export const sendInitialContract = async (organization: Organization) => {
         Bem-vindo à Leadly! Segue em anexo o contrato de adesão para sua assinatura.
         
         Para concluir seu cadastro, por favor:
-        1. Assine o contrato digitalmente através do link: [LINK_ASSINATURA]
-        2. Efetue o pagamento pro rata no valor de R$ 99,90
+        1. Acesse o link de confirmação: ${confirmationLink}
+        2. Complete seus dados e defina sua senha
+        3. Assine o contrato digitalmente
+        4. Efetue o pagamento pro rata no valor de R$ 99,90
         
         Após a confirmação do pagamento, sua conta será ativada automaticamente.
         
