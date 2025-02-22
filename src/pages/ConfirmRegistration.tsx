@@ -1,9 +1,8 @@
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -54,15 +53,43 @@ export default function ConfirmRegistration() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-4xl">
-        <CardHeader>
-          <CardTitle>Confirmar Registro</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ConfirmRegistrationForm organization={organization} onSubmit={handleSubmit} />
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
+      <div className="max-w-4xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
+        {/* Logo e Mensagem de Boas-vindas */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/a6f95a9f-b22e-4925-94e8-c48a07388c46.png"
+              alt="Leadly Logo" 
+              className="h-12 w-auto"
+            />
+          </div>
+          <h1 className="text-2xl font-semibold text-[#1A1F2C] mb-2">
+            Bem-vindo à Leadly!
+          </h1>
+          <p className="text-[#8E9196] max-w-2xl mx-auto">
+            Complete seu cadastro para começar a transformar suas chamadas em oportunidades de negócio
+          </p>
+        </div>
+
+        {/* Formulário */}
+        <Card className="w-full shadow-lg border-[#E5DEFF]">
+          <CardHeader className="border-b border-[#E5DEFF] bg-[#F1F0FB] rounded-t-lg">
+            <CardTitle className="text-[#6E59A5]">Confirmar Registro</CardTitle>
+            <CardDescription>
+              Preencha os dados abaixo para concluir seu cadastro
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ConfirmRegistrationForm organization={organization} onSubmit={handleSubmit} />
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center mt-6 mb-8 text-sm text-[#8E9196]">
+          Precisa de ajuda? Entre em contato com nosso suporte
+        </div>
+      </div>
     </div>
   );
 }
