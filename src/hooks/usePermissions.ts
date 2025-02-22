@@ -4,8 +4,8 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 
 export const usePermissions = (user: User) => {
   const hasRoutePermission = (routeId: string): boolean => {
-    // Profile é sempre permitido
-    if (routeId === 'profile') {
+    // Profile e Company são sempre permitidos
+    if (routeId === 'profile' || routeId === 'company') {
       return true;
     }
 
@@ -22,8 +22,9 @@ export const usePermissions = (user: User) => {
     const routes: string[] = [];
     const permissions = user?.permissions || {};
 
-    // Profile é sempre permitido
+    // Profile e Company são sempre permitidos
     routes.push('profile');
+    routes.push('company');
 
     // Adiciona outras rotas que o usuário tem permissão
     Object.keys(permissions).forEach(routeId => {
@@ -37,8 +38,8 @@ export const usePermissions = (user: User) => {
   };
 
   const hasTabPermission = (routeId: string, tabValue: string): boolean => {
-    // Profile sempre tem acesso a todas as tabs
-    if (routeId === 'profile') return true;
+    // Profile e Company sempre têm acesso a todas as tabs
+    if (routeId === 'profile' || routeId === 'company') return true;
 
     const permissions = user?.permissions?.[routeId] || [];
     return permissions.includes(tabValue);
