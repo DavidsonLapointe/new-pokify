@@ -28,9 +28,8 @@ import AdminUsers from "./pages/AdminUsers";
 const Routes = () => {
   return (
     <RouterRoutes>
+      {/* Rotas Principais */}
       <Route path="/" element={<Index />} />
-      
-      {/* Rota de Confirmação de Registro */}
       <Route path="/confirm-registration" element={<ConfirmRegistration />} />
       
       {/* Rotas da Organização */}
