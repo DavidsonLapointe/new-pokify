@@ -23,6 +23,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Mock data for example organizations
 const mockOrganizations: Organization[] = [
@@ -82,9 +88,14 @@ const Organizations = () => {
   const [organizations] = useState<Organization[]>(mockOrganizations);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
 
   const handleEditOrganization = (organization: Organization) => {
     setEditingOrganization(organization);
+  };
+
+  const handleShowActiveUsers = (organization: Organization) => {
+    setSelectedOrganization(organization);
   };
 
   const filteredOrganizations = organizations.filter((org) =>
@@ -180,7 +191,7 @@ const Organizations = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Empresa</TableHead>
+              <TableHead className="w-[300px]">Empresa</TableHead>
               <TableHead>Plano</TableHead>
               <TableHead>Usuários Ativos</TableHead>
               <TableHead>Status</TableHead>
@@ -199,7 +210,15 @@ const Organizations = () => {
                   </div>
                 </TableCell>
                 <TableCell>{org.plan}</TableCell>
-                <TableCell>{getActiveUsersCount(org)}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleShowActiveUsers(org)}
+                    className="px-2 font-medium text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
+                  >
+                    {getActiveUsersCount(org)}
+                  </Button>
+                </TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(org.status)}>
                     {getStatusLabel(org.status)}
@@ -239,6 +258,26 @@ const Organizations = () => {
           organization={editingOrganization}
         />
       )}
+
+      <Dialog open={!!selectedOrganization} onOpenChange={() => setSelectedOrganization(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Usuários Ativos - {selectedOrganization?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedOrganization?.users
+              .filter(user => user.status === "active")
+              .map(user => (
+                <div key={user.id} className="flex items-center gap-4 p-2 rounded-lg border">
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
