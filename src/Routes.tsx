@@ -10,6 +10,7 @@ import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationProfile from "./pages/OrganizationProfile";
 import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationUsers from "./pages/OrganizationUsers";
+import OrganizationCompany from "./pages/OrganizationCompany";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
@@ -40,6 +41,7 @@ const Routes = () => {
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="plan" element={<OrganizationPlan />} />
           <Route path="profile" element={<OrganizationProfile />} />
+          <Route path="company" element={<OrganizationCompany />} />
         </Route>
       </Route>
 

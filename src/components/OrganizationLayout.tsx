@@ -10,6 +10,7 @@ import {
   Building2,
   LogOut,
   CreditCard,
+  Building,
 } from "lucide-react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,7 +28,7 @@ const OrganizationLayout = () => {
 
   const handleLogout = () => {
     try {
-      contextLogout(); // Usa o logout do contexto
+      contextLogout();
       toast.success("Logout realizado com sucesso");
       navigate("/");
     } catch (error) {
@@ -74,6 +75,12 @@ const OrganizationLayout = () => {
       permissionId: "plan"
     },
     {
+      icon: Building,
+      label: "Minha Empresa",
+      path: "/organization/company",
+      permissionId: "settings"
+    },
+    {
       icon: UserCircle,
       label: "Meu Perfil",
       path: "/organization/profile",
@@ -116,8 +123,18 @@ const OrganizationLayout = () => {
         <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
           <div className="h-full px-8 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-white">
-              <Building2 className="w-4 h-4 text-white" />
-              <span className="font-medium">{user.organization.name}</span>
+              {user.organization.logo ? (
+                <img 
+                  src={user.organization.logo} 
+                  alt={user.organization.name} 
+                  className="h-8 w-auto"
+                />
+              ) : (
+                <>
+                  <Building2 className="w-4 h-4 text-white" />
+                  <span className="font-medium">{user.organization.name}</span>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-4">
               <p className="text-sm font-medium text-white">{user.name}</p>
