@@ -175,6 +175,7 @@ const Organizations = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEditOrganization(org)}
+                    className="text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
