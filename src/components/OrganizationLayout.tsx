@@ -136,10 +136,10 @@ const OrganizationLayout = () => {
                   className="h-8 w-auto"
                 />
               ) : (
-                <>
+                <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-white" />
-                  <span className="font-medium">{user.organization.name}</span>
-                </>
+                  <span className="font-medium">Seu Logo</span>
+                </div>
               )}
             </div>
             <div className="flex items-center gap-4">
