@@ -6,7 +6,7 @@ export const confirmRegistrationSchema = z.object({
   email: z.string().email("Email inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   password: z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
   logradouro: z.string().min(3, "Logradouro é obrigatório"),
   numero: z.string().min(1, "Número é obrigatório"),
   complemento: z.string().optional(),
@@ -23,3 +23,4 @@ export const confirmRegistrationSchema = z.object({
 });
 
 export type ConfirmRegistrationFormData = z.infer<typeof confirmRegistrationSchema>;
+
