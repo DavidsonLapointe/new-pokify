@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Package, Users } from "lucide-react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
@@ -12,7 +12,6 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
   const { hasRoutePermission } = usePermissions(user);
@@ -36,7 +35,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       localStorage.removeItem('orgUser');
       sessionStorage.clear();
       toast.success("Logout realizado com sucesso");
-      navigate("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error("Erro ao realizar logout");
       console.error("Erro no logout:", error);
@@ -82,9 +81,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
-                  <button
+                  <Link
                     key={item.path}
-                    onClick={() => navigate(item.path)}
+                    to={item.path}
                     className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
                       isActive
                         ? "bg-[#F1F0FB] text-[#9b87f5]"
@@ -93,7 +92,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   >
                     <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
                     {item.label}
-                  </button>
+                  </Link>
                 );
               })}
             </div>

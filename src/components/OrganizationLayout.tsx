@@ -12,7 +12,7 @@ import {
   CreditCard,
   Building,
 } from "lucide-react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -20,17 +20,16 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { useUser } from "@/contexts/UserContext";
 
 const OrganizationLayout = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { user, logout: contextLogout } = useUser();
-  const { getUserPermissions, hasRoutePermission } = usePermissions(user);
+  const { hasRoutePermission } = usePermissions(user);
   const [menuItems, setMenuItems] = useState<any[]>([]);
 
   const handleLogout = () => {
     try {
       contextLogout();
       toast.success("Logout realizado com sucesso");
-      navigate("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error("Erro ao realizar logout");
       console.error("Erro no logout:", error);
@@ -78,7 +77,7 @@ const OrganizationLayout = () => {
       icon: Building,
       label: "Minha Empresa",
       path: "/organization/company",
-      permissionId: "company"  // Alterado de "settings" para "company"
+      permissionId: "company"
     },
     {
       icon: UserCircle,
@@ -94,9 +93,8 @@ const OrganizationLayout = () => {
       console.log("Usuário:", user.name);
       console.log("Permissões do usuário:", user.permissions);
       
-      // Garantindo que o usuário sempre tenha acesso à página da empresa
       const hasPermission = (permissionId: string) => {
-        if (permissionId === "company") return true; // Todos têm acesso à página da empresa
+        if (permissionId === "company") return true;
         return hasRoutePermission(permissionId);
       };
 
@@ -160,12 +158,9 @@ const OrganizationLayout = () => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
                   return (
-                    <button
+                    <Link
                       key={item.path}
-                      onClick={() => {
-                        console.log("Navegando para:", item.path);
-                        navigate(item.path);
-                      }}
+                      to={item.path}
                       className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
                         active
                           ? "bg-[#F1F0FB] text-[#9b87f5]"
@@ -174,7 +169,7 @@ const OrganizationLayout = () => {
                     >
                       <Icon className={`w-4 h-4 mr-3 ${active ? "text-[#9b87f5]" : "text-gray-600"}`} />
                       {item.label}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
