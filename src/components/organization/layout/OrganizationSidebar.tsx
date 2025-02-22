@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 
@@ -24,13 +25,17 @@ export const OrganizationSidebar = ({ menuItems, isActive, handleLogout }: Organ
           ))}
         </div>
 
-        <button
-          onClick={handleLogout}
+        <Link
+          to="/"
+          onClick={(e) => {
+            e.preventDefault();
+            handleLogout();
+          }}
           className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
         >
           <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
           Sair
-        </button>
+        </Link>
       </nav>
     </aside>
   );
