@@ -13,7 +13,9 @@ export function AddressSection({ form }: AddressSectionProps) {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <div className="h-6 w-1 bg-[#9b87f5] rounded-full" />
-        <h3 className="text-lg font-medium text-[#1A1F2C]">Endereço da Empresa</h3>
+        <h3 className="text-lg font-medium text-[#1A1F2C] flex items-center gap-0.5">
+          Endereço da Empresa <span>*</span>
+        </h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
