@@ -10,9 +10,10 @@ interface AvatarUploadProps {
   currentImage?: string
   name: string
   onImageUpload: (file: File) => void
+  isLogo?: boolean
 }
 
-export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUploadProps) {
+export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false }: AvatarUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentImage)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -71,7 +72,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
 
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium">Foto de Perfil</Label>
+      <Label className="text-sm font-medium">{isLogo ? "Logo" : "Foto de Perfil"}</Label>
       <div className="flex flex-col sm:flex-row items-center gap-6">
         <div 
           className={`relative group ${isDragging ? 'ring-2 ring-primary ring-offset-2' : ''}`}
@@ -82,13 +83,20 @@ export function AvatarUpload({ currentImage, name, onImageUpload }: AvatarUpload
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
         >
-          <Avatar className="h-28 w-28 ring-2 ring-gray-100">
-            <AvatarImage src={previewUrl} alt={name} />
-            <AvatarFallback className="bg-[#9b87f5] text-white flex items-center justify-center text-xl font-medium">
-              {getInitials(name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="absolute inset-0 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className={`overflow-hidden ${isLogo ? 'w-48 h-24' : 'w-28 h-28 rounded-full'}`}>
+            {previewUrl ? (
+              <img 
+                src={previewUrl} 
+                alt={name} 
+                className={`w-full h-full object-contain ${!isLogo && 'rounded-full'}`}
+              />
+            ) : (
+              <div className={`w-full h-full bg-[#9b87f5] text-white flex items-center justify-center text-xl font-medium ${!isLogo && 'rounded-full'}`}>
+                {getInitials(name)}
+              </div>
+            )}
+          </div>
+          <div className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <label className="cursor-pointer p-2" htmlFor="avatar-upload">
               <Camera className="w-6 h-6" />
               <input

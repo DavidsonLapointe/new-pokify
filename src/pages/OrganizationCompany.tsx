@@ -15,7 +15,6 @@ export default function OrganizationCompany() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Se o campo for parte do endereço
     if (["logradouro", "numero", "complemento", "bairro", "cidade", "estado", "cep"].includes(name)) {
       setOrganization(prev => ({
         ...prev,
@@ -34,7 +33,6 @@ export default function OrganizationCompany() {
 
   const handleLogoUpload = async (file: File) => {
     try {
-      // Simulando upload - em produção, isto seria uma chamada real à API
       const logoUrl = URL.createObjectURL(file);
       
       setOrganization(prev => ({
@@ -42,7 +40,6 @@ export default function OrganizationCompany() {
         logo: logoUrl
       }));
 
-      // Atualiza o usuário com a nova organização
       updateUser({
         ...user,
         organization: {
@@ -60,7 +57,6 @@ export default function OrganizationCompany() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Atualiza o usuário com a nova organização
     updateUser({
       ...user,
       organization
@@ -85,6 +81,7 @@ export default function OrganizationCompany() {
               currentImage={organization.logo}
               name={organization.name}
               onImageUpload={handleLogoUpload}
+              isLogo={true}
             />
             <p className="text-sm text-muted-foreground mt-2">
               Esta imagem será exibida no cabeçalho do sistema
