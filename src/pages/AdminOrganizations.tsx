@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
@@ -18,6 +17,12 @@ import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Mock data for example organizations
 const mockOrganizations: Organization[] = [
@@ -114,6 +119,54 @@ const Organizations = () => {
     }
   };
 
+  const getIntegrationsInfo = (org: Organization) => {
+    const totalIntegrations = 2;
+    const completedIntegrations = [org.integratedCRM, org.integratedLLM].filter(Boolean).length;
+    
+    const getTooltipContent = () => {
+      if (completedIntegrations === 0) {
+        return "Integrações pendentes: CRM e LLM";
+      }
+
+      const integrations = [];
+      if (org.integratedCRM) {
+        integrations.push(`CRM: ${org.integratedCRM}`);
+      } else {
+        integrations.push("CRM: Pendente");
+      }
+      
+      if (org.integratedLLM) {
+        integrations.push(`LLM: ${org.integratedLLM}`);
+      } else {
+        integrations.push("LLM: Pendente");
+      }
+
+      return integrations.join('\n');
+    };
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge 
+              variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
+              className="cursor-help"
+            >
+              {completedIntegrations}/{totalIntegrations}
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="whitespace-pre-line">{getTooltipContent()}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
+  const getActiveUsersCount = (org: Organization) => {
+    return org.users.filter(user => user.status === "active").length;
+  };
+
   return (
     <div className="space-y-8">
       <OrganizationsHeader onCreateNew={() => setIsCreateDialogOpen(true)} />
@@ -129,7 +182,7 @@ const Organizations = () => {
             <TableRow>
               <TableHead>Empresa</TableHead>
               <TableHead>Plano</TableHead>
-              <TableHead>Admin</TableHead>
+              <TableHead>Usuários Ativos</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Data de Cadastro</TableHead>
               <TableHead>Integrações</TableHead>
@@ -146,12 +199,7 @@ const Organizations = () => {
                   </div>
                 </TableCell>
                 <TableCell>{org.plan}</TableCell>
-                <TableCell>
-                  <div>
-                    <p className="font-medium">{org.adminName}</p>
-                    <p className="text-sm text-muted-foreground">{org.adminEmail}</p>
-                  </div>
-                </TableCell>
+                <TableCell>{getActiveUsersCount(org)}</TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(org.status)}>
                     {getStatusLabel(org.status)}
@@ -161,14 +209,7 @@ const Organizations = () => {
                   {format(new Date(org.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-1">
-                    <Badge variant="outline" className="mr-1">
-                      CRM: {org.integratedCRM || "Não integrado"}
-                    </Badge>
-                    <Badge variant="outline">
-                      LLM: {org.integratedLLM || "Não integrado"}
-                    </Badge>
-                  </div>
+                  {getIntegrationsInfo(org)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
