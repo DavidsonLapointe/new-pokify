@@ -81,5 +81,15 @@ export const availableRoutePermissions: RoutePermission[] = [
       { id: "view", label: "Visualizar", value: "view" },
       { id: "upgrade", label: "Alterar Plano", value: "upgrade" }
     ]
+  },
+  {
+    id: "company",
+    label: "Minha Empresa",
+    path: "/organization/company",
+    isDefault: true,
+    tabs: [
+      { id: "view", label: "Visualizar", value: "view" },
+      { id: "edit", label: "Editar", value: "edit" }
+    ]
   }
 ];

@@ -78,7 +78,7 @@ const OrganizationLayout = () => {
       icon: Building,
       label: "Minha Empresa",
       path: "/organization/company",
-      permissionId: "settings"
+      permissionId: "company"  // Alterado de "settings" para "company"
     },
     {
       icon: UserCircle,
@@ -94,10 +94,16 @@ const OrganizationLayout = () => {
       console.log("Usuário:", user.name);
       console.log("Permissões do usuário:", user.permissions);
       
+      // Garantindo que o usuário sempre tenha acesso à página da empresa
+      const hasPermission = (permissionId: string) => {
+        if (permissionId === "company") return true; // Todos têm acesso à página da empresa
+        return hasRoutePermission(permissionId);
+      };
+
       const filteredItems = allMenuItems.filter(item => {
-        const hasPermission = hasRoutePermission(item.permissionId);
-        console.log(`Item ${item.label}: permitido? ${hasPermission}`);
-        return hasPermission;
+        const permitted = hasPermission(item.permissionId);
+        console.log(`Item ${item.label}: permitido? ${permitted}`);
+        return permitted;
       });
 
       console.log("Menu items filtrados:", filteredItems);
