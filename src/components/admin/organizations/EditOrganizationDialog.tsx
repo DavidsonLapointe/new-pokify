@@ -1,9 +1,11 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { Organization } from "@/types";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +51,7 @@ export const EditOrganizationDialog = ({
       cnpj: organization.cnpj || "",
       email: organization.email || "",
       phone: organization.phone || "",
-      plan: organization.plan.toLowerCase(),
+      plan: (organization.plan.toLowerCase() || "professional") as "basic" | "professional" | "enterprise",
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
       status: organization.status,
@@ -148,10 +150,7 @@ export const EditOrganizationDialog = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Plano</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o plano" />
