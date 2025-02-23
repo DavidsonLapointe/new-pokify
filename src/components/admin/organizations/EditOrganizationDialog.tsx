@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,18 +30,19 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FilterX } from "lucide-react";
 
 interface EditOrganizationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   organization: Organization;
+  onSave: (organization: Organization) => void;
 }
 
 export const EditOrganizationDialog = ({
   open,
   onOpenChange,
   organization,
+  onSave,
 }: EditOrganizationDialogProps) => {
   const { toast } = useToast();
   
@@ -99,12 +101,25 @@ export const EditOrganizationDialog = ({
   };
 
   const onSubmit = (values: CreateOrganizationFormData) => {
-    console.log(values);
+    const updatedOrganization: Organization = {
+      ...organization,
+      name: values.razaoSocial,
+      nomeFantasia: values.nomeFantasia,
+      cnpj: values.cnpj,
+      email: values.email,
+      phone: values.phone,
+      plan: values.plan,
+      adminName: values.adminName,
+      adminEmail: values.adminEmail,
+      status: values.status,
+    };
+
+    onSave(updatedOrganization);
+    
     toast({
       title: "Empresa atualizada com sucesso",
       description: "As alterações foram salvas.",
     });
-    onOpenChange(false);
   };
 
   const availableStatusOptions = getAvailableStatusOptions(organization.status);
