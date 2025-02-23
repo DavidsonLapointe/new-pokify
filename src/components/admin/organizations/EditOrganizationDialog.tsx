@@ -1,3 +1,9 @@
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
+import { Organization } from "@/types";
+import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
 import {
   Dialog,
   DialogContent,
@@ -5,9 +11,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -15,35 +26,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { useToast } from "@/hooks/use-toast";
-
-const formSchema = z.object({
-  razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
-  nomeFantasia: z.string().min(2, "O nome fantasia deve ter pelo menos 2 caracteres"),
-  cnpj: z.string().min(14, "CNPJ inválido"),
-  plan: z.enum(["basic", "professional", "enterprise"]),
-  email: z.string().email("Email da empresa inválido"),
-  phone: z.string().min(10, "Telefone inválido"),
-  adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
-  adminEmail: z.string().email("Email do administrador inválido"),
-  status: z.enum(["active", "pending", "inactive"]),
-});
+import { Button } from "@/components/ui/button";
 
 interface EditOrganizationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  organization: any;
+  organization: Organization;
 }
 
 export const EditOrganizationDialog = ({
@@ -53,8 +41,8 @@ export const EditOrganizationDialog = ({
 }: EditOrganizationDialogProps) => {
   const { toast } = useToast();
   
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateOrganizationFormData>({
+    resolver: zodResolver(createOrganizationSchema),
     defaultValues: {
       razaoSocial: organization.name,
       nomeFantasia: organization.nomeFantasia || "",
@@ -68,7 +56,7 @@ export const EditOrganizationDialog = ({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: CreateOrganizationFormData) => {
     console.log(values);
     toast({
       title: "Empresa atualizada com sucesso",
