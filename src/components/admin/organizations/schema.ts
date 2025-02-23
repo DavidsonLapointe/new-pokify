@@ -1,6 +1,7 @@
+
 import * as z from "zod";
 
-const formSchema = z.object({
+export const createOrganizationSchema = z.object({
   razaoSocial: z.string().min(2, "A razão social deve ter pelo menos 2 caracteres"),
   nomeFantasia: z.string().min(2, "O nome fantasia deve ter pelo menos 2 caracteres"),
   cnpj: z.string().min(14, "CNPJ inválido"),
@@ -12,4 +13,4 @@ const formSchema = z.object({
   status: z.enum(["active", "pending", "inactive"]),
 });
 
-export type CreateOrganizationFormData = z.infer<typeof formSchema>;
+export type CreateOrganizationFormData = z.infer<typeof createOrganizationSchema>;

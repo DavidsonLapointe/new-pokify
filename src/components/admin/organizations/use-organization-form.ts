@@ -21,6 +21,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       plan: "professional",
       adminName: "",
       adminEmail: "",
+      status: "pending",
     },
   });
 
