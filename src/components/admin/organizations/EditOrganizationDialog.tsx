@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -38,7 +37,7 @@ const formSchema = z.object({
   phone: z.string().min(10, "Telefone inválido"),
   adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
   adminEmail: z.string().email("Email do administrador inválido"),
-  status: z.boolean(),
+  status: z.enum(["active", "pending", "inactive"]),
 });
 
 interface EditOrganizationDialogProps {
@@ -65,7 +64,7 @@ export const EditOrganizationDialog = ({
       plan: organization.plan.toLowerCase(),
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
-      status: organization.status === "active",
+      status: organization.status,
     },
   });
 
@@ -93,20 +92,21 @@ export const EditOrganizationDialog = ({
               control={form.control}
               name="status"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm bg-secondary/20">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Status da Empresa</FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      {field.value ? "Empresa ativa no sistema" : "Empresa inativa no sistema"}
-                    </div>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-600"
-                    />
-                  </FormControl>
+                <FormItem>
+                  <FormLabel>Status da Empresa</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="active">Ativo</SelectItem>
+                      <SelectItem value="pending">Pendente</SelectItem>
+                      <SelectItem value="inactive">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -256,7 +256,7 @@ export const EditOrganizationDialog = ({
             <div className="flex justify-end space-x-4 pt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="cancel"
                 onClick={() => onOpenChange(false)}
               >
                 Cancelar

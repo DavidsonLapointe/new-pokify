@@ -10,11 +10,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OrganizationIntegrations } from "./OrganizationIntegrations";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface OrganizationsTableProps {
   organizations: Organization[];
@@ -57,6 +62,18 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     return org.users.filter(user => user.status === "active").length;
   };
 
+  const getPendingReason = (org: Organization) => {
+    if (org.status !== "pending") return null;
+
+    const reasons: { [key: string]: string } = {
+      contract_signature: "Aguardando assinatura do contrato",
+      payment: "Aguardando confirmação do pagamento",
+      approval: "Aguardando aprovação administrativa",
+    };
+
+    return reasons[org.pendingReason || ""] || "Status pendente";
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -64,7 +81,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
           <TableRow>
             <TableHead className="w-[300px]">Empresa</TableHead>
             <TableHead>Plano</TableHead>
-            <TableHead>Usuários Ativos</TableHead>
+            <TableHead className="text-center">Usuários Ativos</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Data de Cadastro</TableHead>
             <TableHead>Integrações</TableHead>
@@ -81,7 +98,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                 </div>
               </TableCell>
               <TableCell>{org.plan}</TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <Button
                   variant="ghost"
                   onClick={() => onShowActiveUsers(org)}
@@ -91,12 +108,23 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                 </Button>
               </TableCell>
               <TableCell>
-                <Badge className={getStatusColor(org.status)}>
-                  {getStatusLabel(org.status)}
-                </Badge>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className={getStatusColor(org.status)}>
+                        {getStatusLabel(org.status)}
+                      </Badge>
+                    </TooltipTrigger>
+                    {org.status === "pending" && (
+                      <TooltipContent>
+                        <p>{getPendingReason(org)}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               </TableCell>
               <TableCell>
-                {format(new Date(org.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                {format(new Date(org.createdAt), "dd/MM/yyyy")}
               </TableCell>
               <TableCell>
                 <OrganizationIntegrations organization={org} />
