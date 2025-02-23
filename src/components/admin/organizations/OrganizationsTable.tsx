@@ -109,18 +109,22 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Badge className={getStatusColor(org.status)}>
-                        {getStatusLabel(org.status)}
-                      </Badge>
-                    </TooltipTrigger>
-                    {org.status === "pending" && org.pendingReason && (
+                  {org.status === "pending" ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge className={getStatusColor(org.status)}>
+                          {getStatusLabel(org.status)}
+                        </Badge>
+                      </TooltipTrigger>
                       <TooltipContent>
                         <p>{getPendingReason(org)}</p>
                       </TooltipContent>
-                    )}
-                  </Tooltip>
+                    </Tooltip>
+                  ) : (
+                    <Badge className={getStatusColor(org.status)}>
+                      {getStatusLabel(org.status)}
+                    </Badge>
+                  )}
                 </TableCell>
                 <TableCell>
                   {format(new Date(org.createdAt), "dd/MM/yyyy")}

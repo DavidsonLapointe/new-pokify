@@ -31,7 +31,7 @@ export const OrganizationIntegrations: React.FC<OrganizationIntegrationsProps> =
   };
 
   return (
-    <Tooltip delayDuration={0}>
+    <Tooltip>
       <TooltipTrigger asChild>
         <Badge 
           variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
@@ -42,7 +42,9 @@ export const OrganizationIntegrations: React.FC<OrganizationIntegrationsProps> =
       </TooltipTrigger>
       <TooltipContent>
         <div className="text-sm whitespace-pre-line">
-          {tooltipText()}
+          {tooltipText().split('\n').map((line, i) => (
+            <p key={i}>{line}</p>
+          ))}
         </div>
       </TooltipContent>
     </Tooltip>

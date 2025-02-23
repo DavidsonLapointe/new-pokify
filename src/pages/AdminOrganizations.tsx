@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Organization } from "@/types";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -61,13 +62,20 @@ const mockOrganizations: Organization[] = [
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [organizations] = useState<Organization[]>(mockOrganizations);
+  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
 
   const handleEditOrganization = (organization: Organization) => {
     setEditingOrganization(organization);
+  };
+
+  const handleUpdateOrganization = (updatedOrg: Organization) => {
+    setOrganizations(orgs => 
+      orgs.map(org => org.id === updatedOrg.id ? updatedOrg : org)
+    );
+    setEditingOrganization(null);
   };
 
   const handleShowActiveUsers = (organization: Organization) => {
@@ -105,6 +113,7 @@ const Organizations = () => {
           open={!!editingOrganization}
           onOpenChange={(open) => !open && setEditingOrganization(null)}
           organization={editingOrganization}
+          onSave={handleUpdateOrganization}
         />
       )}
 
