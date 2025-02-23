@@ -115,7 +115,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                         {getStatusLabel(org.status)}
                       </Badge>
                     </TooltipTrigger>
-                    {org.status === "pending" && (
+                    {org.status === "pending" && org.pendingReason && (
                       <TooltipContent>
                         <p>{getPendingReason(org)}</p>
                       </TooltipContent>

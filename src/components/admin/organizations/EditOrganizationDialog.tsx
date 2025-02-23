@@ -29,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { FilterX } from "lucide-react";
 
 interface EditOrganizationDialogProps {
   open: boolean;
@@ -58,6 +60,46 @@ export const EditOrganizationDialog = ({
     },
   });
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "pending":
+        return "Pendente";
+      case "inactive":
+        return "Inativo";
+      default:
+        return status;
+    }
+  };
+
+  // Função para obter as opções de status disponíveis
+  const getAvailableStatusOptions = (currentStatus: string) => {
+    switch (currentStatus) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [{ value: "inactive", label: "Inativo" }];
+      default:
+        return [];
+    }
+  };
+
   const onSubmit = (values: CreateOrganizationFormData) => {
     console.log(values);
     toast({
@@ -66,6 +108,8 @@ export const EditOrganizationDialog = ({
     });
     onOpenChange(false);
   };
+
+  const availableStatusOptions = getAvailableStatusOptions(organization.status);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -78,29 +122,6 @@ export const EditOrganizationDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status da Empresa</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="active">Ativo</SelectItem>
-                      <SelectItem value="pending">Pendente</SelectItem>
-                      <SelectItem value="inactive">Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -238,6 +259,41 @@ export const EditOrganizationDialog = ({
                   )}
                 />
               </div>
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel>Status da Empresa:</FormLabel>
+                      <Badge className={getStatusColor(organization.status)}>
+                        {getStatusLabel(organization.status)}
+                      </Badge>
+                    </div>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o novo status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {availableStatusOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className="flex justify-end space-x-4 pt-4">
