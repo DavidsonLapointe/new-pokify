@@ -32,22 +32,22 @@ export const OrganizationIntegrations: React.FC<OrganizationIntegrationsProps> =
   };
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Badge 
-          variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
-          className="cursor-help"
-        >
-          {completedIntegrations}/{totalIntegrations}
-        </Badge>
-      </TooltipTrigger>
-      <TooltipContent>
-        <div className="text-sm">
-          {tooltipText().split('\n').map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </div>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <Badge 
+            variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
+            className="cursor-help"
+          >
+            {completedIntegrations}/{totalIntegrations}
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-sm whitespace-pre-line">
+            {tooltipText()}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

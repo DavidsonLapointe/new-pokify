@@ -272,12 +272,11 @@ export const EditOrganizationDialog = ({
                       </Badge>
                     </div>
                     <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
+                      onValueChange={field.onChange}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione o novo status" defaultValue="" />
+                          <SelectValue placeholder="Selecione o novo status" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

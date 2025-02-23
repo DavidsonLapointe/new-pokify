@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Organization } from "@/types";
 import {
@@ -108,28 +107,24 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                 </Button>
               </TableCell>
               <TableCell>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge className={getStatusColor(org.status)}>
-                        {getStatusLabel(org.status)}
-                      </Badge>
-                    </TooltipTrigger>
-                    {org.status === "pending" && (
-                      <TooltipContent>
-                        <p>{getPendingReason(org)}</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Badge className={getStatusColor(org.status)}>
+                      {getStatusLabel(org.status)}
+                    </Badge>
+                  </TooltipTrigger>
+                  {org.status === "pending" && org.pendingReason && (
+                    <TooltipContent>
+                      <p>{getPendingReason(org)}</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
               </TableCell>
               <TableCell>
                 {format(new Date(org.createdAt), "dd/MM/yyyy")}
               </TableCell>
               <TableCell>
-                <TooltipProvider>
-                  <OrganizationIntegrations organization={org} />
-                </TooltipProvider>
+                <OrganizationIntegrations organization={org} />
               </TableCell>
               <TableCell className="text-right">
                 <Button
