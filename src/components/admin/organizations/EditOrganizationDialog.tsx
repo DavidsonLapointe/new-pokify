@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -86,7 +85,6 @@ export const EditOrganizationDialog = ({
     }
   };
 
-  // Função para obter as opções de status disponíveis
   const getAvailableStatusOptions = (currentStatus: string) => {
     switch (currentStatus) {
       case "active":
@@ -279,7 +277,7 @@ export const EditOrganizationDialog = ({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione o novo status" />
+                          <SelectValue placeholder="Selecione o novo status" defaultValue="" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

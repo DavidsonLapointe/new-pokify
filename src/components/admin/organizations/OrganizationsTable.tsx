@@ -115,7 +115,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                         {getStatusLabel(org.status)}
                       </Badge>
                     </TooltipTrigger>
-                    {org.status === "pending" && org.pendingReason && (
+                    {org.status === "pending" && (
                       <TooltipContent>
                         <p>{getPendingReason(org)}</p>
                       </TooltipContent>
@@ -127,7 +127,9 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                 {format(new Date(org.createdAt), "dd/MM/yyyy")}
               </TableCell>
               <TableCell>
-                <OrganizationIntegrations organization={org} />
+                <TooltipProvider>
+                  <OrganizationIntegrations organization={org} />
+                </TooltipProvider>
               </TableCell>
               <TableCell className="text-right">
                 <Button
