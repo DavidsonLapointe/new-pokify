@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Organization } from "@/types";
 import {
@@ -74,72 +75,74 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">Empresa</TableHead>
-            <TableHead>Plano</TableHead>
-            <TableHead className="text-center">Usuários Ativos</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Data de Cadastro</TableHead>
-            <TableHead>Integrações</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {organizations.map((org) => (
-            <TableRow key={org.id}>
-              <TableCell>
-                <div>
-                  <p className="font-medium">{org.name}</p>
-                  <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
-                </div>
-              </TableCell>
-              <TableCell>{org.plan}</TableCell>
-              <TableCell className="text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => onShowActiveUsers(org)}
-                  className="px-2 font-medium text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
-                >
-                  {getActiveUsersCount(org)}
-                </Button>
-              </TableCell>
-              <TableCell>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Badge className={getStatusColor(org.status)}>
-                      {getStatusLabel(org.status)}
-                    </Badge>
-                  </TooltipTrigger>
-                  {org.status === "pending" && org.pendingReason && (
-                    <TooltipContent>
-                      <p>{getPendingReason(org)}</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TableCell>
-              <TableCell>
-                {format(new Date(org.createdAt), "dd/MM/yyyy")}
-              </TableCell>
-              <TableCell>
-                <OrganizationIntegrations organization={org} />
-              </TableCell>
-              <TableCell className="text-right">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEditOrganization(org)}
-                  className="text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </TableCell>
+    <TooltipProvider>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[300px]">Empresa</TableHead>
+              <TableHead>Plano</TableHead>
+              <TableHead className="text-center">Usuários Ativos</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Data de Cadastro</TableHead>
+              <TableHead>Integrações</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {organizations.map((org) => (
+              <TableRow key={org.id}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{org.name}</p>
+                    <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
+                  </div>
+                </TableCell>
+                <TableCell>{org.plan}</TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    variant="ghost"
+                    onClick={() => onShowActiveUsers(org)}
+                    className="px-2 font-medium text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
+                  >
+                    {getActiveUsersCount(org)}
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Badge className={getStatusColor(org.status)}>
+                        {getStatusLabel(org.status)}
+                      </Badge>
+                    </TooltipTrigger>
+                    {org.status === "pending" && org.pendingReason && (
+                      <TooltipContent>
+                        <p>{getPendingReason(org)}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  {format(new Date(org.createdAt), "dd/MM/yyyy")}
+                </TableCell>
+                <TableCell>
+                  <OrganizationIntegrations organization={org} />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEditOrganization(org)}
+                    className="text-[#9b87f5] hover:text-[#7E69AB] hover:bg-[#F1F0FB]"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </TooltipProvider>
   );
 };

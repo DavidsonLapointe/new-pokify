@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -32,22 +31,20 @@ export const OrganizationIntegrations: React.FC<OrganizationIntegrationsProps> =
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <Badge 
-            variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
-            className="cursor-help"
-          >
-            {completedIntegrations}/{totalIntegrations}
-          </Badge>
-        </TooltipTrigger>
-        <TooltipContent>
-          <div className="text-sm whitespace-pre-line">
-            {tooltipText()}
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <Badge 
+          variant={completedIntegrations === totalIntegrations ? "secondary" : "default"}
+          className="cursor-help"
+        >
+          {completedIntegrations}/{totalIntegrations}
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent>
+        <div className="text-sm whitespace-pre-line">
+          {tooltipText()}
+        </div>
+      </TooltipContent>
+    </Tooltip>
   );
 };
