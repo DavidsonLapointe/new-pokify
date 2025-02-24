@@ -23,6 +23,15 @@ interface UserPermissionsDialogProps {
   onUserUpdate: (user: User) => void;
 }
 
+const dashboardTabs = [
+  { id: 'leads', label: 'Leads' },
+  { id: 'uploads', label: 'Uploads' },
+  { id: 'performance', label: 'Performance' },
+  { id: 'objections', label: 'Objeções' },
+  { id: 'suggestions', label: 'Sugestões' },
+  { id: 'sellers', label: 'Vendedores' },
+];
+
 export const UserPermissionsDialog = ({
   isOpen,
   onClose,
@@ -73,12 +82,10 @@ export const UserPermissionsDialog = ({
                     onPermissionChange={handlePermissionChange}
                   />
 
-                  {/* Mostra as abas do dashboard quando a rota for dashboard e estiver habilitada */}
-                  {route.id === 'dashboard' && route.tabs && isRouteEnabled && (
+                  {route.id === 'dashboard' && isRouteEnabled && (
                     <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
-                      <Label className="text-sm text-gray-500">Abas do Dashboard:</Label>
                       <div className="grid grid-cols-2 gap-4">
-                        {route.tabs.map((tab) => (
+                        {dashboardTabs.map((tab) => (
                           <div key={tab.id} className="flex items-center space-x-2">
                             <Checkbox
                               id={`tab-${tab.id}`}
