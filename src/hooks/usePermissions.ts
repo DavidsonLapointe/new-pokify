@@ -1,6 +1,6 @@
 
 import { User } from "@/types";
-import { RoutePermission } from "@/types/permissions";
+import { RoutePermission, availablePermissions, dashboardTabPermissions, settingsTabPermissions } from "@/types/permissions";
 
 export const usePermissions = (user: User) => {
   const isAdminRoute = window.location.pathname.startsWith('/admin');
@@ -23,6 +23,17 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
+    // Verifica se é uma subpermissão (aba)
+    const isDashboardTab = dashboardTabPermissions.includes(routeId);
+    const isSettingsTab = settingsTabPermissions.includes(routeId);
+
+    if (isDashboardTab || isSettingsTab) {
+      const mainRoute = routeId.split('.')[0]; // 'dashboard' ou 'settings'
+      if (!user.permissions[mainRoute]) {
+        return false; // Se não tem acesso à página principal, não tem acesso às abas
+      }
+    }
+
     // Verifica se a permissão existe e é true
     const hasPermission = Boolean(user.permissions[routeId]);
     console.log(`Tem permissão para ${routeId}?`, hasPermission);
@@ -34,9 +45,31 @@ export const usePermissions = (user: User) => {
 
     // Adiciona todas as rotas que têm permissão true
     if (user?.permissions) {
+      // Adiciona rotas principais
       routes = Object.entries(user.permissions)
-        .filter(([_, value]) => Boolean(value))
+        .filter(([key, value]) => {
+          // Não inclui subpermissões aqui
+          if (key.includes('.')) return false;
+          return Boolean(value);
+        })
         .map(([key, _]) => key);
+
+      // Adiciona subpermissões apenas para dashboard e settings
+      if (user.permissions['dashboard']) {
+        dashboardTabPermissions.forEach(tabPermission => {
+          if (user.permissions[tabPermission]) {
+            routes.push(tabPermission);
+          }
+        });
+      }
+
+      if (user.permissions['settings']) {
+        settingsTabPermissions.forEach(tabPermission => {
+          if (user.permissions[tabPermission]) {
+            routes.push(tabPermission);
+          }
+        });
+      }
     }
 
     // Adiciona profile se não existir
