@@ -1,16 +1,13 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Navigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function Auth() {
-  const [defaultTab, setDefaultTab] = useState<"login" | "signup">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
@@ -41,8 +38,23 @@ export default function Auth() {
     }
   };
 
-  const handleForgotPassword = () => {
-    // Implementar lógica de recuperação de senha
+  const handleForgotPassword = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success("Email de recuperação enviado com sucesso");
+    } catch (error: any) {
+      setError(error.message);
+      toast.error("Erro ao enviar email de recuperação");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,27 +70,16 @@ export default function Auth() {
           <CardHeader>
             <CardTitle>Bem-vindo à Leadly</CardTitle>
             <CardDescription>
-              Faça login ou crie sua conta para começar
+              Faça login para acessar a plataforma
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue={defaultTab} className="w-full" onValueChange={(value) => setDefaultTab(value as "login" | "signup")}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Cadastro</TabsTrigger>
-              </TabsList>
-              <TabsContent value="login">
-                <LoginForm 
-                  onSubmit={handleLogin}
-                  onForgotPassword={handleForgotPassword}
-                  isLoading={isLoading}
-                  error={error}
-                />
-              </TabsContent>
-              <TabsContent value="signup">
-                <SignUpForm onLoginClick={() => setDefaultTab("login")} />
-              </TabsContent>
-            </Tabs>
+            <LoginForm 
+              onSubmit={handleLogin}
+              onForgotPassword={handleForgotPassword}
+              isLoading={isLoading}
+              error={error}
+            />
           </CardContent>
         </Card>
       </div>

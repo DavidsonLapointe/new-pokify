@@ -9,7 +9,7 @@ import { AlertCircle } from "lucide-react";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => void;
-  onForgotPassword: () => void;
+  onForgotPassword: (email: string) => void;
   isLoading: boolean;
   error: string | null;
 }
@@ -17,10 +17,15 @@ interface LoginFormProps {
 export const LoginForm = ({ onSubmit, onForgotPassword, isLoading, error }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password);
+    if (isForgotPassword) {
+      onForgotPassword(email);
+    } else {
+      onSubmit(email, password);
+    }
   };
 
   return (
@@ -44,25 +49,27 @@ export const LoginForm = ({ onSubmit, onForgotPassword, isLoading, error }: Logi
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
-        <Input
-          id="password"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+      {!isForgotPassword && (
+        <div className="space-y-2">
+          <Label htmlFor="password">Senha</Label>
+          <Input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <Button
           type="button"
           variant="link"
           className="text-sm px-0"
-          onClick={onForgotPassword}
+          onClick={() => setIsForgotPassword(!isForgotPassword)}
         >
-          Esqueceu sua senha?
+          {isForgotPassword ? "Voltar ao login" : "Esqueceu sua senha?"}
         </Button>
       </div>
 
@@ -78,7 +85,7 @@ export const LoginForm = ({ onSubmit, onForgotPassword, isLoading, error }: Logi
           </>
         ) : (
           <>
-            Entrar
+            {isForgotPassword ? "Recuperar Senha" : "Entrar"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </>
         )}
