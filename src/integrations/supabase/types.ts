@@ -11,33 +11,57 @@ export type Database = {
     Tables: {
       company_leadly: {
         Row: {
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
           cnpj: string
+          complemento: string | null
           created_at: string
           email: string
+          estado: string | null
           id: string
           logo: string | null
-          name: string
+          logradouro: string | null
+          nome_fantasia: string
+          numero: string | null
           phone: string | null
+          razao_social: string
           updated_at: string
         }
         Insert: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
           cnpj: string
+          complemento?: string | null
           created_at?: string
           email: string
+          estado?: string | null
           id?: string
           logo?: string | null
-          name: string
+          logradouro?: string | null
+          nome_fantasia?: string
+          numero?: string | null
           phone?: string | null
+          razao_social: string
           updated_at?: string
         }
         Update: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
           cnpj?: string
+          complemento?: string | null
           created_at?: string
           email?: string
+          estado?: string | null
           id?: string
           logo?: string | null
-          name?: string
+          logradouro?: string | null
+          nome_fantasia?: string
+          numero?: string | null
           phone?: string | null
+          razao_social?: string
           updated_at?: string
         }
         Relationships: []

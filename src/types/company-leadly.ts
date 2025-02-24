@@ -1,19 +1,35 @@
 
 export interface CompanyLeadly {
   id: string;
-  name: string;
+  razao_social: string;
+  nome_fantasia: string;
   cnpj: string;
   email: string;
   phone?: string | null;
   logo?: string | null;
   created_at: string;
   updated_at: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  cep?: string;
 }
 
 export interface UpdateCompanyLeadlyDTO {
-  name?: string;
+  razao_social?: string;
+  nome_fantasia?: string;
   cnpj?: string;
   email?: string;
   phone?: string | null;
   logo?: string | null;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  cep?: string;
 }
