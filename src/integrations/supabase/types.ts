@@ -9,7 +9,137 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      organizations: {
+        Row: {
+          admin_email: string
+          admin_name: string
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string
+          complemento: string | null
+          contract_signed_at: string | null
+          created_at: string | null
+          email: string
+          estado: string | null
+          id: string
+          integrated_crm: string | null
+          integrated_llm: string | null
+          logo: string | null
+          logradouro: string | null
+          name: string
+          nome_fantasia: string | null
+          numero: string | null
+          pending_reason:
+            | Database["public"]["Enums"]["organization_pending_reason"]
+            | null
+          phone: string | null
+          plan: string
+          status: Database["public"]["Enums"]["user_status"]
+        }
+        Insert: {
+          admin_email: string
+          admin_name: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj: string
+          complemento?: string | null
+          contract_signed_at?: string | null
+          created_at?: string | null
+          email: string
+          estado?: string | null
+          id?: string
+          integrated_crm?: string | null
+          integrated_llm?: string | null
+          logo?: string | null
+          logradouro?: string | null
+          name: string
+          nome_fantasia?: string | null
+          numero?: string | null
+          pending_reason?:
+            | Database["public"]["Enums"]["organization_pending_reason"]
+            | null
+          phone?: string | null
+          plan: string
+          status?: Database["public"]["Enums"]["user_status"]
+        }
+        Update: {
+          admin_email?: string
+          admin_name?: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string
+          complemento?: string | null
+          contract_signed_at?: string | null
+          created_at?: string | null
+          email?: string
+          estado?: string | null
+          id?: string
+          integrated_crm?: string | null
+          integrated_llm?: string | null
+          logo?: string | null
+          logradouro?: string | null
+          name?: string
+          nome_fantasia?: string | null
+          numero?: string | null
+          pending_reason?:
+            | Database["public"]["Enums"]["organization_pending_reason"]
+            | null
+          phone?: string | null
+          plan?: string
+          status?: Database["public"]["Enums"]["user_status"]
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar: string | null
+          created_at: string | null
+          email: string
+          id: string
+          last_access: string | null
+          name: string
+          organization_id: string | null
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          status: Database["public"]["Enums"]["user_status"]
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string | null
+          email: string
+          id: string
+          last_access?: string | null
+          name: string
+          organization_id?: string | null
+          phone?: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["user_status"]
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          last_access?: string | null
+          name?: string
+          organization_id?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["user_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_organization"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -22,6 +152,8 @@ export type Database = {
         | "contract_signature"
         | "pro_rata_payment"
         | "null"
+      user_role: "leadly_employee" | "admin" | "seller"
+      user_status: "active" | "inactive" | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
