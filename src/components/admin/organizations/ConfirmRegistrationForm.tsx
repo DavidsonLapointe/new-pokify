@@ -15,6 +15,7 @@ import { confirmRegistrationSchema, ConfirmRegistrationFormData } from "./types"
 import { PaymentForm } from "@/components/payment/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import type { StripeElementsOptions } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -107,8 +108,8 @@ export function ConfirmRegistrationForm({
     },
   };
 
-  const options = {
-    mode: 'payment',
+  const options: StripeElementsOptions = {
+    mode: 'payment' as const,
     amount: 1099,
     currency: 'brl',
     appearance,
