@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,8 +18,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
-// A chave pública do Stripe foi movida para as variáveis seguras do projeto
-const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
+// A chave pública do Stripe foi movida para as variáveis do projeto
+const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY ?? '');
 
 interface ConfirmRegistrationFormProps {
   organization: Organization;
@@ -28,9 +29,9 @@ interface ConfirmRegistrationFormProps {
 }
 
 const planPrices: Record<string, string> = {
-  basic: "price_basic123", // Substituir pelos IDs reais do Stripe
-  professional: "price_prof123",
-  enterprise: "price_enterprise123"
+  basic: process.env.STRIPE_PRICE_BASIC ?? '',
+  professional: process.env.STRIPE_PRICE_PROFESSIONAL ?? '',
+  enterprise: process.env.STRIPE_PRICE_ENTERPRISE ?? ''
 };
 
 export function ConfirmRegistrationForm({ 
