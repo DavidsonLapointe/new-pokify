@@ -41,7 +41,11 @@ export default function AppRoutes() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/auth" element={
+            <UserProvider>
+              <Auth />
+            </UserProvider>
+          } />
           <Route path="/confirm-registration" element={<ConfirmRegistration />} />
           <Route path="/contract" element={<Contract />} />
 
