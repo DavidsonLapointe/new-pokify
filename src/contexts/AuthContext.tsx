@@ -10,8 +10,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const publicRoutes = ['/', '/auth', '/confirm-registration', '/contract'];
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { session, loading } = useAuthSession();
+  const currentPath = window.location.pathname;
+  const isPublicRoute = publicRoutes.includes(currentPath);
+
+  // Se estiver em uma rota pública, renderiza normalmente independente da sessão
+  if (isPublicRoute) {
+    return (
+      <AuthContext.Provider value={{ session, loading }}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+
+  // Para rotas protegidas, redireciona se não houver sessão
+  if (!loading && !session && !isPublicRoute) {
+    window.location.href = '/';
+    return null;
+  }
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
