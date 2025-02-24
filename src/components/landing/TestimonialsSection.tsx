@@ -1,7 +1,14 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface Testimonial {
   name: string;
@@ -36,49 +43,43 @@ const testimonials: Testimonial[] = [
 ];
 
 export function TestimonialsSection() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  const nextTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
   return (
-    <section className="py-20">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-12">
           O que nossos clientes dizem
         </h2>
-        <div className="relative max-w-4xl mx-auto">
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <div className="flex items-center gap-4 mb-6">
-              <img
-                src={testimonials[currentTestimonial].image}
-                alt={testimonials[currentTestimonial].name}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-              <div>
-                <h4 className="font-semibold">{testimonials[currentTestimonial].name}</h4>
-                <p className="text-gray-600">{testimonials[currentTestimonial].role}</p>
-                <p className="text-gray-500">{testimonials[currentTestimonial].company}</p>
-              </div>
-            </div>
-            <p className="text-lg text-gray-700 mb-6">
-              "{testimonials[currentTestimonial].text}"
-            </p>
-            <div className="flex justify-center gap-4">
-              <Button variant="outline" size="icon" onClick={prevTestimonial}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon" onClick={nextTestimonial}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        
+        <Carousel className="max-w-5xl mx-auto">
+          <CarouselContent>
+            {testimonials.map((testimonial, index) => (
+              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <div className="bg-white p-6 rounded-xl shadow-lg mx-2 h-full">
+                  <div className="mb-4">
+                    <Quote className="h-8 w-8 text-primary/20" />
+                  </div>
+                  <p className="text-gray-700 mb-6 min-h-[100px]">
+                    "{testimonial.text}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div>
+                      <h4 className="font-semibold">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                      <p className="text-sm text-gray-500">{testimonial.company}</p>
+                    </div>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </section>
   );
