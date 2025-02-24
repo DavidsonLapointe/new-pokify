@@ -10,12 +10,13 @@ export const createProRataTitle = async (organization: Organization, proRataValu
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert([{
-        organization_id: organization.id,
+      .insert({
+        organization_id: organization.id.toString(),
         type: 'pro_rata',
-        value: proRataValue,
+        value: proRataValue.toString(),
         due_date: dueDate.toISOString(),
-      }])
+        status: 'pending'
+      })
       .select()
       .single();
 
@@ -42,13 +43,14 @@ export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert([{
-        organization_id: dto.organizationId,
+      .insert({
+        organization_id: dto.organizationId.toString(),
         type: 'mensalidade',
-        value: dto.value,
+        value: dto.value.toString(),
         due_date: dto.dueDate,
         reference_month: dto.referenceMonth,
-      }])
+        status: 'pending'
+      })
       .select()
       .single();
 
@@ -171,7 +173,7 @@ export const getOrganizationTitles = async (organizationId: string): Promise<Fin
       id: title.id,
       organizationId: title.organization_id,
       type: title.type,
-      value: title.value,
+      value: Number(title.value),
       dueDate: title.due_date,
       status: title.status,
       referenceMonth: title.reference_month,
@@ -206,7 +208,7 @@ export const getAllTitles = async (): Promise<FinancialTitle[]> => {
       id: title.id,
       organizationId: title.organization_id,
       type: title.type,
-      value: title.value,
+      value: Number(title.value),
       dueDate: title.due_date,
       status: title.status,
       referenceMonth: title.reference_month,
