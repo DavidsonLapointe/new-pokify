@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,6 +12,12 @@ import { PersonalDataSection } from "./form-sections/PersonalDataSection";
 import { PasswordSection } from "./form-sections/PasswordSection";
 import { AddressSection } from "./form-sections/AddressSection";
 import { confirmRegistrationSchema, ConfirmRegistrationFormData } from "./types";
+import { PaymentForm } from "@/components/payment/PaymentForm";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { createSubscription } from "@/services/subscriptionService";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface ConfirmRegistrationFormProps {
   organization: Organization;
@@ -19,12 +26,21 @@ interface ConfirmRegistrationFormProps {
   onShowPrivacyPolicy: () => void;
 }
 
+const planPrices: Record<string, string> = {
+  basic: "price_basic123", // Substituir pelos IDs reais do Stripe
+  professional: "price_prof123",
+  enterprise: "price_enterprise123"
+};
+
 export function ConfirmRegistrationForm({ 
   organization, 
   onSubmit,
   onShowTerms,
   onShowPrivacyPolicy 
 }: ConfirmRegistrationFormProps) {
+  const [paymentMethodId, setPaymentMethodId] = useState<string>();
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
     defaultValues: {
@@ -44,13 +60,58 @@ export function ConfirmRegistrationForm({
     }
   });
 
+  const handlePaymentMethodCreated = (pmId: string) => {
+    setPaymentMethodId(pmId);
+  };
+
   const handleSubmit = async (data: ConfirmRegistrationFormData) => {
     try {
-      await onSubmit(data);
-      toast.success("Cadastro confirmado com sucesso!");
+      setIsProcessing(true);
+
+      if (!paymentMethodId) {
+        toast.error("Por favor, adicione um método de pagamento válido.");
+        return;
+      }
+
+      // Criar assinatura no Stripe
+      const priceId = planPrices[organization.plan];
+      if (!priceId) {
+        toast.error("Plano inválido");
+        return;
+      }
+
+      const subscriptionResult = await createSubscription({
+        organizationId: organization.id.toString(),
+        paymentMethodId,
+        priceId
+      });
+
+      if (subscriptionResult.status === 'active') {
+        await onSubmit(data);
+        toast.success("Cadastro confirmado com sucesso!");
+      } else {
+        toast.error("Erro ao processar pagamento. Tente novamente.");
+      }
     } catch (error) {
+      console.error("Erro ao confirmar cadastro:", error);
       toast.error("Erro ao confirmar cadastro. Tente novamente.");
+    } finally {
+      setIsProcessing(false);
     }
+  };
+
+  const appearance = {
+    theme: 'stripe',
+    variables: {
+      colorPrimary: '#9b87f5',
+    },
+  };
+
+  const options = {
+    mode: 'payment',
+    amount: 1099,
+    currency: 'brl',
+    appearance,
   };
 
   return (
@@ -61,7 +122,13 @@ export function ConfirmRegistrationForm({
         <PasswordSection form={form} />
         <AddressSection form={form} />
 
-        {/* Termos de Uso */}
+        <Elements stripe={stripePromise} options={options}>
+          <PaymentForm 
+            onPaymentMethodCreated={handlePaymentMethodCreated}
+            isLoading={isProcessing}
+          />
+        </Elements>
+
         <FormField
           control={form.control}
           name="acceptTerms"
@@ -102,8 +169,9 @@ export function ConfirmRegistrationForm({
           <Button 
             type="submit"
             className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white font-medium px-8"
+            disabled={isProcessing}
           >
-            Confirmar Cadastro
+            {isProcessing ? "Processando..." : "Confirmar Cadastro"}
           </Button>
         </div>
       </form>
