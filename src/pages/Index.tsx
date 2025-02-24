@@ -98,17 +98,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header/Nav */}
       <header className="border-b fixed w-full bg-white/80 backdrop-blur-sm z-50">
-        <div className="max-w-screen-2xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto h-16 flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold">Leadly</h1>
-          <div className="flex-1 flex justify-end">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowLoginModal(true)}
-              className="mr-4"
-            >
-              Acessar Plataforma
-            </Button>
-          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setShowLoginModal(true)}
+            className="ml-auto"
+          >
+            Acessar Plataforma
+          </Button>
         </div>
       </header>
 
@@ -120,7 +118,7 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[700px] bg-gradient-to-br from-slate-50 to-blue-50 w-full">
-        <div className="max-w-screen-2xl mx-auto px-4">
+        <div className="max-w-screen-2xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 pt-32 pb-20 items-center">
             {/* Left Content */}
             <div className="space-y-8">
