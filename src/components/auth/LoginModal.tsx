@@ -92,9 +92,39 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         .update({ last_access: new Date().toISOString() })
         .eq('id', profile.id);
 
+      // Mapeia os dados da organização para o formato esperado
+      const organizationData = profile.organization ? {
+        id: parseInt(profile.organization.id, 10), // Converte UUID para número
+        name: profile.organization.name,
+        nomeFantasia: profile.organization.nome_fantasia || profile.organization.name,
+        plan: profile.organization.plan,
+        users: [], // Será preenchido posteriormente se necessário
+        status: profile.organization.status,
+        pendingReason: profile.organization.pending_reason || null,
+        integratedCRM: profile.organization.integrated_crm,
+        integratedLLM: profile.organization.integrated_llm,
+        email: profile.organization.email,
+        phone: profile.organization.phone || "",
+        cnpj: profile.organization.cnpj,
+        adminName: profile.organization.admin_name,
+        adminEmail: profile.organization.admin_email,
+        contractSignedAt: profile.organization.contract_signed_at,
+        createdAt: profile.organization.created_at || "",
+        logo: profile.organization.logo,
+        address: profile.organization.logradouro ? {
+          logradouro: profile.organization.logradouro,
+          numero: profile.organization.numero || "",
+          complemento: profile.organization.complemento || "",
+          bairro: profile.organization.bairro || "",
+          cidade: profile.organization.cidade || "",
+          estado: profile.organization.estado || "",
+          cep: profile.organization.cep || "",
+        } : undefined
+      } : null;
+
       // Atualiza o contexto do usuário
       updateUser({
-        id: profile.id,
+        id: parseInt(profile.id, 10), // Converte UUID para número
         name: profile.name,
         email: profile.email,
         phone: profile.phone || "",
@@ -104,7 +134,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         createdAt: profile.created_at || "",
         lastAccess: profile.last_access || "",
         logs: [],
-        organization: profile.organization,
+        organization: organizationData,
         avatar: profile.avatar || "",
       });
 
