@@ -1,110 +1,101 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
-import Stripe from 'https://esm.sh/stripe@13.10.0?target=deno'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { Stripe } from 'https://esm.sh/stripe@13.10.0'
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+  apiVersion: '2023-10-16',
+  httpClient: Stripe.createFetchHttpClient(),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    console.log('Iniciando setup do Stripe...');
-    
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
-      apiVersion: '2023-10-16',
-    });
+    // Criar os produtos para pacotes de créditos avulsos
+    const products = [
+      {
+        name: 'Pacote Inicial',
+        description: '100 créditos para análise de arquivos',
+        credits: 100,
+        price: 9990, // R$ 99,90 em centavos
+      },
+      {
+        name: 'Pacote Plus',
+        description: '500 créditos para análise de arquivos',
+        credits: 500,
+        price: 44990, // R$ 449,90 em centavos
+      },
+      {
+        name: 'Pacote Enterprise',
+        description: '1000 créditos para análise de arquivos',
+        credits: 1000,
+        price: 84990, // R$ 849,90 em centavos
+      }
+    ];
 
-    console.log('Verificando produtos existentes...');
+    const createdProducts = [];
 
-    // Buscar produtos existentes
-    const existingProducts = await stripe.products.list({
-      active: true,
-    });
+    for (const product of products) {
+      // Criar o produto no Stripe
+      const stripeProduct = await stripe.products.create({
+        name: product.name,
+        description: product.description,
+        metadata: {
+          credits: product.credits.toString(),
+          type: 'additional_credits'
+        },
+      });
 
-    // Arquivar produtos existentes
-    console.log('Arquivando produtos existentes...');
-    for (const product of existingProducts.data) {
-      await stripe.products.update(product.id, { active: false });
-      console.log(`Produto ${product.id} arquivado`);
+      // Criar o preço para o produto
+      const price = await stripe.prices.create({
+        product: stripeProduct.id,
+        unit_amount: product.price,
+        currency: 'brl',
+        metadata: {
+          credits: product.credits.toString()
+        }
+      });
+
+      createdProducts.push({
+        product: stripeProduct,
+        price: price
+      });
     }
 
-    console.log('Criando novos produtos...');
-
-    // Criar os produtos
-    const basicProduct = await stripe.products.create({
-      name: 'Pacote Básico',
-      description: '100 créditos de análise',
-      default_price_data: {
-        currency: 'brl',
-        unit_amount: 4990, // R$ 49,90
-      },
-      active: true,
-    });
-
-    console.log('Produto básico criado:', basicProduct.id);
-
-    const proProduct = await stripe.products.create({
-      name: 'Pacote Pro',
-      description: '500 créditos de análise',
-      default_price_data: {
-        currency: 'brl',
-        unit_amount: 19990, // R$ 199,90
-      },
-      active: true,
-    });
-
-    console.log('Produto pro criado:', proProduct.id);
-
-    const enterpriseProduct = await stripe.products.create({
-      name: 'Pacote Enterprise',
-      description: '2000 créditos de análise',
-      default_price_data: {
-        currency: 'brl',
-        unit_amount: 69990, // R$ 699,90
-      },
-      active: true,
-    });
-
-    console.log('Produto enterprise criado:', enterpriseProduct.id);
-
-    const response = {
-      basic: basicProduct,
-      pro: proProduct,
-      enterprise: enterpriseProduct
-    };
-
-    console.log('Todos os produtos criados com sucesso!');
-
     return new Response(
-      JSON.stringify(response),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-  } catch (error) {
-    console.error('Erro ao criar produtos:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        stack: error.stack 
+      JSON.stringify({
+        success: true,
+        products: createdProducts
       }),
       {
-        status: 500,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
+        status: 200,
       }
-    );
+    )
+  } catch (error) {
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+      }),
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+        status: 400,
+      }
+    )
   }
-});
+})
