@@ -19,6 +19,24 @@ const mockOrganization: Organization = {
   createdAt: "2024-01-01T00:00:00.000Z"
 };
 
+// Organização para usuários admin
+const orgDemo: Organization = {
+  id: 2,
+  name: "Organização Demo",
+  nomeFantasia: "Organização Demo",
+  plan: "Professional",
+  users: [],
+  status: "active",
+  integratedCRM: null,
+  integratedLLM: null,
+  email: "contato@organizacao.com",
+  phone: "(11) 99999-9999",
+  cnpj: "00.000.000/0000-01",
+  adminName: "Admin Organização",
+  adminEmail: "admin@organizacao.com",
+  createdAt: "2024-01-01T00:00:00.000Z"
+};
+
 // Usuário Leadly Ativo (Principal)
 const activeLeadlyEmployee: User = {
   id: 1,
@@ -100,11 +118,108 @@ const pendingLeadlyEmployee: User = {
   organization: mockOrganization
 };
 
+// Admin Ativo (Principal)
+const activeAdmin: User = {
+  id: 4,
+  name: "Ricardo Souza",
+  email: "ricardo.souza@organizacao.com",
+  phone: "(11) 97777-8888",
+  role: "admin",
+  status: "active",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: new Date().toISOString(),
+  permissions: [
+    "dashboard",
+    "dashboard.leads",
+    "dashboard.uploads",
+    "dashboard.performance",
+    "dashboard.objections",
+    "dashboard.suggestions",
+    "dashboard.sellers",
+    "leads",
+    "users",
+    "integrations",
+    "settings",
+    "plan",
+    "company",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
+// Admin Inativo
+const inactiveAdmin: User = {
+  id: 5,
+  name: "Paula Costa",
+  email: "paula.costa@organizacao.com",
+  phone: "(11) 96666-7777",
+  role: "admin",
+  status: "inactive",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: "2024-02-10T00:00:00.000Z",
+  permissions: [
+    "dashboard",
+    "dashboard.leads",
+    "dashboard.uploads",
+    "dashboard.performance",
+    "dashboard.objections",
+    "dashboard.suggestions",
+    "dashboard.sellers",
+    "leads",
+    "users",
+    "integrations",
+    "settings",
+    "plan",
+    "company",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
+// Admin Pendente
+const pendingAdmin: User = {
+  id: 6,
+  name: "Lucas Mendes",
+  email: "lucas.mendes@organizacao.com",
+  phone: "(11) 95555-6666",
+  role: "admin",
+  status: "pending",
+  createdAt: "2024-02-20T00:00:00.000Z",
+  lastAccess: "2024-02-20T00:00:00.000Z",
+  permissions: [
+    "dashboard",
+    "dashboard.leads",
+    "dashboard.uploads",
+    "dashboard.performance",
+    "dashboard.objections",
+    "dashboard.suggestions",
+    "dashboard.sellers",
+    "leads",
+    "users",
+    "integrations",
+    "settings",
+    "plan",
+    "company",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
 export const mockUsers: User[] = [
   activeLeadlyEmployee,
   inactiveLeadlyEmployee,
-  pendingLeadlyEmployee
+  pendingLeadlyEmployee,
+  activeAdmin,
+  inactiveAdmin,
+  pendingAdmin
 ];
 
-// Exporta o usuário ativo para ser usado como padrão
+// Exporta os usuários ativos para serem usados como padrão
 export const defaultActiveUser = activeLeadlyEmployee;
+export const defaultActiveOrgUser = activeAdmin;
