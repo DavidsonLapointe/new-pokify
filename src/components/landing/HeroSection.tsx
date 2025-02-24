@@ -47,8 +47,8 @@ export function HeroSection() {
           <div className="relative">
             <div className="relative animate-float">
               <img
-                src="/photo-1581091226825-a6a2a5aee158"
-                alt="Pessoa usando Leadly"
+                src="/lovable-uploads/817f098f-b9a1-4bd0-87f9-c523e1b33f53.png"
+                alt="Equipe de vendas trabalhando"
                 className="rounded-lg shadow-2xl"
               />
               <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg">
