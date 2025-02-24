@@ -4,6 +4,7 @@ import { User } from '@/types';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface UserContextType {
   user: User | null;
@@ -16,13 +17,13 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const loadUserProfile = async () => {
       if (!session?.user) {
-        console.log("No session found, redirecting to login");
+        console.log("No session found");
         setUser(null);
-        window.location.href = '/';
         return;
       }
 
@@ -30,7 +31,41 @@ export function UserProvider({ children }: { children: ReactNode }) {
         console.log("Loading user profile for:", session.user.id);
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('*, organizations (*)')
+          .select(`
+            id,
+            name,
+            email,
+            phone,
+            role,
+            status,
+            created_at,
+            last_access,
+            avatar,
+            organizations:organizations (
+              id,
+              name,
+              nome_fantasia,
+              status,
+              plan,
+              integrated_crm,
+              integrated_llm,
+              email,
+              phone,
+              cnpj,
+              admin_name,
+              admin_email,
+              contract_signed_at,
+              created_at,
+              logo,
+              logradouro,
+              numero,
+              complemento,
+              bairro,
+              cidade,
+              estado,
+              cep
+            )
+          `)
           .eq('id', session.user.id)
           .single();
 
@@ -51,7 +86,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
             status: profile.status || 'active',
             createdAt: profile.created_at,
             lastAccess: profile.last_access,
-            // Definindo permissões baseadas no papel do usuário
             permissions: profile.role === 'leadly_employee' ? [
               'dashboard',
               'organizations',
@@ -101,12 +135,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error('Error loading user profile:', error);
         toast.error('Erro ao carregar perfil do usuário');
-        window.location.href = '/';
+        // Em caso de erro, faça logout e redirecione para a página inicial
+        await supabase.auth.signOut();
+        setUser(null);
+        navigate('/', { replace: true });
       }
     };
 
     loadUserProfile();
-  }, [session]);
+  }, [session, navigate]);
 
   const updateUser = async (newUser: User) => {
     try {
@@ -137,7 +174,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
 
       setUser(null);
-      window.location.href = '/';
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Error during logout:', error);
       toast.error('Erro ao fazer logout');
