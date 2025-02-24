@@ -10,8 +10,10 @@ import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { mockUsers } from "@/types";
+import { useUser } from "@/contexts/UserContext";
 
 const OrganizationDashboard = () => {
+  const { user } = useUser();
   const {
     monthStats,
     dailyLeadsData,
@@ -55,6 +57,24 @@ const OrganizationDashboard = () => {
     setMonthlySuggestionsSeller,
   } = useDashboardData();
 
+  // Define as tabs disponíveis e suas permissões necessárias
+  const availableTabs = [
+    { id: "leads", label: "Leads", permission: "dashboard.leads" },
+    { id: "calls", label: "Uploads", permission: "dashboard.uploads" },
+    { id: "sellers", label: "Performance Vendedores", permission: "dashboard.performance" },
+    { id: "objections", label: "Objeções", permission: "dashboard.objections" },
+    { id: "suggestions", label: "Sugestões", permission: "dashboard.suggestions" },
+    { id: "sellers-info", label: "Vendedores", permission: "dashboard.sellers" }
+  ];
+
+  // Filtra as tabs baseado nas permissões do usuário
+  const userTabs = availableTabs.filter(tab => 
+    user.permissions.includes(tab.permission)
+  );
+
+  // Define a primeira tab disponível como padrão
+  const defaultTab = userTabs[0]?.id || "leads";
+
   return (
     <div className="space-y-6">
       <div>
@@ -64,103 +84,114 @@ const OrganizationDashboard = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="leads" className="space-y-4">
+      <Tabs defaultValue={defaultTab} className="space-y-4">
         <TabsList>
-          <TabsTrigger value="leads">Leads</TabsTrigger>
-          <TabsTrigger value="calls">Uploads</TabsTrigger>
-          <TabsTrigger value="sellers">Performance Vendedores</TabsTrigger>
-          <TabsTrigger value="objections">Objeções</TabsTrigger>
-          <TabsTrigger value="suggestions">Sugestões</TabsTrigger>
-          <TabsTrigger value="sellers-info">Vendedores</TabsTrigger>
+          {userTabs.map(tab => (
+            <TabsTrigger key={tab.id} value={tab.id}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
         
-        <TabsContent value="leads">
-          <LeadsTabContent
-            monthStats={monthStats}
-            monthlyLeadsData={monthlyLeadsData}
-            dailyLeadsData={dailyLeadsData}
-            monthlyLeadsDate={monthlyLeadsDate}
-            setMonthlyLeadsDate={setMonthlyLeadsDate}
-            dailyLeadsDate={dailyLeadsDate}
-            setDailyLeadsDate={setDailyLeadsDate}
-            monthlyLeadsSeller={monthlyLeadsSeller}
-            setMonthlyLeadsSeller={setMonthlyLeadsSeller}
-            dailyLeadsSeller={dailyLeadsSeller}
-            setDailyLeadsSeller={setDailyLeadsSeller}
-            sellers={mockUsers}
-          />
-        </TabsContent>
-
-        <TabsContent value="calls" className="space-y-6">
-          <CallsStats
-            total={monthStats.total}
-            processed={monthStats.processed}
-            failed={monthStats.failed}
-            subtitle="Total acumulado desde o início"
-          />
-          <div className="grid gap-6">
-            <DailyCallsChart 
-              data={monthlyCallsData}
-              isMonthly={true}
-              selectedSeller={monthlyCallsSeller}
-              onSellerChange={setMonthlyCallsSeller}
+        {user.permissions.includes("dashboard.leads") && (
+          <TabsContent value="leads">
+            <LeadsTabContent
+              monthStats={monthStats}
+              monthlyLeadsData={monthlyLeadsData}
+              dailyLeadsData={dailyLeadsData}
+              monthlyLeadsDate={monthlyLeadsDate}
+              setMonthlyLeadsDate={setMonthlyLeadsDate}
+              dailyLeadsDate={dailyLeadsDate}
+              setDailyLeadsDate={setDailyLeadsDate}
+              monthlyLeadsSeller={monthlyLeadsSeller}
+              setMonthlyLeadsSeller={setMonthlyLeadsSeller}
+              dailyLeadsSeller={dailyLeadsSeller}
+              setDailyLeadsSeller={setDailyLeadsSeller}
               sellers={mockUsers}
             />
-            <DailyCallsChart 
-              data={dailyCallsData}
-              selectedDate={callsDate}
-              onDateChange={setCallsDate}
-              selectedSeller={dailyCallsSeller}
-              onSellerChange={setDailyCallsSeller}
+          </TabsContent>
+        )}
+
+        {user.permissions.includes("dashboard.uploads") && (
+          <TabsContent value="calls" className="space-y-6">
+            <CallsStats
+              total={monthStats.total}
+              processed={monthStats.processed}
+              failed={monthStats.failed}
+              subtitle="Total acumulado desde o início"
+            />
+            <div className="grid gap-6">
+              <DailyCallsChart 
+                data={monthlyCallsData}
+                isMonthly={true}
+                selectedSeller={monthlyCallsSeller}
+                onSellerChange={setMonthlyCallsSeller}
+                sellers={mockUsers}
+              />
+              <DailyCallsChart 
+                data={dailyCallsData}
+                selectedDate={callsDate}
+                onDateChange={setCallsDate}
+                selectedSeller={dailyCallsSeller}
+                onSellerChange={setDailyCallsSeller}
+                sellers={mockUsers}
+              />
+            </div>
+          </TabsContent>
+        )}
+
+        {user.permissions.includes("dashboard.performance") && (
+          <TabsContent value="sellers" className="space-y-6">
+            <div className="grid gap-6">
+              <DailyPerformanceChart 
+                data={dailyPerformanceData}
+                selectedMetric={dailyMetric}
+                onMetricChange={setDailyMetric}
+              />
+              <MonthlyPerformanceChart 
+                data={monthlyPerformanceData}
+                selectedMetric={monthlyMetric}
+                onMetricChange={setMonthlyMetric}
+              />
+            </div>
+          </TabsContent>
+        )}
+
+        {user.permissions.includes("dashboard.objections") && (
+          <TabsContent value="objections" className="space-y-6">
+            <ObjectionsTabContent
+              objectionsData={objectionsData}
+              objectionTrendsData={objectionTrendsData}
+              objectionExamples={objectionExamples}
+              monthlyObjectionsDate={monthlyObjectionsDate}
+              setMonthlyObjectionsDate={setMonthlyObjectionsDate}
+              monthlyObjectionsSeller={monthlyObjectionsSeller}
+              setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
+              objectionTrendsSeller={objectionTrendsSeller}
+              setObjectionTrendsSeller={setObjectionTrendsSeller}
               sellers={mockUsers}
             />
-          </div>
-        </TabsContent>
+          </TabsContent>
+        )}
 
-        <TabsContent value="sellers" className="space-y-6">
-          <div className="grid gap-6">
-            <DailyPerformanceChart 
-              data={dailyPerformanceData}
-              selectedMetric={dailyMetric}
-              onMetricChange={setDailyMetric}
+        {user.permissions.includes("dashboard.suggestions") && (
+          <TabsContent value="suggestions" className="space-y-6">
+            <SuggestionsTabContent
+              suggestions={suggestionsData}
+              monthlySuggestionsDate={monthlySuggestionsDate}
+              setMonthlySuggestionsDate={setMonthlySuggestionsDate}
+              monthlySuggestionsSeller={monthlySuggestionsSeller}
+              setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
+              sellers={mockUsers}
             />
-            <MonthlyPerformanceChart 
-              data={monthlyPerformanceData}
-              selectedMetric={monthlyMetric}
-              onMetricChange={setMonthlyMetric}
-            />
-          </div>
-        </TabsContent>
+          </TabsContent>
+        )}
 
-        <TabsContent value="objections" className="space-y-6">
-          <ObjectionsTabContent
-            objectionsData={objectionsData}
-            objectionTrendsData={objectionTrendsData}
-            objectionExamples={objectionExamples}
-            monthlyObjectionsDate={monthlyObjectionsDate}
-            setMonthlyObjectionsDate={setMonthlyObjectionsDate}
-            monthlyObjectionsSeller={monthlyObjectionsSeller}
-            setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
-            objectionTrendsSeller={objectionTrendsSeller}
-            setObjectionTrendsSeller={setObjectionTrendsSeller}
-            sellers={mockUsers}
-          />
-        </TabsContent>
-
-        <TabsContent value="suggestions" className="space-y-6">
-          <SuggestionsTabContent
-            suggestions={suggestionsData}
-            monthlySuggestionsDate={monthlySuggestionsDate}
-            setMonthlySuggestionsDate={setMonthlySuggestionsDate}
-            monthlySuggestionsSeller={monthlySuggestionsSeller}
-            setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-            sellers={mockUsers}
-          />
-        </TabsContent>
-
-        <TabsContent value="sellers-info">
-          <SellersTabContent sellers={mockUsers} />
-        </TabsContent>
+        {user.permissions.includes("dashboard.sellers") && (
+          <TabsContent value="sellers-info">
+            <SellersTabContent sellers={mockUsers} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
