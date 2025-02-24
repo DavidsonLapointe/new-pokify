@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { leadFormSchema, LeadFormData } from "@/schemas/leadFormSchema";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UseLeadFormProps {
   hasPhoneIntegration: boolean;
@@ -70,7 +71,7 @@ export const useLeadForm = ({
     form.setValue(field, value);
   };
 
-  const onSubmit = (data: LeadFormData) => {
+  const onSubmit = async (data: LeadFormData) => {
     if (!data.phone && !data.email) {
       toast({
         variant: "destructive",
@@ -80,14 +81,58 @@ export const useLeadForm = ({
       return;
     }
 
-    onCreateLead(data);
-    form.reset();
-    onSuccess?.();
-    
-    toast({
-      title: "Lead criado com sucesso",
-      description: "Você já pode iniciar o contato.",
-    });
+    try {
+      // Obter o organization_id do usuário logado
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .single();
+
+      if (profileError) throw profileError;
+
+      const { error } = await supabase
+        .from('organization_leads')
+        .insert({
+          organization_id: profileData.organization_id,
+          person_type: data.personType,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          razao_social: data.razaoSocial,
+          nome_fantasia: data.nomeFantasia,
+          email: data.email,
+          phone: data.phone,
+          cpf: data.cpf,
+          cnpj: data.cnpj,
+          logradouro: data.logradouro,
+          numero: data.numero,
+          complemento: data.complemento,
+          bairro: data.bairro,
+          cidade: data.cidade,
+          estado: data.estado,
+          cep: data.cep,
+          status: 'pending',
+          temperature: 0,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        });
+
+      if (error) throw error;
+
+      onCreateLead(data);
+      form.reset();
+      onSuccess?.();
+      
+      toast({
+        title: "Lead criado com sucesso",
+        description: "Você já pode iniciar o contato.",
+      });
+    } catch (error) {
+      console.error('Erro ao criar lead:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao criar lead",
+        description: "Ocorreu um erro ao tentar criar o lead. Por favor, tente novamente.",
+      });
+    }
   };
 
   return {
