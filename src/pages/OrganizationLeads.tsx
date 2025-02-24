@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -63,7 +62,6 @@ const OrganizationLeads = () => {
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
   const [currentCalls, setCurrentCalls] = useState(mockCalls);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);
@@ -110,11 +108,6 @@ const OrganizationLeads = () => {
     pending: 0
   };
 
-  const handleSort = () => {
-    const nextOrder = sortOrder === 'asc' ? 'desc' : sortOrder === 'desc' ? null : 'asc';
-    setSortOrder(nextOrder);
-  };
-
   return (
     <TooltipProvider>
       <div className="space-y-8">
@@ -134,8 +127,6 @@ const OrganizationLeads = () => {
           onPlayAudio={handlePlayAudio}
           onViewAnalysis={handleViewAnalysis}
           formatDate={formatDate}
-          sortOrder={sortOrder}
-          onSort={handleSort}
         />
 
         <CallAnalysisDialog
