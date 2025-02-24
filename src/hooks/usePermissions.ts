@@ -5,6 +5,16 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 export const usePermissions = (user: User) => {
   const isAdminRoute = window.location.pathname.startsWith('/admin');
 
+  const normalizePermissions = (permissions: any): string[] => {
+    if (Array.isArray(permissions)) {
+      return permissions;
+    }
+    if (typeof permissions === 'object' && permissions !== null) {
+      return Object.keys(permissions);
+    }
+    return [];
+  };
+
   const hasRoutePermission = (routeId: string): boolean => {
     console.log("\n=== Verificando Permissão ===");
     console.log("Rota solicitada:", routeId);
@@ -23,25 +33,11 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Se for ambiente da organização
-    if (!isAdminRoute) {
-      // Extrai as permissões independente do formato
-      const permissions = Array.isArray(user.permissions)
-        ? user.permissions
-        : Object.keys(user.permissions);
+    // Normaliza as permissões para array
+    const permissions = normalizePermissions(user.permissions);
+    console.log('Permissões normalizadas:', permissions);
 
-      console.log('Permissões extraídas:', permissions);
-      const hasPermission = permissions.includes(routeId);
-      console.log(`Tem permissão para ${routeId}?`, hasPermission);
-      return hasPermission;
-    }
-
-    // Para ambiente administrativo
-    const adminPermissions = Array.isArray(user.permissions)
-      ? user.permissions
-      : Object.keys(user.permissions);
-    console.log('Permissões administrativas:', adminPermissions);
-    const hasPermission = adminPermissions.includes(routeId);
+    const hasPermission = permissions.includes(routeId);
     console.log(`Tem permissão para ${routeId}?`, hasPermission);
     return hasPermission;
   };
@@ -49,11 +45,9 @@ export const usePermissions = (user: User) => {
   const getUserPermissions = () => {
     let routes: string[] = [];
 
-    // Extrai as permissões independente do formato
+    // Normaliza as permissões independente do formato
     if (user?.permissions) {
-      routes = Array.isArray(user.permissions)
-        ? [...user.permissions]
-        : Object.keys(user.permissions);
+      routes = normalizePermissions(user.permissions);
     }
 
     // Adiciona profile se não existir
