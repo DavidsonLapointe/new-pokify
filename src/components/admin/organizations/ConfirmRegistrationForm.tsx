@@ -19,7 +19,7 @@ import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
 // A chave pública do Stripe foi movida para as variáveis do projeto
-const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY ?? '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY ?? '');
 
 interface ConfirmRegistrationFormProps {
   organization: Organization;
@@ -29,9 +29,9 @@ interface ConfirmRegistrationFormProps {
 }
 
 const planPrices: Record<string, string> = {
-  basic: process.env.STRIPE_PRICE_BASIC ?? '',
-  professional: process.env.STRIPE_PRICE_PROFESSIONAL ?? '',
-  enterprise: process.env.STRIPE_PRICE_ENTERPRISE ?? ''
+  basic: import.meta.env.VITE_STRIPE_PRICE_BASIC ?? '',
+  professional: import.meta.env.VITE_STRIPE_PRICE_PROFESSIONAL ?? '',
+  enterprise: import.meta.env.VITE_STRIPE_PRICE_ENTERPRISE ?? ''
 };
 
 export function ConfirmRegistrationForm({ 
