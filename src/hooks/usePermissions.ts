@@ -14,13 +14,8 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Verifica se é um objeto de permissões (admin) ou um array (org)
-    if (Array.isArray(user.permissions)) {
-      return user.permissions.includes(routeId);
-    } else {
-      // Para usuários admin, verifica se a rota existe nas permissões
-      return routeId in user.permissions;
-    }
+    // Simplifica a verificação para usar diretamente o array de permissões
+    return user.permissions.includes(routeId);
   };
 
   const getUserPermissions = () => {
@@ -31,13 +26,7 @@ export const usePermissions = (user: User) => {
 
     // Adiciona outras rotas que o usuário tem permissão
     if (user?.permissions) {
-      if (Array.isArray(user.permissions)) {
-        // Para usuários da organização
-        routes.push(...user.permissions);
-      } else {
-        // Para usuários admin
-        routes.push(...Object.keys(user.permissions));
-      }
+      routes.push(...user.permissions);
     }
 
     console.log('Rotas permitidas:', routes);

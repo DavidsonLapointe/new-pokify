@@ -82,7 +82,7 @@ export const UserPermissionsDialog = ({
                     onPermissionChange={handlePermissionChange}
                   />
 
-                  {route.id === 'dashboard' && (
+                  {route.id === 'dashboard' && hasPermissions && (
                     <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
                       <div className="grid grid-cols-2 gap-4">
                         {dashboardTabs.map((tab) => (
