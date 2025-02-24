@@ -35,7 +35,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         if (profile) {
           const userData: User = {
-            id: String(profile.id),
+            id: Number(profile.id),
             name: profile.name || '',
             email: profile.email || '',
             phone: profile.phone || '',
@@ -46,7 +46,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             permissions: [],
             logs: [],
             organization: {
-              id: String(profile.organizations?.id || ''),
+              id: Number(profile.organizations?.id || 0),
               name: profile.organizations?.name || '',
               status: profile.organizations?.status || 'active',
               nomeFantasia: profile.organizations?.nome_fantasia || '',
