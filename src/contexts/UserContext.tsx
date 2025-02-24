@@ -38,7 +38,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       "integrations",
       "settings",
       "plan",
-      "company",
+      "company", // Garantindo que a permissão 'company' está presente
       "profile"
     ],
     logs: [
