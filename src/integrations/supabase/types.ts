@@ -9,6 +9,85 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      credit_balances: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          total_credits: number
+          updated_at: string
+          used_credits: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          total_credits?: number
+          updated_at?: string
+          used_credits?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          total_credits?: number
+          updated_at?: string
+          used_credits?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_balances_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          credits: number
+          id: string
+          organization_id: string
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_product_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          credits: number
+          id?: string
+          organization_id: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_product_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          organization_id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_purchases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           created_at: string
