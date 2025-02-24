@@ -15,7 +15,7 @@ import { confirmRegistrationSchema, ConfirmRegistrationFormData } from "./types"
 import { PaymentForm } from "@/components/payment/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import type { StripeElementsOptions } from "@stripe/stripe-js";
+import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -101,8 +101,8 @@ export function ConfirmRegistrationForm({
     }
   };
 
-  const appearance = {
-    theme: 'stripe',
+  const appearance: Appearance = {
+    theme: 'stripe' as const,
     variables: {
       colorPrimary: '#9b87f5',
     },
