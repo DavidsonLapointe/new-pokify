@@ -48,15 +48,29 @@ export function UserProvider({ children }: { children: ReactNode }) {
             organization: {
               id: Number(profile.organizations?.id || 0),
               name: profile.organizations?.name || '',
-              status: profile.organizations?.status || 'active',
               nomeFantasia: profile.organizations?.nome_fantasia || '',
+              status: profile.organizations?.status || 'active',
+              plan: profile.organizations?.plan || '',
               users: [],
-              integratedCRM: null,
-              integratedLLM: null,
-              subscriptionStatus: 'inactive',
-              nextPayment: null,
-              currentPlan: null,
-              credits: 0
+              integratedCRM: profile.organizations?.integrated_crm || null,
+              integratedLLM: profile.organizations?.integrated_llm || null,
+              email: profile.organizations?.email || '',
+              phone: profile.organizations?.phone || '',
+              cnpj: profile.organizations?.cnpj || '',
+              adminName: profile.organizations?.admin_name || '',
+              adminEmail: profile.organizations?.admin_email || '',
+              contractSignedAt: profile.organizations?.contract_signed_at || undefined,
+              createdAt: profile.organizations?.created_at || '',
+              logo: profile.organizations?.logo,
+              address: profile.organizations?.logradouro ? {
+                logradouro: profile.organizations.logradouro || '',
+                numero: profile.organizations.numero || '',
+                complemento: profile.organizations.complemento || '',
+                bairro: profile.organizations.bairro || '',
+                cidade: profile.organizations.cidade || '',
+                estado: profile.organizations.estado || '',
+                cep: profile.organizations.cep || ''
+              } : undefined
             },
             avatar: profile.avatar || '',
           };
