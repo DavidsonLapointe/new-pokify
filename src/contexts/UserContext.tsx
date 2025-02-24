@@ -39,10 +39,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
             name: profile.name || '',
             email: profile.email || '',
             phone: profile.phone || '',
-            role: profile.role || 'user',
+            role: profile.role || 'leadly_employee',
             status: profile.status || 'active',
-            createdAt: profile.created_at || '',
-            lastAccess: profile.last_access || '',
+            createdAt: new Date(profile.created_at).getTime(),
+            lastAccess: new Date(profile.last_access).getTime(),
             permissions: [],
             logs: [],
             organization: {
