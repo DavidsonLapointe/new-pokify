@@ -3,10 +3,6 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import Stripe from 'https://esm.sh/stripe@13.10.0?target=deno'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
-  apiVersion: '2023-10-16',
-});
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -19,7 +15,14 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Iniciando criação de produtos...');
+    console.log('Iniciando setup do Stripe...');
+    console.log('STRIPE_SECRET_KEY:', Deno.env.get('STRIPE_SECRET_KEY')?.slice(-10)); // Mostra apenas os últimos 10 caracteres por segurança
+
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+      apiVersion: '2023-10-16',
+    });
+
+    console.log('Criando produtos no Stripe...');
 
     // Criar os produtos
     const basicProduct = await stripe.products.create({
@@ -32,6 +35,8 @@ serve(async (req) => {
       active: true,
     });
 
+    console.log('Produto básico criado:', basicProduct.id);
+
     const proProduct = await stripe.products.create({
       name: 'Pacote Pro',
       description: '500 créditos de análise',
@@ -41,6 +46,8 @@ serve(async (req) => {
       },
       active: true,
     });
+
+    console.log('Produto pro criado:', proProduct.id);
 
     const enterpriseProduct = await stripe.products.create({
       name: 'Pacote Enterprise',
@@ -52,18 +59,18 @@ serve(async (req) => {
       active: true,
     });
 
-    console.log('Produtos criados com sucesso:', {
+    console.log('Produto enterprise criado:', enterpriseProduct.id);
+
+    const response = {
       basic: basicProduct,
       pro: proProduct,
       enterprise: enterpriseProduct
-    });
+    };
+
+    console.log('Todos os produtos criados com sucesso!');
 
     return new Response(
-      JSON.stringify({
-        basic: basicProduct,
-        pro: proProduct,
-        enterprise: enterpriseProduct
-      }),
+      JSON.stringify(response),
       {
         headers: {
           ...corsHeaders,
@@ -74,7 +81,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Erro ao criar produtos:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        stack: error.stack 
+      }),
       {
         status: 500,
         headers: {
