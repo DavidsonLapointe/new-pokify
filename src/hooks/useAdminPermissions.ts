@@ -50,16 +50,8 @@ export const useAdminPermissions = (user: User) => {
     const tabs: { [routeId: string]: string[] } = {};
     
     routes.forEach(routeId => {
-      if (routeId === 'profile') {
-        // Para profile, permite todas as tabs
-        const profileTabs = availableAdminRoutePermissions
-          .find(r => r.id === 'profile')
-          ?.tabs?.map(t => t.value) || [];
-        if (profileTabs.length > 0) {
-          tabs[routeId] = profileTabs;
-        }
-      } else if (user?.permissions?.[routeId]) {
-        // Para outras rotas, usa as permissões do usuário
+      if (user?.permissions?.[routeId]) {
+        // Para todas as rotas, usa as permissões do usuário
         tabs[routeId] = user.permissions[routeId];
       }
     });
