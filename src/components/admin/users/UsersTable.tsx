@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -10,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@/types";
-import { PencilIcon, LockIcon } from "lucide-react";
+import { UserCircle, Mail, PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
@@ -60,21 +59,24 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableRow key={user.id}>
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="bg-primary/10">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback className="bg-[#9b87f5] text-white">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="font-medium">{user.name}</div>
-                    <div className="text-sm text-muted-foreground">{user.email}</div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Mail className="w-3 h-3" />
+                      {user.email}
+                    </div>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
                 <span className="capitalize">
-                  {"Funcionário Leadly"}
+                  {user.role === "leadly_employee" ? "Funcionário Leadly" : user.role === "admin" ? "Administrador" : "Vendedor"}
                 </span>
               </TableCell>
               <TableCell>

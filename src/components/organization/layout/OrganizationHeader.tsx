@@ -30,7 +30,9 @@ export const OrganizationHeader = ({ user, getInitials }: OrganizationHeaderProp
           <p className="text-sm font-medium text-white">{user.name}</p>
           <Avatar className="h-10 w-10">
             <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+            <AvatarFallback className="bg-white text-[#9b87f5]">
+              {getInitials(user.name)}
+            </AvatarFallback>
           </Avatar>
         </div>
       </div>
