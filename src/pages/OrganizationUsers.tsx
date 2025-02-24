@@ -30,4 +30,65 @@ const OrganizationUsers = () => {
     setIsEditDialogOpen(true);
   };
 
-  const
+  const handleEditPermissions = (user: User) => {
+    setSelectedUser(user);
+    setIsPermissionsDialogOpen(true);
+  };
+
+  const handleUserUpdate = (updatedUser: User) => {
+    const updatedUsers = users.map((user) =>
+      user.id === updatedUser.id ? updatedUser : user
+    );
+    setUsers(updatedUsers);
+    setIsEditDialogOpen(false);
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Usuários</h1>
+          <p className="text-muted-foreground">
+            Gerencie os usuários da sua organização
+          </p>
+        </div>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
+          <UserPlus className="w-4 h-4 mr-2" />
+          Novo Usuário
+        </Button>
+      </div>
+
+      <UsersTable
+        users={users}
+        onEditUser={handleEditUser}
+        onEditPermissions={handleEditPermissions}
+      />
+
+      <AddUserDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onUserAdded={handleAddUser}
+      />
+
+      {selectedUser && (
+        <>
+          <EditUserDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => setIsEditDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
+
+          <UserPermissionsDialog
+            isOpen={isPermissionsDialogOpen}
+            onClose={() => setIsPermissionsDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default OrganizationUsers;
