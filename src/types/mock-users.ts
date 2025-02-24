@@ -1,4 +1,3 @@
-
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -211,13 +210,79 @@ const pendingAdmin: User = {
   organization: orgDemo
 };
 
+// Seller (Vendedor) Ativo
+const activeSeller: User = {
+  id: 7,
+  name: "Pedro Santos",
+  email: "pedro.santos@organizacao.com",
+  phone: "(11) 94444-5555",
+  role: "seller",
+  status: "active",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: new Date().toISOString(),
+  permissions: [
+    "dashboard.leads",
+    "dashboard.performance",
+    "leads",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
+// Seller (Vendedor) Inativo
+const inactiveSeller: User = {
+  id: 8,
+  name: "Carla Lima",
+  email: "carla.lima@organizacao.com",
+  phone: "(11) 93333-4444",
+  role: "seller",
+  status: "inactive",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  lastAccess: "2024-02-05T00:00:00.000Z",
+  permissions: [
+    "dashboard.leads",
+    "dashboard.performance",
+    "leads",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
+// Seller (Vendedor) Pendente
+const pendingSeller: User = {
+  id: 9,
+  name: "Bruno Costa",
+  email: "bruno.costa@organizacao.com",
+  phone: "(11) 92222-3333",
+  role: "seller",
+  status: "pending",
+  createdAt: "2024-02-20T00:00:00.000Z",
+  lastAccess: "2024-02-20T00:00:00.000Z",
+  permissions: [
+    "dashboard.leads",
+    "dashboard.performance",
+    "leads",
+    "profile"
+  ],
+  logs: [],
+  avatar: "",
+  organization: orgDemo
+};
+
 export const mockUsers: User[] = [
   activeLeadlyEmployee,
   inactiveLeadlyEmployee,
   pendingLeadlyEmployee,
   activeAdmin,
   inactiveAdmin,
-  pendingAdmin
+  pendingAdmin,
+  activeSeller,
+  inactiveSeller,
+  pendingSeller
 ];
 
 // Exporta os usuários ativos para serem usados como padrão
