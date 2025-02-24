@@ -18,8 +18,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
-// Exemplo: Se sua chave é pk_test_51AbCdEfGhIjKlMnO, substitua abaixo:
-const STRIPE_PUBLIC_KEY = 'pk_test_51AbCdEfGhIjKlMnO';
+// Agora você pode substituir esta chave pela sua chave real do Stripe que você copiou
+const STRIPE_PUBLIC_KEY = 'sua_chave_publica_aqui';
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
 interface ConfirmRegistrationFormProps {
