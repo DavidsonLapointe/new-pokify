@@ -1,15 +1,16 @@
 
-import { BrowserRouter } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import { UserProvider } from "./contexts/UserContext";
-import Routes from "./Routes";
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import Routes from './Routes';
+import { UserProvider } from './contexts/UserContext';
+import './App.css';
 
 function App() {
   return (
     <BrowserRouter>
       <UserProvider>
         <Routes />
-        <Toaster />
+        <Toaster position="top-right" richColors />
       </UserProvider>
     </BrowserRouter>
   );
