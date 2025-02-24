@@ -15,7 +15,7 @@ export default function Auth() {
   // Se já estiver autenticado, redireciona
   if (user) {
     // Verifica se é admin para redirecionar corretamente
-    const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
+    const redirectTo = user.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
     return <Navigate to={redirectTo} replace />;
   }
 
