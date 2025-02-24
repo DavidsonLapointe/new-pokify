@@ -23,113 +23,38 @@ export const AdminUserPermissionsDialog = ({
   onUserUpdate,
 }: AdminUserPermissionsDialogProps) => {
   const { user: currentUser, updateUser: updateCurrentUser } = useUser();
-  const [selectedPermissions, setSelectedPermissions] = useState<{
-    [key: string]: string[];
-  }>(user.permissions || {});
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(user.permissions || []);
 
-  // Atualiza o estado quando o modal abre ou o usuário muda
   useEffect(() => {
     if (isOpen) {
       console.log("Permissões iniciais:", user.permissions);
-      // Garante que todas as permissões usam hífen
-      const normalizedPermissions: { [key: string]: string[] } = {};
-      Object.entries(user.permissions || {}).forEach(([key, value]) => {
-        const normalizedKey = key.replace(/_/g, '-');
-        normalizedPermissions[normalizedKey] = value;
-      });
-      setSelectedPermissions(normalizedPermissions);
+      setSelectedPermissions(user.permissions || []);
     }
   }, [isOpen, user]);
 
-  const handleSectionPermissionChange = (routeId: string, checked: boolean) => {
-    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-    if (!route || routeId === 'profile') return;
-
-    setSelectedPermissions(prev => {
-      const newPermissions = { ...prev };
-      if (checked) {
-        // Ativa todas as permissões da seção
-        newPermissions[routeId] = route.tabs?.map(tab => tab.value) || [];
-      } else {
-        // Remove todas as permissões da seção
-        delete newPermissions[routeId];
-      }
-      console.log(`Alterando permissões da seção ${routeId}:`, newPermissions);
-      return newPermissions;
-    });
-  };
-
-  const handlePermissionChange = (routeId: string, tabValue: string) => {
+  const handlePermissionChange = (routeId: string) => {
     if (routeId === 'profile') return;
 
     setSelectedPermissions(prev => {
-      const currentPermissions = [...(prev[routeId] || [])];
-      const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-      
-      if (currentPermissions.includes(tabValue)) {
-        // Remove a permissão
-        const newPermissions = currentPermissions.filter(p => p !== tabValue);
-        
-        if (newPermissions.length === 0) {
-          const { [routeId]: _, ...rest } = prev;
-          console.log(`Removendo todas as permissões de ${routeId}`);
-          return rest;
-        }
-        
-        return {
-          ...prev,
-          [routeId]: newPermissions
-        };
+      if (prev.includes(routeId)) {
+        return prev.filter(p => p !== routeId);
       } else {
-        // Adiciona a permissão
-        return {
-          ...prev,
-          [routeId]: [...currentPermissions, tabValue]
-        };
+        return [...prev, routeId];
       }
     });
-  };
-
-  const isSectionFullyChecked = (routeId: string): boolean => {
-    if (routeId === 'profile') return true;
-    
-    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-    if (!route?.tabs) return false;
-
-    const normalizedRouteId = routeId.replace(/_/g, '-');
-    const currentPermissions = selectedPermissions[normalizedRouteId] || [];
-    return route.tabs.every(tab => currentPermissions.includes(tab.value));
-  };
-
-  const isSectionPartiallyChecked = (routeId: string): boolean => {
-    if (routeId === 'profile') return false;
-    
-    const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-    if (!route?.tabs) return false;
-
-    const normalizedRouteId = routeId.replace(/_/g, '-');
-    const currentPermissions = selectedPermissions[normalizedRouteId] || [];
-    const hasAny = route.tabs.some(tab => currentPermissions.includes(tab.value));
-    return hasAny && !isSectionFullyChecked(routeId);
-  };
-
-  const isTabChecked = (routeId: string, tabValue: string): boolean => {
-    const normalizedRouteId = routeId.replace(/_/g, '-');
-    return (selectedPermissions[normalizedRouteId] || []).includes(tabValue);
   };
 
   const handleSave = () => {
     try {
-      // Garante que as permissões do perfil estão sempre presentes
-      const profileRoute = availableAdminRoutePermissions.find(r => r.id === 'profile');
-      const profilePermissions = profileRoute?.tabs?.map(tab => tab.value) || [];
+      // Garante que as rotas padrão estão sempre presentes
+      let updatedPermissions = [...selectedPermissions];
+      if (!updatedPermissions.includes('profile')) {
+        updatedPermissions.push('profile');
+      }
 
       const updatedUser = {
         ...user,
-        permissions: {
-          ...selectedPermissions,
-          profile: profilePermissions
-        }
+        permissions: updatedPermissions
       };
 
       // Se estiver atualizando o usuário atual, atualiza o contexto
@@ -158,58 +83,29 @@ export const AdminUserPermissionsDialog = ({
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6">
-            {availableAdminRoutePermissions.map((route) => {
-              const isFullyChecked = isSectionFullyChecked(route.id);
-              const isPartiallyChecked = isSectionPartiallyChecked(route.id);
-              
-              return (
-                <div key={route.id} className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`section-${route.id}`}
-                      checked={isFullyChecked || isPartiallyChecked}
-                      data-state={isPartiallyChecked ? "indeterminate" : isFullyChecked ? "checked" : "unchecked"}
-                      onCheckedChange={(checked) => handleSectionPermissionChange(route.id, checked as boolean)}
-                      disabled={route.id === 'profile'}
-                      className={`h-4 w-4 rounded-[4px] border ${
-                        route.id === 'profile'
-                          ? 'border-gray-300 data-[state=checked]:bg-gray-300 data-[state=indeterminate]:bg-gray-300'
-                          : 'border-primary data-[state=checked]:bg-[#9b87f5] data-[state=indeterminate]:bg-[#9b87f5]'
-                      } data-[state=checked]:text-primary-foreground data-[state=indeterminate]:text-primary-foreground`}
-                    />
-                    <label
-                      htmlFor={`section-${route.id}`}
-                      className="font-medium"
-                    >
-                      {route.label}
-                    </label>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 ml-6">
-                    {route.tabs?.map((tab) => (
-                      <div key={tab.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`${route.id}-${tab.id}`}
-                          checked={isTabChecked(route.id, tab.value)}
-                          onCheckedChange={() => handlePermissionChange(route.id, tab.value)}
-                          disabled={route.id === 'profile'}
-                          className={`h-4 w-4 rounded-[4px] border ${
-                            route.id === 'profile'
-                              ? 'border-gray-300 data-[state=checked]:bg-gray-300'
-                              : 'border-primary data-[state=checked]:bg-[#9b87f5]'
-                          } data-[state=checked]:text-primary-foreground`}
-                        />
-                        <label
-                          htmlFor={`${route.id}-${tab.id}`}
-                          className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {tab.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
+            {availableAdminRoutePermissions.map((route) => (
+              <div key={route.id} className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`section-${route.id}`}
+                    checked={selectedPermissions.includes(route.id)}
+                    onCheckedChange={() => handlePermissionChange(route.id)}
+                    disabled={route.id === 'profile'}
+                    className={`h-4 w-4 rounded-[4px] border ${
+                      route.id === 'profile'
+                        ? 'border-gray-300 data-[state=checked]:bg-gray-300'
+                        : 'border-primary data-[state=checked]:bg-[#9b87f5]'
+                    }`}
+                  />
+                  <label
+                    htmlFor={`section-${route.id}`}
+                    className="font-medium"
+                  >
+                    {route.label}
+                  </label>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </ScrollArea>
 

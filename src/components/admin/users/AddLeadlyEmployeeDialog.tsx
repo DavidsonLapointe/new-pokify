@@ -13,7 +13,6 @@ import {
 import { User } from "@/types";
 import { toast } from "sonner";
 import { mockUsers } from "@/types/mock-users";
-import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddLeadlyEmployeeDialogProps {
   isOpen: boolean;
@@ -41,23 +40,17 @@ export const AddLeadlyEmployeeDialog = ({
     const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
     
     // Define as permissões padrão para usuários leadly_employee
-    const userPermissions: { [key: string]: string[] } = {};
-    const adminRoutes = [
+    const userPermissions: string[] = [
       'dashboard',
       'integrations',
       'plans',
       'organizations',
       'settings',
       'prompt',
-      'analysis_packages',
-      'financial'
+      'analysis-packages',
+      'financial',
+      'profile'
     ];
-
-    availableRoutePermissions.forEach(route => {
-      if (adminRoutes.includes(route.id)) {
-        userPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-      }
-    });
 
     const user: User = {
       id: newUserId,

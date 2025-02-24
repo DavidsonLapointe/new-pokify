@@ -5,7 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Organization } from "@/types";
 import { sendInitialContract } from "@/services/organizationService";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
-import { availableRoutePermissions } from "@/types/permissions";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { toast } = useToast();
@@ -26,19 +25,17 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   });
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
-    // Gera as permissões para o admin inicial
-    const adminPermissions: { [key: string]: string[] } = {};
-    
-    // Para cada rota disponível, adiciona todas as suas tabs como permissões
-    availableRoutePermissions.forEach(route => {
-      // Exclui rotas administrativas
-      if (!['organizations', 'companies', 'analysis_packages', 'financial', 'prompt'].includes(route.id)) {
-        adminPermissions[route.id] = route.tabs?.map(tab => tab.value) || [];
-      }
-    });
-
-    // Adiciona explicitamente as permissões de usuários para o admin inicial
-    adminPermissions.users = ['view', 'edit', 'delete'];
+    // Define as permissões para o admin inicial
+    const adminPermissions: string[] = [
+      "dashboard",
+      "leads",
+      "integrations",
+      "settings",
+      "users",
+      "plan",
+      "profile",
+      "company"
+    ];
 
     const newOrganization: Organization = {
       id: Math.random(),

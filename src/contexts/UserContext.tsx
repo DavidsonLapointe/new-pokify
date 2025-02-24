@@ -25,15 +25,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-20T10:30:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      leads: ["view", "edit", "delete"],
-      users: ["view", "edit", "delete"],
-      integrations: ["view", "edit"],
-      settings: ["view", "edit"],
-      plan: ["view", "upgrade"],
-      profile: ["contact", "password"]
-    },
+    permissions: [
+      "dashboard",
+      "leads",
+      "users",
+      "integrations",
+      "settings",
+      "plan",
+      "profile"
+    ],
     logs: [
       {
         id: 1,

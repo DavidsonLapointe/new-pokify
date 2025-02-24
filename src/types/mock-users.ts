@@ -1,4 +1,3 @@
-
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
@@ -29,13 +28,7 @@ export const mockUsers: User[] = [
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-20T10:30:00.000Z",
-    permissions: {
-      dashboard: ["view"],
-      leads: ["view"],
-      users: ["view"],
-      plan: ["view"],
-      profile: ["contact", "password"]
-    },
+    permissions: ["dashboard", "leads", "users", "profile"],
     logs: [
       {
         id: 1,
@@ -55,15 +48,7 @@ export const mockUsers: User[] = [
     status: "inactive",
     createdAt: "2024-01-15T00:00:00.000Z",
     lastAccess: "2024-03-20T09:45:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      leads: ["view", "edit", "delete"],
-      integrations: ["view", "edit"],
-      settings: ["view", "edit"],
-      users: ["view", "edit", "delete"],
-      plan: ["view", "upgrade"],
-      profile: ["contact", "password"]
-    },
+    permissions: ["dashboard", "leads", "integrations", "settings", "users", "plan", "profile"],
     logs: [
       {
         id: 1,
@@ -83,14 +68,7 @@ export const mockUsers: User[] = [
     status: "pending",
     createdAt: "2024-02-01T00:00:00.000Z",
     lastAccess: "2024-03-20T11:15:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      leads: ["view", "edit", "delete"],
-      integrations: ["view", "edit"],
-      settings: ["view", "edit"],
-      users: ["view", "edit", "delete"],
-      plan: ["view", "upgrade"]
-    },
+    permissions: ["dashboard", "leads", "integrations", "settings", "users", "plan"],
     logs: [
       {
         id: 1,
@@ -110,11 +88,7 @@ export const mockUsers: User[] = [
     status: "active",
     createdAt: "2024-02-15T00:00:00.000Z",
     lastAccess: "2024-03-20T10:00:00.000Z",
-    permissions: {
-      dashboard: ["view"],
-      leads: ["view", "edit"],
-      integrations: ["view"]
-    },
+    permissions: ["dashboard", "leads", "integrations"],
     logs: [
       {
         id: 1,
@@ -134,11 +108,7 @@ export const mockUsers: User[] = [
     status: "inactive",
     createdAt: "2024-02-20T00:00:00.000Z",
     lastAccess: "2024-03-20T14:30:00.000Z",
-    permissions: {
-      dashboard: ["view"],
-      leads: ["view", "edit"],
-      integrations: ["view"]
-    },
+    permissions: ["dashboard", "leads", "integrations"],
     logs: [
       {
         id: 1,
@@ -158,11 +128,7 @@ export const mockUsers: User[] = [
     status: "pending",
     createdAt: "2024-03-01T00:00:00.000Z",
     lastAccess: "2024-03-20T15:45:00.000Z",
-    permissions: {
-      dashboard: ["view"],
-      leads: ["view", "edit"],
-      integrations: ["view"]
-    },
+    permissions: ["dashboard", "leads", "integrations"],
     logs: [
       {
         id: 1,
@@ -182,18 +148,18 @@ export const mockUsers: User[] = [
     status: "active",
     createdAt: "2024-02-15T10:00:00.000Z",
     lastAccess: "2024-03-10T15:30:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      integrations: ["view", "edit"],
-      plans: ["view", "edit"],
-      organizations: ["view", "edit", "delete"],
-      settings: ["view", "edit"],
-      prompt: ["view", "edit"],
-      "analysis-packages": ["view", "edit"],
-      financial: ["view", "edit"],
-      users: ["view", "edit", "delete"],
-      profile: ["contact", "password"]
-    },
+    permissions: [
+      "dashboard",
+      "integrations",
+      "plans",
+      "organizations",
+      "settings",
+      "prompt",
+      "analysis-packages",
+      "financial",
+      "users",
+      "profile"
+    ],
     logs: [
       {
         id: 1,
@@ -233,18 +199,18 @@ export const mockUsers: User[] = [
     status: "active",
     createdAt: "2024-02-20T09:00:00.000Z",
     lastAccess: "2024-03-11T14:20:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      integrations: ["view", "edit"],
-      plans: ["view", "edit"],
-      organizations: ["view", "edit", "delete"],
-      settings: ["view", "edit"],
-      prompt: ["view", "edit"],
-      "analysis-packages": ["view", "edit"],
-      financial: ["view", "edit"],
-      users: ["view", "edit", "delete"],
-      profile: ["contact", "password"]
-    },
+    permissions: [
+      "dashboard",
+      "integrations",
+      "plans",
+      "organizations",
+      "settings",
+      "prompt",
+      "analysis-packages",
+      "financial",
+      "users",
+      "profile"
+    ],
     logs: [
       {
         id: 1,
@@ -284,16 +250,16 @@ export const mockUsers: User[] = [
     status: "inactive",
     createdAt: "2024-02-25T11:00:00.000Z",
     lastAccess: "2024-03-01T16:45:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      integrations: ["view", "edit"],
-      plans: ["view", "edit"],
-      organizations: ["view", "edit"],
-      settings: ["view", "edit"],
-      prompt: ["view", "edit"],
-      "analysis-packages": ["view", "edit"],
-      financial: ["view", "edit"]
-    },
+    permissions: [
+      "dashboard",
+      "integrations",
+      "plans",
+      "organizations",
+      "settings",
+      "prompt",
+      "analysis-packages",
+      "financial"
+    ],
     logs: [
       {
         id: 1,
@@ -333,16 +299,16 @@ export const mockUsers: User[] = [
     status: "pending",
     createdAt: "2024-03-10T08:00:00.000Z",
     lastAccess: "2024-03-10T08:00:00.000Z",
-    permissions: {
-      dashboard: ["view", "export"],
-      integrations: ["view", "edit"],
-      plans: ["view", "edit"],
-      organizations: ["view", "edit"],
-      settings: ["view", "edit"],
-      prompt: ["view", "edit"],
-      "analysis-packages": ["view", "edit"],
-      financial: ["view", "edit"]
-    },
+    permissions: [
+      "dashboard",
+      "integrations",
+      "plans",
+      "organizations",
+      "settings",
+      "prompt",
+      "analysis-packages",
+      "financial"
+    ],
     logs: [
       {
         id: 1,
