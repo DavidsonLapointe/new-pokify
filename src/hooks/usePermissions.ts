@@ -17,35 +17,32 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Verifica se estamos em uma rota administrativa
-    if (isAdminRoute) {
-      const adminPermissions = typeof user.permissions === 'object' && !Array.isArray(user.permissions) 
-        ? Object.keys(user.permissions)
-        : [];
-      console.log('Admin permissions:', adminPermissions);
-      return adminPermissions.includes(routeId);
+    // Para ambiente da organização, verifica se a permissão existe no array
+    if (!isAdminRoute) {
+      const permissions = Array.isArray(user.permissions) ? user.permissions : [];
+      console.log('Verificando permissão da organização:', routeId, 'em', permissions);
+      return permissions.includes(routeId);
     }
 
-    // Para rotas da organização, usa o array de permissões
-    const orgPermissions = Array.isArray(user.permissions) ? user.permissions : [];
-    console.log('Organization permissions:', orgPermissions);
-    return orgPermissions.includes(routeId);
+    // Para ambiente administrativo, verifica no objeto de permissões
+    const adminPermissions = typeof user.permissions === 'object' && !Array.isArray(user.permissions) 
+      ? Object.keys(user.permissions)
+      : [];
+    console.log('Verificando permissão administrativa:', routeId, 'em', adminPermissions);
+    return adminPermissions.includes(routeId);
   };
 
   const getUserPermissions = () => {
     let routes: string[] = [];
 
     if (isAdminRoute) {
-      // Para ambiente admin, usa as chaves do objeto de permissões
       routes = typeof user?.permissions === 'object' && !Array.isArray(user.permissions)
         ? Object.keys(user.permissions)
         : [];
     } else {
-      // Para ambiente da organização, usa o array de permissões
       routes = Array.isArray(user?.permissions) ? [...user.permissions] : [];
     }
 
-    // Profile é sempre permitido
     if (!routes.includes('profile')) {
       routes.push('profile');
     }
