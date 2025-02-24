@@ -24,8 +24,9 @@ export const useUserPermissions = (
     const expanded = [...permissions];
     if (expanded.includes('dashboard')) {
       dashboardTabs.forEach(tab => {
-        if (!expanded.includes(`dashboard.${tab}`)) {
-          expanded.push(`dashboard.${tab}`);
+        const subPermission = `dashboard.${tab}`;
+        if (!expanded.includes(subPermission)) {
+          expanded.push(subPermission);
         }
       });
     }
@@ -35,6 +36,7 @@ export const useUserPermissions = (
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
+      // Sempre expandir as permissões ao abrir o modal
       const initialPermissions = expandDashboardPermissions(user.permissions || []);
       console.log('Permissões expandidas:', initialPermissions);
       setTempPermissions(initialPermissions);
@@ -57,8 +59,9 @@ export const useUserPermissions = (
           // Adiciona dashboard e todas as subpermissões
           newPermissions.push('dashboard');
           dashboardTabs.forEach(tab => {
-            if (!newPermissions.includes(`dashboard.${tab}`)) {
-              newPermissions.push(`dashboard.${tab}`);
+            const subPermission = `dashboard.${tab}`;
+            if (!newPermissions.includes(subPermission)) {
+              newPermissions.push(subPermission);
             }
           });
         } else {
@@ -71,8 +74,9 @@ export const useUserPermissions = (
         const isSubPermissionEnabled = prev.includes(routeId);
         
         if (!isSubPermissionEnabled) {
-          // Adiciona a subpermissão e o dashboard principal
+          // Adiciona a subpermissão
           newPermissions.push(routeId);
+          // Sempre mantém o dashboard principal quando houver qualquer subpermissão
           if (!newPermissions.includes('dashboard')) {
             newPermissions.push('dashboard');
           }
@@ -80,15 +84,19 @@ export const useUserPermissions = (
           // Remove a subpermissão
           newPermissions = newPermissions.filter(p => p !== routeId);
           
-          // Se não houver mais nenhuma subpermissão, remove o dashboard
+          // Verifica se ainda existe alguma subpermissão
           const hasAnySubPermission = dashboardTabs.some(tab => 
             newPermissions.includes(`dashboard.${tab}`)
           );
           
+          // Remove o dashboard principal apenas se não houver mais nenhuma subpermissão
           if (!hasAnySubPermission) {
             newPermissions = newPermissions.filter(p => p !== 'dashboard');
           }
         }
+
+        // Garante que todas as subpermissões existentes permaneçam
+        newPermissions = expandDashboardPermissions(newPermissions);
       } else {
         if (prev.includes(routeId)) {
           newPermissions = prev.filter(p => p !== routeId);
