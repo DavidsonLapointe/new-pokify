@@ -6,7 +6,7 @@ import { StatusMap, Call } from "@/types/calls";
 import { MonthStats } from "@/types/calls";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronFirst, ChevronLast } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronUp, ChevronDown } from "lucide-react";
 
 interface LeadsPageContentProps {
   searchQuery: string;
@@ -17,6 +17,8 @@ interface LeadsPageContentProps {
   onPlayAudio: (audioUrl: string) => void;
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
+  sortOrder: 'asc' | 'desc' | null;
+  onSort: () => void;
 }
 
 export const LeadsPageContent = ({
@@ -28,6 +30,8 @@ export const LeadsPageContent = ({
   onPlayAudio,
   onViewAnalysis,
   formatDate,
+  sortOrder,
+  onSort,
 }: LeadsPageContentProps) => {
   console.log("LeadsPageContent - calls recebidos:", calls);
   
@@ -40,9 +44,9 @@ export const LeadsPageContent = ({
     setCurrentPage(1);
   }, [searchQuery]);
   
-  // Filtra os calls baseado na busca
+  // Filtra e ordena os calls baseado na busca e ordem
   useEffect(() => {
-    const filtered = calls.filter((call) => {
+    let filtered = calls.filter((call) => {
       const searchLower = searchQuery.toLowerCase();
       const leadInfo = call.leadInfo;
       
@@ -54,9 +58,20 @@ export const LeadsPageContent = ({
         leadInfo.razaoSocial?.toLowerCase().includes(searchLower)
       );
     });
+
+    if (sortOrder) {
+      filtered = [...filtered].sort((a, b) => {
+        const nameA = `${a.leadInfo.firstName || ''} ${a.leadInfo.lastName || ''}`.trim().toLowerCase();
+        const nameB = `${b.leadInfo.firstName || ''} ${b.leadInfo.lastName || ''}`.trim().toLowerCase();
+        
+        return sortOrder === 'asc' 
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA);
+      });
+    }
     
     setFilteredCalls(filtered);
-  }, [calls, searchQuery]);
+  }, [calls, searchQuery, sortOrder]);
   
   // Calcula o índice inicial e final dos itens na página atual
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -97,6 +112,8 @@ export const LeadsPageContent = ({
         onPlayAudio={onPlayAudio}
         onViewAnalysis={onViewAnalysis}
         formatDate={formatDate}
+        sortOrder={sortOrder}
+        onSort={onSort}
       />
       
       {/* Paginação */}
@@ -146,4 +163,3 @@ export const LeadsPageContent = ({
     </Card>
   );
 };
-
