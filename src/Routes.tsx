@@ -1,4 +1,3 @@
-
 import { Routes as RouterRoutes, Route } from "react-router-dom";
 import OrganizationLayout from "./components/OrganizationLayout";
 import AdminLayout from "./components/AdminLayout";
@@ -12,6 +11,7 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import ConfirmRegistration from "./pages/ConfirmRegistration";
+import Contract from "./pages/Contract";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
@@ -31,6 +31,7 @@ const Routes = () => {
       {/* Rotas Principais */}
       <Route path="/" element={<Index />} />
       <Route path="/confirm-registration" element={<ConfirmRegistration />} />
+      <Route path="/contract/:id" element={<Contract />} />
       
       {/* Rotas da Organização */}
       <Route element={<OrganizationLayout />}>
