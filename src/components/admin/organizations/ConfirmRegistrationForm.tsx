@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,9 +17,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 
-// Agora você pode substituir esta chave pela sua chave real do Stripe que você copiou
-const STRIPE_PUBLIC_KEY = 'sua_chave_publica_aqui';
-const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+// A chave pública do Stripe foi movida para as variáveis seguras do projeto
+const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
 
 interface ConfirmRegistrationFormProps {
   organization: Organization;
