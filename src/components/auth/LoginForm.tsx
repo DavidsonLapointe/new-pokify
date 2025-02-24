@@ -66,7 +66,7 @@ export const LoginForm = ({ onSubmit, onForgotPassword, isLoading, error }: Logi
         <Button
           type="button"
           variant="link"
-          className="text-sm px-0"
+          className="text-sm px-0 text-primary hover:text-primary/80"
           onClick={() => setIsForgotPassword(!isForgotPassword)}
         >
           {isForgotPassword ? "Voltar ao login" : "Esqueceu sua senha?"}
