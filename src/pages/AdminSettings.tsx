@@ -7,6 +7,7 @@ import RetentionSettings from "@/components/admin/settings/RetentionSettings";
 import AnalysisSettings from "@/components/admin/settings/AnalysisSettings";
 import SystemSettings from "@/components/admin/settings/SystemSettings";
 import LLMSettings from "@/components/admin/settings/LLMSettings";
+import { DefaultPermissionsSettings } from "@/components/admin/settings/DefaultPermissionsSettings";
 
 const AdminSettings = () => {
   return (
@@ -32,6 +33,7 @@ const AdminSettings = () => {
           <TabsTrigger value="analysis">Parâmetros de Análise</TabsTrigger>
           <TabsTrigger value="llm">LLM</TabsTrigger>
           <TabsTrigger value="system">Configurações de Sistema</TabsTrigger>
+          <TabsTrigger value="permissions">Permissões Padrão</TabsTrigger>
         </TabsList>
 
         <TabsContent value="alerts" className="space-y-4">
@@ -53,9 +55,14 @@ const AdminSettings = () => {
         <TabsContent value="system" className="space-y-4">
           <SystemSettings />
         </TabsContent>
+
+        <TabsContent value="permissions" className="space-y-4">
+          <DefaultPermissionsSettings />
+        </TabsContent>
       </Tabs>
     </div>
   );
 };
 
 export default AdminSettings;
+

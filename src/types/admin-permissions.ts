@@ -11,6 +11,21 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     prompt: ["view", "edit"],
     settings: ["view", "edit"],
     profile: ["contact", "password"]
+  },
+  admin: {
+    dashboard: ["view", "export"],
+    leads: ["view", "edit", "delete"],
+    users: ["view", "edit", "delete"],
+    integrations: ["view", "edit"],
+    settings: ["view", "edit"],
+    plan: ["view", "upgrade"],
+    profile: ["contact", "password"]
+  },
+  seller: {
+    dashboard: ["view"],
+    leads: ["view", "edit"],
+    integrations: ["view"],
+    profile: ["contact", "password"]
   }
 };
 
@@ -67,3 +82,4 @@ export const availableAdminRoutePermissions = [
     path: "/admin/settings"
   }
 ];
+
