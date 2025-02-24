@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { Organization } from "@/types";
-import { sendInitialContract } from "@/services/organizationService";
+import { supabase } from "@/integrations/supabase/client";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
@@ -76,7 +76,18 @@ export const useOrganizationForm = (onSuccess: () => void) => {
     newOrganization.users = [adminUser];
 
     try {
-      await sendInitialContract(newOrganization);
+      // Envia o email com o contrato
+      const { error: emailError } = await supabase.functions.invoke('send-organization-emails', {
+        body: {
+          organizationId: newOrganization.id,
+          type: 'contract',
+          data: {
+            contractUrl: `${window.location.origin}/contract/${newOrganization.id}`
+          }
+        }
+      });
+
+      if (emailError) throw emailError;
 
       toast({
         title: "Empresa criada com sucesso",
@@ -85,14 +96,15 @@ export const useOrganizationForm = (onSuccess: () => void) => {
           "Contrato de adesão para assinatura",
           "Link para assinatura digital do contrato",
           "Instruções sobre os próximos passos"
-        ].map((text, index) => (
+        ].map((text) => (
           `• ${text}`
         )).join("\n")
       });
 
       form.reset();
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Erro ao criar empresa:", error);
       toast({
         title: "Erro ao criar empresa",
         description: "Não foi possível enviar o email com o contrato. Tente novamente.",

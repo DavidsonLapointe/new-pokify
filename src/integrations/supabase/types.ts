@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          created_at: string
+          id: number
+          metadata: Json | null
+          organization_id: string | null
+          sent_to: string
+          status: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          metadata?: Json | null
+          organization_id?: string | null
+          sent_to: string
+          status: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          metadata?: Json | null
+          organization_id?: string | null
+          sent_to?: string
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           admin_email: string
