@@ -13,11 +13,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { session, loading } = useAuthSession();
 
-  // Se estiver carregando, mostra nada até terminar
-  if (loading) {
-    return null;
-  }
-
   return (
     <AuthContext.Provider value={{ session, loading }}>
       {children}
