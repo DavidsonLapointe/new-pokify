@@ -1,8 +1,11 @@
 
-import { AlertCircle, FileBarChart, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { AlertCircle, FileBarChart, Loader2, Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CreditsBalanceCardProps {
   monthlyQuota: number;
@@ -19,7 +22,54 @@ export function CreditsBalanceCard({
   onBuyMoreCredits,
   isLoading = false,
 }: CreditsBalanceCardProps) {
-  const usagePercentage = (used / monthlyQuota) * 100;
+  const [loading, setLoading] = useState(true);
+  const [credits, setCredits] = useState({
+    total: 0,
+    used: 0
+  });
+
+  useEffect(() => {
+    fetchCreditsBalance();
+  }, []);
+
+  const fetchCreditsBalance = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('credit_balances')
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Erro ao buscar saldo de créditos:', error);
+        toast.error('Erro ao carregar saldo de créditos');
+        return;
+      }
+
+      if (data) {
+        setCredits({
+          total: data.total_credits,
+          used: data.used_credits
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar saldo:', error);
+      toast.error('Erro ao carregar saldo de créditos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const usagePercentage = (credits.used / monthlyQuota) * 100;
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="pt-6 flex items-center justify-center min-h-[300px]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -38,7 +88,7 @@ export function CreditsBalanceCard({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Créditos do plano mensal</span>
-              <span className="font-medium">{used}/{monthlyQuota}</span>
+              <span className="font-medium">{credits.used}/{monthlyQuota}</span>
             </div>
             <Progress value={usagePercentage} className="h-2" />
             <p className="text-xs text-muted-foreground">
