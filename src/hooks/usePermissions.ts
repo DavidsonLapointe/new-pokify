@@ -14,28 +14,15 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Garante que estamos trabalhando com um array
-    const userPermissions = Array.isArray(user.permissions) 
-      ? user.permissions 
-      : Object.keys(user.permissions);
-
-    return userPermissions.includes(routeId);
+    return user.permissions.includes(routeId);
   };
 
   const getUserPermissions = () => {
-    const routes: string[] = [];
-
+    const routes = user?.permissions || [];
+    
     // Profile é sempre permitido
-    routes.push('profile');
-
-    // Adiciona outras rotas que o usuário tem permissão
-    if (user?.permissions) {
-      // Garante que estamos trabalhando com um array
-      const userPermissions = Array.isArray(user.permissions)
-        ? user.permissions
-        : Object.keys(user.permissions);
-        
-      routes.push(...userPermissions);
+    if (!routes.includes('profile')) {
+      routes.push('profile');
     }
 
     console.log('Rotas permitidas:', routes);
