@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { UserRole } from "@/types/user-types";
 import { Settings, User, Lock, List, BarChart3, Users, Network, CreditCard, Building2 } from "lucide-react";
+import { ADMIN_DEFAULT_PERMISSIONS, availableAdminRoutePermissions } from "@/types/admin-permissions";
 
+// Rotas do ambiente da organização
 const organizationRoutes = [
   {
     id: "profile",
@@ -62,14 +64,7 @@ type RolePermissions = {
 };
 
 const initialPermissions: RolePermissions = {
-  leadly_employee: {
-    profile: ["view", "edit"],
-    dashboard: ["view"],
-    leads: ["view", "edit"],
-    users: ["view", "edit"],
-    integrations: ["view", "edit"],
-    settings: ["view", "edit"]
-  },
+  leadly_employee: ADMIN_DEFAULT_PERMISSIONS.leadly_employee,
   admin: {
     profile: ["view", "edit"],
     dashboard: ["view"],
@@ -95,10 +90,19 @@ const initialPermissions: RolePermissions = {
 };
 
 const getRouteIcon = (route: string) => {
+  // Para rotas do ambiente administrativo
+  if (route.includes('analysis-packages')) return <List className="h-4 w-4" />;
+  if (route.includes('financial')) return <CreditCard className="h-4 w-4" />;
+  if (route.includes('organizations')) return <Building2 className="h-4 w-4" />;
+  
+  // Para rotas da organização
   const routeConfig = organizationRoutes.find(r => r.id === route);
-  if (!routeConfig) return <List className="h-4 w-4" />;
-  const Icon = routeConfig.icon;
-  return <Icon className="h-4 w-4" />;
+  if (routeConfig) {
+    const Icon = routeConfig.icon;
+    return <Icon className="h-4 w-4" />;
+  }
+  
+  return <List className="h-4 w-4" />;
 };
 
 export const DefaultPermissionsSettings = () => {
@@ -145,6 +149,16 @@ export const DefaultPermissionsSettings = () => {
     { id: "sellers", label: "Vendedores" }
   ];
 
+  // Decide quais rotas mostrar baseado no papel selecionado
+  const getRoutesToDisplay = () => {
+    if (selectedRole === 'leadly_employee') {
+      return availableAdminRoutePermissions;
+    }
+    return organizationRoutes;
+  };
+
+  const routesToShow = getRoutesToDisplay();
+
   return (
     <Card>
       <CardHeader>
@@ -175,27 +189,27 @@ export const DefaultPermissionsSettings = () => {
 
         <div className="space-y-6">
           <div className="grid gap-4">
-            {organizationRoutes.map(route => (
-              <div key={route.id} className="space-y-2">
+            {routesToShow.map(route => (
+              <div key={typeof route === 'string' ? route : route.id} className="space-y-2">
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center gap-2">
-                    {getRouteIcon(route.id)}
+                    {getRouteIcon(typeof route === 'string' ? route : route.id)}
                     <span className="font-medium">
-                      {route.label}
+                      {typeof route === 'string' ? route : route.label}
                     </span>
-                    {route.id === 'profile' && (
+                    {(typeof route === 'string' ? route : route.id) === 'profile' && (
                       <Lock className="h-4 w-4 text-gray-400 ml-2" />
                     )}
                   </div>
                   <CustomSwitch
-                    checked={route.id === 'profile' ? true : hasAccess(route.id)}
-                    onCheckedChange={() => handleTogglePermission(route.id)}
-                    disabled={route.id === 'profile'}
+                    checked={(typeof route === 'string' ? route : route.id) === 'profile' ? true : hasAccess(typeof route === 'string' ? route : route.id)}
+                    onCheckedChange={() => handleTogglePermission(typeof route === 'string' ? route : route.id)}
+                    disabled={(typeof route === 'string' ? route : route.id) === 'profile'}
                   />
                 </div>
                 
                 {/* Mostra as abas do dashboard apenas para admin e seller */}
-                {route.id === 'dashboard' && 
+                {(typeof route === 'string' ? route : route.id) === 'dashboard' && 
                  (selectedRole === 'admin' || selectedRole === 'seller') && (
                   <div className="ml-8 space-y-2">
                     <Label className="text-sm text-muted-foreground">Abas do Dashboard:</Label>
