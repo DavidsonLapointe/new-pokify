@@ -21,9 +21,7 @@ export interface User {
   status: UserStatus;
   createdAt: string;
   lastAccess: string;
-  permissions: {
-    [key: string]: string[];
-  };
+  permissions: string[];  // Agora é um array simples de strings
   logs: UserLog[];
   organization: Organization;
   avatar: string;

@@ -14,40 +14,28 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    const permissions = user.permissions[routeId];
-    return Array.isArray(permissions) && permissions.length > 0;
+    // Agora permissions é apenas um array de strings com os IDs das rotas permitidas
+    return user.permissions.includes(routeId);
   };
 
   const getUserPermissions = () => {
     const routes: string[] = [];
-    const permissions = user?.permissions || {};
 
     // Profile e Company são sempre permitidos
     routes.push('profile');
     routes.push('company');
 
     // Adiciona outras rotas que o usuário tem permissão
-    Object.keys(permissions).forEach(routeId => {
-      if (hasRoutePermission(routeId)) {
-        routes.push(routeId);
-      }
-    });
+    if (user?.permissions) {
+      routes.push(...user.permissions);
+    }
 
     console.log('Rotas permitidas:', routes);
-    return { routes, tabs: permissions };
-  };
-
-  const hasTabPermission = (routeId: string, tabValue: string): boolean => {
-    // Profile e Company sempre têm acesso a todas as tabs
-    if (routeId === 'profile' || routeId === 'company') return true;
-
-    const permissions = user?.permissions?.[routeId] || [];
-    return permissions.includes(tabValue);
+    return { routes };
   };
 
   return {
     hasRoutePermission,
-    hasTabPermission,
     getUserPermissions
   };
 };
