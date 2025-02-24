@@ -25,22 +25,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
     lastAccess: "2024-03-20T10:30:00.000Z",
-    permissions: [
-      "dashboard",
-      "dashboard.leads",
-      "dashboard.uploads",
-      "dashboard.performance",
-      "dashboard.objections",
-      "dashboard.suggestions",
-      "dashboard.sellers",
-      "leads",
-      "users",
-      "integrations",
-      "settings",
-      "plan",
-      "company", // Garantindo que a permissão 'company' está presente
-      "profile"
-    ],
+    permissions: {
+      dashboard: ["view", "export"],
+      leads: ["view", "edit", "delete"],
+      users: ["view", "edit", "delete"],
+      integrations: ["view", "edit"],
+      settings: ["view", "edit"],
+      plan: ["view", "upgrade"],
+      profile: ["contact", "password"],
+      company: ["view", "edit"] // Adicionando permissões para company
+    },
     logs: [
       {
         id: 1,
