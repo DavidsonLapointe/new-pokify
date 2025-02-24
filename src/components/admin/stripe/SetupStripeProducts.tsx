@@ -17,7 +17,7 @@ export function SetupStripeProducts() {
       toast.success('Produtos e preços criados com sucesso!');
     } catch (error) {
       console.error('Erro:', error);
-      toast.error('Erro ao criar produtos e preços');
+      toast.error('Erro ao criar produtos e preços. Verifique o console para mais detalhes.');
     } finally {
       setIsLoading(false);
     }
@@ -28,6 +28,8 @@ export function SetupStripeProducts() {
       <Button
         onClick={handleSetup}
         disabled={isLoading}
+        size="lg"
+        variant="default"
       >
         {isLoading ? (
           <>

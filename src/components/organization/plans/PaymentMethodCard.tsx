@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Usando a chave diretamente do segredo do Supabase
+// Usando a chave pública do Stripe que está configurada no Supabase
 const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
 
 interface PaymentMethodCardProps {
