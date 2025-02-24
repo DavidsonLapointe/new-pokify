@@ -22,7 +22,16 @@ export const useUserPermissions = (
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
-      setTempPermissions(user.permissions || []);
+      // Expande as subpermissões do dashboard se necessário
+      let initialPermissions = [...(user.permissions || [])];
+      if (initialPermissions.includes('dashboard')) {
+        dashboardTabs.forEach(tab => {
+          if (!initialPermissions.includes(`dashboard.${tab}`)) {
+            initialPermissions.push(`dashboard.${tab}`);
+          }
+        });
+      }
+      setTempPermissions(initialPermissions);
     } else {
       setTempPermissions([]);
     }
