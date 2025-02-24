@@ -8,9 +8,8 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { User } from "@/types";
-import { mockUsers } from "@/types/mock-users";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginModalProps {
   open: boolean;
@@ -26,74 +25,102 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  // Função auxiliar para encontrar um administrador ativo
-  const findActiveAdmin = (users: User[], organization: any) => {
-    return users.find(user => 
-      user.organization.id === organization.id && 
-      user.status === "active" && 
-      user.permissions.includes("users")
-    );
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     
     try {
-      // Simula busca do usuário
-      const user = mockUsers.find(u => u.email === email);
-      
-      if (!user) {
-        setError("Usuário não encontrado");
-        setIsLoading(false);
-        return;
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Busca o perfil do usuário
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          organization:organizations (
+            *
+          )
+        `)
+        .eq('id', authData.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      if (!profile) {
+        throw new Error("Perfil não encontrado");
       }
 
-      // Verifica se é funcionário Leadly
-      if (user.role === "leadly_employee") {
-        if (user.status !== "active") {
-          const activeAdmin = findActiveAdmin(mockUsers, { id: 1 }); // Leadly company
+      if (profile.status !== "active") {
+        if (profile.role === "leadly_employee") {
+          toast.error("Seu usuário não está ativo. Por favor, entre em contato com o suporte.");
+        } else {
+          // Busca um admin ativo da organização
+          const { data: activeAdmin } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('organization_id', profile.organization.id)
+            .eq('role', 'admin')
+            .eq('status', 'active')
+            .single();
+
           toast.error(
-            `Seu usuário não está ativo. Por favor, entre em contato com o administrador: ${activeAdmin?.email || 'suporte@leadly.com'}`
+            `Seu usuário não está ativo. Por favor, entre em contato com o administrador: ${activeAdmin?.email || 'Não encontrado'}`
           );
-          setIsLoading(false);
-          return;
         }
-        
-        updateUser(user);
-        onOpenChange(false);
-        navigate("/admin/dashboard");
+        await supabase.auth.signOut();
+        setIsLoading(false);
         return;
       }
 
-      // Para usuários de organizações clientes
-      if (user.organization.status !== "active") {
+      // Verifica status da organização para usuários não-Leadly
+      if (profile.role !== "leadly_employee" && profile.organization?.status !== "active") {
         toast.error("Sua empresa não está ativa no sistema. Entre em contato com o suporte.");
+        await supabase.auth.signOut();
         setIsLoading(false);
         return;
       }
 
-      if (user.status !== "active") {
-        const activeAdmin = findActiveAdmin(mockUsers, user.organization);
-        toast.error(
-          `Seu usuário não está ativo. Por favor, entre em contato com o administrador: ${activeAdmin?.email || 'Não encontrado'}`
-        );
-        setIsLoading(false);
-        return;
-      }
+      // Atualiza último acesso
+      await supabase
+        .from('profiles')
+        .update({ last_access: new Date().toISOString() })
+        .eq('id', profile.id);
 
-      // Login bem sucedido
-      updateUser(user);
+      // Atualiza o contexto do usuário
+      updateUser({
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone || "",
+        role: profile.role,
+        status: profile.status,
+        permissions: [], // TODO: Implementar permissões
+        createdAt: profile.created_at || "",
+        lastAccess: profile.last_access || "",
+        logs: [],
+        organization: profile.organization,
+        avatar: profile.avatar || "",
+      });
+
       onOpenChange(false);
       
       // Redireciona baseado no tipo de usuário
-      if (user.role === "admin" || user.role === "seller") {
+      if (profile.role === "leadly_employee") {
+        navigate("/admin/dashboard");
+      } else {
         navigate("/organization/dashboard");
       }
 
-    } catch (error) {
-      setError("Ocorreu um erro ao tentar fazer login. Tente novamente.");
+    } catch (error: any) {
+      console.error("Erro no login:", error);
+      setError(error.message || "Ocorreu um erro ao tentar fazer login. Tente novamente.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -104,13 +131,17 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     setError(null);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log("Reset password for:", email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
       setIsLoading(false);
       toast.success("Se o email existir em nossa base, você receberá instruções para redefinir sua senha.");
       setMode("login");
-    } catch (error) {
-      setError("Ocorreu um erro ao solicitar a recuperação de senha. Tente novamente.");
+    } catch (error: any) {
+      setError(error.message || "Ocorreu um erro ao solicitar a recuperação de senha. Tente novamente.");
       setIsLoading(false);
     }
   };
@@ -195,3 +226,4 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 };
 
 export default LoginModal;
+
