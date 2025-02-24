@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -13,7 +12,7 @@ import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-const stripePromise = loadStripe("pk_test_your_key");
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
 
 interface PaymentGatewayDialogProps {
   open: boolean;
