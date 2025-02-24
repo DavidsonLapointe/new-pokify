@@ -13,60 +13,56 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log('Iniciando criação de produtos...');
+
     // Criar os produtos
     const basicProduct = await stripe.products.create({
-      name: 'Basic',
-      description: 'Ideal para pequenas empresas iniciando no mercado',
+      name: 'Pacote Básico',
+      description: '100 créditos de análise',
+      default_price_data: {
+        currency: 'brl',
+        unit_amount: 4990, // R$ 49,90
+      },
+      active: true,
     });
 
-    const professionalProduct = await stripe.products.create({
-      name: 'Professional',
-      description: 'Perfect para empresas em crescimento',
+    const proProduct = await stripe.products.create({
+      name: 'Pacote Pro',
+      description: '500 créditos de análise',
+      default_price_data: {
+        currency: 'brl',
+        unit_amount: 19990, // R$ 199,90
+      },
+      active: true,
     });
 
     const enterpriseProduct = await stripe.products.create({
-      name: 'Enterprise',
-      description: 'Para grandes empresas que precisam de mais recursos',
+      name: 'Pacote Enterprise',
+      description: '2000 créditos de análise',
+      default_price_data: {
+        currency: 'brl',
+        unit_amount: 69990, // R$ 699,90
+      },
+      active: true,
     });
 
-    // Criar os preços para cada produto
-    const basicPrice = await stripe.prices.create({
-      product: basicProduct.id,
-      unit_amount: 9990, // R$ 99,90 em centavos
-      currency: 'brl',
-      recurring: {
-        interval: 'month',
-      },
-    });
-
-    const professionalPrice = await stripe.prices.create({
-      product: professionalProduct.id,
-      unit_amount: 19990, // R$ 199,90 em centavos
-      currency: 'brl',
-      recurring: {
-        interval: 'month',
-      },
-    });
-
-    const enterprisePrice = await stripe.prices.create({
-      product: enterpriseProduct.id,
-      unit_amount: 49990, // R$ 499,90 em centavos
-      currency: 'brl',
-      recurring: {
-        interval: 'month',
-      },
+    console.log('Produtos criados com sucesso:', {
+      basic: basicProduct,
+      pro: proProduct,
+      enterprise: enterpriseProduct
     });
 
     return new Response(
       JSON.stringify({
-        basicPriceId: basicPrice.id,
-        professionalPriceId: professionalPrice.id,
-        enterprisePriceId: enterprisePrice.id,
+        basic: basicProduct,
+        pro: proProduct,
+        enterprise: enterpriseProduct
       }),
       {
         headers: {
@@ -76,7 +72,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Erro ao criar produtos:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
