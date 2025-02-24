@@ -7,6 +7,9 @@ export const planFormSchema = z.object({
   description: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
   features: z.string().min(1, "Adicione pelo menos um recurso"),
   active: z.boolean(),
+  stripeProductId: z.string().optional(),
+  stripePriceId: z.string().optional(),
+  credits: z.number().optional(),
 });
 
 export type PlanFormValues = z.infer<typeof planFormSchema>;
@@ -18,4 +21,7 @@ export interface Plan {
   description: string;
   features: string[];
   active: boolean;
+  stripeProductId?: string;
+  stripePriceId?: string;
+  credits?: number;
 }

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { planFormSchema, type PlanFormValues, type Plan } from "./plan-form-schema";
 import { useToast } from "@/hooks/use-toast";
+import { updateStripeProduct } from "@/services/stripeService";
 
 interface UsePlanFormProps {
   plan?: Plan;
@@ -23,6 +24,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       description: "",
       features: "",
       active: true,
+      stripeProductId: "",
+      stripePriceId: "",
+      credits: undefined,
     },
   });
 
@@ -34,6 +38,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         description: plan.description,
         features: plan.features.join("\n"),
         active: plan.active,
+        stripeProductId: plan.stripeProductId,
+        stripePriceId: plan.stripePriceId,
+        credits: plan.credits,
       });
     } else {
       form.reset({
@@ -42,6 +49,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         description: "",
         features: "",
         active: true,
+        stripeProductId: "",
+        stripePriceId: "",
+        credits: undefined,
       });
     }
   }, [plan, form]);
@@ -54,6 +64,19 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         features: values.features.split("\n").filter(f => f.trim()),
       };
       
+      // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
+      if (isEditing && formattedValues.stripeProductId) {
+        await updateStripeProduct({
+          stripeProductId: formattedValues.stripeProductId,
+          stripePriceId: formattedValues.stripePriceId || '',
+          name: formattedValues.name,
+          description: formattedValues.description,
+          price: formattedValues.price,
+          active: formattedValues.active,
+          credits: formattedValues.credits,
+        });
+      }
+      
       await onSave(formattedValues);
       
       toast({
@@ -63,9 +86,10 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       
       onOpenChange(false);
     } catch (error) {
+      console.error('Erro ao salvar plano:', error);
       toast({
         title: "Erro ao salvar plano",
-        description: "Ocorreu um erro ao salvar o plano. Tente novamente.",
+        description: error.message || "Ocorreu um erro ao salvar o plano. Tente novamente.",
         variant: "destructive",
       });
     }
