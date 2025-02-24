@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -38,7 +37,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
       if (authError) throw authError;
 
-      // Busca o perfil do usuário
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select(`
@@ -60,7 +58,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         if (profile.role === "leadly_employee") {
           toast.error("Seu usuário não está ativo. Por favor, entre em contato com o suporte.");
         } else {
-          // Busca um admin ativo da organização
           const { data: activeAdmin } = await supabase
             .from('profiles')
             .select('email')
@@ -78,7 +75,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         return;
       }
 
-      // Verifica status da organização para usuários não-Leadly
       if (profile.role !== "leadly_employee" && profile.organization?.status !== "active") {
         toast.error("Sua empresa não está ativa no sistema. Entre em contato com o suporte.");
         await supabase.auth.signOut();
@@ -86,21 +82,19 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         return;
       }
 
-      // Atualiza último acesso
       await supabase
         .from('profiles')
         .update({ last_access: new Date().toISOString() })
         .eq('id', profile.id);
 
-      // Mapeia os dados da organização para o formato esperado
       const organizationData = profile.organization ? {
-        id: parseInt(profile.organization.id, 10), // Converte UUID para número
+        id: parseInt(profile.organization.id, 10),
         name: profile.organization.name,
         nomeFantasia: profile.organization.nome_fantasia || profile.organization.name,
         plan: profile.organization.plan,
-        users: [], // Será preenchido posteriormente se necessário
+        users: [],
         status: profile.organization.status,
-        pendingReason: profile.organization.pending_reason || null,
+        pendingReason: profile.organization.pending_reason === "null" ? null : profile.organization.pending_reason,
         integratedCRM: profile.organization.integrated_crm,
         integratedLLM: profile.organization.integrated_llm,
         email: profile.organization.email,
@@ -122,15 +116,14 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         } : undefined
       } : null;
 
-      // Atualiza o contexto do usuário
       updateUser({
-        id: parseInt(profile.id, 10), // Converte UUID para número
+        id: parseInt(profile.id, 10),
         name: profile.name,
         email: profile.email,
         phone: profile.phone || "",
         role: profile.role,
         status: profile.status,
-        permissions: [], // TODO: Implementar permissões
+        permissions: [],
         createdAt: profile.created_at || "",
         lastAccess: profile.last_access || "",
         logs: [],
@@ -140,7 +133,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
       onOpenChange(false);
       
-      // Redireciona baseado no tipo de usuário
       if (profile.role === "leadly_employee") {
         navigate("/admin/dashboard");
       } else {
@@ -256,4 +248,3 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 };
 
 export default LoginModal;
-
