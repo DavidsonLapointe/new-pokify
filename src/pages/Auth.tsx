@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,11 +11,11 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
+  const navigate = useNavigate();
 
-  // Se já estiver autenticado, redireciona
+  // Se já estiver autenticado, redireciona usando o navigate
   if (user) {
-    // Verifica se é admin para redirecionar corretamente
-    const redirectTo = user.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+    const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
     return <Navigate to={redirectTo} replace />;
   }
 
