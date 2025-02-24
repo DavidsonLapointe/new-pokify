@@ -12,6 +12,7 @@ import Contract from "./pages/Contract";
 import NotFound from "./pages/NotFound";
 import { supabase } from "./integrations/supabase/client";
 import { Button } from "./components/ui/button";
+import { useAuth } from "./contexts/AuthContext";
 
 // Admin Pages
 import AdminProfile from "./pages/AdminProfile";
@@ -35,7 +36,6 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
-import { useAuth } from "./contexts/AuthContext";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -56,14 +56,32 @@ const LogoutButton = () => {
   );
 };
 
-const AppRoutes = () => {
-  const { loading } = useAuth();
+function AppRoutes() {
+  const { session, loading } = useAuth();
 
   // Mostra uma tela de carregamento enquanto verifica a autenticação
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white" />
+      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
     );
+  }
+
+  // Se o usuário está autenticado e tenta acessar /auth, redireciona
+  if (session?.user && window.location.pathname === '/auth') {
+    const checkAndRedirect = async () => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      window.location.href = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+    };
+    
+    checkAndRedirect();
+    return null;
   }
 
   return (
