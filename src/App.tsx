@@ -1,14 +1,15 @@
 
-import { Routes } from "./Routes"
+import AppRoutes from "./Routes"
 import { Toaster } from "@/components/ui/toaster"
+import { AuthProvider } from "./contexts/AuthContext"
 import './App.css'
 
 function App() {
   return (
-    <>
-      <Routes />
+    <AuthProvider>
+      <AppRoutes />
       <Toaster />
-    </>
+    </AuthProvider>
   )
 }
 
