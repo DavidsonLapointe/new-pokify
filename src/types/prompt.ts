@@ -4,4 +4,5 @@ export interface Prompt {
   name: string;
   content: string;
   description: string;
+  type: string;
 }

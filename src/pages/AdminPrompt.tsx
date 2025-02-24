@@ -14,7 +14,12 @@ const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [newPrompt, setNewPrompt] = useState({ name: "", content: "", description: "" });
+  const [newPrompt, setNewPrompt] = useState({ 
+    name: "", 
+    content: "", 
+    description: "",
+    type: "default" // Valor padrão para o tipo
+  });
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +42,8 @@ const AdminPrompt = () => {
         id: prompt.id,
         name: prompt.name,
         content: prompt.content,
-        description: prompt.description || ''
+        description: prompt.description || '',
+        type: prompt.type
       })));
     } catch (error) {
       console.error('Erro ao buscar prompts:', error);
@@ -52,7 +58,7 @@ const AdminPrompt = () => {
   };
 
   const handleNewPrompt = () => {
-    setNewPrompt({ name: "", content: "", description: "" });
+    setNewPrompt({ name: "", content: "", description: "", type: "default" });
     setIsEditing(false);
     setSelectedPrompt(null);
     setIsModalOpen(true);
@@ -75,7 +81,8 @@ const AdminPrompt = () => {
           .update({
             name: newPrompt.name,
             content: newPrompt.content,
-            description: newPrompt.description
+            description: newPrompt.description,
+            type: newPrompt.type
           })
           .eq('id', selectedPrompt.id);
 
@@ -88,11 +95,12 @@ const AdminPrompt = () => {
       } else {
         const { error } = await supabase
           .from('prompts')
-          .insert([{
+          .insert({
             name: newPrompt.name,
             content: newPrompt.content,
-            description: newPrompt.description
-          }]);
+            description: newPrompt.description,
+            type: newPrompt.type
+          });
 
         if (error) throw error;
 
@@ -115,7 +123,7 @@ const AdminPrompt = () => {
   };
 
   const handleCancel = () => {
-    setNewPrompt({ name: "", content: "", description: "" });
+    setNewPrompt({ name: "", content: "", description: "", type: "default" });
     setIsModalOpen(false);
     setIsEditing(false);
     setSelectedPrompt(null);
@@ -127,6 +135,7 @@ const AdminPrompt = () => {
       name: prompt.name,
       content: prompt.content,
       description: prompt.description,
+      type: prompt.type
     });
     setIsEditing(true);
     setIsModalOpen(true);
