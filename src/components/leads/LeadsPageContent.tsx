@@ -17,8 +17,6 @@ interface LeadsPageContentProps {
   onPlayAudio: (audioUrl: string) => void;
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
-  sortDirection: 'asc' | 'desc' | null;
-  onSort: () => void;
 }
 
 export const LeadsPageContent = ({
@@ -30,8 +28,6 @@ export const LeadsPageContent = ({
   onPlayAudio,
   onViewAnalysis,
   formatDate,
-  sortDirection,
-  onSort,
 }: LeadsPageContentProps) => {
   console.log("LeadsPageContent - calls recebidos:", calls);
   
@@ -39,10 +35,12 @@ export const LeadsPageContent = ({
   const [filteredCalls, setFilteredCalls] = useState(calls);
   const itemsPerPage = 10;
 
+  // Reseta a página para 1 sempre que a busca mudar
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
   
+  // Filtra os calls baseado na busca
   useEffect(() => {
     const filtered = calls.filter((call) => {
       const searchLower = searchQuery.toLowerCase();
@@ -60,11 +58,17 @@ export const LeadsPageContent = ({
     setFilteredCalls(filtered);
   }, [calls, searchQuery]);
   
+  // Calcula o índice inicial e final dos itens na página atual
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+  
+  // Filtra os calls para a página atual
   const currentCalls = filteredCalls.slice(startIndex, endIndex);
+  
+  // Calcula o número total de páginas
   const totalPages = Math.ceil(filteredCalls.length / itemsPerPage);
 
+  // Gera array de páginas para exibição
   const getPageNumbers = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -93,10 +97,9 @@ export const LeadsPageContent = ({
         onPlayAudio={onPlayAudio}
         onViewAnalysis={onViewAnalysis}
         formatDate={formatDate}
-        sortDirection={sortDirection}
-        onSort={onSort}
       />
       
+      {/* Paginação */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 py-4">
           <Button
@@ -143,3 +146,4 @@ export const LeadsPageContent = ({
     </Card>
   );
 };
+

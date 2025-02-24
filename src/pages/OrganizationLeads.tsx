@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -63,7 +62,6 @@ const OrganizationLeads = () => {
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
   const [currentCalls, setCurrentCalls] = useState(mockCalls);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);
@@ -75,22 +73,6 @@ const OrganizationLeads = () => {
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('pt-BR');
-  };
-
-  const handleSort = () => {
-    const newDirection = sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc';
-    setSortDirection(newDirection);
-
-    if (newDirection) {
-      const sortedCalls = [...currentCalls].sort((a, b) => {
-        const nameA = `${a.leadInfo.firstName || ''} ${a.leadInfo.lastName || ''}`.trim().toLowerCase();
-        const nameB = `${b.leadInfo.firstName || ''} ${b.leadInfo.lastName || ''}`.trim().toLowerCase();
-        return newDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-      });
-      setCurrentCalls(sortedCalls);
-    } else {
-      setCurrentCalls(mockCalls); // Reset to original order
-    }
   };
 
   const {
@@ -145,8 +127,6 @@ const OrganizationLeads = () => {
           onPlayAudio={handlePlayAudio}
           onViewAnalysis={handleViewAnalysis}
           formatDate={formatDate}
-          sortDirection={sortDirection}
-          onSort={handleSort}
         />
 
         <CallAnalysisDialog

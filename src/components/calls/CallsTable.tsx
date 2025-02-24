@@ -1,19 +1,18 @@
 
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+} from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ArrowUpZA, ArrowDownAZ } from "lucide-react";
-import { Call, StatusMap } from "@/types/calls";
-
-interface CallsTableProps {
-  calls: Call[];
-  statusMap: StatusMap;
-  onPlayAudio: (audioUrl: string) => void;
-  onViewAnalysis: (call: Call) => void;
-  formatDate: (date: string) => string;
-  sortDirection: 'asc' | 'desc' | null;
-  onSort: () => void;
-}
+import { CallsTableProps, LeadCalls } from "./types";
+import { CallHistory } from "./CallHistory";
+import { UploadCallDialog } from "./UploadCallDialog";
+import { EmptyLeadsState } from "./table/EmptyLeadsState";
+import { LeadsTableHeader } from "./table/LeadsTableHeader";
+import { LeadsTableRow } from "./table/LeadsTableRow";
+import { useLeadsData } from "./table/useLeadsData";
+import { Call } from "@/types/calls";
 
 export const CallsTable = ({
   calls,
@@ -21,75 +20,99 @@ export const CallsTable = ({
   onPlayAudio,
   onViewAnalysis,
   formatDate,
-  sortDirection,
-  onSort,
 }: CallsTableProps) => {
+  const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
+  const [showCallsHistory, setShowCallsHistory] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
+  const [uploadLeadInfo, setUploadLeadInfo] = useState<Call["leadInfo"] | undefined>();
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
+
+  const { leadsWithCalls, updateLeadCalls } = useLeadsData(calls);
+
+  const handleShowCallHistory = (lead: LeadCalls) => {
+    console.log("Mostrando histórico para lead:", lead);
+    setSelectedLead(lead);
+    setShowCallsHistory(true);
+  };
+
+  const handleShowUpload = (lead: LeadCalls) => {
+    setUploadLeadId(lead.id);
+    setUploadLeadInfo({
+      personType: lead.personType,
+      firstName: lead.firstName,
+      lastName: lead.lastName,
+      razaoSocial: lead.razaoSocial,
+      phone: lead.calls[0]?.phone || ""
+    });
+    setShowUpload(true);
+  };
+
+  const handleUploadSuccess = (newCall?: Call) => {
+    if (newCall && uploadLeadId) {
+      updateLeadCalls(uploadLeadId, newCall);
+    }
+    setShowUpload(false);
+    setUploadLeadId(null);
+    setUploadLeadInfo(undefined);
+  };
+
+  console.log("CallsTable - calls:", calls);
+  console.log("CallsTable - leadsWithCalls:", leadsWithCalls);
+
+  if (!calls || calls.length === 0) {
+    return (
+      <EmptyLeadsState
+        isCreateLeadOpen={isCreateLeadOpen}
+        setIsCreateLeadOpen={setIsCreateLeadOpen}
+      />
+    );
+  }
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[200px]">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={onSort}>
-              Nome do Lead
-              <button 
-                className="ml-1 focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSort();
-                }}
-              >
-                {sortDirection === 'asc' ? (
-                  <ArrowDownAZ className="h-4 w-4 text-gray-500" />
-                ) : sortDirection === 'desc' ? (
-                  <ArrowUpZA className="h-4 w-4 text-gray-500" />
-                ) : (
-                  <ArrowDownAZ className="h-4 w-4 text-gray-300" />
-                )}
-              </button>
-            </div>
-          </TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Telefone</TableHead>
-          <TableHead>Data</TableHead>
-          <TableHead>Duração</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {calls.map((call) => (
-          <TableRow key={call.id}>
-            <TableCell className="font-medium">
-              {call.leadInfo.firstName} {call.leadInfo.lastName}
-            </TableCell>
-            <TableCell>{call.leadInfo.email}</TableCell>
-            <TableCell>{call.leadInfo.phone}</TableCell>
-            <TableCell>{formatDate(call.date)}</TableCell>
-            <TableCell>{call.duration}</TableCell>
-            <TableCell>
-              <span className={`px-2 py-1 rounded-full text-xs ${statusMap[call.status].color}`}>
-                {statusMap[call.status].label}
-              </span>
-            </TableCell>
-            <TableCell className="text-right space-x-2">
-              <button
-                className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
-                onClick={() => onPlayAudio(call.audioUrl)}
-              >
-                Ouvir
-              </button>
-              {call.analysis && (
-                <button
-                  className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
-                  onClick={() => onViewAnalysis(call)}
-                >
-                  Ver Análise
-                </button>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <TooltipProvider>
+      <div className="rounded-md border">
+        <Table>
+          <LeadsTableHeader />
+          <TableBody>
+            {leadsWithCalls.map((lead) => (
+              <LeadsTableRow
+                key={lead.id}
+                lead={lead}
+                formatDate={formatDate}
+                onShowHistory={handleShowCallHistory}
+                onShowUpload={handleShowUpload}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <CallHistory
+        isOpen={showCallsHistory}
+        onOpenChange={setShowCallsHistory}
+        selectedLead={selectedLead}
+        statusMap={statusMap}
+        onPlayAudio={onPlayAudio}
+        onViewAnalysis={onViewAnalysis}
+        formatDate={formatDate}
+      />
+
+      {uploadLeadId && (
+        <UploadCallDialog
+          leadId={uploadLeadId}
+          isOpen={showUpload}
+          onOpenChange={(open) => {
+            setShowUpload(open);
+            if (!open) {
+              setUploadLeadId(null);
+              setUploadLeadInfo(undefined);
+            }
+          }}
+          onUploadSuccess={handleUploadSuccess}
+          leadInfo={uploadLeadInfo}
+        />
+      )}
+    </TooltipProvider>
   );
 };
