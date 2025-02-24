@@ -74,13 +74,9 @@ export const useMenuItems = (user: User) => {
       console.log("Usuário:", user.name);
       console.log("Permissões do usuário:", user.permissions);
       
-      const hasPermission = (permissionId: string) => {
-        // Removemos a exceção para 'company' - agora ele segue a regra geral de permissões
-        return hasRoutePermission(permissionId);
-      };
-
+      // Filtra os itens do menu baseado nas permissões do usuário
       const filteredItems = allMenuItems.filter(item => {
-        const permitted = hasPermission(item.permissionId);
+        const permitted = hasRoutePermission(item.permissionId);
         console.log(`Item ${item.label}: permitido? ${permitted}`);
         return permitted;
       });
