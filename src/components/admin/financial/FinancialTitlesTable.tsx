@@ -16,7 +16,7 @@ interface FinancialTitlesTableProps {
 }
 
 const mockOrganization: Organization = {
-  id: 1,
+  id: "1",
   name: "Tech Solutions",
   nomeFantasia: "Tech Solutions Ltda",
   plan: "Enterprise",
@@ -141,7 +141,7 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
         <TableBody>
           {localTitles.map((title) => (
             <TableRow key={title.id}>
-              <TableCell>{title.organizationName}</TableCell>
+              <TableCell>{title.organization?.name}</TableCell>
               <TableCell>
                 {title.type === "pro_rata" ? "Pro Rata" : "Mensalidade"}
                 {title.referenceMonth && ` - ${format(new Date(title.referenceMonth), 'MMMM/yyyy', { locale: ptBR })}`}

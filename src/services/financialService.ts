@@ -11,7 +11,7 @@ export const createProRataTitle = async (organization: Organization, proRataValu
     const { data: title, error } = await supabase
       .from('financial_titles')
       .insert({
-        organization_id: organization.id,
+        organization_id: organization.id.toString(),
         type: 'pro_rata',
         value: proRataValue,
         due_date: dueDate.toISOString(),
@@ -72,6 +72,33 @@ export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<
   }
 };
 
+export const handleTitlePayment = async (
+  title: FinancialTitle, 
+  organization: Organization
+): Promise<FinancialTitle> => {
+  const { data: updatedTitle, error } = await supabase
+    .from('financial_titles')
+    .update({
+      status: 'paid',
+      payment_date: new Date().toISOString(),
+      payment_method: 'pix' // Por enquanto fixo como PIX
+    })
+    .eq('id', title.id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error('Erro ao processar pagamento');
+  }
+
+  return {
+    ...title,
+    status: 'paid',
+    paymentDate: updatedTitle.payment_date,
+    paymentMethod: updatedTitle.payment_method
+  };
+};
+
 export const updateTitleStatus = async (
   titleId: string, 
   status: 'paid' | 'overdue', 
@@ -106,7 +133,14 @@ export const getOrganizationTitles = async (organizationId: string): Promise<Fin
   try {
     const { data: titles, error } = await supabase
       .from('financial_titles')
-      .select('*')
+      .select(`
+        *,
+        organization:organizations (
+          name,
+          nome_fantasia,
+          cnpj
+        )
+      `)
       .eq('organization_id', organizationId)
       .order('due_date', { ascending: true });
 
@@ -123,6 +157,7 @@ export const getOrganizationTitles = async (organizationId: string): Promise<Fin
       createdAt: title.created_at,
       paymentDate: title.payment_date,
       paymentMethod: title.payment_method,
+      organization: title.organization
     }));
   } catch (error) {
     console.error('Erro ao buscar títulos da organização:', error);
@@ -157,6 +192,7 @@ export const getAllTitles = async (): Promise<FinancialTitle[]> => {
       createdAt: title.created_at,
       paymentDate: title.payment_date,
       paymentMethod: title.payment_method,
+      organization: title.organization
     }));
   } catch (error) {
     console.error('Erro ao buscar todos os títulos:', error);

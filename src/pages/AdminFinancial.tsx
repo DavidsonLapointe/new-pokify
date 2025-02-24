@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FinancialTitlesTable } from "@/components/admin/financial/FinancialTitlesTable";
 import { FinancialHeader } from "@/components/admin/financial/FinancialHeader";
@@ -11,28 +12,32 @@ const AdminFinancial = () => {
   const mockTitles: FinancialTitle[] = [
     {
       id: "1",
-      organizationId: 1,
-      organizationName: "Empresa A LTDA",
-      organizationNomeFantasia: "Empresa A",
-      organizationCNPJ: "12.345.678/0001-90",
+      organizationId: "1",
       type: "mensalidade",
       value: 1000,
       dueDate: "2024-03-25",
       status: "pending",
       referenceMonth: "2024-03-01",
       createdAt: "2024-03-01",
+      organization: {
+        name: "Empresa A LTDA",
+        nome_fantasia: "Empresa A",
+        cnpj: "12.345.678/0001-90"
+      }
     },
     {
       id: "2",
-      organizationId: 2,
-      organizationName: "Empresa B Comércio S.A.",
-      organizationNomeFantasia: "Empresa B",
-      organizationCNPJ: "98.765.432/0001-10",
+      organizationId: "2",
       type: "pro_rata",
       value: 500,
       dueDate: "2024-03-20",
       status: "overdue",
       createdAt: "2024-03-01",
+      organization: {
+        name: "Empresa B Comércio S.A.",
+        nome_fantasia: "Empresa B",
+        cnpj: "98.765.432/0001-10"
+      }
     }
   ];
 
@@ -55,9 +60,9 @@ const AdminFinancial = () => {
       // Busca por razão social, nome fantasia ou CNPJ
       const searchTerm = filters.search.toLowerCase();
       const matchesSearch = filters.search === "" || 
-        title.organizationName.toLowerCase().includes(searchTerm) ||
-        title.organizationNomeFantasia?.toLowerCase().includes(searchTerm) ||
-        title.organizationCNPJ?.toLowerCase().includes(searchTerm);
+        title.organization?.name.toLowerCase().includes(searchTerm) ||
+        title.organization?.nome_fantasia?.toLowerCase().includes(searchTerm) ||
+        title.organization?.cnpj.toLowerCase().includes(searchTerm);
 
       return matchesStatus && matchesType && matchesSearch;
     });
