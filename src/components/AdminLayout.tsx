@@ -48,6 +48,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
+  // Se não houver usuário, não renderiza o layout
+  if (!user) {
+    return null;
+  }
+
   // Filtra os itens do menu baseado nas permissões
   const filteredMenuItems = adminMenuItems.filter(item => {
     const hasPermission = hasRoutePermission(item.permissionId);
