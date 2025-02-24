@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useNavigate } from "react-router-dom";
@@ -10,30 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const { session } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkAuthAndRedirect = async () => {
-      try {
-        if (session?.user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
-          navigate(redirectTo, { replace: true });
-        }
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    checkAuthAndRedirect();
-  }, [session, navigate]);
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
@@ -81,11 +58,6 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
-
-  // Não renderiza nada enquanto verifica o estado da autenticação
-  if (isCheckingAuth) {
-    return <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white" />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center p-4">

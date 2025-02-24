@@ -35,6 +35,7 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
+import { useAuth } from "./contexts/AuthContext";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -55,7 +56,16 @@ const LogoutButton = () => {
   );
 };
 
-export default function AppRoutes() {
+const AppRoutes = () => {
+  const { loading } = useAuth();
+
+  // Mostra uma tela de carregamento enquanto verifica a autenticação
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white" />
+    );
+  }
+
   return (
     <BrowserRouter>
       <LogoutButton />
@@ -107,5 +117,13 @@ export default function AppRoutes() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+  );
+}
+
+export default function Root() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
