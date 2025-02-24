@@ -25,10 +25,22 @@ export const usePermissions = (user: User) => {
 
     // Se for ambiente da organização
     if (!isAdminRoute) {
-      // Garante que o routeId está no array de permissões
-      const hasPermission = Array.isArray(user.permissions) && user.permissions.includes(routeId);
-      console.log(`Tem permissão para ${routeId}?`, hasPermission);
-      return hasPermission;
+      // Para ambiente da organização, verifica se a permissão existe no array
+      if (Array.isArray(user.permissions)) {
+        const hasPermission = user.permissions.includes(routeId);
+        console.log('Permissões da organização:', user.permissions);
+        console.log(`Tem permissão para ${routeId}?`, hasPermission);
+        return hasPermission;
+      } 
+      // Se por algum motivo vier como objeto, tenta usar as chaves
+      else if (typeof user.permissions === 'object') {
+        const permissions = Object.keys(user.permissions);
+        const hasPermission = permissions.includes(routeId);
+        console.log('Permissões da organização (objeto):', permissions);
+        console.log(`Tem permissão para ${routeId}?`, hasPermission);
+        return hasPermission;
+      }
+      return false;
     }
 
     // Para ambiente administrativo
@@ -49,8 +61,12 @@ export const usePermissions = (user: User) => {
         ? Object.keys(user.permissions)
         : [];
     } else {
-      // Para ambiente da organização, usa diretamente o array de permissões
-      routes = Array.isArray(user?.permissions) ? user.permissions : [];
+      // Para ambiente da organização
+      if (Array.isArray(user?.permissions)) {
+        routes = [...user.permissions];
+      } else if (typeof user?.permissions === 'object') {
+        routes = Object.keys(user.permissions);
+      }
     }
 
     // Adiciona profile se não existir
