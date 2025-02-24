@@ -1,8 +1,9 @@
 
+import React from 'react';
 import { List, CreditCard, Building2 } from "lucide-react";
 import { organizationRoutes } from "./constants";
 
-export const getRouteIcon = (route: string) => {
+export const getRouteIcon = (route: string): JSX.Element => {
   // Para rotas do ambiente administrativo
   if (route.includes('analysis-packages')) return <List className="h-4 w-4" />;
   if (route.includes('financial')) return <CreditCard className="h-4 w-4" />;
