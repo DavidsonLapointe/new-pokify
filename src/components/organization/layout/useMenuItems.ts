@@ -74,13 +74,19 @@ export const useMenuItems = (user: User) => {
       console.log("Usuário:", user.name);
       console.log("Permissões do usuário:", user.permissions);
       
-      const filteredItems = allMenuItems;
-      console.log("Menu items:", filteredItems);
+      // Filtra os itens do menu baseado nas permissões
+      const filteredItems = allMenuItems.filter(item => {
+        const hasPermission = hasRoutePermission(item.permissionId);
+        console.log(`Verificando permissão para ${item.label}:`, hasPermission);
+        return hasPermission;
+      });
+
+      console.log("Menu items filtrados:", filteredItems);
       console.log("=========================\n");
 
       setMenuItems(filteredItems);
     }
-  }, [user]);
+  }, [user, hasRoutePermission]);
 
   return menuItems;
 };
