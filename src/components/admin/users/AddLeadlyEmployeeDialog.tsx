@@ -10,16 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { UserPlus } from "lucide-react";
+import { UserRole } from "@/types";
 import { toast } from "sonner";
-import { UserRole, mockUsers } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddLeadlyEmployeeDialogProps {
@@ -37,56 +29,8 @@ export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLea
   });
 
   const handleAddUser = () => {
-    const lastId = mockUsers.length > 0 
-      ? Math.max(...mockUsers.map(u => parseInt(u.id)))
-      : 0;
-    const newUserId = String(lastId + 1);
-    
-    const userPermissions: { [key: string]: string[] } = {
-      profile: ["contact", "password"]
-    };
-    
-    if (newUser.role === 'admin') {
-      const adminRoutes = {
-        'dashboard': ['view', 'export'],
-        'leads': ['view', 'edit', 'delete'],
-        'users': ['view', 'edit', 'delete'],
-        'integrations': ['view', 'edit'],
-        'settings': ['view', 'edit'],
-        'plan': ['view', 'upgrade']
-      };
-      
-      Object.entries(adminRoutes).forEach(([route, permissions]) => {
-        userPermissions[route] = permissions;
-      });
-    } else if (newUser.role === 'seller') {
-      const sellerRoutes = {
-        'dashboard': ['view'],
-        'leads': ['view', 'edit'],
-        'integrations': ['view']
-      };
-      
-      Object.entries(sellerRoutes).forEach(([route, permissions]) => {
-        userPermissions[route] = permissions;
-      });
-    }
-
-    const user = {
-      id: newUserId,
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      status: "active" as const,
-      createdAt: new Date().toISOString(),
-      lastAccess: new Date().toISOString(),
-      permissions: userPermissions,
-      logs: [],
-      avatar: "",
-      organization: mockUsers[0].organization
-    };
-
-    console.log("Novo usuário:", user);
+    // TODO: Implementar integração com a API
+    console.log("Novo usuário:", newUser);
     toast.success("Usuário adicionado com sucesso!");
     onClose();
     setNewUser({ name: "", email: "", phone: "", role: "seller" });

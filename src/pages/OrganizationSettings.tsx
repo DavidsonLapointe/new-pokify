@@ -1,7 +1,7 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { OrganizationSettingsForm } from "@/components/organization/OrganizationSettingsForm";
-import { mockUsers } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const mockDefaultData = {
@@ -10,7 +10,7 @@ const mockDefaultData = {
     name: "Tech Solutions",
     nomeFantasia: "Tech Solutions Ltda",
     plan: "Professional",
-    users: [],
+    users: [], // TODO: Implementar integração com a API
     status: "active" as const,
     integratedCRM: null,
     integratedLLM: "OpenAI",

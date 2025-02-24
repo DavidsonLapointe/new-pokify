@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,16 +12,14 @@ import { useLeadUpload } from "@/hooks/useLeadUpload";
 import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
-import { mockUsers } from "@/types/mock-users";
 import { Call } from "@/types/calls";
-import { mockCalls } from "@/mocks/calls";
 
 const mockOrganization = {
   id: "1",
   name: "Tech Solutions Ltda",
   nomeFantasia: "Tech Solutions",
   plan: "enterprise",
-  users: mockUsers,
+  users: [], // TODO: Implementar integração com a API
   status: "active" as const,
   integratedCRM: "HubSpot",
   integratedLLM: "OpenAI",
@@ -61,7 +60,7 @@ const OrganizationLeads = () => {
   const [isFindLeadOpen, setIsFindLeadOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
-  const [currentCalls, setCurrentCalls] = useState(mockCalls);
+  const [currentCalls, setCurrentCalls] = useState<Call[]>([]);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);

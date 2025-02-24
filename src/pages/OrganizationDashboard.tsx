@@ -1,4 +1,3 @@
-
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
@@ -107,7 +106,7 @@ const OrganizationDashboard = () => {
               setMonthlyLeadsSeller={setMonthlyLeadsSeller}
               dailyLeadsSeller={dailyLeadsSeller}
               setDailyLeadsSeller={setDailyLeadsSeller}
-              sellers={mockUsers}
+              sellers={[]} // TODO: Implementar integração com a API
             />
           </TabsContent>
         )}
@@ -126,7 +125,7 @@ const OrganizationDashboard = () => {
                 isMonthly={true}
                 selectedSeller={monthlyCallsSeller}
                 onSellerChange={setMonthlyCallsSeller}
-                sellers={mockUsers}
+                sellers={[]} // TODO: Implementar integração com a API
               />
               <DailyCallsChart 
                 data={dailyCallsData}
@@ -134,7 +133,7 @@ const OrganizationDashboard = () => {
                 onDateChange={setCallsDate}
                 selectedSeller={dailyCallsSeller}
                 onSellerChange={setDailyCallsSeller}
-                sellers={mockUsers}
+                sellers={[]} // TODO: Implementar integração com a API
               />
             </div>
           </TabsContent>
@@ -169,7 +168,7 @@ const OrganizationDashboard = () => {
               setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
               objectionTrendsSeller={objectionTrendsSeller}
               setObjectionTrendsSeller={setObjectionTrendsSeller}
-              sellers={mockUsers}
+              sellers={[]} // TODO: Implementar integração com a API
             />
           </TabsContent>
         )}
@@ -182,14 +181,14 @@ const OrganizationDashboard = () => {
               setMonthlySuggestionsDate={setMonthlySuggestionsDate}
               monthlySuggestionsSeller={monthlySuggestionsSeller}
               setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-              sellers={mockUsers}
+              sellers={[]} // TODO: Implementar integração com a API
             />
           </TabsContent>
         )}
 
         {user.permissions.includes("dashboard.sellers") && (
           <TabsContent value="sellers-info">
-            <SellersTabContent sellers={mockUsers} />
+            <SellersTabContent sellers={[]} />
           </TabsContent>
         )}
       </Tabs>

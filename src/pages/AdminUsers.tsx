@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { User } from "@/types";
-import { mockUsers } from "@/types/mock-users";
 import { useUser } from "@/contexts/UserContext";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { AddLeadlyEmployeeDialog } from "@/components/admin/users/AddLeadlyEmployeeDialog";
@@ -19,15 +18,13 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    const leadlyEmployees = mockUsers.filter(u => u.role === "leadly_employee");
-    setUsers(leadlyEmployees);
+    // TODO: Implementar chamada à API para buscar usuários
+    setUsers([]);
   }, []);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(false);
-    // Recarregar usuários após adicionar
-    const leadlyEmployees = mockUsers.filter(u => u.role === "leadly_employee");
-    setUsers(leadlyEmployees);
+    // TODO: Recarregar usuários após adicionar
   };
 
   const handleEditUser = (user: User) => {
