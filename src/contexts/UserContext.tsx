@@ -20,22 +20,30 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadUserProfile = async () => {
       if (!session?.user) {
+        console.log("No session found, redirecting to login");
         setUser(null);
+        window.location.href = '/';
         return;
       }
 
       try {
+        console.log("Loading user profile for:", session.user.id);
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('*, organizations (*)')
           .eq('id', session.user.id)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error loading profile:", error);
+          throw error;
+        }
+
+        console.log("Profile loaded:", profile);
 
         if (profile) {
           const userData: User = {
-            id: Number(profile.id),
+            id: profile.id,
             name: profile.name || '',
             email: profile.email || '',
             phone: profile.phone || '',
@@ -43,26 +51,38 @@ export function UserProvider({ children }: { children: ReactNode }) {
             status: profile.status || 'active',
             createdAt: profile.created_at,
             lastAccess: profile.last_access,
-            permissions: [],
+            // Definindo permissões baseadas no papel do usuário
+            permissions: profile.role === 'leadly_employee' ? [
+              'dashboard',
+              'organizations',
+              'users',
+              'plans',
+              'analysis-packages',
+              'financial',
+              'integrations',
+              'prompt',
+              'settings',
+              'profile'
+            ] : ['profile'],
             logs: [],
-            organization: {
-              id: Number(profile.organizations?.id || 0),
-              name: profile.organizations?.name || '',
-              nomeFantasia: profile.organizations?.nome_fantasia || '',
-              status: profile.organizations?.status || 'active',
-              plan: profile.organizations?.plan || '',
+            organization: profile.organizations ? {
+              id: profile.organizations.id,
+              name: profile.organizations.name || '',
+              nomeFantasia: profile.organizations.nome_fantasia || '',
+              status: profile.organizations.status || 'active',
+              plan: profile.organizations.plan || '',
               users: [],
-              integratedCRM: profile.organizations?.integrated_crm || null,
-              integratedLLM: profile.organizations?.integrated_llm || null,
-              email: profile.organizations?.email || '',
-              phone: profile.organizations?.phone || '',
-              cnpj: profile.organizations?.cnpj || '',
-              adminName: profile.organizations?.admin_name || '',
-              adminEmail: profile.organizations?.admin_email || '',
-              contractSignedAt: profile.organizations?.contract_signed_at || undefined,
-              createdAt: profile.organizations?.created_at || '',
-              logo: profile.organizations?.logo,
-              address: profile.organizations?.logradouro ? {
+              integratedCRM: profile.organizations.integrated_crm || null,
+              integratedLLM: profile.organizations.integrated_llm || null,
+              email: profile.organizations.email || '',
+              phone: profile.organizations.phone || '',
+              cnpj: profile.organizations.cnpj || '',
+              adminName: profile.organizations.admin_name || '',
+              adminEmail: profile.organizations.admin_email || '',
+              contractSignedAt: profile.organizations.contract_signed_at,
+              createdAt: profile.organizations.created_at || '',
+              logo: profile.organizations.logo,
+              address: profile.organizations.logradouro ? {
                 logradouro: profile.organizations.logradouro || '',
                 numero: profile.organizations.numero || '',
                 complemento: profile.organizations.complemento || '',
@@ -71,15 +91,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
                 estado: profile.organizations.estado || '',
                 cep: profile.organizations.cep || ''
               } : undefined
-            },
+            } : null,
             avatar: profile.avatar || '',
           };
 
+          console.log("Setting user data:", userData);
           setUser(userData);
         }
       } catch (error) {
         console.error('Error loading user profile:', error);
         toast.error('Erro ao carregar perfil do usuário');
+        window.location.href = '/';
       }
     };
 
