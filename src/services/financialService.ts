@@ -10,13 +10,13 @@ export const createProRataTitle = async (organization: Organization, proRataValu
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert({
+      .insert([{
         organization_id: organization.id.toString(),
-        type: 'pro_rata',
-        value: proRataValue.toString(),
+        type: 'pro_rata' as const,
+        value: proRataValue,
         due_date: dueDate.toISOString(),
-        status: 'pending'
-      })
+        status: 'pending' as const
+      }])
       .select()
       .single();
 
@@ -43,14 +43,14 @@ export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert({
+      .insert([{
         organization_id: dto.organizationId.toString(),
-        type: 'mensalidade',
-        value: dto.value.toString(),
+        type: 'mensalidade' as const,
+        value: dto.value,
         due_date: dto.dueDate,
         reference_month: dto.referenceMonth,
-        status: 'pending'
-      })
+        status: 'pending' as const
+      }])
       .select()
       .single();
 
@@ -81,9 +81,9 @@ export const handleTitlePayment = async (
   const { data: updatedTitle, error } = await supabase
     .from('financial_titles')
     .update({
-      status: 'paid',
+      status: 'paid' as const,
       payment_date: new Date().toISOString(),
-      payment_method: 'pix' // Por enquanto fixo como PIX
+      payment_method: 'pix' as const
     })
     .eq('id', title.id)
     .select()
@@ -101,14 +101,14 @@ export const handleTitlePayment = async (
         status: 'active',
         pending_reason: null
       })
-      .eq('id', organization.id);
+      .eq('id', organization.id.toString());
 
     if (orgError) throw orgError;
 
     const { error: userError } = await supabase
       .from('profiles')
       .update({ status: 'active' })
-      .eq('organization_id', organization.id)
+      .eq('organization_id', organization.id.toString())
       .eq('role', 'admin');
 
     if (userError) throw userError;
