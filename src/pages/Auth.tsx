@@ -10,21 +10,25 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const { session } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Se já estiver autenticado, verifica o perfil e redireciona
     const checkAuthAndRedirect = async () => {
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
+      try {
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
 
-        const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
-        navigate(redirectTo, { replace: true });
+          const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+          navigate(redirectTo, { replace: true });
+        }
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
 
@@ -77,6 +81,11 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
+
+  // Não renderiza nada enquanto verifica o estado da autenticação
+  if (isCheckingAuth) {
+    return <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white" />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center p-4">
