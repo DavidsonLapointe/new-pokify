@@ -1,7 +1,6 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
-import { mockUsers } from '@/types/mock-users';
+import { mockUsers, defaultActiveUser } from '@/types/mock-users';
 
 interface UserContextType {
   user: User;
@@ -12,51 +11,12 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Usuário Admin padrão para ambiente administrativo
-  const defaultAdminUser: User = {
-    id: 1,
-    name: "Admin Leadly",
-    email: "admin@leadly.com",
-    phone: "(11) 3333-4444",
-    role: "leadly_employee",
-    status: "active",
-    createdAt: "2024-01-01T00:00:00.000Z",
-    lastAccess: new Date().toISOString(),
-    permissions: [
-      "dashboard",
-      "integrations",
-      "plans",
-      "organizations",
-      "settings",
-      "prompt",
-      "analysis-packages",
-      "financial",
-      "users",
-      "profile"
-    ],
-    logs: [],
-    avatar: "",
-    organization: {
-      id: 1,
-      name: "Leadly Technologies",
-      nomeFantasia: "Leadly",
-      plan: "Enterprise",
-      users: [],
-      status: "active",
-      integratedCRM: null,
-      integratedLLM: null,
-      email: "contato@leadly.com",
-      phone: "(11) 3333-4444",
-      cnpj: "12.345.678/0001-90",
-      adminName: "Admin Leadly",
-      adminEmail: "admin@leadly.com",
-      createdAt: "2024-01-01T00:00:00.000Z"
-    }
-  };
+  // Usuário Admin padrão para ambiente administrativo (agora usando o usuário ativo criado)
+  const defaultAdminUser: User = defaultActiveUser;
   
   // Usuário padrão para ambiente da organização
   const defaultOrgUser: User = {
-    id: 2,
+    id: 4,
     name: "Admin Organização",
     email: "admin@organizacao.com",
     phone: "(11) 99999-9999",
