@@ -2,7 +2,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { Session } from '@supabase/supabase-js';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 interface AuthContextType {
   session: Session | null;
@@ -15,8 +15,8 @@ const publicRoutes = ['/', '/auth', '/confirm-registration', '/contract'];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { session, loading } = useAuthSession();
-  const location = useLocation();
-  const isPublicRoute = publicRoutes.includes(location.pathname);
+  const pathname = window.location.pathname;
+  const isPublicRoute = publicRoutes.includes(pathname);
 
   // Se estiver carregando, mostra nada até terminar
   if (loading) {
