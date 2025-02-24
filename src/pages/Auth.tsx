@@ -31,7 +31,7 @@ export default function Auth() {
         .eq('id', data.user.id)
         .single();
 
-      const redirectTo = profile?.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
+      const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
       navigate(redirectTo, { replace: true });
     } catch (error: any) {
       setError(error.message);
