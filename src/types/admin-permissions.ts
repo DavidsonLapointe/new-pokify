@@ -1,31 +1,30 @@
 
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
-    dashboard: ["view", "export"],
-    organizations: ["view", "edit", "delete"],
-    users: ["view", "edit", "delete"],
-    plans: ["view", "edit"],
-    "analysis-packages": ["view", "edit"],
-    financial: ["view", "edit"],
-    integrations: ["view", "edit"],
-    prompt: ["view", "edit"],
-    settings: ["view", "edit"],
-    profile: ["contact", "password"]
+    dashboard: true,
+    organizations: true,
+    users: true,
+    plans: true,
+    "analysis-packages": true,
+    financial: true,
+    integrations: true,
+    prompt: true,
+    settings: true,
+    profile: true
   },
   admin: {
-    dashboard: ["view", "export"],
-    leads: ["view", "edit", "delete"],
-    users: ["view", "edit", "delete"],
-    integrations: ["view", "edit"],
-    settings: ["view", "edit"],
-    plan: ["view", "upgrade"],
-    profile: ["contact", "password"]
+    dashboard: true,
+    leads: true,
+    users: true,
+    integrations: true,
+    settings: true,
+    plan: true,
+    profile: true
   },
   seller: {
-    dashboard: ["view"],
-    leads: ["view", "edit"],
-    integrations: ["view"],
-    profile: ["contact", "password"]
+    dashboard: true,
+    leads: true,
+    profile: true
   }
 };
 
@@ -82,4 +81,3 @@ export const availableAdminRoutePermissions = [
     path: "/admin/settings"
   }
 ];
-

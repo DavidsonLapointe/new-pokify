@@ -5,16 +5,6 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 export const usePermissions = (user: User) => {
   const isAdminRoute = window.location.pathname.startsWith('/admin');
 
-  const normalizePermissions = (permissions: any): string[] => {
-    if (Array.isArray(permissions)) {
-      return permissions;
-    }
-    if (typeof permissions === 'object' && permissions !== null) {
-      return Object.keys(permissions);
-    }
-    return [];
-  };
-
   const hasRoutePermission = (routeId: string): boolean => {
     console.log("\n=== Verificando Permissão ===");
     console.log("Rota solicitada:", routeId);
@@ -33,11 +23,8 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Normaliza as permissões para array
-    const permissions = normalizePermissions(user.permissions);
-    console.log('Permissões normalizadas:', permissions);
-
-    const hasPermission = permissions.includes(routeId);
+    // Verifica se a permissão existe e é true
+    const hasPermission = user.permissions[routeId] === true;
     console.log(`Tem permissão para ${routeId}?`, hasPermission);
     return hasPermission;
   };
@@ -45,9 +32,11 @@ export const usePermissions = (user: User) => {
   const getUserPermissions = () => {
     let routes: string[] = [];
 
-    // Normaliza as permissões independente do formato
+    // Adiciona todas as rotas que têm permissão true
     if (user?.permissions) {
-      routes = normalizePermissions(user.permissions);
+      routes = Object.entries(user.permissions)
+        .filter(([_, value]) => value === true)
+        .map(([key, _]) => key);
     }
 
     // Adiciona profile se não existir
