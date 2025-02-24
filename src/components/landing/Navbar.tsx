@@ -7,7 +7,7 @@ export function Navbar() {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="font-bold text-2xl text-gray-900">Leadly</div>
-          <div className="mr-4">
+          <div>
             <Button onClick={() => window.location.href = "/auth"}>
               Acessar Plataforma
             </Button>
