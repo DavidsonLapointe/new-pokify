@@ -28,7 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Para rotas protegidas, redireciona se não houver sessão
   if (!loading && !session && !isPublicRoute) {
-    window.location.href = '/';
+    // Redireciona para a página de autenticação ao invés da raiz
+    window.location.href = '/auth';
     return null;
   }
 

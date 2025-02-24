@@ -19,9 +19,13 @@ export function useAuthSession() {
       setSession(session);
       setLoading(false);
 
-      // Só loga a mensagem de redirecionamento em rotas protegidas
-      if (!isPublicRoute && !session) {
-        console.log("No session found, redirecting to login");
+      // Melhorando os logs para debug
+      if (!isPublicRoute) {
+        if (!session) {
+          console.log("No session found, will redirect to auth page");
+        } else {
+          console.log("Session found:", session.user.id);
+        }
       }
     });
 
@@ -29,6 +33,7 @@ export function useAuthSession() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", _event);
       setSession(session);
       setLoading(false);
     });

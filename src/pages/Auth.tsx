@@ -15,8 +15,7 @@ export default function Auth() {
   // Se já estiver autenticado, redireciona
   if (user) {
     // Verifica se é admin para redirecionar corretamente
-    const isAdmin = user.role === 'leadly_employee';
-    const redirectTo = isAdmin ? '/admin/profile' : '/organization/profile';
+    const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
     return <Navigate to={redirectTo} replace />;
   }
 
@@ -30,6 +29,9 @@ export default function Auth() {
       });
 
       if (error) throw error;
+
+      // Se o login for bem sucedido, o useEffect no AuthContext
+      // vai atualizar a sessão e redirecionar automaticamente
     } catch (error: any) {
       setError(error.message);
       toast.error("Erro ao fazer login");
