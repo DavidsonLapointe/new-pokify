@@ -13,7 +13,7 @@ export interface Address {
 }
 
 export interface Organization {
-  id: number;
+  id: string;
   name: string;
   nomeFantasia: string;
   plan: string;

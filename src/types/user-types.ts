@@ -4,7 +4,7 @@ export type UserStatus = "active" | "inactive" | "pending";
 export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | null;
 
 export interface UserLog {
-  id: number;
+  id: string;
   date: string;
   action: string;
 }
@@ -13,7 +13,7 @@ export interface UserLog {
 import type { Organization } from "./organization-types";
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -21,8 +21,8 @@ export interface User {
   status: UserStatus;
   createdAt: string;
   lastAccess: string;
-  permissions: string[];  // Agora é um array simples de strings
+  permissions: string[];
   logs: UserLog[];
-  organization: Organization;
+  organization: Organization | null;
   avatar: string;
 }
