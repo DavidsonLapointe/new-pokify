@@ -4,8 +4,8 @@ import { RoutePermission, availableRoutePermissions } from "@/types/permissions"
 
 export const usePermissions = (user: User) => {
   const hasRoutePermission = (routeId: string): boolean => {
-    // Profile e Company são sempre permitidos
-    if (routeId === 'profile' || routeId === 'company') {
+    // Profile é sempre permitido
+    if (routeId === 'profile') {
       return true;
     }
 
@@ -26,9 +26,8 @@ export const usePermissions = (user: User) => {
   const getUserPermissions = () => {
     const routes: string[] = [];
 
-    // Profile e Company são sempre permitidos
+    // Profile é sempre permitido
     routes.push('profile');
-    routes.push('company');
 
     // Adiciona outras rotas que o usuário tem permissão
     if (user?.permissions) {

@@ -75,7 +75,7 @@ export const useMenuItems = (user: User) => {
       console.log("Permissões do usuário:", user.permissions);
       
       const hasPermission = (permissionId: string) => {
-        if (permissionId === "company") return true;
+        // Removemos a exceção para 'company' - agora ele segue a regra geral de permissões
         return hasRoutePermission(permissionId);
       };
 
