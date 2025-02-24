@@ -7,68 +7,71 @@ import { useState, useEffect } from "react"
 import { toast } from "sonner"
 
 interface AvatarUploadProps {
-  currentImage?: string
-  name: string
-  onImageUpload: (file: File) => void
-  isLogo?: boolean
+  currentImage?: string;
+  name: string;
+  onImageUpload: (file: File) => void;
+  isLogo?: boolean;
 }
 
 export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false }: AvatarUploadProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentImage)
-  const [isDragging, setIsDragging] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentImage);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    setPreviewUrl(currentImage)
-  }, [currentImage])
+    setPreviewUrl(currentImage);
+  }, [currentImage]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    validateAndUploadFile(file)
-  }
+    validateAndUploadFile(file);
+  };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    setIsDragging(false)
+    event.preventDefault();
+    setIsDragging(false);
 
-    const file = event.dataTransfer.files[0]
-    if (!file) return
+    const file = event.dataTransfer.files[0];
+    if (!file) return;
 
-    validateAndUploadFile(file)
-  }
+    validateAndUploadFile(file);
+  };
 
   const validateAndUploadFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Por favor, selecione uma imagem válida')
-      return
+      toast.error('Por favor, selecione uma imagem válida');
+      return;
     }
 
-    const maxSize = 5 * 1024 * 1024 // 5MB
+    const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      toast.error('A imagem deve ter no máximo 5MB')
-      return
+      toast.error('A imagem deve ter no máximo 5MB');
+      return;
     }
 
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setPreviewUrl(reader.result as string)
-    }
-    reader.readAsDataURL(file)
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
 
-    onImageUpload(file)
-  }
+    onImageUpload(file);
+  };
 
   const handleRemoveImage = () => {
-    setPreviewUrl(undefined)
-    onImageUpload(new File([], "removed"))
-  }
+    setPreviewUrl(undefined);
+    // Cria um "arquivo vazio" para remover a imagem
+    const emptyBlob = new Blob([], { type: 'image/png' });
+    const emptyFile = new File([emptyBlob], 'removed', { type: 'image/png' });
+    onImageUpload(emptyFile);
+  };
 
   const getInitials = (name: string) => {
-    const nameParts = name.trim().split(' ')
-    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
-    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
-  }
+    const nameParts = name.trim().split(' ');
+    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase();
+    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+  };
 
   return (
     <div className="space-y-4">
@@ -77,8 +80,8 @@ export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false
         <div 
           className={`relative group ${isDragging ? 'ring-2 ring-primary ring-offset-2' : ''}`}
           onDragOver={(e) => {
-            e.preventDefault()
-            setIsDragging(true)
+            e.preventDefault();
+            setIsDragging(true);
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
@@ -107,7 +110,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false
                 accept="image/*"
               />
             </label>
-            {currentImage && (
+            {previewUrl && (
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -133,7 +136,7 @@ export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false
                 Escolher arquivo
               </label>
             </Button>
-            {currentImage && (
+            {previewUrl && (
               <Button 
                 variant="cancel"
                 size="sm"
@@ -152,5 +155,5 @@ export function AvatarUpload({ currentImage, name, onImageUpload, isLogo = false
         </div>
       </div>
     </div>
-  )
+  );
 }
