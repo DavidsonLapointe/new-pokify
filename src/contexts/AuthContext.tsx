@@ -2,7 +2,6 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { Session } from '@supabase/supabase-js';
-import { Navigate } from 'react-router-dom';
 
 interface AuthContextType {
   session: Session | null;
@@ -11,30 +10,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/', '/auth', '/confirm-registration', '/contract'];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { session, loading } = useAuthSession();
-  const pathname = window.location.pathname;
-  const isPublicRoute = publicRoutes.includes(pathname);
 
   // Se estiver carregando, mostra nada até terminar
   if (loading) {
     return null;
-  }
-
-  // Se estiver em uma rota pública, renderiza normalmente independente da sessão
-  if (isPublicRoute) {
-    return (
-      <AuthContext.Provider value={{ session, loading }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  }
-
-  // Para rotas protegidas, redireciona se não houver sessão
-  if (!session && !isPublicRoute) {
-    return <Navigate to="/auth" replace />;
   }
 
   return (
