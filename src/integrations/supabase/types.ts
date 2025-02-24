@@ -47,6 +47,53 @@ export type Database = {
           },
         ]
       }
+      financial_titles: {
+        Row: {
+          created_at: string
+          due_date: string
+          id: string
+          organization_id: string | null
+          payment_date: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          reference_month: string | null
+          status: Database["public"]["Enums"]["financial_title_status"]
+          type: Database["public"]["Enums"]["financial_title_type"]
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          due_date: string
+          id?: string
+          organization_id?: string | null
+          payment_date?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          reference_month?: string | null
+          status?: Database["public"]["Enums"]["financial_title_status"]
+          type: Database["public"]["Enums"]["financial_title_type"]
+          value: number
+        }
+        Update: {
+          created_at?: string
+          due_date?: string
+          id?: string
+          organization_id?: string | null
+          payment_date?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          reference_month?: string | null
+          status?: Database["public"]["Enums"]["financial_title_status"]
+          type?: Database["public"]["Enums"]["financial_title_type"]
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_titles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           admin_email: string
@@ -186,10 +233,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      financial_title_status: "pending" | "paid" | "overdue"
+      financial_title_type: "pro_rata" | "mensalidade"
       organization_pending_reason:
         | "contract_signature"
         | "pro_rata_payment"
         | "null"
+      payment_method: "pix" | "boleto"
       user_role: "leadly_employee" | "admin" | "seller"
       user_status: "active" | "inactive" | "pending"
     }

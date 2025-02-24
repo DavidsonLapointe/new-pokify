@@ -1,77 +1,165 @@
 
-import { FinancialTitle } from "@/types/financial";
+import { FinancialTitle, CreateFinancialTitleDTO } from "@/types/financial";
 import { Organization } from "@/types";
-import { updateOrganizationStatus } from "./organizationService";
+import { supabase } from "@/integrations/supabase/client";
 
-export const createProRataTitle = (organization: Organization, proRataValue: number): FinancialTitle => {
+export const createProRataTitle = async (organization: Organization, proRataValue: number): Promise<FinancialTitle | null> => {
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
 
-  return {
-    id: Math.random().toString(36).substring(7),
-    organizationId: organization.id,
-    organizationName: organization.name,
-    type: "pro_rata",
-    value: proRataValue,
-    dueDate: dueDate.toISOString(),
-    status: "pending",
-    createdAt: new Date().toISOString(),
-  };
-};
+  try {
+    const { data: title, error } = await supabase
+      .from('financial_titles')
+      .insert({
+        organization_id: organization.id,
+        type: 'pro_rata',
+        value: proRataValue,
+        due_date: dueDate.toISOString(),
+      })
+      .select()
+      .single();
 
-export const generateMonthlyTitles = async () => {
-  // Em produção, isso seria um job agendado para rodar todo dia 1
-  const activeOrganizations: Organization[] = []; // Buscar organizações ativas
-  const dueDate = new Date();
-  dueDate.setDate(5); // Vencimento dia 5
+    if (error) throw error;
 
-  const titles: FinancialTitle[] = activeOrganizations.map(org => ({
-    id: Math.random().toString(36).substring(7),
-    organizationId: org.id,
-    organizationName: org.name,
-    type: "mensalidade",
-    value: 500, // Valor do plano da organização
-    dueDate: dueDate.toISOString(),
-    status: "pending",
-    referenceMonth: new Date().toISOString().substring(0, 7),
-    createdAt: new Date().toISOString(),
-  }));
-
-  return titles;
-};
-
-export const processPayment = async (titleId: string) => {
-  // Em produção, implementar a lógica de processamento do pagamento
-  console.log("Processando pagamento do título:", titleId);
-  return true;
-};
-
-// Função para atualizar status do título e da organização após pagamento
-export const handleTitlePayment = async (title: FinancialTitle, organization: Organization) => {
-  // Atualiza o título para pago
-  const updatedTitle = {
-    ...title,
-    status: "paid" as const,
-    paymentDate: new Date().toISOString(),
-  };
-
-  // Se for pagamento pro rata, ativa a organização e o usuário admin
-  if (title.type === "pro_rata") {
-    const adminUser = organization.users.find(user => user.role === "admin");
-    if (adminUser) {
-      adminUser.status = "active";
-    }
-    organization.status = "active";
-    organization.pendingReason = null;
+    return {
+      id: title.id,
+      organizationId: title.organization_id,
+      type: title.type,
+      value: title.value,
+      dueDate: title.due_date,
+      status: title.status,
+      createdAt: title.created_at,
+      paymentDate: title.payment_date,
+      paymentMethod: title.payment_method,
+    };
+  } catch (error) {
+    console.error('Erro ao criar título pro rata:', error);
+    return null;
   }
-
-  return updatedTitle;
 };
 
-// Função para verificar status do pagamento (mock)
-export const checkPaymentStatus = async (organizationId: number): Promise<"pending" | "paid" | "overdue"> => {
-  // Aqui implementaríamos a verificação real do status do pagamento
-  // Por enquanto, retornamos um status aleatório para demonstração
-  const statuses: ("pending" | "paid" | "overdue")[] = ["pending", "paid", "overdue"];
-  return statuses[Math.floor(Math.random() * statuses.length)];
+export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<FinancialTitle | null> => {
+  try {
+    const { data: title, error } = await supabase
+      .from('financial_titles')
+      .insert({
+        organization_id: dto.organizationId,
+        type: 'mensalidade',
+        value: dto.value,
+        due_date: dto.dueDate,
+        reference_month: dto.referenceMonth,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: title.id,
+      organizationId: title.organization_id,
+      type: title.type,
+      value: title.value,
+      dueDate: title.due_date,
+      status: title.status,
+      referenceMonth: title.reference_month,
+      createdAt: title.created_at,
+      paymentDate: title.payment_date,
+      paymentMethod: title.payment_method,
+    };
+  } catch (error) {
+    console.error('Erro ao criar título mensal:', error);
+    return null;
+  }
+};
+
+export const updateTitleStatus = async (
+  titleId: string, 
+  status: 'paid' | 'overdue', 
+  paymentMethod?: 'pix' | 'boleto'
+): Promise<boolean> => {
+  try {
+    const updateData: any = {
+      status,
+    };
+
+    if (status === 'paid') {
+      updateData.payment_date = new Date().toISOString();
+      if (paymentMethod) {
+        updateData.payment_method = paymentMethod;
+      }
+    }
+
+    const { error } = await supabase
+      .from('financial_titles')
+      .update(updateData)
+      .eq('id', titleId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar status do título:', error);
+    return false;
+  }
+};
+
+export const getOrganizationTitles = async (organizationId: string): Promise<FinancialTitle[]> => {
+  try {
+    const { data: titles, error } = await supabase
+      .from('financial_titles')
+      .select('*')
+      .eq('organization_id', organizationId)
+      .order('due_date', { ascending: true });
+
+    if (error) throw error;
+
+    return titles.map(title => ({
+      id: title.id,
+      organizationId: title.organization_id,
+      type: title.type,
+      value: title.value,
+      dueDate: title.due_date,
+      status: title.status,
+      referenceMonth: title.reference_month,
+      createdAt: title.created_at,
+      paymentDate: title.payment_date,
+      paymentMethod: title.payment_method,
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar títulos da organização:', error);
+    return [];
+  }
+};
+
+export const getAllTitles = async (): Promise<FinancialTitle[]> => {
+  try {
+    const { data: titles, error } = await supabase
+      .from('financial_titles')
+      .select(`
+        *,
+        organization:organizations (
+          name,
+          nome_fantasia,
+          cnpj
+        )
+      `)
+      .order('due_date', { ascending: true });
+
+    if (error) throw error;
+
+    return titles.map(title => ({
+      id: title.id,
+      organizationId: title.organization_id,
+      type: title.type,
+      value: title.value,
+      dueDate: title.due_date,
+      status: title.status,
+      referenceMonth: title.reference_month,
+      createdAt: title.created_at,
+      paymentDate: title.payment_date,
+      paymentMethod: title.payment_method,
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar todos os títulos:', error);
+    return [];
+  }
 };
