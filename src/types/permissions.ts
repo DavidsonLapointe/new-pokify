@@ -59,7 +59,6 @@ export const availableRoutePermissions: RoutePermission[] = [
   {
     id: "company",
     label: "Minha Empresa",
-    path: "/organization/company",
-    isDefault: true
+    path: "/organization/company"
   }
 ];
