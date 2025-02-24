@@ -1,163 +1,104 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { useUser } from "@/contexts/UserContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { User } from "@/types";
 
-export const useAuthLogin = (onSuccess: () => void) => {
-  const navigate = useNavigate();
-  const { updateUser } = useUser();
+export const useAuthLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { setSession } = useAuth();
+  const router = useRouter();
 
-  const handleLogin = async (email: string, password: string) => {
+  const login = async (email: string) => {
     setIsLoading(true);
-    setError(null);
-    
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
-      if (authError) throw authError;
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          organization:organizations (
-            *
-          )
-        `)
-        .eq('id', authData.user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      if (!profile) {
-        throw new Error("Perfil não encontrado");
-      }
-
-      if (profile.status !== "active") {
-        if (profile.role === "leadly_employee") {
-          toast.error("Seu usuário não está ativo. Por favor, entre em contato com o suporte.");
-        } else {
-          const { data: activeAdmin } = await supabase
-            .from('profiles')
-            .select('email')
-            .eq('organization_id', profile.organization.id)
-            .eq('role', 'admin')
-            .eq('status', 'active')
-            .single();
-
-          toast.error(
-            `Seu usuário não está ativo. Por favor, entre em contato com o administrador: ${activeAdmin?.email || 'Não encontrado'}`
-          );
-        }
-        await supabase.auth.signOut();
-        setIsLoading(false);
+      if (error) {
+        console.error("Erro ao fazer login:", error);
+        toast.error("Erro ao fazer login. Verifique seu email.");
         return;
       }
 
-      if (profile.role !== "leadly_employee" && profile.organization?.status !== "active") {
-        toast.error("Sua empresa não está ativa no sistema. Entre em contato com o suporte.");
-        await supabase.auth.signOut();
-        setIsLoading(false);
+      toast.success("Email de confirmação enviado! Verifique sua caixa de entrada.");
+      console.log("Link de confirmação enviado para:", email);
+    } catch (error) {
+      console.error("Erro inesperado ao fazer login:", error);
+      toast.error("Ocorreu um erro inesperado. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCallback = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Erro ao obter sessão:", error);
+        toast.error("Erro ao obter sessão. Tente novamente.");
         return;
       }
 
-      await supabase
-        .from('profiles')
-        .update({ last_access: new Date().toISOString() })
-        .eq('id', profile.id);
+      if (session) {
+        setSession(session);
 
-      const mockUser = {
-        id: "1",  // Convertido para string
-        name: profile.name || "",
-        email: profile.email || "",
-        role: profile.role,
-        status: profile.status,
-        permissions: [],
-        createdAt: profile.created_at || "",
-        lastAccess: profile.last_access || "",
-        logs: [],
-        organization: {
-          id: "1",  // Convertido para string
-          name: "Tech Solutions",
-          nomeFantasia: "Tech Solutions Ltda",
-          plan: "Enterprise",
+        const { user } = session;
+
+        const mockOrganization = {
+          id: "1",
+          name: "Leadly",
+          nomeFantasia: "Leadly",
+          plan: "Professional",
           users: [],
           status: "active",
-          pendingReason: profile.organization.pending_reason === "null" ? null : profile.organization.pending_reason,
-          integratedCRM: profile.organization.integrated_crm,
-          integratedLLM: profile.organization.integrated_llm,
-          email: profile.organization.email,
-          phone: profile.organization.phone || "",
-          cnpj: profile.organization.cnpj,
-          adminName: profile.organization.admin_name,
-          adminEmail: profile.organization.admin_email,
-          contractSignedAt: profile.organization.contract_signed_at,
-          createdAt: profile.organization.created_at || "",
-          logo: profile.organization.logo,
-          address: profile.organization.logradouro ? {
-            logradouro: profile.organization.logradouro,
-            numero: profile.organization.numero || "",
-            complemento: profile.organization.complemento || "",
-            bairro: profile.organization.bairro || "",
-            cidade: profile.organization.cidade || "",
-            estado: profile.organization.estado || "",
-            cep: profile.organization.cep || "",
-          } : undefined
-        },
-        avatar: profile.avatar || "",
-      };
+          integratedCRM: null,
+          integratedLLM: "OpenAI",
+          email: "contato@leadly.com",
+          phone: "(11) 99999-9999",
+          cnpj: "12.345.678/0001-90",
+          adminName: "João Silva",
+          adminEmail: "joao.silva@leadly.com",
+          createdAt: new Date().toISOString()
+        };
 
-      updateUser(mockUser);
+        const mockUser: User = {
+          id: user.id,
+          name: user.user_metadata.name || "",
+          email: user.email || "",
+          phone: "", // Adicionando o campo phone que estava faltando
+          role: "leadly_employee",
+          status: "active",
+          createdAt: new Date().toISOString(),
+          lastAccess: new Date().toISOString(),
+          permissions: [],
+          logs: [],
+          organization: mockOrganization,
+          avatar: ""
+        };
 
-      onSuccess();
-      
-      if (profile.role === "leadly_employee") {
-        navigate("/admin/dashboard");
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        toast.success("Login realizado com sucesso!");
+        router.push("/dashboard");
       } else {
-        navigate("/organization/dashboard");
+        toast.error("Sessão não encontrada. Tente novamente.");
+        router.push("/");
       }
-
-    } catch (error: any) {
-      console.error("Erro no login:", error);
-      setError(error.message || "Ocorreu um erro ao tentar fazer login. Tente novamente.");
+    } catch (error) {
+      console.error("Erro durante o callback:", error);
+      toast.error("Erro ao completar o login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handlePasswordRecovery = async (email: string) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
-
-      setIsLoading(false);
-      toast.success("Se o email existir em nossa base, você receberá instruções para redefinir sua senha.");
-      return true;
-    } catch (error: any) {
-      setError(error.message || "Ocorreu um erro ao solicitar a recuperação de senha. Tente novamente.");
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return {
-    isLoading,
-    error,
-    handleLogin,
-    handlePasswordRecovery,
-    setError
-  };
+  return { login, isLoading, handleCallback };
 };

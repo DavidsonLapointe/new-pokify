@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,29 +37,28 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
   });
 
   const handleAddUser = () => {
-    const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
+    const lastId = mockUsers.length > 0 
+      ? Math.max(...mockUsers.map(u => parseInt(u.id))) + 1
+      : 1;
     
     const userPermissions: { [key: string]: string[] } = {
-      // Adicionamos o profile por padrão para todos os usuários
       profile: ["contact", "password"]
     };
     
     if (newUser.role === 'admin') {
-      // Permissões padrão para admin, incluindo explicitamente 'plan'
       const adminRoutes = {
         'dashboard': ['view', 'export'],
         'leads': ['view', 'edit', 'delete'],
         'users': ['view', 'edit', 'delete'],
         'integrations': ['view', 'edit'],
         'settings': ['view', 'edit'],
-        'plan': ['view', 'upgrade']  // Garantindo que todo admin tenha acesso ao Meu Plano
+        'plan': ['view', 'upgrade']
       };
       
       Object.entries(adminRoutes).forEach(([route, permissions]) => {
         userPermissions[route] = permissions;
       });
     } else if (newUser.role === 'seller') {
-      // Permissões padrão para seller
       const sellerRoutes = {
         'dashboard': ['view'],
         'leads': ['view', 'edit'],
@@ -73,7 +71,7 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     }
 
     const user = {
-      id: newUserId,
+      id: String(lastId),
       name: newUser.name,
       email: newUser.email,
       phone: newUser.phone,

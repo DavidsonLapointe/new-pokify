@@ -11,8 +11,8 @@ import {
 import { User, UserRole } from "@/types";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { UserForm } from "./UserForm";
-import { EditUserDialogProps, DEFAULT_PERMISSIONS } from "./types";
+import { UserForm } from "@/components/admin/users/UserForm";
+import { EditUserDialogProps, DEFAULT_PERMISSIONS } from "@/components/admin/users/types";
 
 export const EditUserDialog = ({
   isOpen,
@@ -45,7 +45,7 @@ export const EditUserDialog = ({
       logs: [
         ...editedUser.logs,
         {
-          id: Math.max(...editedUser.logs.map(log => log.id)) + 1,
+          id: String(Math.max(...editedUser.logs.map(log => parseInt(log.id))) + 1),
           date: new Date().toISOString(),
           action: `Usuário atualizado${pendingRole ? ` - Função alterada para ${newRole}` : ''}`
         }

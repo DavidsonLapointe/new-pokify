@@ -11,7 +11,7 @@ const mockDefaultData = {
     nomeFantasia: "Tech Solutions Ltda",
     plan: "Professional",
     users: [],
-    status: "active",
+    status: "active" as const,
     integratedCRM: null,
     integratedLLM: "OpenAI",
     email: "contato@techsolutions.com",
