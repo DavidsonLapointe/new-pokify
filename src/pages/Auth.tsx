@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,24 @@ export default function Auth() {
   const [error, setError] = useState<string | null>(null);
   const { session } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Se já estiver autenticado, verifica o perfil e redireciona
+    const checkAuthAndRedirect = async () => {
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+        navigate(redirectTo, { replace: true });
+      }
+    };
+
+    checkAuthAndRedirect();
+  }, [session, navigate]);
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);

@@ -2,7 +2,7 @@
 import { ReactNode, useEffect } from 'react';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { User } from '@/types/user-types';
+import { User } from '@/types';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -21,15 +21,16 @@ export default function ProtectedRoute({ children, user }: ProtectedRouteProps) 
     }
   }, [session, loading, isPublicRoute, navigate]);
 
-  // Se estiver carregando, mostra nada
+  // Se estiver carregando, mostra uma div vazia com altura total para evitar flash
   if (loading) {
-    return null;
+    return <div className="min-h-screen" />;
   }
 
   // Se for rota pública, renderiza normalmente
   if (isPublicRoute) {
     // Se tiver sessão e estiver tentando acessar /auth, redireciona baseado no papel
     if (session && location.pathname === '/auth') {
+      console.log("Usuário autenticado tentando acessar /auth, redirecionando...");
       // Busca o papel do usuário para determinar o redirecionamento
       const redirectTo = user?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
       return <Navigate to={redirectTo} replace />;
