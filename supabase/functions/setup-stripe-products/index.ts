@@ -16,13 +16,26 @@ serve(async (req) => {
 
   try {
     console.log('Iniciando setup do Stripe...');
-    console.log('STRIPE_SECRET_KEY:', Deno.env.get('STRIPE_SECRET_KEY')?.slice(-10)); // Mostra apenas os últimos 10 caracteres por segurança
-
+    
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
       apiVersion: '2023-10-16',
     });
 
-    console.log('Criando produtos no Stripe...');
+    console.log('Verificando produtos existentes...');
+
+    // Buscar produtos existentes
+    const existingProducts = await stripe.products.list({
+      active: true,
+    });
+
+    // Arquivar produtos existentes
+    console.log('Arquivando produtos existentes...');
+    for (const product of existingProducts.data) {
+      await stripe.products.update(product.id, { active: false });
+      console.log(`Produto ${product.id} arquivado`);
+    }
+
+    console.log('Criando novos produtos...');
 
     // Criar os produtos
     const basicProduct = await stripe.products.create({
