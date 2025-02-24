@@ -49,38 +49,53 @@ export type Database = {
       }
       financial_titles: {
         Row: {
+          boleto_barcode: string | null
+          boleto_url: string | null
           created_at: string
           due_date: string
           id: string
           organization_id: string | null
           payment_date: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
+          pix_expiration_date: string | null
+          pix_qr_code: string | null
           reference_month: string | null
           status: Database["public"]["Enums"]["financial_title_status"]
+          stripe_payment_intent_id: string | null
           type: Database["public"]["Enums"]["financial_title_type"]
           value: number
         }
         Insert: {
+          boleto_barcode?: string | null
+          boleto_url?: string | null
           created_at?: string
           due_date: string
           id?: string
           organization_id?: string | null
           payment_date?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          pix_expiration_date?: string | null
+          pix_qr_code?: string | null
           reference_month?: string | null
           status?: Database["public"]["Enums"]["financial_title_status"]
+          stripe_payment_intent_id?: string | null
           type: Database["public"]["Enums"]["financial_title_type"]
           value: number
         }
         Update: {
+          boleto_barcode?: string | null
+          boleto_url?: string | null
           created_at?: string
           due_date?: string
           id?: string
           organization_id?: string | null
           payment_date?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          pix_expiration_date?: string | null
+          pix_qr_code?: string | null
           reference_month?: string | null
           status?: Database["public"]["Enums"]["financial_title_status"]
+          stripe_payment_intent_id?: string | null
           type?: Database["public"]["Enums"]["financial_title_type"]
           value?: number
         }

@@ -91,6 +91,27 @@ export const handleTitlePayment = async (
     throw new Error('Erro ao processar pagamento');
   }
 
+  // Se for um título pro-rata, ativa a organização e o usuário admin
+  if (title.type === 'pro_rata') {
+    const { error: orgError } = await supabase
+      .from('organizations')
+      .update({
+        status: 'active',
+        pending_reason: null
+      })
+      .eq('id', organization.id);
+
+    if (orgError) throw orgError;
+
+    const { error: userError } = await supabase
+      .from('profiles')
+      .update({ status: 'active' })
+      .eq('organization_id', organization.id)
+      .eq('role', 'admin');
+
+    if (userError) throw userError;
+  }
+
   return {
     ...title,
     status: 'paid',
