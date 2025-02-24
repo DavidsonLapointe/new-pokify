@@ -61,7 +61,10 @@ export function PaymentMethodDialog({
       return data?.status as TitleStatus;
     },
     enabled: !!titleId && open,
-    refetchInterval: (data: TitleStatus | undefined) => data === 'paid' ? false : 5000,
+    refetchInterval: (query) => {
+      const currentStatus = query.state.data;
+      return currentStatus === 'paid' ? false : 5000;
+    },
     meta: {
       onSuccess: (status: TitleStatus) => {
         if (status === 'paid') {

@@ -10,12 +10,12 @@ export const createProRataTitle = async (organization: Organization, proRataValu
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert({
+      .insert([{
         organization_id: organization.id,
         type: 'pro_rata',
-        value: proRataValue.toString(),
+        value: proRataValue,
         due_date: dueDate.toISOString(),
-      })
+      }])
       .select()
       .single();
 
@@ -42,13 +42,13 @@ export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<
   try {
     const { data: title, error } = await supabase
       .from('financial_titles')
-      .insert({
+      .insert([{
         organization_id: dto.organizationId,
         type: 'mensalidade',
-        value: dto.value.toString(),
+        value: dto.value,
         due_date: dto.dueDate,
         reference_month: dto.referenceMonth,
-      })
+      }])
       .select()
       .single();
 
