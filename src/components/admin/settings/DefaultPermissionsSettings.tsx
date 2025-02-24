@@ -6,9 +6,52 @@ import { Label } from "@/components/ui/label";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ADMIN_DEFAULT_PERMISSIONS, availableAdminRoutePermissions } from "@/types/admin-permissions";
 import { UserRole } from "@/types/user-types";
-import { Settings, User, Lock, List } from "lucide-react";
+import { Settings, User, Lock, List, BarChart3, Users, Network, CreditCard, Building2 } from "lucide-react";
+
+const organizationRoutes = [
+  {
+    id: "profile",
+    label: "Meu Perfil",
+    icon: User,
+    isDefault: true
+  },
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: BarChart3
+  },
+  {
+    id: "leads",
+    label: "Análise de Leads",
+    icon: List
+  },
+  {
+    id: "users",
+    label: "Usuários",
+    icon: Users
+  },
+  {
+    id: "integrations",
+    label: "Integrações",
+    icon: Network
+  },
+  {
+    id: "settings",
+    label: "Configurações",
+    icon: Settings
+  },
+  {
+    id: "plan",
+    label: "Meu Plano",
+    icon: CreditCard
+  },
+  {
+    id: "company",
+    label: "Minha Empresa",
+    icon: Building2
+  }
+];
 
 type PermissionConfig = {
   [key: string]: string[];
@@ -18,25 +61,49 @@ type RolePermissions = {
   [K in UserRole]: PermissionConfig;
 };
 
-const getRouteLabel = (routeId: string): string => {
-  const route = availableAdminRoutePermissions.find(r => r.id === routeId);
-  return route?.label || routeId;
+const initialPermissions: RolePermissions = {
+  leadly_employee: {
+    profile: ["view", "edit"],
+    dashboard: ["view"],
+    leads: ["view", "edit"],
+    users: ["view", "edit"],
+    integrations: ["view", "edit"],
+    settings: ["view", "edit"]
+  },
+  admin: {
+    profile: ["view", "edit"],
+    dashboard: ["view"],
+    "dashboard-leads": ["view"],
+    "dashboard-uploads": ["view"],
+    "dashboard-performance": ["view"],
+    "dashboard-objections": ["view"],
+    "dashboard-suggestions": ["view"],
+    "dashboard-sellers": ["view"],
+    leads: ["view", "edit"],
+    users: ["view", "edit"],
+    integrations: ["view", "edit"],
+    settings: ["view", "edit"],
+    plan: ["view", "edit"],
+    company: ["view", "edit"]
+  },
+  seller: {
+    profile: ["view", "edit"],
+    dashboard: ["view"],
+    "dashboard-leads": ["view"],
+    leads: ["view", "edit"]
+  }
 };
 
-const getRouteIcon = (routeId: string) => {
-  switch (routeId) {
-    case 'settings':
-      return <Settings className="h-4 w-4" />;
-    case 'profile':
-      return <User className="h-4 w-4" />;
-    default:
-      return <List className="h-4 w-4" />;
-  }
+const getRouteIcon = (route: string) => {
+  const routeConfig = organizationRoutes.find(r => r.id === route);
+  if (!routeConfig) return <List className="h-4 w-4" />;
+  const Icon = routeConfig.icon;
+  return <Icon className="h-4 w-4" />;
 };
 
 export const DefaultPermissionsSettings = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>("leadly_employee");
-  const [permissions, setPermissions] = useState<RolePermissions>(ADMIN_DEFAULT_PERMISSIONS);
+  const [permissions, setPermissions] = useState<RolePermissions>(initialPermissions);
 
   const handleTogglePermission = (route: string) => {
     // Não permite alteração se for a rota de perfil
@@ -67,9 +134,6 @@ export const DefaultPermissionsSettings = () => {
   const hasAccess = (route: string): boolean => {
     return Object.keys(permissions[selectedRole]?.[route] || {}).length > 0;
   };
-
-  // Obtém todas as rotas disponíveis do arquivo de configuração
-  const availableRoutes = availableAdminRoutePermissions.map(route => route.id);
 
   // Define as abas do dashboard disponíveis
   const dashboardTabs = [
@@ -111,27 +175,27 @@ export const DefaultPermissionsSettings = () => {
 
         <div className="space-y-6">
           <div className="grid gap-4">
-            {availableRoutes.map(route => (
-              <div key={route} className="space-y-2">
+            {organizationRoutes.map(route => (
+              <div key={route.id} className="space-y-2">
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center gap-2">
-                    {getRouteIcon(route)}
+                    {getRouteIcon(route.id)}
                     <span className="font-medium">
-                      {getRouteLabel(route)}
+                      {route.label}
                     </span>
-                    {route === 'profile' && (
+                    {route.id === 'profile' && (
                       <Lock className="h-4 w-4 text-gray-400 ml-2" />
                     )}
                   </div>
                   <CustomSwitch
-                    checked={route === 'profile' ? true : hasAccess(route)}
-                    onCheckedChange={() => handleTogglePermission(route)}
-                    disabled={route === 'profile'}
+                    checked={route.id === 'profile' ? true : hasAccess(route.id)}
+                    onCheckedChange={() => handleTogglePermission(route.id)}
+                    disabled={route.id === 'profile'}
                   />
                 </div>
                 
                 {/* Mostra as abas do dashboard apenas para admin e seller */}
-                {route === 'dashboard' && 
+                {route.id === 'dashboard' && 
                  (selectedRole === 'admin' || selectedRole === 'seller') && (
                   <div className="ml-8 space-y-2">
                     <Label className="text-sm text-muted-foreground">Abas do Dashboard:</Label>
