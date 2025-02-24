@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      company_leadly: {
+        Row: {
+          cnpj: string
+          created_at: string
+          email: string
+          id: string
+          logo: string | null
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnpj: string
+          created_at?: string
+          email: string
+          id?: string
+          logo?: string | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string
+          created_at?: string
+          email?: string
+          id?: string
+          logo?: string | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credit_balances: {
         Row: {
           created_at: string
@@ -605,6 +638,7 @@ export type Database = {
         Row: {
           auth_provider: string | null
           avatar: string | null
+          company_leadly_id: string | null
           created_at: string | null
           email: string
           id: string
@@ -620,6 +654,7 @@ export type Database = {
         Insert: {
           auth_provider?: string | null
           avatar?: string | null
+          company_leadly_id?: string | null
           created_at?: string | null
           email: string
           id: string
@@ -635,6 +670,7 @@ export type Database = {
         Update: {
           auth_provider?: string | null
           avatar?: string | null
+          company_leadly_id?: string | null
           created_at?: string | null
           email?: string
           id?: string
@@ -653,6 +689,13 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_company_leadly_id_fkey"
+            columns: ["company_leadly_id"]
+            isOneToOne: false
+            referencedRelation: "company_leadly"
             referencedColumns: ["id"]
           },
         ]
