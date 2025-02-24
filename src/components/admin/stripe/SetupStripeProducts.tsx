@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { setupStripeProducts } from '@/services/setupStripeProducts';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export function SetupStripeProducts() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,8 +11,9 @@ export function SetupStripeProducts() {
   const handleSetup = async () => {
     setIsLoading(true);
     try {
+      console.log('Iniciando setup dos produtos...');
       const result = await setupStripeProducts();
-      console.log('Produtos criados:', result);
+      console.log('Resultado:', result);
       toast.success('Produtos e preços criados com sucesso!');
     } catch (error) {
       console.error('Erro:', error);
@@ -27,7 +29,14 @@ export function SetupStripeProducts() {
         onClick={handleSetup}
         disabled={isLoading}
       >
-        {isLoading ? 'Criando produtos...' : 'Criar Produtos Stripe'}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Criando produtos...
+          </>
+        ) : (
+          'Criar Produtos Stripe'
+        )}
       </Button>
     </div>
   );
