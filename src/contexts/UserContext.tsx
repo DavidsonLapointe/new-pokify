@@ -35,18 +35,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         if (profile) {
           const userData: User = {
-            id: profile.id,
+            id: String(profile.id),
             name: profile.name || '',
             email: profile.email || '',
             phone: profile.phone || '',
             role: profile.role || 'leadly_employee',
             status: profile.status || 'active',
-            createdAt: new Date(profile.created_at).getTime(),
-            lastAccess: new Date(profile.last_access).getTime(),
+            createdAt: profile.created_at,
+            lastAccess: profile.last_access,
             permissions: [],
             logs: [],
             organization: {
-              id: profile.organizations?.id || '',
+              id: String(profile.organizations?.id || ''),
               name: profile.organizations?.name || '',
               status: profile.organizations?.status || 'active',
               nomeFantasia: profile.organizations?.nome_fantasia || '',
@@ -83,7 +83,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           avatar: newUser.avatar,
           role: newUser.role,
         })
-        .eq('id', newUser.id);
+        .eq('id', String(newUser.id));
 
       if (error) throw error;
 
