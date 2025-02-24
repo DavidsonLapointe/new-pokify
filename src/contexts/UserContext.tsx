@@ -1,10 +1,12 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
-import { defaultActiveUser, defaultActiveOrgUser } from '@/types/mock-users';
+import { useAuth } from './AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface UserContextType {
-  user: User;
+  user: User | null;
   updateUser: (newUser: User) => void;
   logout: () => void;
 }
@@ -12,71 +14,87 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Usuário Admin padrão para ambiente administrativo (usando o usuário Leadly ativo)
-  const defaultAdminUser: User = defaultActiveUser;
+  const { session } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
   
-  // Usuário padrão para ambiente da organização (usando o admin ativo)
-  const defaultOrgUser: User = defaultActiveOrgUser;
-  
-  const [user, setUser] = useState<User>(() => {
-    const isAdminRoute = window.location.pathname.startsWith('/admin');
-    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
-    
-    // Tenta recuperar o usuário do localStorage
-    const storedUser = localStorage.getItem(storageKey);
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        // Verifica se o usuário armazenado tem o formato correto
-        if (parsedUser && parsedUser.permissions) {
-          return parsedUser;
-        }
-      } catch (e) {
-        console.error('Erro ao parsear usuário do localStorage:', e);
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!session?.user) {
+        setUser(null);
+        return;
       }
-    }
-    
-    // Se não houver usuário válido no localStorage, usa o padrão
-    const defaultUser = isAdminRoute ? defaultAdminUser : defaultOrgUser;
-    localStorage.setItem(storageKey, JSON.stringify(defaultUser));
-    return defaultUser;
-  });
 
-  const updateUser = (newUser: User) => {
-    const isAdminRoute = window.location.pathname.startsWith('/admin');
-    const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
-    
-    if (isAdminRoute && newUser.role !== 'leadly_employee') {
-      console.error('Tentativa inválida de atualizar usuário admin com usuário não-Leadly');
-      return;
-    }
-    if (!isAdminRoute && newUser.role === 'leadly_employee') {
-      console.error('Tentativa inválida de atualizar usuário da organização com usuário Leadly');
-      return;
-    }
-    
-    // Garante que as permissões estão em formato de array
-    const permissions = Array.isArray(newUser.permissions) 
-      ? newUser.permissions 
-      : Object.keys(newUser.permissions);
-    
-    const userWithArrayPermissions = {
-      ...newUser,
-      permissions
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*, organizations (*)')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error) throw error;
+
+        if (profile) {
+          const userData: User = {
+            id: profile.id,
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone || '',
+            role: profile.role,
+            status: profile.status,
+            createdAt: profile.created_at,
+            lastAccess: profile.last_access,
+            permissions: profile.permissions || [],
+            logs: [],
+            organization: profile.organizations,
+            avatar: profile.avatar || '',
+          };
+
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        toast.error('Erro ao carregar perfil do usuário');
+      }
     };
-    
-    setUser(userWithArrayPermissions);
-    localStorage.setItem(storageKey, JSON.stringify(userWithArrayPermissions));
+
+    loadUserProfile();
+  }, [session]);
+
+  const updateUser = async (newUser: User) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: newUser.name,
+          email: newUser.email,
+          phone: newUser.phone,
+          avatar: newUser.avatar,
+          role: newUser.role,
+          permissions: newUser.permissions,
+        })
+        .eq('id', newUser.id);
+
+      if (error) throw error;
+
+      setUser(newUser);
+      toast.success('Perfil atualizado com sucesso');
+    } catch (error) {
+      console.error('Error updating user:', error);
+      toast.error('Erro ao atualizar perfil');
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem('adminUser');
-    localStorage.removeItem('orgUser');
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('mockLoggedUser');
-    
-    window.location.href = '/';
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setUser(null);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error during logout:', error);
+      toast.error('Erro ao fazer logout');
+    }
   };
 
   return (

@@ -274,6 +274,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          auth_provider: string | null
           avatar: string | null
           created_at: string | null
           email: string
@@ -282,10 +283,13 @@ export type Database = {
           name: string
           organization_id: string | null
           phone: string | null
+          reset_password_expires: string | null
+          reset_password_token: string | null
           role: Database["public"]["Enums"]["user_role"]
           status: Database["public"]["Enums"]["user_status"]
         }
         Insert: {
+          auth_provider?: string | null
           avatar?: string | null
           created_at?: string | null
           email: string
@@ -294,10 +298,13 @@ export type Database = {
           name: string
           organization_id?: string | null
           phone?: string | null
+          reset_password_expires?: string | null
+          reset_password_token?: string | null
           role: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"]
         }
         Update: {
+          auth_provider?: string | null
           avatar?: string | null
           created_at?: string | null
           email?: string
@@ -306,6 +313,8 @@ export type Database = {
           name?: string
           organization_id?: string | null
           phone?: string | null
+          reset_password_expires?: string | null
+          reset_password_token?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"]
         }
@@ -374,7 +383,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: {
+          user_id: string
+        }
+        Returns: string
+      }
+      user_has_access_to_org: {
+        Args: {
+          user_id: string
+          org_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       financial_title_status: "pending" | "paid" | "overdue"
