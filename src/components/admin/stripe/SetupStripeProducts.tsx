@@ -12,12 +12,12 @@ export function SetupStripeProducts() {
     setIsLoading(true);
     try {
       console.log('Iniciando setup dos produtos...');
-      const result = await setupStripeProducts();
+      const result = await setupStripeProducts('plans'); // Especifica que são planos
       console.log('Resultado:', result);
-      toast.success('Produtos e preços criados com sucesso!');
+      toast.success('Planos criados com sucesso!');
     } catch (error) {
       console.error('Erro:', error);
-      toast.error('Erro ao criar produtos e preços. Verifique o console para mais detalhes.');
+      toast.error('Erro ao criar planos. Verifique o console para mais detalhes.');
     } finally {
       setIsLoading(false);
     }
@@ -34,10 +34,10 @@ export function SetupStripeProducts() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Criando produtos...
+            Criando planos...
           </>
         ) : (
-          'Criar Produtos Stripe'
+          'Criar Planos Stripe'
         )}
       </Button>
     </div>

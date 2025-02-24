@@ -19,27 +19,53 @@ serve(async (req) => {
   }
 
   try {
-    // Criar os produtos para pacotes de créditos avulsos
-    const products = [
-      {
-        name: 'Pacote Inicial',
-        description: '100 créditos para análise de arquivos',
-        credits: 100,
-        price: 9990, // R$ 99,90 em centavos
-      },
-      {
-        name: 'Pacote Plus',
-        description: '500 créditos para análise de arquivos',
-        credits: 500,
-        price: 44990, // R$ 449,90 em centavos
-      },
-      {
-        name: 'Pacote Enterprise',
-        description: '1000 créditos para análise de arquivos',
-        credits: 1000,
-        price: 84990, // R$ 849,90 em centavos
-      }
-    ];
+    // Verificar se é para criar produtos de planos ou pacotes de créditos
+    const { type = 'credits' } = await req.json();
+    
+    let products;
+    
+    if (type === 'credits') {
+      // Criar os produtos para pacotes de créditos avulsos
+      products = [
+        {
+          name: 'Pacote Inicial',
+          description: '100 créditos para análise de arquivos',
+          credits: 100,
+          price: 9990, // R$ 99,90 em centavos
+        },
+        {
+          name: 'Pacote Plus',
+          description: '500 créditos para análise de arquivos',
+          credits: 500,
+          price: 44990, // R$ 449,90 em centavos
+        },
+        {
+          name: 'Pacote Enterprise',
+          description: '1000 créditos para análise de arquivos',
+          credits: 1000,
+          price: 84990, // R$ 849,90 em centavos
+        }
+      ];
+    } else {
+      // Criar os produtos para planos
+      products = [
+        {
+          name: 'Plano Básico',
+          description: 'Ideal para pequenas empresas iniciando no mercado',
+          price: 4990, // R$ 49,90 em centavos
+        },
+        {
+          name: 'Plano Pro',
+          description: 'Perfect para empresas em crescimento',
+          price: 19990, // R$ 199,90 em centavos
+        },
+        {
+          name: 'Plano Enterprise',
+          description: 'Para grandes empresas que precisam de mais recursos',
+          price: 69990, // R$ 699,90 em centavos
+        }
+      ];
+    }
 
     const createdProducts = [];
 
@@ -49,8 +75,8 @@ serve(async (req) => {
         name: product.name,
         description: product.description,
         metadata: {
-          credits: product.credits.toString(),
-          type: 'additional_credits'
+          credits: product.credits?.toString(),
+          type: type === 'credits' ? 'additional_credits' : 'subscription'
         },
       });
 
@@ -60,7 +86,7 @@ serve(async (req) => {
         unit_amount: product.price,
         currency: 'brl',
         metadata: {
-          credits: product.credits.toString()
+          credits: product.credits?.toString()
         }
       });
 

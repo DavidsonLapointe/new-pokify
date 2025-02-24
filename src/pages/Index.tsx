@@ -15,7 +15,7 @@ export default function Index() {
       console.log('Iniciando setup dos produtos de créditos...');
       
       const { data, error } = await supabase.functions.invoke('setup-stripe-products', {
-        body: {}
+        body: { type: 'credits' }
       });
 
       if (error) {
@@ -23,10 +23,10 @@ export default function Index() {
       }
 
       console.log('Produtos criados:', data);
-      toast.success('Produtos de créditos criados com sucesso!');
+      toast.success('Pacotes de créditos criados com sucesso!');
     } catch (error) {
       console.error('Erro:', error);
-      toast.error('Erro ao criar produtos de créditos');
+      toast.error('Erro ao criar pacotes de créditos');
     } finally {
       setIsLoadingCredits(false);
     }
@@ -50,10 +50,10 @@ export default function Index() {
               {isLoadingCredits ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criando produtos de créditos...
+                  Criando pacotes de créditos...
                 </>
               ) : (
-                'Criar Produtos de Créditos Avulsos'
+                'Criar Pacotes de Créditos'
               )}
             </Button>
           </div>
