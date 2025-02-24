@@ -2,6 +2,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { Session } from '@supabase/supabase-js';
+import { Navigate } from 'react-router-dom';
 
 interface AuthContextType {
   session: Session | null;
@@ -28,9 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Para rotas protegidas, redireciona se não houver sessão
   if (!loading && !session && !isPublicRoute) {
-    // Redireciona para a página de autenticação ao invés da raiz
-    window.location.href = '/auth';
-    return null;
+    // Usa Navigate do React Router ao invés de window.location
+    return <Navigate to="/auth" replace />;
   }
 
   return (
