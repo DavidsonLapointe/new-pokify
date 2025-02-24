@@ -1,13 +1,11 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { UserRole } from "@/types/user-types";
-import { Settings, User, Lock, List, BarChart3, Users, Network, CreditCard, Building2 } from "lucide-react";
+import { Settings, User, Lock, List, BarChart3, Users, Network, CreditCard, Building2, Bell, Database, Shield } from "lucide-react";
 import { ADMIN_DEFAULT_PERMISSIONS, availableAdminRoutePermissions } from "@/types/admin-permissions";
 
 // Rotas do ambiente da organização
@@ -55,6 +53,16 @@ const organizationRoutes = [
   }
 ];
 
+// Configurar as abas de configurações
+const settingsTabs = [
+  { id: "alerts", label: "Alertas e Limites", icon: Bell },
+  { id: "analysis", label: "Análises", icon: BarChart3 },
+  { id: "retention", label: "Retenção", icon: Database },
+  { id: "llm", label: "LLM", icon: Network },
+  { id: "system", label: "Sistema", icon: Settings },
+  { id: "permissions", label: "Permissões", icon: Shield }
+];
+
 type PermissionConfig = {
   [key: string]: string[];
 };
@@ -64,7 +72,15 @@ type RolePermissions = {
 };
 
 const initialPermissions: RolePermissions = {
-  leadly_employee: ADMIN_DEFAULT_PERMISSIONS.leadly_employee,
+  leadly_employee: {
+    ...ADMIN_DEFAULT_PERMISSIONS.leadly_employee,
+    "settings-alerts": ["view", "edit"],
+    "settings-analysis": ["view", "edit"],
+    "settings-retention": ["view", "edit"],
+    "settings-llm": ["view", "edit"],
+    "settings-system": ["view", "edit"],
+    "settings-permissions": ["view", "edit"]
+  },
   admin: {
     profile: ["view", "edit"],
     dashboard: ["view"],
@@ -220,6 +236,28 @@ export const DefaultPermissionsSettings = () => {
                           <CustomSwitch
                             checked={hasAccess(`dashboard-${tab.id}`)}
                             onCheckedChange={() => handleTogglePermission(`dashboard-${tab.id}`)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Mostra as abas de configurações apenas para leadly_employee */}
+                {(typeof route === 'string' ? route : route.id) === 'settings' && 
+                 selectedRole === 'leadly_employee' && (
+                  <div className="ml-8 space-y-2">
+                    <Label className="text-sm text-muted-foreground">Abas de Configurações:</Label>
+                    <div className="grid gap-2">
+                      {settingsTabs.map(tab => (
+                        <div key={tab.id} className="flex items-center justify-between p-2 border rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <tab.icon className="h-4 w-4" />
+                            <span className="text-sm">{tab.label}</span>
+                          </div>
+                          <CustomSwitch
+                            checked={hasAccess(`settings-${tab.id}`)}
+                            onCheckedChange={() => handleTogglePermission(`settings-${tab.id}`)}
                           />
                         </div>
                       ))}
