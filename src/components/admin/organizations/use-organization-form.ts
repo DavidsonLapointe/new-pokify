@@ -86,7 +86,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         plan: newOrganizationData.plan,
         users: [], // Inicialmente vazio
         status: newOrganizationData.status,
-        pendingReason: newOrganizationData.pending_reason || undefined,
+        pendingReason: newOrganizationData.pending_reason === "null" ? null : newOrganizationData.pending_reason || null,
         integratedCRM: newOrganizationData.integrated_crm,
         integratedLLM: newOrganizationData.integrated_llm,
         email: newOrganizationData.email,
