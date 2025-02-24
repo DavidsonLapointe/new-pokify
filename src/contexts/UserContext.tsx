@@ -27,18 +27,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
     lastAccess: "2024-03-20T10:30:00.000Z",
     permissions: [
       "dashboard",
-      "dashboard.leads",
-      "dashboard.uploads",
-      "dashboard.performance",
-      "dashboard.objections",
-      "dashboard.suggestions",
-      "dashboard.sellers",
       "leads",
       "users",
       "integrations",
       "settings",
       "plan",
-      "company",
+      "company", // Garante que company está incluído
       "profile"
     ],
     logs: [
@@ -73,7 +67,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem(storageKey);
     
     if (storedUser) {
-      return JSON.parse(storedUser);
+      const parsedUser = JSON.parse(storedUser);
+      // Garante que as permissões estão em formato de array
+      if (parsedUser.permissions && !Array.isArray(parsedUser.permissions)) {
+        parsedUser.permissions = Object.keys(parsedUser.permissions);
+      }
+      return parsedUser;
     }
     
     return isAdminRoute ? mockAdminUser : mockOrgUser;
@@ -92,8 +91,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    setUser(newUser);
-    localStorage.setItem(storageKey, JSON.stringify(newUser));
+    // Garante que as permissões estão em formato de array
+    const userWithArrayPermissions = {
+      ...newUser,
+      permissions: Array.isArray(newUser.permissions) 
+        ? newUser.permissions 
+        : Object.keys(newUser.permissions)
+    };
+    
+    setUser(userWithArrayPermissions);
+    localStorage.setItem(storageKey, JSON.stringify(userWithArrayPermissions));
   };
 
   const logout = () => {
