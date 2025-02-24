@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ButtonGroup } from "@/components/ui/button";
 import { ArrowUpZA, ArrowDownAZ } from "lucide-react";
 import { Call, StatusMap } from "@/types/calls";
 
