@@ -3,7 +3,6 @@
 export * from './user-types';
 export * from './organization-types';
 export * from './permissions-types';
-export * from './mock-users';
 
 // Re-export specific types
 export type {
@@ -14,9 +13,6 @@ export type {
   Organization,
   OrganizationPendingReason,
 } from './user-types';
-
-// Re-export mock data
-export { mockUsers } from './mock-users';
 
 // Re-export permissions
 export { availablePermissions } from './permissions-types';
