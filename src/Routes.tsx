@@ -35,8 +35,8 @@ import OrganizationSetup from "./pages/OrganizationSetup";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <AuthProvider>
+      <BrowserRouter>
         <UserProvider>
           <Routes>
             {/* Public Routes */}
@@ -78,7 +78,7 @@ export default function AppRoutes() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </UserProvider>
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

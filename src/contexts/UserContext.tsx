@@ -41,11 +41,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
             phone: profile.phone || '',
             role: profile.role,
             status: profile.status,
-            createdAt: profile.created_at,
-            lastAccess: profile.last_access,
-            permissions: profile.permissions || [],
+            createdAt: new Date(profile.created_at).getTime(),
+            lastAccess: new Date(profile.last_access).getTime(),
+            permissions: [], // Inicializado como array vazio
             logs: [],
-            organization: profile.organizations,
+            organization: {
+              id: profile.organizations.id,
+              name: profile.organizations.name,
+              status: profile.organizations.status,
+              nomeFantasia: profile.organizations.nome_fantasia || '',
+              users: [],
+              integratedCRM: null,
+              integratedLLM: null,
+              subscriptionStatus: 'inactive',
+              nextPayment: null,
+              currentPlan: null,
+              credits: 0
+            },
             avatar: profile.avatar || '',
           };
 
@@ -70,7 +82,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
           phone: newUser.phone,
           avatar: newUser.avatar,
           role: newUser.role,
-          permissions: newUser.permissions,
         })
         .eq('id', newUser.id);
 
