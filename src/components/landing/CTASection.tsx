@@ -12,7 +12,10 @@ export function CTASection() {
         <p className="text-xl mb-8 opacity-90">
           Junte-se a centenas de empresas que já transformaram suas vendas com o Leadly
         </p>
-        <Button size="lg" variant="secondary" className="text-lg">
+        <Button 
+          size="lg" 
+          className="text-lg bg-white text-primary hover:bg-gray-100 transition-colors"
+        >
           Começar Gratuitamente
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
