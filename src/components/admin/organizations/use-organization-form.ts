@@ -37,25 +37,13 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       "company"
     ];
 
+    // Cria a organização primeiro
     const newOrganization: Organization = {
       id: Math.random(),
       name: values.razaoSocial,
       nomeFantasia: values.nomeFantasia,
       plan: values.plan,
-      users: [{
-        id: 1,
-        name: values.adminName,
-        email: values.adminEmail,
-        phone: values.phone,
-        role: "admin",
-        status: "pending",
-        createdAt: new Date().toISOString(),
-        lastAccess: new Date().toISOString(),
-        permissions: adminPermissions,
-        logs: [],
-        organization: {} as Organization, // Será atualizado após a criação
-        avatar: "",
-      }],
+      users: [], // Inicialmente vazio
       status: "pending",
       pendingReason: "contract_signature",
       integratedCRM: null,
@@ -67,6 +55,25 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       adminEmail: values.adminEmail,
       createdAt: new Date().toISOString(),
     };
+
+    // Cria o usuário admin inicial
+    const adminUser = {
+      id: 1,
+      name: values.adminName,
+      email: values.adminEmail,
+      phone: values.phone,
+      role: "admin" as const,
+      status: "pending" as const,
+      createdAt: new Date().toISOString(),
+      lastAccess: new Date().toISOString(),
+      permissions: adminPermissions,
+      logs: [],
+      organization: newOrganization, // Referência à organização
+      avatar: "",
+    };
+
+    // Adiciona o usuário admin à organização
+    newOrganization.users = [adminUser];
 
     try {
       await sendInitialContract(newOrganization);
