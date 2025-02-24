@@ -25,28 +25,21 @@ export const usePermissions = (user: User) => {
 
     // Se for ambiente da organização
     if (!isAdminRoute) {
-      // Para ambiente da organização, verifica se a permissão existe no array
-      if (Array.isArray(user.permissions)) {
-        const hasPermission = user.permissions.includes(routeId);
-        console.log('Permissões da organização:', user.permissions);
-        console.log(`Tem permissão para ${routeId}?`, hasPermission);
-        return hasPermission;
-      } 
-      // Se por algum motivo vier como objeto, tenta usar as chaves
-      else if (typeof user.permissions === 'object') {
-        const permissions = Object.keys(user.permissions);
-        const hasPermission = permissions.includes(routeId);
-        console.log('Permissões da organização (objeto):', permissions);
-        console.log(`Tem permissão para ${routeId}?`, hasPermission);
-        return hasPermission;
-      }
-      return false;
+      // Extrai as permissões independente do formato
+      const permissions = Array.isArray(user.permissions)
+        ? user.permissions
+        : Object.keys(user.permissions);
+
+      console.log('Permissões extraídas:', permissions);
+      const hasPermission = permissions.includes(routeId);
+      console.log(`Tem permissão para ${routeId}?`, hasPermission);
+      return hasPermission;
     }
 
     // Para ambiente administrativo
-    const adminPermissions = typeof user.permissions === 'object' && !Array.isArray(user.permissions) 
-      ? Object.keys(user.permissions)
-      : [];
+    const adminPermissions = Array.isArray(user.permissions)
+      ? user.permissions
+      : Object.keys(user.permissions);
     console.log('Permissões administrativas:', adminPermissions);
     const hasPermission = adminPermissions.includes(routeId);
     console.log(`Tem permissão para ${routeId}?`, hasPermission);
@@ -56,17 +49,11 @@ export const usePermissions = (user: User) => {
   const getUserPermissions = () => {
     let routes: string[] = [];
 
-    if (isAdminRoute) {
-      routes = typeof user?.permissions === 'object' && !Array.isArray(user.permissions)
-        ? Object.keys(user.permissions)
-        : [];
-    } else {
-      // Para ambiente da organização
-      if (Array.isArray(user?.permissions)) {
-        routes = [...user.permissions];
-      } else if (typeof user?.permissions === 'object') {
-        routes = Object.keys(user.permissions);
-      }
+    // Extrai as permissões independente do formato
+    if (user?.permissions) {
+      routes = Array.isArray(user.permissions)
+        ? [...user.permissions]
+        : Object.keys(user.permissions);
     }
 
     // Adiciona profile se não existir
