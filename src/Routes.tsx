@@ -43,13 +43,15 @@ const LogoutButton = () => {
   };
 
   return (
-    <Button 
-      onClick={handleLogout}
-      className="fixed top-4 right-4 z-50"
-      variant="outline"
-    >
-      Logout
-    </Button>
+    <div className="fixed top-0 right-0 m-4 z-[9999]">
+      <Button 
+        onClick={handleLogout}
+        variant="outline"
+        className="bg-white shadow-md hover:bg-gray-100"
+      >
+        Logout
+      </Button>
+    </div>
   );
 };
 
