@@ -1,9 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,31 +10,29 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser();
   const { session } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Se já estiver autenticado, redireciona usando o navigate
-    if (user) {
-      const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
-      navigate(redirectTo, { replace: true });
-    }
-  }, [user, navigate]);
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
 
-      // Se o login for bem sucedido, o useEffect acima vai redirecionar
-      // quando o estado do user for atualizado
+      // Busca o perfil do usuário para determinar o redirecionamento
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      const redirectTo = profile?.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
+      navigate(redirectTo, { replace: true });
     } catch (error: any) {
       setError(error.message);
       toast.error("Erro ao fazer login");
