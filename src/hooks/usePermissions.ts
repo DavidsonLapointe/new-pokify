@@ -14,8 +14,12 @@ export const usePermissions = (user: User) => {
       return false;
     }
 
-    // Simplifica a verificação para usar diretamente o array de permissões
-    return user.permissions.includes(routeId);
+    // Garante que estamos trabalhando com um array
+    const userPermissions = Array.isArray(user.permissions) 
+      ? user.permissions 
+      : Object.keys(user.permissions);
+
+    return userPermissions.includes(routeId);
   };
 
   const getUserPermissions = () => {
@@ -26,7 +30,12 @@ export const usePermissions = (user: User) => {
 
     // Adiciona outras rotas que o usuário tem permissão
     if (user?.permissions) {
-      routes.push(...user.permissions);
+      // Garante que estamos trabalhando com um array
+      const userPermissions = Array.isArray(user.permissions)
+        ? user.permissions
+        : Object.keys(user.permissions);
+        
+      routes.push(...userPermissions);
     }
 
     console.log('Rotas permitidas:', routes);
