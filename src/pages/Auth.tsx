@@ -1,23 +1,27 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
+  const { session } = useAuth();
   const navigate = useNavigate();
 
-  // Se já estiver autenticado, redireciona usando o navigate
-  if (user) {
-    const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
-    return <Navigate to={redirectTo} replace />;
-  }
+  useEffect(() => {
+    // Se já estiver autenticado, redireciona usando o navigate
+    if (user) {
+      const redirectTo = user.role === 'leadly_employee' ? '/admin/profile' : '/organization/profile';
+      navigate(redirectTo, { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
@@ -30,8 +34,8 @@ export default function Auth() {
 
       if (error) throw error;
 
-      // Se o login for bem sucedido, o useEffect no AuthContext
-      // vai atualizar a sessão e redirecionar automaticamente
+      // Se o login for bem sucedido, o useEffect acima vai redirecionar
+      // quando o estado do user for atualizado
     } catch (error: any) {
       setError(error.message);
       toast.error("Erro ao fazer login");
