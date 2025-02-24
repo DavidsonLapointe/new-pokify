@@ -15,7 +15,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Usando a Ana Silva para ambiente administrativo
   const mockAdminUser: User = mockUsers.find(u => u.id === 101) || mockUsers[0];
   
-  // Usando o João Silva para ambiente da organização
+  // Usando o João Silva para ambiente da organização com todas as permissões
   const mockOrgUser: User = {
     id: 201,
     name: "João Silva",
@@ -27,11 +27,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
     lastAccess: "2024-03-20T10:30:00.000Z",
     permissions: [
       "dashboard",
+      "dashboard.leads",
+      "dashboard.uploads",
+      "dashboard.performance",
+      "dashboard.objections",
+      "dashboard.suggestions",
+      "dashboard.sellers",
       "leads",
       "users",
       "integrations",
       "settings",
       "plan",
+      "company",
       "profile"
     ],
     logs: [
