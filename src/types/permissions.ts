@@ -16,11 +16,7 @@ export const availableRoutePermissions: RoutePermission[] = [
     id: "profile",
     label: "Meu Perfil",
     path: "/organization/profile",
-    isDefault: true,
-    tabs: [
-      { id: "contact", label: "Informações de Contato", value: "contact" },
-      { id: "password", label: "Alterar Senha", value: "password" }
-    ]
+    isDefault: true
   },
   {
     id: "dashboard",
@@ -38,58 +34,32 @@ export const availableRoutePermissions: RoutePermission[] = [
   {
     id: "leads",
     label: "Análise de Leads",
-    path: "/organization/leads",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" },
-      { id: "delete", label: "Excluir", value: "delete" }
-    ]
+    path: "/organization/leads"
   },
   {
     id: "users",
     label: "Usuários",
-    path: "/organization/users",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" },
-      { id: "delete", label: "Excluir", value: "delete" }
-    ]
+    path: "/organization/users"
   },
   {
     id: "integrations",
     label: "Integrações",
-    path: "/organization/integrations",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/organization/integrations"
   },
   {
     id: "settings",
     label: "Configurações",
-    path: "/organization/settings",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/organization/settings"
   },
   {
     id: "plan",
     label: "Meu Plano",
-    path: "/organization/plan",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "upgrade", label: "Alterar Plano", value: "upgrade" }
-    ]
+    path: "/organization/plan"
   },
   {
     id: "company",
     label: "Minha Empresa",
     path: "/organization/company",
-    isDefault: true,
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    isDefault: true
   }
 ];

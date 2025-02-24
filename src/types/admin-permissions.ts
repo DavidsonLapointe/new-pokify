@@ -19,92 +19,51 @@ export const availableAdminRoutePermissions = [
     id: "profile",
     label: "Meu Perfil",
     path: "/admin/profile",
-    isDefault: true,
-    tabs: [
-      { id: "contact", label: "Informações de Contato", value: "contact" },
-      { id: "password", label: "Alterar Senha", value: "password" }
-    ]
+    isDefault: true
   },
   {
     id: "dashboard",
     label: "Dashboard",
-    path: "/admin",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" }
-    ]
+    path: "/admin"
   },
   {
     id: "organizations",
     label: "Empresas",
-    path: "/admin/organizations",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" },
-      { id: "delete", label: "Excluir", value: "delete" }
-    ]
+    path: "/admin/organizations"
   },
   {
     id: "users",
     label: "Usuários",
-    path: "/admin/users",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" },
-      { id: "delete", label: "Excluir", value: "delete" }
-    ]
+    path: "/admin/users"
   },
   {
     id: "plans",
     label: "Planos",
-    path: "/admin/plans",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/admin/plans"
   },
   {
     id: "analysis-packages",
     label: "Pacote de Análises",
-    path: "/admin/analysis-packages",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/admin/analysis-packages"
   },
   {
     id: "financial",
     label: "Financeiro",
-    path: "/admin/financial",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" }
-    ]
+    path: "/admin/financial"
   },
   {
     id: "integrations",
     label: "Integrações",
-    path: "/admin/integrations",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/admin/integrations"
   },
   {
     id: "prompt",
     label: "Prompt",
-    path: "/admin/prompt",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/admin/prompt"
   },
   {
     id: "settings",
     label: "Configurações",
-    path: "/admin/settings",
-    tabs: [
-      { id: "view", label: "Visualizar", value: "view" },
-      { id: "edit", label: "Editar", value: "edit" }
-    ]
+    path: "/admin/settings"
   }
 ];
-
