@@ -12,51 +12,90 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Usando a Ana Silva para ambiente administrativo
-  const mockAdminUser: User = mockUsers.find(u => u.id === 101) || mockUsers[0];
+  // Usuário Admin padrão para ambiente administrativo
+  const defaultAdminUser: User = {
+    id: 1,
+    name: "Admin Leadly",
+    email: "admin@leadly.com",
+    phone: "(11) 3333-4444",
+    role: "leadly_employee",
+    status: "active",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastAccess: new Date().toISOString(),
+    permissions: [
+      "dashboard",
+      "integrations",
+      "plans",
+      "organizations",
+      "settings",
+      "prompt",
+      "analysis-packages",
+      "financial",
+      "users",
+      "profile"
+    ],
+    logs: [],
+    avatar: "",
+    organization: {
+      id: 1,
+      name: "Leadly Technologies",
+      nomeFantasia: "Leadly",
+      plan: "Enterprise",
+      users: [],
+      status: "active",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@leadly.com",
+      phone: "(11) 3333-4444",
+      cnpj: "12.345.678/0001-90",
+      adminName: "Admin Leadly",
+      adminEmail: "admin@leadly.com",
+      createdAt: "2024-01-01T00:00:00.000Z"
+    }
+  };
   
-  // Usando o João Silva para ambiente da organização com todas as permissões
-  const mockOrgUser: User = {
-    id: 201,
-    name: "João Silva",
-    email: "joao.silva@techcorp.com",
-    phone: "(11) 98765-4321",
+  // Usuário padrão para ambiente da organização
+  const defaultOrgUser: User = {
+    id: 2,
+    name: "Admin Organização",
+    email: "admin@organizacao.com",
+    phone: "(11) 99999-9999",
     role: "admin",
     status: "active",
     createdAt: "2024-01-01T00:00:00.000Z",
-    lastAccess: "2024-03-20T10:30:00.000Z",
+    lastAccess: new Date().toISOString(),
     permissions: [
       "dashboard",
+      "dashboard.leads",
+      "dashboard.uploads",
+      "dashboard.performance",
+      "dashboard.objections",
+      "dashboard.suggestions",
+      "dashboard.sellers",
       "leads",
       "users",
       "integrations",
       "settings",
       "plan",
-      "company",  // Garantindo que company está incluído
+      "company",
       "profile"
     ],
-    logs: [
-      {
-        id: 1,
-        date: "2024-03-20T10:30:00.000Z",
-        action: "Acessou o sistema"
-      }
-    ],
+    logs: [],
     avatar: "",
     organization: {
       id: 2,
-      name: "TechCorp Brasil",
-      nomeFantasia: "TechCorp",
+      name: "Organização Demo",
+      nomeFantasia: "Organização Demo",
       plan: "Professional",
       users: [],
       status: "active",
-      integratedCRM: "Salesforce",
-      integratedLLM: "GPT-4",
-      email: "contato@techcorp.com.br",
+      integratedCRM: null,
+      integratedLLM: null,
+      email: "contato@organizacao.com",
       phone: "(11) 99999-9999",
       cnpj: "00.000.000/0000-01",
-      adminName: "João Silva",
-      adminEmail: "joao.silva@techcorp.com.br",
+      adminName: "Admin Organização",
+      adminEmail: "admin@organizacao.com",
       createdAt: "2024-01-01T00:00:00.000Z"
     }
   };
@@ -65,25 +104,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
     
-    // Limpa o localStorage para forçar o uso do mockOrgUser
+    // Limpa o localStorage para forçar o uso dos usuários padrão
     localStorage.removeItem(storageKey);
     
-    const storedUser = localStorage.getItem(storageKey);
-    
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      // Garante que as permissões estão em formato de array
-      if (parsedUser.permissions && !Array.isArray(parsedUser.permissions)) {
-        parsedUser.permissions = Object.keys(parsedUser.permissions);
-      }
-      // Adiciona 'company' se não existir
-      if (!parsedUser.permissions.includes('company')) {
-        parsedUser.permissions.push('company');
-      }
-      return parsedUser;
-    }
-    
-    return isAdminRoute ? mockAdminUser : mockOrgUser;
+    return isAdminRoute ? defaultAdminUser : defaultOrgUser;
   });
 
   const updateUser = (newUser: User) => {
@@ -99,14 +123,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Garante que as permissões estão em formato de array e inclui 'company'
+    // Garante que as permissões estão em formato de array
     const permissions = Array.isArray(newUser.permissions) 
       ? newUser.permissions 
       : Object.keys(newUser.permissions);
-    
-    if (!permissions.includes('company')) {
-      permissions.push('company');
-    }
     
     const userWithArrayPermissions = {
       ...newUser,
