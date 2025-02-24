@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Prompt } from "@/types/prompt";
@@ -7,6 +8,7 @@ import { EmptyPromptState } from "@/components/admin/prompts/EmptyPromptState";
 import { PromptCard } from "@/components/admin/prompts/PromptCard";
 import { ViewPromptDialog } from "@/components/admin/prompts/ViewPromptDialog";
 import { PromptFormDialog } from "@/components/admin/prompts/PromptFormDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +17,39 @@ const AdminPrompt = () => {
   const [newPrompt, setNewPrompt] = useState({ name: "", content: "", description: "" });
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchPrompts();
+  }, []);
+
+  const fetchPrompts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('prompts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setPrompts(data.map(prompt => ({
+        id: prompt.id,
+        name: prompt.name,
+        content: prompt.content,
+        description: prompt.description || ''
+      })));
+    } catch (error) {
+      console.error('Erro ao buscar prompts:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os prompts.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNewPrompt = () => {
     setNewPrompt({ name: "", content: "", description: "" });
@@ -24,7 +58,7 @@ const AdminPrompt = () => {
     setIsModalOpen(true);
   };
 
-  const handleSavePrompt = () => {
+  const handleSavePrompt = async () => {
     if (!newPrompt.name.trim() || !newPrompt.content.trim() || !newPrompt.description.trim()) {
       toast({
         title: "Erro",
@@ -34,30 +68,50 @@ const AdminPrompt = () => {
       return;
     }
 
-    if (isEditing && selectedPrompt) {
-      const updatedPrompts = prompts.map((prompt) =>
-        prompt.id === selectedPrompt.id ? { ...newPrompt, id: prompt.id } : prompt
-      );
-      setPrompts(updatedPrompts);
+    try {
+      if (isEditing && selectedPrompt) {
+        const { error } = await supabase
+          .from('prompts')
+          .update({
+            name: newPrompt.name,
+            content: newPrompt.content,
+            description: newPrompt.description
+          })
+          .eq('id', selectedPrompt.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Sucesso",
+          description: "Prompt atualizado com sucesso!",
+        });
+      } else {
+        const { error } = await supabase
+          .from('prompts')
+          .insert([{
+            name: newPrompt.name,
+            content: newPrompt.content,
+            description: newPrompt.description
+          }]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Sucesso",
+          description: "Prompt cadastrado com sucesso!",
+        });
+      }
+
+      handleCancel();
+      fetchPrompts();
+    } catch (error) {
+      console.error('Erro ao salvar prompt:', error);
       toast({
-        title: "Sucesso",
-        description: "Prompt atualizado com sucesso!",
-      });
-    } else {
-      const prompt: Prompt = {
-        id: Date.now().toString(),
-        name: newPrompt.name,
-        content: newPrompt.content,
-        description: newPrompt.description,
-      };
-      setPrompts([...prompts, prompt]);
-      toast({
-        title: "Sucesso",
-        description: "Prompt cadastrado com sucesso!",
+        title: "Erro",
+        description: "Ocorreu um erro ao salvar o prompt.",
+        variant: "destructive",
       });
     }
-
-    handleCancel();
   };
 
   const handleCancel = () => {
@@ -109,7 +163,7 @@ const AdminPrompt = () => {
         ))}
       </div>
 
-      {prompts.length === 0 && <EmptyPromptState />}
+      {!isLoading && prompts.length === 0 && <EmptyPromptState />}
 
       <ViewPromptDialog
         open={isViewModalOpen}
