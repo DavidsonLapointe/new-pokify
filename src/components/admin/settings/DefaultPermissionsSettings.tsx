@@ -9,26 +9,34 @@ import { toast } from "sonner";
 import { ADMIN_DEFAULT_PERMISSIONS } from "@/types/admin-permissions";
 import { UserRole } from "@/types/user-types";
 
+type PermissionConfig = {
+  [key: string]: string[];
+};
+
+type RolePermissions = {
+  [K in UserRole]: PermissionConfig;
+};
+
 export const DefaultPermissionsSettings = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>("leadly_employee");
-  const [permissions, setPermissions] = useState<Record<string, string[]>>(ADMIN_DEFAULT_PERMISSIONS);
+  const [permissions, setPermissions] = useState<RolePermissions>(ADMIN_DEFAULT_PERMISSIONS);
 
   const handleTogglePermission = (route: string, permission: string) => {
     setPermissions(prev => {
-      const currentPerms = prev[selectedRole] || {};
-      const routePerms = currentPerms[route] || [];
+      const currentPerms = { ...prev[selectedRole] };
+      const routePerms = [...(currentPerms[route] || [])];
       
-      const updated = {
+      const updatedRoutePerms = routePerms.includes(permission)
+        ? routePerms.filter(p => p !== permission)
+        : [...routePerms, permission];
+
+      return {
         ...prev,
         [selectedRole]: {
           ...currentPerms,
-          [route]: routePerms.includes(permission)
-            ? routePerms.filter(p => p !== permission)
-            : [...routePerms, permission]
+          [route]: updatedRoutePerms
         }
       };
-
-      return updated;
     });
   };
 
@@ -72,7 +80,7 @@ export const DefaultPermissionsSettings = () => {
 
         <div className="space-y-6">
           <div className="grid gap-4">
-            {Object.entries(ADMIN_DEFAULT_PERMISSIONS.leadly_employee).map(([route, perms]) => (
+            {Object.entries(permissions[selectedRole] || {}).map(([route, perms]) => (
               <div key={route} className="flex items-center justify-between p-4 border rounded-lg">
                 <span className="font-medium capitalize">
                   {route.replace(/-/g, " ")}
