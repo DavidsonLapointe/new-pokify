@@ -1,7 +1,7 @@
 
 import { useLocation, Outlet } from "react-router-dom";
 import { toast } from "sonner";
-import { ProtectedRoute } from "./ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import { useUser } from "@/contexts/UserContext";
 import { OrganizationHeader } from "./organization/layout/OrganizationHeader";
 import { OrganizationSidebar } from "./organization/layout/OrganizationSidebar";
