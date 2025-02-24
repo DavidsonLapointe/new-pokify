@@ -795,6 +795,13 @@ export type Database = {
       }
     }
     Functions: {
+      debit_organization_credits: {
+        Args: {
+          p_organization_id: string
+          p_credits_to_debit: number
+        }
+        Returns: undefined
+      }
       get_user_role: {
         Args: {
           user_id: string
