@@ -32,10 +32,8 @@ export const UserPermissionsDialog = ({
     saving,
     tempPermissions,
     handlePermissionChange,
-    handleTabPermissionChange,
     handleSave,
     handleClose,
-    isTabEnabled,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
   console.log("Current permissions:", tempPermissions);
@@ -54,11 +52,11 @@ export const UserPermissionsDialog = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-6">
           {availableRoutePermissions.map((route) => {
             console.log(`Checking route ${route.id}:`, {
-              hasPermissions: Object.keys(tempPermissions).includes(route.id),
-              tempPermissions: tempPermissions[route.id]
+              hasPermissions: tempPermissions.includes(route.id),
+              tempPermissions
             });
 
-            const hasPermissions = Object.keys(tempPermissions).includes(route.id);
+            const hasPermissions = tempPermissions.includes(route.id);
             const isRouteEnabled = route.isDefault || hasPermissions;
             const isProfile = route.id === 'profile';
             
@@ -69,8 +67,6 @@ export const UserPermissionsDialog = ({
                 isRouteEnabled={isRouteEnabled}
                 isProfile={isProfile}
                 onPermissionChange={handlePermissionChange}
-                onTabPermissionChange={handleTabPermissionChange}
-                isTabEnabled={isTabEnabled}
               />
             );
           })}

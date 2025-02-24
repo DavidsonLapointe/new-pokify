@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,12 +41,7 @@ const mockLoggedUser = {
   status: "active" as const,
   createdAt: "2024-01-01T00:00:00.000Z",
   lastAccess: "2024-03-15T14:30:00.000Z",
-  permissions: {
-    dashboard: ["view"],
-    calls: ["view", "upload"],
-    leads: ["view", "edit"],
-    integrations: ["view"],
-  },
+  permissions: ["dashboard", "calls", "leads", "integrations"],
   logs: [
     {
       id: 1,

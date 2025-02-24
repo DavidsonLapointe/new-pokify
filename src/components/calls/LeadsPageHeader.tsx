@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { CallsHeader } from "@/components/calls/CallsHeader";
 import { UserPlus } from "lucide-react";
@@ -41,12 +42,12 @@ export const LeadsPageHeader = ({
   };
 
   // Verifica se o usuário tem acesso às integrações
-  const hasIntegrationsAccess = currentUser.permissions?.integrations?.includes("edit") || false;
+  const hasIntegrationsAccess = currentUser.permissions.includes("integrations");
 
   // Filtra usuários ativos com acesso a integrações
   const integrationUsers = organization.users.filter(user => 
     user.role === "admin" || 
-    (user.permissions?.integrations?.includes("edit") && user.status === "active")
+    (user.permissions.includes("integrations") && user.status === "active")
   );
 
   return (

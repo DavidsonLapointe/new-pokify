@@ -1,56 +1,8 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
-import { User, UserRole, Organization } from "@/types";
+import { User } from "@/types";
 import { useUser } from "@/contexts/UserContext";
-
-const mockOrganization: Organization = {
-  id: 1,
-  name: "Tech Solutions Ltda",
-  nomeFantasia: "Tech Solutions",
-  plan: "Enterprise",
-  users: [],
-  status: "active",
-  integratedCRM: null,
-  integratedLLM: "GPT-4",
-  email: "contato@techsolutions.com",
-  phone: "(11) 1234-5678",
-  cnpj: "12.345.678/0001-90",
-  adminName: "Alexandre Rodrigues",
-  adminEmail: "alexandre.rodrigues@empresa.com",
-  createdAt: "2024-01-01T00:00:00.000Z"
-};
-
-export const mockLoggedUser: User = {
-  id: 1,
-  name: "Alexandre Rodrigues",
-  email: "alexandre.rodrigues@empresa.com",
-  phone: "(11) 98765-4321",
-  role: "admin",
-  status: "active",
-  createdAt: "2024-01-01T00:00:00.000Z",
-  lastAccess: "2024-03-18T10:30:00.000Z",
-  permissions: {
-    dashboard: ["view", "export"],
-    calls: ["view", "upload", "delete"],
-    leads: ["view", "edit", "delete"],
-    integrations: ["view", "edit"],
-    users: ["view", "edit", "delete"],
-    settings: ["view", "edit"],
-    plan: ["view", "edit"],
-    profile: ["view", "edit"]
-  },
-  logs: [
-    {
-      id: 1,
-      date: "2024-03-18T10:30:00.000Z",
-      action: "Acessou o sistema",
-    },
-  ],
-  avatar: "",
-  organization: mockOrganization,
-};
 
 export const useProfileForm = () => {
   const { user, updateUser } = useUser();
@@ -75,20 +27,17 @@ export const useProfileForm = () => {
     try {
       const mockImageUrl = URL.createObjectURL(file);
       
-      // Atualiza o estado do formulário
       setFormData(prev => ({
         ...prev,
         avatar: mockImageUrl
       }));
       
-      // Atualiza o usuário no contexto global
       const updatedUser = {
         ...user,
         avatar: mockImageUrl
       };
       updateUser(updatedUser);
       
-      // Atualiza também o mockLoggedUser para persistência
       mockLoggedUser.avatar = mockImageUrl;
       
       toast.success("Foto de perfil atualizada com sucesso!");
@@ -122,7 +71,6 @@ export const useProfileForm = () => {
         }
       }
 
-      // Atualiza o usuário no contexto global
       const updatedUser = {
         ...user,
         email: formData.email,
@@ -132,7 +80,6 @@ export const useProfileForm = () => {
       };
       updateUser(updatedUser);
 
-      // Atualiza o mockLoggedUser para persistência
       mockLoggedUser.email = formData.email;
       mockLoggedUser.name = formData.name;
       mockLoggedUser.phone = formData.phone;
