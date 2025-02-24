@@ -12,6 +12,9 @@ import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { PermissionRow } from "./PermissionRow";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -49,28 +52,53 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto py-4 space-y-6">
-          {availableRoutePermissions.map((route) => {
-            console.log(`Checking route ${route.id}:`, {
-              hasPermissions: tempPermissions.includes(route.id),
-              tempPermissions
-            });
+        <ScrollArea className="flex-1 pr-4">
+          <div className="space-y-6">
+            {availableRoutePermissions.map((route) => {
+              console.log(`Checking route ${route.id}:`, {
+                hasPermissions: tempPermissions.includes(route.id),
+                tempPermissions
+              });
 
-            const hasPermissions = tempPermissions.includes(route.id);
-            const isRouteEnabled = route.isDefault || hasPermissions;
-            const isProfile = route.id === 'profile';
-            
-            return (
-              <PermissionRow
-                key={route.id}
-                route={route}
-                isRouteEnabled={isRouteEnabled}
-                isProfile={isProfile}
-                onPermissionChange={handlePermissionChange}
-              />
-            );
-          })}
-        </div>
+              const hasPermissions = tempPermissions.includes(route.id);
+              const isRouteEnabled = route.isDefault || hasPermissions;
+              const isProfile = route.id === 'profile';
+              
+              return (
+                <div key={route.id} className="space-y-4">
+                  <PermissionRow
+                    route={route}
+                    isRouteEnabled={isRouteEnabled}
+                    isProfile={isProfile}
+                    onPermissionChange={handlePermissionChange}
+                  />
+
+                  {/* Mostra as abas do dashboard quando a rota for dashboard e estiver habilitada */}
+                  {route.id === 'dashboard' && route.tabs && isRouteEnabled && (
+                    <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
+                      <Label className="text-sm text-gray-500">Abas do Dashboard:</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {route.tabs.map((tab) => (
+                          <div key={tab.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`tab-${tab.id}`}
+                              checked={tempPermissions.includes(`dashboard.${tab.id}`)}
+                              onCheckedChange={() => handlePermissionChange(`dashboard.${tab.id}`)}
+                              className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
+                            />
+                            <Label htmlFor={`tab-${tab.id}`} className="text-sm">
+                              {tab.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </ScrollArea>
 
         <DialogFooter className="mt-4">
           <Button variant="cancel" onClick={handleClose} disabled={saving}>
