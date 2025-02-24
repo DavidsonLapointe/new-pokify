@@ -1,8 +1,12 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
+import { useState } from "react";
+import { LeadForm } from "./LeadForm";
 
 export function HeroSection() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
     <section className="pt-32 pb-20">
       <div className="container mx-auto px-4">
@@ -24,7 +28,7 @@ export function HeroSection() {
               Use inteligência artificial para analisar 100% das suas chamadas, identificar padrões de sucesso e multiplicar suas vendas
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="lg" className="text-lg">
+              <Button size="lg" className="text-lg" onClick={() => setIsFormOpen(true)}>
                 Começar Gratuitamente
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -67,6 +71,11 @@ export function HeroSection() {
             </div>
           </div>
         </div>
+
+        <LeadForm 
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+        />
       </div>
     </section>
   );

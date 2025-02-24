@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,7 @@ export function LeadForm({ isOpen, onClose }: LeadFormProps) {
     toast({
       title: "Obrigado pelo interesse!",
       description: "Nossa equipe comercial entrará em contato em breve.",
+      duration: 5000,
     });
     form.reset();
     onClose();
@@ -54,6 +55,9 @@ export function LeadForm({ isOpen, onClose }: LeadFormProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Solicite um contato</DialogTitle>
+          <DialogDescription>
+            Preencha o formulário abaixo para ser contactado por nossa equipe comercial.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
