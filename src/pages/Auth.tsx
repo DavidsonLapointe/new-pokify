@@ -4,13 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function Auth() {
   const [defaultTab, setDefaultTab] = useState<"login" | "signup">("login");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
-  const location = useLocation();
 
   // Se já estiver autenticado, redireciona
   if (user) {
@@ -19,6 +22,28 @@ export default function Auth() {
     const redirectTo = isAdmin ? '/admin/profile' : '/organization/profile';
     return <Navigate to={redirectTo} replace />;
   }
+
+  const handleLogin = async (email: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+    } catch (error: any) {
+      setError(error.message);
+      toast.error("Erro ao fazer login");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = () => {
+    // Implementar lógica de recuperação de senha
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center p-4">
@@ -43,7 +68,12 @@ export default function Auth() {
                 <TabsTrigger value="signup">Cadastro</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
-                <LoginForm onSignUpClick={() => setDefaultTab("signup")} />
+                <LoginForm 
+                  onSubmit={handleLogin}
+                  onForgotPassword={handleForgotPassword}
+                  isLoading={isLoading}
+                  error={error}
+                />
               </TabsContent>
               <TabsContent value="signup">
                 <SignUpForm onLoginClick={() => setDefaultTab("login")} />
