@@ -76,6 +76,15 @@ export const useMenuItems = (user: User) => {
       
       // Filtra os itens do menu baseado nas permissões
       const filteredItems = allMenuItems.filter(item => {
+        // Exceção para o dashboard: deve checar por qualquer subpermissão
+        if (item.permissionId === 'dashboard') {
+          const dashboardTabs = ['leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'];
+          return dashboardTabs.some(tab => 
+            (user.permissions || []).includes(`dashboard.${tab}`)
+          );
+        }
+        
+        // Para outros itens, verifica a permissão normalmente
         const hasPermission = hasRoutePermission(item.permissionId);
         console.log(`Verificando permissão para ${item.label}:`, hasPermission);
         return hasPermission;
