@@ -1,14 +1,13 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { User } from "@/types";
+import { User, UserStatus } from "@/types";
 
 export const useAuthLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setSession } = useAuth();
-  const router = useRouter();
+  const { session } = useAuth();
 
   const login = async (email: string) => {
     setIsLoading(true);
@@ -49,8 +48,6 @@ export const useAuthLogin = () => {
       }
 
       if (session) {
-        setSession(session);
-
         const { user } = session;
 
         const mockOrganization = {
@@ -59,7 +56,7 @@ export const useAuthLogin = () => {
           nomeFantasia: "Leadly",
           plan: "Professional",
           users: [],
-          status: "active",
+          status: "active" as UserStatus,
           integratedCRM: null,
           integratedLLM: "OpenAI",
           email: "contato@leadly.com",
@@ -74,7 +71,7 @@ export const useAuthLogin = () => {
           id: user.id,
           name: user.user_metadata.name || "",
           email: user.email || "",
-          phone: "", // Adicionando o campo phone que estava faltando
+          phone: "",
           role: "leadly_employee",
           status: "active",
           createdAt: new Date().toISOString(),
@@ -87,10 +84,10 @@ export const useAuthLogin = () => {
 
         localStorage.setItem('user', JSON.stringify(mockUser));
         toast.success("Login realizado com sucesso!");
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         toast.error("Sessão não encontrada. Tente novamente.");
-        router.push("/");
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Erro durante o callback:", error);

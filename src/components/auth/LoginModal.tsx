@@ -12,20 +12,26 @@ interface LoginModalProps {
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [mode, setMode] = useState<"login" | "forgot">("login");
-  const [email, setEmail] = useState("");
-  
-  const {
-    isLoading,
-    error,
-    handleLogin,
-    handlePasswordRecovery,
-    setError
-  } = useAuthLogin(() => onOpenChange(false));
+  const [error, setError] = useState<string | null>(null);
+  const { login, isLoading, handleCallback } = useAuthLogin();
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      await login(email);
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao fazer login");
+    }
+  };
 
   const handleForgotPassword = async (email: string) => {
-    const success = await handlePasswordRecovery(email);
-    if (success) {
+    try {
+      await login(email);
       setMode("login");
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao recuperar senha");
+      return false;
     }
   };
 

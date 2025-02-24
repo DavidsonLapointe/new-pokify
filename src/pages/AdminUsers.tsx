@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -18,14 +19,15 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // Filtra apenas usuários do tipo leadly_employee
     const leadlyEmployees = mockUsers.filter(u => u.role === "leadly_employee");
     setUsers(leadlyEmployees);
   }, []);
 
-  const handleAddUser = (newUser: User) => {
-    setUsers(prev => [...prev, newUser]);
+  const handleAddUser = () => {
     setIsAddDialogOpen(false);
+    // Recarregar usuários após adicionar
+    const leadlyEmployees = mockUsers.filter(u => u.role === "leadly_employee");
+    setUsers(leadlyEmployees);
   };
 
   const handleEditUser = (user: User) => {
