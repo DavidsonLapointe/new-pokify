@@ -1,8 +1,12 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { LeadForm } from "./LeadForm";
 
 export function CTASection() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
     <section className="py-20 bg-primary text-white">
       <div className="container mx-auto px-4 text-center">
@@ -15,10 +19,16 @@ export function CTASection() {
         <Button 
           size="lg" 
           className="text-lg bg-white text-primary hover:bg-gray-100 transition-colors"
+          onClick={() => setIsFormOpen(true)}
         >
           Começar Gratuitamente
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
+
+        <LeadForm 
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+        />
       </div>
     </section>
   );
