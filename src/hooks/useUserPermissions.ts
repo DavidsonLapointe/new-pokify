@@ -19,6 +19,20 @@ export const useUserPermissions = (
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<string[]>([]);
 
+  // Função auxiliar para expandir as permissões do dashboard
+  const expandDashboardPermissions = (permissions: string[]) => {
+    const expanded = [...permissions];
+    if (expanded.includes('dashboard')) {
+      dashboardTabs.forEach(tab => {
+        const subPermission = `dashboard.${tab}`;
+        if (!expanded.includes(subPermission)) {
+          expanded.push(subPermission);
+        }
+      });
+    }
+    return expanded;
+  };
+
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
@@ -34,8 +48,10 @@ export const useUserPermissions = (
         initialPermissions.push('dashboard');
       }
 
-      console.log('Permissões expandidas:', initialPermissions);
-      setTempPermissions(initialPermissions);
+      // Expande as permissões ao abrir
+      const expandedPermissions = expandDashboardPermissions(initialPermissions);
+      console.log('Permissões expandidas:', expandedPermissions);
+      setTempPermissions(expandedPermissions);
     } else {
       setTempPermissions([]);
     }
@@ -106,9 +122,12 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
+      // Garante que as permissões estão expandidas antes de salvar
+      const finalPermissions = expandDashboardPermissions([...tempPermissions]);
+
       const updatedUser = {
         ...user,
-        permissions: [...tempPermissions]
+        permissions: finalPermissions
       };
 
       console.log('Salvando usuário com permissões:', updatedUser.permissions);
