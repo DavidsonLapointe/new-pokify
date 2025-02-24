@@ -13,7 +13,7 @@ export default function Index() {
             <div className="hidden md:flex space-x-8">
               <a href="#como-funciona" className="text-gray-600 hover:text-gray-900">Como Funciona</a>
               <a href="#beneficios" className="text-gray-600 hover:text-gray-900">Benefícios</a>
-              <a href="#planos" className="text-gray-600 hover:text-gray-900">Planos</a>
+              <a href="#depoimentos" className="text-gray-600 hover:text-gray-900">Depoimentos</a>
             </div>
             <Button>Começar Agora</Button>
           </div>
@@ -23,21 +23,30 @@ export default function Index() {
       {/* Hero Section */}
       <section className="pt-32 pb-20">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Transforme suas chamadas em oportunidades
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Automatize a análise de chamadas, identifique padrões e aumente suas conversões com inteligência artificial
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg">
-                Começar Gratuitamente
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg">
-                Agendar Demo
-              </Button>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-left">
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                Transforme suas chamadas em oportunidades
+              </h1>
+              <p className="text-xl text-gray-600 mb-8">
+                Automatize a análise de chamadas, identifique padrões e aumente suas conversões com inteligência artificial
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="text-lg">
+                  Começar Gratuitamente
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button size="lg" variant="outline" className="text-lg">
+                  Agendar Demo
+                </Button>
+              </div>
+            </div>
+            <div className="relative animate-float">
+              <img
+                src="/photo-1581091226825-a6a2a5aee158"
+                alt="Pessoa usando Leadly"
+                className="rounded-lg shadow-2xl"
+              />
             </div>
           </div>
         </div>
@@ -118,6 +127,63 @@ export default function Index() {
               <div>
                 <h3 className="font-semibold mb-2">Treinamento Eficiente</h3>
                 <p className="text-gray-600">Use casos reais para treinar sua equipe de vendas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Depoimentos */}
+      <section id="depoimentos" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-12">O que nossos clientes dizem</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <p className="text-gray-600 mb-4">
+                "O Leadly transformou completamente nossa forma de avaliar chamadas. Aumentamos nossas conversões em 40%!"
+              </p>
+              <div className="flex items-center">
+                <img
+                  src="/photo-1519389950473-47ba0277781c"
+                  alt="Cliente"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <p className="font-semibold">Ana Silva</p>
+                  <p className="text-sm text-gray-500">Gerente de Vendas</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <p className="text-gray-600 mb-4">
+                "A análise automática nos ajudou a identificar pontos de melhoria que nem sabíamos que existiam."
+              </p>
+              <div className="flex items-center">
+                <img
+                  src="/photo-1649972904349-6e44c42644a7"
+                  alt="Cliente"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <p className="font-semibold">Carlos Santos</p>
+                  <p className="text-sm text-gray-500">Diretor Comercial</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <p className="text-gray-600 mb-4">
+                "Economizamos horas de trabalho manual e melhoramos a qualidade das nossas análises."
+              </p>
+              <div className="flex items-center">
+                <img
+                  src="/placeholder.svg"
+                  alt="Cliente"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <p className="font-semibold">Marina Costa</p>
+                  <p className="text-sm text-gray-500">Supervisora de Equipe</p>
+                </div>
               </div>
             </div>
           </div>
