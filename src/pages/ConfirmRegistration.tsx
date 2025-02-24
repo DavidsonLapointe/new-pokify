@@ -24,7 +24,7 @@ export default function ConfirmRegistration() {
   });
   
   const mockOrganization: Organization = {
-    id: 1,
+    id: "1",
     name: "Empresa Exemplo LTDA",
     nomeFantasia: "Empresa Exemplo",
     cnpj: "12.345.678/0001-90",

@@ -1,8 +1,9 @@
+
 import { User } from "./user-types";
 import { Organization } from "./organization-types";
 
 const mockOrganization: Organization = {
-  id: 1,
+  id: "1",
   name: "Leadly Technologies",
   nomeFantasia: "Leadly",
   plan: "Enterprise",
@@ -20,7 +21,7 @@ const mockOrganization: Organization = {
 
 // Organização para usuários admin
 const orgDemo: Organization = {
-  id: 2,
+  id: "2",
   name: "Organização Demo",
   nomeFantasia: "Organização Demo",
   plan: "Professional",
@@ -38,7 +39,7 @@ const orgDemo: Organization = {
 
 // Usuário Leadly Ativo (Principal)
 const activeLeadlyEmployee: User = {
-  id: 1,
+  id: "1",
   name: "Maria Silva",
   email: "maria.silva@leadly.com",
   phone: "(11) 98765-4321",
@@ -65,7 +66,7 @@ const activeLeadlyEmployee: User = {
 
 // Usuário Leadly Inativo
 const inactiveLeadlyEmployee: User = {
-  id: 2,
+  id: "2",
   name: "João Santos",
   email: "joao.santos@leadly.com",
   phone: "(11) 98765-1234",
@@ -92,7 +93,7 @@ const inactiveLeadlyEmployee: User = {
 
 // Usuário Leadly Pendente
 const pendingLeadlyEmployee: User = {
-  id: 3,
+  id: "3",
   name: "Ana Oliveira",
   email: "ana.oliveira@leadly.com",
   phone: "(11) 98765-5678",
@@ -119,7 +120,7 @@ const pendingLeadlyEmployee: User = {
 
 // Admin Ativo (Principal)
 const activeAdmin: User = {
-  id: 4,
+  id: "4",
   name: "Ricardo Souza",
   email: "ricardo.souza@organizacao.com",
   phone: "(11) 97777-8888",
@@ -150,7 +151,7 @@ const activeAdmin: User = {
 
 // Admin Inativo
 const inactiveAdmin: User = {
-  id: 5,
+  id: "5",
   name: "Paula Costa",
   email: "paula.costa@organizacao.com",
   phone: "(11) 96666-7777",
@@ -181,7 +182,7 @@ const inactiveAdmin: User = {
 
 // Admin Pendente
 const pendingAdmin: User = {
-  id: 6,
+  id: "6",
   name: "Lucas Mendes",
   email: "lucas.mendes@organizacao.com",
   phone: "(11) 95555-6666",
@@ -212,7 +213,7 @@ const pendingAdmin: User = {
 
 // Seller (Vendedor) Ativo
 const activeSeller: User = {
-  id: 7,
+  id: "7",
   name: "Pedro Santos",
   email: "pedro.santos@organizacao.com",
   phone: "(11) 94444-5555",
@@ -233,7 +234,7 @@ const activeSeller: User = {
 
 // Seller (Vendedor) Inativo
 const inactiveSeller: User = {
-  id: 8,
+  id: "8",
   name: "Carla Lima",
   email: "carla.lima@organizacao.com",
   phone: "(11) 93333-4444",
@@ -254,7 +255,7 @@ const inactiveSeller: User = {
 
 // Seller (Vendedor) Pendente
 const pendingSeller: User = {
-  id: 9,
+  id: "9",
   name: "Bruno Costa",
   email: "bruno.costa@organizacao.com",
   phone: "(11) 92222-3333",

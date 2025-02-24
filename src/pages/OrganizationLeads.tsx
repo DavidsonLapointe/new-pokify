@@ -16,7 +16,7 @@ import { Call } from "@/types/calls";
 import { mockCalls } from "@/mocks/calls";
 
 const mockOrganization = {
-  id: 1,
+  id: "1",
   name: "Tech Solutions Ltda",
   nomeFantasia: "Tech Solutions",
   plan: "enterprise",
@@ -33,7 +33,7 @@ const mockOrganization = {
 };
 
 const mockLoggedUser = {
-  id: 2,
+  id: "2",
   name: "Maria Santos",
   email: "maria@empresa.com",
   phone: "(11) 98888-8888",
@@ -44,7 +44,7 @@ const mockLoggedUser = {
   permissions: ["dashboard", "calls", "leads", "integrations"],
   logs: [
     {
-      id: 1,
+      id: "1",
       date: "2024-03-15T14:30:00.000Z",
       action: "Acessou o sistema",
     },

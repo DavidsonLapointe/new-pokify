@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -80,7 +79,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       // Mapeia os dados do Supabase para o tipo Organization
       const newOrganization: Organization = {
-        id: Number(newOrganizationData.id),
+        id: String(newOrganizationData.id),
         name: newOrganizationData.name,
         nomeFantasia: newOrganizationData.nome_fantasia || "",
         plan: newOrganizationData.plan,
