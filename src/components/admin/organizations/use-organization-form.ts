@@ -5,9 +5,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "./schema";
+import { useUser } from "@/contexts/UserContext";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { toast } = useToast();
+  const { user } = useUser();
   
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),
@@ -25,6 +27,16 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   });
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
+    // Verifica se o usuário tem permissão para criar organizações
+    if (user.role !== "leadly_employee") {
+      toast({
+        title: "Acesso negado",
+        description: "Apenas funcionários Leadly podem criar organizações",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Define as permissões para o admin inicial
     const adminPermissions: string[] = [
       "dashboard",
