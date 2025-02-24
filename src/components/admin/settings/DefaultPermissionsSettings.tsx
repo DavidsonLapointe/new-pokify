@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ADMIN_DEFAULT_PERMISSIONS } from "@/types/admin-permissions";
+import { ADMIN_DEFAULT_PERMISSIONS, availableAdminRoutePermissions } from "@/types/admin-permissions";
 import { UserRole } from "@/types/user-types";
+import { Settings, User, Lock, List } from "lucide-react";
 
 type PermissionConfig = {
   [key: string]: string[];
@@ -17,11 +18,30 @@ type RolePermissions = {
   [K in UserRole]: PermissionConfig;
 };
 
+const getRouteLabel = (routeId: string): string => {
+  const route = availableAdminRoutePermissions.find(r => r.id === routeId);
+  return route?.label || routeId;
+};
+
+const getRouteIcon = (routeId: string) => {
+  switch (routeId) {
+    case 'settings':
+      return <Settings className="h-4 w-4" />;
+    case 'profile':
+      return <User className="h-4 w-4" />;
+    default:
+      return <List className="h-4 w-4" />;
+  }
+};
+
 export const DefaultPermissionsSettings = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>("leadly_employee");
   const [permissions, setPermissions] = useState<RolePermissions>(ADMIN_DEFAULT_PERMISSIONS);
 
   const handleTogglePermission = (route: string, permission: string) => {
+    // Não permite alteração se for a rota de perfil
+    if (route === 'profile') return;
+
     setPermissions(prev => {
       const currentPerms = { ...prev[selectedRole] };
       const routePerms = [...(currentPerms[route] || [])];
@@ -49,6 +69,9 @@ export const DefaultPermissionsSettings = () => {
   const hasPermission = (route: string, permission: string): boolean => {
     return permissions[selectedRole]?.[route]?.includes(permission) || false;
   };
+
+  // Obtém todas as rotas disponíveis do arquivo de configuração
+  const availableRoutes = availableAdminRoutePermissions.map(route => route.id);
 
   return (
     <Card>
@@ -80,21 +103,28 @@ export const DefaultPermissionsSettings = () => {
 
         <div className="space-y-6">
           <div className="grid gap-4">
-            {Object.entries(permissions[selectedRole] || {}).map(([route, perms]) => (
+            {availableRoutes.map(route => (
               <div key={route} className="flex items-center justify-between p-4 border rounded-lg">
-                <span className="font-medium capitalize">
-                  {route.replace(/-/g, " ")}
-                </span>
+                <div className="flex items-center gap-2">
+                  {getRouteIcon(route)}
+                  <span className="font-medium">
+                    {getRouteLabel(route)}
+                  </span>
+                  {route === 'profile' && (
+                    <Lock className="h-4 w-4 text-gray-400 ml-2" />
+                  )}
+                </div>
                 <div className="flex items-center gap-4">
-                  {Array.isArray(perms) && perms.map(permission => (
+                  {(permissions[selectedRole]?.[route] || []).map(permission => (
                     <div key={`${route}-${permission}`} className="flex items-center gap-2">
                       <Label htmlFor={`${route}-${permission}`} className="text-sm">
                         {permission}
                       </Label>
                       <CustomSwitch
                         id={`${route}-${permission}`}
-                        checked={hasPermission(route, permission)}
+                        checked={route === 'profile' ? true : hasPermission(route, permission)}
                         onCheckedChange={() => handleTogglePermission(route, permission)}
+                        disabled={route === 'profile'}
                       />
                     </div>
                   ))}
@@ -111,4 +141,3 @@ export const DefaultPermissionsSettings = () => {
     </Card>
   );
 };
-
