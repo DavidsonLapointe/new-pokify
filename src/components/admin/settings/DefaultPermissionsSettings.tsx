@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomSwitch } from "@/components/ui/custom-switch";
@@ -13,7 +12,7 @@ import { DashboardTabs } from "./DashboardTabs";
 import { organizationRoutes } from "./constants";
 
 type PermissionConfig = {
-  [key: string]: string[];
+  [key: string]: boolean;
 };
 
 type RolePermissions = {
@@ -23,34 +22,34 @@ type RolePermissions = {
 const initialPermissions: RolePermissions = {
   leadly_employee: {
     ...ADMIN_DEFAULT_PERMISSIONS.leadly_employee,
-    "settings-alerts": ["view", "edit"],
-    "settings-analysis": ["view", "edit"],
-    "settings-retention": ["view", "edit"],
-    "settings-llm": ["view", "edit"],
-    "settings-system": ["view", "edit"],
-    "settings-permissions": ["view", "edit"]
+    "settings.alerts": true,
+    "settings.analysis": true,
+    "settings.retention": true,
+    "settings.llm": true,
+    "settings.system": true,
+    "settings.permissions": true
   },
   admin: {
-    profile: ["view", "edit"],
-    dashboard: ["view"],
-    "dashboard-leads": ["view"],
-    "dashboard-uploads": ["view"],
-    "dashboard-performance": ["view"],
-    "dashboard-objections": ["view"],
-    "dashboard-suggestions": ["view"],
-    "dashboard-sellers": ["view"],
-    leads: ["view", "edit"],
-    users: ["view", "edit"],
-    integrations: ["view", "edit"],
-    settings: ["view", "edit"],
-    plan: ["view", "edit"],
-    company: ["view", "edit"]
+    profile: true,
+    dashboard: true,
+    "dashboard.leads": true,
+    "dashboard.uploads": true,
+    "dashboard.performance": true,
+    "dashboard.objections": true,
+    "dashboard.suggestions": true,
+    "dashboard.sellers": true,
+    leads: true,
+    users: true,
+    integrations: true,
+    settings: true,
+    plan: true,
+    company: true
   },
   seller: {
-    profile: ["view", "edit"],
-    dashboard: ["view"],
-    "dashboard-leads": ["view"],
-    leads: ["view", "edit"]
+    profile: true,
+    dashboard: true,
+    "dashboard.leads": true,
+    leads: true
   }
 };
 
@@ -75,18 +74,13 @@ export const DefaultPermissionsSettings = () => {
   const handleTogglePermission = (route: string) => {
     if (route === 'profile') return;
 
-    setPermissions(prev => {
-      const currentPerms = { ...prev[selectedRole] };
-      const hasAnyPermission = Object.keys(currentPerms[route] || {}).length > 0;
-      
-      return {
-        ...prev,
-        [selectedRole]: {
-          ...currentPerms,
-          [route]: hasAnyPermission ? [] : ['view', 'edit', 'delete']
-        }
-      };
-    });
+    setPermissions(prev => ({
+      ...prev,
+      [selectedRole]: {
+        ...prev[selectedRole],
+        [route]: !prev[selectedRole][route]
+      }
+    }));
   };
 
   const handleSave = () => {
@@ -95,7 +89,7 @@ export const DefaultPermissionsSettings = () => {
   };
 
   const hasAccess = (route: string): boolean => {
-    return Object.keys(permissions[selectedRole]?.[route] || {}).length > 0;
+    return !!permissions[selectedRole]?.[route];
   };
 
   const routesToShow = selectedRole === 'leadly_employee' 

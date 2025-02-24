@@ -1,6 +1,6 @@
 
 import { User } from "@/types";
-import { RoutePermission, availableRoutePermissions } from "@/types/permissions";
+import { RoutePermission } from "@/types/permissions";
 
 export const usePermissions = (user: User) => {
   const isAdminRoute = window.location.pathname.startsWith('/admin');
@@ -24,7 +24,7 @@ export const usePermissions = (user: User) => {
     }
 
     // Verifica se a permissão existe e é true
-    const hasPermission = user.permissions[routeId] === true;
+    const hasPermission = Boolean(user.permissions[routeId]);
     console.log(`Tem permissão para ${routeId}?`, hasPermission);
     return hasPermission;
   };
@@ -35,7 +35,7 @@ export const usePermissions = (user: User) => {
     // Adiciona todas as rotas que têm permissão true
     if (user?.permissions) {
       routes = Object.entries(user.permissions)
-        .filter(([_, value]) => value === true)
+        .filter(([_, value]) => Boolean(value))
         .map(([key, _]) => key);
     }
 
