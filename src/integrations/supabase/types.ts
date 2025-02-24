@@ -221,6 +221,302 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_lead_analyses: {
+        Row: {
+          analysis_type: string
+          created_at: string
+          created_by: string | null
+          crm_sync_data: Json | null
+          error_message: string | null
+          file_id: string | null
+          id: string
+          lead_id: string
+          processed_data: Json
+          prompt_id: string | null
+          raw_result: Json
+          sent_to_crm: boolean | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          analysis_type: string
+          created_at?: string
+          created_by?: string | null
+          crm_sync_data?: Json | null
+          error_message?: string | null
+          file_id?: string | null
+          id?: string
+          lead_id: string
+          processed_data: Json
+          prompt_id?: string | null
+          raw_result: Json
+          sent_to_crm?: boolean | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          analysis_type?: string
+          created_at?: string
+          created_by?: string | null
+          crm_sync_data?: Json | null
+          error_message?: string | null
+          file_id?: string | null
+          id?: string
+          lead_id?: string
+          processed_data?: Json
+          prompt_id?: string | null
+          raw_result?: Json
+          sent_to_crm?: boolean | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_lead_analyses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_lead_analyses_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "organization_lead_files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_lead_analyses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "organization_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_lead_analyses_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_lead_files: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id: string
+          lead_id: string
+          metadata: Json | null
+          processed: boolean | null
+          status: string | null
+          storage_path: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          processed?: boolean | null
+          status?: string | null
+          storage_path: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          processed?: boolean | null
+          status?: string | null
+          storage_path?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_lead_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_lead_files_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "organization_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_lead_notes: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          lead_id: string
+          metadata: Json | null
+          note_type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          note_type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          note_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_lead_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "organization_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_leads: {
+        Row: {
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string | null
+          complemento: string | null
+          cpf: string | null
+          created_at: string
+          created_by: string | null
+          crm_external_id: string | null
+          crm_sync_status: string | null
+          email: string | null
+          estado: string | null
+          first_name: string | null
+          id: string
+          last_contact: string | null
+          last_name: string | null
+          logradouro: string | null
+          metadata: Json | null
+          nome_fantasia: string | null
+          numero: string | null
+          organization_id: string
+          person_type: string
+          phone: string | null
+          razao_social: string | null
+          status: string | null
+          temperature: number | null
+          updated_at: string
+        }
+        Insert: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string | null
+          crm_external_id?: string | null
+          crm_sync_status?: string | null
+          email?: string | null
+          estado?: string | null
+          first_name?: string | null
+          id?: string
+          last_contact?: string | null
+          last_name?: string | null
+          logradouro?: string | null
+          metadata?: Json | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          organization_id: string
+          person_type: string
+          phone?: string | null
+          razao_social?: string | null
+          status?: string | null
+          temperature?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string | null
+          crm_external_id?: string | null
+          crm_sync_status?: string | null
+          email?: string | null
+          estado?: string | null
+          first_name?: string | null
+          id?: string
+          last_contact?: string | null
+          last_name?: string | null
+          logradouro?: string | null
+          metadata?: Json | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          organization_id?: string
+          person_type?: string
+          phone?: string | null
+          razao_social?: string | null
+          status?: string | null
+          temperature?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_leads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           admin_email: string
@@ -460,7 +756,43 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      organization_lead_analysis_summary: {
+        Row: {
+          analysis_type: string | null
+          failed_analyses: number | null
+          first_analysis: string | null
+          last_analysis: string | null
+          organization_id: string | null
+          synced_to_crm: number | null
+          total_analyses: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_lead_objections: {
+        Row: {
+          lead_ids: string[] | null
+          objection_type: string | null
+          occurrence_count: number | null
+          organization_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_role: {
