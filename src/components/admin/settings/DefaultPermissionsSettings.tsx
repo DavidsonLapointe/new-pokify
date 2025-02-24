@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -38,23 +38,21 @@ export const DefaultPermissionsSettings = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>("leadly_employee");
   const [permissions, setPermissions] = useState<RolePermissions>(ADMIN_DEFAULT_PERMISSIONS);
 
-  const handleTogglePermission = (route: string, permission: string) => {
+  const handleTogglePermission = (route: string) => {
     // Não permite alteração se for a rota de perfil
     if (route === 'profile') return;
 
     setPermissions(prev => {
       const currentPerms = { ...prev[selectedRole] };
-      const routePerms = [...(currentPerms[route] || [])];
       
-      const updatedRoutePerms = routePerms.includes(permission)
-        ? routePerms.filter(p => p !== permission)
-        : [...routePerms, permission];
-
+      // Se já tem alguma permissão, removemos todas. Se não tem, adicionamos acesso completo
+      const hasAnyPermission = Object.keys(currentPerms[route] || {}).length > 0;
+      
       return {
         ...prev,
         [selectedRole]: {
           ...currentPerms,
-          [route]: updatedRoutePerms
+          [route]: hasAnyPermission ? [] : ['view', 'edit', 'delete']
         }
       };
     });
@@ -66,12 +64,22 @@ export const DefaultPermissionsSettings = () => {
     toast.success("Permissões padrão atualizadas com sucesso!");
   };
 
-  const hasPermission = (route: string, permission: string): boolean => {
-    return permissions[selectedRole]?.[route]?.includes(permission) || false;
+  const hasAccess = (route: string): boolean => {
+    return Object.keys(permissions[selectedRole]?.[route] || {}).length > 0;
   };
 
   // Obtém todas as rotas disponíveis do arquivo de configuração
   const availableRoutes = availableAdminRoutePermissions.map(route => route.id);
+
+  // Define as abas do dashboard disponíveis
+  const dashboardTabs = [
+    { id: "leads", label: "Leads" },
+    { id: "uploads", label: "Uploads" },
+    { id: "performance", label: "Performance Vendedores" },
+    { id: "objections", label: "Objeções" },
+    { id: "suggestions", label: "Sugestões" },
+    { id: "sellers", label: "Vendedores" }
+  ];
 
   return (
     <Card>
@@ -104,31 +112,42 @@ export const DefaultPermissionsSettings = () => {
         <div className="space-y-6">
           <div className="grid gap-4">
             {availableRoutes.map(route => (
-              <div key={route} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-2">
-                  {getRouteIcon(route)}
-                  <span className="font-medium">
-                    {getRouteLabel(route)}
-                  </span>
-                  {route === 'profile' && (
-                    <Lock className="h-4 w-4 text-gray-400 ml-2" />
-                  )}
+              <div key={route} className="space-y-2">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-2">
+                    {getRouteIcon(route)}
+                    <span className="font-medium">
+                      {getRouteLabel(route)}
+                    </span>
+                    {route === 'profile' && (
+                      <Lock className="h-4 w-4 text-gray-400 ml-2" />
+                    )}
+                  </div>
+                  <CustomSwitch
+                    checked={route === 'profile' ? true : hasAccess(route)}
+                    onCheckedChange={() => handleTogglePermission(route)}
+                    disabled={route === 'profile'}
+                  />
                 </div>
-                <div className="flex items-center gap-4">
-                  {(permissions[selectedRole]?.[route] || []).map(permission => (
-                    <div key={`${route}-${permission}`} className="flex items-center gap-2">
-                      <Label htmlFor={`${route}-${permission}`} className="text-sm">
-                        {permission}
-                      </Label>
-                      <CustomSwitch
-                        id={`${route}-${permission}`}
-                        checked={route === 'profile' ? true : hasPermission(route, permission)}
-                        onCheckedChange={() => handleTogglePermission(route, permission)}
-                        disabled={route === 'profile'}
-                      />
+                
+                {/* Mostra as abas do dashboard apenas para admin e seller */}
+                {route === 'dashboard' && 
+                 (selectedRole === 'admin' || selectedRole === 'seller') && (
+                  <div className="ml-8 space-y-2">
+                    <Label className="text-sm text-muted-foreground">Abas do Dashboard:</Label>
+                    <div className="grid gap-2">
+                      {dashboardTabs.map(tab => (
+                        <div key={tab.id} className="flex items-center justify-between p-2 border rounded-lg">
+                          <span className="text-sm">{tab.label}</span>
+                          <CustomSwitch
+                            checked={hasAccess(`dashboard-${tab.id}`)}
+                            onCheckedChange={() => handleTogglePermission(`dashboard-${tab.id}`)}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
