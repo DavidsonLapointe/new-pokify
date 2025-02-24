@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogD
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -28,15 +29,45 @@ export function LeadForm({ isOpen, onClose }: LeadFormProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Obrigado pelo interesse!",
-      description: "Nossa equipe comercial entrará em contato em breve.",
-      duration: 5000,
-    });
-    form.reset();
-    onClose();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const { error } = await supabase
+        .from('leads_leadly')
+        .insert([
+          {
+            name: values.name,
+            phone: values.phone,
+          }
+        ]);
+
+      if (error) {
+        console.error('Erro ao salvar lead:', error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao enviar formulário",
+          description: "Ocorreu um erro ao salvar seus dados. Por favor, tente novamente.",
+          duration: 5000,
+        });
+        return;
+      }
+
+      toast({
+        title: "Obrigado pelo interesse!",
+        description: "Nossa equipe comercial entrará em contato em breve.",
+        duration: 5000,
+      });
+      
+      form.reset();
+      onClose();
+    } catch (error) {
+      console.error('Erro ao processar submissão:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao enviar formulário",
+        description: "Ocorreu um erro inesperado. Por favor, tente novamente.",
+        duration: 5000,
+      });
+    }
   }
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
