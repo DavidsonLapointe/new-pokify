@@ -20,7 +20,7 @@ export const PermissionRow = ({
     isProfile
   });
 
-  // Alterado para considerar apenas 'profile' como rota padrão
+  // Apenas o perfil é rota padrão não editável
   const isDefaultRoute = route.id === 'profile';
 
   return (
@@ -30,7 +30,7 @@ export const PermissionRow = ({
           type="checkbox"
           id={route.id}
           checked={isRouteEnabled}
-          onChange={() => !isDefaultRoute && onPermissionChange(route.id)}
+          onChange={() => onPermissionChange(route.id)}
           disabled={isDefaultRoute}
           className={`h-4 w-4 rounded border appearance-none ${
             isDefaultRoute
