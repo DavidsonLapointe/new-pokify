@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { UserRole } from "@/types";
 import { toast } from "sonner";
-import { availableRoutePermissions } from "@/types/permissions";
+import { availablePermissions } from "@/types/permissions";
 
 interface AddLeadlyEmployeeDialogProps {
   isOpen: boolean;

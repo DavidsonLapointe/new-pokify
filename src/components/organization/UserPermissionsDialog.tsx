@@ -9,12 +9,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { User } from "@/types";
-import { availableRoutePermissions } from "@/types/permissions";
+import { availablePermissions } from "@/types/permissions";
 import { PermissionRow } from "./PermissionRow";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { availableAdminRoutePermissions } from "@/types/admin-permissions";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -63,7 +64,7 @@ export const UserPermissionsDialog = ({
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6">
-            {availableRoutePermissions.map((route) => {
+            {availableAdminRoutePermissions.map((route) => {
               console.log(`Checking route ${route.id}:`, {
                 hasPermissions: tempPermissions.includes(route.id),
                 tempPermissions

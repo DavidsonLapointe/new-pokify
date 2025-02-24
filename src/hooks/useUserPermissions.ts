@@ -1,5 +1,6 @@
+
 import { User } from "@/types";
-import { availableRoutePermissions } from "@/types/permissions";
+import { availablePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
@@ -28,8 +29,8 @@ export const useUserPermissions = (
   }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
-    const route = availableRoutePermissions.find(r => r.id === routeId);
-    if (route?.isDefault) return;
+    const route = availablePermissions.find(r => r === routeId);
+    if (route === 'profile') return;
 
     setTempPermissions(prev => {
       let newPermissions = [...prev];
@@ -97,16 +98,11 @@ export const useUserPermissions = (
     }
   };
 
-  const handleClose = () => {
-    setTempPermissions([]);
-    onClose();
-  };
-
   return {
     saving,
     tempPermissions,
     handlePermissionChange,
     handleSave,
-    handleClose,
+    handleClose: onClose,
   };
 };
