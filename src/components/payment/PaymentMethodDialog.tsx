@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
+import { TitleStatus } from "@/types/financial";
 
 interface PaymentMethodDialogProps {
   open: boolean;
@@ -57,16 +58,18 @@ export function PaymentMethodDialog({
         .select('status')
         .eq('id', titleId)
         .single();
-      return data?.status;
+      return data?.status as TitleStatus;
     },
     enabled: !!titleId && open,
     refetchInterval: (data) => (data === 'paid' ? false : 5000),
-    onSuccess: (status) => {
-      if (status === 'paid') {
-        toast.success('Pagamento confirmado com sucesso!');
-        onOpenChange(false);
+    meta: {
+      onSuccess: (status: TitleStatus) => {
+        if (status === 'paid') {
+          toast.success('Pagamento confirmado com sucesso!');
+          onOpenChange(false);
+        }
       }
-    },
+    }
   });
 
   return (
