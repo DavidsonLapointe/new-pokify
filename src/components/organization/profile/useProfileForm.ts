@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProfileFormData } from "./types";
@@ -38,8 +39,6 @@ export const useProfileForm = () => {
       };
       updateUser(updatedUser);
       
-      mockLoggedUser.avatar = mockImageUrl;
-      
       toast.success("Foto de perfil atualizada com sucesso!");
     } catch (error) {
       toast.error("Erro ao atualizar foto de perfil");
@@ -79,11 +78,6 @@ export const useProfileForm = () => {
         avatar: formData.avatar,
       };
       updateUser(updatedUser);
-
-      mockLoggedUser.email = formData.email;
-      mockLoggedUser.name = formData.name;
-      mockLoggedUser.phone = formData.phone;
-      mockLoggedUser.avatar = formData.avatar;
 
       toast.success("Perfil atualizado com sucesso!");
       
