@@ -44,14 +44,14 @@ const testimonials: Testimonial[] = [
     name: "Pedro Almeida",
     role: "CEO",
     company: "SalesForce",
-    image: "/placeholder.svg",
+    image: "/photo-1486312338219-ce68d2c6f44d",
     text: "A plataforma é incrivelmente intuitiva e os insights gerados pela IA são muito precisos. Recomendo fortemente para qualquer equipe de vendas."
   },
   {
     name: "Juliana Torres",
     role: "Head de Vendas",
     company: "TechSales",
-    image: "/placeholder.svg",
+    image: "/photo-1519389950473-47ba0277781c",
     text: "Desde que implementamos o Leadly, nossa equipe melhorou significativamente a taxa de conversão. Os relatórios automáticos são fantásticos!"
   }
 ];
