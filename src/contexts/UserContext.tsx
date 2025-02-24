@@ -22,10 +22,24 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
     
-    // Limpa o localStorage para forçar o uso dos usuários padrão
-    localStorage.removeItem(storageKey);
+    // Tenta recuperar o usuário do localStorage
+    const storedUser = localStorage.getItem(storageKey);
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        // Verifica se o usuário armazenado tem o formato correto
+        if (parsedUser && parsedUser.permissions) {
+          return parsedUser;
+        }
+      } catch (e) {
+        console.error('Erro ao parsear usuário do localStorage:', e);
+      }
+    }
     
-    return isAdminRoute ? defaultAdminUser : defaultOrgUser;
+    // Se não houver usuário válido no localStorage, usa o padrão
+    const defaultUser = isAdminRoute ? defaultAdminUser : defaultOrgUser;
+    localStorage.setItem(storageKey, JSON.stringify(defaultUser));
+    return defaultUser;
   });
 
   const updateUser = (newUser: User) => {
