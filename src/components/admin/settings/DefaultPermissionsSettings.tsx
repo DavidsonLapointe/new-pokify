@@ -1,68 +1,16 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { UserRole } from "@/types/user-types";
-import { Settings, User, Lock, List, BarChart3, Users, Network, CreditCard, Building2, Bell, Database, Shield } from "lucide-react";
+import { Lock, List, CreditCard, Building2 } from "lucide-react";
 import { ADMIN_DEFAULT_PERMISSIONS, availableAdminRoutePermissions } from "@/types/admin-permissions";
-
-// Rotas do ambiente da organização
-const organizationRoutes = [
-  {
-    id: "profile",
-    label: "Meu Perfil",
-    icon: User,
-    isDefault: true
-  },
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: BarChart3
-  },
-  {
-    id: "leads",
-    label: "Análise de Leads",
-    icon: List
-  },
-  {
-    id: "users",
-    label: "Usuários",
-    icon: Users
-  },
-  {
-    id: "integrations",
-    label: "Integrações",
-    icon: Network
-  },
-  {
-    id: "settings",
-    label: "Configurações",
-    icon: Settings
-  },
-  {
-    id: "plan",
-    label: "Meu Plano",
-    icon: CreditCard
-  },
-  {
-    id: "company",
-    label: "Minha Empresa",
-    icon: Building2
-  }
-];
-
-// Configurar as abas de configurações
-const settingsTabs = [
-  { id: "alerts", label: "Alertas e Limites", icon: Bell },
-  { id: "analysis", label: "Análises", icon: BarChart3 },
-  { id: "retention", label: "Retenção", icon: Database },
-  { id: "llm", label: "LLM", icon: Network },
-  { id: "system", label: "Sistema", icon: Settings },
-  { id: "permissions", label: "Permissões", icon: Shield }
-];
+import { RoleSelector } from "./RoleSelector";
+import { SettingsTabs } from "./SettingsTabs";
+import { DashboardTabs } from "./DashboardTabs";
+import { organizationRoutes } from "./constants";
 
 type PermissionConfig = {
   [key: string]: string[];
@@ -107,12 +55,10 @@ const initialPermissions: RolePermissions = {
 };
 
 const getRouteIcon = (route: string) => {
-  // Para rotas do ambiente administrativo
   if (route.includes('analysis-packages')) return <List className="h-4 w-4" />;
   if (route.includes('financial')) return <CreditCard className="h-4 w-4" />;
   if (route.includes('organizations')) return <Building2 className="h-4 w-4" />;
   
-  // Para rotas da organização
   const routeConfig = organizationRoutes.find(r => r.id === route);
   if (routeConfig) {
     const Icon = routeConfig.icon;
@@ -127,13 +73,10 @@ export const DefaultPermissionsSettings = () => {
   const [permissions, setPermissions] = useState<RolePermissions>(initialPermissions);
 
   const handleTogglePermission = (route: string) => {
-    // Não permite alteração se for a rota de perfil
     if (route === 'profile') return;
 
     setPermissions(prev => {
       const currentPerms = { ...prev[selectedRole] };
-      
-      // Se já tem alguma permissão, removemos todas. Se não tem, adicionamos acesso completo
       const hasAnyPermission = Object.keys(currentPerms[route] || {}).length > 0;
       
       return {
@@ -147,7 +90,6 @@ export const DefaultPermissionsSettings = () => {
   };
 
   const handleSave = () => {
-    // TODO: Implement API call to save permissions
     console.log("Saving permissions:", permissions);
     toast.success("Permissões padrão atualizadas com sucesso!");
   };
@@ -156,25 +98,9 @@ export const DefaultPermissionsSettings = () => {
     return Object.keys(permissions[selectedRole]?.[route] || {}).length > 0;
   };
 
-  // Define as abas do dashboard disponíveis
-  const dashboardTabs = [
-    { id: "leads", label: "Leads" },
-    { id: "uploads", label: "Uploads" },
-    { id: "performance", label: "Performance Vendedores" },
-    { id: "objections", label: "Objeções" },
-    { id: "suggestions", label: "Sugestões" },
-    { id: "sellers", label: "Vendedores" }
-  ];
-
-  // Decide quais rotas mostrar baseado no papel selecionado
-  const getRoutesToDisplay = () => {
-    if (selectedRole === 'leadly_employee') {
-      return availableAdminRoutePermissions;
-    }
-    return organizationRoutes;
-  };
-
-  const routesToShow = getRoutesToDisplay();
+  const routesToShow = selectedRole === 'leadly_employee' 
+    ? availableAdminRoutePermissions 
+    : organizationRoutes;
 
   return (
     <Card>
@@ -182,27 +108,10 @@ export const DefaultPermissionsSettings = () => {
         <CardTitle>Permissões Padrão por Função</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <Label>Selecione a Função</Label>
-          <RadioGroup
-            value={selectedRole}
-            onValueChange={(value: UserRole) => setSelectedRole(value)}
-            className="flex space-x-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="leadly_employee" id="leadly_employee" />
-              <Label htmlFor="leadly_employee">Funcionário Leadly</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="admin" id="admin" />
-              <Label htmlFor="admin">Administrador</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="seller" id="seller" />
-              <Label htmlFor="seller">Vendedor</Label>
-            </div>
-          </RadioGroup>
-        </div>
+        <RoleSelector 
+          selectedRole={selectedRole} 
+          onRoleChange={(value) => setSelectedRole(value)} 
+        />
 
         <div className="space-y-6">
           <div className="grid gap-4">
@@ -225,45 +134,20 @@ export const DefaultPermissionsSettings = () => {
                   />
                 </div>
                 
-                {/* Mostra as abas do dashboard apenas para admin e seller */}
                 {(typeof route === 'string' ? route : route.id) === 'dashboard' && 
                  (selectedRole === 'admin' || selectedRole === 'seller') && (
-                  <div className="ml-8 space-y-2">
-                    <Label className="text-sm text-muted-foreground">Abas do Dashboard:</Label>
-                    <div className="grid gap-2">
-                      {dashboardTabs.map(tab => (
-                        <div key={tab.id} className="flex items-center justify-between p-2 border rounded-lg">
-                          <span className="text-sm">{tab.label}</span>
-                          <CustomSwitch
-                            checked={hasAccess(`dashboard-${tab.id}`)}
-                            onCheckedChange={() => handleTogglePermission(`dashboard-${tab.id}`)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <DashboardTabs 
+                    hasAccess={hasAccess}
+                    onTogglePermission={handleTogglePermission}
+                  />
                 )}
 
-                {/* Mostra as abas de configurações apenas para leadly_employee */}
                 {(typeof route === 'string' ? route : route.id) === 'settings' && 
                  selectedRole === 'leadly_employee' && (
-                  <div className="ml-8 space-y-2">
-                    <Label className="text-sm text-muted-foreground">Abas de Configurações:</Label>
-                    <div className="grid gap-2">
-                      {settingsTabs.map(tab => (
-                        <div key={tab.id} className="flex items-center justify-between p-2 border rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <tab.icon className="h-4 w-4" />
-                            <span className="text-sm">{tab.label}</span>
-                          </div>
-                          <CustomSwitch
-                            checked={hasAccess(`settings-${tab.id}`)}
-                            onCheckedChange={() => handleTogglePermission(`settings-${tab.id}`)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <SettingsTabs
+                    hasAccess={hasAccess}
+                    onTogglePermission={handleTogglePermission}
+                  />
                 )}
               </div>
             ))}
