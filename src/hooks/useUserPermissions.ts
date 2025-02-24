@@ -22,22 +22,28 @@ export const useUserPermissions = (
   // Função auxiliar para expandir as permissões do dashboard
   const expandDashboardPermissions = (permissions: string[]) => {
     const expanded = [...permissions];
-    if (expanded.includes('dashboard')) {
-      dashboardTabs.forEach(tab => {
-        const subPermission = `dashboard.${tab}`;
-        if (!expanded.includes(subPermission)) {
-          expanded.push(subPermission);
-        }
-      });
-    }
+    // Não remove mais o dashboard caso não tenha subpermissões
+    dashboardTabs.forEach(tab => {
+      const subPermission = `dashboard.${tab}`;
+      if (!expanded.includes(subPermission) && expanded.includes('dashboard')) {
+        expanded.push(subPermission);
+      }
+    });
     return expanded;
   };
 
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
-      // Sempre expandir as permissões ao abrir o modal
-      const initialPermissions = expandDashboardPermissions(user.permissions || []);
+      const initialPermissions = [...(user.permissions || [])];
+      if (initialPermissions.includes('dashboard')) {
+        dashboardTabs.forEach(tab => {
+          const subPermission = `dashboard.${tab}`;
+          if (!initialPermissions.includes(subPermission)) {
+            initialPermissions.push(subPermission);
+          }
+        });
+      }
       console.log('Permissões expandidas:', initialPermissions);
       setTempPermissions(initialPermissions);
     } else {
@@ -56,7 +62,7 @@ export const useUserPermissions = (
         const isDashboardEnabled = prev.includes('dashboard');
         
         if (!isDashboardEnabled) {
-          // Adiciona dashboard e todas as subpermissões
+          // Adiciona o dashboard e todas as subpermissões
           newPermissions.push('dashboard');
           dashboardTabs.forEach(tab => {
             const subPermission = `dashboard.${tab}`;
@@ -65,9 +71,9 @@ export const useUserPermissions = (
             }
           });
         } else {
-          // Remove dashboard e todas as subpermissões
+          // Remove apenas as subpermissões, mantendo o dashboard
           newPermissions = newPermissions.filter(p => 
-            !p.startsWith('dashboard.') && p !== 'dashboard'
+            !p.startsWith('dashboard.') || p === 'dashboard'
           );
         }
       } else if (routeId.startsWith('dashboard.')) {
@@ -76,27 +82,15 @@ export const useUserPermissions = (
         if (!isSubPermissionEnabled) {
           // Adiciona a subpermissão
           newPermissions.push(routeId);
-          // Sempre mantém o dashboard principal quando houver qualquer subpermissão
+          // Sempre mantém o dashboard principal
           if (!newPermissions.includes('dashboard')) {
             newPermissions.push('dashboard');
           }
         } else {
-          // Remove a subpermissão
+          // Remove apenas a subpermissão específica
           newPermissions = newPermissions.filter(p => p !== routeId);
-          
-          // Verifica se ainda existe alguma subpermissão
-          const hasAnySubPermission = dashboardTabs.some(tab => 
-            newPermissions.includes(`dashboard.${tab}`)
-          );
-          
-          // Remove o dashboard principal apenas se não houver mais nenhuma subpermissão
-          if (!hasAnySubPermission) {
-            newPermissions = newPermissions.filter(p => p !== 'dashboard');
-          }
+          // Não remove mais o dashboard mesmo que não tenha subpermissões
         }
-
-        // Garante que todas as subpermissões existentes permaneçam
-        newPermissions = expandDashboardPermissions(newPermissions);
       } else {
         if (prev.includes(routeId)) {
           newPermissions = prev.filter(p => p !== routeId);
@@ -114,14 +108,15 @@ export const useUserPermissions = (
     if (!user) return;
     setSaving(true);
     try {
-      // Garante que as permissões estão consistentes antes de salvar
-      const finalPermissions = tempPermissions.includes('dashboard') 
-        ? expandDashboardPermissions(tempPermissions)
-        : tempPermissions;
+      // Mantém o dashboard nas permissões finais
+      const finalPermissions = [...tempPermissions];
+      if (finalPermissions.includes('dashboard')) {
+        finalPermissions.push(...dashboardTabs.map(tab => `dashboard.${tab}`));
+      }
 
       const updatedUser = {
         ...user,
-        permissions: finalPermissions
+        permissions: [...new Set(finalPermissions)] // Remove duplicatas
       };
 
       console.log('Salvando usuário com permissões:', updatedUser.permissions);
