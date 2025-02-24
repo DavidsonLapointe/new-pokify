@@ -59,7 +59,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
     try {
       // Cria a organização primeiro
-      const { data: newOrganization, error: orgError } = await supabase
+      const { data: newOrganizationData, error: orgError } = await supabase
         .from('organizations')
         .insert({
           name: values.razaoSocial,
@@ -78,6 +78,36 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       if (orgError) throw orgError;
 
+      // Mapeia os dados do Supabase para o tipo Organization
+      const newOrganization: Organization = {
+        id: Number(newOrganizationData.id),
+        name: newOrganizationData.name,
+        nomeFantasia: newOrganizationData.nome_fantasia || "",
+        plan: newOrganizationData.plan,
+        users: [], // Inicialmente vazio
+        status: newOrganizationData.status,
+        pendingReason: newOrganizationData.pending_reason || undefined,
+        integratedCRM: newOrganizationData.integrated_crm,
+        integratedLLM: newOrganizationData.integrated_llm,
+        email: newOrganizationData.email,
+        phone: newOrganizationData.phone || "",
+        cnpj: newOrganizationData.cnpj,
+        adminName: newOrganizationData.admin_name,
+        adminEmail: newOrganizationData.admin_email,
+        contractSignedAt: newOrganizationData.contract_signed_at,
+        createdAt: newOrganizationData.created_at || new Date().toISOString(),
+        logo: newOrganizationData.logo,
+        address: newOrganizationData.logradouro ? {
+          logradouro: newOrganizationData.logradouro,
+          numero: newOrganizationData.numero || "",
+          complemento: newOrganizationData.complemento || "",
+          bairro: newOrganizationData.bairro || "",
+          cidade: newOrganizationData.cidade || "",
+          estado: newOrganizationData.estado || "",
+          cep: newOrganizationData.cep || "",
+        } : undefined
+      };
+
       // Calcula o valor pro-rata baseado no plano
       const planValues = {
         basic: 99.90,
@@ -88,10 +118,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       const proRataValue = calculateProRataValue(planValues[values.plan as keyof typeof planValues]);
 
       // Cria o título pro-rata
-      const proRataTitle = await createProRataTitle(
-        { ...newOrganization, id: Number(newOrganization.id) } as Organization, 
-        proRataValue
-      );
+      const proRataTitle = await createProRataTitle(newOrganization, proRataValue);
 
       if (!proRataTitle) {
         throw new Error("Falha ao criar título pro-rata");
