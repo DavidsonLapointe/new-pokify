@@ -10,7 +10,7 @@ import { ActiveUsersDialog } from "@/components/admin/organizations/ActiveUsersD
 
 const mockOrganizations: Organization[] = [
   {
-    id: 1,
+    id: "1",
     name: "Tech Solutions Ltd",
     nomeFantasia: "TechSol",
     plan: "Professional",
@@ -26,7 +26,7 @@ const mockOrganizations: Organization[] = [
     createdAt: "2024-01-15T10:00:00.000Z"
   },
   {
-    id: 2,
+    id: "2",
     name: "Global Services Inc",
     nomeFantasia: "GlobalServ",
     plan: "Enterprise",
@@ -43,7 +43,7 @@ const mockOrganizations: Organization[] = [
     createdAt: "2024-02-20T14:30:00.000Z"
   },
   {
-    id: 3,
+    id: "3",
     name: "Innovation Labs",
     nomeFantasia: "InnLabs",
     plan: "Professional",

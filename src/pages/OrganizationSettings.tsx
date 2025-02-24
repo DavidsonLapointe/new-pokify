@@ -1,88 +1,78 @@
-
-import { FunnelSection } from "@/components/settings/FunnelSection";
-import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
-import { CustomFieldDialog } from "@/components/settings/CustomFieldDialog";
-import { SettingsHeader } from "@/components/settings/SettingsHeader";
 import { useState } from "react";
-import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
-import { useCustomFieldsManagement } from "@/hooks/settings/useCustomFieldsManagement";
+import { useToast } from "@/hooks/use-toast";
+import { OrganizationSettingsForm } from "@/components/organization/OrganizationSettingsForm";
+import { mockUsers } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-const mockCurrentOrganization = {
-  id: 1,
-  name: "Tech Solutions",
-  nomeFantasia: "Tech Solutions Ltda",
-  plan: "Enterprise",
-  users: [] as any[],
-  status: "active" as const,
-  integratedCRM: null,
-  integratedLLM: "GPT-4",
-  email: "contact@techsolutions.com",
-  phone: "(11) 1234-5678",
-  cnpj: "12.345.678/0001-00",
-  adminName: "João Silva",
-  adminEmail: "joao@techsolutions.com",
-  createdAt: "2024-01-01T00:00:00.000Z",
+const mockDefaultData = {
+  organization: {
+    id: "1",
+    name: "Tech Solutions",
+    nomeFantasia: "Tech Solutions Ltda",
+    plan: "Professional",
+    users: [],
+    status: "active",
+    integratedCRM: null,
+    integratedLLM: "OpenAI",
+    email: "contato@techsolutions.com",
+    phone: "(11) 99999-9999",
+    cnpj: "12.345.678/0001-90",
+    adminName: "João Silva",
+    adminEmail: "joao.silva@techsolutions.com",
+    createdAt: "2024-01-01T00:00:00.000Z"
+  },
+  address: {
+    logradouro: "Rua Exemplo",
+    numero: "123",
+    complemento: "Apto 456",
+    bairro: "Centro",
+    cidade: "São Paulo",
+    estado: "SP",
+    cep: "01000-000"
+  }
 };
 
 const OrganizationSettings = () => {
-  const [isFieldsDialogOpen, setIsFieldsDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const [organizationData, setOrganizationData] = useState(mockDefaultData.organization);
+  const [addressData, setAddressData] = useState(mockDefaultData.address);
 
-  const {
-    funnelName,
-    stageName,
-    isDefaultConfigSaved,
-    isEditing,
-    setFunnelName,
-    setStageName,
-    handleSaveDefaultConfig,
-    handleToggleEdit,
-  } = useFunnelManagement();
+  const handleOrganizationUpdate = (updatedOrganization: any) => {
+    setOrganizationData(updatedOrganization);
+    toast({
+      title: "Dados da empresa atualizados com sucesso!",
+      description: "As informações da sua empresa foram atualizadas.",
+    });
+  };
 
-  const {
-    customFields,
-    newField,
-    isEditingField,
-    setNewField,
-    handleOpenNewField,
-    handleOpenEditField,
-    handleSaveFieldsSettings,
-  } = useCustomFieldsManagement();
+  const handleAddressUpdate = (updatedAddress: any) => {
+    setAddressData(updatedAddress);
+    toast({
+      title: "Endereço atualizado com sucesso!",
+      description: "O endereço da sua empresa foi atualizado.",
+    });
+  };
 
   return (
-    <div className="space-y-6">
-      <SettingsHeader organization={mockCurrentOrganization} />
-
-      <FunnelSection
-        funnelName={funnelName}
-        stageName={stageName}
-        setFunnelName={setFunnelName}
-        setStageName={setStageName}
-        isDefaultConfigSaved={isDefaultConfigSaved}
-        isEditing={isEditing}
-        onSaveDefaultConfig={handleSaveDefaultConfig}
-        onToggleEdit={handleToggleEdit}
-      />
-
-      <CustomFieldsSection
-        customFields={customFields}
-        handleOpenNewField={() => {
-          handleOpenNewField();
-          setIsFieldsDialogOpen(true);
-        }}
-        handleOpenEditField={(field) => {
-          handleOpenEditField(field);
-          setIsFieldsDialogOpen(true);
-        }}
-      />
-
-      <CustomFieldDialog
-        isOpen={isFieldsDialogOpen}
-        onOpenChange={setIsFieldsDialogOpen}
-        isEditing={isEditingField}
-        newField={newField}
-        setNewField={setNewField}
-        handleSaveFieldsSettings={handleSaveFieldsSettings}
-      />
+    <div className="container mx-auto py-10">
+      <Card className="w-full shadow-md">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-bold">
+            Configurações da Organização
+          </CardTitle>
+          <CardDescription>
+            Atualize as informações da sua empresa.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <OrganizationSettingsForm
+            organization={organizationData}
+            address={addressData}
+            onOrganizationUpdate={handleOrganizationUpdate}
+            onAddressUpdate={handleAddressUpdate}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -16,7 +16,7 @@ interface FinancialTitlesTableProps {
 }
 
 const mockOrganization: Organization = {
-  id: 1, // Corrigido de "1" para 1
+  id: "1",  // Convertido para string
   name: "Tech Solutions",
   nomeFantasia: "Tech Solutions Ltda",
   plan: "Enterprise",

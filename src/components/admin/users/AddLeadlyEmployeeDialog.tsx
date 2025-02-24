@@ -10,74 +10,87 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { User } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import { mockUsers } from "@/types/mock-users";
+import { UserRole, mockUsers } from "@/types";
+import { availableRoutePermissions } from "@/types/permissions";
 
 interface AddLeadlyEmployeeDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onUserAdded: (user: User) => void;
+  onUserAdded: () => void;
 }
 
-export const AddLeadlyEmployeeDialog = ({ 
-  isOpen, 
-  onClose, 
-  onUserAdded 
-}: AddLeadlyEmployeeDialogProps) => {
+export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLeadlyEmployeeDialogProps) => {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
     phone: "",
+    role: "seller" as UserRole,
   });
 
   const handleAddUser = () => {
-    if (!newUser.name || !newUser.email) {
-      toast.error("Por favor, preencha todos os campos obrigatórios");
-      return;
+    const lastId = mockUsers.length > 0 
+      ? Math.max(...mockUsers.map(u => parseInt(u.id)))
+      : 0;
+    const newUserId = String(lastId + 1);
+    
+    const userPermissions: { [key: string]: string[] } = {
+      profile: ["contact", "password"]
+    };
+    
+    if (newUser.role === 'admin') {
+      const adminRoutes = {
+        'dashboard': ['view', 'export'],
+        'leads': ['view', 'edit', 'delete'],
+        'users': ['view', 'edit', 'delete'],
+        'integrations': ['view', 'edit'],
+        'settings': ['view', 'edit'],
+        'plan': ['view', 'upgrade']
+      };
+      
+      Object.entries(adminRoutes).forEach(([route, permissions]) => {
+        userPermissions[route] = permissions;
+      });
+    } else if (newUser.role === 'seller') {
+      const sellerRoutes = {
+        'dashboard': ['view'],
+        'leads': ['view', 'edit'],
+        'integrations': ['view']
+      };
+      
+      Object.entries(sellerRoutes).forEach(([route, permissions]) => {
+        userPermissions[route] = permissions;
+      });
     }
 
-    const newUserId = Math.max(...mockUsers.map(u => u.id)) + 1;
-    
-    // Define as permissões padrão para usuários leadly_employee
-    const userPermissions: string[] = [
-      'dashboard',
-      'integrations',
-      'plans',
-      'organizations',
-      'settings',
-      'prompt',
-      'analysis-packages',
-      'financial',
-      'profile'
-    ];
-
-    const user: User = {
+    const user = {
       id: newUserId,
       name: newUser.name,
       email: newUser.email,
       phone: newUser.phone,
-      role: "leadly_employee",
-      status: "pending",
+      role: newUser.role,
+      status: "active" as const,
       createdAt: new Date().toISOString(),
       lastAccess: new Date().toISOString(),
       permissions: userPermissions,
-      logs: [{
-        id: 1,
-        date: new Date().toISOString(),
-        action: "Usuário criado"
-      }],
+      logs: [],
       avatar: "",
       organization: mockUsers[0].organization
     };
 
-    // Simula o envio do email de confirmação
-    console.log("Enviando email para:", user.email, "com link de confirmação");
-    toast.success("Email de confirmação enviado para " + user.email);
-
-    mockUsers.push(user);
-    onUserAdded(user);
-    setNewUser({ name: "", email: "", phone: "" });
+    console.log("Novo usuário:", user);
+    toast.success("Usuário adicionado com sucesso!");
+    onClose();
+    setNewUser({ name: "", email: "", phone: "", role: "seller" });
+    onUserAdded();
   };
 
   return (
