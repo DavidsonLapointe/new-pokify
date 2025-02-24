@@ -32,7 +32,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       "integrations",
       "settings",
       "plan",
-      "company", // Garante que company está incluído
+      "company",  // Garantindo que company está incluído
       "profile"
     ],
     logs: [
@@ -64,6 +64,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const storageKey = isAdminRoute ? 'adminUser' : 'orgUser';
+    
+    // Limpa o localStorage para forçar o uso do mockOrgUser
+    localStorage.removeItem(storageKey);
+    
     const storedUser = localStorage.getItem(storageKey);
     
     if (storedUser) {
@@ -71,6 +75,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       // Garante que as permissões estão em formato de array
       if (parsedUser.permissions && !Array.isArray(parsedUser.permissions)) {
         parsedUser.permissions = Object.keys(parsedUser.permissions);
+      }
+      // Adiciona 'company' se não existir
+      if (!parsedUser.permissions.includes('company')) {
+        parsedUser.permissions.push('company');
       }
       return parsedUser;
     }
@@ -91,12 +99,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Garante que as permissões estão em formato de array
+    // Garante que as permissões estão em formato de array e inclui 'company'
+    const permissions = Array.isArray(newUser.permissions) 
+      ? newUser.permissions 
+      : Object.keys(newUser.permissions);
+    
+    if (!permissions.includes('company')) {
+      permissions.push('company');
+    }
+    
     const userWithArrayPermissions = {
       ...newUser,
-      permissions: Array.isArray(newUser.permissions) 
-        ? newUser.permissions 
-        : Object.keys(newUser.permissions)
+      permissions
     };
     
     setUser(userWithArrayPermissions);
