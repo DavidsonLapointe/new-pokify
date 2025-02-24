@@ -98,14 +98,17 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header/Nav */}
       <header className="border-b fixed w-full bg-white/80 backdrop-blur-sm z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Leadly</h1>
-          <Button 
-            variant="outline" 
-            onClick={() => setShowLoginModal(true)}
-          >
-            Acessar Plataforma
-          </Button>
+          <div className="flex-1 flex justify-end">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowLoginModal(true)}
+              className="mr-4"
+            >
+              Acessar Plataforma
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -116,11 +119,11 @@ const Index = () => {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-[700px] bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[700px] bg-gradient-to-br from-slate-50 to-blue-50 w-full">
+        <div className="max-w-screen-2xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 pt-32 pb-20 items-center">
             {/* Left Content */}
-            <div className="space-y-8 max-w-2xl">
+            <div className="space-y-8">
               <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-100">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
