@@ -1,5 +1,5 @@
 
-import { Input, FileText, Upload, Brain, Database, BarChart2, ArrowRight } from "lucide-react";
+import { FileText, Upload, Video, Brain, Database, BarChart2, ArrowRight } from "lucide-react";
 
 export function HowItWorksSection() {
   return (
@@ -35,7 +35,7 @@ export function HowItWorksSection() {
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <Input className="h-8 w-8 text-primary" />
+                <Video className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-semibold text-center mb-2">Vídeo</h3>
               <p className="text-gray-600 text-center text-sm">
