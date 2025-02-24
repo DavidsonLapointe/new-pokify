@@ -4,16 +4,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@/types";
 
 interface OrganizationHeaderProps {
-  user: User;
+  user: User | null;
   getInitials: (name: string) => string;
 }
 
 export const OrganizationHeader = ({ user, getInitials }: OrganizationHeaderProps) => {
+  if (!user) return null; // Retorna null se não houver usuário
+
   return (
     <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
       <div className="h-full px-8 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-white">
-          {user.organization.logo ? (
+          {user.organization?.logo ? (
             <img 
               src={user.organization.logo} 
               alt={user.organization.name} 

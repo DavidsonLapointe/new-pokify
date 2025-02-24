@@ -9,13 +9,13 @@ export const useProfileForm = () => {
   const { user, updateUser } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-    avatar: user.avatar,
+    avatar: user?.avatar || "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +24,11 @@ export const useProfileForm = () => {
   };
 
   const handleImageUpload = async (file: File) => {
+    if (!user) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const mockImageUrl = URL.createObjectURL(file);
@@ -50,6 +55,11 @@ export const useProfileForm = () => {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
