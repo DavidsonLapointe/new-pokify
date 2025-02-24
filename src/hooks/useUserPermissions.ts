@@ -1,4 +1,3 @@
-
 import { User } from "@/types";
 import { availableRoutePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
@@ -22,8 +21,7 @@ export const useUserPermissions = (
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
-      // Não adiciona automaticamente todas as subpermissões do dashboard
-      setTempPermissions([...(user.permissions || [])]);
+      setTempPermissions(user.permissions || []);
     } else {
       setTempPermissions([]);
     }
@@ -38,26 +36,21 @@ export const useUserPermissions = (
 
       if (routeId === 'dashboard') {
         if (!prev.includes('dashboard')) {
-          // Se marcar dashboard, não adiciona automaticamente todas as subpermissões
           newPermissions.push('dashboard');
         } else {
-          // Remove dashboard e todas as subpermissões
           newPermissions = newPermissions.filter(p => !p.startsWith('dashboard'));
         }
       } else if (routeId.startsWith('dashboard.')) {
         const isSubPermissionEnabled = prev.includes(routeId);
         
         if (!isSubPermissionEnabled) {
-          // Adiciona a subpermissão e o dashboard se necessário
           newPermissions.push(routeId);
           if (!newPermissions.includes('dashboard')) {
             newPermissions.push('dashboard');
           }
         } else {
-          // Remove apenas a subpermissão específica
           newPermissions = newPermissions.filter(p => p !== routeId);
           
-          // Se não houver mais nenhuma subpermissão, remove o dashboard também
           const hasAnySubPermission = dashboardTabs.some(tab => 
             newPermissions.includes(`dashboard.${tab}`)
           );

@@ -9,7 +9,7 @@ interface OrganizationHeaderProps {
 }
 
 export const OrganizationHeader = ({ user, getInitials }: OrganizationHeaderProps) => {
-  if (!user) return null; // Retorna null se não houver usuário
+  if (!user) return null;
 
   return (
     <header className="h-16 bg-[#9b87f5] fixed top-0 left-0 right-0 z-40">
