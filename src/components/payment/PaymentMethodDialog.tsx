@@ -61,7 +61,7 @@ export function PaymentMethodDialog({
       return data?.status as TitleStatus;
     },
     enabled: !!titleId && open,
-    refetchInterval: (data) => (data === 'paid' ? false : 5000),
+    refetchInterval: (data: TitleStatus | undefined) => data === 'paid' ? false : 5000,
     meta: {
       onSuccess: (status: TitleStatus) => {
         if (status === 'paid') {
