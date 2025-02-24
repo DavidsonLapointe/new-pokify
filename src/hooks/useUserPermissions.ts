@@ -61,8 +61,7 @@ export const useUserPermissions = (
             }
           });
         } else {
-          // Regra 2: Se desmarcar o dashboard, remove todas as subpermissões
-          newPermissions = newPermissions.filter(p => !p.startsWith('dashboard.'));
+          // Regra 2: Se desmarcar o dashboard, mantém as subpermissões existentes
           newPermissions = newPermissions.filter(p => p !== 'dashboard');
         }
       } else if (routeId.startsWith('dashboard.')) {
