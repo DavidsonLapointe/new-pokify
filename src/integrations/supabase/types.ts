@@ -18,7 +18,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      organization_pending_reason:
+        | "contract_signature"
+        | "pro_rata_payment"
+        | "null"
     }
     CompositeTypes: {
       [_ in never]: never
