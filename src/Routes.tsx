@@ -68,38 +68,36 @@ function AppRoutes() {
     );
   }
 
-  // Se o usuário está autenticado e tenta acessar /auth, redireciona
-  if (session?.user && window.location.pathname === '/auth') {
-    const checkAndRedirect = async () => {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      window.location.href = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
-    };
-    
-    checkAndRedirect();
-    return null;
-  }
-
   return (
     <BrowserRouter>
-      <LogoutButton />
+      {session && <LogoutButton />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route 
+          path="/auth" 
+          element={
+            session ? (
+              <Navigate to="/admin/dashboard" replace />
+            ) : (
+              <Auth />
+            )
+          } 
+        />
         <Route path="/confirm-registration" element={<ConfirmRegistration />} />
         <Route path="/contract" element={<Contract />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={
-          <UserProvider>
-            <AdminLayout />
-          </UserProvider>
-        }>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <UserProvider>
+                <AdminLayout />
+              </UserProvider>
+            </ProtectedRoute>
+          }
+        >
           <Route path="" element={<Navigate to="profile" replace />} />
           <Route path="profile" element={<AdminProfile />} />
           <Route path="organizations" element={<AdminOrganizations />} />
@@ -113,11 +111,16 @@ function AppRoutes() {
         </Route>
 
         {/* Organization Routes */}
-        <Route path="/organization" element={
-          <UserProvider>
-            <OrganizationLayout />
-          </UserProvider>
-        }>
+        <Route
+          path="/organization"
+          element={
+            <ProtectedRoute>
+              <UserProvider>
+                <OrganizationLayout />
+              </UserProvider>
+            </ProtectedRoute>
+          }
+        >
           <Route path="" element={<Navigate to="profile" replace />} />
           <Route path="profile" element={<OrganizationProfile />} />
           <Route path="dashboard" element={<OrganizationDashboard />} />
