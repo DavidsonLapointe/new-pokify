@@ -10,7 +10,7 @@ import { EditLeadlyEmployeeDialog } from "@/components/admin/users/EditLeadlyEmp
 import { AdminUserPermissionsDialog } from "@/components/admin/users/AdminUserPermissionsDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { formatUserData, formatOrganizationData } from "@/utils/userUtils";
+import { formatUserData } from "@/utils/userUtils";
 
 const AdminUsers = () => {
   const { user } = useUser();
@@ -23,7 +23,7 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Buscar todos os perfis
+      // Buscar apenas perfis do tipo leadly_employee
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
@@ -36,41 +36,16 @@ const AdminUsers = () => {
           permissions,
           created_at,
           last_access,
-          organization_id,
           company_leadly_id
-        `);
+        `)
+        .eq('role', 'leadly_employee');
 
       if (profilesError) throw profilesError;
 
-      // Separar perfis em funcionários Leadly e usuários de organizações
-      const leadlyEmployees = profiles.filter(profile => profile.role === 'leadly_employee');
-      const organizationUsers = profiles.filter(profile => profile.role !== 'leadly_employee');
+      // Formatar todos os usuários Leadly
+      const formattedUsers = profiles.map(profile => formatUserData(profile));
 
-      // Buscar organizações para os usuários que não são funcionários Leadly
-      const organizationIds = [...new Set(organizationUsers.map(user => user.organization_id))];
-      const { data: organizations, error: orgsError } = await supabase
-        .from('organizations')
-        .select('*')
-        .in('id', organizationIds);
-
-      if (orgsError) throw orgsError;
-
-      // Criar um mapa de organizações para fácil acesso
-      const organizationsMap = new Map(
-        organizations?.map(org => [org.id, formatOrganizationData(org)])
-      );
-
-      // Formatar todos os usuários
-      const formattedUsers = [
-        // Formatar funcionários Leadly
-        ...leadlyEmployees.map(profile => formatUserData(profile)),
-        // Formatar usuários de organizações
-        ...organizationUsers.map(profile => 
-          formatUserData(profile, organizationsMap.get(profile.organization_id))
-        )
-      ];
-
-      console.log("Usuários carregados:", formattedUsers);
+      console.log("Usuários Leadly carregados:", formattedUsers);
       setUsers(formattedUsers);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
@@ -136,12 +111,12 @@ const AdminUsers = () => {
         <div>
           <h1 className="text-3xl font-bold">Usuários</h1>
           <p className="text-muted-foreground">
-            Gerencie os usuários da Leadly
+            Gerencie os funcionários da Leadly
           </p>
         </div>
         <Button onClick={() => setIsAddDialogOpen(true)}>
           <UserPlus className="w-4 h-4 mr-2" />
-          Novo Usuário
+          Novo Funcionário
         </Button>
       </div>
 
