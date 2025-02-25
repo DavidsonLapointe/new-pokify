@@ -9,14 +9,21 @@ const Auth = () => {
   const { session } = useAuth();
   const { user, loading } = useUser();
 
+  console.log("Auth page - Session:", session);
+  console.log("Auth page - User:", user);
+  console.log("Auth page - Loading:", loading);
+
   // Se tiver sessão e usuário carregado, redireciona baseado no papel
   if (session && user && !loading) {
-    // Se for admin, vai para dashboard administrativo
     if (user.role === 'leadly_employee') {
-      return <Navigate to="/admin/dashboard" replace />;
+      console.log("Redirecionando leadly_employee para /admin/prompt");
+      return <Navigate to="/admin/prompt" replace />;
     }
-    // Senão vai para dashboard da organização
-    return <Navigate to="/organization/dashboard" replace />;
+    // Se for admin, vai para dashboard da organização
+    if (user.role === 'admin') {
+      console.log("Redirecionando admin para /organization/dashboard");
+      return <Navigate to="/organization/dashboard" replace />;
+    }
   }
 
   // Se não tiver sessão, mostra página de login
@@ -37,3 +44,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
