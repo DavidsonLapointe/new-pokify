@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface UserContextType {
   user: User | null;
+  loading: boolean; // Adicionando loading ao tipo
   updateUser: (newUser: User) => void;
   logout: () => void;
 }
@@ -17,6 +18,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // Inicializa como true
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -24,6 +26,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (!session?.user) {
         console.log("No session found");
         setUser(null);
+        setLoading(false); // Atualiza loading quando não há sessão
         return;
       }
 
@@ -83,6 +86,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
         setUser(null);
         navigate('/', { replace: true });
+      } finally {
+        setLoading(false); // Atualiza loading após terminar
       }
     };
 
@@ -126,7 +131,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, updateUser, logout }}>
+    <UserContext.Provider value={{ user, loading, updateUser, logout }}>
       {children}
     </UserContext.Provider>
   );
