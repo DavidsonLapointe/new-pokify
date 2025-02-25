@@ -6,7 +6,7 @@ import AlertsLimitsSettings from "@/components/admin/settings/AlertsLimitsSettin
 import RetentionSettings from "@/components/admin/settings/RetentionSettings";
 import AnalysisSettings from "@/components/admin/settings/AnalysisSettings";
 import SystemSettings from "@/components/admin/settings/SystemSettings";
-import LLMSettings from "@/components/admin/settings/LLMSettings";
+import LLMSettings from "@/components/admin/settings/llm/LLMSettings";
 import { DefaultPermissionsSettings } from "@/components/admin/settings/DefaultPermissionsSettings";
 
 const AdminSettings = () => {
@@ -65,4 +65,3 @@ const AdminSettings = () => {
 };
 
 export default AdminSettings;
-
