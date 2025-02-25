@@ -4,22 +4,9 @@ import { Input } from "@/components/ui/input";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { AlertsLimitsFormValues } from "./types";
+import { FieldProps } from "./types";
 
-interface MaxAnalysisRetriesFieldProps {
-  form: UseFormReturn<AlertsLimitsFormValues>;
-  isEditing: boolean;
-  enabledSettings: { maxAnalysisRetries: boolean };
-  onToggle: (setting: 'maxAnalysisRetries') => void;
-}
-
-export function MaxAnalysisRetriesField({ 
-  form, 
-  isEditing, 
-  enabledSettings, 
-  onToggle 
-}: MaxAnalysisRetriesFieldProps) {
+export function MaxAnalysisRetriesField({ form, isEditing, enabledSettings, onToggle }: FieldProps) {
   return (
     <FormField
       control={form.control}

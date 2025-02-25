@@ -4,22 +4,9 @@ import { Input } from "@/components/ui/input";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { AlertsLimitsFormValues } from "./types";
+import { FieldProps } from "./types";
 
-interface MaxAlertFrequencyFieldProps {
-  form: UseFormReturn<AlertsLimitsFormValues>;
-  isEditing: boolean;
-  enabledSettings: { maxAlertFrequency: boolean };
-  onToggle: (setting: 'maxAlertFrequency') => void;
-}
-
-export function MaxAlertFrequencyField({ 
-  form, 
-  isEditing, 
-  enabledSettings, 
-  onToggle 
-}: MaxAlertFrequencyFieldProps) {
+export function MaxAlertFrequencyField({ form, isEditing, enabledSettings, onToggle }: FieldProps) {
   return (
     <FormField
       control={form.control}

@@ -1,25 +1,12 @@
 
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { AlertsLimitsFormValues } from "./types";
+import { CustomSwitch } from "@/components/ui/custom-switch";
+import { FieldProps } from "./types";
 
-interface CreditAlertThresholdFieldProps {
-  form: UseFormReturn<AlertsLimitsFormValues>;
-  isEditing: boolean;
-  enabledSettings: { creditAlertThreshold: boolean };
-  onToggle: (setting: 'creditAlertThreshold') => void;
-}
-
-export function CreditAlertThresholdField({ 
-  form, 
-  isEditing, 
-  enabledSettings, 
-  onToggle 
-}: CreditAlertThresholdFieldProps) {
+export function CreditAlertThresholdField({ form, isEditing, enabledSettings, onToggle }: FieldProps) {
   return (
     <FormField
       control={form.control}

@@ -9,7 +9,7 @@ import { CreditAlertThresholdField } from "./alerts-limits/CreditAlertThresholdF
 import { MaxAlertFrequencyField } from "./alerts-limits/MaxAlertFrequencyField";
 import { MaxAnalysisRetriesField } from "./alerts-limits/MaxAnalysisRetriesField";
 import { useAlertsLimitsForm } from "./alerts-limits/useAlertsLimitsForm";
-import { AlertsLimitsFormValues, EnabledSettings } from "./alerts-limits/types";
+import { EnabledSettings, AlertsLimitsFormValues } from "./alerts-limits/types";
 
 const AlertsLimitsSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
