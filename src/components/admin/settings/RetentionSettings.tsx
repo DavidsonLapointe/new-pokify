@@ -91,7 +91,7 @@ const RetentionSettings = () => {
                       className={(!isEditing || !enabledSettings.audioRetentionDays) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Período de retenção para arquivos de áudio originais.
                   </FormDescription>
                   <FormMessage />
@@ -119,7 +119,7 @@ const RetentionSettings = () => {
                       className={(!isEditing || !enabledSettings.analysisRetentionDays) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Período de retenção para análises geradas pelo sistema.
                   </FormDescription>
                   <FormMessage />
@@ -147,7 +147,7 @@ const RetentionSettings = () => {
                       className={(!isEditing || !enabledSettings.transcriptionRetentionDays) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Período de retenção para transcrições de áudio.
                   </FormDescription>
                   <FormMessage />

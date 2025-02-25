@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -106,7 +107,7 @@ const AlertsLimitsSettings = () => {
                       className={(!isEditing || !enabledSettings.creditAlertThreshold) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Porcentagem mínima de créditos restantes para disparar alerta.
                   </FormDescription>
                   <FormMessage />
@@ -148,7 +149,7 @@ const AlertsLimitsSettings = () => {
                       className={(!isEditing || !enabledSettings.maxAlertFrequency) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Intervalo mínimo entre alertas para a mesma empresa.
                   </FormDescription>
                   <FormMessage />
@@ -190,7 +191,7 @@ const AlertsLimitsSettings = () => {
                       className={(!isEditing || !enabledSettings.maxAnalysisRetries) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Número máximo de tentativas para análise de um arquivo.
                   </FormDescription>
                   <FormMessage />

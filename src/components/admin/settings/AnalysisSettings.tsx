@@ -91,7 +91,7 @@ const AnalysisSettings = () => {
                       className={(!isEditing || !enabledSettings.minConfidenceScore) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Score mínimo de confiança para aceitar uma análise.
                   </FormDescription>
                   <FormMessage />
@@ -119,7 +119,7 @@ const AnalysisSettings = () => {
                       className={(!isEditing || !enabledSettings.maxProcessingTime) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Tempo máximo permitido para processamento de um áudio.
                   </FormDescription>
                   <FormMessage />
@@ -147,7 +147,7 @@ const AnalysisSettings = () => {
                       className={(!isEditing || !enabledSettings.batchSize) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Quantidade de áudios processados simultaneamente.
                   </FormDescription>
                   <FormMessage />

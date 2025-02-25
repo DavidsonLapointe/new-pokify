@@ -111,7 +111,7 @@ const LLMSettings: React.FC<LLMSettingsProps> = () => {
                       className={(!isEditing || !enabledSettings.llmCreditThreshold) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Porcentagem mínima de créditos LLM para disparar alerta.
                   </FormDescription>
                   <FormMessage />
@@ -153,7 +153,7 @@ const LLMSettings: React.FC<LLMSettingsProps> = () => {
                       className={(!isEditing || !enabledSettings.llmAlertFrequency) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Intervalo entre alertas de saldo LLM para a mesma empresa.
                   </FormDescription>
                   <FormMessage />
@@ -196,7 +196,7 @@ const LLMSettings: React.FC<LLMSettingsProps> = () => {
                       className={(!isEditing || !enabledSettings.llmUsageCheckInterval) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Frequência de verificação do saldo de créditos LLM.
                   </FormDescription>
                   <FormMessage />

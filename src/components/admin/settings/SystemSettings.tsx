@@ -91,7 +91,7 @@ const SystemSettings = () => {
                       className={(!isEditing || !enabledSettings.maxConcurrentJobs) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Número máximo de jobs executados simultaneamente.
                   </FormDescription>
                   <FormMessage />
@@ -119,7 +119,7 @@ const SystemSettings = () => {
                       className={(!isEditing || !enabledSettings.jobQueueTimeout) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Tempo máximo que um job pode ficar na fila.
                   </FormDescription>
                   <FormMessage />
@@ -147,7 +147,7 @@ const SystemSettings = () => {
                       className={(!isEditing || !enabledSettings.systemMaintenanceWindow) ? "bg-muted" : ""} 
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs text-gray-500 text-left pl-3">
                     Duração da janela de manutenção do sistema.
                   </FormDescription>
                   <FormMessage />
