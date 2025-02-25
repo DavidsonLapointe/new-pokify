@@ -74,7 +74,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Usuário</TableHead>
+            <TableHead className="text-left">Usuário</TableHead>
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Data de Cadastro</TableHead>
