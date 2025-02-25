@@ -16,15 +16,14 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// Define o schema Zod com tipos não-opcionais
 const formSchema = z.object({
-  email: z.string().email("Email inválido"),
+  email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
 });
 
-interface AuthFormData {
-  email: string;
-  password: string;
-}
+// Deriva o tipo a partir do schema Zod
+type AuthFormData = z.infer<typeof formSchema>;
 
 const AuthForm = () => {
   const [isLoading, setIsLoading] = React.useState(false);
