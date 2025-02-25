@@ -38,28 +38,40 @@ export function ContactForm({ formData, isLoading, onInputChange, onImageUpload 
   }, [user, onInputChange]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+    let value = e.target.value;
     
-    if (value.length <= 11) {
-      // Formata o número conforme vai digitando
-      if (value.length > 2) {
-        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-      }
-      if (value.length > 6) {
-        value = `${value.slice(0, 10)}-${value.slice(10)}`;
-      }
-      
-      const event = {
-        ...e,
-        target: {
-          ...e.target,
-          name: 'phone',
-          value
+    // Remove formatação atual para trabalhar apenas com números
+    value = value.replace(/\D/g, '');
+    
+    // Se houver números, aplica a formatação
+    if (value.length > 0) {
+      if (value.length <= 11) {
+        let formattedValue = '';
+        
+        if (value.length > 2) {
+          formattedValue = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        } else {
+          formattedValue = value;
         }
-      };
-      
-      onInputChange(event);
+        
+        if (value.length > 7) {
+          formattedValue = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+        }
+        
+        value = formattedValue;
+      }
     }
+    
+    const event = {
+      ...e,
+      target: {
+        ...e.target,
+        name: 'phone',
+        value
+      }
+    };
+    
+    onInputChange(event);
   };
 
   return (
