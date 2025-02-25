@@ -7,7 +7,35 @@ import { CompanyForm } from "@/components/organization/company/CompanyForm";
 
 export default function OrganizationCompany() {
   const { user, updateUser } = useUser();
-  const [organization, setOrganization] = useState<Organization>(user.organization);
+  
+  // Initialize with default empty organization if not present
+  const defaultOrganization: Organization = {
+    id: '',
+    name: '',
+    nomeFantasia: '',
+    plan: '',
+    users: [],
+    status: 'active',
+    email: '',
+    phone: '',
+    cnpj: '',
+    adminName: '',
+    adminEmail: '',
+    createdAt: new Date().toISOString(),
+    address: {
+      logradouro: '',
+      numero: '',
+      complemento: '',
+      bairro: '',
+      cidade: '',
+      estado: '',
+      cep: ''
+    }
+  };
+
+  const [organization, setOrganization] = useState<Organization>(
+    user?.organization || defaultOrganization
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,7 +68,7 @@ export default function OrganizationCompany() {
       updateUser({
         ...user,
         organization: {
-          ...user.organization,
+          ...organization,
           logo: logoUrl
         }
       });
