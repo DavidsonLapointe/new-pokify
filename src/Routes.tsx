@@ -98,9 +98,13 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<AdminOrganizations />} />
+          {/* Redireciona /admin para /admin/dashboard */}
+          <Route path="" element={<Navigate to="dashboard" replace />} />
+          
+          {/* Dashboard é a página principal que mostra as organizações */}
           <Route path="dashboard" element={<AdminOrganizations />} />
-          <Route path="organizations" element={<AdminOrganizations />} />
+          
+          {/* Remove a rota duplicada de organizations */}
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="plans" element={<AdminPlans />} />
