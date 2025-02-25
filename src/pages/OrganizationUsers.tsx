@@ -98,10 +98,8 @@ const OrganizationUsers = () => {
 
   // Efeito para carregar usuários apenas quando necessário
   useEffect(() => {
-    if (currentUser?.organization?.id) {
-      fetchOrganizationUsers();
-    }
-  }, [currentUser?.organization?.id]);
+    fetchOrganizationUsers();
+  }, []); // Removida a dependência que causava loops
 
   const handleAddUser = () => {
     fetchOrganizationUsers(); // Atualiza a lista após adicionar
@@ -144,6 +142,10 @@ const OrganizationUsers = () => {
       toast.error("Erro ao atualizar usuário");
     }
   };
+
+  if (!currentUser) {
+    return <div>Carregando informações do usuário...</div>;
+  }
 
   return (
     <div className="space-y-8">
