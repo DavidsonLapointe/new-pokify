@@ -7,8 +7,12 @@ import { EditUserDialog } from "@/components/organization/EditUserDialog";
 import { UsersTable } from "@/components/organization/UsersTable";
 import { User } from "@/types";
 import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
+import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const OrganizationUsers = () => {
+  const { user: currentUser } = useUser();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
@@ -16,10 +20,58 @@ const OrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // TODO: Implementar chamada à API para buscar usuários da organização
-    const organizationUsers: User[] = [];
-    setUsers(organizationUsers);
-  }, []);
+    const fetchOrganizationUsers = async () => {
+      try {
+        if (!currentUser?.organization?.id) {
+          console.log("No organization ID found");
+          return;
+        }
+
+        const { data: profiles, error } = await supabase
+          .from('profiles')
+          .select(`
+            id,
+            name,
+            email,
+            phone,
+            role,
+            status,
+            permissions,
+            created_at,
+            last_access,
+            avatar
+          `)
+          .eq('organization_id', currentUser.organization.id);
+
+        if (error) {
+          console.error("Error fetching users:", error);
+          toast.error("Erro ao carregar usuários");
+          return;
+        }
+
+        const formattedUsers: User[] = profiles.map(profile => ({
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          phone: profile.phone || '',
+          role: profile.role,
+          status: profile.status,
+          createdAt: profile.created_at,
+          lastAccess: profile.last_access || profile.created_at,
+          permissions: profile.permissions || {},
+          logs: [], // You might want to fetch logs separately if needed
+          avatar: profile.avatar || ''
+        }));
+
+        setUsers(formattedUsers);
+      } catch (error) {
+        console.error("Error in fetchOrganizationUsers:", error);
+        toast.error("Erro ao carregar usuários");
+      }
+    };
+
+    fetchOrganizationUsers();
+  }, [currentUser?.organization?.id]);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(false);
@@ -35,12 +87,32 @@ const OrganizationUsers = () => {
     setIsPermissionsDialogOpen(true);
   };
 
-  const handleUserUpdate = (updatedUser: User) => {
-    const updatedUsers = users.map((user) =>
-      user.id === updatedUser.id ? updatedUser : user
-    );
-    setUsers(updatedUsers);
-    setIsEditDialogOpen(false);
+  const handleUserUpdate = async (updatedUser: User) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: updatedUser.name,
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          role: updatedUser.role,
+          permissions: updatedUser.permissions
+        })
+        .eq('id', updatedUser.id);
+
+      if (error) throw error;
+
+      const updatedUsers = users.map((user) =>
+        user.id === updatedUser.id ? updatedUser : user
+      );
+      setUsers(updatedUsers);
+      setIsEditDialogOpen(false);
+      setIsPermissionsDialogOpen(false);
+      toast.success("Usuário atualizado com sucesso");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Erro ao atualizar usuário");
+    }
   };
 
   return (
