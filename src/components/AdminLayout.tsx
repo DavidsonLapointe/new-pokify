@@ -7,7 +7,6 @@ import { Navigate } from "react-router-dom";
 
 const AdminLayout = () => {
   const { user, loading } = useUser();
-  const permissions = useAdminPermissions();
 
   if (loading) {
     return <div>Carregando...</div>;
@@ -19,7 +18,9 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar permissions={permissions} />
+      <Sidebar>
+        <div>Menu Content</div>
+      </Sidebar>
       <main className="flex-1 overflow-y-auto bg-background p-8">
         <Outlet />
       </main>
