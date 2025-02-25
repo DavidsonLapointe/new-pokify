@@ -8,7 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User, UserRole, UserStatus } from "@/types";
+import { User, UserRole } from "@/types";
+
+interface StatusOption {
+  value: string;
+  label: string;
+}
+
+interface RoleOption {
+  value: UserRole;
+  label: string;
+}
 
 interface UserFormProps {
   editedUser: User | null;
@@ -17,6 +27,9 @@ interface UserFormProps {
   onEditUser: (field: string, value: string) => void;
   onRoleChange: (value: UserRole) => void;
   onStatusChange: (value: string) => void;
+  availableStatusOptions: StatusOption[];
+  availableRoles: RoleOption[];
+  currentStatusLabel: React.ReactNode;
 }
 
 export const UserForm = ({
@@ -26,6 +39,9 @@ export const UserForm = ({
   onEditUser,
   onRoleChange,
   onStatusChange,
+  availableStatusOptions,
+  availableRoles,
+  currentStatusLabel,
 }: UserFormProps) => {
   if (!editedUser) return null;
 
@@ -57,25 +73,29 @@ export const UserForm = ({
             <SelectValue placeholder="Selecione uma função" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="admin">Administrador</SelectItem>
-            <SelectItem value="seller">Vendedor</SelectItem>
-            <SelectItem value="leadly_employee">Funcionário Leadly</SelectItem>
+            {availableRoles.map((role) => (
+              <SelectItem key={role.value} value={role.value}>
+                {role.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
       <div className="space-y-2">
-        <Label>Status</Label>
+        <Label>{currentStatusLabel}</Label>
         <Select
-          value={pendingStatus || editedUser.status}
+          value={pendingStatus}
           onValueChange={onStatusChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Selecione um status" />
+            <SelectValue placeholder="Selecione o novo status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="active">Ativo</SelectItem>
-            <SelectItem value="inactive">Inativo</SelectItem>
-            <SelectItem value="pending">Pendente</SelectItem>
+            {availableStatusOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
