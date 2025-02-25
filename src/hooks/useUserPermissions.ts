@@ -22,9 +22,10 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Debug log para verificar as permissões carregadas
-      console.log('Permissões atuais do usuário:', user.permissions);
-      setTempPermissions(user.permissions || {});
+      // Garantimos que temos um objeto de permissões válido
+      const userPermissions = user.permissions || {};
+      console.log('Carregando permissões do usuário:', userPermissions);
+      setTempPermissions({ ...userPermissions });
     } else {
       setTempPermissions({});
     }
@@ -68,7 +69,6 @@ export const useUserPermissions = (
         newPermissions[routeId] = !prev[routeId];
       }
 
-      // Debug log para verificar as mudanças nas permissões
       console.log('Novas permissões após mudança:', newPermissions);
       return newPermissions;
     });
@@ -80,19 +80,21 @@ export const useUserPermissions = (
     
     try {
       // Atualiza as permissões no banco de dados
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({
-          permissions: { ...tempPermissions, profile: true }
+          permissions: tempPermissions
         })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
       if (error) throw error;
 
-      // Atualiza o usuário localmente
+      // Atualiza o usuário localmente com as novas permissões do banco
       const updatedUser = {
         ...user,
-        permissions: { ...tempPermissions, profile: true }
+        permissions: data.permissions
       };
 
       onUserUpdate(updatedUser);

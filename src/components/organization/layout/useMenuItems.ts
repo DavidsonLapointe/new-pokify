@@ -70,13 +70,12 @@ export const useMenuItems = (user: User) => {
 
   useEffect(() => {
     if (user) {
-      const dashboardTabs = ['leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'];
-      
+      console.log('Verificando permissões para menu items:', user.permissions);
       const filteredItems = allMenuItems.filter(item => {
-        if (item.permissionId === 'dashboard') {
-          return dashboardTabs.some(tab => !!user.permissions[`dashboard.${tab}`]);
-        }
-        return hasRoutePermission(item.permissionId);
+        // Verifica se o usuário tem a permissão específica para o item
+        const hasPermission = hasRoutePermission(item.permissionId);
+        console.log(`Permissão para ${item.label}:`, hasPermission);
+        return hasPermission;
       });
 
       setMenuItems(filteredItems);
