@@ -107,12 +107,12 @@ export const EditUserDialog = ({
     }
   };
 
-  const getAvailableRoles = (currentRole: UserRole) => {
+  const getAvailableRoles = (currentRole: UserRole): { value: UserRole; label: string }[] => {
     switch (currentRole) {
       case "admin":
-        return [{ value: "seller", label: "Vendedor" }];
+        return [{ value: "seller" as UserRole, label: "Vendedor" }];
       case "seller":
-        return [{ value: "admin", label: "Administrador" }];
+        return [{ value: "admin" as UserRole, label: "Administrador" }];
       default:
         return [];
     }
