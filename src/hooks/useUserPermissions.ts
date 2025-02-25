@@ -17,55 +17,53 @@ export const useUserPermissions = (
 ) => {
   const { user: currentUser, updateUser: updateCurrentUser } = useUser();
   const [saving, setSaving] = useState(false);
-  const [tempPermissions, setTempPermissions] = useState<string[]>([]);
+  const [tempPermissions, setTempPermissions] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (isOpen && user) {
       console.log('Permissões atuais do usuário:', user.permissions);
-      setTempPermissions(user.permissions || []);
+      setTempPermissions(user.permissions || {});
     } else {
-      setTempPermissions([]);
+      setTempPermissions({});
     }
   }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
-    const route = availablePermissions.find(r => r === routeId);
-    if (route === 'profile') return;
+    if (routeId === 'profile') return;
 
     setTempPermissions(prev => {
-      let newPermissions = [...prev];
+      const newPermissions = { ...prev };
 
       if (routeId === 'dashboard') {
-        if (!prev.includes('dashboard')) {
-          newPermissions.push('dashboard');
+        if (!prev['dashboard']) {
+          newPermissions['dashboard'] = true;
         } else {
-          newPermissions = newPermissions.filter(p => !p.startsWith('dashboard'));
+          Object.keys(prev).forEach(key => {
+            if (key.startsWith('dashboard.')) {
+              delete newPermissions[key];
+            }
+          });
+          delete newPermissions['dashboard'];
         }
       } else if (routeId.startsWith('dashboard.')) {
-        const isSubPermissionEnabled = prev.includes(routeId);
+        const isSubPermissionEnabled = prev[routeId];
         
         if (!isSubPermissionEnabled) {
-          newPermissions.push(routeId);
-          if (!newPermissions.includes('dashboard')) {
-            newPermissions.push('dashboard');
-          }
+          newPermissions[routeId] = true;
+          newPermissions['dashboard'] = true;
         } else {
-          newPermissions = newPermissions.filter(p => p !== routeId);
+          delete newPermissions[routeId];
           
           const hasAnySubPermission = dashboardTabs.some(tab => 
-            newPermissions.includes(`dashboard.${tab}`)
+            newPermissions[`dashboard.${tab}`]
           );
           
           if (!hasAnySubPermission) {
-            newPermissions = newPermissions.filter(p => p !== 'dashboard');
+            delete newPermissions['dashboard'];
           }
         }
       } else {
-        if (prev.includes(routeId)) {
-          newPermissions = prev.filter(p => p !== routeId);
-        } else {
-          newPermissions.push(routeId);
-        }
+        newPermissions[routeId] = !prev[routeId];
       }
 
       console.log('Novas permissões após mudança:', newPermissions);
@@ -79,12 +77,12 @@ export const useUserPermissions = (
     try {
       const updatedUser = {
         ...user,
-        permissions: [...tempPermissions]
+        permissions: { ...tempPermissions, profile: true }
       };
 
       console.log('Salvando usuário com permissões:', updatedUser.permissions);
 
-      if (user.id === currentUser.id) {
+      if (user.id === currentUser?.id) {
         updateCurrentUser(updatedUser);
       }
 

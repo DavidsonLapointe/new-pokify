@@ -1,101 +1,74 @@
 
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { User, UserStatus } from "@/types";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const useAuthLogin = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { session } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const login = async (email: string) => {
-    setIsLoading(true);
+  const login = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email: email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+      setLoading(true);
+      
+      // Sign in with email and password
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      if (error) {
-        console.error("Erro ao fazer login:", error);
-        toast.error("Erro ao fazer login. Verifique seu email.");
-        return;
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error('No user data returned from auth');
       }
 
-      toast.success("Email de confirmação enviado! Verifique sua caixa de entrada.");
-      console.log("Link de confirmação enviado para:", email);
-    } catch (error) {
-      console.error("Erro inesperado ao fazer login:", error);
-      toast.error("Ocorreu um erro inesperado. Tente novamente.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // Get user profile from database
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
 
-  const handleCallback = async () => {
-    setIsLoading(true);
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      if (profileError) throw profileError;
 
-      if (error) {
-        console.error("Erro ao obter sessão:", error);
-        toast.error("Erro ao obter sessão. Tente novamente.");
-        return;
+      if (!profile) {
+        throw new Error('No profile found');
       }
 
-      if (session) {
-        const { user } = session;
+      // Initialize default permissions object
+      const defaultPermissions: { [key: string]: boolean } = {
+        profile: true
+      };
 
-        const mockOrganization = {
-          id: "1",
-          name: "Leadly",
-          nomeFantasia: "Leadly",
-          plan: "Professional",
-          users: [],
-          status: "active" as UserStatus,
-          integratedCRM: null,
-          integratedLLM: "OpenAI",
-          email: "contato@leadly.com",
-          phone: "(11) 99999-9999",
-          cnpj: "12.345.678/0001-90",
-          adminName: "João Silva",
-          adminEmail: "joao.silva@leadly.com",
-          createdAt: new Date().toISOString()
-        };
+      // Update user's profile with default permissions if none exist
+      if (!profile.permissions) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            permissions: defaultPermissions
+          })
+          .eq('id', authData.user.id);
 
-        const mockUser: User = {
-          id: user.id,
-          name: user.user_metadata.name || "",
-          email: user.email || "",
-          phone: "",
-          role: "leadly_employee",
-          status: "active",
-          createdAt: new Date().toISOString(),
-          lastAccess: new Date().toISOString(),
-          permissions: [],
-          logs: [],
-          organization: mockOrganization,
-          avatar: ""
-        };
+        if (updateError) throw updateError;
+      }
 
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        toast.success("Login realizado com sucesso!");
-        window.location.href = "/dashboard";
+      // Redirect based on role
+      if (profile.role === 'leadly_employee') {
+        navigate('/admin');
       } else {
-        toast.error("Sessão não encontrada. Tente novamente.");
-        window.location.href = "/";
+        navigate('/organization/dashboard');
       }
-    } catch (error) {
-      console.error("Erro durante o callback:", error);
-      toast.error("Erro ao completar o login. Tente novamente.");
+
+      toast.success('Login realizado com sucesso!');
+    } catch (error: any) {
+      toast.error('Erro ao fazer login: ' + (error.message || 'Tente novamente'));
+      console.error('Login error:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  return { login, isLoading, handleCallback };
+  return { login, loading };
 };

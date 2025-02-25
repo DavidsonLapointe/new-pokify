@@ -42,12 +42,12 @@ export const LeadsPageHeader = ({
   };
 
   // Verifica se o usuário tem acesso às integrações
-  const hasIntegrationsAccess = currentUser.permissions.includes("integrations");
+  const hasIntegrationsAccess = Boolean(currentUser.permissions['integrations']);
 
   // Filtra usuários ativos com acesso a integrações
   const integrationUsers = organization.users.filter(user => 
     user.role === "admin" || 
-    (user.permissions.includes("integrations") && user.status === "active")
+    (Boolean(user.permissions['integrations']) && user.status === "active")
   );
 
   return (

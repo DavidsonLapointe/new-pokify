@@ -40,7 +40,13 @@ const mockLoggedUser = {
   status: "active" as const,
   createdAt: "2024-01-01T00:00:00.000Z",
   lastAccess: "2024-03-15T14:30:00.000Z",
-  permissions: ["dashboard", "calls", "leads", "integrations"],
+  permissions: {
+    dashboard: true,
+    'dashboard.leads': true,
+    leads: true,
+    integrations: true,
+    profile: true
+  },
   logs: [
     {
       id: "1",

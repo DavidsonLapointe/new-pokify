@@ -35,7 +35,11 @@ export const EditUserDialog = ({
 
     const newRole = pendingRole || editedUser.role;
     
-    const newPermissions = DEFAULT_PERMISSIONS[newRole];
+    // Convert array permissions to object permissions
+    const newPermissions = DEFAULT_PERMISSIONS[newRole].reduce((acc, permission) => ({
+      ...acc,
+      [permission]: true
+    }), {} as { [key: string]: boolean });
 
     const updatedUser = {
       ...editedUser,
