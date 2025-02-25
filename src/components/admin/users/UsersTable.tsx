@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,11 +10,11 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@/types";
-import { UserCircle, Mail, PencilIcon, LockIcon } from "lucide-react";
+import { Mail, PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
-import { UserLogsDialog } from "@/components/organization/UserLogsDialog";
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 
 interface UsersTableProps {
   users: User[];
@@ -23,21 +24,48 @@ interface UsersTableProps {
 
 export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableProps) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [logsDialogOpen, setLogsDialogOpen] = useState(false);
 
-  const handleViewLogs = (user: User) => {
-    setSelectedUser(user);
-    setLogsDialogOpen(true);
-  };
-
-  const getLogsCount = (logs: User["logs"]) => {
-    return logs.length;
+  const formatDateTime = (dateTimeString: string) => {
+    // Converter UTC para o fuso horário de Brasília
+    const timeZone = 'America/Sao_Paulo';
+    const utcDate = new Date(dateTimeString);
+    const brasiliaDate = utcToZonedTime(utcDate, timeZone);
+    
+    return format(brasiliaDate, "dd/MM/yyyy HH:mm", {
+      locale: ptBR,
+    });
   };
 
   const getInitials = (name: string) => {
     const nameParts = name.trim().split(' ');
     if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase();
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+  };
+
+  const getStatusBadgeClasses = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-700";
+      case "inactive":
+        return "bg-red-100 text-red-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const getStatusLabel = (status: User["status"]) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "inactive":
+        return "Inativo";
+      case "pending":
+        return "Pendente";
+      default:
+        return status;
+    }
   };
 
   return (
@@ -49,7 +77,6 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Data de Cadastro</TableHead>
-            <TableHead>Qtde de Logs</TableHead>
             <TableHead>Último Acesso</TableHead>
             <TableHead className="w-[150px]">Ações</TableHead>
           </TableRow>
@@ -76,40 +103,22 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
               </TableCell>
               <TableCell>
                 <span className="capitalize">
-                  {user.role === "leadly_employee" ? "Funcionário Leadly" : user.role === "admin" ? "Administrador" : "Vendedor"}
+                  {user.role === "leadly_employee" ? "Funcionário Leadly" : 
+                   user.role === "admin" ? "Administrador" : "Vendedor"}
                 </span>
               </TableCell>
               <TableCell>
                 <span
-                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    user.status === "active"
-                      ? "bg-green-100 text-green-700"
-                      : user.status === "pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(user.status)}`}
                 >
-                  {user.status === "active" ? "Ativo" : user.status === "pending" ? "Pendente" : "Inativo"}
+                  {getStatusLabel(user.status)}
                 </span>
               </TableCell>
               <TableCell>
-                {format(new Date(user.createdAt), "dd/MM/yyyy", {
-                  locale: ptBR,
-                })}
+                {formatDateTime(user.createdAt)}
               </TableCell>
               <TableCell>
-                <Button
-                  variant="ghost"
-                  className="px-2 font-medium text-primary hover:text-primary/90"
-                  onClick={() => handleViewLogs(user)}
-                >
-                  {getLogsCount(user.logs)}
-                </Button>
-              </TableCell>
-              <TableCell>
-                {format(new Date(user.lastAccess), "dd/MM/yyyy HH:mm", {
-                  locale: ptBR,
-                })}
+                {formatDateTime(user.lastAccess)}
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
@@ -133,14 +142,6 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
           ))}
         </TableBody>
       </Table>
-
-      {selectedUser && (
-        <UserLogsDialog
-          isOpen={logsDialogOpen}
-          onClose={() => setLogsDialogOpen(false)}
-          user={selectedUser}
-        />
-      )}
     </div>
   );
 };
