@@ -78,7 +78,7 @@ function AppRoutes() {
           path="/auth" 
           element={
             session ? (
-              <Navigate to="/admin/dashboard" replace />
+              <Navigate to="/admin" replace />
             ) : (
               <Auth />
             )
@@ -98,7 +98,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<Navigate to="dashboard" replace />} />
+          <Route path="" element={<AdminOrganizations />} />
           <Route path="dashboard" element={<AdminOrganizations />} />
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="users" element={<AdminUsers />} />

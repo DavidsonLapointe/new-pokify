@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -43,8 +44,10 @@ export default function Auth() {
         throw new Error("Perfil não encontrado");
       }
 
-      // Ajustado para sempre redirecionar para o dashboard administrativo
-      navigate('/admin/dashboard', { replace: true });
+      const redirectTo = profile.role === 'leadly_employee' ? '/admin' : '/organization/profile';
+      console.log("Redirecting to:", redirectTo);
+      
+      navigate(redirectTo, { replace: true });
       toast.success("Login realizado com sucesso!");
     } catch (error: any) {
       console.error("Login error:", error);
