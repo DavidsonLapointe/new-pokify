@@ -11,30 +11,41 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { session } = useAuth();
+
+  // Se já estiver autenticado, redireciona
+  if (session) {
+    navigate('/admin/prompt', { replace: true });
+    return null;
+  }
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error("Usuário não encontrado");
+      }
 
       console.log("Login successful, fetching profile...");
 
-      // Busca o perfil do usuário para determinar o redirecionamento
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
-        .eq('id', data.user.id)
+        .eq('id', authData.user.id)
         .single();
 
       if (profileError) {
         console.error("Error fetching profile:", profileError);
-        throw profileError;
+        // Não fazer logout aqui, apenas mostrar o erro
+        throw new Error("Erro ao carregar perfil do usuário");
       }
 
       console.log("Profile fetched:", profile);
@@ -44,15 +55,12 @@ export default function Auth() {
         throw new Error("Perfil não encontrado");
       }
 
-      const redirectTo = profile.role === 'leadly_employee' ? '/admin/prompt' : '/organization/profile';
-      console.log("Redirecting to:", redirectTo);
-      
-      navigate(redirectTo, { replace: true });
+      // Não fazer o redirecionamento aqui, deixar o AuthContext/ProtectedRoute cuidar disso
       toast.success("Login realizado com sucesso!");
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message);
-      toast.error("Erro ao fazer login");
+      toast.error("Erro ao fazer login: " + error.message);
     } finally {
       setIsLoading(false);
     }
