@@ -24,8 +24,33 @@ export const useUserPermissions = (
     if (isOpen && user) {
       // Garantimos que temos um objeto de permissões válido
       const userPermissions = user.permissions || {};
-      console.log('Carregando permissões do usuário:', userPermissions);
-      setTempPermissions({ ...userPermissions });
+      
+      // Criamos um novo objeto com todas as permissões inicializadas como false
+      const initializedPermissions: { [key: string]: boolean } = {
+        dashboard: false,
+        ...Object.fromEntries(dashboardTabs.map(tab => [`dashboard.${tab}`, false])),
+        ...Object.fromEntries(availablePermissions.map(perm => [perm, false])),
+        profile: true // Perfil sempre true
+      };
+
+      // Sobrescrevemos com as permissões existentes do usuário
+      const mergedPermissions = {
+        ...initializedPermissions,
+        ...userPermissions
+      };
+
+      // Verificamos se há alguma subpermissão do dashboard ativa
+      const hasAnyDashboardTab = dashboardTabs.some(tab => 
+        mergedPermissions[`dashboard.${tab}`]
+      );
+
+      // Garantimos que o dashboard principal está ativo se houver alguma subpermissão ativa
+      if (hasAnyDashboardTab) {
+        mergedPermissions.dashboard = true;
+      }
+
+      console.log('Carregando permissões do usuário:', mergedPermissions);
+      setTempPermissions(mergedPermissions);
     } else {
       setTempPermissions({});
     }
