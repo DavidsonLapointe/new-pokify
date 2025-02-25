@@ -82,11 +82,11 @@ export const UserForm = ({
       <div className="space-y-2">
         <Label>Função atual: {getRoleLabel(editedUser.role)}</Label>
         <Select
-          value={pendingRole || editedUser.role}
+          value={pendingRole}
           onValueChange={onRoleChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Selecione a nova função" />
+            <SelectValue placeholder={getRoleLabel(editedUser.role)} />
           </SelectTrigger>
           <SelectContent>
             {availableRoles.map((role) => (
