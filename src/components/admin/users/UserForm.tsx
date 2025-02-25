@@ -30,7 +30,7 @@ interface UserFormProps {
   availableStatusOptions: StatusOption[];
   availableRoles: RoleOption[];
   currentStatusLabel: React.ReactNode;
-  currentUserId?: string; // ID do usuário logado
+  currentUserId?: string;
 }
 
 export const UserForm = ({
@@ -43,11 +43,8 @@ export const UserForm = ({
   availableStatusOptions,
   availableRoles,
   currentStatusLabel,
-  currentUserId,
 }: UserFormProps) => {
   if (!editedUser) return null;
-
-  const isOwnProfile = currentUserId === editedUser.id;
 
   const getRoleLabel = (role: UserRole) => {
     switch (role) {
@@ -67,15 +64,12 @@ export const UserForm = ({
         <Input
           id="email"
           value={editedUser.email}
-          onChange={(e) => onEditUser("email", e.target.value)}
-          readOnly={!isOwnProfile}
-          className={!isOwnProfile ? "bg-gray-100" : ""}
+          readOnly
+          className="bg-gray-100"
         />
-        {!isOwnProfile && (
-          <p className="text-sm text-muted-foreground mt-1">
-            Apenas o dono do perfil pode alterar o email
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground mt-1">
+          Para alterar o email, acesse a página "Meu Perfil"
+        </p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="phone">Telefone</Label>
