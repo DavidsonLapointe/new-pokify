@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUser } from "@/contexts/UserContext";
 import AuthForm from "@/components/auth/AuthForm";
@@ -8,27 +8,24 @@ import AuthForm from "@/components/auth/AuthForm";
 const Auth = () => {
   const { session } = useAuth();
   const { user, loading } = useUser();
+  const navigate = useNavigate();
 
-  console.log("Auth page - Session:", session);
-  console.log("Auth page - User:", user);
-  console.log("Auth page - Loading:", loading);
-
-  // Se tiver sessão e usuário carregado, redireciona baseado no papel
-  if (session && user && !loading) {
-    // Se for funcionário Leadly, vai para dashboard administrativo
-    if (user.role === 'leadly_employee') {
-      console.log("Redirecionando leadly_employee para /admin/dashboard");
-      return <Navigate to="/admin/dashboard" replace />;
+  useEffect(() => {
+    if (session && user && !loading) {
+      console.log("Auth page - Tentando redirecionar usuário:", user.role);
+      
+      if (user.role === 'leadly_employee') {
+        console.log("Redirecionando leadly_employee para /admin/dashboard");
+        navigate('/admin/dashboard', { replace: true });
+      } else if (user.role === 'admin') {
+        console.log("Redirecionando admin para /organization/dashboard");
+        navigate('/organization/dashboard', { replace: true });
+      } else {
+        console.log("Usuário sem role definido, desconectando...");
+        navigate('/', { replace: true });
+      }
     }
-    // Se for admin de organização, vai para dashboard da organização
-    if (user.role === 'admin') {
-      console.log("Redirecionando admin para /organization/dashboard");
-      return <Navigate to="/organization/dashboard" replace />;
-    }
-    // Se não tiver role definido, desconecta o usuário
-    console.log("Usuário sem role definido, desconectando...");
-    return <Navigate to="/" replace />;
-  }
+  }, [session, user, loading, navigate]);
 
   // Se não tiver sessão e não estiver carregando, mostra página de login
   if (!session && !loading) {
