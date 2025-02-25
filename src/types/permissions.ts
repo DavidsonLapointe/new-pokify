@@ -20,7 +20,7 @@ export const availablePermissions = [
   "users",              // Usuários
   "integrations",       // Integrações
   "settings",           // Configurações
-  "plan",              // Plano
+  "plan",              // Meu Plano
   "profile"            // Perfil
 ];
 
@@ -50,7 +50,7 @@ export const permissionLabels: { [key: string]: string } = {
   users: "Usuários",
   integrations: "Integrações",
   settings: "Configurações",
-  plan: "Plano",
+  plan: "Meu Plano",
   profile: "Meu Perfil",
   'dashboard.leads': "Leads",
   'dashboard.uploads': "Uploads",
