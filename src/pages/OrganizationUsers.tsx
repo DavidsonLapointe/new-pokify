@@ -18,16 +18,18 @@ const OrganizationUsers = () => {
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchOrganizationUsers = async () => {
       try {
         if (!currentUser?.organization?.id) {
           console.log("No organization ID found", currentUser);
+          setLoading(false);
           return;
         }
-
-        console.log("Fetching users for organization:", currentUser.organization.id);
 
         const { data: profiles, error } = await supabase
           .from('profiles')
@@ -52,19 +54,18 @@ const OrganizationUsers = () => {
           return;
         }
 
-        console.log("Fetched profiles:", profiles);
+        if (!isMounted) return;
 
         if (!profiles || profiles.length === 0) {
-          console.log("No users found for organization");
+          setUsers([]);
+          setLoading(false);
           return;
         }
 
         const formattedUsers: User[] = profiles.map(profile => {
-          // Convert permissions to the correct format
           let formattedPermissions: { [key: string]: boolean } = {};
           
           if (profile.permissions && typeof profile.permissions === 'object') {
-            // Ensure permissions is an object and convert its values to boolean
             formattedPermissions = Object.entries(profile.permissions).reduce(
               (acc, [key, value]) => ({
                 ...acc,
@@ -84,21 +85,30 @@ const OrganizationUsers = () => {
             createdAt: profile.created_at,
             lastAccess: profile.last_access || profile.created_at,
             permissions: formattedPermissions,
-            logs: [], // You might want to fetch logs separately if needed
+            logs: [],
             avatar: profile.avatar || '',
-            organization: currentUser.organization // Add organization data
+            organization: currentUser.organization
           };
         });
 
-        console.log("Formatted users:", formattedUsers);
-        setUsers(formattedUsers);
+        if (isMounted) {
+          setUsers(formattedUsers);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error in fetchOrganizationUsers:", error);
         toast.error("Erro ao carregar usuários");
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchOrganizationUsers();
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentUser?.organization?.id]);
 
   const handleAddUser = () => {
@@ -158,11 +168,15 @@ const OrganizationUsers = () => {
         </Button>
       </div>
 
-      <UsersTable
-        users={users}
-        onEditUser={handleEditUser}
-        onEditPermissions={handleEditPermissions}
-      />
+      {loading ? (
+        <div>Carregando usuários...</div>
+      ) : (
+        <UsersTable
+          users={users}
+          onEditUser={handleEditUser}
+          onEditPermissions={handleEditPermissions}
+        />
+      )}
 
       <AddUserDialog
         isOpen={isAddDialogOpen}
