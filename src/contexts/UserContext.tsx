@@ -18,21 +18,22 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Inicializa como true
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
   useEffect(() => {
     const loadUserProfile = async () => {
       if (!session?.user) {
-        console.log("No session found");
         setUser(null);
-        setLoading(false); // Atualiza loading quando não há sessão
+        setLoading(false);
         return;
       }
 
       try {
-        console.log("Loading user profile for:", session.user.id);
-        const { data: profile, error } = await supabase
+        console.log("Carregando perfil do usuário:", session.user.id);
+        
+        // Primeiro, busca o perfil do usuário
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select(`
             id,
@@ -43,51 +44,54 @@ export function UserProvider({ children }: { children: ReactNode }) {
             status,
             permissions,
             created_at,
-            last_access
+            last_access,
+            organization_id
           `)
           .eq('id', session.user.id)
           .maybeSingle();
 
-        if (error) {
-          console.error("Error loading profile:", error);
-          throw error;
+        if (profileError) throw profileError;
+        if (!profile) throw new Error("Perfil não encontrado");
+
+        // Se temos um organization_id, busca os dados da organização
+        if (profile.organization_id) {
+          const { data: organization, error: orgError } = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('id', profile.organization_id)
+            .maybeSingle();
+
+          if (orgError) throw orgError;
+          if (!organization) throw new Error("Organização não encontrada");
+
+          const permissions = profile.permissions as { [key: string]: boolean } || {};
+
+          const userData: User = {
+            id: profile.id,
+            name: profile.name || '',
+            email: profile.email || '',
+            phone: profile.phone || '',
+            role: profile.role || 'seller',
+            status: profile.status || 'active',
+            createdAt: profile.created_at,
+            lastAccess: profile.last_access,
+            permissions: permissions,
+            logs: [],
+            avatar: '',
+            organization: organization
+          };
+
+          console.log("Dados do usuário carregados:", userData);
+          setUser(userData);
         }
-
-        if (!profile) {
-          console.error("No profile found");
-          throw new Error("Perfil não encontrado");
-        }
-
-        console.log("Profile loaded:", profile);
-
-        // Ensure permissions is an object, defaulting to empty object if null
-        const permissions = profile.permissions as { [key: string]: boolean } || {};
-
-        const userData: User = {
-          id: profile.id,
-          name: profile.name || '',
-          email: profile.email || '',
-          phone: profile.phone || '',
-          role: profile.role || 'leadly_employee',
-          status: profile.status || 'active',
-          createdAt: profile.created_at,
-          lastAccess: profile.last_access,
-          permissions: permissions,
-          logs: [],
-          avatar: ''
-        };
-
-        console.log("Setting user data:", userData);
-        setUser(userData);
       } catch (error) {
-        console.error('Error loading user profile:', error);
+        console.error('Erro ao carregar perfil do usuário:', error);
         toast.error('Erro ao carregar perfil do usuário');
-        // Em caso de erro, faça logout e redirecione para a página inicial
         await supabase.auth.signOut();
         setUser(null);
         navigate('/', { replace: true });
       } finally {
-        setLoading(false); // Atualiza loading após terminar
+        setLoading(false);
       }
     };
 
