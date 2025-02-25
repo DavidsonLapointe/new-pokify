@@ -44,7 +44,7 @@ export default function Auth() {
         throw new Error("Perfil não encontrado");
       }
 
-      const redirectTo = profile.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+      const redirectTo = profile.role === 'leadly_employee' ? '/admin/prompt' : '/organization/profile';
       console.log("Redirecting to:", redirectTo);
       
       navigate(redirectTo, { replace: true });
