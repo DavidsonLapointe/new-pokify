@@ -13,9 +13,9 @@ const AdminSettings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Configurações Globais</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Configurações</h2>
         <p className="text-muted-foreground">
-          Gerencie as configurações que serão aplicadas a todas as organizações.
+          Gerencie as configurações globais do ambiente administrativo
         </p>
       </div>
 
