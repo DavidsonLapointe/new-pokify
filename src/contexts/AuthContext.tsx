@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Get initial session
     const initializeAuth = async () => {
       try {
+        console.log("Initializing auth...");
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         if (mounted) {
           console.log("Initial session:", initialSession);
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Cleanup
     return () => {
+      console.log("Cleaning up auth context...");
       mounted = false;
       subscription.unsubscribe();
     };
@@ -55,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
+      <AuthDebugger />
       {children}
     </AuthContext.Provider>
   );
