@@ -39,12 +39,12 @@ export default function Auth() {
         throw new Error("Usuário não encontrado");
       }
 
-      // Busca perfil com status, role e permissões
+      // Busca perfil com status, role e permissões usando maybeSingle()
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('status, role, permissions')
         .eq('id', authData.user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error("Profile error:", profileError);
