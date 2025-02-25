@@ -68,7 +68,7 @@ export const UserForm = ({
           className="bg-gray-100"
         />
         <p className="text-sm text-muted-foreground mt-1">
-          Para alterar o email, acesse a página "Meu Perfil"
+          Alteração de email é feita pelo próprio usuário na página "Meu Perfil"
         </p>
       </div>
       <div className="space-y-2">
