@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface UserContextType {
   user: User | null;
-  loading: boolean; // Adicionando loading ao tipo
+  loading: boolean;
   updateUser: (newUser: User) => void;
   logout: () => void;
 }
@@ -66,6 +66,35 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
           const permissions = profile.permissions as { [key: string]: boolean } || {};
 
+          const formattedOrganization = {
+            id: organization.id,
+            name: organization.name,
+            nomeFantasia: organization.nome_fantasia || '',
+            plan: organization.plan,
+            users: [], // Será preenchido posteriormente se necessário
+            status: organization.status,
+            pendingReason: organization.pending_reason,
+            integratedCRM: organization.integrated_crm,
+            integratedLLM: organization.integrated_llm,
+            email: organization.email,
+            phone: organization.phone || '',
+            cnpj: organization.cnpj,
+            adminName: organization.admin_name,
+            adminEmail: organization.admin_email,
+            contractSignedAt: organization.contract_signed_at,
+            createdAt: organization.created_at || new Date().toISOString(),
+            logo: organization.logo,
+            address: organization.logradouro ? {
+              logradouro: organization.logradouro,
+              numero: organization.numero || '',
+              complemento: organization.complemento || '',
+              bairro: organization.bairro || '',
+              cidade: organization.cidade || '',
+              estado: organization.estado || '',
+              cep: organization.cep || '',
+            } : undefined
+          };
+
           const userData: User = {
             id: profile.id,
             name: profile.name || '',
@@ -78,7 +107,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             permissions: permissions,
             logs: [],
             avatar: '',
-            organization: organization
+            organization: formattedOrganization
           };
 
           console.log("Dados do usuário carregados:", userData);
