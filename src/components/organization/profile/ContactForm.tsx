@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { AvatarUpload } from "@/components/profile/AvatarUpload"
 import { ProfileFormData } from "./types"
 import { useUser } from "@/contexts/UserContext"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 interface ContactFormProps {
   formData: ProfileFormData
@@ -16,9 +16,12 @@ interface ContactFormProps {
 
 export function ContactForm({ formData, isLoading, onInputChange, onImageUpload }: ContactFormProps) {
   const { user } = useUser();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (user) {
+    if (user && isFirstRender.current) {
+      isFirstRender.current = false;
+      
       // Simula o evento de mudança para atualizar os campos
       onInputChange({
         target: { name: 'email', value: user.email }
