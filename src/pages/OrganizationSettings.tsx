@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
 import { FunnelSection } from "@/components/settings/FunnelSection";
 
@@ -60,34 +59,25 @@ const OrganizationSettings = () => {
             Configure o funil de vendas e campos personalizados para extração de dados
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
-          <Tabs defaultValue="funnel" className="w-full">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="funnel">Funil de Vendas</TabsTrigger>
-              <TabsTrigger value="fields">Campos Personalizados</TabsTrigger>
-            </TabsList>
+        <CardContent className="p-6 space-y-8">
+          <div className="space-y-8">
+            <FunnelSection
+              funnelName={funnelName}
+              stageName={stageName}
+              setFunnelName={setFunnelName}
+              setStageName={setStageName}
+              isDefaultConfigSaved={isDefaultConfigSaved}
+              isEditing={isEditing}
+              onSaveDefaultConfig={handleSaveDefaultConfig}
+              onToggleEdit={handleToggleEdit}
+            />
             
-            <TabsContent value="funnel">
-              <FunnelSection
-                funnelName={funnelName}
-                stageName={stageName}
-                setFunnelName={setFunnelName}
-                setStageName={setStageName}
-                isDefaultConfigSaved={isDefaultConfigSaved}
-                isEditing={isEditing}
-                onSaveDefaultConfig={handleSaveDefaultConfig}
-                onToggleEdit={handleToggleEdit}
-              />
-            </TabsContent>
-            
-            <TabsContent value="fields">
-              <CustomFieldsSection
-                customFields={customFields}
-                handleOpenNewField={handleOpenNewField}
-                handleOpenEditField={handleOpenEditField}
-              />
-            </TabsContent>
-          </Tabs>
+            <CustomFieldsSection
+              customFields={customFields}
+              handleOpenNewField={handleOpenNewField}
+              handleOpenEditField={handleOpenEditField}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
