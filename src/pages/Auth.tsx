@@ -36,15 +36,19 @@ export default function Auth() {
 
       console.log("Login successful, fetching profile...");
 
-      // Busca perfil com status e organização
+      // Busca perfil com status e todas as possíveis organizações
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select(`
           role,
           status,
-          organizations:organization_id (
+          organization:organization_id (
             id,
             status
+          ),
+          company:company_leadly_id (
+            id,
+            razao_social
           )
         `)
         .eq('id', authData.user.id)
@@ -67,9 +71,16 @@ export default function Auth() {
         throw new Error("Usuário inativo");
       }
 
-      // Verifica status da organização (se existir e for necessário)
-      if (profile.organizations && profile.role !== 'leadly_employee') {
-        if (profile.organizations.status !== 'active') {
+      // Verifica organização baseado no tipo de usuário
+      if (profile.role === 'leadly_employee') {
+        if (!profile.company) {
+          throw new Error("Usuário Leadly sem vínculo com a empresa");
+        }
+      } else {
+        if (!profile.organization) {
+          throw new Error("Usuário sem vínculo com organização");
+        }
+        if (profile.organization.status !== 'active') {
           throw new Error("Organização inativa");
         }
       }
