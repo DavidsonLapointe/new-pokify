@@ -45,7 +45,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
             permissions,
             created_at,
             last_access,
-            organization_id
+            organization_id,
+            company_leadly_id
           `)
           .eq('id', session.user.id)
           .maybeSingle();
@@ -53,8 +54,29 @@ export function UserProvider({ children }: { children: ReactNode }) {
         if (profileError) throw profileError;
         if (!profile) throw new Error("Perfil não encontrado");
 
-        // Se temos um organization_id, busca os dados da organização
-        if (profile.organization_id) {
+        // Se for um funcionário Leadly, não precisa carregar dados da organização
+        if (profile.role === 'leadly_employee') {
+          console.log("Carregando perfil de funcionário Leadly");
+          const userData: User = {
+            id: profile.id,
+            name: profile.name || '',
+            email: profile.email || '',
+            phone: profile.phone || '',
+            role: profile.role,
+            status: profile.status || 'active',
+            createdAt: profile.created_at,
+            lastAccess: profile.last_access,
+            permissions: profile.permissions as { [key: string]: boolean } || {},
+            logs: [],
+            avatar: '',
+            company_leadly_id: profile.company_leadly_id
+          };
+
+          console.log("Dados do funcionário Leadly carregados:", userData);
+          setUser(userData);
+        } 
+        // Se tiver organization_id, carrega dados da organização
+        else if (profile.organization_id) {
           const { data: organization, error: orgError } = await supabase
             .from('organizations')
             .select('*')
@@ -66,7 +88,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
           const permissions = profile.permissions as { [key: string]: boolean } || {};
 
-          // Convertendo o pendingReason para o tipo correto
           let convertedPendingReason = organization.pending_reason === 'null' || !organization.pending_reason 
             ? null 
             : organization.pending_reason;
@@ -76,7 +97,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             name: organization.name,
             nomeFantasia: organization.nome_fantasia || '',
             plan: organization.plan,
-            users: [], // Será preenchido posteriormente se necessário
+            users: [],
             status: organization.status,
             pendingReason: convertedPendingReason,
             integratedCRM: organization.integrated_crm,
@@ -105,7 +126,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             name: profile.name || '',
             email: profile.email || '',
             phone: profile.phone || '',
-            role: profile.role || 'seller',
+            role: profile.role,
             status: profile.status || 'active',
             createdAt: profile.created_at,
             lastAccess: profile.last_access,
