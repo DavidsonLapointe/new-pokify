@@ -5,13 +5,16 @@ import { z } from "zod";
 import { AlertsLimitsFormValues } from "./types";
 
 const formSchema = z.object({
-  creditAlertThreshold: z.number().min(1).max(100),
-  maxAlertFrequency: z.number().min(1),
-  maxAnalysisRetries: z.number().min(1).max(10),
+  creditAlertThreshold: z.coerce.number().min(1).max(100),
+  maxAlertFrequency: z.coerce.number().min(1),
+  maxAnalysisRetries: z.coerce.number().min(1).max(10),
 }) satisfies z.ZodType<AlertsLimitsFormValues>;
 
+type FormSchema = typeof formSchema;
+type FormSchemaType = z.infer<FormSchema>;
+
 export function useAlertsLimitsForm() {
-  return useForm<AlertsLimitsFormValues>({
+  return useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       creditAlertThreshold: 20,
