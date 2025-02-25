@@ -68,7 +68,7 @@ const OrganizationDashboard = () => {
 
   // Filtra as tabs baseado nas permissões do usuário
   const userTabs = availableTabs.filter(tab => 
-    user.permissions.includes(tab.permission)
+    !!user.permissions[tab.permission]
   );
 
   // Define a primeira tab disponível como padrão
@@ -92,7 +92,7 @@ const OrganizationDashboard = () => {
           ))}
         </TabsList>
         
-        {user.permissions.includes("dashboard.leads") && (
+        {!!user.permissions["dashboard.leads"] && (
           <TabsContent value="leads">
             <LeadsTabContent
               monthStats={monthStats}
@@ -111,7 +111,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {user.permissions.includes("dashboard.uploads") && (
+        {!!user.permissions["dashboard.uploads"] && (
           <TabsContent value="calls" className="space-y-6">
             <CallsStats
               total={monthStats.total}
@@ -139,7 +139,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {user.permissions.includes("dashboard.performance") && (
+        {!!user.permissions["dashboard.performance"] && (
           <TabsContent value="sellers" className="space-y-6">
             <div className="grid gap-6">
               <DailyPerformanceChart 
@@ -156,7 +156,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {user.permissions.includes("dashboard.objections") && (
+        {!!user.permissions["dashboard.objections"] && (
           <TabsContent value="objections" className="space-y-6">
             <ObjectionsTabContent
               objectionsData={objectionsData}
@@ -173,7 +173,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {user.permissions.includes("dashboard.suggestions") && (
+        {!!user.permissions["dashboard.suggestions"] && (
           <TabsContent value="suggestions" className="space-y-6">
             <SuggestionsTabContent
               suggestions={suggestionsData}
@@ -186,7 +186,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {user.permissions.includes("dashboard.sellers") && (
+        {!!user.permissions["dashboard.sellers"] && (
           <TabsContent value="sellers-info">
             <SellersTabContent sellers={[]} />
           </TabsContent>

@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { User } from "@/types";
-import { availablePermissions } from "@/types/permissions";
 import { PermissionRow } from "./PermissionRow";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Label } from "@/components/ui/label";
@@ -49,9 +48,6 @@ export const UserPermissionsDialog = ({
     handleClose,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
-  console.log("Current permissions:", tempPermissions);
-  console.log("User permissions:", user.permissions);
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
@@ -65,12 +61,7 @@ export const UserPermissionsDialog = ({
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6">
             {availableAdminRoutePermissions.map((route) => {
-              console.log(`Checking route ${route.id}:`, {
-                hasPermissions: tempPermissions.includes(route.id),
-                tempPermissions
-              });
-
-              const hasPermissions = tempPermissions.includes(route.id);
+              const hasPermissions = !!tempPermissions[route.id];
               const isRouteEnabled = route.isDefault || hasPermissions;
               const isProfile = route.id === 'profile';
               
@@ -90,7 +81,7 @@ export const UserPermissionsDialog = ({
                           <div key={tab.id} className="flex items-center space-x-2">
                             <Checkbox
                               id={`tab-${tab.id}`}
-                              checked={tempPermissions.includes(`dashboard.${tab.id}`)}
+                              checked={!!tempPermissions[`dashboard.${tab.id}`]}
                               onCheckedChange={() => handlePermissionChange(`dashboard.${tab.id}`)}
                               className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
                             />
