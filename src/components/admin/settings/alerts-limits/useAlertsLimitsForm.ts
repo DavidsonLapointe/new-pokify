@@ -8,7 +8,7 @@ const formSchema = z.object({
   creditAlertThreshold: z.coerce.number().min(1).max(100),
   maxAlertFrequency: z.coerce.number().min(1),
   maxAnalysisRetries: z.coerce.number().min(1).max(10),
-});
+}).required();
 
 export function useAlertsLimitsForm() {
   return useForm<AlertsLimitsFormValues>({
