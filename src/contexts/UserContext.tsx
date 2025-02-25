@@ -66,6 +66,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
           const permissions = profile.permissions as { [key: string]: boolean } || {};
 
+          // Convertendo o pendingReason para o tipo correto
+          let convertedPendingReason = organization.pending_reason === 'null' || !organization.pending_reason 
+            ? null 
+            : organization.pending_reason;
+
           const formattedOrganization = {
             id: organization.id,
             name: organization.name,
@@ -73,7 +78,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             plan: organization.plan,
             users: [], // Será preenchido posteriormente se necessário
             status: organization.status,
-            pendingReason: organization.pending_reason,
+            pendingReason: convertedPendingReason,
             integratedCRM: organization.integrated_crm,
             integratedLLM: organization.integrated_llm,
             email: organization.email,
