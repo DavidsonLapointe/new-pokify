@@ -14,7 +14,7 @@ import { Mail, PencilIcon, LockIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 
 interface UsersTableProps {
   users: User[];
@@ -29,7 +29,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     // Converter UTC para o fuso horário de Brasília
     const timeZone = 'America/Sao_Paulo';
     const utcDate = new Date(dateTimeString);
-    const brasiliaDate = utcToZonedTime(utcDate, timeZone);
+    const brasiliaDate = toZonedTime(utcDate, timeZone);
     
     return format(brasiliaDate, "dd/MM/yyyy HH:mm", {
       locale: ptBR,
