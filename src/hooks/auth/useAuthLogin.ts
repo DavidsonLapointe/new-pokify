@@ -27,7 +27,13 @@ export const useAuthLogin = () => {
       // Get user profile from database
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          organization:organization_id (
+            status,
+            pending_reason
+          )
+        `)
         .eq('id', authData.user.id)
         .single();
 
@@ -54,14 +60,22 @@ export const useAuthLogin = () => {
         if (updateError) throw updateError;
       }
 
-      // Redirect based on role
-      if (profile.role === 'leadly_employee') {
-        navigate('/admin');
+      // Check if user is leadly_employee or if their organization is active
+      if (profile.role === 'leadly_employee' || 
+          (profile.organization && profile.organization.status === 'active')) {
+        // Redirect based on role
+        if (profile.role === 'leadly_employee') {
+          navigate('/admin');
+          toast.success('Login realizado com sucesso!');
+        } else {
+          navigate('/organization/dashboard');
+          toast.success('Login realizado com sucesso!');
+        }
       } else {
-        navigate('/organization/dashboard');
+        // If user's organization is not active and they're not a leadly_employee
+        throw new Error('Sua empresa não possui uma assinatura ativa. Entre em contato com o suporte.');
       }
 
-      toast.success('Login realizado com sucesso!');
     } catch (error: any) {
       toast.error('Erro ao fazer login: ' + (error.message || 'Tente novamente'));
       console.error('Login error:', error);
