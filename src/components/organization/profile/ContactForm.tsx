@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AvatarUpload } from "@/components/profile/AvatarUpload"
 import { ProfileFormData } from "./types"
+import { useUser } from "@/contexts/UserContext"
+import { useEffect } from "react"
 
 interface ContactFormProps {
   formData: ProfileFormData
@@ -13,6 +15,25 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ formData, isLoading, onInputChange, onImageUpload }: ContactFormProps) {
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      // Simula o evento de mudança para atualizar os campos
+      onInputChange({
+        target: { name: 'email', value: user.email }
+      } as React.ChangeEvent<HTMLInputElement>);
+      
+      onInputChange({
+        target: { name: 'phone', value: user.phone || '' }
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onInputChange({
+        target: { name: 'name', value: user.name }
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+  }, [user, onInputChange]);
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
     
