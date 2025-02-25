@@ -672,6 +672,7 @@ export type Database = {
           last_access: string | null
           name: string
           organization_id: string | null
+          permissions: Json | null
           phone: string | null
           reset_password_expires: string | null
           reset_password_token: string | null
@@ -688,6 +689,7 @@ export type Database = {
           last_access?: string | null
           name: string
           organization_id?: string | null
+          permissions?: Json | null
           phone?: string | null
           reset_password_expires?: string | null
           reset_password_token?: string | null
@@ -704,6 +706,7 @@ export type Database = {
           last_access?: string | null
           name?: string
           organization_id?: string | null
+          permissions?: Json | null
           phone?: string | null
           reset_password_expires?: string | null
           reset_password_token?: string | null

@@ -38,10 +38,10 @@ export default function Auth() {
         throw new Error("Usuário não encontrado");
       }
 
-      // Busca perfil simplificado
+      // Busca perfil com status, role e permissões
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('status, role')
+        .select('status, role, permissions')
         .eq('id', authData.user.id)
         .maybeSingle();
 
@@ -57,6 +57,21 @@ export default function Auth() {
 
       if (profile.status !== 'active') {
         throw new Error("Usuário inativo");
+      }
+
+      // Verifica se tem permissão para acessar a página de prompts
+      const permissions = profile.permissions || {};
+      console.log("User permissions:", permissions);
+
+      if (!permissions.prompt && profile.role !== 'leadly_employee') {
+        console.log("User doesn't have access to prompts page");
+        // Se não tem acesso a prompts, tenta redirecionar para dashboard ou perfil
+        if (permissions.dashboard) {
+          navigate('/admin/dashboard', { replace: true });
+        } else {
+          navigate('/admin/profile', { replace: true });
+        }
+        return;
       }
 
       console.log("Login successful!");
