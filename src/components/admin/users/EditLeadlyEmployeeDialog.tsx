@@ -122,7 +122,7 @@ export const EditLeadlyEmployeeDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Editar Usuário</DialogTitle>
+          <DialogTitle>Editar Usuário - {editedUser?.name || editedUser?.email}</DialogTitle>
           <DialogDescription>
             Atualize as informações do usuário.
           </DialogDescription>
@@ -146,6 +146,7 @@ export const EditLeadlyEmployeeDialog = ({
               </div>
             ) : null
           }
+          currentRole={editedUser?.role}
         />
         <DialogFooter>
           <Button variant="cancel" onClick={onClose}>

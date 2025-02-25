@@ -30,7 +30,7 @@ interface UserFormProps {
   availableStatusOptions: StatusOption[];
   availableRoles: RoleOption[];
   currentStatusLabel: React.ReactNode;
-  currentUserId?: string;
+  currentRole?: UserRole;
 }
 
 export const UserForm = ({
@@ -43,6 +43,7 @@ export const UserForm = ({
   availableStatusOptions,
   availableRoles,
   currentStatusLabel,
+  currentRole
 }: UserFormProps) => {
   if (!editedUser) return null;
 
@@ -80,13 +81,13 @@ export const UserForm = ({
         />
       </div>
       <div className="space-y-2">
-        <Label>Função atual: {getRoleLabel(editedUser.role)}</Label>
+        <Label>Função atual:</Label>
         <Select
           value={pendingRole}
           onValueChange={onRoleChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Selecione a nova função" />
+            <SelectValue placeholder={getRoleLabel(currentRole || editedUser.role)} />
           </SelectTrigger>
           <SelectContent>
             {availableRoles.map((role) => (
