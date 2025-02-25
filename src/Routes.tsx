@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -24,6 +23,7 @@ import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -98,7 +98,8 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          {/* Remove redirecionamento padrão para dashboard */}
+          <Route path="" element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />

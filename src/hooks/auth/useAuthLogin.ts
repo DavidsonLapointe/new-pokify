@@ -1,8 +1,8 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export const useAuthLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ export const useAuthLogin = () => {
       // Se for leadly_employee, pode acessar independente do status
       if (profile.role === 'leadly_employee') {
         console.log("Leadly employee login successful");
-        navigate('/admin/prompt');
+        navigate('/admin/dashboard'); // Changed from /admin/prompt to /admin/dashboard
         toast.success('Login realizado com sucesso!');
         return;
       }
@@ -78,5 +78,9 @@ export const useAuthLogin = () => {
     }
   };
 
-  return { login, loading };
+  return {
+    loading,
+    login
+  };
 };
+
