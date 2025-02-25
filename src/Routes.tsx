@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -78,11 +77,9 @@ function AppRoutes() {
         <Route 
           path="/auth" 
           element={
-            session ? (
-              <Navigate to="/organization/dashboard" replace />
-            ) : (
+            <UserProvider>
               <Auth />
-            )
+            </UserProvider>
           } 
         />
         <Route path="/confirm-registration" element={<ConfirmRegistration />} />
