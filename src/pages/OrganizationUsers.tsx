@@ -98,8 +98,11 @@ const OrganizationUsers = () => {
 
   // Efeito para carregar usuários apenas quando necessário
   useEffect(() => {
-    fetchOrganizationUsers();
-  }, []); // Removida a dependência que causava loops
+    console.log("useEffect em OrganizationUsers - currentUser:", currentUser?.organization?.id);
+    if (currentUser?.organization?.id) {
+      fetchOrganizationUsers();
+    }
+  }, [currentUser?.organization?.id]); // Dependência corrigida
 
   const handleAddUser = () => {
     fetchOrganizationUsers(); // Atualiza a lista após adicionar
