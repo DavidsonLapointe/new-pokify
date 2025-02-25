@@ -22,6 +22,8 @@ export default function OrganizationCompany() {
     adminName: '',
     adminEmail: '',
     createdAt: new Date().toISOString(),
+    integratedCRM: null,
+    integratedLLM: null,
     address: {
       logradouro: '',
       numero: '',
