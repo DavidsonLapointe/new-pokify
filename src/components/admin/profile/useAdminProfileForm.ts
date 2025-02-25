@@ -1,16 +1,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-
-// Mock data (will be replaced with real auth data later)
-export const mockAdminUser = {
-  id: 1,
-  name: "Admin Silva",
-  email: "admin.silva@leadly.com",
-  phone: "(11) 99999-9999",
-  avatar: "",
-  role: "admin",
-};
+import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface AdminProfileFormData {
   email: string;
@@ -22,14 +14,15 @@ export interface AdminProfileFormData {
 }
 
 export const useAdminProfileForm = () => {
+  const { user, updateUser } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<AdminProfileFormData>({
-    email: mockAdminUser.email,
-    phone: mockAdminUser.phone,
+    email: user?.email || "",
+    phone: user?.phone || "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-    avatar: mockAdminUser.avatar,
+    avatar: user?.avatar || "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,21 +31,55 @@ export const useAdminProfileForm = () => {
   };
 
   const handleImageUpload = async (file: File) => {
+    if (!user) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const mockImageUrl = URL.createObjectURL(file);
-      
+      // Upload da imagem para o bucket 'avatars'
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Obter a URL pública da imagem
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Atualizar o avatar no perfil do usuário
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
       setFormData(prev => ({
         ...prev,
-        avatar: mockImageUrl
+        avatar: publicUrl
       }));
-      
-      // Update the mockAdminUser for the navbar
-      mockAdminUser.avatar = mockImageUrl;
-      
+
+      const updatedUser = {
+        ...user,
+        avatar: publicUrl
+      };
+      updateUser(updatedUser);
+
       toast.success("Foto de perfil atualizada com sucesso!");
     } catch (error) {
+      console.error("Erro ao atualizar avatar:", error);
       toast.error("Erro ao atualizar foto de perfil");
     } finally {
       setIsLoading(false);
@@ -61,11 +88,14 @@ export const useAdminProfileForm = () => {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       if (formData.newPassword) {
         if (formData.newPassword.length < 6) {
           toast.error("A nova senha deve ter pelo menos 6 caracteres");
@@ -79,11 +109,32 @@ export const useAdminProfileForm = () => {
           toast.error("Digite sua senha atual");
           return;
         }
+
+        // Atualizar senha
+        const { error: passwordError } = await supabase.auth.updateUser({
+          password: formData.newPassword
+        });
+
+        if (passwordError) throw passwordError;
       }
 
-      // Update the mockAdminUser data
-      mockAdminUser.email = formData.email;
-      mockAdminUser.phone = formData.phone;
+      // Atualizar perfil
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          email: formData.email,
+          phone: formData.phone,
+        })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      const updatedUser = {
+        ...user,
+        email: formData.email,
+        phone: formData.phone,
+      };
+      updateUser(updatedUser);
 
       toast.success("Perfil atualizado com sucesso!");
       
@@ -94,6 +145,7 @@ export const useAdminProfileForm = () => {
         confirmPassword: "",
       }));
     } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
       toast.error("Erro ao atualizar o perfil");
     } finally {
       setIsLoading(false);
