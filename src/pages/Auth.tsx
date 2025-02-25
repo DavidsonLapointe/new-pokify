@@ -36,15 +36,22 @@ export default function Auth() {
 
       console.log("Login successful, fetching profile...");
 
+      // Busca perfil com status e organização
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('role')
+        .select(`
+          role,
+          status,
+          organizations:organization_id (
+            id,
+            status
+          )
+        `)
         .eq('id', authData.user.id)
         .single();
 
       if (profileError) {
         console.error("Error fetching profile:", profileError);
-        // Não fazer logout aqui, apenas mostrar o erro
         throw new Error("Erro ao carregar perfil do usuário");
       }
 
@@ -55,12 +62,25 @@ export default function Auth() {
         throw new Error("Perfil não encontrado");
       }
 
-      // Não fazer o redirecionamento aqui, deixar o AuthContext/ProtectedRoute cuidar disso
+      // Verifica status do usuário
+      if (profile.status !== 'active') {
+        throw new Error("Usuário inativo");
+      }
+
+      // Verifica status da organização (se existir e for necessário)
+      if (profile.organizations && profile.role !== 'leadly_employee') {
+        if (profile.organizations.status !== 'active') {
+          throw new Error("Organização inativa");
+        }
+      }
+
       toast.success("Login realizado com sucesso!");
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message);
       toast.error("Erro ao fazer login: " + error.message);
+      // Em caso de erro, fazer logout para garantir que não há sessão parcial
+      await supabase.auth.signOut();
     } finally {
       setIsLoading(false);
     }
