@@ -13,11 +13,11 @@ interface LoginModalProps {
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [error, setError] = useState<string | null>(null);
-  const { login, isLoading, handleCallback } = useAuthLogin();
+  const { login, loading } = useAuthLogin();
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      await login(email);
+      await login(email, password);
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login");
@@ -26,7 +26,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
   const handleForgotPassword = async (email: string) => {
     try {
-      await login(email);
+      // Implement forgot password logic here
       setMode("login");
       return true;
     } catch (err) {
@@ -53,14 +53,14 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           <LoginForm
             onSubmit={handleLogin}
             onForgotPassword={toggleMode}
-            isLoading={isLoading}
+            isLoading={loading}
             error={error}
           />
         ) : (
           <ForgotPasswordForm
             onSubmit={handleForgotPassword}
             onBackToLogin={toggleMode}
-            isLoading={isLoading}
+            isLoading={loading}
             error={error}
           />
         )}

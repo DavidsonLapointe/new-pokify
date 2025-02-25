@@ -70,28 +70,14 @@ export const useMenuItems = (user: User) => {
 
   useEffect(() => {
     if (user) {
-      console.log("\n=== Atualizando Menu Lateral ===");
-      console.log("Usuário:", user.name);
-      console.log("Permissões do usuário:", user.permissions);
+      const dashboardTabs = ['leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'];
       
-      // Filtra os itens do menu baseado nas permissões
       const filteredItems = allMenuItems.filter(item => {
-        // Exceção para o dashboard: deve checar por qualquer subpermissão
         if (item.permissionId === 'dashboard') {
-          const dashboardTabs = ['leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'];
-          return dashboardTabs.some(tab => 
-            (user.permissions || []).includes(`dashboard.${tab}`)
-          );
+          return dashboardTabs.some(tab => !!user.permissions[`dashboard.${tab}`]);
         }
-        
-        // Para outros itens, verifica a permissão normalmente
-        const hasPermission = hasRoutePermission(item.permissionId);
-        console.log(`Verificando permissão para ${item.label}:`, hasPermission);
-        return hasPermission;
+        return hasRoutePermission(item.permissionId);
       });
-
-      console.log("Menu items filtrados:", filteredItems);
-      console.log("=========================\n");
 
       setMenuItems(filteredItems);
     }
