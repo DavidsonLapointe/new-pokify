@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
 import { usePermissions } from "@/hooks/usePermissions";
+import { SidebarMenuItem } from "./organization/layout/SidebarMenuItem";
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -16,8 +17,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { user } = useUser();
   const { hasRoutePermission } = usePermissions(user);
 
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   const adminMenuItems = [
-    { icon: List, label: "Dashboard", path: "/admin", permissionId: "dashboard" },
+    { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
     { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
     { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
     { icon: DollarSign, label: "Planos", path: "/admin/plans", permissionId: "plans" },
@@ -60,9 +65,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return hasPermission;
   });
 
-  console.log("User permissions:", user.permissions);
-  console.log("Menu items:", filteredMenuItems);
-
   return (
     <div className="min-h-screen bg-background">
       <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
@@ -82,33 +84,28 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
           <nav className="flex flex-col h-full py-6 px-3">
             <div className="space-y-0.5">
-              {filteredMenuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] ${
-                      isActive
-                        ? "bg-[#F1F0FB] text-[#9b87f5]"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    <Icon className={`w-4 h-4 mr-3 ${isActive ? "text-[#9b87f5]" : "text-gray-600"}`} />
-                    {item.label}
-                  </Link>
-                );
-              })}
+              {filteredMenuItems.map((item) => (
+                <SidebarMenuItem
+                  key={item.path}
+                  icon={item.icon}
+                  label={item.label}
+                  path={item.path}
+                  active={isActive(item.path)}
+                />
+              ))}
             </div>
 
-            <button
-              onClick={handleLogout}
+            <Link
+              to="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogout();
+              }}
               className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
             >
               <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
               Sair
-            </button>
+            </Link>
           </nav>
         </aside>
 
