@@ -9,7 +9,7 @@ import { CreditAlertThresholdField } from "./alerts-limits/CreditAlertThresholdF
 import { MaxAlertFrequencyField } from "./alerts-limits/MaxAlertFrequencyField";
 import { MaxAnalysisRetriesField } from "./alerts-limits/MaxAnalysisRetriesField";
 import { useAlertsLimitsForm } from "./alerts-limits/useAlertsLimitsForm";
-import { EnabledSettings } from "./alerts-limits/types";
+import { AlertsLimitsFormValues, EnabledSettings } from "./alerts-limits/types";
 
 const AlertsLimitsSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,13 +21,13 @@ const AlertsLimitsSettings = () => {
 
   const form = useAlertsLimitsForm();
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: AlertsLimitsFormValues) => {
     const enabledValues = Object.keys(values).reduce((acc, key) => {
       if (enabledSettings[key as keyof typeof enabledSettings]) {
         acc[key] = values[key as keyof typeof values];
       }
       return acc;
-    }, {} as Partial<typeof values>);
+    }, {} as Partial<AlertsLimitsFormValues>);
 
     console.log(enabledValues);
     toast.success("Configurações salvas com sucesso!");
