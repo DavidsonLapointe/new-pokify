@@ -87,6 +87,7 @@ const OrganizationUsers = () => {
         };
       });
 
+      console.log("Usuários carregados:", formattedUsers);
       setUsers(formattedUsers);
     } catch (error) {
       console.error("Error in fetchOrganizationUsers:", error);
@@ -96,13 +97,37 @@ const OrganizationUsers = () => {
     }
   };
 
-  // Efeito para carregar usuários apenas quando necessário
+  // Efeito para configurar o listener de realtime
   useEffect(() => {
-    console.log("useEffect em OrganizationUsers - currentUser:", currentUser?.organization?.id);
-    if (currentUser?.organization?.id) {
-      fetchOrganizationUsers();
-    }
-  }, [currentUser?.organization?.id]); // Dependência corrigida
+    if (!currentUser?.organization?.id) return;
+
+    // Configurar o canal para mudanças na tabela profiles
+    const channel = supabase
+      .channel('organization-users-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Escuta todos os eventos (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'profiles',
+          filter: `organization_id=eq.${currentUser.organization.id}` // Filtra apenas para a organização atual
+        },
+        (payload) => {
+          console.log('Mudança detectada:', payload);
+          // Recarrega a lista de usuários quando houver qualquer mudança
+          fetchOrganizationUsers();
+        }
+      )
+      .subscribe();
+
+    // Carregar usuários inicialmente
+    fetchOrganizationUsers();
+
+    // Cleanup: remover o canal quando o componente for desmontado
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser?.organization?.id]);
 
   const handleAddUser = () => {
     fetchOrganizationUsers(); // Atualiza a lista após adicionar
@@ -128,15 +153,14 @@ const OrganizationUsers = () => {
           email: updatedUser.email,
           phone: updatedUser.phone,
           role: updatedUser.role,
-          permissions: updatedUser.permissions
+          permissions: updatedUser.permissions,
+          status: updatedUser.status
         })
         .eq('id', updatedUser.id);
 
       if (error) throw error;
-
-      // Atualiza a lista de usuários
-      fetchOrganizationUsers();
       
+      // O listener do Supabase vai atualizar a lista automaticamente
       setIsEditDialogOpen(false);
       setIsPermissionsDialogOpen(false);
       toast.success("Usuário atualizado com sucesso");
