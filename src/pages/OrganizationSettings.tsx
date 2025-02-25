@@ -1,56 +1,25 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { OrganizationSettingsForm } from "@/components/organization/OrganizationSettingsForm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CustomFieldsSection } from "@/components/settings/CustomFieldsSection";
+import { FunnelSection } from "@/components/settings/FunnelSection";
 
-const mockDefaultData = {
-  organization: {
-    id: "1",
-    name: "Tech Solutions",
-    nomeFantasia: "Tech Solutions Ltda",
-    plan: "Professional",
-    users: [], // TODO: Implementar integração com a API
-    status: "active" as const,
-    integratedCRM: null,
-    integratedLLM: "OpenAI",
-    email: "contato@techsolutions.com",
-    phone: "(11) 99999-9999",
-    cnpj: "12.345.678/0001-90",
-    adminName: "João Silva",
-    adminEmail: "joao.silva@techsolutions.com",
-    createdAt: "2024-01-01T00:00:00.000Z"
-  },
-  address: {
-    logradouro: "Rua Exemplo",
-    numero: "123",
-    complemento: "Apto 456",
-    bairro: "Centro",
-    cidade: "São Paulo",
-    estado: "SP",
-    cep: "01000-000"
-  }
-};
+import { CustomField } from "@/components/settings/types";
 
 const OrganizationSettings = () => {
   const { toast } = useToast();
-  const [organizationData, setOrganizationData] = useState(mockDefaultData.organization);
-  const [addressData, setAddressData] = useState(mockDefaultData.address);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
 
-  const handleOrganizationUpdate = (updatedOrganization: any) => {
-    setOrganizationData(updatedOrganization);
-    toast({
-      title: "Dados da empresa atualizados com sucesso!",
-      description: "As informações da sua empresa foram atualizadas.",
-    });
+  const handleOpenNewField = () => {
+    // Implementar lógica para abrir modal de novo campo
+    console.log("Open new field modal");
   };
 
-  const handleAddressUpdate = (updatedAddress: any) => {
-    setAddressData(updatedAddress);
-    toast({
-      title: "Endereço atualizado com sucesso!",
-      description: "O endereço da sua empresa foi atualizado.",
-    });
+  const handleOpenEditField = (field: CustomField) => {
+    // Implementar lógica para abrir modal de edição
+    console.log("Open edit field modal", field);
   };
 
   return (
@@ -58,19 +27,31 @@ const OrganizationSettings = () => {
       <Card className="w-full shadow-md">
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-bold">
-            Configurações da Organização
+            Configurações do Sistema
           </CardTitle>
           <CardDescription>
-            Atualize as informações da sua empresa.
+            Configure o funil de vendas e campos personalizados para extração de dados
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
-          <OrganizationSettingsForm
-            organization={organizationData}
-            address={addressData}
-            onOrganizationUpdate={handleOrganizationUpdate}
-            onAddressUpdate={handleAddressUpdate}
-          />
+        <CardContent className="p-6 space-y-6">
+          <Tabs defaultValue="funnel" className="w-full">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="funnel">Funil de Vendas</TabsTrigger>
+              <TabsTrigger value="fields">Campos Personalizados</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="funnel">
+              <FunnelSection />
+            </TabsContent>
+            
+            <TabsContent value="fields">
+              <CustomFieldsSection
+                customFields={customFields}
+                handleOpenNewField={handleOpenNewField}
+                handleOpenEditField={handleOpenEditField}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
