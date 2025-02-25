@@ -13,6 +13,7 @@ import { User, UserRole, UserStatus } from "@/types";
 import { toast } from "sonner";
 import { UserForm } from "./UserForm";
 import { EditUserDialogProps, DEFAULT_PERMISSIONS } from "./types";
+import { Badge } from "@/components/ui/badge";
 
 export const EditLeadlyEmployeeDialog = ({
   isOpen,
@@ -64,6 +65,59 @@ export const EditLeadlyEmployeeDialog = ({
     setEditedUser(prev => prev ? { ...prev, [field]: value } : null);
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "pending":
+        return "Pendente";
+      case "inactive":
+        return "Inativo";
+      default:
+        return status;
+    }
+  };
+
+  const getAvailableStatusOptions = (currentStatus: string) => {
+    switch (currentStatus) {
+      case "active":
+        return [{ value: "inactive", label: "Inativo" }];
+      case "inactive":
+        return [{ value: "active", label: "Ativo" }];
+      case "pending":
+        return [
+          { value: "active", label: "Ativo" },
+          { value: "inactive", label: "Inativo" }
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const getAvailableRoles = (currentRole: UserRole): { value: UserRole; label: string }[] => {
+    switch (currentRole) {
+      case "admin":
+        return [{ value: "seller", label: "Vendedor" }];
+      case "seller":
+        return [{ value: "admin", label: "Administrador" }];
+      default:
+        return [];
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -80,6 +134,18 @@ export const EditLeadlyEmployeeDialog = ({
           onEditUser={handleEditUser}
           onRoleChange={(value: UserRole) => setPendingRole(value)}
           onStatusChange={setPendingStatus}
+          availableStatusOptions={editedUser ? getAvailableStatusOptions(editedUser.status) : []}
+          availableRoles={editedUser ? getAvailableRoles(editedUser.role) : []}
+          currentStatusLabel={
+            editedUser ? (
+              <div className="flex items-center gap-2">
+                Status atual:
+                <Badge className={getStatusColor(editedUser.status)}>
+                  {getStatusLabel(editedUser.status)}
+                </Badge>
+              </div>
+            ) : null
+          }
         />
         <DialogFooter>
           <Button variant="cancel" onClick={onClose}>
