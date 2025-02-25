@@ -38,34 +38,28 @@ export const useUserPermissions = (
       const newPermissions = { ...prev };
 
       if (routeId === 'dashboard') {
-        if (!prev['dashboard']) {
-          newPermissions['dashboard'] = true;
-        } else {
-          Object.keys(prev).forEach(key => {
-            if (key.startsWith('dashboard.')) {
-              delete newPermissions[key];
-            }
+        // Altera o valor do dashboard
+        newPermissions['dashboard'] = !prev['dashboard'];
+        
+        // Se o dashboard foi desativado, desativa todas as suas subpermissões
+        if (!newPermissions['dashboard']) {
+          dashboardTabs.forEach(tab => {
+            newPermissions[`dashboard.${tab}`] = false;
           });
-          delete newPermissions['dashboard'];
         }
       } else if (routeId.startsWith('dashboard.')) {
-        const isSubPermissionEnabled = prev[routeId];
+        // Altera o valor da subpermissão
+        newPermissions[routeId] = !prev[routeId];
         
-        if (!isSubPermissionEnabled) {
-          newPermissions[routeId] = true;
-          newPermissions['dashboard'] = true;
-        } else {
-          delete newPermissions[routeId];
-          
-          const hasAnySubPermission = dashboardTabs.some(tab => 
-            newPermissions[`dashboard.${tab}`]
-          );
-          
-          if (!hasAnySubPermission) {
-            delete newPermissions['dashboard'];
-          }
-        }
+        // Verifica se tem alguma subpermissão ativa
+        const hasAnySubPermission = dashboardTabs.some(tab => 
+          newPermissions[`dashboard.${tab}`]
+        );
+        
+        // Atualiza o estado do dashboard principal
+        newPermissions['dashboard'] = hasAnySubPermission;
       } else {
+        // Para outras permissões, simplesmente inverte o valor
         newPermissions[routeId] = !prev[routeId];
       }
 
