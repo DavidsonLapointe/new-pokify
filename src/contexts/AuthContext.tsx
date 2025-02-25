@@ -2,7 +2,6 @@
 import { createContext, useContext, ReactNode, useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { AuthDebugger } from '@/components/auth/AuthDebugger';
 
 interface AuthContextType {
   session: Session | null;
@@ -58,7 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
-      <AuthDebugger />
       {children}
     </AuthContext.Provider>
   );
