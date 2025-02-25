@@ -23,16 +23,34 @@ export default function Auth() {
 
       if (error) throw error;
 
+      console.log("Login successful, fetching profile...");
+
       // Busca o perfil do usuário para determinar o redirecionamento
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', data.user.id)
         .single();
 
-      const redirectTo = profile?.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+      if (profileError) {
+        console.error("Error fetching profile:", profileError);
+        throw profileError;
+      }
+
+      console.log("Profile fetched:", profile);
+
+      if (!profile) {
+        console.error("No profile found for user");
+        throw new Error("Perfil não encontrado");
+      }
+
+      const redirectTo = profile.role === 'leadly_employee' ? '/admin/dashboard' : '/organization/profile';
+      console.log("Redirecting to:", redirectTo);
+      
       navigate(redirectTo, { replace: true });
+      toast.success("Login realizado com sucesso!");
     } catch (error: any) {
+      console.error("Login error:", error);
       setError(error.message);
       toast.error("Erro ao fazer login");
     } finally {
