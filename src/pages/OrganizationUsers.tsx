@@ -20,98 +20,91 @@ const OrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true;
+  // Função para buscar usuários
+  const fetchOrganizationUsers = async () => {
+    if (!currentUser?.organization?.id) {
+      setLoading(false);
+      return;
+    }
 
-    const fetchOrganizationUsers = async () => {
-      try {
-        if (!currentUser?.organization?.id) {
-          console.log("No organization ID found", currentUser);
-          setLoading(false);
-          return;
-        }
+    try {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          name,
+          email,
+          phone,
+          role,
+          status,
+          permissions,
+          created_at,
+          last_access,
+          avatar,
+          organization_id
+        `)
+        .eq('organization_id', currentUser.organization.id);
 
-        const { data: profiles, error } = await supabase
-          .from('profiles')
-          .select(`
-            id,
-            name,
-            email,
-            phone,
-            role,
-            status,
-            permissions,
-            created_at,
-            last_access,
-            avatar,
-            organization_id
-          `)
-          .eq('organization_id', currentUser.organization.id);
-
-        if (error) {
-          console.error("Error fetching users:", error);
-          toast.error("Erro ao carregar usuários");
-          return;
-        }
-
-        if (!isMounted) return;
-
-        if (!profiles || profiles.length === 0) {
-          setUsers([]);
-          setLoading(false);
-          return;
-        }
-
-        const formattedUsers: User[] = profiles.map(profile => {
-          let formattedPermissions: { [key: string]: boolean } = {};
-          
-          if (profile.permissions && typeof profile.permissions === 'object') {
-            formattedPermissions = Object.entries(profile.permissions).reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: Boolean(value)
-              }),
-              {}
-            );
-          }
-
-          return {
-            id: profile.id,
-            name: profile.name || '',
-            email: profile.email || '',
-            phone: profile.phone || '',
-            role: profile.role || 'seller',
-            status: profile.status || 'active',
-            createdAt: profile.created_at,
-            lastAccess: profile.last_access || profile.created_at,
-            permissions: formattedPermissions,
-            logs: [],
-            avatar: profile.avatar || '',
-            organization: currentUser.organization
-          };
-        });
-
-        if (isMounted) {
-          setUsers(formattedUsers);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error in fetchOrganizationUsers:", error);
+      if (error) {
+        console.error("Error fetching users:", error);
         toast.error("Erro ao carregar usuários");
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
+        return;
       }
-    };
 
-    fetchOrganizationUsers();
+      if (!profiles) {
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
 
-    return () => {
-      isMounted = false;
-    };
+      const formattedUsers: User[] = profiles.map(profile => {
+        let formattedPermissions: { [key: string]: boolean } = {};
+        
+        if (profile.permissions && typeof profile.permissions === 'object') {
+          formattedPermissions = Object.entries(profile.permissions).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: Boolean(value)
+            }),
+            {}
+          );
+        }
+
+        return {
+          id: profile.id,
+          name: profile.name || '',
+          email: profile.email || '',
+          phone: profile.phone || '',
+          role: profile.role || 'seller',
+          status: profile.status || 'active',
+          createdAt: profile.created_at,
+          lastAccess: profile.last_access || profile.created_at,
+          permissions: formattedPermissions,
+          logs: [],
+          avatar: profile.avatar || '',
+          organization: currentUser.organization
+        };
+      });
+
+      setUsers(formattedUsers);
+    } catch (error) {
+      console.error("Error in fetchOrganizationUsers:", error);
+      toast.error("Erro ao carregar usuários");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Efeito para carregar usuários apenas quando necessário
+  useEffect(() => {
+    if (currentUser?.organization?.id) {
+      fetchOrganizationUsers();
+    }
   }, [currentUser?.organization?.id]);
 
   const handleAddUser = () => {
+    fetchOrganizationUsers(); // Atualiza a lista após adicionar
     setIsAddDialogOpen(false);
   };
 
@@ -140,10 +133,9 @@ const OrganizationUsers = () => {
 
       if (error) throw error;
 
-      const updatedUsers = users.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      );
-      setUsers(updatedUsers);
+      // Atualiza a lista de usuários
+      fetchOrganizationUsers();
+      
       setIsEditDialogOpen(false);
       setIsPermissionsDialogOpen(false);
       toast.success("Usuário atualizado com sucesso");
