@@ -108,7 +108,7 @@ const AdminUsers = () => {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="text-left">
           <h1 className="text-3xl font-bold">Usuários</h1>
           <p className="text-muted-foreground">
             Gerencie os funcionários da Leadly
@@ -154,3 +154,4 @@ const AdminUsers = () => {
 };
 
 export default AdminUsers;
+
