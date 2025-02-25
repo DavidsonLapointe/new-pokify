@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -96,8 +97,9 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<Navigate to="prompt" replace />} />
+          <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
