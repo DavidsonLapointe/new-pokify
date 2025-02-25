@@ -27,10 +27,10 @@ export function AdminContactForm({
     if (value.length <= 11) {
       // Formata o número conforme vai digitando
       if (value.length > 2) {
-        value = `(${value.slice(0, 2)})${value.slice(2)}`;
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
       }
-      if (value.length > 7) {
-        value = `${value.slice(0, 8)}-${value.slice(8)}`;
+      if (value.length > 6) {
+        value = `${value.slice(0, 10)}-${value.slice(10)}`;
       }
       
       const event = {
@@ -50,6 +50,9 @@ export function AdminContactForm({
     <div className="grid gap-6">
       <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
         <div className="text-left">
+          <Label className="text-sm font-medium text-gray-700 mb-2 block">
+            Foto de Perfil
+          </Label>
           <AvatarUpload 
             currentImage={formData.avatar}
             name={user?.name || ""}
@@ -79,7 +82,7 @@ export function AdminContactForm({
         
         <div className="pt-4 border-t border-gray-200">
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="phone" className="text-sm font-medium text-gray-700 flex items-center">
               Telefone
             </Label>
             <Input
@@ -89,9 +92,9 @@ export function AdminContactForm({
               value={formData.phone}
               onChange={handlePhoneChange}
               required
-              maxLength={14}
+              maxLength={15}
               className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
-              placeholder="(00) 0000-0000"
+              placeholder="(00) 00000-0000"
             />
           </div>
         </div>
