@@ -91,10 +91,13 @@ export const useUserPermissions = (
 
       if (error) throw error;
 
+      // Garantimos que as permissões retornadas são do tipo correto
+      const permissions = data.permissions as { [key: string]: boolean };
+
       // Atualiza o usuário localmente com as novas permissões do banco
-      const updatedUser = {
+      const updatedUser: User = {
         ...user,
-        permissions: data.permissions
+        permissions
       };
 
       onUserUpdate(updatedUser);
