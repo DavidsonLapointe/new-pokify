@@ -10,9 +10,21 @@ import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useUser } from "@/contexts/UserContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const OrganizationDashboard = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Se não houver usuário, redireciona para login
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+  }, [user, navigate]);
+
   const {
     monthStats,
     dailyLeadsData,
@@ -56,6 +68,11 @@ const OrganizationDashboard = () => {
     setMonthlySuggestionsSeller,
   } = useDashboardData();
 
+  // Se não houver usuário ainda, não renderiza nada
+  if (!user) {
+    return null;
+  }
+
   // Define as tabs disponíveis e suas permissões necessárias
   const availableTabs = [
     { id: "leads", label: "Leads", permission: "dashboard.leads" },
@@ -67,8 +84,9 @@ const OrganizationDashboard = () => {
   ];
 
   // Filtra as tabs baseado nas permissões do usuário
+  const userPermissions = user.permissions || {};
   const userTabs = availableTabs.filter(tab => 
-    !!user.permissions[tab.permission]
+    !!userPermissions[tab.permission]
   );
 
   // Define a primeira tab disponível como padrão
@@ -92,7 +110,7 @@ const OrganizationDashboard = () => {
           ))}
         </TabsList>
         
-        {!!user.permissions["dashboard.leads"] && (
+        {!!userPermissions["dashboard.leads"] && (
           <TabsContent value="leads">
             <LeadsTabContent
               monthStats={monthStats}
@@ -111,7 +129,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {!!user.permissions["dashboard.uploads"] && (
+        {!!userPermissions["dashboard.uploads"] && (
           <TabsContent value="calls" className="space-y-6">
             <CallsStats
               total={monthStats.total}
@@ -139,7 +157,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {!!user.permissions["dashboard.performance"] && (
+        {!!userPermissions["dashboard.performance"] && (
           <TabsContent value="sellers" className="space-y-6">
             <div className="grid gap-6">
               <DailyPerformanceChart 
@@ -156,7 +174,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {!!user.permissions["dashboard.objections"] && (
+        {!!userPermissions["dashboard.objections"] && (
           <TabsContent value="objections" className="space-y-6">
             <ObjectionsTabContent
               objectionsData={objectionsData}
@@ -173,7 +191,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {!!user.permissions["dashboard.suggestions"] && (
+        {!!userPermissions["dashboard.suggestions"] && (
           <TabsContent value="suggestions" className="space-y-6">
             <SuggestionsTabContent
               suggestions={suggestionsData}
@@ -186,7 +204,7 @@ const OrganizationDashboard = () => {
           </TabsContent>
         )}
 
-        {!!user.permissions["dashboard.sellers"] && (
+        {!!userPermissions["dashboard.sellers"] && (
           <TabsContent value="sellers-info">
             <SellersTabContent sellers={[]} />
           </TabsContent>
