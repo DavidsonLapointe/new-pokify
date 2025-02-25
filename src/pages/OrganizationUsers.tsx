@@ -49,19 +49,35 @@ const OrganizationUsers = () => {
           return;
         }
 
-        const formattedUsers: User[] = profiles.map(profile => ({
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          phone: profile.phone || '',
-          role: profile.role,
-          status: profile.status,
-          createdAt: profile.created_at,
-          lastAccess: profile.last_access || profile.created_at,
-          permissions: profile.permissions || {},
-          logs: [], // You might want to fetch logs separately if needed
-          avatar: profile.avatar || ''
-        }));
+        const formattedUsers: User[] = profiles.map(profile => {
+          // Convert permissions to the correct format
+          let formattedPermissions: { [key: string]: boolean } = {};
+          
+          if (profile.permissions && typeof profile.permissions === 'object') {
+            // Ensure permissions is an object and convert its values to boolean
+            formattedPermissions = Object.entries(profile.permissions).reduce(
+              (acc, [key, value]) => ({
+                ...acc,
+                [key]: Boolean(value)
+              }),
+              {}
+            );
+          }
+
+          return {
+            id: profile.id,
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone || '',
+            role: profile.role,
+            status: profile.status,
+            createdAt: profile.created_at,
+            lastAccess: profile.last_access || profile.created_at,
+            permissions: formattedPermissions,
+            logs: [], // You might want to fetch logs separately if needed
+            avatar: profile.avatar || ''
+          };
+        });
 
         setUsers(formattedUsers);
       } catch (error) {
