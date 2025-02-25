@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
-import { AdminProfileFormData, mockAdminUser } from "./useAdminProfileForm";
+import { AdminProfileFormData } from "./useAdminProfileForm";
+import { useUser } from "@/contexts/UserContext";
 
 interface AdminContactFormProps {
   formData: AdminProfileFormData;
@@ -18,12 +19,14 @@ export function AdminContactForm({
   onInputChange, 
   onImageUpload 
 }: AdminContactFormProps) {
+  const { user } = useUser();
+
   return (
     <div className="grid gap-6">
       <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
         <AvatarUpload 
           currentImage={formData.avatar}
-          name={mockAdminUser.name}
+          name={user?.name || ""}
           onImageUpload={onImageUpload}
         />
 
