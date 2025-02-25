@@ -881,6 +881,13 @@ export type Database = {
         }
         Returns: string
       }
+      has_permission: {
+        Args: {
+          user_id: string
+          permission_name: string
+        }
+        Returns: boolean
+      }
       user_has_access_to_org: {
         Args: {
           user_id: string

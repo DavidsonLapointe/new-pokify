@@ -44,7 +44,7 @@ export default function Auth() {
         .from('profiles')
         .select('status, role, permissions')
         .eq('id', authData.user.id)
-        .maybeSingle();
+        .single();
 
       if (profileError) {
         console.error("Profile error:", profileError);
@@ -85,6 +85,8 @@ export default function Auth() {
       // Tratamento de erros específicos
       if (error.message?.includes("Invalid login credentials")) {
         errorMessage = "Email ou senha inválidos";
+      } else if (error.message?.includes("Usuário inativo")) {
+        errorMessage = "Usuário inativo. Entre em contato com o administrador.";
       }
       
       setError(errorMessage);
