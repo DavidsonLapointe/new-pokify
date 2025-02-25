@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -78,7 +77,7 @@ function AppRoutes() {
           path="/auth" 
           element={
             session ? (
-              <Navigate to="/admin" replace />
+              <Navigate to="/admin/prompt" replace />
             ) : (
               <Auth />
             )
@@ -98,17 +97,11 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          {/* Redireciona /admin para /admin/dashboard */}
-          <Route path="" element={<Navigate to="dashboard" replace />} />
-          
-          {/* Dashboard é a página principal que mostra as organizações */}
-          <Route path="dashboard" element={<AdminOrganizations />} />
-          
-          {/* Remove a rota duplicada de organizations */}
+          {/* Remove redirecionamento padrão para dashboard */}
+          <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="plans" element={<AdminPlans />} />
-          <Route path="prompt" element={<AdminPrompt />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="analysis-packages" element={<AdminAnalysisPackages />} />
