@@ -56,42 +56,46 @@ export default function Auth() {
 
       if (profileError) {
         console.error("Error fetching profile:", profileError);
-        throw new Error("Erro ao carregar perfil do usuário");
+        setError("Erro ao carregar perfil do usuário");
+        return; // Não faz logout, apenas retorna
       }
-
-      console.log("Profile fetched:", profile);
 
       if (!profile) {
         console.error("No profile found for user");
-        throw new Error("Perfil não encontrado");
+        setError("Perfil não encontrado");
+        return; // Não faz logout, apenas retorna
       }
 
       // Verifica status do usuário
       if (profile.status !== 'active') {
-        throw new Error("Usuário inativo");
+        setError("Usuário inativo");
+        return; // Não faz logout, apenas retorna
       }
 
       // Verifica organização baseado no tipo de usuário
       if (profile.role === 'leadly_employee') {
         if (!profile.company) {
-          throw new Error("Usuário Leadly sem vínculo com a empresa");
+          setError("Usuário Leadly sem vínculo com a empresa");
+          return; // Não faz logout, apenas retorna
         }
       } else {
         if (!profile.organization) {
-          throw new Error("Usuário sem vínculo com organização");
+          setError("Usuário sem vínculo com organização");
+          return; // Não faz logout, apenas retorna
         }
         if (profile.organization.status !== 'active') {
-          throw new Error("Organização inativa");
+          setError("Organização inativa");
+          return; // Não faz logout, apenas retorna
         }
       }
 
       toast.success("Login realizado com sucesso!");
+      navigate('/admin/prompt', { replace: true });
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message);
       toast.error("Erro ao fazer login: " + error.message);
-      // Em caso de erro, fazer logout para garantir que não há sessão parcial
-      await supabase.auth.signOut();
+      // Removido o signOut para evitar o logout automático em caso de erro
     } finally {
       setIsLoading(false);
     }
