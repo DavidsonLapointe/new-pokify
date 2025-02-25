@@ -81,7 +81,7 @@ export const UserForm = ({
           onValueChange={onRoleChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder={getRoleLabel(editedUser.role)} />
+            <SelectValue placeholder="Selecione a nova função" />
           </SelectTrigger>
           <SelectContent>
             {availableRoles.map((role) => (
