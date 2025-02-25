@@ -16,7 +16,7 @@ export const useUserPermissions = (
   onClose: () => void,
   onUserUpdate: (user: User) => void
 ) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser, updateUser: updateCurrentUser } = useUser();
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: boolean }>({});
 
@@ -101,6 +101,13 @@ export const useUserPermissions = (
       };
 
       onUserUpdate(updatedUser);
+
+      // Se o usuário está alterando suas próprias permissões, atualiza o contexto
+      if (currentUser && user.id === currentUser.id) {
+        console.log('Atualizando permissões do usuário atual no contexto');
+        updateCurrentUser(updatedUser);
+      }
+
       onClose();
       toast.success("Permissões atualizadas com sucesso");
     } catch (error) {
