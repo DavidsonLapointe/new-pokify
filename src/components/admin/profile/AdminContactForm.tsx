@@ -50,9 +50,6 @@ export function AdminContactForm({
     <div className="grid gap-6">
       <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
         <div className="text-left">
-          <Label className="text-sm font-medium text-gray-700 mb-2 block">
-            Foto de Perfil
-          </Label>
           <AvatarUpload 
             currentImage={formData.avatar}
             name={user?.name || ""}
