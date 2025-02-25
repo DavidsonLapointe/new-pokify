@@ -98,8 +98,8 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<Navigate to="profile" replace />} />
-          <Route path="profile" element={<AdminProfile />} />
+          <Route path="" element={<Navigate to="organizations" replace />} />
+          <Route path="dashboard" element={<AdminOrganizations />} />
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
@@ -108,6 +108,7 @@ function AppRoutes() {
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="analysis-packages" element={<AdminAnalysisPackages />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
 
         {/* Organization Routes */}
