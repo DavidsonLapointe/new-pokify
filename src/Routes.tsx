@@ -10,6 +10,8 @@ import Auth from "./pages/Auth";
 import ConfirmRegistration from "./pages/ConfirmRegistration";
 import Contract from "./pages/Contract";
 import NotFound from "./pages/NotFound";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "./contexts/AuthContext";
 
 // Admin Pages
@@ -35,6 +37,25 @@ import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
 
+const LogoutButton = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/auth';
+  };
+
+  return (
+    <div className="fixed top-0 right-0 m-4 z-[9999]">
+      <Button 
+        onClick={handleLogout}
+        variant="outline"
+        className="bg-white shadow-md hover:bg-gray-100"
+      >
+        Logout
+      </Button>
+    </div>
+  );
+};
+
 function AppRoutes() {
   const { session, loading } = useAuth();
 
@@ -49,6 +70,7 @@ function AppRoutes() {
 
   return (
     <BrowserRouter>
+      {session && <LogoutButton />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
