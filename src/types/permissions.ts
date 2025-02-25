@@ -16,7 +16,7 @@ export interface RoutePermission {
 // Rotas disponíveis para usuários da organização
 export const availablePermissions = [
   "dashboard",           // Tem subpermissões (abas)
-  "leads",              // Leads
+  "leads",              // Análise de Leads
   "users",              // Usuários
   "integrations",       // Integrações
   "settings",           // Configurações
@@ -46,7 +46,7 @@ export const settingsTabPermissions = [
 // Labels em português para as permissões
 export const permissionLabels: { [key: string]: string } = {
   dashboard: "Dashboard",
-  leads: "Leads",
+  leads: "Análise de Leads",
   users: "Usuários",
   integrations: "Integrações",
   settings: "Configurações",
