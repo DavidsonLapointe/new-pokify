@@ -4,6 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUser } from "@/contexts/UserContext";
 import AuthForm from "@/components/auth/AuthForm";
+import { toast } from "sonner";
 
 const Auth = () => {
   const { session } = useAuth();
@@ -12,17 +13,18 @@ const Auth = () => {
 
   useEffect(() => {
     if (session && user && !loading) {
-      console.log("Auth page - Tentando redirecionar usuário:", user.role);
+      console.log("Auth page - Usuário autenticado:", user);
       
       if (user.role === 'leadly_employee') {
         console.log("Redirecionando leadly_employee para /admin/dashboard");
-        navigate('/admin/dashboard', { replace: true });
+        navigate('/admin/dashboard');
       } else if (user.role === 'admin') {
         console.log("Redirecionando admin para /organization/dashboard");
-        navigate('/organization/dashboard', { replace: true });
+        navigate('/organization/dashboard');
       } else {
-        console.log("Usuário sem role definido, desconectando...");
-        navigate('/', { replace: true });
+        console.log("Usuário sem role definido ou inválido:", user.role);
+        toast.error("Tipo de usuário não reconhecido");
+        navigate('/');
       }
     }
   }, [session, user, loading, navigate]);
