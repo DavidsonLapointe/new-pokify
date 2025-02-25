@@ -45,7 +45,7 @@ export function AdminContactForm({
             className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
             placeholder="seu@email.com"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 text-left">
             Este é o email utilizado para acessar o sistema
           </p>
         </div>
