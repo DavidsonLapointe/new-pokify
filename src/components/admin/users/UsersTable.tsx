@@ -25,13 +25,14 @@ interface UsersTableProps {
 export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableProps) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const formatDateTime = (dateTimeString: string) => {
+  const formatDateTime = (dateTimeString: string, showTime: boolean = true) => {
     // Converter UTC para o fuso horário de Brasília
     const timeZone = 'America/Sao_Paulo';
     const utcDate = new Date(dateTimeString);
     const brasiliaDate = toZonedTime(utcDate, timeZone);
     
-    return format(brasiliaDate, "dd/MM/yyyy HH:mm", {
+    const dateFormat = showTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy";
+    return format(brasiliaDate, dateFormat, {
       locale: ptBR,
     });
   };
@@ -115,10 +116,10 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                 </span>
               </TableCell>
               <TableCell>
-                {formatDateTime(user.createdAt)}
+                {formatDateTime(user.createdAt, false)} {/* Apenas data */}
               </TableCell>
               <TableCell>
-                {formatDateTime(user.lastAccess)}
+                {formatDateTime(user.lastAccess, true)} {/* Data e hora */}
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
