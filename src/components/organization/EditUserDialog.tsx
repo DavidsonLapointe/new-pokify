@@ -138,7 +138,6 @@ export const EditUserDialog = ({
           onStatusChange={setPendingStatus}
           availableStatusOptions={editedUser ? getAvailableStatusOptions(editedUser.status) : []}
           availableRoles={editedUser ? getAvailableRoles(editedUser.role) : []}
-          currentUserId={currentUser?.id}
           currentStatusLabel={
             editedUser ? (
               <div className="flex items-center gap-2">
@@ -149,6 +148,7 @@ export const EditUserDialog = ({
               </div>
             ) : null
           }
+          currentRole={editedUser?.role}
         />
         <DialogFooter>
           <Button variant="cancel" onClick={onClose}>
