@@ -14,16 +14,17 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const OrganizationDashboard = () => {
-  const { user } = useUser();
+  const { user, loading } = useUser(); // Adicionamos loading do contexto
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Se não houver usuário, redireciona para login
-    if (!user) {
+    // Só redireciona se não estiver carregando e não tiver usuário
+    if (!loading && !user) {
+      console.log("No user found, redirecting to auth");
       navigate('/auth');
       return;
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const {
     monthStats,
@@ -68,7 +69,16 @@ const OrganizationDashboard = () => {
     setMonthlySuggestionsSeller,
   } = useDashboardData();
 
-  // Se não houver usuário ainda, não renderiza nada
+  // Mostra loading enquanto carrega o usuário
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Se não houver usuário depois do carregamento, não renderiza nada
   if (!user) {
     return null;
   }
