@@ -11,8 +11,10 @@ import { AdminUserPermissionsDialog } from "@/components/admin/users/AdminUserPe
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatUserData } from "@/utils/userUtils";
+import { useNavigate, Link } from "react-router-dom";
 
 const AdminUsers = () => {
+  const navigate = useNavigate();
   const { user } = useUser();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -154,4 +156,3 @@ const AdminUsers = () => {
 };
 
 export default AdminUsers;
-
