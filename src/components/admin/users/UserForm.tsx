@@ -45,6 +45,17 @@ export const UserForm = ({
 }: UserFormProps) => {
   if (!editedUser) return null;
 
+  const getRoleLabel = (role: UserRole) => {
+    switch (role) {
+      case "admin":
+        return "Administrador";
+      case "seller":
+        return "Vendedor";
+      default:
+        return role;
+    }
+  };
+
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-2">
@@ -64,13 +75,13 @@ export const UserForm = ({
         />
       </div>
       <div className="space-y-2">
-        <Label>Função</Label>
+        <Label>Função atual: {getRoleLabel(editedUser.role)}</Label>
         <Select
           value={pendingRole || editedUser.role}
           onValueChange={onRoleChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Selecione uma função" />
+            <SelectValue placeholder={getRoleLabel(editedUser.role)} />
           </SelectTrigger>
           <SelectContent>
             {availableRoles.map((role) => (
