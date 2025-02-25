@@ -23,72 +23,56 @@ export default function Auth() {
     setIsLoading(true);
     setError(null);
     try {
+      console.log("Attempting login for:", email);
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error("Auth error:", authError);
+        throw authError;
+      }
 
       if (!authData.user) {
         throw new Error("Usuário não encontrado");
       }
 
-      console.log("Login successful, fetching profile...");
-
-      // Busca perfil com status e todas as possíveis organizações
+      // Busca perfil simplificado
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select(`
-          role,
-          status,
-          organization:organization_id (
-            id,
-            status
-          ),
-          company:company_leadly_id (
-            id,
-            razao_social
-          )
-        `)
+        .select('status, role')
         .eq('id', authData.user.id)
         .maybeSingle();
 
       if (profileError) {
-        console.error("Error fetching profile:", profileError);
+        console.error("Profile error:", profileError);
         throw new Error("Erro ao carregar perfil do usuário");
       }
 
       if (!profile) {
-        console.error("No profile found for user");
+        console.error("No profile found");
         throw new Error("Perfil não encontrado");
       }
 
-      // Verifica status do usuário
       if (profile.status !== 'active') {
         throw new Error("Usuário inativo");
       }
 
-      // Verifica organização baseado no tipo de usuário
-      if (profile.role === 'leadly_employee') {
-        if (!profile.company) {
-          throw new Error("Usuário Leadly sem vínculo com a empresa");
-        }
-      } else {
-        if (!profile.organization) {
-          throw new Error("Usuário sem vínculo com organização");
-        }
-        if (profile.organization.status !== 'active') {
-          throw new Error("Organização inativa");
-        }
-      }
-
+      console.log("Login successful!");
       toast.success("Login realizado com sucesso!");
       navigate('/admin/prompt', { replace: true });
     } catch (error: any) {
       console.error("Login error:", error);
-      setError(error.message);
-      toast.error("Erro ao fazer login: " + error.message);
+      let errorMessage = "Erro ao fazer login";
+      
+      // Tratamento de erros específicos
+      if (error.message?.includes("Invalid login credentials")) {
+        errorMessage = "Email ou senha inválidos";
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
