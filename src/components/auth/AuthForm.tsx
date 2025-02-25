@@ -1,6 +1,8 @@
 
 import * as React from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,13 +16,21 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const formSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+});
+
 interface AuthFormData {
   email: string;
   password: string;
 }
 
 const AuthForm = () => {
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const form = useForm<AuthFormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -29,19 +39,29 @@ const AuthForm = () => {
 
   const onSubmit = async (data: AuthFormData) => {
     try {
+      setIsLoading(true);
+      console.log("Tentando fazer login com:", data.email);
+      
       const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
       if (error) {
+        console.error("Erro de autenticação:", error);
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Email ou senha incorretos");
+        } else {
+          toast.error("Erro ao fazer login. Por favor, tente novamente.");
+        }
         throw error;
       }
 
       toast.success("Login realizado com sucesso!");
     } catch (error) {
-      console.error("Error during login:", error);
-      toast.error("Erro ao fazer login. Verifique suas credenciais.");
+      console.error("Erro detalhado durante login:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,7 +81,13 @@ const AuthForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="exemplo@email.com" {...field} />
+                  <Input 
+                    placeholder="exemplo@email.com" 
+                    type="email"
+                    autoComplete="email"
+                    disabled={isLoading}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -75,15 +101,32 @@ const AuthForm = () => {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    disabled={isLoading}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Entrar
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                Entrando...
+              </>
+            ) : (
+              "Entrar"
+            )}
           </Button>
         </form>
       </Form>
