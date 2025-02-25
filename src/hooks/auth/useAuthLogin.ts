@@ -44,10 +44,18 @@ export const useAuthLogin = () => {
         throw new Error("Perfil não encontrado");
       }
 
-      // Se for leadly_employee, pode acessar independente do status
+      // Se for admin, redireciona para o dashboard da organização
+      if (profile.role === 'admin') {
+        console.log("Admin login successful");
+        navigate('/organization/dashboard');
+        toast.success('Login realizado com sucesso!');
+        return;
+      }
+
+      // Se for leadly_employee, redireciona para a página de prompts
       if (profile.role === 'leadly_employee') {
         console.log("Leadly employee login successful");
-        navigate('/admin/dashboard'); // Changed from /admin/prompt to /admin/dashboard
+        navigate('/admin/prompt');
         toast.success('Login realizado com sucesso!');
         return;
       }
@@ -83,4 +91,3 @@ export const useAuthLogin = () => {
     login
   };
 };
-

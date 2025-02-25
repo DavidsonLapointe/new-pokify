@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -78,7 +79,7 @@ function AppRoutes() {
           path="/auth" 
           element={
             session ? (
-              <Navigate to="/admin/prompt" replace />
+              <Navigate to="/organization/dashboard" replace />
             ) : (
               <Auth />
             )
@@ -98,7 +99,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<Navigate to="dashboard" replace />} />
+          <Route path="" element={<Navigate to="prompt" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
@@ -121,7 +122,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="" element={<Navigate to="profile" replace />} />
+          <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="profile" element={<OrganizationProfile />} />
           <Route path="dashboard" element={<OrganizationDashboard />} />
           <Route path="calls" element={<OrganizationCalls />} />
