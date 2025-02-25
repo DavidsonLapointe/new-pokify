@@ -38,100 +38,41 @@ export function UserProvider({ children }: { children: ReactNode }) {
             phone,
             role,
             status,
+            permissions,
             created_at,
-            last_access,
-            avatar,
-            organizations:organizations (
-              id,
-              name,
-              nome_fantasia,
-              status,
-              plan,
-              integrated_crm,
-              integrated_llm,
-              email,
-              phone,
-              cnpj,
-              admin_name,
-              admin_email,
-              contract_signed_at,
-              created_at,
-              logo,
-              logradouro,
-              numero,
-              complemento,
-              bairro,
-              cidade,
-              estado,
-              cep
-            )
+            last_access
           `)
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error("Error loading profile:", error);
           throw error;
         }
 
+        if (!profile) {
+          console.error("No profile found");
+          throw new Error("Perfil não encontrado");
+        }
+
         console.log("Profile loaded:", profile);
 
-        if (profile) {
-          const userData: User = {
-            id: profile.id,
-            name: profile.name || '',
-            email: profile.email || '',
-            phone: profile.phone || '',
-            role: profile.role || 'leadly_employee',
-            status: profile.status || 'active',
-            createdAt: profile.created_at,
-            lastAccess: profile.last_access,
-            permissions: profile.role === 'leadly_employee' ? [
-              'dashboard',
-              'organizations',
-              'users',
-              'plans',
-              'analysis-packages',
-              'financial',
-              'integrations',
-              'prompt',
-              'settings',
-              'profile'
-            ] : ['profile'],
-            logs: [],
-            organization: profile.organizations ? {
-              id: profile.organizations.id,
-              name: profile.organizations.name || '',
-              nomeFantasia: profile.organizations.nome_fantasia || '',
-              status: profile.organizations.status || 'active',
-              plan: profile.organizations.plan || '',
-              users: [],
-              integratedCRM: profile.organizations.integrated_crm || null,
-              integratedLLM: profile.organizations.integrated_llm || null,
-              email: profile.organizations.email || '',
-              phone: profile.organizations.phone || '',
-              cnpj: profile.organizations.cnpj || '',
-              adminName: profile.organizations.admin_name || '',
-              adminEmail: profile.organizations.admin_email || '',
-              contractSignedAt: profile.organizations.contract_signed_at,
-              createdAt: profile.organizations.created_at || '',
-              logo: profile.organizations.logo,
-              address: profile.organizations.logradouro ? {
-                logradouro: profile.organizations.logradouro || '',
-                numero: profile.organizations.numero || '',
-                complemento: profile.organizations.complemento || '',
-                bairro: profile.organizations.bairro || '',
-                cidade: profile.organizations.cidade || '',
-                estado: profile.organizations.estado || '',
-                cep: profile.organizations.cep || ''
-              } : undefined
-            } : null,
-            avatar: profile.avatar || '',
-          };
+        const userData: User = {
+          id: profile.id,
+          name: profile.name || '',
+          email: profile.email || '',
+          phone: profile.phone || '',
+          role: profile.role || 'leadly_employee',
+          status: profile.status || 'active',
+          createdAt: profile.created_at,
+          lastAccess: profile.last_access,
+          permissions: profile.permissions || {},
+          logs: [],
+          avatar: ''
+        };
 
-          console.log("Setting user data:", userData);
-          setUser(userData);
-        }
+        console.log("Setting user data:", userData);
+        setUser(userData);
       } catch (error) {
         console.error('Error loading user profile:', error);
         toast.error('Erro ao carregar perfil do usuário');
@@ -156,7 +97,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           avatar: newUser.avatar,
           role: newUser.role,
         })
-        .eq('id', String(newUser.id));
+        .eq('id', newUser.id);
 
       if (error) throw error;
 
