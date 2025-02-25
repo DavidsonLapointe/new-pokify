@@ -57,6 +57,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         console.log("Profile loaded:", profile);
 
+        // Ensure permissions is an object, defaulting to empty object if null
+        const permissions = profile.permissions as { [key: string]: boolean } || {};
+
         const userData: User = {
           id: profile.id,
           name: profile.name || '',
@@ -66,7 +69,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           status: profile.status || 'active',
           createdAt: profile.created_at,
           lastAccess: profile.last_access,
-          permissions: profile.permissions || {},
+          permissions: permissions,
           logs: [],
           avatar: ''
         };

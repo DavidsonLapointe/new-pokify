@@ -18,7 +18,7 @@ export interface User {
   status: UserStatus;
   createdAt: string;
   lastAccess?: string;
-  permissions: string[];  // Mudamos de { [key: string]: any } para string[]
+  permissions: { [key: string]: boolean };  // Changed from string[] to object
   logs: UserLog[];
   avatar?: string;
   organization?: Organization;  // Atualizamos para incluir todos os campos necessários
