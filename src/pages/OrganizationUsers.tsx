@@ -23,9 +23,11 @@ const OrganizationUsers = () => {
     const fetchOrganizationUsers = async () => {
       try {
         if (!currentUser?.organization?.id) {
-          console.log("No organization ID found");
+          console.log("No organization ID found", currentUser);
           return;
         }
+
+        console.log("Fetching users for organization:", currentUser.organization.id);
 
         const { data: profiles, error } = await supabase
           .from('profiles')
@@ -39,13 +41,21 @@ const OrganizationUsers = () => {
             permissions,
             created_at,
             last_access,
-            avatar
+            avatar,
+            organization_id
           `)
           .eq('organization_id', currentUser.organization.id);
 
         if (error) {
           console.error("Error fetching users:", error);
           toast.error("Erro ao carregar usuários");
+          return;
+        }
+
+        console.log("Fetched profiles:", profiles);
+
+        if (!profiles || profiles.length === 0) {
+          console.log("No users found for organization");
           return;
         }
 
@@ -66,19 +76,21 @@ const OrganizationUsers = () => {
 
           return {
             id: profile.id,
-            name: profile.name,
-            email: profile.email,
+            name: profile.name || '',
+            email: profile.email || '',
             phone: profile.phone || '',
-            role: profile.role,
-            status: profile.status,
+            role: profile.role || 'seller',
+            status: profile.status || 'active',
             createdAt: profile.created_at,
             lastAccess: profile.last_access || profile.created_at,
             permissions: formattedPermissions,
             logs: [], // You might want to fetch logs separately if needed
-            avatar: profile.avatar || ''
+            avatar: profile.avatar || '',
+            organization: currentUser.organization // Add organization data
           };
         });
 
+        console.log("Formatted users:", formattedUsers);
         setUsers(formattedUsers);
       } catch (error) {
         console.error("Error in fetchOrganizationUsers:", error);
