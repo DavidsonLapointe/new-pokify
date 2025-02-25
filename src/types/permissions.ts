@@ -13,19 +13,15 @@ export interface RoutePermission {
   hasTabs?: boolean;
 }
 
-// Rotas básicas disponíveis
+// Rotas disponíveis para usuários da organização
 export const availablePermissions = [
   "dashboard",           // Tem subpermissões (abas)
-  "leads",
-  "users",
-  "integrations",
-  "settings",           // Tem subpermissões (abas)
-  "plan",
-  "profile",
-  "organizations",
-  "analysis-packages",
-  "financial",
-  "prompt"
+  "leads",              // Leads
+  "users",              // Usuários
+  "integrations",       // Integrações
+  "settings",           // Configurações
+  "plan",              // Plano
+  "profile"            // Perfil
 ];
 
 // Subpermissões para páginas com abas
@@ -46,3 +42,20 @@ export const settingsTabPermissions = [
   'settings.system',
   'settings.permissions'
 ];
+
+// Labels em português para as permissões
+export const permissionLabels: { [key: string]: string } = {
+  dashboard: "Dashboard",
+  leads: "Leads",
+  users: "Usuários",
+  integrations: "Integrações",
+  settings: "Configurações",
+  plan: "Plano",
+  profile: "Meu Perfil",
+  'dashboard.leads': "Leads",
+  'dashboard.uploads': "Uploads",
+  'dashboard.performance': "Performance",
+  'dashboard.objections': "Objeções",
+  'dashboard.suggestions': "Sugestões",
+  'dashboard.sellers': "Vendedores"
+};

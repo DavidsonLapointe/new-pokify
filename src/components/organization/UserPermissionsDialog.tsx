@@ -9,12 +9,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { User } from "@/types";
-import { PermissionRow } from "./PermissionRow";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { availablePermissions } from "@/types/permissions";
+import { availablePermissions, permissionLabels } from "@/types/permissions";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -48,10 +47,6 @@ export const UserPermissionsDialog = ({
     handleClose,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
-  // Debug logs para acompanhar o estado das permissões
-  console.log("UserPermissionsDialog - Current user permissions:", user.permissions);
-  console.log("UserPermissionsDialog - Temp permissions:", tempPermissions);
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
@@ -73,7 +68,7 @@ export const UserPermissionsDialog = ({
                 className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
               />
               <Label htmlFor="profile" className="text-sm">
-                Meu Perfil
+                {permissionLabels['profile']}
               </Label>
             </div>
 
@@ -87,7 +82,7 @@ export const UserPermissionsDialog = ({
                   className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
                 />
                 <Label htmlFor="dashboard" className="text-sm">
-                  Dashboard
+                  {permissionLabels['dashboard']}
                 </Label>
               </div>
 
@@ -103,7 +98,7 @@ export const UserPermissionsDialog = ({
                           className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
                         />
                         <Label htmlFor={`dashboard.${tab.id}`} className="text-sm">
-                          {tab.label}
+                          {permissionLabels[`dashboard.${tab.id}`]}
                         </Label>
                       </div>
                     ))}
@@ -123,8 +118,8 @@ export const UserPermissionsDialog = ({
                     onCheckedChange={() => handlePermissionChange(permission)}
                     className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
                   />
-                  <Label htmlFor={permission} className="text-sm capitalize">
-                    {permission}
+                  <Label htmlFor={permission} className="text-sm">
+                    {permissionLabels[permission]}
                   </Label>
                 </div>
               ))}
