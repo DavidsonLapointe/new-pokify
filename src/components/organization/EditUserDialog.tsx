@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { UserForm } from "@/components/admin/users/UserForm";
 import { EditUserDialogProps, DEFAULT_PERMISSIONS } from "@/components/admin/users/types";
 import { Badge } from "@/components/ui/badge";
+import { useUser } from "@/contexts/UserContext";
 
 export const EditUserDialog = ({
   isOpen,
@@ -21,6 +22,7 @@ export const EditUserDialog = ({
   user,
   onUserUpdate,
 }: EditUserDialogProps) => {
+  const { user: currentUser } = useUser();
   const [editedUser, setEditedUser] = useState<User | null>(user);
   const [pendingStatus, setPendingStatus] = useState<string>("");
   const [pendingRole, setPendingRole] = useState<UserRole | "">("");
@@ -110,9 +112,9 @@ export const EditUserDialog = ({
   const getAvailableRoles = (currentRole: UserRole): { value: UserRole; label: string }[] => {
     switch (currentRole) {
       case "admin":
-        return [{ value: "seller" as UserRole, label: "Vendedor" }];
+        return [{ value: "seller", label: "Vendedor" }];
       case "seller":
-        return [{ value: "admin" as UserRole, label: "Administrador" }];
+        return [{ value: "admin", label: "Administrador" }];
       default:
         return [];
     }
@@ -136,6 +138,7 @@ export const EditUserDialog = ({
           onStatusChange={setPendingStatus}
           availableStatusOptions={editedUser ? getAvailableStatusOptions(editedUser.status) : []}
           availableRoles={editedUser ? getAvailableRoles(editedUser.role) : []}
+          currentUserId={currentUser?.id}
           currentStatusLabel={
             editedUser ? (
               <div className="flex items-center gap-2">
