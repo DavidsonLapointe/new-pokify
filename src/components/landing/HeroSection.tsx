@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import { LeadForm } from "./LeadForm";
-import { AuthDebugger } from "@/components/auth/AuthDebugger";
 
 export function HeroSection() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -11,7 +10,6 @@ export function HeroSection() {
   return (
     <section className="pt-32 pb-20">
       <div className="container mx-auto px-4">
-        <AuthDebugger />
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-2 mb-6">
