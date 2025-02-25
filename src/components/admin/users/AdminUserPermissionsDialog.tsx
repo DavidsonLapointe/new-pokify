@@ -1,6 +1,5 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { User } from "@/types";
 import { useEffect, useState } from "react";
 import { availableAdminRoutePermissions } from "@/types/admin-permissions";
@@ -23,42 +22,39 @@ export const AdminUserPermissionsDialog = ({
   onUserUpdate,
 }: AdminUserPermissionsDialogProps) => {
   const { user: currentUser, updateUser: updateCurrentUser } = useUser();
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(user.permissions || []);
+  const [selectedPermissions, setSelectedPermissions] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (isOpen) {
-      console.log("Permissões iniciais:", user.permissions);
-      setSelectedPermissions(user.permissions || []);
+      console.log("Initial permissions:", user.permissions);
+      setSelectedPermissions(user.permissions || {});
     }
   }, [isOpen, user]);
 
   const handlePermissionChange = (routeId: string) => {
     if (routeId === 'profile') return;
 
-    setSelectedPermissions(prev => {
-      if (prev.includes(routeId)) {
-        return prev.filter(p => p !== routeId);
-      } else {
-        return [...prev, routeId];
-      }
-    });
+    setSelectedPermissions(prev => ({
+      ...prev,
+      [routeId]: !prev[routeId]
+    }));
   };
 
   const handleSave = () => {
     try {
-      // Garante que as rotas padrão estão sempre presentes
-      let updatedPermissions = [...selectedPermissions];
-      if (!updatedPermissions.includes('profile')) {
-        updatedPermissions.push('profile');
-      }
+      // Ensure 'profile' permission is always present
+      const updatedPermissions = {
+        ...selectedPermissions,
+        profile: true
+      };
 
       const updatedUser = {
         ...user,
         permissions: updatedPermissions
       };
 
-      // Se estiver atualizando o usuário atual, atualiza o contexto
-      if (user.id === currentUser.id) {
+      // Update current user if it's the same user
+      if (user.id === currentUser?.id) {
         updateCurrentUser(updatedUser);
       }
 
@@ -73,7 +69,7 @@ export const AdminUserPermissionsDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Permissões do Usuário - {user.name}</DialogTitle>
           <DialogDescription>
@@ -81,33 +77,26 @@ export const AdminUserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-6">
-            {availableAdminRoutePermissions.map((route) => (
-              <div key={route.id} className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`section-${route.id}`}
-                    checked={selectedPermissions.includes(route.id)}
-                    onCheckedChange={() => handlePermissionChange(route.id)}
-                    disabled={route.id === 'profile'}
-                    className={`h-4 w-4 rounded-[4px] border ${
-                      route.id === 'profile'
-                        ? 'border-gray-300 data-[state=checked]:bg-gray-300'
-                        : 'border-primary data-[state=checked]:bg-[#9b87f5]'
-                    }`}
-                  />
-                  <label
-                    htmlFor={`section-${route.id}`}
-                    className="font-medium"
-                  >
-                    {route.label}
-                  </label>
-                </div>
+        <div className="space-y-6">
+          {availableAdminRoutePermissions.map((route) => (
+            <div key={route.id} className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`section-${route.id}`}
+                  checked={selectedPermissions[route.id] ?? false}
+                  onCheckedChange={() => handlePermissionChange(route.id)}
+                  disabled={route.id === 'profile'}
+                />
+                <label
+                  htmlFor={`section-${route.id}`}
+                  className="font-medium"
+                >
+                  {route.label}
+                </label>
               </div>
-            ))}
-          </div>
-        </ScrollArea>
+            </div>
+          ))}
+        </div>
 
         <div className="flex justify-end space-x-2 pt-4">
           <Button variant="cancel" onClick={onClose}>

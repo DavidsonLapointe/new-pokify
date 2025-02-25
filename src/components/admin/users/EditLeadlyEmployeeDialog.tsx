@@ -1,6 +1,6 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -9,13 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { User, UserRole, UserStatus } from "@/types";
 import { toast } from "sonner";
 import { UserForm } from "./UserForm";
@@ -42,7 +35,11 @@ export const EditLeadlyEmployeeDialog = ({
 
     const newRole = pendingRole || editedUser.role;
     
-    const newPermissions = DEFAULT_PERMISSIONS[newRole];
+    // Convert array permissions to object permissions
+    const newPermissions = DEFAULT_PERMISSIONS[newRole].reduce((acc, permission) => ({
+      ...acc,
+      [permission]: true
+    }), {} as { [key: string]: boolean });
 
     const updatedUser = {
       ...editedUser,
