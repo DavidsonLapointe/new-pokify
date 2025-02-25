@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { Permissions } from "@/types/permissions";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,13 +61,13 @@ export default function Auth() {
       }
 
       // Verifica se tem permissão para acessar a página de prompts
-      const permissions = profile.permissions || {};
+      const permissions = profile.permissions as Permissions || {};
       console.log("User permissions:", permissions);
 
-      if (!permissions.prompt && profile.role !== 'leadly_employee') {
+      if (!permissions['prompt'] && profile.role !== 'leadly_employee') {
         console.log("User doesn't have access to prompts page");
         // Se não tem acesso a prompts, tenta redirecionar para dashboard ou perfil
-        if (permissions.dashboard) {
+        if (permissions['dashboard']) {
           navigate('/admin/dashboard', { replace: true });
         } else {
           navigate('/admin/profile', { replace: true });
