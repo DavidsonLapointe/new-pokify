@@ -4,6 +4,7 @@ import { availablePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const dashboardTabs = [
   'leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'
@@ -15,12 +16,13 @@ export const useUserPermissions = (
   onClose: () => void,
   onUserUpdate: (user: User) => void
 ) => {
-  const { user: currentUser, updateUser: updateCurrentUser } = useUser();
+  const { user: currentUser } = useUser();
   const [saving, setSaving] = useState(false);
   const [tempPermissions, setTempPermissions] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (isOpen && user) {
+      // Debug log para verificar as permissões carregadas
       console.log('Permissões atuais do usuário:', user.permissions);
       setTempPermissions(user.permissions || {});
     } else {
@@ -66,30 +68,38 @@ export const useUserPermissions = (
         newPermissions[routeId] = !prev[routeId];
       }
 
+      // Debug log para verificar as mudanças nas permissões
       console.log('Novas permissões após mudança:', newPermissions);
       return newPermissions;
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+    
     try {
+      // Atualiza as permissões no banco de dados
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          permissions: { ...tempPermissions, profile: true }
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Atualiza o usuário localmente
       const updatedUser = {
         ...user,
         permissions: { ...tempPermissions, profile: true }
       };
 
-      console.log('Salvando usuário com permissões:', updatedUser.permissions);
-
-      if (user.id === currentUser?.id) {
-        updateCurrentUser(updatedUser);
-      }
-
       onUserUpdate(updatedUser);
       onClose();
-      toast.success("Permissões atualizadas com sucesso!");
+      toast.success("Permissões atualizadas com sucesso");
     } catch (error) {
+      console.error("Erro ao salvar permissões:", error);
       toast.error("Erro ao atualizar permissões");
     } finally {
       setSaving(false);

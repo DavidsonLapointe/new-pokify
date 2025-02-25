@@ -14,7 +14,7 @@ import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { availableAdminRoutePermissions } from "@/types/admin-permissions";
+import { availablePermissions } from "@/types/permissions";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -48,11 +48,15 @@ export const UserPermissionsDialog = ({
     handleClose,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
+  // Debug logs para acompanhar o estado das permissões
+  console.log("UserPermissionsDialog - Current user permissions:", user.permissions);
+  console.log("UserPermissionsDialog - Temp permissions:", tempPermissions);
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Permissões do Usuário - {user.name}</DialogTitle>
+          <DialogTitle>Permissões do Usuário - {user.name || user.email}</DialogTitle>
           <DialogDescription>
             Gerencie as permissões de acesso deste usuário
           </DialogDescription>
@@ -60,42 +64,70 @@ export const UserPermissionsDialog = ({
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6">
-            {availableAdminRoutePermissions.map((route) => {
-              const hasPermissions = !!tempPermissions[route.id];
-              const isRouteEnabled = route.isDefault || hasPermissions;
-              const isProfile = route.id === 'profile';
-              
-              return (
-                <div key={route.id} className="space-y-4">
-                  <PermissionRow
-                    route={route}
-                    isRouteEnabled={isRouteEnabled}
-                    isProfile={isProfile}
-                    onPermissionChange={handlePermissionChange}
-                  />
+            {/* Perfil (sempre habilitado) */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="profile"
+                checked={true}
+                disabled={true}
+                className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
+              />
+              <Label htmlFor="profile" className="text-sm">
+                Meu Perfil
+              </Label>
+            </div>
 
-                  {route.id === 'dashboard' && hasPermissions && (
-                    <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        {dashboardTabs.map((tab) => (
-                          <div key={tab.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`tab-${tab.id}`}
-                              checked={!!tempPermissions[`dashboard.${tab.id}`]}
-                              onCheckedChange={() => handlePermissionChange(`dashboard.${tab.id}`)}
-                              className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
-                            />
-                            <Label htmlFor={`tab-${tab.id}`} className="text-sm">
-                              {tab.label}
-                            </Label>
-                          </div>
-                        ))}
+            {/* Dashboard e suas subpermissões */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dashboard"
+                  checked={tempPermissions['dashboard'] || false}
+                  onCheckedChange={() => handlePermissionChange('dashboard')}
+                  className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
+                />
+                <Label htmlFor="dashboard" className="text-sm">
+                  Dashboard
+                </Label>
+              </div>
+
+              {tempPermissions['dashboard'] && (
+                <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {dashboardTabs.map((tab) => (
+                      <div key={tab.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`dashboard.${tab.id}`}
+                          checked={tempPermissions[`dashboard.${tab.id}`] || false}
+                          onCheckedChange={() => handlePermissionChange(`dashboard.${tab.id}`)}
+                          className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
+                        />
+                        <Label htmlFor={`dashboard.${tab.id}`} className="text-sm">
+                          {tab.label}
+                        </Label>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              );
-            })}
+              )}
+            </div>
+
+            {/* Outras permissões principais */}
+            {availablePermissions
+              .filter(permission => !['dashboard', 'profile'].includes(permission))
+              .map(permission => (
+                <div key={permission} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={permission}
+                    checked={tempPermissions[permission] || false}
+                    onCheckedChange={() => handlePermissionChange(permission)}
+                    className="h-4 w-4 rounded border-primary data-[state=checked]:bg-[#9b87f5]"
+                  />
+                  <Label htmlFor={permission} className="text-sm capitalize">
+                    {permission}
+                  </Label>
+                </div>
+              ))}
           </div>
         </ScrollArea>
 
