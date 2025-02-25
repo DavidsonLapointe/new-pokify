@@ -21,6 +21,31 @@ export function AdminContactForm({
 }: AdminContactFormProps) {
   const { user } = useUser();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+    
+    if (value.length <= 11) {
+      // Formata o número conforme vai digitando
+      if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      }
+      if (value.length > 9) {
+        value = `${value.slice(0, 9)}-${value.slice(9)}`;
+      }
+      
+      const event = {
+        ...e,
+        target: {
+          ...e.target,
+          name: 'phone',
+          value
+        }
+      };
+      
+      onInputChange(event);
+    }
+  };
+
   return (
     <div className="grid gap-6">
       <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 space-y-6">
@@ -60,8 +85,9 @@ export function AdminContactForm({
               name="phone"
               type="tel"
               value={formData.phone}
-              onChange={onInputChange}
+              onChange={handlePhoneChange}
               required
+              maxLength={15}
               className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
               placeholder="(00) 00000-0000"
             />
