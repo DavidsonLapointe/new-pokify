@@ -52,40 +52,34 @@ export default function Auth() {
           )
         `)
         .eq('id', authData.user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error("Error fetching profile:", profileError);
-        setError("Erro ao carregar perfil do usuário");
-        return; // Não faz logout, apenas retorna
+        throw new Error("Erro ao carregar perfil do usuário");
       }
 
       if (!profile) {
         console.error("No profile found for user");
-        setError("Perfil não encontrado");
-        return; // Não faz logout, apenas retorna
+        throw new Error("Perfil não encontrado");
       }
 
       // Verifica status do usuário
       if (profile.status !== 'active') {
-        setError("Usuário inativo");
-        return; // Não faz logout, apenas retorna
+        throw new Error("Usuário inativo");
       }
 
       // Verifica organização baseado no tipo de usuário
       if (profile.role === 'leadly_employee') {
         if (!profile.company) {
-          setError("Usuário Leadly sem vínculo com a empresa");
-          return; // Não faz logout, apenas retorna
+          throw new Error("Usuário Leadly sem vínculo com a empresa");
         }
       } else {
         if (!profile.organization) {
-          setError("Usuário sem vínculo com organização");
-          return; // Não faz logout, apenas retorna
+          throw new Error("Usuário sem vínculo com organização");
         }
         if (profile.organization.status !== 'active') {
-          setError("Organização inativa");
-          return; // Não faz logout, apenas retorna
+          throw new Error("Organização inativa");
         }
       }
 
@@ -95,7 +89,6 @@ export default function Auth() {
       console.error("Login error:", error);
       setError(error.message);
       toast.error("Erro ao fazer login: " + error.message);
-      // Removido o signOut para evitar o logout automático em caso de erro
     } finally {
       setIsLoading(false);
     }
