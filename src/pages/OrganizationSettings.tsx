@@ -11,6 +11,12 @@ import { CustomField } from "@/components/settings/types";
 const OrganizationSettings = () => {
   const { toast } = useToast();
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
+  
+  // Add state for funnel configuration
+  const [funnelName, setFunnelName] = useState("");
+  const [stageName, setStageName] = useState("");
+  const [isDefaultConfigSaved, setIsDefaultConfigSaved] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleOpenNewField = () => {
     // Implementar lógica para abrir modal de novo campo
@@ -20,6 +26,27 @@ const OrganizationSettings = () => {
   const handleOpenEditField = (field: CustomField) => {
     // Implementar lógica para abrir modal de edição
     console.log("Open edit field modal", field);
+  };
+
+  const handleSaveDefaultConfig = () => {
+    if (!funnelName || !stageName) {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos obrigatórios",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsDefaultConfigSaved(true);
+    setIsEditing(false);
+    toast({
+      title: "Sucesso",
+      description: "Configurações do funil salvas com sucesso",
+    });
+  };
+
+  const handleToggleEdit = () => {
+    setIsEditing(!isEditing);
   };
 
   return (
@@ -41,7 +68,16 @@ const OrganizationSettings = () => {
             </TabsList>
             
             <TabsContent value="funnel">
-              <FunnelSection />
+              <FunnelSection
+                funnelName={funnelName}
+                stageName={stageName}
+                setFunnelName={setFunnelName}
+                setStageName={setStageName}
+                isDefaultConfigSaved={isDefaultConfigSaved}
+                isEditing={isEditing}
+                onSaveDefaultConfig={handleSaveDefaultConfig}
+                onToggleEdit={handleToggleEdit}
+              />
             </TabsContent>
             
             <TabsContent value="fields">
