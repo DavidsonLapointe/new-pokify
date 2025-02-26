@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 const AdminDashboard = () => {
   return (
     <div className="space-y-6">
-      <div className="text-left">
+      <div>
         <h1 className="text-3xl font-bold">Dashboard Administrativo</h1>
         <p className="text-muted-foreground">
           Visão geral da plataforma Leadly

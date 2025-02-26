@@ -1,122 +1,121 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "@/types";
+import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
+import { AddUserDialog } from "@/components/organization/AddUserDialog";
+import { EditUserDialog } from "@/components/organization/EditUserDialog";
+import { UsersTable } from "@/components/organization/UsersTable";
+import { UserPermissionsDialog } from "@/components/organization/UserPermissionsDialog";
 import { OrganizationUsersHeader } from "@/components/organization/users/OrganizationUsersHeader";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-const mockUsers: User[] = [
-  {
-    id: "1",
-    name: "João Silva",
-    email: "joao@example.com",
-    phone: "(11) 99999-9999",
-    role: "admin",
-    status: "active",
-    lastAccess: "2024-03-10T10:00:00.000Z",
-    createdAt: "2024-03-01T10:00:00.000Z",
-    permissions: {},
-    logs: []
-  },
-  {
-    id: "2",
-    name: "Maria Souza",
-    email: "maria@example.com",
-    phone: "(11) 98888-8888",
-    role: "seller",
-    status: "active",
-    lastAccess: "2024-03-05T14:30:00.000Z",
-    createdAt: "2024-03-01T10:00:00.000Z",
-    permissions: {},
-    logs: []
-  },
-  {
-    id: "3",
-    name: "Carlos Pereira",
-    email: "carlos@example.com",
-    phone: "(11) 97777-7777",
-    role: "seller",
-    status: "pending",
-    createdAt: "2024-03-01T10:00:00.000Z",
-    permissions: {},
-    logs: []
-  },
-];
+import { useOrganizationUsers } from "@/hooks/useOrganizationUsers";
 
 const OrganizationUsers = () => {
-  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const { user: currentUser } = useUser();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  
+  const { 
+    users, 
+    loading, 
+    fetchOrganizationUsers, 
+    updateUser 
+  } = useOrganizationUsers(currentUser?.organization?.id);
+
+  // Configurar o listener de realtime
+  useEffect(() => {
+    if (!currentUser?.organization?.id) return;
+
+    const channel = supabase
+      .channel('organization-users-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `organization_id=eq.${currentUser.organization.id}`
+        },
+        (payload) => {
+          console.log('Mudança detectada:', payload);
+          fetchOrganizationUsers();
+        }
+      )
+      .subscribe();
+
+    fetchOrganizationUsers();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser?.organization?.id]);
 
   const handleAddUser = () => {
-    setIsInviteDialogOpen(true);
+    fetchOrganizationUsers();
+    setIsAddDialogOpen(false);
   };
 
-  const handleInviteUser = (newUser: User) => {
-    setUsers([...users, newUser]);
-    setIsInviteDialogOpen(false);
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsEditDialogOpen(true);
   };
+
+  const handleEditPermissions = (user: User) => {
+    setSelectedUser(user);
+    setIsPermissionsDialogOpen(true);
+  };
+
+  const handleUserUpdate = async (updatedUser: User) => {
+    const success = await updateUser(updatedUser);
+    if (success) {
+      setIsEditDialogOpen(false);
+      setIsPermissionsDialogOpen(false);
+    }
+  };
+
+  if (!currentUser) {
+    return <div>Carregando informações do usuário...</div>;
+  }
 
   return (
     <div className="space-y-8">
-      <div className="text-left">
-        <h1 className="text-3xl font-bold">Usuários</h1>
-        <p className="text-muted-foreground">
-          Gerencie os usuários da sua organização
-        </p>
-      </div>
+      <OrganizationUsersHeader onAddUser={() => setIsAddDialogOpen(true)} />
 
-      <OrganizationUsersHeader onAddUser={handleAddUser} />
+      {loading ? (
+        <div>Carregando usuários...</div>
+      ) : (
+        <UsersTable
+          users={users}
+          onEditUser={handleEditUser}
+          onEditPermissions={handleEditPermissions}
+        />
+      )}
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Função</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Último Acesso</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map(user => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role === 'admin' ? 'Administrador' : 'Vendedor'}</TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    user.status === 'active' ? 'bg-green-100 text-green-800' :
-                    user.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {user.status === 'active' ? 'Ativo' :
-                     user.status === 'pending' ? 'Pendente' : 'Inativo'}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {user.lastAccess ? new Date(user.lastAccess).toLocaleDateString('pt-BR') : 'Nunca acessou'}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {/* Action buttons will be implemented later */}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <AddUserDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onUserAdded={handleAddUser}
+      />
 
-      <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Convidar Novo Usuário</DialogTitle>
-          </DialogHeader>
-          {/* Dialog content will be implemented later */}
-        </DialogContent>
-      </Dialog>
+      {selectedUser && (
+        <>
+          <EditUserDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => setIsEditDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
+
+          <UserPermissionsDialog
+            isOpen={isPermissionsDialogOpen}
+            onClose={() => setIsPermissionsDialogOpen(false)}
+            user={selectedUser}
+            onUserUpdate={handleUserUpdate}
+          />
+        </>
+      )}
     </div>
   );
 };

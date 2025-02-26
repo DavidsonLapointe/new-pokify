@@ -121,9 +121,9 @@ const AdminAnalysisPackages = () => {
 
   return (
     <div className="space-y-6">
-      <div className="text-left">
-        <h1 className="text-3xl font-bold">Pacotes de Análise</h1>
-        <p className="text-muted-foreground">
+      <div>
+        <h1 className="text-3xl font-semibold">Pacotes de Análise</h1>
+        <p className="text-muted-foreground mt-1">
           Gerencie os pacotes de créditos adicionais para análises
         </p>
       </div>

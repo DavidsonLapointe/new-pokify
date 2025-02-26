@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { CallsHeader } from "@/components/calls/CallsHeader";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
@@ -40,8 +41,10 @@ export const LeadsPageHeader = ({
     }
   };
 
+  // Verifica se o usuário tem acesso às integrações
   const hasIntegrationsAccess = Boolean(currentUser.permissions['integrations']);
 
+  // Filtra usuários ativos com acesso a integrações
   const integrationUsers = organization.users.filter(user => 
     user.role === "admin" || 
     (Boolean(user.permissions['integrations']) && user.status === "active")
@@ -50,12 +53,10 @@ export const LeadsPageHeader = ({
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="text-left">
-          <h1 className="text-3xl font-bold">Análise de Leads</h1>
-          <p className="text-muted-foreground">
-            Visualize e gerencie todos os seus leads.
-          </p>
-        </div>
+        <CallsHeader 
+          title="Análise de Leads"
+          description="Visualize e gerencie todos os seus leads."
+        />
 
         <div className="flex gap-2">
           <Button onClick={handleNewLeadClick}>

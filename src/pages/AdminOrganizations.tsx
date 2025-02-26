@@ -90,13 +90,8 @@ const Organizations = () => {
 
   return (
     <div className="space-y-8">
-      <div className="text-left">
-        <h1 className="text-3xl font-bold">Empresas</h1>
-        <p className="text-muted-foreground">
-          Gerencie as empresas cadastradas na plataforma
-        </p>
-      </div>
-
+      <OrganizationsHeader onCreateNew={() => setIsCreateDialogOpen(true)} />
+      
       <OrganizationsSearch 
         value={searchTerm}
         onChange={setSearchTerm}

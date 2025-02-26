@@ -102,9 +102,9 @@ const OrganizationPlan = () => {
 
   return (
     <div className="space-y-2">
-      <div className="text-left mb-2">
-        <h1 className="text-3xl font-bold">Meu Plano</h1>
-        <p className="text-muted-foreground">
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold">Meu Plano</h1>
+        <p className="text-muted-foreground text-sm">
           Gerencie seu plano e consumo de análises
         </p>
       </div>

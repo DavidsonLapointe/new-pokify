@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FinancialTitlesTable } from "@/components/admin/financial/FinancialTitlesTable";
 import { FinancialHeader } from "@/components/admin/financial/FinancialHeader";
@@ -76,13 +77,6 @@ const AdminFinancial = () => {
 
   return (
     <div className="space-y-6">
-      <div className="text-left">
-        <h1 className="text-3xl font-bold">Financeiro</h1>
-        <p className="text-muted-foreground">
-          Gerencie os títulos financeiros das empresas
-        </p>
-      </div>
-
       <FinancialHeader />
       <FinancialFilters onSearch={handleSearch} />
       <FinancialTitlesTable titles={filteredTitles} />

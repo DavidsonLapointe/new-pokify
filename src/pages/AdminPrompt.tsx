@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
@@ -147,11 +148,17 @@ const AdminPrompt = () => {
 
   return (
     <div className="space-y-6">
-      <div className="text-left">
-        <h1 className="text-3xl font-bold">Prompts</h1>
-        <p className="text-muted-foreground mt-1">
-          Gerencie seus prompts de IA
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-semibold">Prompts</h1>
+          <p className="text-muted-foreground mt-1">
+            Gerencie seus prompts de IA
+          </p>
+        </div>
+        <Button onClick={handleNewPrompt}>
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Prompt
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -46,7 +46,7 @@ const OrganizationIntegrations = () => {
     <div className="space-y-12">
       <div className="flex items-center gap-2">
         <Network className="w-6 h-6" />
-        <div className="text-left">
+        <div>
           <h1 className="text-3xl font-bold">Integrações</h1>
           <p className="text-muted-foreground">
             Configure as integrações com outras ferramentas

@@ -94,8 +94,8 @@ export default function OrganizationCompany() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8 text-left">
-        <h1 className="text-3xl font-bold">Minha Empresa</h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-medium mb-2">Minha Empresa</h1>
         <p className="text-muted-foreground">
           Gerencie as informações da sua empresa
         </p>

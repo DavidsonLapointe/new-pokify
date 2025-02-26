@@ -8,10 +8,16 @@ interface OrganizationUsersHeaderProps {
 
 export const OrganizationUsersHeader = ({ onAddUser }: OrganizationUsersHeaderProps) => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-3xl font-bold">Usuários</h1>
+        <p className="text-muted-foreground">
+          Gerencie os usuários da sua organização
+        </p>
+      </div>
       <Button onClick={onAddUser}>
         <UserPlus className="w-4 h-4 mr-2" />
-        Adicionar Usuário
+        Novo Usuário
       </Button>
     </div>
   );

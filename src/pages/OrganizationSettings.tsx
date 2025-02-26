@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -10,16 +11,19 @@ const OrganizationSettings = () => {
   const { toast } = useToast();
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   
+  // Add state for funnel configuration
   const [funnelName, setFunnelName] = useState("");
   const [stageName, setStageName] = useState("");
   const [isDefaultConfigSaved, setIsDefaultConfigSaved] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const handleOpenNewField = () => {
+    // Implementar lógica para abrir modal de novo campo
     console.log("Open new field modal");
   };
 
   const handleOpenEditField = (field: CustomField) => {
+    // Implementar lógica para abrir modal de edição
     console.log("Open edit field modal", field);
   };
 
@@ -46,13 +50,6 @@ const OrganizationSettings = () => {
 
   return (
     <div className="container mx-auto py-10">
-      <div className="text-left mb-8">
-        <h1 className="text-3xl font-bold">Configurações</h1>
-        <p className="text-muted-foreground">
-          Configure o funil de vendas e campos personalizados para extração de dados
-        </p>
-      </div>
-
       <Card className="w-full shadow-md">
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-bold">
