@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { OrganizationUser } from "@/types";
-import { OrganizationUsersHeader } from "@/components/organization/users/OrganizationUsersHeader";
-import { OrganizationUsersTable } from "@/components/organization/users/OrganizationUsersTable";
-import { InviteUserDialog } from "@/components/organization/users/InviteUserDialog";
 
-const mockUsers: OrganizationUser[] = [
+import { useState } from "react";
+import { User } from "@/types";
+import { OrganizationUsersHeader } from "@/components/organization/users/OrganizationUsersHeader";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+const mockUsers: User[] = [
   {
     id: "1",
     name: "João Silva",
@@ -13,6 +15,9 @@ const mockUsers: OrganizationUser[] = [
     role: "admin",
     status: "active",
     lastAccess: "2024-03-10T10:00:00.000Z",
+    createdAt: "2024-03-01T10:00:00.000Z",
+    permissions: {},
+    logs: []
   },
   {
     id: "2",
@@ -22,6 +27,9 @@ const mockUsers: OrganizationUser[] = [
     role: "seller",
     status: "active",
     lastAccess: "2024-03-05T14:30:00.000Z",
+    createdAt: "2024-03-01T10:00:00.000Z",
+    permissions: {},
+    logs: []
   },
   {
     id: "3",
@@ -30,18 +38,21 @@ const mockUsers: OrganizationUser[] = [
     phone: "(11) 97777-7777",
     role: "seller",
     status: "pending",
+    createdAt: "2024-03-01T10:00:00.000Z",
+    permissions: {},
+    logs: []
   },
 ];
 
 const OrganizationUsers = () => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-  const [users, setUsers] = useState<OrganizationUser[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>(mockUsers);
 
   const handleAddUser = () => {
     setIsInviteDialogOpen(true);
   };
 
-  const handleInviteUser = (newUser: OrganizationUser) => {
+  const handleInviteUser = (newUser: User) => {
     setUsers([...users, newUser]);
     setIsInviteDialogOpen(false);
   };
@@ -55,14 +66,24 @@ const OrganizationUsers = () => {
         </p>
       </div>
 
-      <OrganizationUsersHeader onAddUser={handleAddUser} />
-      <OrganizationUsersTable users={users} />
+      <div className="flex justify-between items-center">
+        <Button onClick={handleAddUser}>Adicionar Usuário</Button>
+      </div>
 
-      <InviteUserDialog
-        open={isInviteDialogOpen}
-        onOpenChange={setIsInviteDialogOpen}
-        onInvite={handleInviteUser}
-      />
+      <div className="border rounded-lg">
+        <Table>
+          {/* Table content will be implemented later */}
+        </Table>
+      </div>
+
+      <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Convidar Novo Usuário</DialogTitle>
+          </DialogHeader>
+          {/* Dialog content will be implemented later */}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
