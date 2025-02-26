@@ -12,8 +12,8 @@ import { DefaultPermissionsSettings } from "@/components/admin/settings/DefaultP
 const AdminSettings = () => {
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Configurações Globais</h2>
+      <div className="text-left">
+        <h2 className="text-3xl font-bold">Configurações Globais</h2>
         <p className="text-muted-foreground">
           Gerencie as configurações que serão aplicadas a todas as organizações.
         </p>
