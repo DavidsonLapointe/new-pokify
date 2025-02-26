@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { User } from "@/types";
 import { OrganizationUsersHeader } from "@/components/organization/users/OrganizationUsersHeader";
-import { Table } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const mockUsers: User[] = [
@@ -69,7 +69,43 @@ const OrganizationUsers = () => {
 
       <div className="border rounded-lg">
         <Table>
-          {/* Table content will be implemented later */}
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Função</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Último Acesso</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.role === 'admin' ? 'Administrador' : 'Vendedor'}</TableCell>
+                <TableCell>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    user.status === 'active' ? 'bg-green-100 text-green-800' :
+                    user.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {user.status === 'active' ? 'Ativo' :
+                     user.status === 'pending' ? 'Pendente' : 'Inativo'}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  {user.lastAccess ? new Date(user.lastAccess).toLocaleDateString('pt-BR') : 'Nunca acessou'}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {/* Action buttons will be implemented later */}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </div>
 
@@ -86,4 +122,3 @@ const OrganizationUsers = () => {
 };
 
 export default OrganizationUsers;
-
