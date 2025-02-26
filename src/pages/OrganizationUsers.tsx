@@ -3,7 +3,6 @@ import { useState } from "react";
 import { User } from "@/types";
 import { OrganizationUsersHeader } from "@/components/organization/users/OrganizationUsersHeader";
 import { Table } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const mockUsers: User[] = [
@@ -66,9 +65,7 @@ const OrganizationUsers = () => {
         </p>
       </div>
 
-      <div className="flex justify-between items-center">
-        <Button onClick={handleAddUser}>Adicionar Usuário</Button>
-      </div>
+      <OrganizationUsersHeader onAddUser={handleAddUser} />
 
       <div className="border rounded-lg">
         <Table>
@@ -89,3 +86,4 @@ const OrganizationUsers = () => {
 };
 
 export default OrganizationUsers;
+
