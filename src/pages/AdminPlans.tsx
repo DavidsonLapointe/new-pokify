@@ -7,6 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Plus, FileText } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 
@@ -121,7 +128,7 @@ const Plans = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <div>
+        <div className="text-left">
           <h1 className="text-3xl font-semibold">Planos</h1>
           <p className="text-muted-foreground mt-1">
             Gerencie os planos disponíveis na plataforma

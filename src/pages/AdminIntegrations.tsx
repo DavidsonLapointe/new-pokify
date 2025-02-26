@@ -11,9 +11,9 @@ const AdminIntegrations = () => {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold">Integrações</h1>
-          <p className="text-muted-foreground mt-1">
+        <div className="text-left">
+          <h1 className="text-3xl font-bold">Integrações</h1>
+          <p className="text-muted-foreground">
             Gerencie as integrações disponíveis para as empresas
           </p>
         </div>
