@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -115,13 +116,6 @@ const OrganizationLeads = () => {
   return (
     <TooltipProvider>
       <div className="space-y-8">
-        <div className="text-left">
-          <h1 className="text-3xl font-bold">Análise de Leads</h1>
-          <p className="text-muted-foreground">
-            Gerencie e analise seus leads
-          </p>
-        </div>
-
         <LeadsPageHeader
           onUploadClick={() => setIsFindLeadOpen(true)}
           onNewLeadClick={() => setIsCreateLeadOpen(true)}
