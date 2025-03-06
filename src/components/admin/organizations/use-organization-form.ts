@@ -212,7 +212,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
           toast({
             title: "Aviso",
             description: "Empresa criada, mas houve um erro ao enviar os emails. Nossa equipe será notificada.",
-            variant: "warning",
+            variant: "destructive", // Changed from "warning" to "destructive"
           });
           // Continue with success flow even if email fails
         }
@@ -230,7 +230,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         toast({
           title: "Empresa criada parcialmente",
           description: "A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.",
-          variant: "warning",
+          variant: "destructive", // Changed from "warning" to "destructive"
         });
         
         form.reset();
