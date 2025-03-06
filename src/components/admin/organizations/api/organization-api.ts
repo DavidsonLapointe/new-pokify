@@ -43,6 +43,40 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
 };
 
 /**
+ * Transforms database organization format to match Organization type
+ */
+export const mapToOrganizationType = (dbOrganization: any): Organization => {
+  return {
+    id: dbOrganization.id,
+    name: dbOrganization.name,
+    nomeFantasia: dbOrganization.nome_fantasia || "",
+    plan: dbOrganization.plan,
+    users: [],
+    status: dbOrganization.status,
+    pendingReason: dbOrganization.pending_reason,
+    integratedCRM: dbOrganization.integrated_crm,
+    integratedLLM: dbOrganization.integrated_llm,
+    email: dbOrganization.email,
+    phone: dbOrganization.phone || "",
+    cnpj: dbOrganization.cnpj,
+    adminName: dbOrganization.admin_name,
+    adminEmail: dbOrganization.admin_email,
+    contractSignedAt: dbOrganization.contract_signed_at,
+    createdAt: dbOrganization.created_at,
+    logo: dbOrganization.logo,
+    address: dbOrganization.address || {
+      logradouro: dbOrganization.logradouro || "",
+      numero: dbOrganization.numero || "",
+      complemento: dbOrganization.complemento || "",
+      bairro: dbOrganization.bairro || "",
+      cidade: dbOrganization.cidade || "",
+      estado: dbOrganization.estado || "",
+      cep: dbOrganization.cep || ""
+    }
+  };
+};
+
+/**
  * Creates a pro-rata title for the newly created organization
  */
 export const handleProRataCreation = async (organization: Organization) => {

@@ -8,7 +8,8 @@ import {
   checkExistingOrganization, 
   createOrganization, 
   handleProRataCreation, 
-  sendOnboardingEmail 
+  sendOnboardingEmail,
+  mapToOrganizationType
 } from "./api/organization-api";
 import { useFormErrorHandlers } from "./utils/form-error-handlers";
 
@@ -63,6 +64,9 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       console.log("Organização criada com sucesso:", newOrganizationData);
 
+      // Convert DB organization to Organization type
+      const organizationFormatted = mapToOrganizationType(newOrganizationData);
+
       // Calculate pro-rata value
       const planValues = getPlanValues();
       let proRataValue = calculateProRataValue(planValues[values.plan as keyof typeof planValues]);
@@ -71,7 +75,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       try {
         // Create pro-rata title
-        const proRataTitle = await handleProRataCreation(newOrganizationData);
+        const proRataTitle = await handleProRataCreation(organizationFormatted);
 
         console.log("Título pro-rata criado:", proRataTitle);
 
@@ -83,10 +87,10 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         try {
           console.log("Enviando email único de onboarding...");
           const { error: emailError } = await sendOnboardingEmail(
-            newOrganizationData.id,
-            `${window.location.origin}/contract/${newOrganizationData.id}`,
-            `${window.location.origin}/confirm-registration/${newOrganizationData.id}`,
-            `${window.location.origin}/payment/${newOrganizationData.id}`,
+            organizationFormatted.id,
+            `${window.location.origin}/contract/${organizationFormatted.id}`,
+            `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
+            `${window.location.origin}/payment/${organizationFormatted.id}`,
             proRataValue
           );
 
