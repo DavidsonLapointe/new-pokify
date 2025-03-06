@@ -120,8 +120,10 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log(`Sending ${type} email to ${organization.admin_email}`);
+    
+    // Using Resend's default domain until leadly.com.br domain is verified
     const emailResponse = await resend.emails.send({
-      from: "Leadly <noreply@leadly.com.br>",
+      from: "Leadly <onboarding@resend.dev>",
       to: [organization.admin_email],
       ...emailContent,
     });
