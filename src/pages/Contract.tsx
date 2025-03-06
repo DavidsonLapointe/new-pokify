@@ -53,7 +53,8 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           .maybeSingle();
           
         if (!titleError && titleData) {
-          setProRataValue(parseFloat(titleData.value));
+          // Fixed: Convert numeric value to string when needed
+          setProRataValue(titleData.value ? parseFloat(titleData.value.toString()) : null);
         }
       }
       
