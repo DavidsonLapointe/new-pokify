@@ -1,4 +1,3 @@
-
 import { User } from '@/types';
 import { Organization } from '@/types/organization-types';
 
@@ -13,29 +12,36 @@ export const formatOrganizationData = (organization: any): Organization => {
     throw new Error("Dados de organização inválidos ou incompletos");
   }
   
-  const convertedPendingReason = organization.pending_reason === 'null' || !organization.pending_reason 
+  // Tratar campos opcionais explicitamente
+  const nome_fantasia = organization.nome_fantasia || null;
+  const pending_reason = organization.pending_reason === 'null' || !organization.pending_reason 
     ? null 
     : organization.pending_reason;
+  const contract_signed_at = organization.contract_signed_at || null;
+  const integrated_crm = organization.integrated_crm || null;
+  const integrated_llm = organization.integrated_llm || null;
+  const phone = organization.phone || '';
+  const logo = organization.logo || undefined;
 
-  // Criar objeto de organização formatado
+  // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {
     id: organization.id,
     name: organization.name,
-    nomeFantasia: organization.nome_fantasia || '',
+    nomeFantasia: nome_fantasia || '',
     plan: organization.plan,
     users: organization.users || [],
     status: organization.status,
-    pendingReason: convertedPendingReason,
-    integratedCRM: organization.integrated_crm,
-    integratedLLM: organization.integrated_llm,
+    pendingReason: pending_reason,
+    integratedCRM: integrated_crm,
+    integratedLLM: integrated_llm,
     email: organization.email,
-    phone: organization.phone || '',
+    phone: phone,
     cnpj: organization.cnpj,
     adminName: organization.admin_name,
     adminEmail: organization.admin_email,
-    contractSignedAt: organization.contract_signed_at,
+    contractSignedAt: contract_signed_at,
     createdAt: organization.created_at || new Date().toISOString(),
-    logo: organization.logo,
+    logo: logo,
     address: organization.logradouro ? {
       logradouro: organization.logradouro,
       numero: organization.numero || '',
