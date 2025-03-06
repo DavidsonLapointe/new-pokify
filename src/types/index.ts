@@ -10,6 +10,9 @@ export type {
   UserRole,
   UserStatus,
   UserLog,
+} from './user-types';
+
+export type {
   Organization,
   OrganizationPendingReason,
 } from './organization-types';
