@@ -7,6 +7,10 @@ import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
 import { usePermissions } from "@/hooks/usePermissions";
 import { SidebarMenuItem } from "./organization/layout/SidebarMenuItem";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a client
+const queryClient = new QueryClient();
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -66,56 +70,58 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
-        <div className="h-full px-8 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-white">Leadly</h1>
-          <div className="flex items-center gap-4">
-            <p className="text-sm font-medium text-white">{user.name}</p>
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex pt-16">
-        <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
-          <nav className="flex flex-col h-full py-6 px-3">
-            <div className="space-y-0.5">
-              {filteredMenuItems.map((item) => (
-                <SidebarMenuItem
-                  key={item.path}
-                  icon={item.icon}
-                  label={item.label}
-                  path={item.path}
-                  active={isActive(item.path)}
-                />
-              ))}
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-background">
+        <header className="h-16 bg-primary fixed top-0 left-0 right-0 z-40">
+          <div className="h-full px-8 flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-white">Leadly</h1>
+            <div className="flex items-center gap-4">
+              <p className="text-sm font-medium text-white">{user.name}</p>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+              </Avatar>
             </div>
-
-            <Link
-              to="/"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLogout();
-              }}
-              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
-            >
-              <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
-              Sair
-            </Link>
-          </nav>
-        </aside>
-
-        <main className="flex-1 ml-64">
-          <div className="p-8 animate-fadeIn">
-            {children ?? <Outlet />}
           </div>
-        </main>
+        </header>
+
+        <div className="flex pt-16">
+          <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+            <nav className="flex flex-col h-full py-6 px-3">
+              <div className="space-y-0.5">
+                {filteredMenuItems.map((item) => (
+                  <SidebarMenuItem
+                    key={item.path}
+                    icon={item.icon}
+                    label={item.label}
+                    path={item.path}
+                    active={isActive(item.path)}
+                  />
+                ))}
+              </div>
+
+              <Link
+                to="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLogout();
+                }}
+                className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#6E59A5] mt-auto"
+              >
+                <LogOut className="w-4 h-4 mr-3 text-[#6E59A5]" />
+                Sair
+              </Link>
+            </nav>
+          </aside>
+
+          <main className="flex-1 ml-64">
+            <div className="p-8 animate-fadeIn">
+              {children ?? <Outlet />}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 };
 
