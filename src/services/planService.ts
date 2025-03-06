@@ -49,14 +49,24 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
     // Process features safely based on type
     let features: string[] = [];
     
-    if (Array.isArray(plan.features)) {
-      features = plan.features;
-    } else if (typeof plan.features === 'string') {
-      features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
-    } else if (plan.features) {
-      // Fallback - convert to string if possible
-      const featuresStr = String(plan.features);
-      features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+    if (plan.features !== undefined) {
+      if (Array.isArray(plan.features)) {
+        features = plan.features;
+      } else if (typeof plan.features === 'string') {
+        features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+      } else if (plan.features === null) {
+        // Handle null case
+        features = [];
+      } else {
+        // Fallback - convert to string if possible
+        try {
+          const featuresStr = String(plan.features);
+          features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+        } catch (e) {
+          console.error('Error converting features to string:', e);
+          features = [];
+        }
+      }
     }
     
     const { data, error } = await supabase
@@ -99,10 +109,18 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
         features = plan.features;
       } else if (typeof plan.features === 'string') {
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+      } else if (plan.features === null) {
+        // Handle null case
+        features = [];
       } else if (plan.features) {
         // Fallback - convert to string if possible
-        const featuresStr = String(plan.features);
-        features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+        try {
+          const featuresStr = String(plan.features);
+          features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+        } catch (e) {
+          console.error('Error converting features to string:', e);
+          features = [];
+        }
       } else {
         features = [];
       }
