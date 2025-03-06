@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Organization } from "@/types";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
@@ -7,74 +7,105 @@ import { OrganizationsHeader } from "@/components/admin/organizations/Organizati
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { OrganizationsTable } from "@/components/admin/organizations/OrganizationsTable";
 import { ActiveUsersDialog } from "@/components/admin/organizations/ActiveUsersDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-const mockOrganizations: Organization[] = [
-  {
-    id: "1",
-    name: "Tech Solutions Ltd",
-    nomeFantasia: "TechSol",
-    plan: "Professional",
-    users: [],
-    status: "active",
-    integratedCRM: "Salesforce",
-    integratedLLM: "GPT-4",
-    email: "contact@techsol.com",
-    phone: "(11) 98765-4321",
-    cnpj: "12.345.678/0001-90",
-    adminName: "Maria Silva",
-    adminEmail: "maria@techsol.com",
-    createdAt: "2024-01-15T10:00:00.000Z"
-  },
-  {
-    id: "2",
-    name: "Global Services Inc",
-    nomeFantasia: "GlobalServ",
-    plan: "Enterprise",
-    users: [],
-    status: "pending",
-    pendingReason: "contract_signature",
-    integratedCRM: null,
-    integratedLLM: null,
-    email: "info@globalserv.com",
-    phone: "(11) 91234-5678",
-    cnpj: "98.765.432/0001-10",
-    adminName: "João Santos",
-    adminEmail: "joao@globalserv.com",
-    createdAt: "2024-02-20T14:30:00.000Z"
-  },
-  {
-    id: "3",
-    name: "Innovation Labs",
-    nomeFantasia: "InnLabs",
-    plan: "Professional",
-    users: [],
-    status: "active",
-    integratedCRM: "Hubspot",
-    integratedLLM: "GPT-4",
-    email: "hello@innlabs.com",
-    phone: "(11) 94444-3333",
-    cnpj: "45.678.901/0001-23",
-    adminName: "Ana Oliveira",
-    adminEmail: "ana@innlabs.com",
-    createdAt: "2024-03-01T09:15:00.000Z"
+const fetchOrganizations = async (): Promise<Organization[]> => {
+  // Fetch organizations from Supabase
+  const { data, error } = await supabase
+    .from('organizations')
+    .select(`
+      id,
+      name,
+      nome_fantasia,
+      plan,
+      status,
+      pending_reason,
+      integrated_crm,
+      integrated_llm,
+      email,
+      phone,
+      cnpj,
+      admin_name,
+      admin_email,
+      contract_signed_at,
+      created_at
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching organizations:", error);
+    throw new Error("Falha ao carregar empresas. Tente novamente mais tarde.");
   }
-];
+
+  // Also need to fetch users for each organization
+  const organizationsWithUsers = await Promise.all(
+    (data || []).map(async (org) => {
+      const { data: users, error: usersError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('organization_id', org.id);
+
+      if (usersError) {
+        console.error("Error fetching users for organization:", org.id, usersError);
+        return {
+          ...org,
+          users: []
+        };
+      }
+
+      return {
+        id: String(org.id),
+        name: org.name,
+        nomeFantasia: org.nome_fantasia || "",
+        plan: org.plan,
+        users: users || [],
+        status: org.status,
+        pendingReason: org.pending_reason === "null" ? null : org.pending_reason || null,
+        integratedCRM: org.integrated_crm,
+        integratedLLM: org.integrated_llm,
+        email: org.email,
+        phone: org.phone || "",
+        cnpj: org.cnpj,
+        adminName: org.admin_name,
+        adminEmail: org.admin_email,
+        contractSignedAt: org.contract_signed_at,
+        createdAt: org.created_at || new Date().toISOString(),
+      };
+    })
+  );
+
+  return organizationsWithUsers;
+};
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+
+  // Use React Query to fetch and manage organizations data
+  const { data: organizations = [], isLoading, error } = useQuery({
+    queryKey: ['organizations'],
+    queryFn: fetchOrganizations,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true
+  });
+
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error("Erro ao carregar organizações: " + (error as Error).message);
+    }
+  }, [error]);
 
   const handleEditOrganization = (organization: Organization) => {
     setEditingOrganization(organization);
   };
 
   const handleUpdateOrganization = (updatedOrg: Organization) => {
-    setOrganizations(orgs => 
-      orgs.map(org => org.id === updatedOrg.id ? updatedOrg : org)
-    );
+    // The updated data will be automatically refetched by React Query
     setEditingOrganization(null);
   };
 
@@ -97,11 +128,17 @@ const Organizations = () => {
         onChange={setSearchTerm}
       />
 
-      <OrganizationsTable 
-        organizations={filteredOrganizations}
-        onEditOrganization={handleEditOrganization}
-        onShowActiveUsers={handleShowActiveUsers}
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <OrganizationsTable 
+          organizations={filteredOrganizations}
+          onEditOrganization={handleEditOrganization}
+          onShowActiveUsers={handleShowActiveUsers}
+        />
+      )}
 
       <CreateOrganizationDialog 
         open={isCreateDialogOpen} 
