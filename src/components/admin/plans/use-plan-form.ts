@@ -75,6 +75,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         price: parseFloat(values.price),
         features: values.features.split("\n").filter(f => f.trim()),
         active: values.active, // Make sure active is explicitly included
+        credits: typeof values.credits === 'string' ? parseInt(values.credits, 10) : values.credits
       };
       
       let savedPlan: Plan | null = null;

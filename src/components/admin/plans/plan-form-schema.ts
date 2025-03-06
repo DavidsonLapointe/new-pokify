@@ -9,7 +9,9 @@ export const planFormSchema = z.object({
   active: z.boolean(),
   stripeProductId: z.string().optional(),
   stripePriceId: z.string().optional(),
-  credits: z.number().optional(),
+  credits: z.number().optional().or(z.string().optional().transform(val => 
+    val ? parseInt(val, 10) : undefined
+  )),
 });
 
 export type PlanFormValues = z.infer<typeof planFormSchema>;
