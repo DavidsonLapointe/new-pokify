@@ -63,6 +63,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         ...values,
         price: parseFloat(values.price),
         features: values.features.split("\n").filter(f => f.trim()),
+        active: values.active, // Make sure active is explicitly included
       };
       
       let savedPlan: Plan | null = null;
@@ -84,7 +85,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       if (isEditing && plan) {
         savedPlan = await updatePlan(plan.id, formattedValues);
       } else {
-        savedPlan = await createPlan(formattedValues);
+        savedPlan = await createPlan(formattedValues as Omit<Plan, "id">);
       }
       
       if (savedPlan) {

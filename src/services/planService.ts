@@ -46,13 +46,20 @@ export async function fetchPlanById(id: string): Promise<Plan | null> {
 
 export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
   try {
+    // Ensure features is an array
+    const features = Array.isArray(plan.features) 
+      ? plan.features 
+      : typeof plan.features === 'string'
+        ? plan.features.split('\n').filter(f => f.trim())
+        : [];
+    
     const { data, error } = await supabase
       .from('plans')
       .insert([{
         name: plan.name,
         price: plan.price,
         description: plan.description,
-        features: Array.isArray(plan.features) ? plan.features : plan.features.split('\n').filter(f => f.trim()),
+        features: features,
         active: plan.active,
         stripe_product_id: plan.stripeProductId,
         stripe_price_id: plan.stripePriceId,
@@ -76,6 +83,15 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
 
 export async function updatePlan(id: number | string, plan: Partial<Plan>): Promise<Plan | null> {
   try {
+    // Ensure features is an array if it exists
+    const features = plan.features 
+      ? (Array.isArray(plan.features) 
+        ? plan.features 
+        : typeof plan.features === 'string'
+          ? plan.features.split('\n').filter(f => f.trim())
+          : [])
+      : undefined;
+    
     const updateData: any = {
       name: plan.name,
       price: plan.price,
@@ -86,19 +102,15 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       credits: plan.credits
     };
     
-    // Se features existe e é uma string, converta para array
-    if (plan.features) {
-      updateData.features = Array.isArray(plan.features) 
-        ? plan.features 
-        : typeof plan.features === 'string'
-          ? plan.features.split('\n').filter(f => f.trim())
-          : plan.features;
+    // Only add features if it exists
+    if (features) {
+      updateData.features = features;
     }
     
     const { data, error } = await supabase
       .from('plans')
       .update(updateData)
-      .eq('id', id)
+      .eq('id', id.toString())
       .select()
       .single();
     
