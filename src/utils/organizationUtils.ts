@@ -19,7 +19,26 @@ export const formatOrganizationData = (organization: any): Organization => {
   const integrated_crm = organization.integrated_crm || null;
   const integrated_llm = organization.integrated_llm || null;
   const phone = organization.phone || '';
-  const logo = organization.logo || undefined;
+  
+  // Verificar campos que podem ser undefined para evitar serializações incorretas
+  let logo = undefined;
+  if (organization.logo !== null && organization.logo !== undefined) {
+    logo = organization.logo;
+  }
+  
+  // Verificar se há dados de endereço
+  let address = undefined;
+  if (organization.logradouro) {
+    address = {
+      logradouro: organization.logradouro,
+      numero: organization.numero || '',
+      complemento: organization.complemento || '',
+      bairro: organization.bairro || '',
+      cidade: organization.cidade || '',
+      estado: organization.estado || '',
+      cep: organization.cep || '',
+    };
+  }
 
   // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {
@@ -40,15 +59,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     contractSignedAt: contract_signed_at,
     createdAt: organization.created_at || new Date().toISOString(),
     logo: logo,
-    address: organization.logradouro ? {
-      logradouro: organization.logradouro,
-      numero: organization.numero || '',
-      complemento: organization.complemento || '',
-      bairro: organization.bairro || '',
-      cidade: organization.cidade || '',
-      estado: organization.estado || '',
-      cep: organization.cep || '',
-    } : undefined
+    address: address
   };
   
   console.log("Organização formatada com sucesso:", formattedOrg);

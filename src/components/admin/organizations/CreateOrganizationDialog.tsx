@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -13,13 +14,18 @@ import { useOrganizationForm } from "./use-organization-form";
 interface CreateOrganizationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 export const CreateOrganizationDialog = ({
   open,
   onOpenChange,
+  onSuccess = () => {}
 }: CreateOrganizationDialogProps) => {
-  const { form, onSubmit } = useOrganizationForm(() => onOpenChange(false));
+  const { form, onSubmit } = useOrganizationForm(() => {
+    onOpenChange(false);
+    onSuccess();
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

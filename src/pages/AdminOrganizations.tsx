@@ -31,7 +31,9 @@ const Organizations = () => {
 
   // Adicionar log para verificar os dados carregados
   useEffect(() => {
-    console.log("Organizações carregadas no componente:", organizations);
+    if (organizations && organizations.length > 0) {
+      console.log("Organizações carregadas no componente:", organizations);
+    }
   }, [organizations]);
 
   // Trigger manual load when component mounts
@@ -70,6 +72,11 @@ const Organizations = () => {
     setSelectedOrganization(organization);
   };
 
+  const handleCreateSuccess = () => {
+    setIsCreateDialogOpen(false);
+    refetch();
+  };
+
   const filteredOrganizations = organizations.filter((org) =>
     [org.name, org.nomeFantasia, org.cnpj].some(field =>
       field?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -103,7 +110,8 @@ const Organizations = () => {
 
       <CreateOrganizationDialog 
         open={isCreateDialogOpen} 
-        onOpenChange={setIsCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen}
+        onSuccess={handleCreateSuccess}
       />
 
       {editingOrganization && (
