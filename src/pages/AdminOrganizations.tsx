@@ -10,6 +10,7 @@ import { ActiveUsersDialog } from "@/components/admin/organizations/ActiveUsersD
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { formatOrganizationData } from "@/utils/userUtils";
 
 const fetchOrganizations = async (): Promise<Organization[]> => {
   // Fetch organizations from Supabase
@@ -49,30 +50,16 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
 
       if (usersError) {
         console.error("Error fetching users for organization:", org.id, usersError);
-        return {
+        return formatOrganizationData({
           ...org,
           users: []
-        };
+        });
       }
 
-      return {
-        id: String(org.id),
-        name: org.name,
-        nomeFantasia: org.nome_fantasia || "",
-        plan: org.plan,
-        users: users || [],
-        status: org.status,
-        pendingReason: org.pending_reason === "null" ? null : org.pending_reason || null,
-        integratedCRM: org.integrated_crm,
-        integratedLLM: org.integrated_llm,
-        email: org.email,
-        phone: org.phone || "",
-        cnpj: org.cnpj,
-        adminName: org.admin_name,
-        adminEmail: org.admin_email,
-        contractSignedAt: org.contract_signed_at,
-        createdAt: org.created_at || new Date().toISOString(),
-      };
+      return formatOrganizationData({
+        ...org,
+        users: users || []
+      });
     })
   );
 
