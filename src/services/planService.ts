@@ -172,7 +172,7 @@ function mapDbPlanToPlan(dbPlan: any): Plan {
     name: dbPlan.name,
     price: parseFloat(dbPlan.price),
     description: dbPlan.description,
-    features: dbPlan.features,
+    features: dbPlan.features || [], // Ensure features is always an array
     active: dbPlan.active,
     stripeProductId: dbPlan.stripe_product_id,
     stripePriceId: dbPlan.stripe_price_id,

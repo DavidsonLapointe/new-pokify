@@ -137,7 +137,7 @@ const Plans = () => {
                         plan.features.map((feature: string, index: number) => (
                           <li key={index} className="flex items-start gap-2 text-sm">
                             <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                            <span>{feature}</span>
+                            <span className="leading-tight">{feature}</span>
                           </li>
                         ))
                       ) : (
