@@ -62,18 +62,22 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     return org.users.filter(user => user.status === "active").length;
   };
 
-  const getPendingReason = (org: Organization) => {
-    if (org.status !== "pending") return null;
-
-    const reasons: { [key: string]: string } = {
-      contract_signature: "Aguardando assinatura do contrato",
-      payment: "Aguardando confirmação do pagamento",
-      pro_rata_payment: "Aguardando pagamento pro-rata",
-      user_validation: "Aguardando validação dos dados do usuário",
-      approval: "Aguardando aprovação administrativa",
-    };
-
-    return reasons[org.pendingReason || ""] || "Status pendente";
+  const getPendingSteps = (org: Organization) => {
+    const pendingSteps = [];
+    
+    if (org.contractStatus === "pending") {
+      pendingSteps.push("Assinatura de contrato pendente");
+    }
+    
+    if (org.paymentStatus === "pending") {
+      pendingSteps.push("Pagamento pro-rata pendente");
+    }
+    
+    if (org.registrationStatus === "pending") {
+      pendingSteps.push("Validação de cadastro pendente");
+    }
+    
+    return pendingSteps;
   };
 
   return (
@@ -122,8 +126,14 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="font-medium text-sm">Motivo da pendência:</p>
-                        <p>{getPendingReason(org)}</p>
+                        <p className="font-medium text-sm mb-2">Etapas pendentes:</p>
+                        <ul className="list-disc pl-5 space-y-1">
+                          {getPendingSteps(org).map((step, index) => (
+                            <li key={index} className="text-sm">
+                              {step}
+                            </li>
+                          ))}
+                        </ul>
                       </TooltipContent>
                     </Tooltip>
                   ) : (

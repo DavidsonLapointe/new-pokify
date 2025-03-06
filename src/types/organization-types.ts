@@ -20,6 +20,9 @@ export interface Organization {
   users: User[];
   status: UserStatus;
   pendingReason?: OrganizationPendingReason;
+  contractStatus?: 'pending' | 'completed';
+  paymentStatus?: 'pending' | 'completed';
+  registrationStatus?: 'pending' | 'completed';
   integratedCRM: string | null;
   integratedLLM: string | null;
   email: string;
