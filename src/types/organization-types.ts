@@ -1,6 +1,15 @@
 
 import type { User } from "./user-types";
-import type { UserStatus, OrganizationPendingReason } from "./user-types";
+import type { UserStatus } from "./user-types";
+
+/**
+ * Reasons why an organization might be in pending status:
+ * - contract_signature: The contract hasn't been signed yet
+ * - pro_rata_payment: The pro-rata payment hasn't been made
+ * - user_validation: The admin user hasn't validated their data and created a password
+ * - null: No pending issues
+ */
+export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | "user_validation" | null;
 
 export interface Address {
   logradouro: string;

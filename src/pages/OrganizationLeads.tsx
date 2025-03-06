@@ -21,6 +21,9 @@ const mockOrganization = {
   plan: "enterprise",
   users: [], // TODO: Implementar integração com a API
   status: "active" as const,
+  contractStatus: "completed" as const,
+  paymentStatus: "completed" as const,
+  registrationStatus: "completed" as const,
   integratedCRM: "HubSpot",
   integratedLLM: "OpenAI",
   email: "contato@techsolutions.com",

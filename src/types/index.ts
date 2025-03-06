@@ -12,7 +12,7 @@ export type {
   UserLog,
   Organization,
   OrganizationPendingReason,
-} from './user-types';
+} from './organization-types';
 
 // Re-export permissions
 export { availablePermissions } from './permissions-types';
