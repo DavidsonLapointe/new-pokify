@@ -7,133 +7,19 @@ import { OrganizationsHeader } from "@/components/admin/organizations/Organizati
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { OrganizationsTable } from "@/components/admin/organizations/OrganizationsTable";
 import { ActiveUsersDialog } from "@/components/admin/organizations/ActiveUsersDialog";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { formatOrganizationData } from "@/utils/userUtils";
-
-const fetchOrganizations = async (): Promise<Organization[]> => {
-  try {
-    console.log("=== INICIANDO BUSCA DE ORGANIZAÇÕES ===");
-    
-    // Verificar se a sessão atual e o usuário logado
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) {
-      console.error("Erro ao obter sessão atual:", sessionError);
-      throw new Error(`Falha ao verificar autenticação: ${sessionError.message}`);
-    }
-    
-    console.log("Sessão atual:", sessionData.session ? "Autenticado" : "Não autenticado");
-    if (sessionData.session) {
-      console.log("Usuário ID:", sessionData.session.user.id);
-      
-      // Verificar o perfil do usuário para confirmar que é leadly_employee
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', sessionData.session.user.id)
-        .single();
-        
-      if (profileError) {
-        console.error("Erro ao verificar perfil do usuário:", profileError);
-      } else {
-        console.log("Função do usuário:", profileData?.role);
-      }
-    }
-    
-    // Fetch organizations from Supabase with debug logs
-    console.log("Executando query para buscar organizações");
-    const { data: orgsData, error: orgsError } = await supabase
-      .from('organizations')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    // Verificar se houve erro na consulta
-    if (orgsError) {
-      console.error("Erro ao buscar organizações:", orgsError);
-      if (orgsError.code === "PGRST301") {
-        console.error("Erro de permissão! Verifique as políticas RLS no Supabase.");
-      }
-      throw new Error(`Falha ao carregar empresas: ${orgsError.message}`);
-    }
-
-    // Logar os dados brutos recebidos
-    console.log("Dados brutos recebidos do Supabase:", orgsData);
-    console.log("Quantidade de organizações recebidas:", orgsData?.length || 0);
-
-    if (!orgsData || orgsData.length === 0) {
-      console.log("Nenhuma organização encontrada no banco de dados");
-      return [];
-    }
-
-    // Also need to fetch users for each organization
-    const organizationsWithUsers = await Promise.all(
-      orgsData.map(async (org) => {
-        try {
-          console.log(`Buscando usuários para a organização: ${org.id} (${org.name})`);
-          
-          const { data: users, error: usersError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('organization_id', org.id);
-
-          if (usersError) {
-            console.error(`Erro ao buscar usuários para organização ${org.id}:`, usersError);
-            return formatOrganizationData({
-              ...org,
-              users: []
-            });
-          }
-
-          console.log(`Encontrados ${users?.length || 0} usuários para a organização ${org.id}`);
-          
-          // Formatar e retornar os dados da organização com usuários
-          const formattedOrg = formatOrganizationData({
-            ...org,
-            users: users || []
-          });
-          
-          console.log(`Organização formatada: ${formattedOrg.name}`, formattedOrg);
-          return formattedOrg;
-        } catch (err) {
-          console.error(`Erro ao processar organização ${org.id}:`, err);
-          return formatOrganizationData({
-            ...org,
-            users: []
-          });
-        }
-      })
-    );
-
-    console.log("Processamento completo. Total de organizações formatadas:", organizationsWithUsers.length);
-    console.log("Organizações processadas:", organizationsWithUsers);
-    return organizationsWithUsers;
-  } catch (err) {
-    console.error("Erro em fetchOrganizations:", err);
-    throw err;
-  }
-};
+import { OrganizationsLoadingState } from "@/components/admin/organizations/OrganizationsLoadingState";
+import { useOrganizations } from "@/hooks/useOrganizations";
 
 const Organizations = () => {
+  // State management
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
-
-  // Use React Query to fetch and manage organizations data
-  const { 
-    data: organizations = [], 
-    isLoading, 
-    error,
-    refetch 
-  } = useQuery({
-    queryKey: ['organizations'],
-    queryFn: fetchOrganizations,
-    staleTime: 0, // Desabilitar cache para sempre buscar dados novos
-    refetchOnWindowFocus: true,
-    retry: 5, // Aumentar número de tentativas
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
-  });
+  
+  // Fetch organizations data
+  const { organizations, isLoading, error, refetch } = useOrganizations();
 
   // Show error toast if there's an error
   useEffect(() => {
@@ -199,32 +85,15 @@ const Organizations = () => {
         onChange={setSearchTerm}
       />
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <span className="ml-2">Carregando empresas...</span>
-        </div>
-      ) : error ? (
-        <div className="p-8 text-center">
-          <p className="text-red-500 mb-4">Falha ao carregar empresas</p>
-          <button 
-            onClick={() => refetch()} 
-            className="px-4 py-2 bg-primary text-white rounded-md"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      ) : organizations.length === 0 ? (
-        <div className="p-8 text-center border rounded-md">
-          <p className="text-muted-foreground mb-4">Nenhuma empresa encontrada</p>
-          <button 
-            onClick={() => setIsCreateDialogOpen(true)} 
-            className="px-4 py-2 bg-primary text-white rounded-md"
-          >
-            Cadastrar Empresa
-          </button>
-        </div>
-      ) : (
+      <OrganizationsLoadingState
+        isLoading={isLoading}
+        error={error as Error | null}
+        refetch={refetch}
+        isEmpty={organizations.length === 0}
+        onCreateNew={() => setIsCreateDialogOpen(true)}
+      />
+
+      {!isLoading && !error && organizations.length > 0 && (
         <OrganizationsTable 
           organizations={filteredOrganizations}
           onEditOrganization={handleEditOrganization}
