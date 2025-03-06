@@ -21,6 +21,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [organization, setOrganization] = useState<any>(null);
   const [agreed, setAgreed] = useState(false);
   const [proRataValue, setProRataValue] = useState<number | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>("");
 
   useEffect(() => {
     loadOrganization();
@@ -31,6 +32,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
 
     try {
       setLoading(true);
+      console.log("Loading organization with ID:", id);
       
       // Buscar a organização
       const { data: orgData, error: orgError } = await supabase
@@ -39,7 +41,13 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         .eq('id', id)
         .single();
 
-      if (orgError) throw orgError;
+      if (orgError) {
+        console.error("Error fetching organization:", orgError);
+        setDebugInfo(`Error: ${orgError.message} | Code: ${orgError.code} | Details: ${orgError.details}`);
+        throw orgError;
+      }
+      
+      console.log("Organization data retrieved:", orgData);
       
       // Se estiver no modo de pagamento, buscar o título pro-rata
       if (paymentMode) {
@@ -52,9 +60,14 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           .limit(1)
           .maybeSingle();
           
-        if (!titleError && titleData) {
+        if (titleError) {
+          console.error("Error fetching pro-rata title:", titleError);
+        } else if (titleData) {
+          console.log("Pro-rata title data:", titleData);
           // Fixed: Convert numeric value to string when needed
           setProRataValue(titleData.value ? parseFloat(titleData.value.toString()) : null);
+        } else {
+          console.log("No pro-rata title found");
         }
       }
       
@@ -134,6 +147,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         <div className="text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-red-600 mb-2">Empresa não encontrada</h2>
           <p className="text-gray-600 mb-4">Não foi possível encontrar os dados da empresa solicitada.</p>
+          {debugInfo && (
+            <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-left overflow-auto">
+              <pre>{debugInfo}</pre>
+              <p className="mt-2">ID buscado: {id}</p>
+            </div>
+          )}
           <Button onClick={() => navigate("/")} variant="outline">
             Voltar para a página inicial
           </Button>
