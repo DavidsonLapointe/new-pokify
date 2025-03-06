@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, ArrowRight, Calendar } from "lucide-react";
+import { BadgeCheck, ArrowRight, Calendar, Coins } from "lucide-react";
 import { format, startOfMonth, addMonths } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 import { useState, useEffect } from "react";
@@ -90,6 +90,13 @@ export function ChangePlanDialog({
                       </span>
                     </div>
                   </div>
+
+                  {plan.credits !== undefined && plan.credits > 0 && (
+                    <div className="flex items-center gap-2 text-sm font-medium bg-muted p-2 rounded-md">
+                      <Coins className="h-4 w-4 text-primary" />
+                      <span>{plan.credits} créditos mensais</span>
+                    </div>
+                  )}
 
                   <ul className="space-y-2">
                     {plan.features.map((feature, index) => (

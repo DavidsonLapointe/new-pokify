@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Coins } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans } from "@/services/planService";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -81,6 +81,13 @@ const Plans = () => {
       <CardContent className="flex-1 flex flex-col">
         <div className="space-y-6 flex-1">
           <div className="space-y-4">
+            {plan.credits !== undefined && plan.credits > 0 && (
+              <div className="flex items-center gap-2 text-sm font-medium mb-4 bg-muted p-2 rounded-md">
+                <Coins className="h-4 w-4 text-primary" />
+                <span>{plan.credits} créditos mensais</span>
+              </div>
+            )}
+            
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
               Recursos inclusos:
             </div>

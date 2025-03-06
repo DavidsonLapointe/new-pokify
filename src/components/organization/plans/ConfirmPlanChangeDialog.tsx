@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Calendar, CreditCard } from "lucide-react";
+import { Calendar, CreditCard, Coins } from "lucide-react";
 import { format } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
@@ -38,6 +38,15 @@ export const ConfirmPlanChangeDialog = ({
                   <strong>{format(nextBillingDate, "dd/MM/yyyy")}</strong>
                 </p>
               </div>
+              
+              {selectedPlan.credits !== undefined && selectedPlan.credits > 0 && (
+                <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
+                  <Coins className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <p>
+                    Você receberá <strong>{selectedPlan.credits}</strong> créditos mensais com este plano
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <h4 className="font-medium">Detalhes da cobrança</h4>

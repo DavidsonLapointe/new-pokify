@@ -1,175 +1,77 @@
 
-import { BadgeCheck, ArrowUpDown } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { toast } from "sonner";
+import { CalendarDays, CheckCircle, Coins } from "lucide-react";
+import { format } from "date-fns";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
 
 interface CurrentPlanCardProps {
-  planInfo: Plan;
+  plan: Plan;
   onChangePlan: () => void;
+  nextBillingDate?: Date;
 }
 
-export function CurrentPlanCard({ planInfo, onChangePlan }: CurrentPlanCardProps) {
-  const [selectedReason, setSelectedReason] = useState("");
-  const [otherReason, setOtherReason] = useState("");
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-
-  const cancellationReasons = [
-    { id: "price", label: "Preço muito alto" },
-    { id: "features", label: "Faltam recursos importantes" },
-    { id: "usability", label: "Difícil de usar" },
-    { id: "competitor", label: "Mudando para outro serviço" },
-    { id: "temporary", label: "Pausa temporária" },
-    { id: "other", label: "Outro motivo" }
-  ];
-
-  const handleCancelSubscription = () => {
-    if (!selectedReason) {
-      toast.error("Por favor, selecione um motivo para o cancelamento");
-      return;
-    }
-    
-    if (selectedReason === "other" && !otherReason.trim()) {
-      toast.error("Por favor, descreva o motivo do cancelamento");
-      return;
-    }
-
-    const finalReason = selectedReason === "other" ? otherReason : cancellationReasons.find(r => r.id === selectedReason)?.label;
-    console.log("Assinatura cancelada. Motivo:", finalReason);
-    
-    setIsAlertOpen(false);
-    setSelectedReason("");
-    setOtherReason("");
-    toast.success("Assinatura cancelada com sucesso");
-  };
-
-  const handleModalClose = () => {
-    setSelectedReason("");
-    setOtherReason("");
-  };
-
+export function CurrentPlanCard({ plan, onChangePlan, nextBillingDate }: CurrentPlanCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BadgeCheck className="h-5 w-5 text-primary" />
-          Plano {planInfo.name}
-        </CardTitle>
-        <CardDescription>
-          {planInfo.description}
-        </CardDescription>
+    <Card className="border-primary/20">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
+            <p className="text-muted-foreground text-sm mt-1">
+              {plan.description}
+            </p>
+          </div>
+          <Badge variant="default" className="ml-2">
+            Plano Atual
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Recursos inclusos:</div>
+        <div className="flex items-baseline text-2xl font-semibold">
+          <span className="text-xl mr-1">R$</span>
+          {plan.price?.toFixed(2)}
+          <span className="text-sm font-normal text-muted-foreground ml-1">
+            /mês
+          </span>
+        </div>
+
+        {plan.credits !== undefined && plan.credits > 0 && (
+          <div className="flex items-center gap-2 text-sm p-3 bg-muted rounded-md">
+            <Coins className="h-4 w-4 text-primary shrink-0" />
+            <span><strong>{plan.credits}</strong> créditos mensais</span>
+          </div>
+        )}
+
+        {nextBillingDate && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CalendarDays className="h-4 w-4" />
+            <span>
+              Próximo pagamento em {format(nextBillingDate, "dd/MM/yyyy")}
+            </span>
+          </div>
+        )}
+
+        <div className="mt-6">
+          <h4 className="text-sm font-medium mb-3">Recursos inclusos:</h4>
           <ul className="space-y-2">
-            {planInfo.features.map((feature, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm">
-                <BadgeCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            {plan.features?.map((feature, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm">
+                <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <span>{feature}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="flex flex-col items-center gap-2 pt-4 border-t">
-          <Button 
-            variant="outline" 
-            onClick={onChangePlan}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            size="sm"
-          >
-            <ArrowUpDown className="h-4 w-4 mr-2" />
-            Alterar plano
-          </Button>
-          
-          <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-destructive"
-              >
-                Cancelar assinatura
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Cancelar assinatura?</AlertDialogTitle>
-                <AlertDialogDescription className="space-y-4">
-                  <p>
-                    Essa ação <span className="font-medium">não poderá ser desfeita</span>. 
-                    Sua assinatura será cancelada ao final do período atual e você perderá 
-                    acesso a todos os recursos do sistema.
-                  </p>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
-                      Por que você está cancelando?
-                    </label>
-                    <RadioGroup 
-                      value={selectedReason} 
-                      onValueChange={setSelectedReason}
-                      className="space-y-3"
-                    >
-                      {cancellationReasons.map((reason) => (
-                        <div key={reason.id} className="flex items-center space-x-2">
-                          <RadioGroupItem value={reason.id} id={reason.id} />
-                          <label 
-                            htmlFor={reason.id}
-                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {reason.label}
-                          </label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                    
-                    {selectedReason === "other" && (
-                      <div className="mt-4">
-                        <Textarea
-                          value={otherReason}
-                          onChange={(e) => setOtherReason(e.target.value)}
-                          placeholder="Descreva o motivo do cancelamento..."
-                          className="resize-none"
-                          rows={4}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel 
-                  onClick={handleModalClose} 
-                  className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]"
-                >
-                  Manter assinatura
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleCancelSubscription}
-                  className="bg-destructive hover:bg-destructive/90"
-                >
-                  Confirmar cancelamento
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        <Button
+          variant="outline"
+          className="w-full mt-6"
+          onClick={onChangePlan}
+        >
+          Mudar de Plano
+        </Button>
       </CardContent>
     </Card>
   );
