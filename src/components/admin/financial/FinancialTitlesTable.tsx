@@ -1,22 +1,21 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { format, isBefore } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
-import { FinancialTitle, TitleStatus } from "@/types/financial";
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { handleTitlePayment } from "@/services/financial";
+import { FinancialTitle } from "@/types/financial";
+import { useTitleStatus } from "./hooks/useTitleStatus";
+import { getStatusBadge } from "./table/TitleStatusBadge";
+import { TitlePaymentButton } from "./table/TitlePaymentButton";
+import { EmptyTitlesState } from "./table/EmptyTitlesState";
 import { Organization } from "@/types";
-import { SearchX } from "lucide-react";
 
 interface FinancialTitlesTableProps {
   titles: FinancialTitle[];
 }
 
+// Mock data for organization - in a real app, this would come from a context or props
 const mockOrganization: Organization = {
-  id: "1",  // Convertido para string
+  id: "1",
   name: "Tech Solutions",
   nomeFantasia: "Tech Solutions Ltda",
   plan: "Enterprise",
@@ -32,97 +31,17 @@ const mockOrganization: Organization = {
   createdAt: "2024-01-01T00:00:00.000Z"
 };
 
-const getStatusBadge = (status: TitleStatus) => {
-  const variants: Record<TitleStatus, "default" | "secondary" | "destructive"> = {
-    pending: "default",
-    paid: "secondary",
-    overdue: "destructive",
-  };
-
-  const labels: Record<TitleStatus, string> = {
-    pending: "Pendente",
-    paid: "Pago",
-    overdue: "Vencido",
-  };
-
-  return (
-    <Badge variant={variants[status]}>
-      {labels[status]}
-    </Badge>
-  );
-};
-
-const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
-  if (title.status === "paid") return "paid";
-  
-  const today = new Date();
-  const dueDate = new Date(title.dueDate);
-  
-  if (isBefore(dueDate, today)) {
-    return "overdue";
-  }
-  
-  return "pending";
-};
-
 export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
-  const { toast } = useToast();
-  const [localTitles, setLocalTitles] = useState<FinancialTitle[]>(titles);
+  const { titles: localTitles, setTitles } = useTitleStatus(titles);
 
-  useEffect(() => {
-    setLocalTitles(titles);
-  }, [titles]);
-
-  useEffect(() => {
-    const updateTitlesStatus = () => {
-      setLocalTitles(prevTitles => 
-        prevTitles.map(title => ({
-          ...title,
-          status: checkTitleStatus(title)
-        }))
-      );
-    };
-
-    updateTitlesStatus();
-    const interval = setInterval(updateTitlesStatus, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handlePayment = async (title: FinancialTitle) => {
-    try {
-      const updatedTitle = await handleTitlePayment(title, mockOrganization);
-      
-      setLocalTitles(prev => prev.map(t => 
-        t.id === title.id ? updatedTitle : t
-      ));
-
-      toast({
-        title: "Título baixado com sucesso",
-        description: title.type === "pro_rata" 
-          ? "O pagamento foi registrado, a organização e o usuário admin foram ativados."
-          : "O pagamento foi registrado e o título foi baixado.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro ao processar pagamento",
-        description: "Ocorreu um erro ao tentar baixar o título.",
-        variant: "destructive",
-      });
-    }
+  const handlePaymentSuccess = (updatedTitle: FinancialTitle) => {
+    setTitles(prev => prev.map(t => 
+      t.id === updatedTitle.id ? updatedTitle : t
+    ));
   };
 
   if (localTitles.length === 0) {
-    return (
-      <div className="rounded-md border border-dashed p-8">
-        <div className="flex flex-col items-center justify-center text-center">
-          <SearchX className="h-12 w-12 text-gray-400 mb-3" />
-          <h3 className="font-semibold text-lg mb-1">Nenhum título encontrado</h3>
-          <p className="text-sm text-gray-500">
-            Não foram encontrados títulos com os critérios de busca selecionados.
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyTitlesState />;
   }
 
   return (
@@ -157,16 +76,11 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
               </TableCell>
               <TableCell>{getStatusBadge(title.status)}</TableCell>
               <TableCell>
-                {(title.status === "pending" || title.status === "overdue") && (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90"
-                    onClick={() => handlePayment(title)}
-                  >
-                    Baixar Título
-                  </Button>
-                )}
+                <TitlePaymentButton 
+                  title={title} 
+                  organization={mockOrganization}
+                  onPaymentSuccess={handlePaymentSuccess}
+                />
               </TableCell>
             </TableRow>
           ))}
