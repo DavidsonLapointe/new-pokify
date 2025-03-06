@@ -60,9 +60,8 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       } else {
         // Fallback - convert to string if possible
         try {
-          // Ensure we're dealing with a string and handle undefined
-          const featuresStr = plan.features !== undefined ? String(plan.features) : '';
-          features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+          const featuresString = String(plan.features || '');
+          features = featuresString.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
           features = [];
@@ -70,6 +69,18 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       }
     }
     
+    console.log("Creating plan with features:", features);
+    console.log("Full plan data:", {
+      name: plan.name,
+      price: plan.price,
+      description: plan.description,
+      features: features,
+      active: plan.active,
+      stripe_product_id: plan.stripeProductId,
+      stripe_price_id: plan.stripePriceId,
+      credits: plan.credits
+    });
+
     const { data, error } = await supabase
       .from('plans')
       .insert([{
@@ -100,7 +111,8 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
 
 export async function updatePlan(id: number | string, plan: Partial<Plan>): Promise<Plan | null> {
   try {
-    console.log('Atualizando plano:', id, plan);
+    console.log('Atualizando plano, ID:', id);
+    console.log('Dados do plano para atualização:', plan);
     
     // Process features safely based on type
     let features: string[] | undefined = undefined;
@@ -113,40 +125,36 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       } else if (plan.features === null) {
         // Handle null case explicitly
         features = [];
-      } else if (plan.features) {
+      } else {
         // Fallback - convert to string if possible
         try {
-          // Ensure we're dealing with a string
-          const featuresStr = plan.features !== undefined ? String(plan.features) : '';
-          features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+          const featuresString = String(plan.features || '');
+          features = featuresString.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
           features = [];
         }
-      } else {
-        features = [];
       }
     }
     
-    const updateData: any = {
-      name: plan.name,
-      price: plan.price,
-      description: plan.description,
-      active: plan.active,
-      stripe_product_id: plan.stripeProductId,
-      stripe_price_id: plan.stripePriceId,
-      credits: plan.credits
-    };
+    const updateData: Record<string, any> = {};
     
-    // Only add features if it exists
-    if (features) {
-      updateData.features = features;
-    }
+    // Only include defined fields in the update
+    if (plan.name !== undefined) updateData.name = plan.name;
+    if (plan.price !== undefined) updateData.price = plan.price;
+    if (plan.description !== undefined) updateData.description = plan.description;
+    if (plan.active !== undefined) updateData.active = plan.active;
+    if (plan.stripeProductId !== undefined) updateData.stripe_product_id = plan.stripeProductId;
+    if (plan.stripePriceId !== undefined) updateData.stripe_price_id = plan.stripePriceId;
+    if (plan.credits !== undefined) updateData.credits = plan.credits;
+    if (features !== undefined) updateData.features = features;
+    
+    console.log('Dados finais de atualização:', updateData);
     
     const { data, error } = await supabase
       .from('plans')
       .update(updateData)
-      .eq('id', id.toString())
+      .eq('id', id)
       .select()
       .single();
     
@@ -155,6 +163,7 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       throw error;
     }
     
+    console.log('Plano atualizado com sucesso:', data);
     return mapDbPlanToPlan(data);
   } catch (error) {
     console.error(`Erro ao atualizar plano ${id}:`, error);

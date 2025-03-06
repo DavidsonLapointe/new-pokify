@@ -27,7 +27,9 @@ const Plans = () => {
   const loadPlans = async () => {
     setIsLoading(true);
     try {
+      console.log("Carregando planos...");
       const fetchedPlans = await fetchPlans();
+      console.log("Planos carregados:", fetchedPlans);
       setPlans(fetchedPlans);
     } catch (error) {
       console.error("Erro ao carregar planos:", error);
@@ -38,9 +40,11 @@ const Plans = () => {
   };
 
   const handleSavePlan = async (data: Partial<Plan>) => {
+    console.log("Salvando plano:", data);
     try {
       if (editingPlan) {
         // Atualizar plano existente
+        console.log("Atualizando plano existente:", editingPlan.id);
         const updatedPlans = plans.map(plan => 
           plan.id === editingPlan.id 
             ? { ...plan, ...data, id: plan.id }
@@ -50,12 +54,14 @@ const Plans = () => {
         setEditingPlan(null);
       } else {
         // Adicionar novo plano à lista
+        console.log("Adicionando novo plano");
         const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
         setPlans([...plans, newPlan]);
       }
 
       // Recarregar planos do banco de dados para garantir sincronização
       await loadPlans();
+      toast.success(editingPlan ? "Plano atualizado com sucesso!" : "Plano criado com sucesso!");
       
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
@@ -152,7 +158,58 @@ const Plans = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} />
+            <Card 
+              key={plan.id} 
+              className={`hover:shadow-md transition-shadow flex flex-col ${!plan.active ? 'opacity-60' : ''}`}
+            >
+              <CardHeader>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
+                    <div className="flex items-baseline text-xl font-semibold text-primary">
+                      <span className="text-base mr-1">R$</span>
+                      {plan.price.toFixed(2)}
+                      <span className="text-sm font-normal text-muted-foreground ml-1">/mês</span>
+                    </div>
+                  </div>
+                  <CardDescription className="text-sm">{plan.description}</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col">
+                <div className="space-y-6 flex-1">
+                  <div className="space-y-4">
+                    {plan.credits !== undefined && plan.credits > 0 && (
+                      <div className="flex items-center gap-2 text-sm font-medium mb-4 bg-muted p-2 rounded-md">
+                        <Coins className="h-4 w-4 text-primary" />
+                        <span>{plan.credits} créditos mensais</span>
+                      </div>
+                    )}
+                    
+                    <div className="h-[32px] flex items-center border-b text-sm font-medium">
+                      Recursos inclusos:
+                    </div>
+                    <ul className="space-y-2">
+                      {Array.isArray(plan.features) && plan.features.map((feature: string, index: number) => (
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-6 mt-auto border-t">
+                  <Button 
+                    className="w-full" 
+                    variant="default"
+                    onClick={() => setEditingPlan(plan)}
+                  >
+                    Editar Plano
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

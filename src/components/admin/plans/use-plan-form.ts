@@ -17,6 +17,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
   const { toast } = useToast();
   const isEditing = !!plan;
 
+  console.log("usePlanForm iniciado com plano:", plan);
+
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planFormSchema),
     defaultValues: {
@@ -33,6 +35,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   useEffect(() => {
     if (plan) {
+      console.log("Carregando dados do plano no formulário:", plan);
+      
       // Prepare features for form
       let featuresString = "";
       if (Array.isArray(plan.features)) {
@@ -50,8 +54,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         description: plan.description,
         features: featuresString,
         active: plan.active,
-        stripeProductId: plan.stripeProductId,
-        stripePriceId: plan.stripePriceId,
+        stripeProductId: plan.stripeProductId || "",
+        stripePriceId: plan.stripePriceId || "",
         credits: plan.credits,
       });
     } else {
@@ -70,6 +74,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   const onSubmit = async (values: PlanFormValues) => {
     try {
+      console.log("Dados do formulário para salvar:", values);
+      
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
@@ -78,25 +84,39 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         credits: typeof values.credits === 'string' ? parseInt(values.credits, 10) : values.credits
       };
       
+      console.log("Valores formatados para salvar:", formattedValues);
+      
       let savedPlan: Plan | null = null;
       
       // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
       if (isEditing && formattedValues.stripeProductId) {
-        await updateStripeProduct({
-          stripeProductId: formattedValues.stripeProductId,
-          stripePriceId: formattedValues.stripePriceId || '',
-          name: formattedValues.name,
-          description: formattedValues.description,
-          price: formattedValues.price,
-          active: formattedValues.active,
-          credits: formattedValues.credits,
-        });
+        try {
+          console.log("Atualizando produto no Stripe");
+          await updateStripeProduct({
+            stripeProductId: formattedValues.stripeProductId,
+            stripePriceId: formattedValues.stripePriceId || '',
+            name: formattedValues.name,
+            description: formattedValues.description,
+            price: formattedValues.price,
+            active: formattedValues.active,
+            credits: formattedValues.credits,
+          });
+          console.log("Produto atualizado no Stripe com sucesso");
+        } catch (stripeError) {
+          console.error("Erro ao atualizar no Stripe:", stripeError);
+          toast({
+            title: "Erro ao atualizar no Stripe",
+            description: "O plano será atualizado apenas no banco de dados local.",
+            variant: "destructive",
+          });
+        }
       }
       
       // Salvar no banco de dados
       if (isEditing && plan) {
         console.log('Atualizando plano', plan.id, formattedValues);
         savedPlan = await updatePlan(plan.id, formattedValues);
+        console.log('Plano atualizado:', savedPlan);
       } else {
         // Ensure active is explicitly included for new plans
         const newPlanData: Omit<Plan, "id"> = {
@@ -110,10 +130,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
           credits: formattedValues.credits,
         };
         
+        console.log('Criando novo plano:', newPlanData);
         savedPlan = await createPlan(newPlanData);
+        console.log('Novo plano criado:', savedPlan);
       }
       
       if (savedPlan) {
+        console.log('Plano salvo com sucesso:', savedPlan);
         await onSave(savedPlan);
         
         toast({
@@ -122,6 +145,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         });
         
         onOpenChange(false);
+      } else {
+        console.error('Não foi possível salvar o plano, resposta vazia');
+        throw new Error('Não foi possível salvar o plano');
       }
     } catch (error) {
       console.error('Erro ao salvar plano:', error);
