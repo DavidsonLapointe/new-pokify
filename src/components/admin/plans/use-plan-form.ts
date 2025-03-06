@@ -33,11 +33,22 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   useEffect(() => {
     if (plan) {
+      // Prepare features for form
+      let featuresString = "";
+      if (Array.isArray(plan.features)) {
+        featuresString = plan.features.join("\n");
+      } else if (typeof plan.features === 'string') {
+        featuresString = plan.features;
+      } else if (plan.features) {
+        // Fallback for any other case
+        featuresString = String(plan.features);
+      }
+
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
         description: plan.description,
-        features: Array.isArray(plan.features) ? plan.features.join("\n") : plan.features,
+        features: featuresString,
         active: plan.active,
         stripeProductId: plan.stripeProductId,
         stripePriceId: plan.stripePriceId,
@@ -83,6 +94,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       
       // Salvar no banco de dados
       if (isEditing && plan) {
+        console.log('Atualizando plano', plan.id, formattedValues);
         savedPlan = await updatePlan(plan.id, formattedValues);
       } else {
         // Ensure active is explicitly included for new plans

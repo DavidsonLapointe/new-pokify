@@ -52,9 +52,11 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
     if (Array.isArray(plan.features)) {
       features = plan.features;
     } else if (typeof plan.features === 'string') {
-      // Type guard ensures TypeScript knows plan.features is a string here
-      const featuresString: string = plan.features;
-      features = featuresString.split('\n').filter((f: string) => f.trim().length > 0);
+      features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+    } else if (plan.features) {
+      // Fallback - convert to string if possible
+      const featuresStr = String(plan.features);
+      features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
     }
     
     const { data, error } = await supabase
@@ -87,6 +89,8 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
 
 export async function updatePlan(id: number | string, plan: Partial<Plan>): Promise<Plan | null> {
   try {
+    console.log('Atualizando plano:', id, plan);
+    
     // Process features safely based on type
     let features: string[] | undefined = undefined;
     
@@ -94,9 +98,11 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       if (Array.isArray(plan.features)) {
         features = plan.features;
       } else if (typeof plan.features === 'string') {
-        // Type guard ensures TypeScript knows plan.features is a string here
-        const featuresString: string = plan.features;
-        features = featuresString.split('\n').filter((f: string) => f.trim().length > 0);
+        features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+      } else {
+        // Fallback - convert to string if possible
+        const featuresStr = String(plan.features);
+        features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
       }
     }
     
