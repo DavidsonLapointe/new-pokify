@@ -29,7 +29,6 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       nome_fantasia: values.nomeFantasia,
       plan: values.plan,
       status: "pending",
-      pending_reason: "contract_signature",
       email: values.email,
       phone: values.phone,
       cnpj: values.cnpj,
@@ -49,14 +48,30 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
  * Transforms database organization format to match Organization type
  */
 export const mapToOrganizationType = (dbOrganization: any): Organization => {
+  // Calculate overall status based on individual statuses
+  const allStepsCompleted = 
+    dbOrganization.contract_status === 'completed' && 
+    dbOrganization.payment_status === 'completed' && 
+    dbOrganization.registration_status === 'completed';
+  
+  // Determine current pending reason based on first incomplete step
+  let currentPendingReason = null;
+  if (dbOrganization.contract_status === 'pending') {
+    currentPendingReason = 'contract_signature';
+  } else if (dbOrganization.payment_status === 'pending') {
+    currentPendingReason = 'pro_rata_payment';
+  } else if (dbOrganization.registration_status === 'pending') {
+    currentPendingReason = 'user_validation';
+  }
+
   return {
     id: dbOrganization.id,
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
     users: [],
-    status: dbOrganization.status,
-    pendingReason: dbOrganization.pending_reason,
+    status: allStepsCompleted ? 'active' : dbOrganization.status,
+    pendingReason: currentPendingReason,
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
     email: dbOrganization.email,

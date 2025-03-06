@@ -12,13 +12,20 @@ export const formatOrganizationData = (organization: any): Organization => {
   
   // Tratar campos opcionais explicitamente
   const nome_fantasia = organization.nome_fantasia || '';
-  const pending_reason = organization.pending_reason === 'null' || !organization.pending_reason 
-    ? null 
-    : organization.pending_reason;
   const contract_signed_at = organization.contract_signed_at || null;
   const integrated_crm = organization.integrated_crm || null;
   const integrated_llm = organization.integrated_llm || null;
   const phone = organization.phone || '';
+  
+  // Determine pending reason based on individual statuses
+  let pendingReason = null;
+  if (organization.contract_status === 'pending') {
+    pendingReason = 'contract_signature';
+  } else if (organization.payment_status === 'pending') {
+    pendingReason = 'pro_rata_payment';
+  } else if (organization.registration_status === 'pending') {
+    pendingReason = 'user_validation';
+  }
   
   // Verificar campos que podem ser undefined para evitar serializações incorretas
   let logo = undefined;
@@ -48,7 +55,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     plan: organization.plan,
     users: organization.users || [],
     status: organization.status,
-    pendingReason: pending_reason,
+    pendingReason: pendingReason,
     integratedCRM: integrated_crm,
     integratedLLM: integrated_llm,
     email: organization.email,
