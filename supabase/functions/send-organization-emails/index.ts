@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from "npm:resend@2.0.0";
@@ -25,12 +26,17 @@ interface EmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("=== Email sending function started ===");
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log("Parsing request body...");
     const { organizationId, type, data } = await req.json();
+    console.log(`Request received for organization ${organizationId}, type: ${type}`);
+    console.log("Email data:", data);
 
     const { data: organization, error: orgError } = await supabase
       .from('organizations')
@@ -38,8 +44,21 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('id', organizationId)
       .single();
 
-    if (orgError) throw new Error(`Erro ao buscar organização: ${orgError.message}`);
-    if (!organization) throw new Error('Organização não encontrada');
+    if (orgError) {
+      console.error("Error fetching organization:", orgError);
+      throw new Error(`Erro ao buscar organização: ${orgError.message}`);
+    }
+    
+    if (!organization) {
+      console.error("Organization not found");
+      throw new Error('Organização não encontrada');
+    }
+
+    console.log("Organization found:", {
+      id: organization.id,
+      name: organization.name,
+      adminEmail: organization.admin_email
+    });
 
     let emailContent;
     switch (type) {
@@ -100,13 +119,14 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error("Tipo de email inválido");
     }
 
+    console.log(`Sending ${type} email to ${organization.admin_email}`);
     const emailResponse = await resend.emails.send({
       from: "Leadly <noreply@leadly.com.br>",
       to: [organization.admin_email],
       ...emailContent,
     });
 
-    console.log(`Email do tipo ${type} enviado com sucesso:`, emailResponse);
+    console.log(`Email sent successfully:`, emailResponse);
 
     const { error: logError } = await supabase
       .from('email_logs')
@@ -119,7 +139,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
     if (logError) {
-      console.error("Erro ao registrar log de email:", logError);
+      console.error("Error logging email:", logError);
     }
 
     return new Response(JSON.stringify(emailResponse), {
@@ -128,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
   } catch (error: any) {
-    console.error("Erro na função send-organization-emails:", error);
+    console.error("Error in send-organization-emails function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
