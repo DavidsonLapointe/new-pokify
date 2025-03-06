@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [proRataValue, setProRataValue] = useState<number | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>("");
   const [notFoundReason, setNotFoundReason] = useState<string>("");
+  const [rawResponse, setRawResponse] = useState<any>(null);
 
   useEffect(() => {
     loadOrganization();
@@ -38,26 +40,38 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       setLoading(true);
       console.log("Loading organization with ID:", id);
       
-      // Buscar a organização (usando maybeSingle em vez de single)
-      const { data: orgData, error: orgError } = await supabase
-        .from('organizations')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
-
-      if (orgError) {
-        console.error("Error fetching organization:", orgError);
-        setDebugInfo(`Error: ${orgError.message} | Code: ${orgError.code} | Details: ${orgError.details}`);
-        throw orgError;
+      // Verificação explícita do formato do ID
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) {
+        setNotFoundReason("O ID fornecido não está no formato UUID válido");
+        setLoading(false);
+        return;
       }
       
-      if (!orgData) {
+      // Buscar a organização com uma busca simples sem usar single ou maybeSingle
+      const { data, error, status } = await supabase
+        .from('organizations')
+        .select('*')
+        .eq('id', id);
+      
+      setRawResponse({ data, error, status });
+      
+      if (error) {
+        console.error("Error fetching organization:", error);
+        setDebugInfo(`Error: ${error.message} | Code: ${error.code} | Details: ${error.details} | Status: ${status}`);
+        throw error;
+      }
+      
+      console.log("Raw response data:", data);
+      
+      if (!data || data.length === 0) {
         console.log("Organization not found with ID:", id);
         setNotFoundReason("A organização com o ID especificado não existe no banco de dados");
         setLoading(false);
         return;
       }
       
+      // Usar o primeiro resultado se houver algum
+      const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
       
       // Se estiver no modo de pagamento, buscar o título pro-rata
@@ -166,6 +180,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-left overflow-auto">
               <pre>{debugInfo}</pre>
               <p className="mt-2">ID buscado: {id}</p>
+            </div>
+          )}
+          {rawResponse && (
+            <div className="mb-4 p-2 bg-gray-50 rounded text-xs text-left overflow-auto">
+              <p className="font-bold">Resposta bruta da API:</p>
+              <pre>{JSON.stringify(rawResponse, null, 2)}</pre>
             </div>
           )}
           <Button onClick={() => navigate("/")} variant="outline">
