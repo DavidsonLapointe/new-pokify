@@ -33,31 +33,5 @@ export interface User {
   company_leadly_id?: string;
 }
 
-export interface Organization {
-  id: string;
-  name: string;
-  nomeFantasia: string;
-  plan: string;
-  users: User[];
-  status: UserStatus;
-  pendingReason?: OrganizationPendingReason;
-  integratedCRM: string | null;
-  integratedLLM: string | null;
-  email: string;
-  phone: string;
-  cnpj: string;
-  adminName: string;
-  adminEmail: string;
-  contractSignedAt?: string;
-  createdAt: string;
-  logo?: string;
-  address?: {
-    logradouro: string;
-    numero: string;
-    complemento: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    cep: string;
-  };
-}
+// Import the Organization type from organization-types.ts to avoid duplication
+import { Organization } from './organization-types';

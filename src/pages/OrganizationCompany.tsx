@@ -24,6 +24,9 @@ export default function OrganizationCompany() {
     createdAt: new Date().toISOString(),
     integratedCRM: null,
     integratedLLM: null,
+    contractStatus: 'completed',
+    paymentStatus: 'completed',
+    registrationStatus: 'completed',
     address: {
       logradouro: '',
       numero: '',
