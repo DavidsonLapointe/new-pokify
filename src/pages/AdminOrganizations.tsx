@@ -16,7 +16,8 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
   try {
     console.log("Iniciando busca de organizações");
     
-    // Fetch organizations from Supabase
+    // Fetch organizations from Supabase with debug logs
+    console.log("Executando query para buscar organizações");
     const { data: orgsData, error: orgsError } = await supabase
       .from('organizations')
       .select(`
@@ -37,16 +38,19 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
         created_at
       `)
       .order('created_at', { ascending: false });
-
+    
+    // Verificar se houve erro na consulta
     if (orgsError) {
       console.error("Erro ao buscar organizações:", orgsError);
-      throw new Error("Falha ao carregar empresas. Tente novamente mais tarde.");
+      throw new Error(`Falha ao carregar empresas: ${orgsError.message}`);
     }
 
-    console.log("Organizações recebidas:", orgsData?.length || 0);
+    // Logar os dados brutos recebidos
+    console.log("Dados brutos recebidos do Supabase:", orgsData);
+    console.log("Quantidade de organizações recebidas:", orgsData?.length || 0);
 
     if (!orgsData || orgsData.length === 0) {
-      console.log("Nenhuma organização encontrada");
+      console.log("Nenhuma organização encontrada no banco de dados");
       return [];
     }
 
@@ -54,7 +58,7 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
     const organizationsWithUsers = await Promise.all(
       orgsData.map(async (org) => {
         try {
-          console.log(`Buscando usuários para a organização: ${org.id}`);
+          console.log(`Buscando usuários para a organização: ${org.id} (${org.name})`);
           
           const { data: users, error: usersError } = await supabase
             .from('profiles')
@@ -71,10 +75,14 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
 
           console.log(`Encontrados ${users?.length || 0} usuários para a organização ${org.id}`);
           
-          return formatOrganizationData({
+          // Formatar e retornar os dados da organização com usuários
+          const formattedOrg = formatOrganizationData({
             ...org,
             users: users || []
           });
+          
+          console.log(`Organização formatada: ${formattedOrg.name}`, formattedOrg);
+          return formattedOrg;
         } catch (err) {
           console.error(`Erro ao processar organização ${org.id}:`, err);
           return formatOrganizationData({
@@ -85,7 +93,8 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
       })
     );
 
-    console.log("Processamento completo. Total de organizações:", organizationsWithUsers.length);
+    console.log("Processamento completo. Total de organizações formatadas:", organizationsWithUsers.length);
+    console.log("Organizações processadas:", organizationsWithUsers);
     return organizationsWithUsers;
   } catch (err) {
     console.error("Erro em fetchOrganizations:", err);
@@ -108,7 +117,7 @@ const Organizations = () => {
   } = useQuery({
     queryKey: ['organizations'],
     queryFn: fetchOrganizations,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 0, // Desabilitar cache para sempre buscar dados novos
     refetchOnWindowFocus: true,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
@@ -124,7 +133,7 @@ const Organizations = () => {
 
   // Adicionar log para verificar os dados carregados
   useEffect(() => {
-    console.log("Organizações carregadas:", organizations);
+    console.log("Organizações carregadas no componente:", organizations);
   }, [organizations]);
 
   const handleEditOrganization = (organization: Organization) => {
@@ -134,7 +143,8 @@ const Organizations = () => {
   const handleUpdateOrganization = (updatedOrg: Organization) => {
     // The updated data will be automatically refetched by React Query
     setEditingOrganization(null);
-    refetch(); // Explicitly refetch after update
+    refetch(); // Explicitamente refetching após atualização
+    toast.success("Empresa atualizada com sucesso!");
   };
 
   const handleShowActiveUsers = (organization: Organization) => {

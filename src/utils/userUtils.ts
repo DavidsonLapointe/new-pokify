@@ -5,6 +5,8 @@ import { Organization } from '@/types/organization-types';
 export const getInitialUserState = (): User | null => null;
 
 export const formatOrganizationData = (organization: any): Organization => {
+  console.log("Formatando organização:", organization.name, organization);
+  
   const convertedPendingReason = organization.pending_reason === 'null' || !organization.pending_reason 
     ? null 
     : organization.pending_reason;
@@ -14,7 +16,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     name: organization.name,
     nomeFantasia: organization.nome_fantasia || '',
     plan: organization.plan,
-    users: [],
+    users: organization.users || [],
     status: organization.status,
     pendingReason: convertedPendingReason,
     integratedCRM: organization.integrated_crm,
