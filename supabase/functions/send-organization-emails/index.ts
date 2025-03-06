@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from "npm:resend@2.0.0";
@@ -26,26 +25,21 @@ interface EmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { organizationId, type, data }: EmailRequest = await req.json();
+    const { organizationId, type, data } = await req.json();
 
-    // Buscar dados da organização
     const { data: organization, error: orgError } = await supabase
       .from('organizations')
-      .select('*, profiles!inner(*)')
+      .select('*')
       .eq('id', organizationId)
       .single();
 
     if (orgError) throw new Error(`Erro ao buscar organização: ${orgError.message}`);
     if (!organization) throw new Error('Organização não encontrada');
-
-    const adminUser = organization.profiles[0];
-    if (!adminUser) throw new Error('Usuário admin não encontrado');
 
     let emailContent;
     switch (type) {
@@ -108,19 +102,18 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailResponse = await resend.emails.send({
       from: "Leadly <noreply@leadly.com.br>",
-      to: [adminUser.email],
+      to: [organization.admin_email],
       ...emailContent,
     });
 
     console.log(`Email do tipo ${type} enviado com sucesso:`, emailResponse);
 
-    // Registrar o envio do email
     const { error: logError } = await supabase
       .from('email_logs')
       .insert({
         organization_id: organizationId,
         type: type,
-        sent_to: adminUser.email,
+        sent_to: organization.admin_email,
         status: 'sent',
         metadata: data
       });

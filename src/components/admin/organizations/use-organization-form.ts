@@ -36,7 +36,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      // Verifica se o usuário tem permissão para criar organizações
+      // Verify user permission
       if (user.role !== "leadly_employee") {
         toast({
           title: "Acesso negado",
@@ -48,7 +48,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       console.log("Iniciando criação da organização:", values);
 
-      // Verifica se o CNPJ já existe
+      // Check if CNPJ exists
       const { data: existingOrg, error: checkError } = await supabase
         .from('organizations')
         .select('id')
@@ -68,7 +68,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         return;
       }
 
-      // Cria a organização primeiro
+      // Create organization
       const { data: newOrganizationData, error: orgError } = await supabase
         .from('organizations')
         .insert({
@@ -104,7 +104,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       console.log("Organização criada com sucesso:", newOrganizationData);
 
-      // Calcula o valor pro-rata baseado no plano
+      // Calculate pro-rata value
       const planValues = {
         basic: 99.90,
         professional: 199.90,
@@ -112,12 +112,12 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       };
 
       let proRataValue = calculateProRataValue(planValues[values.plan as keyof typeof planValues]);
-      proRataValue = parseFloat(proRataValue.toFixed(2)); // Arredonda para 2 casas decimais
+      proRataValue = parseFloat(proRataValue.toFixed(2));
       
       console.log("Valor pro-rata calculado:", proRataValue);
 
       try {
-        // Cria o título pro-rata
+        // Create pro-rata title
         const proRataTitle = await createProRataTitle({
           id: String(newOrganizationData.id),
           name: newOrganizationData.name,
@@ -151,26 +151,70 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         console.log("Título pro-rata criado:", proRataTitle);
 
         if (!proRataTitle) {
-          throw new Error("Falha ao criar título pro-rata");
+          console.error("Falha ao criar título pro-rata");
         }
         
-        // Tenta enviar o email com o contrato
+        // Send contract email
         try {
-          console.log("Tentando enviar email do contrato...");
-          await supabase.functions.invoke('send-organization-emails', {
+          console.log("Enviando email do contrato...");
+          const { error: emailError } = await supabase.functions.invoke('send-organization-emails', {
             body: {
               organizationId: newOrganizationData.id,
               type: 'contract',
               data: {
                 contractUrl: `${window.location.origin}/contract/${newOrganizationData.id}`,
-                proRataValue: proRataValue
+                proRataAmount: proRataValue
               }
             }
           });
-          console.log("Email enviado com sucesso");
+
+          if (emailError) {
+            console.error("Erro ao enviar email:", emailError);
+            throw emailError;
+          }
+          
+          // Send confirmation email with registration link
+          const { error: confirmationEmailError } = await supabase.functions.invoke('send-organization-emails', {
+            body: {
+              organizationId: newOrganizationData.id,
+              type: 'confirmation',
+              data: {
+                confirmationToken: `${window.location.origin}/confirm-registration/${newOrganizationData.id}`
+              }
+            }
+          });
+
+          if (confirmationEmailError) {
+            console.error("Erro ao enviar email de confirmação:", confirmationEmailError);
+            throw confirmationEmailError;
+          }
+
+          // Send payment instructions email
+          const { error: paymentEmailError } = await supabase.functions.invoke('send-organization-emails', {
+            body: {
+              organizationId: newOrganizationData.id,
+              type: 'payment',
+              data: {
+                paymentUrl: `${window.location.origin}/payment/${newOrganizationData.id}`,
+                proRataAmount: proRataValue
+              }
+            }
+          });
+
+          if (paymentEmailError) {
+            console.error("Erro ao enviar email de pagamento:", paymentEmailError);
+            throw paymentEmailError;
+          }
+
+          console.log("Emails enviados com sucesso");
         } catch (emailError) {
-          console.error("Erro ao enviar email:", emailError);
-          // Continua mesmo se o email falhar, apenas loga o erro
+          console.error("Erro ao enviar emails:", emailError);
+          toast({
+            title: "Aviso",
+            description: "Empresa criada, mas houve um erro ao enviar os emails. Nossa equipe será notificada.",
+            variant: "warning",
+          });
+          // Continue with success flow even if email fails
         }
 
         toast({
@@ -183,13 +227,12 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       } catch (error) {
         console.error("Erro ao processar pós-criação da empresa:", error);
         
-        // A organização foi criada, mas houve erro no título ou email
         toast({
           title: "Empresa criada parcialmente",
-          description: "A empresa foi criada, mas houve um erro no processamento financeiro. A equipe será notificada.",
+          description: "A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.",
+          variant: "warning",
         });
         
-        // Ainda fechamos o modal para mostrar que a empresa foi criada
         form.reset();
         onSuccess();
       }
