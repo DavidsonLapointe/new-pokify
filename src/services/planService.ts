@@ -60,7 +60,8 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       } else {
         // Fallback - convert to string if possible
         try {
-          const featuresStr = String(plan.features);
+          // Ensure we're dealing with a string
+          const featuresStr = String(plan.features || '');
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
@@ -115,7 +116,8 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       } else if (plan.features) {
         // Fallback - convert to string if possible
         try {
-          const featuresStr = String(plan.features);
+          // Ensure we're dealing with a string
+          const featuresStr = String(plan.features || '');
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
