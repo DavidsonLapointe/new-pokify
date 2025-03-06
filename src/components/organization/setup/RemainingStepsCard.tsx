@@ -68,7 +68,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
                 <p className="text-sm text-gray-500">Revise e assine o contrato de adesão</p>
               </div>
               <Button 
-                onClick={() => navigate(`/contract/${organizationId}`)}
+                onClick={() => window.location.href = `/contract/${organizationId}`}
                 variant="outline"
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
               >

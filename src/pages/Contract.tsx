@@ -77,11 +77,10 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
       
-      // Check status of each step
-      setContractSigned(!!orgData.contract_signed_at);
-      setPaymentCompleted(orgData.pending_reason !== 'pro_rata_payment' && 
-                          orgData.pending_reason !== 'contract_signature');
-      setRegistrationCompleted(orgData.status === 'active');
+      // Check status of each step using the new status columns
+      setContractSigned(orgData.contract_status === 'completed');
+      setPaymentCompleted(orgData.payment_status === 'completed');
+      setRegistrationCompleted(orgData.registration_status === 'completed');
       
       if (paymentMode) {
         const { data: titleData, error: titleError } = await supabase
@@ -126,7 +125,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         .from('organizations')
         .update({ 
           contract_signed_at: new Date().toISOString(),
-          pending_reason: 'pro_rata_payment'
+          contract_status: 'completed'
         })
         .eq('id', id);
 
@@ -151,7 +150,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       const { error: updateError } = await supabase
         .from('organizations')
         .update({ 
-          pending_reason: 'user_validation'
+          payment_status: 'completed'
         })
         .eq('id', id);
 

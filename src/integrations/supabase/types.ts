@@ -587,6 +587,7 @@ export type Database = {
           cnpj: string
           complemento: string | null
           contract_signed_at: string | null
+          contract_status: string | null
           created_at: string | null
           email: string
           estado: string | null
@@ -598,11 +599,13 @@ export type Database = {
           name: string
           nome_fantasia: string | null
           numero: string | null
+          payment_status: string | null
           pending_reason:
             | Database["public"]["Enums"]["organization_pending_reason"]
             | null
           phone: string | null
           plan: string
+          registration_status: string | null
           status: Database["public"]["Enums"]["user_status"]
         }
         Insert: {
@@ -614,6 +617,7 @@ export type Database = {
           cnpj: string
           complemento?: string | null
           contract_signed_at?: string | null
+          contract_status?: string | null
           created_at?: string | null
           email: string
           estado?: string | null
@@ -625,11 +629,13 @@ export type Database = {
           name: string
           nome_fantasia?: string | null
           numero?: string | null
+          payment_status?: string | null
           pending_reason?:
             | Database["public"]["Enums"]["organization_pending_reason"]
             | null
           phone?: string | null
           plan: string
+          registration_status?: string | null
           status?: Database["public"]["Enums"]["user_status"]
         }
         Update: {
@@ -641,6 +647,7 @@ export type Database = {
           cnpj?: string
           complemento?: string | null
           contract_signed_at?: string | null
+          contract_status?: string | null
           created_at?: string | null
           email?: string
           estado?: string | null
@@ -652,11 +659,13 @@ export type Database = {
           name?: string
           nome_fantasia?: string | null
           numero?: string | null
+          payment_status?: string | null
           pending_reason?:
             | Database["public"]["Enums"]["organization_pending_reason"]
             | null
           phone?: string | null
           plan?: string
+          registration_status?: string | null
           status?: Database["public"]["Enums"]["user_status"]
         }
         Relationships: []

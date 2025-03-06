@@ -77,11 +77,10 @@ export default function OrganizationSetup() {
         if (data) {
           setOrganization(data);
           
-          // Check status of each step
-          setContractSigned(!!data.contract_signed_at);
-          setPaymentCompleted(data.pending_reason !== 'pro_rata_payment' && 
-                             data.pending_reason !== 'contract_signature');
-          setRegistrationCompleted(data.status === 'active');
+          // Check status of each step using the new status columns
+          setContractSigned(data.contract_status === 'completed');
+          setPaymentCompleted(data.payment_status === 'completed');
+          setRegistrationCompleted(data.registration_status === 'completed');
         }
       } catch (error) {
         console.error("Error loading organization:", error);
@@ -112,8 +111,7 @@ export default function OrganizationSetup() {
       const { error: updateError } = await supabase
         .from('organizations')
         .update({ 
-          status: 'active',
-          pending_reason: null 
+          registration_status: 'completed'
         })
         .eq('id', organization.id);
         

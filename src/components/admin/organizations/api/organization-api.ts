@@ -35,6 +35,9 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       cnpj: values.cnpj,
       admin_name: values.adminName,
       admin_email: values.adminEmail,
+      contract_status: 'pending',
+      payment_status: 'pending',
+      registration_status: 'pending'
     })
     .select()
     .single();
