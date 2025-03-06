@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,58 +65,6 @@ const Plans = () => {
     }
   };
 
-  const PlanCard = ({ plan }: { plan: Plan }) => (
-    <Card className={`hover:shadow-md transition-shadow flex flex-col ${!plan.active ? 'opacity-60' : ''}`}>
-      <CardHeader>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-xl font-semibold pr-2 break-words">{plan.name}</CardTitle>
-            <div className="flex items-baseline text-xl font-semibold text-primary whitespace-nowrap">
-              <span className="text-base mr-1">R$</span>
-              {plan.price.toFixed(2)}
-              <span className="text-sm font-normal text-muted-foreground ml-1">/mês</span>
-            </div>
-          </div>
-          <CardDescription className="text-sm">{plan.description}</CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <div className="space-y-6 flex-1">
-          <div className="space-y-4">
-            {plan.credits !== undefined && plan.credits > 0 && (
-              <div className="flex items-center gap-2 text-sm font-medium mb-4 bg-muted p-2 rounded-md">
-                <Coins className="h-4 w-4 text-primary" />
-                <span>{plan.credits} créditos mensais</span>
-              </div>
-            )}
-            
-            <div className="h-[32px] flex items-center border-b text-sm font-medium">
-              Recursos inclusos:
-            </div>
-            <ul className="space-y-3 min-h-[120px]">
-              {Array.isArray(plan.features) && plan.features.map((feature: string, index: number) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="pt-6 mt-auto border-t">
-          <Button 
-            className="w-full" 
-            variant="default"
-            onClick={() => setEditingPlan(plan)}
-          >
-            Editar Plano
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -160,7 +109,7 @@ const Plans = () => {
               <CardHeader>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-xl font-semibold pr-2 break-words">{plan.name}</CardTitle>
+                    <CardTitle className="text-xl font-semibold pr-2 break-words max-w-[65%]">{plan.name}</CardTitle>
                     <div className="flex items-baseline text-xl font-semibold text-primary whitespace-nowrap">
                       <span className="text-base mr-1">R$</span>
                       {plan.price.toFixed(2)}
@@ -184,12 +133,19 @@ const Plans = () => {
                       Recursos inclusos:
                     </div>
                     <ul className="space-y-3 min-h-[120px]">
-                      {Array.isArray(plan.features) && plan.features.map((feature: string, index: number) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                          <span>{feature}</span>
+                      {Array.isArray(plan.features) && plan.features.length > 0 ? (
+                        plan.features.map((feature: string, index: number) => (
+                          <li key={index} className="flex items-start gap-2 text-sm">
+                            <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <FileText className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
+                          <span>Nenhum recurso listado</span>
                         </li>
-                      ))}
+                      )}
                     </ul>
                   </div>
                 </div>
