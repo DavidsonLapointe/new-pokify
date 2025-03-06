@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { FinancialTitle, TitleStatus } from "@/types/financial";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { handleTitlePayment } from "@/services/financialService";
+import { handleTitlePayment } from "@/services/financial";
 import { Organization } from "@/types";
 import { SearchX } from "lucide-react";
 
