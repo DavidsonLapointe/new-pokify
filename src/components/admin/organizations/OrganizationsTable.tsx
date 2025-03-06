@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { Pencil } from "lucide-react";
+import { Pencil, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OrganizationIntegrations } from "./OrganizationIntegrations";
 import {
@@ -68,6 +68,8 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     const reasons: { [key: string]: string } = {
       contract_signature: "Aguardando assinatura do contrato",
       payment: "Aguardando confirmação do pagamento",
+      pro_rata_payment: "Aguardando pagamento pro-rata",
+      user_validation: "Aguardando validação dos dados do usuário",
       approval: "Aguardando aprovação administrativa",
     };
 
@@ -112,11 +114,15 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                   {org.status === "pending" ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge className={getStatusColor(org.status)}>
-                          {getStatusLabel(org.status)}
-                        </Badge>
+                        <div className="flex items-center gap-1">
+                          <Badge className={getStatusColor(org.status)}>
+                            {getStatusLabel(org.status)}
+                          </Badge>
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                        </div>
                       </TooltipTrigger>
                       <TooltipContent>
+                        <p className="font-medium text-sm">Motivo da pendência:</p>
                         <p>{getPendingReason(org)}</p>
                       </TooltipContent>
                     </Tooltip>

@@ -32,6 +32,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { OrganizationFormFields } from "./organization-form-fields";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 interface EditOrganizationDialogProps {
   open: boolean;
@@ -102,6 +104,38 @@ export const EditOrganizationDialog = ({
     }
   };
 
+  const getPendingReasonDescription = (reason: string | null | undefined) => {
+    if (!reason) return null;
+
+    const reasons: { [key: string]: { description: string, action: string } } = {
+      contract_signature: {
+        description: "O contrato ainda não foi assinado pelo cliente.",
+        action: "Envie um lembrete de assinatura ou entre em contato com o cliente."
+      },
+      payment: {
+        description: "O pagamento não foi confirmado.",
+        action: "Verifique o status do pagamento ou entre em contato com o cliente."
+      },
+      pro_rata_payment: {
+        description: "O pagamento pro-rata ainda não foi realizado.",
+        action: "Envie um lembrete de pagamento ou entre em contato com o cliente."
+      },
+      user_validation: {
+        description: "O usuário administrador não validou seus dados ou não criou uma senha.",
+        action: "Envie um novo e-mail de validação ou entre em contato com o administrador."
+      },
+      approval: {
+        description: "A empresa está aguardando aprovação administrativa.",
+        action: "Analise as informações da empresa e aprove-a se estiver tudo correto."
+      }
+    };
+
+    return reasons[reason] || { 
+      description: "Pendência não especificada.", 
+      action: "Entre em contato com o suporte técnico."
+    };
+  };
+
   const onSubmit = async (values: CreateOrganizationFormData) => {
     try {
       console.log("Submitting form with values:", values);
@@ -164,6 +198,8 @@ export const EditOrganizationDialog = ({
   };
 
   const availableStatusOptions = getAvailableStatusOptions(organization.status);
+  const pendingInfo = organization.status === "pending" ? 
+    getPendingReasonDescription(organization.pendingReason) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -174,6 +210,23 @@ export const EditOrganizationDialog = ({
             Atualize os dados da empresa.
           </DialogDescription>
         </DialogHeader>
+
+        {organization.status === "pending" && pendingInfo && (
+          <Card className="border-yellow-200 bg-yellow-50 mb-4">
+            <CardContent className="pt-4">
+              <div className="flex gap-2 items-start">
+                <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-yellow-800">Pendência: {getPendingReasonDescription(organization.pendingReason)?.description}</h4>
+                  <p className="text-sm text-yellow-700 mt-1">
+                    Ação recomendada: {pendingInfo.action}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <OrganizationFormFields form={form} />
