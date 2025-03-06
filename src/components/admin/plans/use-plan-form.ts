@@ -76,12 +76,16 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     try {
       console.log("Dados do formulário para salvar:", values);
       
+      // Ensure price is a number and features is an array
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
         features: values.features.split("\n").filter(f => f.trim()),
-        active: values.active, // Make sure active is explicitly included
-        credits: typeof values.credits === 'string' ? parseInt(values.credits, 10) : values.credits
+        active: values.active, 
+        // Ensure credits is a number if provided
+        credits: typeof values.credits === 'string' 
+          ? parseInt(values.credits, 10) 
+          : (values.credits === undefined ? undefined : Number(values.credits))
       };
       
       console.log("Valores formatados para salvar:", formattedValues);
