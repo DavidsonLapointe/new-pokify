@@ -60,6 +60,7 @@ const getDefaultPlanValue = (planType: string): number => {
   
   // Verificando se o tipo de plano existe no objeto planValues
   if (normalizedPlanType in planValues) {
+    // Use type assertion to tell TypeScript this property exists
     return planValues[normalizedPlanType as keyof typeof planValues];
   } else {
     return planValues.professional; // Fallback para o plano professional se não encontrar
