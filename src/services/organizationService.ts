@@ -1,6 +1,6 @@
 
 import { Organization } from "@/types";
-import { createProRataTitle } from "./financialService";
+import { createProRataTitle } from "@/services/financial";
 
 export const updateOrganizationStatus = async (organizationId: number, newStatus: "active" | "inactive" | "pending") => {
   // Em produção, isso seria uma chamada à API
