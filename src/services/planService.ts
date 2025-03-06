@@ -128,15 +128,26 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
     if (plan.active !== undefined) updateData.active = plan.active;
     if (plan.stripeProductId !== undefined) updateData.stripe_product_id = plan.stripeProductId;
     if (plan.stripePriceId !== undefined) updateData.stripe_price_id = plan.stripePriceId;
-    if (plan.credits !== undefined) updateData.credits = plan.credits;
     if (features !== undefined) updateData.features = features;
+    
+    // Handle credits field properly based on database int4 type
+    if (plan.credits !== undefined) {
+      // Ensure credits is an integer or null
+      if (typeof plan.credits === 'string') {
+        updateData.credits = parseInt(plan.credits, 10);
+      } else if (typeof plan.credits === 'number') {
+        updateData.credits = Math.round(plan.credits); // Ensure it's an integer
+      } else {
+        updateData.credits = plan.credits; // null or undefined
+      }
+    }
     
     console.log('Dados finais de atualização:', updateData);
     
     const { data, error } = await supabase
       .from('plans')
       .update(updateData)
-      .eq('id', id)
+      .eq('id', id.toString())
       .select()
       .single();
     

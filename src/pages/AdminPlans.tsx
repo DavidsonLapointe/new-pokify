@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +42,6 @@ const Plans = () => {
     console.log("Salvando plano:", data);
     try {
       if (editingPlan) {
-        // Atualizar plano existente
         console.log("Atualizando plano existente:", editingPlan.id);
         const updatedPlans = plans.map(plan => 
           plan.id === editingPlan.id 
@@ -53,16 +51,13 @@ const Plans = () => {
         setPlans(updatedPlans);
         setEditingPlan(null);
       } else {
-        // Adicionar novo plano à lista
         console.log("Adicionando novo plano");
         const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
         setPlans([...plans, newPlan]);
       }
 
-      // Recarregar planos do banco de dados para garantir sincronização
       await loadPlans();
       toast.success(editingPlan ? "Plano atualizado com sucesso!" : "Plano criado com sucesso!");
-      
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
       toast.error("Ocorreu um erro ao salvar o plano.");
@@ -73,9 +68,9 @@ const Plans = () => {
     <Card className={`hover:shadow-md transition-shadow flex flex-col ${!plan.active ? 'opacity-60' : ''}`}>
       <CardHeader>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-            <div className="flex items-baseline text-xl font-semibold text-primary">
+          <div className="flex items-start justify-between">
+            <CardTitle className="text-xl font-semibold pr-2 break-words">{plan.name}</CardTitle>
+            <div className="flex items-baseline text-xl font-semibold text-primary whitespace-nowrap">
               <span className="text-base mr-1">R$</span>
               {plan.price.toFixed(2)}
               <span className="text-sm font-normal text-muted-foreground ml-1">/mês</span>
@@ -97,8 +92,8 @@ const Plans = () => {
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
               Recursos inclusos:
             </div>
-            <ul className="space-y-2">
-              {plan.features.map((feature: string, index: number) => (
+            <ul className="space-y-3 min-h-[120px]">
+              {Array.isArray(plan.features) && plan.features.map((feature: string, index: number) => (
                 <li key={index} className="flex items-start gap-2 text-sm">
                   <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <span>{feature}</span>
@@ -164,9 +159,9 @@ const Plans = () => {
             >
               <CardHeader>
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-                    <div className="flex items-baseline text-xl font-semibold text-primary">
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-xl font-semibold pr-2 break-words">{plan.name}</CardTitle>
+                    <div className="flex items-baseline text-xl font-semibold text-primary whitespace-nowrap">
                       <span className="text-base mr-1">R$</span>
                       {plan.price.toFixed(2)}
                       <span className="text-sm font-normal text-muted-foreground ml-1">/mês</span>
@@ -188,7 +183,7 @@ const Plans = () => {
                     <div className="h-[32px] flex items-center border-b text-sm font-medium">
                       Recursos inclusos:
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3 min-h-[120px]">
                       {Array.isArray(plan.features) && plan.features.map((feature: string, index: number) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
                           <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
