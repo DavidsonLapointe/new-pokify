@@ -172,17 +172,9 @@ export default function OrganizationSetup() {
               contractSigned={contractSigned}
               paymentCompleted={paymentCompleted}
               registrationCompleted={true} // This step is now completed
+              hideHomeButton={true}
             />
           )}
-          
-          <div className="text-center mt-8">
-            <Button
-              onClick={() => navigate("/")}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Ir para a página inicial
-            </Button>
-          </div>
         </div>
       </div>
     );
@@ -198,6 +190,7 @@ export default function OrganizationSetup() {
               contractSigned={contractSigned}
               paymentCompleted={paymentCompleted}
               registrationCompleted={registrationCompleted}
+              hideHomeButton={true}
             />
           </div>
         )}

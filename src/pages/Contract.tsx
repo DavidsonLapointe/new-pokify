@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -245,16 +244,8 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             contractSigned={contractSigned}
             paymentCompleted={paymentCompleted}
             registrationCompleted={registrationCompleted}
+            hideHomeButton={true}
           />
-          
-          <div className="text-center mt-8">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/")}
-            >
-              Voltar para a página inicial
-            </Button>
-          </div>
         </div>
       </div>
     );
@@ -278,6 +269,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
               contractSigned={contractSigned}
               paymentCompleted={paymentCompleted}
               registrationCompleted={registrationCompleted}
+              hideHomeButton={true}
             />
           )}
 
@@ -358,6 +350,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             contractSigned={contractSigned}
             paymentCompleted={paymentCompleted}
             registrationCompleted={registrationCompleted}
+            hideHomeButton={true}
           />
         )}
 

@@ -10,6 +10,7 @@ interface RemainingStepsProps {
   contractSigned: boolean;
   paymentCompleted: boolean;
   registrationCompleted: boolean;
+  hideHomeButton?: boolean;
 }
 
 export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
@@ -17,6 +18,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
   contractSigned,
   paymentCompleted,
   registrationCompleted,
+  hideHomeButton = false,
 }) => {
   const navigate = useNavigate();
   
@@ -35,12 +37,14 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
           <p className="text-green-700 mb-4">
             Sua conta está ativa. Você já pode acessar a plataforma.
           </p>
-          <Button 
-            onClick={() => navigate("/")}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Ir para a página inicial
-          </Button>
+          {!hideHomeButton && (
+            <Button 
+              onClick={() => navigate("/")}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Ir para a página inicial
+            </Button>
+          )}
         </CardContent>
       </Card>
     );
@@ -80,7 +84,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
                 <p className="text-sm text-gray-500">Efetue o pagamento pro-rata</p>
               </div>
               <Button 
-                onClick={() => navigate(`/payment/${organizationId}`)}
+                onClick={() => window.location.href = `/payment/${organizationId}`}
                 variant="outline"
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
               >
@@ -96,7 +100,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
                 <p className="text-sm text-gray-500">Defina sua senha e confirme seus dados</p>
               </div>
               <Button 
-                onClick={() => navigate(`/organization/setup?token=${organizationId}`)}
+                onClick={() => window.location.href = `/confirm-registration/${organizationId}`}
                 variant="outline"
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
               >
