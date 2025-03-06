@@ -94,15 +94,17 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
     // Process features safely based on type
     let features: string[] | undefined = undefined;
     
-    if (plan.features) {
+    if (plan.features !== undefined) {
       if (Array.isArray(plan.features)) {
         features = plan.features;
       } else if (typeof plan.features === 'string') {
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
-      } else {
+      } else if (plan.features) {
         // Fallback - convert to string if possible
         const featuresStr = String(plan.features);
         features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
+      } else {
+        features = [];
       }
     }
     
