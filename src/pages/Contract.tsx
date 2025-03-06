@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,29 +21,41 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [agreed, setAgreed] = useState(false);
   const [proRataValue, setProRataValue] = useState<number | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>("");
+  const [notFoundReason, setNotFoundReason] = useState<string>("");
 
   useEffect(() => {
     loadOrganization();
   }, [id]);
 
   const loadOrganization = async () => {
-    if (!id) return;
+    if (!id) {
+      setNotFoundReason("ID não informado na URL");
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
       console.log("Loading organization with ID:", id);
       
-      // Buscar a organização
+      // Buscar a organização (usando maybeSingle em vez de single)
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (orgError) {
         console.error("Error fetching organization:", orgError);
         setDebugInfo(`Error: ${orgError.message} | Code: ${orgError.code} | Details: ${orgError.details}`);
         throw orgError;
+      }
+      
+      if (!orgData) {
+        console.log("Organization not found with ID:", id);
+        setNotFoundReason("A organização com o ID especificado não existe no banco de dados");
+        setLoading(false);
+        return;
       }
       
       console.log("Organization data retrieved:", orgData);
@@ -64,7 +75,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           console.error("Error fetching pro-rata title:", titleError);
         } else if (titleData) {
           console.log("Pro-rata title data:", titleData);
-          // Fixed: Convert numeric value to string when needed
+          // Convert numeric value to string when needed
           setProRataValue(titleData.value ? parseFloat(titleData.value.toString()) : null);
         } else {
           console.log("No pro-rata title found");
@@ -74,6 +85,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       setOrganization(orgData);
     } catch (error: any) {
       console.error('Erro ao carregar organização:', error);
+      setDebugInfo(`Erro carregando organização: ${error.message}`);
       toast.error("Erro ao carregar dados da empresa");
     } finally {
       setLoading(false);
@@ -146,7 +158,10 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
         <div className="text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-red-600 mb-2">Empresa não encontrada</h2>
-          <p className="text-gray-600 mb-4">Não foi possível encontrar os dados da empresa solicitada.</p>
+          <p className="text-gray-600 mb-4">
+            Não foi possível encontrar os dados da empresa solicitada.
+            {notFoundReason && <span className="block mt-2 text-sm">{notFoundReason}</span>}
+          </p>
           {debugInfo && (
             <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-left overflow-auto">
               <pre>{debugInfo}</pre>
@@ -156,6 +171,15 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           <Button onClick={() => navigate("/")} variant="outline">
             Voltar para a página inicial
           </Button>
+          {id && (
+            <Button 
+              onClick={() => loadOrganization()} 
+              variant="outline"
+              className="mt-2 ml-2"
+            >
+              Tentar novamente
+            </Button>
+          )}
         </div>
       </div>
     );
