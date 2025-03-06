@@ -5,13 +5,20 @@ import { Organization } from '@/types/organization-types';
 export const getInitialUserState = (): User | null => null;
 
 export const formatOrganizationData = (organization: any): Organization => {
-  console.log("Formatando organização:", organization.name, organization);
+  console.log("Formatando organização (dados brutos):", organization);
+  
+  // Verificar se os dados necessários estão presentes
+  if (!organization || !organization.id || !organization.name) {
+    console.error("Dados de organização inválidos:", organization);
+    throw new Error("Dados de organização inválidos ou incompletos");
+  }
   
   const convertedPendingReason = organization.pending_reason === 'null' || !organization.pending_reason 
     ? null 
     : organization.pending_reason;
 
-  return {
+  // Criar objeto de organização formatado
+  const formattedOrg: Organization = {
     id: organization.id,
     name: organization.name,
     nomeFantasia: organization.nome_fantasia || '',
@@ -39,6 +46,9 @@ export const formatOrganizationData = (organization: any): Organization => {
       cep: organization.cep || '',
     } : undefined
   };
+  
+  console.log("Organização formatada com sucesso:", formattedOrg);
+  return formattedOrg;
 };
 
 export const formatUserData = (profile: any, organization?: Organization): User => {

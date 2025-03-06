@@ -14,29 +14,25 @@ import { formatOrganizationData } from "@/utils/userUtils";
 
 const fetchOrganizations = async (): Promise<Organization[]> => {
   try {
-    console.log("Iniciando busca de organizações");
+    console.log("=== INICIANDO BUSCA DE ORGANIZAÇÕES ===");
+    
+    // Verificar se a conexão com o Supabase está funcionando
+    try {
+      const { data: testData, error: testError } = await supabase.from('profiles').select('count').limit(1);
+      if (testError) {
+        console.error("Erro na conexão com Supabase:", testError);
+      } else {
+        console.log("Conexão com Supabase OK, testData:", testData);
+      }
+    } catch (connErr) {
+      console.error("Erro ao testar conexão com Supabase:", connErr);
+    }
     
     // Fetch organizations from Supabase with debug logs
     console.log("Executando query para buscar organizações");
     const { data: orgsData, error: orgsError } = await supabase
       .from('organizations')
-      .select(`
-        id,
-        name,
-        nome_fantasia,
-        plan,
-        status,
-        pending_reason,
-        integrated_crm,
-        integrated_llm,
-        email,
-        phone,
-        cnpj,
-        admin_name,
-        admin_email,
-        contract_signed_at,
-        created_at
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
     
     // Verificar se houve erro na consulta
@@ -119,7 +115,7 @@ const Organizations = () => {
     queryFn: fetchOrganizations,
     staleTime: 0, // Desabilitar cache para sempre buscar dados novos
     refetchOnWindowFocus: true,
-    retry: 3,
+    retry: 5, // Aumentar número de tentativas
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 
@@ -135,6 +131,20 @@ const Organizations = () => {
   useEffect(() => {
     console.log("Organizações carregadas no componente:", organizations);
   }, [organizations]);
+
+  // Trigger manual load when component mounts
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        console.log("Carregando organizações manualmente...");
+        await refetch();
+      } catch (err) {
+        console.error("Erro ao recarregar organizações:", err);
+      }
+    };
+    
+    loadData();
+  }, [refetch]);
 
   const handleEditOrganization = (organization: Organization) => {
     setEditingOrganization(organization);
