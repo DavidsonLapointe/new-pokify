@@ -166,11 +166,18 @@ const Organizations = () => {
     setEditingOrganization(organization);
   };
 
-  const handleUpdateOrganization = (updatedOrg: Organization) => {
-    // The updated data will be automatically refetched by React Query
-    setEditingOrganization(null);
-    refetch(); // Explicitamente refetching após atualização
-    toast.success("Empresa atualizada com sucesso!");
+  const handleUpdateOrganization = async (updatedOrg: Organization) => {
+    try {
+      console.log("Atualizando organização:", updatedOrg);
+      
+      // The updated data will be automatically refetched by React Query
+      setEditingOrganization(null);
+      await refetch(); // Explicitamente refetching após atualização
+      toast.success("Empresa atualizada com sucesso!");
+    } catch (err) {
+      console.error("Erro ao processar atualização da organização:", err);
+      toast.error("Erro ao atualizar empresa");
+    }
   };
 
   const handleShowActiveUsers = (organization: Organization) => {

@@ -1,3 +1,4 @@
+
 import { User } from '@/types';
 import { Organization } from '@/types/organization-types';
 
@@ -13,7 +14,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   }
   
   // Tratar campos opcionais explicitamente
-  const nome_fantasia = organization.nome_fantasia || null;
+  const nome_fantasia = organization.nome_fantasia || '';
   const pending_reason = organization.pending_reason === 'null' || !organization.pending_reason 
     ? null 
     : organization.pending_reason;
@@ -27,7 +28,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   const formattedOrg: Organization = {
     id: organization.id,
     name: organization.name,
-    nomeFantasia: nome_fantasia || '',
+    nomeFantasia: nome_fantasia,
     plan: organization.plan,
     users: organization.users || [],
     status: organization.status,
