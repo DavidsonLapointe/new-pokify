@@ -49,9 +49,9 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
     // Ensure features is an array
     const features = Array.isArray(plan.features) 
       ? plan.features 
-      : typeof plan.features === 'string'
-        ? plan.features.split('\n').filter(f => f.trim())
-        : [];
+      : (typeof plan.features === 'string'
+        ? plan.features.split('\n').filter((f: string) => f.trim())
+        : []);
     
     const { data, error } = await supabase
       .from('plans')
@@ -87,9 +87,9 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
     const features = plan.features 
       ? (Array.isArray(plan.features) 
         ? plan.features 
-        : typeof plan.features === 'string'
-          ? plan.features.split('\n').filter(f => f.trim())
-          : [])
+        : (typeof plan.features === 'string'
+          ? plan.features.split('\n').filter((f: string) => f.trim())
+          : []))
       : undefined;
     
     const updateData: any = {

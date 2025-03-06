@@ -58,6 +58,10 @@ const getDefaultPlanValue = (planType: string): number => {
   const planValues = getPlanValues();
   const normalizedPlanType = planType.toLowerCase();
   
-  return planValues[normalizedPlanType as keyof typeof planValues] || 
-         planValues.professional; // Fallback para o plano professional se não encontrar
+  // Verificando se o tipo de plano existe no objeto planValues
+  if (normalizedPlanType in planValues) {
+    return planValues[normalizedPlanType as keyof typeof planValues];
+  } else {
+    return planValues.professional; // Fallback para o plano professional se não encontrar
+  }
 };
