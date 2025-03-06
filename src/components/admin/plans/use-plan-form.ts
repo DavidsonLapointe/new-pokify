@@ -85,7 +85,19 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       if (isEditing && plan) {
         savedPlan = await updatePlan(plan.id, formattedValues);
       } else {
-        savedPlan = await createPlan(formattedValues as Omit<Plan, "id">);
+        // Ensure active is explicitly included for new plans
+        const newPlanData: Omit<Plan, "id"> = {
+          name: formattedValues.name,
+          price: formattedValues.price,
+          description: formattedValues.description,
+          features: formattedValues.features,
+          active: formattedValues.active,
+          stripeProductId: formattedValues.stripeProductId,
+          stripePriceId: formattedValues.stripePriceId,
+          credits: formattedValues.credits,
+        };
+        
+        savedPlan = await createPlan(newPlanData);
       }
       
       if (savedPlan) {

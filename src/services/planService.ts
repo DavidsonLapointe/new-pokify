@@ -46,12 +46,14 @@ export async function fetchPlanById(id: string): Promise<Plan | null> {
 
 export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
   try {
-    // Ensure features is an array
-    const features = Array.isArray(plan.features) 
-      ? plan.features 
-      : (typeof plan.features === 'string'
-        ? plan.features.split('\n').filter((f: string) => f.trim())
-        : []);
+    // Process features safely based on type
+    let features: string[] = [];
+    
+    if (Array.isArray(plan.features)) {
+      features = plan.features;
+    } else if (typeof plan.features === 'string') {
+      features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+    }
     
     const { data, error } = await supabase
       .from('plans')
@@ -83,14 +85,16 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
 
 export async function updatePlan(id: number | string, plan: Partial<Plan>): Promise<Plan | null> {
   try {
-    // Ensure features is an array if it exists
-    const features = plan.features 
-      ? (Array.isArray(plan.features) 
-        ? plan.features 
-        : (typeof plan.features === 'string'
-          ? plan.features.split('\n').filter((f: string) => f.trim())
-          : []))
-      : undefined;
+    // Process features safely based on type
+    let features: string[] | undefined = undefined;
+    
+    if (plan.features) {
+      if (Array.isArray(plan.features)) {
+        features = plan.features;
+      } else if (typeof plan.features === 'string') {
+        features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
+      }
+    }
     
     const updateData: any = {
       name: plan.name,
