@@ -55,13 +55,13 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       } else if (typeof plan.features === 'string') {
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
       } else if (plan.features === null) {
-        // Handle null case
+        // Handle null case explicitly
         features = [];
       } else {
         // Fallback - convert to string if possible
         try {
-          // Ensure we're dealing with a string
-          const featuresStr = String(plan.features || '');
+          // Ensure we're dealing with a string and handle undefined
+          const featuresStr = typeof plan.features !== 'undefined' ? String(plan.features) : '';
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
@@ -111,13 +111,13 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       } else if (typeof plan.features === 'string') {
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
       } else if (plan.features === null) {
-        // Handle null case
+        // Handle null case explicitly
         features = [];
       } else if (plan.features) {
         // Fallback - convert to string if possible
         try {
-          // Ensure we're dealing with a string
-          const featuresStr = String(plan.features || '');
+          // Ensure we're dealing with a string and handle potential undefined
+          const featuresStr = typeof plan.features !== 'undefined' ? String(plan.features) : '';
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
