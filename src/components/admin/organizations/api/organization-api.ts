@@ -97,14 +97,19 @@ export const sendOnboardingEmail = async (
   paymentUrl: string,
   proRataAmount: number
 ) => {
+  // Update links to use the proper formats that work with the multi-step flow
+  const updatedContractUrl = `${window.location.origin}/contract/${organizationId}`;
+  const updatedPaymentUrl = `${window.location.origin}/payment/${organizationId}`;
+  const updatedConfirmationToken = `${window.location.origin}/organization/setup?token=${organizationId}`;
+
   const { error } = await supabase.functions.invoke('send-organization-emails', {
     body: {
       organizationId,
       type: 'onboarding',
       data: {
-        contractUrl,
-        confirmationToken,
-        paymentUrl,
+        contractUrl: updatedContractUrl,
+        confirmationToken: updatedConfirmationToken,
+        paymentUrl: updatedPaymentUrl,
         proRataAmount
       }
     }

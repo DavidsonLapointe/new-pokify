@@ -87,6 +87,8 @@ function AppRoutes() {
         <Route path="/confirm-registration/:id" element={<ConfirmRegistration />} />
         <Route path="/contract/:id" element={<Contract />} />
         <Route path="/payment/:id" element={<Contract paymentMode={true} />} />
+        <Route path="/organization/setup" element={<OrganizationSetup />} />
+        <Route path="/organization/setup/:setupToken" element={<OrganizationSetup />} />
 
         {/* Admin Routes */}
         <Route
@@ -133,7 +135,6 @@ function AppRoutes() {
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="plan" element={<OrganizationPlan />} />
           <Route path="company" element={<OrganizationCompany />} />
-          <Route path="setup" element={<OrganizationSetup />} />
         </Route>
 
         {/* Not Found */}

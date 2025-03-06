@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { LoaderCircle } from "lucide-react";
+import { RemainingStepsCard } from "@/components/organization/setup/RemainingStepsCard";
 
 interface ContractProps {
   paymentMode?: boolean;
@@ -23,6 +25,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [debugInfo, setDebugInfo] = useState<string>("");
   const [notFoundReason, setNotFoundReason] = useState<string>("");
   const [rawResponse, setRawResponse] = useState<any>(null);
+  const [stepCompleted, setStepCompleted] = useState(false);
+  
+  // Track completion status of all steps
+  const [contractSigned, setContractSigned] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
+  const [registrationCompleted, setRegistrationCompleted] = useState(false);
 
   useEffect(() => {
     loadOrganization();
@@ -69,6 +77,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       
       const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
+      
+      // Check status of each step
+      setContractSigned(!!orgData.contract_signed_at);
+      setPaymentCompleted(orgData.pending_reason !== 'pro_rata_payment' && 
+                          orgData.pending_reason !== 'contract_signature');
+      setRegistrationCompleted(orgData.status === 'active');
       
       if (paymentMode) {
         const { data: titleData, error: titleError } = await supabase
@@ -120,8 +134,10 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       if (updateError) throw updateError;
       
       toast.success("Contrato assinado com sucesso!");
+      setContractSigned(true);
+      setStepCompleted(true);
       
-      navigate(`/payment/${id}`);
+      // Don't navigate automatically - let user choose next step
     } catch (error: any) {
       console.error('Erro ao assinar contrato:', error);
       toast.error("Erro ao processar assinatura do contrato");
@@ -146,9 +162,10 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       }
 
       toast.success("Pagamento processado com sucesso!");
-      setTimeout(() => {
-        navigate("/confirm-registration");
-      }, 2000);
+      setPaymentCompleted(true);
+      setStepCompleted(true);
+      
+      // Don't navigate automatically - let user choose next step
     } catch (error: any) {
       console.error('Erro ao processar pagamento:', error);
       toast.error("Erro ao processar pagamento");
@@ -205,6 +222,43 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       </div>
     );
   }
+  
+  // If a step was just completed, show the remaining steps card
+  if (stepCompleted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-xl font-semibold text-primary mb-2">Leadly</h1>
+            <h2 className="text-2xl font-semibold text-gray-900">
+              {paymentMode ? "Pagamento Concluído" : "Contrato Assinado"}
+            </h2>
+            <p className="text-gray-600 mt-2">
+              {paymentMode 
+                ? "Seu pagamento foi processado com sucesso!" 
+                : "Seu contrato foi assinado com sucesso!"}
+            </p>
+          </div>
+          
+          <RemainingStepsCard 
+            organizationId={id || ""}
+            contractSigned={contractSigned}
+            paymentCompleted={paymentCompleted}
+            registrationCompleted={registrationCompleted}
+          />
+          
+          <div className="text-center mt-8">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/")}
+            >
+              Voltar para a página inicial
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (paymentMode) {
     return (
@@ -216,6 +270,16 @@ export default function Contract({ paymentMode = false }: ContractProps) {
               Pagamento Pro Rata
             </h2>
           </div>
+
+          {/* Show remaining steps if any step is already completed */}
+          {(contractSigned || registrationCompleted) && (
+            <RemainingStepsCard 
+              organizationId={id || ""}
+              contractSigned={contractSigned}
+              paymentCompleted={paymentCompleted}
+              registrationCompleted={registrationCompleted}
+            />
+          )}
 
           <Card>
             <CardHeader>
@@ -286,6 +350,16 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             Contrato de Prestação de Serviços
           </h2>
         </div>
+
+        {/* Show remaining steps if any step is already completed */}
+        {(paymentCompleted || registrationCompleted) && (
+          <RemainingStepsCard 
+            organizationId={id || ""}
+            contractSigned={contractSigned}
+            paymentCompleted={paymentCompleted}
+            registrationCompleted={registrationCompleted}
+          />
+        )}
 
         <Card>
           <CardHeader>
