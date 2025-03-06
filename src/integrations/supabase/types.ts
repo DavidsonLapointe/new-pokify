@@ -670,6 +670,48 @@ export type Database = {
         }
         Relationships: []
       }
+      plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          credits: number | null
+          description: string
+          features: string[]
+          id: string
+          name: string
+          price: number
+          stripe_price_id: string | null
+          stripe_product_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          credits?: number | null
+          description: string
+          features: string[]
+          id?: string
+          name: string
+          price: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          credits?: number | null
+          description?: string
+          features?: string[]
+          id?: string
+          name?: string
+          price?: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           auth_provider: string | null

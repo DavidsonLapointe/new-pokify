@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,72 +10,61 @@ import {
 } from "@/components/ui/card";
 import { Plus, FileText } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
-
-const mockPlans = [
-  {
-    id: 1,
-    name: "Basic",
-    price: 99.90,
-    description: "Ideal para pequenas empresas iniciando no mercado",
-    features: [
-      "Até 3 usuários",
-      "100 créditos (análise de arquivos)",
-      "Integração com 1 CRM",
-      "Suporte por email",
-    ],
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Professional",
-    price: 199.90,
-    description: "Perfect para empresas em crescimento",
-    features: [
-      "Até 10 usuários",
-      "500 créditos (análise de arquivos)",
-      "Integração com 3 CRMs",
-      "Suporte prioritário",
-      "API de integração",
-    ],
-    active: true,
-  },
-  {
-    id: 3,
-    name: "Enterprise",
-    price: 499.90,
-    description: "Para grandes empresas que precisam de mais recursos",
-    features: [
-      "Usuários ilimitados",
-      "1000 créditos (análise de arquivos)",
-      "Integrações ilimitadas",
-      "Suporte 24/7",
-      "API dedicada",
-      "Manager dedicado",
-    ],
-    active: true,
-  }
-];
+import { fetchPlans } from "@/services/planService";
+import { Plan } from "@/components/admin/plans/plan-form-schema";
+import { toast } from "sonner";
 
 const Plans = () => {
-  const [plans, setPlans] = useState(mockPlans);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<any>(null);
+  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
-  const handleSavePlan = (data: any) => {
-    if (editingPlan) {
-      setPlans(plans.map(plan => 
-        plan.id === editingPlan.id 
-          ? { ...plan, ...data, id: plan.id }
-          : plan
-      ));
-      setEditingPlan(null);
-    } else {
-      setPlans([...plans, { ...data, id: plans.length + 1 }]);
+  useEffect(() => {
+    loadPlans();
+  }, []);
+
+  const loadPlans = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedPlans = await fetchPlans();
+      setPlans(fetchedPlans);
+    } catch (error) {
+      console.error("Erro ao carregar planos:", error);
+      toast.error("Não foi possível carregar os planos. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const PlanCard = ({ plan }: { plan: any }) => (
-    <Card className="hover:shadow-md transition-shadow flex flex-col">
+  const handleSavePlan = async (data: Partial<Plan>) => {
+    try {
+      if (editingPlan) {
+        // Atualizar plano existente
+        const updatedPlans = plans.map(plan => 
+          plan.id === editingPlan.id 
+            ? { ...plan, ...data, id: plan.id }
+            : plan
+        );
+        setPlans(updatedPlans);
+        setEditingPlan(null);
+      } else {
+        // Adicionar novo plano à lista
+        const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
+        setPlans([...plans, newPlan]);
+      }
+
+      // Recarregar planos do banco de dados para garantir sincronização
+      await loadPlans();
+      
+    } catch (error) {
+      console.error("Erro ao salvar plano:", error);
+      toast.error("Ocorreu um erro ao salvar o plano.");
+    }
+  };
+
+  const PlanCard = ({ plan }: { plan: Plan }) => (
+    <Card className={`hover:shadow-md transition-shadow flex flex-col ${!plan.active ? 'opacity-60' : ''}`}>
       <CardHeader>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
@@ -133,11 +123,32 @@ const Plans = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="hover:shadow-md transition-shadow flex flex-col h-[400px] animate-pulse">
+              <CardHeader>
+                <div className="h-6 bg-gray-200 rounded-md w-1/3 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded-md w-full"></div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <div className="space-y-4">
+                  <div className="h-4 bg-gray-200 rounded-md"></div>
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="h-3 bg-gray-200 rounded-md"></div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <PlanCard key={plan.id} plan={plan} />
+          ))}
+        </div>
+      )}
 
       <EditPlanDialog
         open={!!editingPlan}

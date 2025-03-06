@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { planFormSchema, type PlanFormValues, type Plan } from "./plan-form-schema";
 import { useToast } from "@/hooks/use-toast";
 import { updateStripeProduct } from "@/services/stripeService";
+import { createPlan, updatePlan } from "@/services/planService";
 
 interface UsePlanFormProps {
   plan?: Plan;
@@ -36,7 +37,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         name: plan.name,
         price: plan.price.toString(),
         description: plan.description,
-        features: plan.features.join("\n"),
+        features: Array.isArray(plan.features) ? plan.features.join("\n") : plan.features,
         active: plan.active,
         stripeProductId: plan.stripeProductId,
         stripePriceId: plan.stripePriceId,
@@ -64,6 +65,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         features: values.features.split("\n").filter(f => f.trim()),
       };
       
+      let savedPlan: Plan | null = null;
+      
       // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
       if (isEditing && formattedValues.stripeProductId) {
         await updateStripeProduct({
@@ -77,14 +80,23 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         });
       }
       
-      await onSave(formattedValues);
+      // Salvar no banco de dados
+      if (isEditing && plan) {
+        savedPlan = await updatePlan(plan.id, formattedValues);
+      } else {
+        savedPlan = await createPlan(formattedValues);
+      }
       
-      toast({
-        title: `Plano ${isEditing ? "atualizado" : "criado"} com sucesso!`,
-        description: `O plano ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
-      });
-      
-      onOpenChange(false);
+      if (savedPlan) {
+        await onSave(savedPlan);
+        
+        toast({
+          title: `Plano ${isEditing ? "atualizado" : "criado"} com sucesso!`,
+          description: `O plano ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
+        });
+        
+        onOpenChange(false);
+      }
     } catch (error) {
       console.error('Erro ao salvar plano:', error);
       toast({

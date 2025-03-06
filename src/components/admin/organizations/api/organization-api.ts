@@ -1,9 +1,8 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization } from "@/types";
 import { createProRataTitle } from "@/services/financial";
-import { calculateProRataValue, getPlanValues } from "../utils/calculation-utils";
+import { calculateProRataValue, getPlanValues, getPlanValue } from "../utils/calculation-utils";
 
 /**
  * Checks if an organization with the given CNPJ already exists
@@ -101,11 +100,23 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
  * Creates a pro-rata title for the newly created organization
  */
 export const handleProRataCreation = async (organization: Organization) => {
-  const planValues = getPlanValues();
-  const planType = organization.plan as keyof typeof planValues;
-  const proRataValue = calculateProRataValue(planValues[planType]);
-  
-  return await createProRataTitle(organization, proRataValue);
+  try {
+    // Buscar o valor do plano diretamente do banco de dados
+    const planType = organization.plan;
+    const planValue = await getPlanValue(planType);
+    const proRataValue = calculateProRataValue(planValue);
+    
+    return await createProRataTitle(organization, proRataValue);
+  } catch (error) {
+    console.error('Erro ao criar título pro-rata:', error);
+    
+    // Fallback para o método antigo em caso de erro
+    const planValues = getPlanValues();
+    const planType = organization.plan as keyof typeof planValues;
+    const proRataValue = calculateProRataValue(planValues[planType]);
+    
+    return await createProRataTitle(organization, proRataValue);
+  }
 };
 
 /**
