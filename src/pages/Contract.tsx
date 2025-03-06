@@ -6,13 +6,21 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { formatOrganizationData } from "@/utils/organizationUtils";
+import { LoaderCircle } from "lucide-react";
 
-export default function Contract() {
+interface ContractProps {
+  paymentMode?: boolean;
+}
+
+export default function Contract({ paymentMode = false }: ContractProps) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [organization, setOrganization] = useState<any>(null);
   const [agreed, setAgreed] = useState(false);
+  const [proRataValue, setProRataValue] = useState<number | null>(null);
 
   useEffect(() => {
     loadOrganization();
@@ -22,17 +30,39 @@ export default function Contract() {
     if (!id) return;
 
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      
+      // Buscar a organização
+      const { data: orgData, error: orgError } = await supabase
         .from('organizations')
         .select('*')
         .eq('id', id)
         .single();
 
-      if (error) throw error;
-      setOrganization(data);
+      if (orgError) throw orgError;
+      
+      // Se estiver no modo de pagamento, buscar o título pro-rata
+      if (paymentMode) {
+        const { data: titleData, error: titleError } = await supabase
+          .from('financial_titles')
+          .select('*')
+          .eq('organization_id', id)
+          .eq('type', 'pro_rata')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+          
+        if (!titleError && titleData) {
+          setProRataValue(parseFloat(titleData.value));
+        }
+      }
+      
+      setOrganization(orgData);
     } catch (error: any) {
       console.error('Erro ao carregar organização:', error);
       toast.error("Erro ao carregar dados da empresa");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,7 +72,7 @@ export default function Contract() {
       return;
     }
 
-    setLoading(true);
+    setProcessing(true);
 
     try {
       // Atualiza o status do contrato
@@ -55,38 +85,129 @@ export default function Contract() {
         .eq('id', id);
 
       if (updateError) throw updateError;
-
-      // Envia o email de confirmação
-      const { error: emailError } = await supabase.functions.invoke('send-organization-emails', {
-        body: {
-          organizationId: id,
-          type: 'payment',
-          data: {
-            paymentUrl: `${window.location.origin}/payment/${id}`,
-            proRataAmount: 99.90 // Valor exemplo, idealmente seria calculado
-          }
-        }
-      });
-
-      if (emailError) throw emailError;
-
+      
       toast.success("Contrato assinado com sucesso!");
-      navigate("/confirm-registration", { 
-        state: { organization } 
-      });
+      
+      // Redirecionar para a página de pagamento
+      navigate(`/payment/${id}`);
     } catch (error: any) {
       console.error('Erro ao assinar contrato:', error);
       toast.error("Erro ao processar assinatura do contrato");
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
+  const handlePayment = async () => {
+    setProcessing(true);
+    try {
+      // Aqui seria implementada a integração com a forma de pagamento
+      // Por enquanto, apenas simulamos um pagamento bem-sucedido
+
+      toast.success("Pagamento processado com sucesso!");
+      setTimeout(() => {
+        navigate("/confirm-registration");
+      }, 2000);
+    } catch (error: any) {
+      console.error('Erro ao processar pagamento:', error);
+      toast.error("Erro ao processar pagamento");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
+        <div className="text-center">
+          <LoaderCircle className="h-8 w-8 animate-spin mx-auto mb-2 text-primary" />
+          <h2 className="text-lg font-semibold text-gray-900">Carregando...</h2>
+        </div>
+      </div>
+    );
+  }
+
   if (!organization) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-lg font-semibold text-gray-900">Carregando...</h2>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
+        <div className="text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">Empresa não encontrada</h2>
+          <p className="text-gray-600 mb-4">Não foi possível encontrar os dados da empresa solicitada.</p>
+          <Button onClick={() => navigate("/")} variant="outline">
+            Voltar para a página inicial
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (paymentMode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-xl font-semibold text-primary mb-2">Leadly</h1>
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Pagamento Pro Rata
+            </h2>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Finalizar Cadastro - Pagamento Pro Rata</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-[#F1F0FB] rounded-lg">
+                <h3 className="font-medium text-lg mb-2">Informações da Empresa</h3>
+                <p><strong>Razão Social:</strong> {organization.name}</p>
+                <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
+                <p><strong>CNPJ:</strong> {organization.cnpj}</p>
+                <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
+              </div>
+
+              <div className="p-4 bg-[#F1F0FB] rounded-lg">
+                <h3 className="font-medium text-lg mb-2">Detalhes do Pagamento</h3>
+                <p className="mb-2">Valor pro rata: <strong>R$ {proRataValue?.toFixed(2) || '0.00'}</strong></p>
+                <p className="text-sm text-gray-600">
+                  Este é um pagamento único proporcional referente ao período restante do mês atual. 
+                  A partir do próximo mês, será cobrado o valor integral do plano contratado.
+                </p>
+              </div>
+
+              <div className="p-4 bg-[#F1F0FB] rounded-lg">
+                <h3 className="font-medium text-lg mb-2">Formas de Pagamento</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  Selecione uma forma de pagamento:
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="card" checked />
+                    <label htmlFor="card" className="text-sm font-medium">Cartão de Crédito</label>
+                  </div>
+                  {/* Aqui seria implementado o formulário de cartão de crédito */}
+                  <div className="border rounded p-3 mt-2">
+                    <p className="text-center text-gray-500">Formulário de cartão seria exibido aqui</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={handlePayment} 
+                disabled={processing}
+                className="w-full"
+              >
+                {processing ? (
+                  <>
+                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  `Pagar R$ ${proRataValue?.toFixed(2) || '0.00'}`
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     );
@@ -107,33 +228,78 @@ export default function Contract() {
             <CardTitle>Contrato de Adesão</CardTitle>
           </CardHeader>
           <CardContent className="prose max-w-none">
-            <h3>1. Das Partes</h3>
+            <div className="p-4 bg-[#F1F0FB] rounded-lg mb-6">
+              <h3 className="font-medium text-lg mb-1">Informações da Empresa</h3>
+              <p><strong>Razão Social:</strong> {organization.name}</p>
+              <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
+              <p><strong>CNPJ:</strong> {organization.cnpj}</p>
+              <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
+            </div>
+
+            <h3 className="text-lg font-semibold">1. Das Partes</h3>
             <p>
-              <strong>CONTRATADA:</strong> Leadly Tecnologia LTDA., pessoa jurídica de direito privado...
+              <strong>CONTRATADA:</strong> Leadly Tecnologia LTDA., pessoa jurídica de direito privado, inscrita no CNPJ/MF sob o nº 00.000.000/0001-00, com sede na Cidade de São Paulo, Estado de São Paulo, doravante denominada simplesmente LEADLY.
             </p>
             <p>
-              <strong>CONTRATANTE:</strong> {organization.name}, CNPJ {organization.cnpj}...
+              <strong>CONTRATANTE:</strong> {organization.name}, pessoa jurídica de direito privado, inscrita no CNPJ/MF sob o nº {organization.cnpj}, com sede conforme cadastro realizado no sistema, neste ato representada por seu administrador, Sr(a). {organization.admin_name}, doravante denominada simplesmente CONTRATANTE.
             </p>
 
-            <h3>2. Do Objeto</h3>
+            <h3 className="text-lg font-semibold">2. Do Objeto</h3>
             <p>
               O presente contrato tem por objeto a prestação de serviços de análise 
-              de chamadas telefônicas através de inteligência artificial...
+              de chamadas telefônicas através de inteligência artificial, conforme plano {organization.plan} contratado 
+              pela CONTRATANTE, que permitirá a análise, categorização e extração de insights de chamadas 
+              telefônicas realizadas pela equipe comercial da CONTRATANTE.
             </p>
 
-            <h3>3. Das Obrigações</h3>
+            <h3 className="text-lg font-semibold">3. Das Obrigações</h3>
+            <p><strong>3.1 A CONTRATADA se compromete a:</strong></p>
             <ul>
-              <li>A CONTRATADA se compromete a...</li>
-              <li>A CONTRATANTE se compromete a...</li>
+              <li>Disponibilizar a plataforma Leadly para análise de chamadas conforme o plano contratado;</li>
+              <li>Garantir a segurança e confidencialidade dos dados fornecidos pela CONTRATANTE;</li>
+              <li>Fornecer suporte técnico em horário comercial;</li>
+              <li>Manter a plataforma em funcionamento com disponibilidade mínima de 99% ao mês.</li>
+            </ul>
+            
+            <p><strong>3.2 A CONTRATANTE se compromete a:</strong></p>
+            <ul>
+              <li>Utilizar a plataforma de acordo com as leis aplicáveis;</li>
+              <li>Pagar pontualmente os valores acordados;</li>
+              <li>Obter consentimento adequado para gravação e análise de chamadas;</li>
+              <li>Não compartilhar credenciais de acesso com terceiros não autorizados.</li>
             </ul>
 
-            <h3>4. Dos Valores</h3>
+            <h3 className="text-lg font-semibold">4. Dos Valores</h3>
             <p>
               Pelo serviço objeto deste contrato, a CONTRATANTE pagará à CONTRATADA 
-              o valor mensal conforme o plano contratado...
+              o valor mensal conforme o plano contratado, sendo o primeiro pagamento proporcional (pro rata) 
+              aos dias restantes do mês corrente. Os pagamentos subsequentes serão realizados 
+              mensalmente, sempre no dia 10 de cada mês.
             </p>
 
-            {/* Adicione mais cláusulas conforme necessário */}
+            <h3 className="text-lg font-semibold">5. Da Vigência</h3>
+            <p>
+              O presente contrato tem vigência inicial de 12 (doze) meses, renovável automaticamente 
+              por períodos iguais e sucessivos, salvo manifestação expressa em contrário por 
+              qualquer das partes, com antecedência mínima de 30 (trinta) dias.
+            </p>
+
+            <h3 className="text-lg font-semibold">6. Da Rescisão</h3>
+            <p>
+              O presente contrato poderá ser rescindido:
+            </p>
+            <ul>
+              <li>Por comum acordo entre as partes;</li>
+              <li>Por iniciativa de qualquer das partes, mediante aviso prévio de 30 dias;</li>
+              <li>Por descumprimento de qualquer cláusula contratual.</li>
+            </ul>
+
+            <h3 className="text-lg font-semibold">7. Das Disposições Gerais</h3>
+            <p>
+              As partes elegem o foro da Comarca de São Paulo/SP para dirimir quaisquer dúvidas 
+              ou controvérsias oriundas do presente contrato, com renúncia expressa a qualquer outro, 
+              por mais privilegiado que seja.
+            </p>
           </CardContent>
           <CardFooter className="flex-col space-y-4">
             <div className="flex items-center space-x-2">
@@ -151,10 +317,17 @@ export default function Contract() {
             </div>
             <Button 
               onClick={handleSignContract} 
-              disabled={!agreed || loading}
+              disabled={!agreed || processing}
               className="w-full"
             >
-              {loading ? "Processando..." : "Assinar Contrato"}
+              {processing ? (
+                <>
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                "Assinar Contrato"
+              )}
             </Button>
           </CardFooter>
         </Card>

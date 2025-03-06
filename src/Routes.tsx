@@ -84,7 +84,9 @@ function AppRoutes() {
           } 
         />
         <Route path="/confirm-registration" element={<ConfirmRegistration />} />
-        <Route path="/contract" element={<Contract />} />
+        <Route path="/confirm-registration/:id" element={<ConfirmRegistration />} />
+        <Route path="/contract/:id" element={<Contract />} />
+        <Route path="/payment/:id" element={<Contract paymentMode={true} />} />
 
         {/* Admin Routes */}
         <Route
