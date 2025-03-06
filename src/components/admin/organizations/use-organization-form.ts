@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -121,7 +120,6 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         const proRataTitle = await createProRataTitle({
           id: String(newOrganizationData.id),
           name: newOrganizationData.name,
-          // Incluindo todas as propriedades necessárias para evitar erros
           nomeFantasia: newOrganizationData.nome_fantasia || "",
           plan: newOrganizationData.plan,
           users: [],
@@ -212,7 +210,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
           toast({
             title: "Aviso",
             description: "Empresa criada, mas houve um erro ao enviar os emails. Nossa equipe será notificada.",
-            variant: "destructive", // Changed from "warning" to "destructive"
+            variant: "destructive",
           });
           // Continue with success flow even if email fails
         }
@@ -230,7 +228,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
         toast({
           title: "Empresa criada parcialmente",
           description: "A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.",
-          variant: "destructive", // Changed from "warning" to "destructive"
+          variant: "destructive",
         });
         
         form.reset();

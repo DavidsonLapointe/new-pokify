@@ -1,7 +1,7 @@
 
 export type UserRole = "admin" | "seller" | "leadly_employee";
 export type UserStatus = "active" | "inactive" | "pending";
-export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | null;
+export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | "user_validation" | null;
 
 export interface UserLog {
   id: string;

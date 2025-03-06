@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -40,14 +39,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       setLoading(true);
       console.log("Loading organization with ID:", id);
       
-      // Verificação explícita do formato do ID
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) {
         setNotFoundReason("O ID fornecido não está no formato UUID válido");
         setLoading(false);
         return;
       }
       
-      // Buscar a organização com uma busca simples sem usar single ou maybeSingle
       const { data, error, status } = await supabase
         .from('organizations')
         .select('*')
@@ -70,11 +67,9 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         return;
       }
       
-      // Usar o primeiro resultado se houver algum
       const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
       
-      // Se estiver no modo de pagamento, buscar o título pro-rata
       if (paymentMode) {
         const { data: titleData, error: titleError } = await supabase
           .from('financial_titles')
@@ -89,7 +84,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           console.error("Error fetching pro-rata title:", titleError);
         } else if (titleData) {
           console.log("Pro-rata title data:", titleData);
-          // Convert numeric value to string when needed
           setProRataValue(titleData.value ? parseFloat(titleData.value.toString()) : null);
         } else {
           console.log("No pro-rata title found");
@@ -115,7 +109,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
     setProcessing(true);
 
     try {
-      // Atualiza o status do contrato
       const { error: updateError } = await supabase
         .from('organizations')
         .update({ 
@@ -128,7 +121,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       
       toast.success("Contrato assinado com sucesso!");
       
-      // Redirecionar para a página de pagamento
       navigate(`/payment/${id}`);
     } catch (error: any) {
       console.error('Erro ao assinar contrato:', error);
@@ -141,8 +133,17 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const handlePayment = async () => {
     setProcessing(true);
     try {
-      // Aqui seria implementada a integração com a forma de pagamento
-      // Por enquanto, apenas simulamos um pagamento bem-sucedido
+      const { error: updateError } = await supabase
+        .from('organizations')
+        .update({ 
+          pending_reason: 'user_validation'
+        })
+        .eq('id', id);
+
+      if (updateError) {
+        console.error('Erro ao atualizar status da organização:', updateError);
+        throw updateError;
+      }
 
       toast.success("Pagamento processado com sucesso!");
       setTimeout(() => {
@@ -248,7 +249,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
                     <Checkbox id="card" checked />
                     <label htmlFor="card" className="text-sm font-medium">Cartão de Crédito</label>
                   </div>
-                  {/* Aqui seria implementado o formulário de cartão de crédito */}
                   <div className="border rounded p-3 mt-2">
                     <p className="text-center text-gray-500">Formulário de cartão seria exibido aqui</p>
                   </div>

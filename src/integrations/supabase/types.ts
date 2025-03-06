@@ -907,6 +907,7 @@ export type Database = {
         | "contract_signature"
         | "pro_rata_payment"
         | "null"
+        | "user_validation"
       payment_method: "pix" | "boleto"
       subscription_status:
         | "active"

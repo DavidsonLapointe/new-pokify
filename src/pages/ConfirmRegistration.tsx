@@ -47,6 +47,21 @@ export default function ConfirmRegistration() {
     try {
       console.log("Dados do formulário:", data);
       
+      if (organization && organization.id) {
+        const { error: updateError } = await supabase
+          .from('organizations')
+          .update({ 
+            status: 'active',
+            pending_reason: null 
+          })
+          .eq('id', organization.id);
+          
+        if (updateError) {
+          console.error("Erro ao atualizar organização:", updateError);
+          throw updateError;
+        }
+      }
+      
       toast({
         title: "Cadastro confirmado!",
         description: "Você já pode fazer login no sistema.",
