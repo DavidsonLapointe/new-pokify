@@ -22,7 +22,8 @@ const planInfo: Plan = {
     "Suporte prioritário",
     "API de integração"
   ],
-  active: true
+  active: true,
+  credits: 500
 };
 
 // Mock available plans - em produção viria da API
@@ -38,7 +39,8 @@ const availablePlans: Plan[] = [
       "Integração com 1 CRM",
       "Suporte por email",
     ],
-    active: true
+    active: true,
+    credits: 100
   },
   {
     id: 2,
@@ -52,7 +54,8 @@ const availablePlans: Plan[] = [
       "Suporte prioritário",
       "API de integração"
     ],
-    active: true
+    active: true,
+    credits: 500
   },
   {
     id: 3,
@@ -67,7 +70,8 @@ const availablePlans: Plan[] = [
       "API dedicada",
       "Manager dedicado",
     ],
-    active: true
+    active: true,
+    credits: 1000
   }
 ];
 
@@ -100,6 +104,11 @@ const OrganizationPlan = () => {
     toast.success("Redirecionando para o gateway de pagamento...");
   };
 
+  // Calculate next billing date (1st of next month)
+  const nextBillingDate = new Date();
+  nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+  nextBillingDate.setDate(1);
+
   return (
     <div className="space-y-2">
       <div className="mb-2">
@@ -111,8 +120,9 @@ const OrganizationPlan = () => {
 
       <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
         <CurrentPlanCard 
-          planInfo={planInfo}
+          plan={planInfo}
           onChangePlan={() => setIsChangePlanDialogOpen(true)}
+          nextBillingDate={nextBillingDate}
         />
         <CreditsBalanceCard
           monthlyQuota={usageInfo.monthlyQuota}

@@ -61,7 +61,7 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         // Fallback - convert to string if possible
         try {
           // Ensure we're dealing with a string and handle undefined
-          const featuresStr = typeof plan.features !== 'undefined' ? String(plan.features) : '';
+          const featuresStr = plan.features !== undefined ? String(plan.features) : '';
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
@@ -116,8 +116,8 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       } else if (plan.features) {
         // Fallback - convert to string if possible
         try {
-          // Ensure we're dealing with a string and handle potential undefined
-          const featuresStr = typeof plan.features !== 'undefined' ? String(plan.features) : '';
+          // Ensure we're dealing with a string
+          const featuresStr = plan.features !== undefined ? String(plan.features) : '';
           features = featuresStr.split('\n').filter((f: string) => f.trim().length > 0);
         } catch (e) {
           console.error('Error converting features to string:', e);
