@@ -4,7 +4,8 @@ import { User } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { formatUserData, formatOrganizationData } from '@/utils/userUtils';
+import { formatUserData } from '@/utils/userUtils';
+import { formatOrganizationData } from '@/utils/organizationUtils';
 
 export const useLoadUserProfile = (sessionUserId: string | undefined) => {
   const [user, setUser] = useState<User | null>(null);
