@@ -26,9 +26,17 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
 
   const availableStatusOptions = getAvailableStatusOptions(currentStatus);
 
+  // Handling the value change with proper type casting
+  const handleValueChange = (value: string) => {
+    // Only set the value if it's one of the allowed status values
+    if (value === "active" || value === "pending" || value === "inactive") {
+      form.setValue("status", value);
+    }
+  };
+
   return (
     <>
-      <Select onValueChange={(value) => form.setValue("status", value)}>
+      <Select onValueChange={handleValueChange}>
         <FormControl>
           <SelectTrigger>
             <SelectValue placeholder="Selecione o novo status" />
