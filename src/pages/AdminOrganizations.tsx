@@ -16,16 +16,29 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
   try {
     console.log("=== INICIANDO BUSCA DE ORGANIZAÇÕES ===");
     
-    // Verificar se a conexão com o Supabase está funcionando
-    try {
-      const { data: testData, error: testError } = await supabase.from('profiles').select('count').limit(1);
-      if (testError) {
-        console.error("Erro na conexão com Supabase:", testError);
+    // Verificar se a sessão atual e o usuário logado
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error("Erro ao obter sessão atual:", sessionError);
+      throw new Error(`Falha ao verificar autenticação: ${sessionError.message}`);
+    }
+    
+    console.log("Sessão atual:", sessionData.session ? "Autenticado" : "Não autenticado");
+    if (sessionData.session) {
+      console.log("Usuário ID:", sessionData.session.user.id);
+      
+      // Verificar o perfil do usuário para confirmar que é leadly_employee
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', sessionData.session.user.id)
+        .single();
+        
+      if (profileError) {
+        console.error("Erro ao verificar perfil do usuário:", profileError);
       } else {
-        console.log("Conexão com Supabase OK, testData:", testData);
+        console.log("Função do usuário:", profileData?.role);
       }
-    } catch (connErr) {
-      console.error("Erro ao testar conexão com Supabase:", connErr);
     }
     
     // Fetch organizations from Supabase with debug logs
@@ -38,6 +51,9 @@ const fetchOrganizations = async (): Promise<Organization[]> => {
     // Verificar se houve erro na consulta
     if (orgsError) {
       console.error("Erro ao buscar organizações:", orgsError);
+      if (orgsError.code === "PGRST301") {
+        console.error("Erro de permissão! Verifique as políticas RLS no Supabase.");
+      }
       throw new Error(`Falha ao carregar empresas: ${orgsError.message}`);
     }
 

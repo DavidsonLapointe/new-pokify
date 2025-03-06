@@ -888,6 +888,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_leadly_employee: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       user_has_access_to_org: {
         Args: {
           user_id: string
