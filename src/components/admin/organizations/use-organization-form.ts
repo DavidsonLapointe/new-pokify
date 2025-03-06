@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
@@ -152,64 +153,33 @@ export const useOrganizationForm = (onSuccess: () => void) => {
           console.error("Falha ao criar título pro-rata");
         }
         
-        // Send contract email
+        // Send single onboarding email with all links
         try {
-          console.log("Enviando email do contrato...");
+          console.log("Enviando email único de onboarding...");
           const { error: emailError } = await supabase.functions.invoke('send-organization-emails', {
             body: {
               organizationId: newOrganizationData.id,
-              type: 'contract',
+              type: 'onboarding',
               data: {
                 contractUrl: `${window.location.origin}/contract/${newOrganizationData.id}`,
-                proRataAmount: proRataValue
-              }
-            }
-          });
-
-          if (emailError) {
-            console.error("Erro ao enviar email:", emailError);
-            throw emailError;
-          }
-          
-          // Send confirmation email with registration link
-          const { error: confirmationEmailError } = await supabase.functions.invoke('send-organization-emails', {
-            body: {
-              organizationId: newOrganizationData.id,
-              type: 'confirmation',
-              data: {
-                confirmationToken: `${window.location.origin}/confirm-registration/${newOrganizationData.id}`
-              }
-            }
-          });
-
-          if (confirmationEmailError) {
-            console.error("Erro ao enviar email de confirmação:", confirmationEmailError);
-            throw confirmationEmailError;
-          }
-
-          // Send payment instructions email
-          const { error: paymentEmailError } = await supabase.functions.invoke('send-organization-emails', {
-            body: {
-              organizationId: newOrganizationData.id,
-              type: 'payment',
-              data: {
+                confirmationToken: `${window.location.origin}/confirm-registration/${newOrganizationData.id}`,
                 paymentUrl: `${window.location.origin}/payment/${newOrganizationData.id}`,
                 proRataAmount: proRataValue
               }
             }
           });
 
-          if (paymentEmailError) {
-            console.error("Erro ao enviar email de pagamento:", paymentEmailError);
-            throw paymentEmailError;
+          if (emailError) {
+            console.error("Erro ao enviar email de onboarding:", emailError);
+            throw emailError;
           }
 
-          console.log("Emails enviados com sucesso");
+          console.log("Email de onboarding enviado com sucesso");
         } catch (emailError) {
-          console.error("Erro ao enviar emails:", emailError);
+          console.error("Erro ao enviar email:", emailError);
           toast({
             title: "Aviso",
-            description: "Empresa criada, mas houve um erro ao enviar os emails. Nossa equipe será notificada.",
+            description: "Empresa criada, mas houve um erro ao enviar o email. Nossa equipe será notificada.",
             variant: "destructive",
           });
           // Continue with success flow even if email fails
@@ -217,7 +187,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
         toast({
           title: "Empresa criada com sucesso",
-          description: "Um email será enviado para o administrador contendo o contrato e instruções.",
+          description: "Um email será enviado para o administrador contendo todas as instruções de onboarding.",
         });
 
         form.reset();
