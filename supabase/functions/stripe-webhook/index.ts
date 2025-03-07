@@ -115,7 +115,7 @@ serve(async (req) => {
         // Buscar a assinatura no nosso banco
         const { data: subscription, error: subscriptionError } = await supabase
           .from('subscriptions')
-          .select('organization_id')
+          .select('organization_id, status')
           .eq('stripe_subscription_id', invoice.subscription)
           .single();
         
@@ -123,6 +123,17 @@ serve(async (req) => {
           console.error('Erro ao buscar assinatura:', subscriptionError);
         } else if (subscription) {
           console.log('Assinatura encontrada para organização:', subscription.organization_id);
+          
+          // Buscar os dados da organização para informações de plano/valor
+          const { data: organization, error: orgError } = await supabase
+            .from('organizations')
+            .select('plan, name')
+            .eq('id', subscription.organization_id)
+            .single();
+            
+          if (orgError) {
+            console.error('Erro ao buscar organização:', orgError);
+          }
           
           // Verificar se há título de mensalidade pendente para esta organização
           const { data: titles, error: titlesError } = await supabase
@@ -157,7 +168,51 @@ serve(async (req) => {
               console.log('Título de mensalidade atualizado com sucesso:', title.id);
             }
           } else {
-            console.log('Nenhum título de mensalidade pendente encontrado para esta organização');
+            console.log('Nenhum título de mensalidade pendente encontrado - criando novo título');
+            
+            // Se não houver título pendente, criar um novo título pago
+            // Isso garante que tenhamos o histórico de pagamentos no sistema
+            if (organization && subscription.status === 'active') {
+              // Obter o valor da invoice para o título
+              const amountPaid = invoice.amount_paid / 100; // Stripe usa centavos
+              
+              // Definir data de referência (mês atual)
+              const today = new Date();
+              const referenceMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+              
+              // Criar título financeiro já como pago
+              const { error: createError } = await supabase
+                .from('financial_titles')
+                .insert({
+                  organization_id: subscription.organization_id,
+                  type: 'mensalidade',
+                  value: amountPaid,
+                  due_date: today.toISOString(),
+                  status: 'paid',
+                  payment_date: today.toISOString(),
+                  payment_method: 'credit_card',
+                  stripe_payment_intent_id: invoice.payment_intent,
+                  reference_month: referenceMonth
+                });
+                
+              if (createError) {
+                console.error('Erro ao criar título financeiro:', createError);
+              } else {
+                console.log('Título financeiro criado com sucesso para o pagamento da assinatura');
+              }
+            }
+          }
+          
+          // Se a assinatura estava inativa, marcar como ativa
+          if (subscription.status !== 'active') {
+            const { error: updateSubError } = await supabase
+              .from('subscriptions')
+              .update({ status: 'active' })
+              .eq('stripe_subscription_id', invoice.subscription);
+              
+            if (updateSubError) {
+              console.error('Erro ao atualizar status da assinatura:', updateSubError);
+            }
           }
         }
       }
@@ -314,4 +369,3 @@ serve(async (req) => {
     )
   }
 })
-
