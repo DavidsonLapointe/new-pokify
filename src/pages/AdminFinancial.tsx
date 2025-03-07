@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { FinancialTitlesTable } from "@/components/admin/financial/FinancialTitlesTable";
-import { FinancialHeader } from "@/components/admin/financial/FinancialHeader";
+import FinancialHeader from "@/components/admin/financial/FinancialHeader";
 import { FinancialFilters } from "@/components/admin/financial/FinancialFilters";
 import { useFinancialFilters } from "@/components/admin/financial/hooks/useFinancialFilters";
 import { getAllTitles } from "@/services/financial";
