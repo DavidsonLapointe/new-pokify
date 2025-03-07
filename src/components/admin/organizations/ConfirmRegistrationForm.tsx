@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -69,13 +68,11 @@ export function ConfirmRegistrationForm({
     }
   });
 
-  // Inicializa o Stripe e cria um Setup Intent
   useEffect(() => {
     async function initializeStripe() {
       try {
         console.log("Initializing Stripe with public key:", stripePublicKey);
         
-        // Cria um setup intent para configurar o método de pagamento
         const { data, error } = await supabase.functions.invoke('manage-subscription', {
           body: {
             action: 'create_setup_intent',
@@ -129,7 +126,6 @@ export function ConfirmRegistrationForm({
         return;
       }
 
-      // Criar assinatura no Stripe
       const priceId = planPrices[organization.plan];
       if (!priceId) {
         toast.error("Plano inválido");
@@ -156,7 +152,6 @@ export function ConfirmRegistrationForm({
     }
   };
 
-  // Configuração da aparência do formulário do Stripe
   const appearance: Appearance = {
     theme: 'stripe',
     variables: {
@@ -195,20 +190,13 @@ export function ConfirmRegistrationForm({
     }
   };
 
-  // Configuração das opções do elemento do Stripe
   const options: StripeElementsOptions = {
     appearance,
-    locale: 'pt-BR' as const,
+    locale: 'pt-BR',
   };
 
-  // Adiciona o clientSecret apenas quando ele estiver disponível
   if (setupIntent?.clientSecret) {
-    // Usar a propriedade correta de acordo com o modo
-    // Para "setup" mode, usamos setupIntentClientSecret
-    options.setupIntentClientSecret = setupIntent.clientSecret;
-    options.mode = 'setup';
-    options.currency = 'brl';
-    options.loader = 'auto';
+    options.clientSecret = setupIntent.clientSecret;
   }
 
   return (

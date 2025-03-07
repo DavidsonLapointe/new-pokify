@@ -18,11 +18,11 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
   const [stripeReady, setStripeReady] = useState(false);
 
   useEffect(() => {
-    if (stripe && elements) {
-      console.log("Stripe and elements are ready");
+    if (stripe && elements && clientSecret) {
+      console.log("Stripe and elements are ready with client secret");
       setStripeReady(true);
     }
-  }, [stripe, elements]);
+  }, [stripe, elements, clientSecret]);
 
   // Log the state for debugging
   useEffect(() => {
