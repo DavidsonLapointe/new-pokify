@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, Coins } from "lucide-react";
+import { Plus, FileText, Coins, Trash2 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
-import { fetchPlans } from "@/services/plans";
+import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 
@@ -19,6 +19,7 @@ const Plans = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
+  const [isDeletingPlan, setIsDeletingPlan] = useState<string | null>(null);
 
   useEffect(() => {
     loadPlans();
@@ -62,6 +63,30 @@ const Plans = () => {
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
       toast.error("Ocorreu um erro ao salvar o plano.");
+    }
+  };
+
+  const handleDeletePlan = async (id: string) => {
+    if (!window.confirm("Tem certeza que deseja desativar este plano?")) {
+      return;
+    }
+    
+    setIsDeletingPlan(id);
+    try {
+      const success = await deletePlan(id);
+      if (success) {
+        // Atualiza a lista sem fazer nova requisição
+        setPlans(plans.map(plan => 
+          plan.id === id 
+            ? { ...plan, active: false } 
+            : plan
+        ));
+      }
+    } catch (error) {
+      console.error("Erro ao desativar plano:", error);
+      toast.error("Ocorreu um erro ao desativar o plano.");
+    } finally {
+      setIsDeletingPlan(null);
     }
   };
 
@@ -150,7 +175,7 @@ const Plans = () => {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-auto border-t">
+                <div className="pt-6 mt-auto border-t space-y-2">
                   <Button 
                     className="w-full" 
                     variant="default"
@@ -158,6 +183,27 @@ const Plans = () => {
                   >
                     Editar Plano
                   </Button>
+                  
+                  {plan.active && (
+                    <Button 
+                      className="w-full" 
+                      variant="destructive"
+                      onClick={() => handleDeletePlan(plan.id.toString())}
+                      disabled={isDeletingPlan === plan.id}
+                    >
+                      {isDeletingPlan === plan.id ? (
+                        <span className="flex items-center">
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                          Desativando...
+                        </span>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Desativar Plano
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
