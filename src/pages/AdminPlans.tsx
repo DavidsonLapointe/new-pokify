@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, Coins } from "lucide-react";
+import { Plus, FileText, Coins, Trash2 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
-import { fetchPlans } from "@/services/plans";
+import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 
@@ -19,6 +19,7 @@ const Plans = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
+  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     loadPlans();
@@ -62,6 +63,25 @@ const Plans = () => {
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
       toast.error("Ocorreu um erro ao salvar o plano.");
+    }
+  };
+  
+  const handleDeletePlan = async (id: string) => {
+    if (!id) return;
+    
+    try {
+      setDeletingPlanId(id);
+      const success = await deletePlan(id);
+      
+      if (success) {
+        // Reload plans to get the updated status
+        await loadPlans();
+      }
+    } catch (error) {
+      console.error("Erro ao desativar plano:", error);
+      toast.error("Ocorreu um erro ao desativar o plano.");
+    } finally {
+      setDeletingPlanId(null);
     }
   };
 
@@ -150,14 +170,29 @@ const Plans = () => {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-auto border-t">
+                <div className="pt-6 mt-auto border-t flex gap-2">
                   <Button 
-                    className="w-full" 
+                    className="flex-1" 
                     variant="default"
                     onClick={() => setEditingPlan(plan)}
                   >
                     Editar Plano
                   </Button>
+                  
+                  {plan.active && (
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleDeletePlan(plan.id)}
+                      disabled={deletingPlanId === plan.id}
+                    >
+                      {deletingPlanId === plan.id ? (
+                        <div className="w-4 h-4 rounded-full border-2 border-t-transparent border-white animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
