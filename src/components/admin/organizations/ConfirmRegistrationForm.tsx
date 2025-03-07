@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -65,11 +66,7 @@ export const ConfirmRegistrationForm = ({
       
       if (authError) {
         console.error("Erro ao criar usuário:", authError);
-        toast({
-          title: "Erro ao criar usuário",
-          description: authError.message,
-          variant: "destructive"
-        });
+        toast.error("Erro ao criar usuário: " + authError.message);
         setSubmitting(false);
         return;
       }
@@ -81,11 +78,7 @@ export const ConfirmRegistrationForm = ({
       
     } catch (error: any) {
       console.error("Erro ao processar formulário:", error);
-      toast({
-        title: "Erro ao processar formulário",
-        description: error.message || "Ocorreu um erro durante o processamento",
-        variant: "destructive"
-      });
+      toast.error("Erro ao processar formulário: " + (error.message || "Ocorreu um erro durante o processamento"));
     } finally {
       setSubmitting(false);
     }

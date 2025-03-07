@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatUserData } from "@/utils/userUtils";
 import { User } from "@/types";
 import { toast } from "sonner";
+import { formatOrganizationData } from "@/utils/organizationUtils";
 
 export const useLoadUserProfile = (userId: string | undefined) => {
   const [user, setUser] = useState<User | null>(null);
@@ -82,10 +83,14 @@ export const useLoadUserProfile = (userId: string | undefined) => {
             return;
           }
           
-          const formattedUser = formatUserData(newProfile, newProfile.organizations);
+          // Formatar corretamente a organização antes de usá-la
+          const organization = newProfile.organizations ? formatOrganizationData(newProfile.organizations) : null;
+          const formattedUser = formatUserData(newProfile, organization);
           setUser(formattedUser);
         } else {
-          const formattedUser = formatUserData(profile, profile.organizations);
+          // Formatar corretamente a organização antes de usá-la
+          const organization = profile.organizations ? formatOrganizationData(profile.organizations) : null;
+          const formattedUser = formatUserData(profile, organization);
           setUser(formattedUser);
         }
       } catch (error) {
