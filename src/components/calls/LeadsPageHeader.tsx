@@ -4,7 +4,8 @@ import { CallsHeader } from "@/components/calls/CallsHeader";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
-import { Organization, User } from "@/types";
+import { Organization } from "@/types/organization-types";
+import { User } from "@/types/user-types";
 
 interface LeadsPageHeaderProps {
   onUploadClick: () => void;
@@ -42,13 +43,24 @@ export const LeadsPageHeader = ({
   };
 
   // Verifica se o usuário tem acesso às integrações
-  const hasIntegrationsAccess = !!currentUser.permissions['integrations'];
+  const hasIntegrationsAccess = Boolean(currentUser.permissions && currentUser.permissions['integrations']);
 
-  // Filtra usuários ativos com acesso a integrações
-  const integrationUsers = organization.users.filter(user => 
-    user.role === "admin" || 
-    (!!user.permissions['integrations'] && user.status === "active")
-  );
+  // Convert organization.users to the User type properly
+  const integrationUsers = (organization.users || [])
+    .filter(user => 
+      user.role === "admin" || 
+      (user.permissions && Boolean(user.permissions['integrations']) && user.status === "active")
+    )
+    .map(user => ({
+      ...user,
+      logs: user.logs.map(log => ({
+        id: log.id,
+        date: log.timestamp,
+        action: log.activity,
+        timestamp: log.timestamp,
+        activity: log.activity
+      }))
+    })) as User[];
 
   return (
     <>

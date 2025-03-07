@@ -50,15 +50,15 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       // Remove any non-numeric characters
       const cleanCnpj = cnpj.replace(/[^\d]/g, '');
       
-      const { data, error } = await checkExistingOrganization(cleanCnpj);
+      const { exists, error } = await checkExistingOrganization(cleanCnpj);
       
       if (error) {
         console.error("Erro ao verificar CNPJ existente:", error);
         throw error;
       }
       
-      // If data exists, the CNPJ is already in use
-      return !!data;
+      // Return whether CNPJ exists or not
+      return exists;
     } catch (error) {
       console.error("Erro ao verificar CNPJ:", error);
       throw error;

@@ -45,11 +45,22 @@ export const LeadsPageHeader = ({
   // Verifica se o usuário tem acesso às integrações
   const hasIntegrationsAccess = Boolean(currentUser.permissions && currentUser.permissions['integrations']);
 
-  // Convert organization.users to the User type
-  const integrationUsers = (organization.users || []).filter(user => 
-    user.role === "admin" || 
-    (user.permissions && Boolean(user.permissions['integrations']) && user.status === "active")
-  ) as User[];
+  // Convert organization.users to the User type properly
+  const integrationUsers = (organization.users || [])
+    .filter(user => 
+      user.role === "admin" || 
+      (user.permissions && Boolean(user.permissions['integrations']) && user.status === "active")
+    )
+    .map(user => ({
+      ...user,
+      logs: user.logs.map(log => ({
+        id: log.id,
+        date: log.timestamp,
+        action: log.activity,
+        timestamp: log.timestamp,
+        activity: log.activity
+      }))
+    })) as User[];
 
   return (
     <>

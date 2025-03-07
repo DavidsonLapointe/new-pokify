@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -8,13 +9,17 @@ import { calculateProRataValue, getPlanValues, getPlanValue } from "../utils/cal
  * Checks if an organization with the given CNPJ already exists
  */
 export const checkExistingOrganization = async (cnpj: string) => {
+  // Clean the CNPJ format to ensure consistent comparison
+  const cleanCnpj = cnpj.replace(/[^\d]/g, '');
+  
   const { data, error } = await supabase
     .from('organizations')
     .select('id')
-    .eq('cnpj', cnpj)
+    .eq('cnpj', cleanCnpj)
     .maybeSingle();
   
-  return { data, error };
+  // Return true if data exists (CNPJ is found), regardless of organization status
+  return { exists: !!data, data, error };
 };
 
 /**
