@@ -2,7 +2,7 @@
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, CreditCard } from "lucide-react";
 
 interface PaymentFormProps {
@@ -14,6 +14,13 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading }: PaymentFormPr
   const stripe = useStripe();
   const elements = useElements();
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [stripeReady, setStripeReady] = useState(false);
+
+  useEffect(() => {
+    if (stripe && elements) {
+      setStripeReady(true);
+    }
+  }, [stripe, elements]);
 
   const handleCreatePaymentMethod = async () => {
     if (!stripe || !elements) {
@@ -61,13 +68,21 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading }: PaymentFormPr
         </h3>
       </div>
       
-      {/* Este é o componente do Stripe que renderiza o formulário de cartão */}
-      <PaymentElement className="mb-4" />
+      {!stripeReady ? (
+        <div className="py-8 flex justify-center items-center">
+          <Loader2 className="h-6 w-6 animate-spin text-[#9b87f5]" />
+          <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
+        </div>
+      ) : (
+        <div className="mb-6 bg-white p-4 rounded-md border border-[#E5DEFF]">
+          <PaymentElement />
+        </div>
+      )}
 
       <Button
         type="button"
         onClick={handleCreatePaymentMethod}
-        disabled={!stripe || processingPayment || isLoading}
+        disabled={!stripe || processingPayment || isLoading || !stripeReady}
         className="w-full bg-[#9b87f5] hover:bg-[#8a74e8]"
       >
         {processingPayment ? (

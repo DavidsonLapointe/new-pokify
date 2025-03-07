@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ export function ConfirmRegistrationForm({
   const [paymentMethodId, setPaymentMethodId] = useState<string>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentValidated, setPaymentValidated] = useState(false);
+  const [stripeInitialized, setStripeInitialized] = useState(false);
 
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -63,6 +64,13 @@ export function ConfirmRegistrationForm({
       acceptTerms: false
     }
   });
+
+  useEffect(() => {
+    // Verificar se o Stripe foi inicializado corretamente
+    if (stripePromise) {
+      setStripeInitialized(true);
+    }
+  }, []);
 
   const handlePaymentMethodCreated = (pmId: string) => {
     setPaymentMethodId(pmId);
@@ -107,23 +115,25 @@ export function ConfirmRegistrationForm({
 
   // Configuração da aparência do formulário do Stripe
   const appearance: Appearance = {
-    theme: 'stripe' as const,
+    theme: 'stripe',
     variables: {
       colorPrimary: '#9b87f5',
       fontFamily: 'Inter, sans-serif',
       borderRadius: '4px',
-      colorBackground: '#f9fafb'
+      colorBackground: '#ffffff'
     },
     rules: {
       '.Input': {
         border: '1px solid #E5DEFF',
         boxShadow: 'none',
+        padding: '12px',
       },
       '.Input:focus': {
         border: '1px solid #9b87f5',
       },
       '.Label': {
         color: '#6E59A5',
+        fontWeight: '500',
       },
       '.Tab': {
         borderColor: '#E5DEFF',
@@ -135,6 +145,9 @@ export function ConfirmRegistrationForm({
       '.Tab--selected': {
         borderColor: '#9b87f5',
         color: '#9b87f5',
+      },
+      '.Error': {
+        color: '#FF4D4F',
       }
     }
   };
@@ -155,12 +168,21 @@ export function ConfirmRegistrationForm({
         <PasswordSection form={form} />
         <AddressSection form={form} />
 
-        <Elements stripe={stripePromise} options={options}>
-          <PaymentForm 
-            onPaymentMethodCreated={handlePaymentMethodCreated}
-            isLoading={isProcessing}
-          />
-        </Elements>
+        {stripeInitialized ? (
+          <Elements stripe={stripePromise} options={options}>
+            <PaymentForm 
+              onPaymentMethodCreated={handlePaymentMethodCreated}
+              isLoading={isProcessing}
+            />
+          </Elements>
+        ) : (
+          <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5]" />
+              <span className="ml-3 text-gray-600">Carregando formulário de pagamento...</span>
+            </div>
+          </div>
+        )}
 
         <FormField
           control={form.control}
