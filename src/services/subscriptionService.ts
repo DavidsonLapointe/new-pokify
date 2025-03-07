@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -77,4 +76,30 @@ export const getOrganizationSubscription = async (organizationId: string): Promi
     createdAt: subscription.created_at,
     updatedAt: subscription.updated_at,
   };
+};
+
+export const cancelSubscription = async (organizationId: string): Promise<{ success: boolean; message: string; cancelAt?: string }> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('cancel-subscription', {
+      body: { organizationId }
+    });
+
+    if (error) {
+      console.error('Erro ao invocar função de cancelamento de assinatura:', error);
+      throw new Error('Erro ao cancelar assinatura');
+    }
+
+    if (!data.success) {
+      throw new Error(data.error || 'Erro ao cancelar assinatura');
+    }
+
+    return {
+      success: true,
+      message: 'Assinatura cancelada com sucesso. Acesso permanecerá ativo até o final do período atual.',
+      cancelAt: data.cancelAt
+    };
+  } catch (error) {
+    console.error('Erro ao cancelar assinatura:', error);
+    throw error;
+  }
 };

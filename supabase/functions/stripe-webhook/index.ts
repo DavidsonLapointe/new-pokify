@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { Stripe } from 'https://esm.sh/stripe@13.10.0'
@@ -68,6 +67,90 @@ serve(async (req) => {
           });
 
         if (error) throw error;
+      }
+    }
+    else if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object as Stripe.Subscription;
+      
+      // Buscar a assinatura no Supabase pelo stripe_subscription_id
+      const { data: supabaseSubscription, error: fetchError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('stripe_subscription_id', subscription.id)
+        .single();
+      
+      if (fetchError) {
+        console.error('Erro ao buscar assinatura:', fetchError);
+        return new Response(JSON.stringify({ error: 'Subscription not found' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      // Atualizar informações da assinatura
+      const updateData: any = {
+        status: subscription.status,
+        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      };
+      
+      // Se estiver cancelada, atualizar as informações de cancelamento
+      if (subscription.cancel_at_period_end) {
+        updateData.status = 'canceled';
+        if (subscription.cancel_at) {
+          updateData.cancel_at = new Date(subscription.cancel_at * 1000).toISOString();
+        }
+        if (!supabaseSubscription.canceled_at) {
+          updateData.canceled_at = new Date().toISOString();
+        }
+      }
+      
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update(updateData)
+        .eq('id', supabaseSubscription.id);
+      
+      if (updateError) {
+        console.error('Erro ao atualizar assinatura:', updateError);
+        return new Response(JSON.stringify({ error: 'Failed to update subscription' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    else if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object as Stripe.Subscription;
+      
+      // Buscar a assinatura no Supabase pelo stripe_subscription_id
+      const { data: supabaseSubscription, error: fetchError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('stripe_subscription_id', subscription.id)
+        .single();
+      
+      if (fetchError) {
+        console.error('Erro ao buscar assinatura:', fetchError);
+        return new Response(JSON.stringify({ error: 'Subscription not found' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      // Marcar a assinatura como cancelada
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update({
+          status: 'canceled',
+          canceled_at: new Date().toISOString(),
+        })
+        .eq('id', supabaseSubscription.id);
+      
+      if (updateError) {
+        console.error('Erro ao atualizar assinatura:', updateError);
+        return new Response(JSON.stringify({ error: 'Failed to update subscription' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
       }
     }
 
