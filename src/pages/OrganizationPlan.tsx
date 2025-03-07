@@ -87,13 +87,8 @@ const OrganizationPlan = () => {
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
 
-  // Mock do cartão atual - em produção viria da API
-  const mockPaymentMethod = {
-    brand: "visa",
-    last4: "4242",
-    expMonth: 12,
-    expYear: 2025
-  };
+  // Mock organization ID - em produção viria do contexto ou da rota
+  const organizationId = "mock-org-id";
 
   const handleBuyMoreAnalyses = () => {
     setIsPackagesDialogOpen(true);
@@ -134,7 +129,10 @@ const OrganizationPlan = () => {
       </div>
 
       <div className="mt-2">
-        <PaymentMethodCard currentPaymentMethod={mockPaymentMethod} />
+        <PaymentMethodCard 
+          organizationId={organizationId}
+          onPaymentMethodUpdated={() => toast.success("Método de pagamento atualizado")}
+        />
       </div>
 
       <AnalysisPackagesDialog

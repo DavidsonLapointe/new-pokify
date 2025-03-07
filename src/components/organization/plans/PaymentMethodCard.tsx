@@ -23,6 +23,13 @@ interface PaymentMethodCardProps {
   onPaymentMethodUpdated?: () => void;
 }
 
+interface PaymentMethodData {
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+}
+
 interface PaymentMethodFormProps {
   organizationId: string;
   onSuccess?: () => void;
@@ -87,19 +94,25 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
 
 export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: PaymentMethodCardProps) {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-  const [currentPaymentMethod, setCurrentPaymentMethod] = useState<{
-    brand: string;
-    last4: string;
-    expMonth: number;
-    expYear: number;
-  } | null>(null);
+  const [currentPaymentMethod, setCurrentPaymentMethod] = useState<PaymentMethodData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchPaymentMethod = async () => {
     setIsLoading(true);
     try {
       const paymentMethod = await getPaymentMethod(organizationId);
-      setCurrentPaymentMethod(paymentMethod || null);
+      // Only set if we have all required fields
+      if (paymentMethod && paymentMethod.brand && paymentMethod.last4 && 
+          paymentMethod.expMonth !== undefined && paymentMethod.expYear !== undefined) {
+        setCurrentPaymentMethod({
+          brand: paymentMethod.brand,
+          last4: paymentMethod.last4,
+          expMonth: paymentMethod.expMonth,
+          expYear: paymentMethod.expYear
+        });
+      } else {
+        setCurrentPaymentMethod(null);
+      }
     } catch (error) {
       console.error("Erro ao buscar método de pagamento:", error);
     } finally {

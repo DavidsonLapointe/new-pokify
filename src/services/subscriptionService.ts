@@ -105,12 +105,14 @@ export const cancelSubscription = async (organizationId: string): Promise<{ succ
   }
 };
 
-export const getPaymentMethod = async (organizationId: string): Promise<{ 
-  brand?: string; 
-  last4?: string; 
-  expMonth?: number; 
+export interface PaymentMethodResponse {
+  brand?: string;
+  last4?: string;
+  expMonth?: number;
   expYear?: number;
-} | null> => {
+}
+
+export const getPaymentMethod = async (organizationId: string): Promise<PaymentMethodResponse | null> => {
   try {
     const { data, error } = await supabase.functions.invoke('get-payment-method', {
       body: { organizationId }
