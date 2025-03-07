@@ -14,6 +14,7 @@ export interface FinancialTitle {
   paymentDate?: string;
   paymentMethod?: PaymentMethod;
   createdAt: string;
+  paymentStatusDetails?: string;
   organization?: {
     name: string;
     nome_fantasia: string | null;

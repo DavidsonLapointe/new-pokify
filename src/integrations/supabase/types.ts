@@ -232,6 +232,7 @@ export type Database = {
           organization_id: string | null
           payment_date: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
+          payment_status_details: string | null
           pix_expiration_date: string | null
           pix_qr_code: string | null
           reference_month: string | null
@@ -249,6 +250,7 @@ export type Database = {
           organization_id?: string | null
           payment_date?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_status_details?: string | null
           pix_expiration_date?: string | null
           pix_qr_code?: string | null
           reference_month?: string | null
@@ -266,6 +268,7 @@ export type Database = {
           organization_id?: string | null
           payment_date?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_status_details?: string | null
           pix_expiration_date?: string | null
           pix_qr_code?: string | null
           reference_month?: string | null

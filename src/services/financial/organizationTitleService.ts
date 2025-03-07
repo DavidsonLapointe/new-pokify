@@ -30,6 +30,7 @@ export const getOrganizationTitles = async (organizationId: string): Promise<Fin
       createdAt: title.created_at,
       paymentDate: title.payment_date,
       paymentMethod: title.payment_method,
+      paymentStatusDetails: title.payment_status_details,
       organization: title.organization
     }));
   } catch (error) {
@@ -65,6 +66,7 @@ export const getAllTitles = async (): Promise<FinancialTitle[]> => {
       createdAt: title.created_at,
       paymentDate: title.payment_date,
       paymentMethod: title.payment_method,
+      paymentStatusDetails: title.payment_status_details,
       organization: title.organization
     }));
   } catch (error) {

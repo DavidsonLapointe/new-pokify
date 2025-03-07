@@ -77,7 +77,10 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
               <TableCell>
                 {format(new Date(title.dueDate), 'dd/MM/yyyy')}
               </TableCell>
-              <TableCell>{getStatusBadge(title.status)}</TableCell>
+              <TableCell>{getStatusBadge({ 
+                status: title.status, 
+                paymentStatusDetails: title.paymentStatusDetails 
+              })}</TableCell>
               <TableCell>
                 <TitlePaymentButton 
                   title={title} 

@@ -255,18 +255,27 @@ serve(async (req) => {
             const title = titles[0];
             console.log('Título de mensalidade encontrado:', title.id);
             
-            // Atualizar o título para vencido
+            // Obter o status detalhado para armazenar
+            let paymentStatusDetails = 'payment_failed';
+            if (invoice.last_payment_error?.code) {
+              paymentStatusDetails = invoice.last_payment_error.code;
+            } else if (invoice.next_payment_attempt) {
+              paymentStatusDetails = 'retry_scheduled';
+            }
+            
+            // Atualizar o título para vencido com detalhes do status
             const { error: updateError } = await supabase
               .from('financial_titles')
               .update({
-                status: 'overdue'
+                status: 'overdue',
+                payment_status_details: paymentStatusDetails
               })
               .eq('id', title.id);
             
             if (updateError) {
               console.error('Erro ao atualizar título para vencido:', updateError);
             } else {
-              console.log('Título de mensalidade marcado como vencido:', title.id);
+              console.log('Título de mensalidade marcado como vencido com detalhes:', title.id, paymentStatusDetails);
             }
           }
         }
@@ -319,6 +328,42 @@ serve(async (req) => {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });
+      }
+      
+      // Verificar se há título pendente para esta organização e atualizar status
+      if (subscription.status === 'past_due' || subscription.status === 'incomplete' || 
+          subscription.status === 'incomplete_expired') {
+        
+        const { data: titles, error: titlesError } = await supabase
+          .from('financial_titles')
+          .select('*')
+          .eq('organization_id', supabaseSubscription.organization_id)
+          .eq('type', 'mensalidade')
+          .eq('status', 'pending')
+          .order('due_date', { ascending: true })
+          .limit(1);
+        
+        if (titlesError) {
+          console.error('Erro ao buscar títulos:', titlesError);
+        } else if (titles && titles.length > 0) {
+          const title = titles[0];
+          console.log('Título de mensalidade encontrado:', title.id);
+          
+          // Atualizar o título para vencido com detalhes do status
+          const { error: updateTitleError } = await supabase
+            .from('financial_titles')
+            .update({
+              status: 'overdue',
+              payment_status_details: subscription.status
+            })
+            .eq('id', title.id);
+          
+          if (updateTitleError) {
+            console.error('Erro ao atualizar título com status de assinatura:', updateTitleError);
+          } else {
+            console.log(`Título atualizado com status: overdue, detalhes: ${subscription.status}`);
+          }
+        }
       }
     }
     else if (event.type === 'customer.subscription.deleted') {
