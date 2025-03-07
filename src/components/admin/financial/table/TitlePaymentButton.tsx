@@ -27,7 +27,7 @@ export const TitlePaymentButton = ({
       toast({
         title: "Título baixado com sucesso",
         description: title.type === "pro_rata" 
-          ? "O pagamento foi registrado, a organização e o usuário admin foram ativados."
+          ? "O pagamento foi registrado e a assinatura foi ativada. A organização será ativada quando todas as etapas forem concluídas."
           : "O pagamento foi registrado e o título foi baixado.",
       });
     } catch (error) {
