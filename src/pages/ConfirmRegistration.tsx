@@ -1,7 +1,7 @@
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
-import type { Organization } from "@/types";
+import type { Organization, OrganizationPendingReason } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useState, useEffect } from "react";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SupportForm } from "@/components/admin/organizations/SupportForm";
 import { TermsDialog, PrivacyPolicyDialog, SupportFormDialog } from "@/components/admin/organizations/LegalDocumentsDialogs";
 import { RegistrationHeader } from "@/components/admin/organizations/RegistrationHeader";
+import { formatOrganizationData } from "@/utils/organizationUtils";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -34,37 +35,8 @@ export default function ConfirmRegistration() {
           if (error) throw error;
           
           if (data) {
-            setOrganization({
-              id: data.id,
-              name: data.name,
-              nomeFantasia: data.nome_fantasia || data.name,
-              cnpj: data.cnpj,
-              plan: data.plan,
-              planName: data.planName || "Professional",
-              status: data.status,
-              pendingReason: data.pending_reason,
-              contractStatus: data.contract_status,
-              paymentStatus: data.payment_status,
-              registrationStatus: data.registration_status,
-              email: data.email,
-              phone: data.phone,
-              adminName: data.admin_name,
-              adminEmail: data.admin_email,
-              users: [],
-              integratedCRM: data.integrated_crm,
-              integratedLLM: data.integrated_llm,
-              contractSignedAt: data.contract_signed_at,
-              createdAt: data.created_at,
-              address: {
-                logradouro: data.logradouro,
-                numero: data.numero,
-                complemento: data.complemento,
-                bairro: data.bairro,
-                cidade: data.cidade,
-                estado: data.estado,
-                cep: data.cep
-              }
-            });
+            // Use the formatOrganizationData utility to properly convert DB data to Organization type
+            setOrganization(formatOrganizationData(data));
           }
         }
       } catch (error) {
@@ -91,9 +63,9 @@ export default function ConfirmRegistration() {
     planName: "Professional",
     status: "pending",
     pendingReason: "contract_signature",
-    contractStatus: "pending" as const,
-    paymentStatus: "pending" as const,
-    registrationStatus: "pending" as const,
+    contractStatus: "pending",
+    paymentStatus: "pending",
+    registrationStatus: "pending",
     email: "contato@exemplo.com",
     phone: "(11) 99999-9999",
     adminName: "João Silva",
@@ -114,12 +86,15 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
+        // Define a valid pendingReason value
+        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
+        
         const { error: updateError } = await supabase
           .from('organizations')
           .update({ 
             registration_status: 'completed',
             status: data.acceptTerms ? 'active' : 'pending',
-            pending_reason: data.acceptTerms ? null : 'payment' 
+            pending_reason: pendingReason
           })
           .eq('id', orgId);
           
