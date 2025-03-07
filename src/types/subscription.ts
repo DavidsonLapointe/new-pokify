@@ -1,5 +1,5 @@
 
-export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'incomplete' | 'incomplete_expired';
+export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'incomplete' | 'incomplete_expired' | 'inactive';
 
 export interface Subscription {
   id: string;
