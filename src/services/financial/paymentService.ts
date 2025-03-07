@@ -2,6 +2,7 @@
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { getOrganizationSubscription } from "@/services/subscriptionService";
 
 export const handleTitlePayment = async (
   title: FinancialTitle, 
@@ -43,16 +44,29 @@ export const handleTitlePayment = async (
     if (userError) throw userError;
     
     // Verificamos se existe alguma assinatura inactive para esta organização
-    const { data: subscription, error: subscriptionError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('organization_id', organization.id.toString())
-      .eq('status', 'inactive')
-      .single();
+    const subscription = await getOrganizationSubscription(organization.id.toString());
     
-    // Se não existir uma assinatura inactive, o trigger irá cuidar da atualização automaticamente
-    if (subscriptionError && !subscription) {
-      console.log('Nenhuma assinatura inativa encontrada para atualizar');
+    // Se existir uma assinatura e ela estiver inativa, vamos acionar a função para criar no Stripe
+    if (subscription && subscription.status === 'inactive') {
+      try {
+        // Chamar a função Edge Function para criar a assinatura no Stripe
+        const { data: stripeData, error: stripeError } = await supabase.functions.invoke('create-stripe-subscription', {
+          body: {
+            organizationId: organization.id.toString(),
+            planType: organization.plan
+          }
+        });
+        
+        if (stripeError) {
+          console.error('Erro ao criar assinatura no Stripe:', stripeError);
+        } else {
+          console.log('Assinatura criada com sucesso no Stripe:', stripeData);
+        }
+      } catch (stripeCreateError) {
+        console.error('Exceção ao criar assinatura no Stripe:', stripeCreateError);
+        // Não vamos interromper o fluxo se falhar a criação no Stripe
+        // Apenas registramos o erro para investigação posterior
+      }
     }
   }
 
