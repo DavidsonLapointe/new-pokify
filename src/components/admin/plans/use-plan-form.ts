@@ -91,12 +91,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       console.log("Valores formatados para salvar:", formattedValues);
       
       let savedPlan: Plan | null = null;
+      let stripeResult;
       
       // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
       if (isEditing && formattedValues.stripeProductId) {
         try {
           console.log("Atualizando produto no Stripe");
-          await updateStripeProduct({
+          stripeResult = await updateStripeProduct({
             stripeProductId: formattedValues.stripeProductId,
             stripePriceId: formattedValues.stripePriceId || '',
             name: formattedValues.name,
@@ -105,7 +106,19 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
             active: formattedValues.active,
             credits: formattedValues.credits,
           });
-          console.log("Produto atualizado no Stripe com sucesso");
+          
+          console.log("Produto atualizado no Stripe com sucesso:", stripeResult);
+          
+          // Atualizar o stripePriceId com o novo preço se ele foi atualizado
+          if (stripeResult.priceUpdated && stripeResult.price?.id !== formattedValues.stripePriceId) {
+            formattedValues.stripePriceId = stripeResult.price.id;
+            
+            toast({
+              title: "Preço atualizado no Stripe",
+              description: "Um novo preço foi criado no Stripe e o anterior foi arquivado.",
+              variant: "default",
+            });
+          }
         } catch (stripeError) {
           console.error("Erro ao atualizar no Stripe:", stripeError);
           toast({

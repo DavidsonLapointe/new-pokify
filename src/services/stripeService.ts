@@ -46,10 +46,14 @@ export const updateStripeProduct = async (params: UpdateStripeProductParams) => 
       throw new Error('IDs do produto/preço não retornados pelo Stripe');
     }
     
+    // Verificar se um novo preço foi criado
+    const priceUpdated = data.priceUpdated || false;
+    
     return {
       success: true,
       product: data.product,
-      price: data.price
+      price: data.price,
+      priceUpdated
     };
   } catch (error) {
     console.error('Erro ao atualizar produto no Stripe:', error);

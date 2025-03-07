@@ -44,6 +44,7 @@ serve(async (req) => {
 
     let updatedProduct;
     let updatedPrice;
+    let priceUpdated = false;
 
     // Se não tiver product ID, cria um novo produto
     if (!stripeProductId) {
@@ -98,29 +99,54 @@ serve(async (req) => {
 
         // Criar novo preço se houver mudança no valor ou se não existir um preço
         if (price) {
-          console.log('Criando novo preço para o produto');
-          
-          updatedPrice = await stripe.prices.create({
-            product: stripeProductId,
-            unit_amount: Math.round(price * 100), // Converte para centavos
-            currency: 'brl',
-            active: active !== undefined ? active : true,
-            metadata: {
-              credits: credits?.toString()
-            }
-          });
-          
-          console.log('Novo preço criado com sucesso:', updatedPrice.id);
-
-          // Desativa o preço anterior
+          // Verificar preço atual
+          let currentPrice = null;
           if (stripePriceId) {
-            console.log('Desativando preço anterior:', stripePriceId);
+            try {
+              currentPrice = await stripe.prices.retrieve(stripePriceId);
+              console.log('Preço atual recuperado:', currentPrice);
+            } catch (e) {
+              console.log('Não foi possível recuperar o preço atual:', e);
+            }
+          }
+
+          // Verificar se o preço mudou
+          const newPriceInCents = Math.round(price * 100);
+          const createNewPrice = !currentPrice || 
+                                 currentPrice.unit_amount !== newPriceInCents || 
+                                 !currentPrice.active;
+
+          if (createNewPrice) {
+            console.log('Criando novo preço para o produto. Preço antigo:', 
+                        currentPrice?.unit_amount ? (currentPrice.unit_amount / 100).toFixed(2) : 'N/A',
+                        'Novo preço:', price.toFixed(2));
             
-            await stripe.prices.update(stripePriceId, {
-              active: false
+            updatedPrice = await stripe.prices.create({
+              product: stripeProductId,
+              unit_amount: newPriceInCents,
+              currency: 'brl',
+              active: active !== undefined ? active : true,
+              metadata: {
+                credits: credits?.toString()
+              }
             });
             
-            console.log('Preço anterior desativado com sucesso');
+            console.log('Novo preço criado com sucesso:', updatedPrice.id);
+            priceUpdated = true;
+
+            // Desativa o preço anterior
+            if (stripePriceId) {
+              console.log('Desativando preço anterior:', stripePriceId);
+              
+              await stripe.prices.update(stripePriceId, {
+                active: false
+              });
+              
+              console.log('Preço anterior desativado com sucesso');
+            }
+          } else {
+            console.log('Preço não mudou, mantendo o preço atual');
+            updatedPrice = currentPrice;
           }
         } else if (stripePriceId) {
           // Se não foi fornecido um novo preço, usa o preço existente
@@ -142,7 +168,8 @@ serve(async (req) => {
       responseData = {
         ...responseData,
         product: updatedProduct,
-        price: updatedPrice
+        price: updatedPrice,
+        priceUpdated
       };
     }
 
