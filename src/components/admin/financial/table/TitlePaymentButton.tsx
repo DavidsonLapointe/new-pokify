@@ -39,6 +39,7 @@ export const TitlePaymentButton = ({
     }
   };
 
+  // Apenas exibe o botão se o título estiver pendente ou vencido
   if (title.status === "pending" || title.status === "overdue") {
     return (
       <Button
@@ -52,5 +53,6 @@ export const TitlePaymentButton = ({
     );
   }
 
+  // Se o título já estiver pago, não exibe nenhum botão
   return null;
 };
