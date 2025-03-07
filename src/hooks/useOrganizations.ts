@@ -35,7 +35,7 @@ export const useOrganizations = () => {
         }
       }
       
-      // Buscar todos os planos para mapear IDs para nomes
+      // Fetch all plans to map IDs to names - IMPORTANT for displaying plan name instead of ID
       console.log("Buscando planos para mapear IDs para nomes");
       const { data: plansData, error: plansError } = await supabase
         .from('plans')
@@ -46,7 +46,7 @@ export const useOrganizations = () => {
         throw new Error(`Falha ao carregar planos: ${plansError.message}`);
       }
       
-      // Criar mapa de ID do plano para nome do plano
+      // Create map of plan ID to plan name
       const planIdToNameMap = new Map();
       if (plansData) {
         plansData.forEach(plan => {
@@ -96,19 +96,19 @@ export const useOrganizations = () => {
               return formatOrganizationData({
                 ...org,
                 users: [],
-                // Adicionar o nome do plano aqui
-                planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
+                // Get plan name from map or use fallback
+                planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
               });
             }
 
             console.log(`Encontrados ${users?.length || 0} usuários para a organização ${org.id}`);
             
-            // Formatar e retornar os dados da organização com usuários
+            // Format and return organization data with users and plan name
             const formattedOrg = formatOrganizationData({
               ...org,
               users: users || [],
-              // Adicionar o nome do plano aqui
-              planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
+              // Get plan name from map or use fallback
+              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
             });
             
             console.log(`Organização formatada: ${formattedOrg.name}`, formattedOrg);
@@ -118,8 +118,8 @@ export const useOrganizations = () => {
             return formatOrganizationData({
               ...org,
               users: [],
-              // Adicionar o nome do plano aqui em caso de erro
-              planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
+              // Get plan name from map or use fallback
+              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
             });
           }
         })

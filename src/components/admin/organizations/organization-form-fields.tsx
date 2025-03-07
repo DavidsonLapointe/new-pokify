@@ -56,8 +56,8 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
                 <Input 
                   placeholder="00.000.000/0000-00" 
                   {...field} 
-                  disabled 
-                  className="bg-gray-50"
+                  disabled={cnpjValidated}
+                  className={cnpjValidated ? "bg-gray-50" : ""}
                 />
               </FormControl>
               {!cnpjValidated && <FormMessage />}

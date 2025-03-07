@@ -61,6 +61,15 @@ export const useEditOrganizationForm = (
       
       console.log("Organização atualizada com sucesso no Supabase:", data);
 
+      // After update, fetch the updated plan name
+      const { data: planData } = await supabase
+        .from('plans')
+        .select('name')
+        .eq('id', values.plan)
+        .single();
+
+      const planName = planData?.name || "Plano não especificado";
+
       const updatedOrganization: Organization = {
         ...organization,
         name: values.razaoSocial,
@@ -69,6 +78,7 @@ export const useEditOrganizationForm = (
         email: values.email,
         phone: values.phone,
         plan: values.plan,
+        planName: planName, // Use the fetched plan name
         adminName: values.adminName,
         adminEmail: values.adminEmail,
         status: values.status,
