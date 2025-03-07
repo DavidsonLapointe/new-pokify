@@ -197,12 +197,19 @@ export function ConfirmRegistrationForm({
 
   // Configuração das opções do elemento do Stripe
   const options: StripeElementsOptions = {
-    mode: 'setup',
-    currency: 'brl',
     appearance,
-    loader: 'auto',
-    clientSecret: setupIntent?.clientSecret,
+    locale: 'pt-BR' as const,
   };
+
+  // Adiciona o clientSecret apenas quando ele estiver disponível
+  if (setupIntent?.clientSecret) {
+    // Usar a propriedade correta de acordo com o modo
+    // Para "setup" mode, usamos setupIntentClientSecret
+    options.setupIntentClientSecret = setupIntent.clientSecret;
+    options.mode = 'setup';
+    options.currency = 'brl';
+    options.loader = 'auto';
+  }
 
   return (
     <Form {...form}>
