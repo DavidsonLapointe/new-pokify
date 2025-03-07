@@ -19,6 +19,7 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Recebendo requisição para atualizar produto no Stripe');
     const { 
       stripeProductId, 
       stripePriceId,
@@ -26,17 +27,19 @@ serve(async (req) => {
       description, 
       price,
       active,
-      credits
+      credits,
+      returnIds = true // Nova opção para controlar se devemos retornar os IDs
     } = await req.json();
 
-    console.log('Atualizando produto no Stripe:', {
+    console.log('Dados recebidos:', {
       stripeProductId,
       stripePriceId,
       name,
       description,
       price,
       active,
-      credits
+      credits,
+      returnIds
     });
 
     let updatedProduct;
@@ -46,53 +49,23 @@ serve(async (req) => {
     if (!stripeProductId) {
       console.log('Criando novo produto no Stripe');
       
-      // Criar o produto no Stripe
-      updatedProduct = await stripe.products.create({
-        name,
-        description,
-        active: active !== undefined ? active : true,
-        metadata: {
-          credits: credits?.toString(),
-          type: credits ? 'additional_credits' : 'subscription'
-        }
-      });
-      
-      console.log('Produto criado com sucesso:', updatedProduct.id);
-      
-      // Criar preço para o produto
-      updatedPrice = await stripe.prices.create({
-        product: updatedProduct.id,
-        unit_amount: Math.round(price * 100), // Converte para centavos
-        currency: 'brl',
-        active: active !== undefined ? active : true,
-        metadata: {
-          credits: credits?.toString()
-        }
-      });
-      
-      console.log('Preço criado com sucesso:', updatedPrice.id);
-    } else {
-      console.log('Atualizando produto existente:', stripeProductId);
-
-      // Atualiza o produto
-      updatedProduct = await stripe.products.update(stripeProductId, {
-        name,
-        description,
-        active,
-        metadata: {
-          credits: credits?.toString(),
-          type: credits ? 'additional_credits' : 'subscription'
-        }
-      });
-      
-      console.log('Produto atualizado com sucesso');
-
-      // Criar novo preço se houver mudança no valor ou se não existir um preço
-      if (price) {
-        console.log('Criando novo preço para o produto');
+      try {
+        // Criar o produto no Stripe
+        updatedProduct = await stripe.products.create({
+          name,
+          description,
+          active: active !== undefined ? active : true,
+          metadata: {
+            credits: credits?.toString(),
+            type: credits ? 'additional_credits' : 'subscription'
+          }
+        });
         
+        console.log('Produto criado com sucesso:', updatedProduct.id);
+        
+        // Criar preço para o produto
         updatedPrice = await stripe.prices.create({
-          product: stripeProductId,
+          product: updatedProduct.id,
           unit_amount: Math.round(price * 100), // Converte para centavos
           currency: 'brl',
           active: active !== undefined ? active : true,
@@ -101,27 +74,82 @@ serve(async (req) => {
           }
         });
         
-        console.log('Novo preço criado com sucesso:', updatedPrice.id);
+        console.log('Preço criado com sucesso:', updatedPrice.id);
+      } catch (error) {
+        console.error('Erro ao criar produto/preço no Stripe:', error);
+        throw new Error(`Erro ao criar produto/preço no Stripe: ${error.message}`);
+      }
+    } else {
+      console.log('Atualizando produto existente:', stripeProductId);
 
-        // Desativa o preço anterior
-        if (stripePriceId) {
-          console.log('Desativando preço anterior:', stripePriceId);
+      try {
+        // Atualiza o produto
+        updatedProduct = await stripe.products.update(stripeProductId, {
+          name,
+          description,
+          active,
+          metadata: {
+            credits: credits?.toString(),
+            type: credits ? 'additional_credits' : 'subscription'
+          }
+        });
+        
+        console.log('Produto atualizado com sucesso');
+
+        // Criar novo preço se houver mudança no valor ou se não existir um preço
+        if (price) {
+          console.log('Criando novo preço para o produto');
           
-          await stripe.prices.update(stripePriceId, {
-            active: false
+          updatedPrice = await stripe.prices.create({
+            product: stripeProductId,
+            unit_amount: Math.round(price * 100), // Converte para centavos
+            currency: 'brl',
+            active: active !== undefined ? active : true,
+            metadata: {
+              credits: credits?.toString()
+            }
           });
           
-          console.log('Preço anterior desativado com sucesso');
+          console.log('Novo preço criado com sucesso:', updatedPrice.id);
+
+          // Desativa o preço anterior
+          if (stripePriceId) {
+            console.log('Desativando preço anterior:', stripePriceId);
+            
+            await stripe.prices.update(stripePriceId, {
+              active: false
+            });
+            
+            console.log('Preço anterior desativado com sucesso');
+          }
+        } else if (stripePriceId) {
+          // Se não foi fornecido um novo preço, usa o preço existente
+          console.log('Mantendo preço atual:', stripePriceId);
+          
+          const priceData = await stripe.prices.retrieve(stripePriceId);
+          updatedPrice = priceData;
         }
+      } catch (error) {
+        console.error('Erro ao atualizar produto/preço no Stripe:', error);
+        throw new Error(`Erro ao atualizar produto/preço no Stripe: ${error.message}`);
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
+    // Preparar resposta conforme a opção returnIds
+    let responseData = { success: true };
+    
+    if (returnIds && updatedProduct) {
+      responseData = {
+        ...responseData,
         product: updatedProduct,
         price: updatedPrice
-      }),
+      };
+    }
+
+    console.log('Resposta final:', responseData);
+
+    return new Response(
+      JSON.stringify(responseData),
       {
         headers: {
           ...corsHeaders,
@@ -131,7 +159,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Erro:', error)
     return new Response(
       JSON.stringify({ 
         success: false,
