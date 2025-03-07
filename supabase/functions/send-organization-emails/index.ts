@@ -93,7 +93,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">3. Completar seu Cadastro</h2>
-              <p>Você precisa definir sua senha e confirmar seus dados:</p>
+              <p>Você precisa confirmar seus dados e definir sua senha:</p>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Completar Cadastro</a></p>
             </div>
             

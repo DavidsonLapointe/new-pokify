@@ -72,7 +72,6 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         }
         
         // Get pro-rata value from the title creation process
-        // Fix: Use 'value' instead of 'amount'
         const proRataValue = proRataTitle?.value || 0;
         
         // Send single onboarding email with all links

@@ -50,7 +50,7 @@ export const useFormErrorHandlers = () => {
     toast({
       title: "Empresa criada com sucesso, mas...",
       description: `Detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`,
-      variant: "warning",
+      variant: "destructive",
       duration: 8000,
     });
   };
