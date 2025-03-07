@@ -1,11 +1,10 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { planFormSchema, type PlanFormValues, type Plan } from "./plan-form-schema";
 import { useToast } from "@/hooks/use-toast";
 import { updateStripeProduct } from "@/services/stripeService";
-import { createPlan, updatePlan } from "@/services/planService";
+import { createPlan, updatePlan } from "@/services/plans";
 
 interface UsePlanFormProps {
   plan?: Plan;

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Plus, FileText, Coins } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
-import { fetchPlans } from "@/services/planService";
+import { fetchPlans } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 
