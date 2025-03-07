@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "./schema";
+import { usePlans } from "./hooks/use-plans";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface OrganizationFormFieldsProps {
   form: UseFormReturn<CreateOrganizationFormData>;
@@ -11,6 +13,8 @@ interface OrganizationFormFieldsProps {
 }
 
 export const OrganizationFormFields = ({ form, cnpjValidated = false }: OrganizationFormFieldsProps) => {
+  const { plans, isLoading: plansLoading } = usePlans();
+  
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -72,18 +76,30 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
           render={({ field }) => (
             <FormItem>
               <FormLabel>Plano</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o plano" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="basic">Basic</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
-                </SelectContent>
-              </Select>
+              {plansLoading ? (
+                <Skeleton className="h-10 w-full" />
+              ) : (
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o plano" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {plans.length > 0 ? (
+                      plans.map((plan) => (
+                        <SelectItem key={plan.id} value={plan.id}>
+                          {plan.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-plans" disabled>
+                        Nenhum plano disponível
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
               <FormMessage />
             </FormItem>
           )}

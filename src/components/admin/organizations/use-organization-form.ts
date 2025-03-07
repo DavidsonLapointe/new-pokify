@@ -13,10 +13,13 @@ import {
 } from "./api/organization-api";
 import { useFormErrorHandlers } from "./utils/form-error-handlers";
 import { createInactiveSubscription } from "@/services/subscriptionService";
+import { usePlans } from "./hooks/use-plans";
+import { useEffect } from "react";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { user } = useUser();
   const errorHandlers = useFormErrorHandlers();
+  const { plans } = usePlans();
   
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),
@@ -26,12 +29,20 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       cnpj: "",
       email: "",
       phone: "",
-      plan: "professional",
+      plan: "", // We'll set this dynamically when plans are loaded
       adminName: "",
       adminEmail: "",
       status: "pending",
     },
   });
+
+  // Set default plan when plans are loaded
+  useEffect(() => {
+    if (plans.length > 0 && !form.getValues("plan")) {
+      // Set the first active plan as default
+      form.setValue("plan", plans[0].id);
+    }
+  }, [plans, form]);
 
   // Function to check if CNPJ already exists
   const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
