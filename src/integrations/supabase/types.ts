@@ -642,7 +642,7 @@ export type Database = {
           phone: string | null
           plan: string
           registration_status: string | null
-          status: Database["public"]["Enums"]["user_status"]
+          status: Database["public"]["Enums"]["organization_status"]
         }
         Insert: {
           admin_email: string
@@ -672,7 +672,7 @@ export type Database = {
           phone?: string | null
           plan: string
           registration_status?: string | null
-          status?: Database["public"]["Enums"]["user_status"]
+          status?: Database["public"]["Enums"]["organization_status"]
         }
         Update: {
           admin_email?: string
@@ -702,7 +702,7 @@ export type Database = {
           phone?: string | null
           plan?: string
           registration_status?: string | null
-          status?: Database["public"]["Enums"]["user_status"]
+          status?: Database["public"]["Enums"]["organization_status"]
         }
         Relationships: []
       }
@@ -995,6 +995,7 @@ export type Database = {
         | "pro_rata_payment"
         | "null"
         | "user_validation"
+      organization_status: "active" | "pending" | "inactive"
       payment_method: "pix" | "boleto" | "credit_card"
       subscription_status:
         | "active"

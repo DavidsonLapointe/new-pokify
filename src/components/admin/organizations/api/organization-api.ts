@@ -63,13 +63,16 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     currentPendingReason = 'user_validation';
   }
 
+  // Garantir que o status seja um dos valores válidos do enum OrganizationStatus
+  const status = (dbOrganization.status || 'pending') as OrganizationStatus;
+
   return {
     id: dbOrganization.id,
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
     users: [],
-    status: allStepsCompleted ? 'active' : dbOrganization.status,
+    status: allStepsCompleted ? 'active' : status,
     pendingReason: currentPendingReason,
     contractStatus: dbOrganization.contract_status || 'pending',
     paymentStatus: dbOrganization.payment_status || 'pending',

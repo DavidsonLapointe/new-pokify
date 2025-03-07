@@ -11,6 +11,11 @@ import type { UserStatus } from "./user-types";
  */
 export type OrganizationPendingReason = "contract_signature" | "pro_rata_payment" | "user_validation" | null;
 
+/**
+ * Organization status types reflect the organization's current status in the system
+ */
+export type OrganizationStatus = "active" | "pending" | "inactive";
+
 export interface Address {
   logradouro: string;
   numero: string;
@@ -27,7 +32,7 @@ export interface Organization {
   nomeFantasia: string;
   plan: string;
   users: User[];
-  status: UserStatus;
+  status: OrganizationStatus;
   pendingReason?: OrganizationPendingReason;
   contractStatus: 'pending' | 'completed';
   paymentStatus: 'pending' | 'completed';

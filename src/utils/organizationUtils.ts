@@ -1,5 +1,5 @@
 
-import { Organization } from '@/types';
+import { Organization, OrganizationStatus } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {
   console.log("Formatando organização (dados brutos):", organization);
@@ -47,6 +47,9 @@ export const formatOrganizationData = (organization: any): Organization => {
     };
   }
 
+  // Status sempre será um dos três valores enum definidos
+  const status = (organization.status || 'pending') as OrganizationStatus;
+
   // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {
     id: organization.id,
@@ -54,7 +57,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     nomeFantasia: nome_fantasia,
     plan: organization.plan,
     users: organization.users || [],
-    status: organization.status,
+    status: status,
     pendingReason: pendingReason,
     contractStatus: organization.contract_status || 'pending',
     paymentStatus: organization.payment_status || 'pending',

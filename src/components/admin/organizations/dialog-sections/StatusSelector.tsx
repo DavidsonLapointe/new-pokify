@@ -4,14 +4,15 @@ import { FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "../schema";
+import { OrganizationStatus } from "@/types/organization-types";
 
 interface StatusSelectorProps {
   form: UseFormReturn<CreateOrganizationFormData>;
-  currentStatus: string;
+  currentStatus: OrganizationStatus;
 }
 
 export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => {
-  const getAvailableStatusOptions = (currentStatus: string) => {
+  const getAvailableStatusOptions = (currentStatus: OrganizationStatus) => {
     switch (currentStatus) {
       case "active":
         return [{ value: "inactive", label: "Inativo" }];
@@ -30,7 +31,7 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
   const handleValueChange = (value: string) => {
     // Only set the value if it's one of the allowed status values
     if (value === "active" || value === "pending" || value === "inactive") {
-      form.setValue("status", value);
+      form.setValue("status", value as OrganizationStatus);
     }
   };
 

@@ -1,13 +1,14 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { OrganizationStatus } from "@/types/organization-types";
 
 interface StatusBadgeProps {
-  status: string;
+  status: OrganizationStatus;
 }
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: OrganizationStatus) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -20,7 +21,7 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: OrganizationStatus) => {
     switch (status) {
       case "active":
         return "Ativo";
