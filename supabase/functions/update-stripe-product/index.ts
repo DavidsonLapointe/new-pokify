@@ -101,10 +101,14 @@ serve(async (req) => {
         if (price) {
           // Verificar preço atual
           let currentPrice = null;
+          let currentPriceInCents = 0;
+          
           if (stripePriceId) {
             try {
               currentPrice = await stripe.prices.retrieve(stripePriceId);
+              currentPriceInCents = currentPrice.unit_amount || 0;
               console.log('Preço atual recuperado:', currentPrice);
+              console.log('Valor atual em centavos:', currentPriceInCents);
             } catch (e) {
               console.log('Não foi possível recuperar o preço atual:', e);
             }
@@ -112,13 +116,40 @@ serve(async (req) => {
 
           // Verificar se o preço mudou
           const newPriceInCents = Math.round(price * 100);
-          const createNewPrice = !currentPrice || 
-                                 currentPrice.unit_amount !== newPriceInCents || 
-                                 !currentPrice.active;
+          console.log('Novo preço em centavos:', newPriceInCents);
+          
+          // Verificar se já existe um preço ativo com o mesmo valor para este produto
+          let existingActivePrice = null;
+          
+          try {
+            // Buscar todos os preços ativos para este produto
+            const existingPrices = await stripe.prices.list({
+              product: stripeProductId,
+              active: true
+            });
+            
+            // Verificar se existe um preço ativo com o mesmo valor
+            existingActivePrice = existingPrices.data.find(p => 
+              p.unit_amount === newPriceInCents && p.currency === 'brl'
+            );
+            
+            if (existingActivePrice) {
+              console.log('Encontrado preço ativo existente com o mesmo valor:', existingActivePrice.id);
+            }
+          } catch (e) {
+            console.log('Erro ao buscar preços existentes:', e);
+          }
+
+          // Criar novo preço apenas se não existir um preço ativo com o mesmo valor
+          // ou se o preço mudou em relação ao preço original
+          const createNewPrice = !existingActivePrice && 
+                               (!currentPrice || 
+                                currentPriceInCents !== newPriceInCents || 
+                                !currentPrice.active);
 
           if (createNewPrice) {
             console.log('Criando novo preço para o produto. Preço antigo:', 
-                        currentPrice?.unit_amount ? (currentPrice.unit_amount / 100).toFixed(2) : 'N/A',
+                        currentPriceInCents ? (currentPriceInCents / 100).toFixed(2) : 'N/A',
                         'Novo preço:', price.toFixed(2));
             
             updatedPrice = await stripe.prices.create({
@@ -135,7 +166,7 @@ serve(async (req) => {
             priceUpdated = true;
 
             // Desativa o preço anterior
-            if (stripePriceId) {
+            if (stripePriceId && stripePriceId !== updatedPrice.id) {
               console.log('Desativando preço anterior:', stripePriceId);
               
               await stripe.prices.update(stripePriceId, {
@@ -143,6 +174,22 @@ serve(async (req) => {
               });
               
               console.log('Preço anterior desativado com sucesso');
+            }
+          } else if (existingActivePrice) {
+            console.log('Usando preço ativo existente com o mesmo valor');
+            updatedPrice = existingActivePrice;
+            
+            // Se o preço atual for diferente do preço existente com o mesmo valor,
+            // desative o preço atual
+            if (stripePriceId && stripePriceId !== existingActivePrice.id) {
+              console.log('Desativando preço anterior redundante:', stripePriceId);
+              
+              await stripe.prices.update(stripePriceId, {
+                active: false
+              });
+              
+              console.log('Preço anterior redundante desativado com sucesso');
+              priceUpdated = true;
             }
           } else {
             console.log('Preço não mudou, mantendo o preço atual');
