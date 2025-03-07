@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TitleStatus, TitleType, FinancialTitle } from "@/types/financial";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,12 +18,19 @@ export const useFinancialFilters = (allTitles: FinancialTitle[]) => {
   });
   const [filteredTitles, setFilteredTitles] = useState<FinancialTitle[]>(allTitles);
 
-  const applyFilters = (newFilters: FinancialFilters) => {
+  const applyFilters = useCallback((newFilters: FinancialFilters, showToast = true) => {
     setFilters(newFilters);
     
     // Se todos os filtros estiverem em seu estado inicial, mostre todos os títulos
     if (newFilters.status === "all" && newFilters.type === "all" && newFilters.search === "") {
       setFilteredTitles(allTitles);
+      
+      if (showToast) {
+        toast({
+          title: "Filtros limpos",
+          description: "Todos os filtros foram removidos.",
+        });
+      }
       return;
     }
 
@@ -44,13 +51,15 @@ export const useFinancialFilters = (allTitles: FinancialTitle[]) => {
 
     setFilteredTitles(filtered);
     
-    toast({
-      title: "Filtros aplicados",
-      description: "A lista foi atualizada com os filtros selecionados.",
-    });
-  };
+    if (showToast) {
+      toast({
+        title: "Filtros aplicados",
+        description: "A lista foi atualizada com os filtros selecionados.",
+      });
+    }
+  }, [allTitles, toast]);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     const resetFilters = { status: "all" as const, type: "all" as const, search: "" };
     setFilters(resetFilters);
     setFilteredTitles(allTitles);
@@ -59,7 +68,7 @@ export const useFinancialFilters = (allTitles: FinancialTitle[]) => {
       title: "Filtros limpos",
       description: "Todos os filtros foram removidos.",
     });
-  };
+  }, [allTitles, toast]);
 
   return {
     filters,
