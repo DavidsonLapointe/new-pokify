@@ -52,21 +52,43 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         planName: planName // Inject plan name from the creation response
       });
 
-      // Criar assinatura inativa para a nova organização
+      // Create inactive subscription for the new organization
       try {
         console.log("Tentando criar assinatura inativa para organização:", organizationFormatted.id);
-        const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
         
-        if (inactiveSubscription) {
-          console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
-        } else {
-          console.error("Erro ao criar assinatura inativa - resultado nulo");
+        // Try multiple times with a small delay between attempts
+        let attempts = 0;
+        const maxAttempts = 3;
+        let inactiveSubscription = null;
+        
+        while (attempts < maxAttempts && !inactiveSubscription) {
+          attempts++;
+          try {
+            inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
+            
+            if (inactiveSubscription) {
+              console.log("Assinatura inativa criada com sucesso na tentativa", attempts, ":", inactiveSubscription);
+              break;
+            } else {
+              console.log("Tentativa", attempts, "falhou, aguardando antes de tentar novamente...");
+              // Wait a bit before next attempt
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          } catch (subscriptionAttemptError) {
+            console.error("Erro na tentativa", attempts, ":", subscriptionAttemptError);
+            // Wait a bit before next attempt
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+        
+        if (!inactiveSubscription) {
+          console.error("Falha ao criar assinatura inativa após", maxAttempts, "tentativas");
           toast.error("Erro ao criar assinatura. Tente novamente ou contate o suporte.");
         }
       } catch (subscriptionError) {
         console.error("Erro ao criar assinatura inativa:", subscriptionError);
         toast.error("Erro ao criar assinatura. O processo continuará, mas pode haver problemas no pagamento.");
-        // Continue com o fluxo mesmo com erro na assinatura
+        // Continue with the flow even if subscription creation fails
       }
 
       // Calculate pro-rata value and create pro-rata title

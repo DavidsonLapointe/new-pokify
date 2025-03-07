@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -35,7 +36,7 @@ export const createInactiveSubscription = async (organizationId: string): Promis
   try {
     console.log('Iniciando criação de assinatura inativa para organização:', organizationId);
     
-    // Primeiro verificamos se já existe uma assinatura inativa para esta organização
+    // First check if an inactive subscription already exists for this organization
     const { data: existingSubscription, error: checkError } = await supabase
       .from('subscriptions')
       .select('*')
@@ -47,7 +48,7 @@ export const createInactiveSubscription = async (organizationId: string): Promis
       console.error('Erro ao verificar assinaturas existentes:', checkError);
     }
     
-    // Se já existe uma assinatura inativa, retornamos ela
+    // If an inactive subscription already exists, return it
     if (existingSubscription) {
       console.log('Assinatura inativa já existente, retornando:', existingSubscription.id);
       return {
@@ -65,46 +66,73 @@ export const createInactiveSubscription = async (organizationId: string): Promis
       };
     }
 
-    // Caso contrário, criamos uma nova assinatura inativa
-    const { data: subscription, error } = await supabase
-      .from('subscriptions')
-      .insert({
-        organization_id: organizationId,
-        status: 'inactive',
-        stripe_subscription_id: 'pending', // Será substituído quando a assinatura real for criada
-        stripe_customer_id: 'pending', // Será substituído quando a assinatura real for criada
-      })
-      .select()
-      .single();
+    // Call the Edge Function to create an inactive subscription
+    console.log('Chamando function para criar assinatura inativa');
+    try {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('manage-subscription', {
+        body: {
+          action: 'create_inactive_subscription',
+          organizationId
+        }
+      });
+      
+      if (functionError) {
+        console.error('Erro ao chamar função para criar assinatura inativa:', functionError);
+        throw functionError;
+      }
+      
+      if (!functionData?.subscription) {
+        console.error('Função não retornou dados de assinatura');
+        throw new Error('Erro ao criar assinatura inativa via Edge Function');
+      }
+      
+      console.log('Assinatura inativa criada com sucesso via Edge Function:', functionData.subscription.id);
+      return functionData.subscription;
+    } catch (functionCallError) {
+      console.error('Erro ao chamar Edge Function:', functionCallError);
+      
+      // Fallback: Try to create directly
+      console.log('Tentando criar assinatura inativa diretamente no banco de dados...');
+      const { data: subscription, error } = await supabase
+        .from('subscriptions')
+        .insert({
+          organization_id: organizationId,
+          status: 'inactive',
+          stripe_subscription_id: 'pending',
+          stripe_customer_id: 'pending',
+        })
+        .select()
+        .single();
 
-    if (error) {
-      console.error('Erro ao criar assinatura inativa:', error);
-      throw error; // Lançamos o erro para ser capturado pelo try/catch que chama esta função
+      if (error) {
+        console.error('Erro ao criar assinatura inativa:', error);
+        throw error;
+      }
+
+      if (!subscription) {
+        console.error('Nenhum dado de assinatura retornado após inserção');
+        return null;
+      }
+
+      console.log('Assinatura inativa criada com sucesso:', subscription.id);
+      
+      return {
+        id: subscription.id,
+        organizationId: subscription.organization_id,
+        stripeSubscriptionId: subscription.stripe_subscription_id,
+        stripeCustomerId: subscription.stripe_customer_id,
+        status: subscription.status,
+        currentPeriodStart: subscription.current_period_start,
+        currentPeriodEnd: subscription.current_period_end,
+        cancelAt: subscription.cancel_at,
+        canceledAt: subscription.canceled_at,
+        createdAt: subscription.created_at,
+        updatedAt: subscription.updated_at,
+      };
     }
-
-    if (!subscription) {
-      console.error('Nenhum dado de assinatura retornado após inserção');
-      return null;
-    }
-
-    console.log('Assinatura inativa criada com sucesso:', subscription.id);
-    
-    return {
-      id: subscription.id,
-      organizationId: subscription.organization_id,
-      stripeSubscriptionId: subscription.stripe_subscription_id,
-      stripeCustomerId: subscription.stripe_customer_id,
-      status: subscription.status,
-      currentPeriodStart: subscription.current_period_start,
-      currentPeriodEnd: subscription.current_period_end,
-      cancelAt: subscription.cancel_at,
-      canceledAt: subscription.canceled_at,
-      createdAt: subscription.created_at,
-      updatedAt: subscription.updated_at,
-    };
   } catch (error) {
     console.error('Erro ao criar assinatura inativa:', error);
-    throw error; // Relançamos o erro para que seja tratado corretamente no chamador
+    return null; // Return null instead of throwing to avoid breaking the organization creation flow
   }
 };
 

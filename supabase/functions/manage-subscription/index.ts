@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 import Stripe from "https://esm.sh/stripe@13.6.0?target=deno"
@@ -28,6 +27,11 @@ interface CreateSetupIntentBody {
   organizationId: string;
 }
 
+interface CreateInactiveSubscriptionBody {
+  action: string;
+  organizationId: string;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -36,6 +40,12 @@ serve(async (req) => {
   try {
     const requestBody = await req.json();
     console.log('Requisição recebida:', JSON.stringify(requestBody));
+    
+    // Handle create_inactive_subscription action
+    if (requestBody.action === 'create_inactive_subscription') {
+      console.log('Criando assinatura inativa para organização:', requestBody.organizationId);
+      return await handleCreateInactiveSubscription(requestBody);
+    }
     
     // Handle create_setup_intent action
     if (requestBody.action === 'create_setup_intent') {
@@ -57,6 +67,131 @@ serve(async (req) => {
     );
   }
 });
+
+// Handle inactive subscription creation
+async function handleCreateInactiveSubscription(body: CreateInactiveSubscriptionBody) {
+  try {
+    const { organizationId } = body;
+    console.log('Processando criação de assinatura inativa para organização ID:', organizationId);
+    
+    // Get organization information
+    const { data: organization, error: orgError } = await supabase
+      .from('organizations')
+      .select('*')
+      .eq('id', organizationId)
+      .single();
+
+    if (orgError || !organization) {
+      console.error('Organização não encontrada:', orgError);
+      throw new Error('Organização não encontrada');
+    }
+
+    console.log('Organização encontrada:', organization.name);
+
+    // Check if an inactive subscription already exists
+    const { data: existingSubscriptions, error: subError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('organization_id', organizationId)
+      .eq('status', 'inactive');
+      
+    if (!subError && existingSubscriptions && existingSubscriptions.length > 0) {
+      console.log('Assinatura inativa já existente:', existingSubscriptions[0].id);
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          subscription: {
+            id: existingSubscriptions[0].id,
+            organizationId: existingSubscriptions[0].organization_id,
+            stripeSubscriptionId: existingSubscriptions[0].stripe_subscription_id,
+            stripeCustomerId: existingSubscriptions[0].stripe_customer_id,
+            status: existingSubscriptions[0].status,
+            currentPeriodStart: existingSubscriptions[0].current_period_start,
+            currentPeriodEnd: existingSubscriptions[0].current_period_end,
+            cancelAt: existingSubscriptions[0].cancel_at,
+            canceledAt: existingSubscriptions[0].canceled_at,
+            createdAt: existingSubscriptions[0].created_at,
+            updatedAt: existingSubscriptions[0].updated_at,
+          }
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Create a Stripe customer to get a proper customer ID
+    let customerId = 'pending';
+    
+    try {
+      // Try to create a new Stripe customer
+      console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
+      const customer = await stripe.customers.create({
+        email: organization.admin_email || organization.email,
+        name: organization.name,
+        metadata: {
+          organization_id: organizationId,
+        },
+      });
+      customerId = customer.id;
+      console.log('Novo cliente Stripe criado:', customerId);
+    } catch (stripeError) {
+      console.error('Erro ao criar cliente Stripe (continuando com customerId="pending"):', stripeError);
+      // Continue with pending as customer_id
+    }
+    
+    // Create inactive subscription
+    const { data: newSubscription, error: insertError } = await supabase
+      .from('subscriptions')
+      .insert({
+        organization_id: organizationId,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: 'pending',
+        status: 'inactive',
+      })
+      .select()
+      .single();
+      
+    if (insertError) {
+      console.error('Erro ao criar assinatura inativa:', insertError);
+      throw new Error('Erro ao criar assinatura inativa: ' + insertError.message);
+    }
+    
+    console.log('Assinatura inativa criada com sucesso:', newSubscription.id);
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        subscription: {
+          id: newSubscription.id,
+          organizationId: newSubscription.organization_id,
+          stripeSubscriptionId: newSubscription.stripe_subscription_id,
+          stripeCustomerId: newSubscription.stripe_customer_id,
+          status: newSubscription.status,
+          currentPeriodStart: newSubscription.current_period_start,
+          currentPeriodEnd: newSubscription.current_period_end,
+          cancelAt: newSubscription.cancel_at,
+          canceledAt: newSubscription.canceled_at,
+          createdAt: newSubscription.created_at,
+          updatedAt: newSubscription.updated_at,
+        }
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  } catch (error) {
+    console.error('Erro ao criar assinatura inativa:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+}
 
 // Handle setup intent creation
 async function handleCreateSetupIntent(body: CreateSetupIntentBody) {
