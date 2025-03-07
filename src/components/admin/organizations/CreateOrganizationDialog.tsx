@@ -67,7 +67,9 @@ export const CreateOrganizationDialog = ({
     // Check if CNPJ already exists in the database
     setIsCheckingCnpj(true);
     try {
-      const exists = await checkCnpjExists(cnpj);
+      console.log("Verificando CNPJ:", formattedCnpj);
+      const { exists } = await checkCnpjExists(formattedCnpj);
+      console.log("Resultado da verificação:", exists);
       
       if (exists) {
         form.setError("cnpj", { 

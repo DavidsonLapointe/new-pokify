@@ -52,12 +52,31 @@ export const formatCNPJ = (cnpj: string): string => {
   // Remove any non-numeric characters
   cnpj = cnpj.replace(/[^\d]/g, '');
   
-  // Ensure it has the correct length
-  if (cnpj.length !== 14) return cnpj;
+  // Limit to 14 digits
+  cnpj = cnpj.slice(0, 14);
   
-  // Apply formatting
-  return cnpj.replace(
-    /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-    '$1.$2.$3/$4-$5'
-  );
+  // If empty or too short, return as is
+  if (cnpj.length < 3) return cnpj;
+  
+  // Apply formatting based on how many digits we have
+  if (cnpj.length <= 2) {
+    return cnpj;
+  } else if (cnpj.length <= 5) {
+    return cnpj.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+  } else if (cnpj.length <= 8) {
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+  } else if (cnpj.length <= 12) {
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+  } else {
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/, '$1.$2.$3/$4-$5');
+  }
+};
+
+/**
+ * Removes all formatting from a CNPJ string, keeping only the digits
+ * @param cnpj The formatted CNPJ string
+ * @returns The CNPJ with only digits
+ */
+export const cleanCNPJ = (cnpj: string): string => {
+  return cnpj.replace(/[^\d]/g, '');
 };

@@ -15,6 +15,7 @@ import { useFormErrorHandlers } from "./utils/form-error-handlers";
 import { createInactiveSubscription } from "@/services/subscriptionService";
 import { usePlans } from "./hooks/use-plans";
 import { useEffect } from "react";
+import { cleanCNPJ } from "@/utils/cnpjValidation";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -45,20 +46,21 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   }, [plans, form]);
 
   // Function to check if CNPJ already exists
-  const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
+  const checkCnpjExists = async (cnpj: string): Promise<{exists: boolean, data?: any, error?: any}> => {
     try {
-      // Remove any non-numeric characters
-      const cleanCnpj = cnpj.replace(/[^\d]/g, '');
+      console.log("Iniciando verificação de CNPJ:", cnpj);
       
-      const { exists, error } = await checkExistingOrganization(cleanCnpj);
+      const { exists, data, error } = await checkExistingOrganization(cnpj);
       
       if (error) {
         console.error("Erro ao verificar CNPJ existente:", error);
         throw error;
       }
       
-      // Return whether CNPJ exists or not
-      return exists;
+      console.log("Resultado da verificação:", exists ? "CNPJ já existe" : "CNPJ disponível");
+      
+      // Return whether CNPJ exists or not along with data
+      return { exists, data };
     } catch (error) {
       console.error("Erro ao verificar CNPJ:", error);
       throw error;
