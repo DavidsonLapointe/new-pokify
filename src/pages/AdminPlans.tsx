@@ -66,12 +66,14 @@ const Plans = () => {
     }
   };
   
-  const handleDeletePlan = async (id: string) => {
+  const handleDeletePlan = async (id: string | number) => {
     if (!id) return;
     
     try {
-      setDeletingPlanId(id);
-      const success = await deletePlan(id);
+      // Convert id to string if it's a number
+      const planId = id.toString();
+      setDeletingPlanId(planId);
+      const success = await deletePlan(planId);
       
       if (success) {
         // Reload plans to get the updated status
@@ -184,9 +186,9 @@ const Plans = () => {
                       variant="destructive"
                       size="icon"
                       onClick={() => handleDeletePlan(plan.id)}
-                      disabled={deletingPlanId === plan.id}
+                      disabled={deletingPlanId === plan.id.toString()}
                     >
-                      {deletingPlanId === plan.id ? (
+                      {deletingPlanId === plan.id.toString() ? (
                         <div className="w-4 h-4 rounded-full border-2 border-t-transparent border-white animate-spin" />
                       ) : (
                         <Trash2 className="w-4 h-4" />
