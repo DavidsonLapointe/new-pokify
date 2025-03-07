@@ -1,7 +1,7 @@
 
 export type TitleType = "pro_rata" | "mensalidade";
 export type TitleStatus = "pending" | "paid" | "overdue";
-export type PaymentMethod = "pix" | "boleto";
+export type PaymentMethod = "pix" | "boleto" | "credit_card";
 
 export interface FinancialTitle {
   id: string;
@@ -27,4 +27,12 @@ export interface CreateFinancialTitleDTO {
   value: number;
   dueDate: string;
   referenceMonth?: string;
+}
+
+export interface PaymentOptions {
+  pixQrCode?: string;
+  pixExpirationDate?: string;
+  boletoUrl?: string;
+  boletoBarcode?: string;
+  clientSecret?: string;
 }

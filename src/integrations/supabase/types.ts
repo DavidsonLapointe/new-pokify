@@ -995,7 +995,7 @@ export type Database = {
         | "pro_rata_payment"
         | "null"
         | "user_validation"
-      payment_method: "pix" | "boleto"
+      payment_method: "pix" | "boleto" | "credit_card"
       subscription_status:
         | "active"
         | "canceled"

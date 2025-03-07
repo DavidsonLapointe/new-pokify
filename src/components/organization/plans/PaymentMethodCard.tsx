@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Loader2 } from "lucide-react";
@@ -13,24 +13,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getPaymentMethod, updatePaymentMethod } from "@/services/subscriptionService";
 
 // Usando a chave pública do Stripe que está configurada no Supabase
 const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
 
 interface PaymentMethodCardProps {
-  currentPaymentMethod?: {
-    brand: string;
-    last4: string;
-    expMonth: number;
-    expYear: number;
-  } | null;
+  organizationId: string;
+  onPaymentMethodUpdated?: () => void;
 }
 
 interface PaymentMethodFormProps {
+  organizationId: string;
   onSuccess?: () => void;
 }
 
-const PaymentMethodForm = ({ onSuccess }: PaymentMethodFormProps) => {
+const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,19 +40,26 @@ const PaymentMethodForm = ({ onSuccess }: PaymentMethodFormProps) => {
     setIsLoading(true);
 
     try {
-      const { error, setupIntent } = await stripe.confirmSetup({
+      const result = await stripe.createPaymentMethod({
         elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/organization/plan`,
+        params: {
+          billing_details: {},
         },
-        redirect: 'if_required', // Evita redirecionamento automático
       });
 
-      if (error) {
-        toast.error("Erro ao salvar cartão: " + error.message);
-      } else {
+      if (result.error) {
+        toast.error("Erro ao salvar cartão: " + result.error.message);
+        return;
+      }
+
+      // Atualizar o método de pagamento na assinatura
+      const updated = await updatePaymentMethod(organizationId, result.paymentMethod.id);
+      
+      if (updated) {
         toast.success("Cartão salvo com sucesso!");
         onSuccess?.();
+      } else {
+        toast.error("Erro ao atualizar método de pagamento");
       }
     } catch (e) {
       toast.error("Erro ao processar pagamento");
@@ -80,8 +85,31 @@ const PaymentMethodForm = ({ onSuccess }: PaymentMethodFormProps) => {
   );
 };
 
-export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardProps) {
+export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: PaymentMethodCardProps) {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [currentPaymentMethod, setCurrentPaymentMethod] = useState<{
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchPaymentMethod = async () => {
+    setIsLoading(true);
+    try {
+      const paymentMethod = await getPaymentMethod(organizationId);
+      setCurrentPaymentMethod(paymentMethod || null);
+    } catch (error) {
+      console.error("Erro ao buscar método de pagamento:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPaymentMethod();
+  }, [organizationId]);
 
   const options = {
     mode: 'setup' as const,
@@ -93,6 +121,8 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
 
   const handleSuccess = () => {
     setShowUpdateDialog(false);
+    fetchPaymentMethod();
+    onPaymentMethodUpdated?.();
   };
 
   return (
@@ -107,7 +137,11 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {currentPaymentMethod ? (
+        {isLoading ? (
+          <div className="flex justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : currentPaymentMethod ? (
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium">
@@ -126,7 +160,7 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
           </div>
         ) : (
           <Elements stripe={stripePromise} options={options}>
-            <PaymentMethodForm onSuccess={handleSuccess} />
+            <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
           </Elements>
         )}
 
@@ -139,7 +173,7 @@ export function PaymentMethodCard({ currentPaymentMethod }: PaymentMethodCardPro
               </DialogDescription>
             </DialogHeader>
             <Elements stripe={stripePromise} options={options}>
-              <PaymentMethodForm onSuccess={handleSuccess} />
+              <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
             </Elements>
           </DialogContent>
         </Dialog>

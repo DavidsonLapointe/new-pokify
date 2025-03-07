@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -101,5 +102,46 @@ export const cancelSubscription = async (organizationId: string): Promise<{ succ
   } catch (error) {
     console.error('Erro ao cancelar assinatura:', error);
     throw error;
+  }
+};
+
+export const getPaymentMethod = async (organizationId: string): Promise<{ 
+  brand?: string; 
+  last4?: string; 
+  expMonth?: number; 
+  expYear?: number;
+} | null> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('get-payment-method', {
+      body: { organizationId }
+    });
+
+    if (error || !data.success) {
+      console.error('Erro ao buscar método de pagamento:', error || data.error);
+      return null;
+    }
+
+    return data.paymentMethod || null;
+  } catch (error) {
+    console.error('Erro ao buscar método de pagamento:', error);
+    return null;
+  }
+};
+
+export const updatePaymentMethod = async (organizationId: string, paymentMethodId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('update-payment-method', {
+      body: { organizationId, paymentMethodId }
+    });
+
+    if (error || !data.success) {
+      console.error('Erro ao atualizar método de pagamento:', error || data.error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar método de pagamento:', error);
+    return false;
   }
 };
