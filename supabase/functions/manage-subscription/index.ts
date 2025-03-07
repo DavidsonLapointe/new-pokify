@@ -19,13 +19,27 @@ serve(async (req) => {
     const requestData = await req.json()
     const { action, organizationId, paymentMethodId, priceId } = requestData
 
+    console.log(`Processing ${action} request for organization: ${organizationId}`)
+
     // Setup Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Setup Stripe client
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') ?? ''
+    if (!stripeSecretKey) {
+      console.error('STRIPE_SECRET_KEY not configured');
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'Stripe configuration missing' 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
+    }
+
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     })
@@ -101,6 +115,7 @@ serve(async (req) => {
       
       // Create a Stripe customer in advance
       try {
+        console.log('Creating Stripe customer for organization:', organizationId)
         const customer = await stripe.customers.create({
           email: organization.admin_email || organization.email,
           name: organization.name,
@@ -165,6 +180,8 @@ serve(async (req) => {
     
     // Create a setup intent for future payment method attachment
     if (action === 'create_setup_intent') {
+      console.log('Creating setup intent for organization:', organizationId)
+      
       // Fetch the subscription to get customer ID
       const { data: subscription, error: subscriptionError } = await supabase
         .from('subscriptions')
@@ -173,12 +190,12 @@ serve(async (req) => {
         .single()
       
       if (subscriptionError || !subscription) {
-        console.error('Error fetching subscription:', subscriptionError)
+        console.error('Error fetching subscription:', subscriptionError || 'No subscription found')
         return new Response(
           JSON.stringify({ 
             success: false,
             error: 'Failed to fetch subscription',
-            details: subscriptionError
+            details: subscriptionError || 'No subscription found'
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
         )
@@ -207,37 +224,69 @@ serve(async (req) => {
         }
         
         // Create a Stripe customer
-        const customer = await stripe.customers.create({
-          email: organization.admin_email || organization.email,
-          name: organization.name,
-          metadata: {
-            organizationId
+        try {
+          console.log('Creating new Stripe customer for organization:', organizationId)
+          const customer = await stripe.customers.create({
+            email: organization.admin_email || organization.email,
+            name: organization.name,
+            metadata: {
+              organizationId
+            }
+          })
+          
+          customerId = customer.id
+          console.log('Created new Stripe customer:', customerId)
+          
+          // Update the subscription with the real customer ID
+          const { error: updateError } = await supabase
+            .from('subscriptions')
+            .update({ stripe_customer_id: customerId })
+            .eq('organization_id', organizationId)
+          
+          if (updateError) {
+            console.error('Error updating subscription with customer ID:', updateError)
           }
-        })
-        
-        customerId = customer.id
-        
-        // Update the subscription with the real customer ID
-        const { error: updateError } = await supabase
-          .from('subscriptions')
-          .update({ stripe_customer_id: customerId })
-          .eq('organization_id', organizationId)
-        
-        if (updateError) {
-          console.error('Error updating subscription with customer ID:', updateError)
+        } catch (stripeError) {
+          console.error('Error creating Stripe customer:', stripeError)
+          return new Response(
+            JSON.stringify({ 
+              success: false,
+              error: 'Failed to create Stripe customer',
+              details: stripeError
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          )
         }
       }
       
       // Create a setup intent
-      const setupIntent = await stripe.setupIntents.create({
-        customer: customerId,
-        payment_method_types: ['card'],
-      })
-      
-      return new Response(
-        JSON.stringify({ clientSecret: setupIntent.client_secret }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      try {
+        console.log('Creating Stripe setup intent for customer:', customerId)
+        const setupIntent = await stripe.setupIntents.create({
+          customer: customerId,
+          payment_method_types: ['card'],
+        })
+        
+        console.log('Setup intent created with client secret:', setupIntent.client_secret ? 'Available' : 'Not available')
+        
+        return new Response(
+          JSON.stringify({ 
+            success: true,
+            clientSecret: setupIntent.client_secret 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      } catch (stripeError) {
+        console.error('Error creating setup intent:', stripeError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Failed to create setup intent',
+            details: stripeError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
+      }
     }
     
     // Create active subscription with payment method and price
@@ -264,7 +313,7 @@ serve(async (req) => {
         .single()
       
       if (fetchError || !inactiveSubscription) {
-        console.error('Error fetching inactive subscription:', fetchError)
+        console.error('Error fetching inactive subscription:', fetchError || 'Subscription not found')
         return new Response(
           JSON.stringify({ 
             success: false,
@@ -288,12 +337,14 @@ serve(async (req) => {
       
       try {
         // Attach payment method to customer if not already attached
+        console.log('Attaching payment method to customer:', customerId)
         await stripe.paymentMethods.attach(
           paymentMethodId,
           { customer: customerId }
         )
         
         // Set as default payment method
+        console.log('Setting default payment method for customer:', customerId)
         await stripe.customers.update(
           customerId,
           { 
@@ -304,12 +355,15 @@ serve(async (req) => {
         )
         
         // Create the subscription
+        console.log('Creating Stripe subscription for customer:', customerId, 'with price:', priceId)
         const subscription = await stripe.subscriptions.create({
           customer: customerId,
           items: [{ price: priceId }],
           default_payment_method: paymentMethodId,
           expand: ['latest_invoice.payment_intent'],
         })
+        
+        console.log('Subscription created:', subscription.id, 'with status:', subscription.status)
         
         // Update the subscription in Supabase
         const { error: updateError } = await supabase
@@ -354,9 +408,6 @@ serve(async (req) => {
         )
       }
     }
-    
-    // Handle other subscription actions (create subscription, etc.)
-    // Note: We'd implement additional actions like creating an active subscription here
     
     return new Response(
       JSON.stringify({ error: 'Invalid action requested' }),

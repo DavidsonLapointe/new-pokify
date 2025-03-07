@@ -18,6 +18,8 @@ export const createSubscription = async (dto: CreateSubscriptionDTO): Promise<{ 
 
 export const createSetupIntent = async (organizationId: string): Promise<{ clientSecret: string } | null> => {
   try {
+    console.log('Creating setup intent for organization:', organizationId);
+    
     const { data, error } = await supabase.functions.invoke('manage-subscription', {
       body: {
         action: 'create_setup_intent',
@@ -26,20 +28,21 @@ export const createSetupIntent = async (organizationId: string): Promise<{ clien
     });
 
     if (error) {
-      console.error('Erro ao criar setup intent:', error);
+      console.error('Error creating setup intent:', error);
       return null;
     }
 
+    console.log('Setup intent created successfully:', data?.clientSecret ? 'Client secret available' : 'No client secret');
     return data;
   } catch (error) {
-    console.error('Erro ao criar setup intent:', error);
+    console.error('Exception creating setup intent:', error);
     return null;
   }
 };
 
 export const createInactiveSubscription = async (organizationId: string): Promise<Subscription | null> => {
   try {
-    console.log('Iniciando criação de assinatura inativa para organização:', organizationId);
+    console.log('Initiating inactive subscription creation for organization:', organizationId);
     
     // Use the edge function to create an inactive subscription
     const { data, error } = await supabase.functions.invoke('manage-subscription', {
@@ -50,19 +53,19 @@ export const createInactiveSubscription = async (organizationId: string): Promis
     });
     
     if (error) {
-      console.error('Erro ao invocar função para criar assinatura inativa:', error);
+      console.error('Error invoking function to create inactive subscription:', error);
       throw error;
     }
     
     if (!data?.success || !data?.subscription) {
-      console.error('Função retornou erro ou dados incompletos:', data);
+      console.error('Function returned error or incomplete data:', data);
       return null;
     }
     
-    console.log('Assinatura inativa criada com sucesso:', data.subscription.id);
+    console.log('Inactive subscription created successfully:', data.subscription.id);
     return data.subscription;
   } catch (error) {
-    console.error('Erro ao criar assinatura inativa:', error);
+    console.error('Error creating inactive subscription:', error);
     return null; // Return null instead of throwing to avoid breaking the organization creation flow
   }
 };

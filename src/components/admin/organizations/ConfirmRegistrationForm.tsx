@@ -16,11 +16,10 @@ import { PaymentForm } from "@/components/payment/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
-import { createSubscription } from "@/services/subscriptionService";
+import { createSubscription, createSetupIntent } from "@/services/subscriptionService";
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
-// Certifique-se de que a chave pública do Stripe está disponível
+// Ensure the Stripe public key is available
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
 const stripePromise = loadStripe(stripePublicKey);
 
@@ -49,6 +48,7 @@ export function ConfirmRegistrationForm({
   const [stripeInitialized, setStripeInitialized] = useState(false);
   const [setupIntent, setSetupIntent] = useState<{clientSecret: string} | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initError, setInitError] = useState<string | null>(null);
 
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -72,33 +72,31 @@ export function ConfirmRegistrationForm({
   useEffect(() => {
     async function initializeStripe() {
       try {
-        console.log("Inicializando Stripe com chave pública:", stripePublicKey.substring(0, 10) + "...");
+        console.log("Initializing Stripe with public key:", stripePublicKey.substring(0, 10) + "...");
+        console.log("Organization ID:", organization.id);
         
-        const { data, error } = await supabase.functions.invoke('manage-subscription', {
-          body: {
-            action: 'create_setup_intent',
-            organizationId: organization.id.toString()
-          }
-        });
+        // Direct API call for setup intent to help with debugging
+        const setupIntentResult = await createSetupIntent(organization.id.toString());
 
-        if (error) {
-          console.error("Erro ao criar setup intent:", error);
-          toast.error("Erro ao inicializar formulário de pagamento");
+        if (!setupIntentResult) {
+          console.error("Failed to create setup intent: No result returned");
+          setInitError("Failed to initialize payment form. Setup intent creation failed.");
+          setLoading(false);
           return;
         }
 
-        console.log("Setup intent criado:", data);
+        console.log("Setup intent created:", setupIntentResult);
         
-        if (data && data.clientSecret) {
-          setSetupIntent(data);
+        if (setupIntentResult.clientSecret) {
+          setSetupIntent(setupIntentResult);
           setStripeInitialized(true);
         } else {
-          console.error("Client secret não encontrado na resposta");
-          toast.error("Erro ao inicializar dados de pagamento");
+          console.error("Client secret not found in response");
+          setInitError("Failed to initialize payment data: No client secret received");
         }
       } catch (err) {
-        console.error("Erro ao inicializar Stripe:", err);
-        toast.error("Erro ao inicializar sistema de pagamento");
+        console.error("Error initializing Stripe:", err);
+        setInitError("Failed to initialize payment system. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -108,12 +106,12 @@ export function ConfirmRegistrationForm({
       initializeStripe();
     } else {
       setLoading(false);
-      toast.error("Chave do Stripe não configurada");
+      setInitError("Stripe key not configured");
     }
   }, [organization.id]);
 
   const handlePaymentMethodCreated = (pmId: string) => {
-    console.log("Payment method criado:", pmId);
+    console.log("Payment method created:", pmId);
     setPaymentMethodId(pmId);
     setPaymentValidated(true);
   };
@@ -123,15 +121,20 @@ export function ConfirmRegistrationForm({
       setIsProcessing(true);
 
       if (!paymentMethodId) {
-        toast.error("Por favor, adicione e valide um método de pagamento.");
+        toast.error("Please add and validate a payment method.");
         return;
       }
 
+      // Get correct price ID based on plan
       const priceId = planPrices[organization.plan];
       if (!priceId) {
-        toast.error("Plano inválido");
+        toast.error("Invalid plan");
         return;
       }
+
+      console.log("Creating subscription with payment method:", paymentMethodId);
+      console.log("Organization ID:", organization.id);
+      console.log("Price ID:", priceId);
 
       const subscriptionResult = await createSubscription({
         organizationId: organization.id.toString(),
@@ -139,15 +142,17 @@ export function ConfirmRegistrationForm({
         priceId
       });
 
+      console.log("Subscription creation result:", subscriptionResult);
+
       if (subscriptionResult.status === 'active') {
         await onSubmit(data);
-        toast.success("Cadastro confirmado com sucesso!");
+        toast.success("Registration confirmed successfully!");
       } else {
-        toast.error("Erro ao processar pagamento. Tente novamente.");
+        toast.error("Error processing payment. Please try again.");
       }
     } catch (error) {
-      console.error("Erro ao confirmar cadastro:", error);
-      toast.error("Erro ao confirmar cadastro. Tente novamente.");
+      console.error("Error confirming registration:", error);
+      toast.error("Error confirming registration. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -191,13 +196,13 @@ export function ConfirmRegistrationForm({
     }
   };
 
-  // Configuração das opções para o Stripe Elements
+  // Stripe Elements configuration
   const options: StripeElementsOptions = {
     appearance,
     locale: 'pt-BR',
   };
 
-  // Adicionar clientSecret somente quando disponível
+  // Add clientSecret only when available
   if (setupIntent?.clientSecret) {
     options.clientSecret = setupIntent.clientSecret;
   }
@@ -213,8 +218,24 @@ export function ConfirmRegistrationForm({
         {loading ? (
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5]" />
-              <span className="ml-3 text-gray-600">Inicializando método de pagamento...</span>
+              <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5] mr-3" />
+              <span className="text-gray-600">Inicializando método de pagamento...</span>
+            </div>
+          </div>
+        ) : initError ? (
+          <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+            <div className="py-6 px-4 bg-red-50 border border-red-100 rounded-md text-center">
+              <p className="text-red-600 font-medium">{initError}</p>
+              <p className="text-red-500 mt-2 text-sm">
+                Tente atualizar a página ou entre em contato com o suporte se o problema persistir.
+              </p>
+              <Button 
+                type="button"
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-[#9b87f5] hover:bg-[#8a74e8]"
+              >
+                Atualizar página
+              </Button>
             </div>
           </div>
         ) : stripeInitialized && setupIntent?.clientSecret ? (
@@ -230,6 +251,13 @@ export function ConfirmRegistrationForm({
             <div className="py-8 text-center">
               <p className="text-red-500 font-medium">Não foi possível carregar o formulário de pagamento.</p>
               <p className="text-gray-600 mt-2">Verifique se as chaves do Stripe estão configuradas corretamente.</p>
+              <Button 
+                type="button"
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-[#9b87f5] hover:bg-[#8a74e8]"
+              >
+                Tentar novamente
+              </Button>
             </div>
           </div>
         )}

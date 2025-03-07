@@ -3,7 +3,7 @@ import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { Loader2, CreditCard } from "lucide-react";
+import { Loader2, CreditCard, RefreshCw } from "lucide-react";
 
 interface PaymentFormProps {
   onPaymentMethodCreated: (paymentMethodId: string) => void;
@@ -21,38 +21,43 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
   const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    console.log("PaymentForm montado com clientSecret:", clientSecret?.substring(0, 10) + "...");
-    
-    // Clear any existing timeout
-    if (loadingTimeout) {
-      clearTimeout(loadingTimeout);
-    }
-    
-    // Set a timeout to show error if form doesn't load in 10 seconds
-    const timeout = setTimeout(() => {
-      if (!formLoaded && clientSecret) {
-        console.error("Timeout: Form de pagamento não carregou após 10 segundos");
-        setFormError("O formulário de pagamento não carregou corretamente. Tente atualizar a página.");
+    const initStripe = async () => {
+      // Clear any existing timeout
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
       }
-    }, 10000);
+      
+      console.log("PaymentForm mounted with clientSecret:", clientSecret ? `${clientSecret.substring(0, 10)}...` : 'undefined');
+      
+      // Validate requirements
+      if (!clientSecret) {
+        console.error("Client secret not available");
+        setFormError("Client secret not available. Unable to load payment form.");
+        return;
+      }
+      
+      // Set a timeout to show error if form doesn't load in 10 seconds
+      const timeout = setTimeout(() => {
+        if (!formLoaded && clientSecret) {
+          console.error("Timeout: Payment form didn't load after 10 seconds");
+          setFormError("The payment form didn't load correctly. Try refreshing the page.");
+        }
+      }, 10000);
+      
+      setLoadingTimeout(timeout);
+      
+      // Wait for Stripe and Elements to be ready
+      if (!stripe || !elements) {
+        console.log("Stripe or Elements not yet available");
+        return;
+      }
+      
+      console.log("Stripe, Elements and clientSecret are all available!");
+      setStripeReady(true);
+      setFormError(null);
+    };
     
-    setLoadingTimeout(timeout);
-    
-    // Verificamos explicitamente se todos os componentes necessários estão disponíveis
-    if (!clientSecret) {
-      console.log("Client secret não disponível");
-      setFormError("Client secret não disponível. Não é possível carregar o formulário de pagamento.");
-      return;
-    }
-
-    if (!stripe || !elements) {
-      console.log("Stripe ou Elements ainda não estão disponíveis");
-      return;
-    }
-    
-    console.log("Stripe, Elements e clientSecret estão todos disponíveis!");
-    setStripeReady(true);
-    setFormError(null);
+    initStripe();
     
     return () => {
       if (loadingTimeout) {
@@ -61,9 +66,9 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
     };
   }, [stripe, elements, clientSecret]);
 
-  // Verificamos quando o formulário termina de carregar
+  // Track when form finishes loading
   const handleFormReady = () => {
-    console.log("Formulário de pagamento carregado e pronto");
+    console.log("Payment form loaded and ready");
     if (loadingTimeout) {
       clearTimeout(loadingTimeout);
     }
@@ -72,46 +77,50 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
 
   const handleCreatePaymentMethod = async () => {
     if (!stripe || !elements) {
-      toast.error("O Stripe não está carregado corretamente");
+      toast.error("Stripe is not loaded correctly");
       return;
     }
 
     try {
       setProcessingPayment(true);
       
-      // Primeiro validamos os elementos do formulário
+      // First validate form elements
       const { error: submitError } = await elements.submit();
       if (submitError) {
-        console.error("Erro ao validar formulário:", submitError);
-        toast.error(`Erro ao validar dados do cartão: ${submitError.message}`);
+        console.error("Error validating form:", submitError);
+        toast.error(`Error validating card data: ${submitError.message}`);
         return;
       }
 
-      // Criamos um payment method usando os elementos do formulário
+      // Create payment method using form elements
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         elements,
       });
 
       if (error) {
-        console.error("Erro ao criar payment method:", error);
-        toast.error(`Erro ao processar cartão: ${error.message}`);
+        console.error("Error creating payment method:", error);
+        toast.error(`Error processing card: ${error.message}`);
         return;
       }
 
-      console.log("Payment method criado com sucesso:", paymentMethod.id);
+      console.log("Payment method created successfully:", paymentMethod.id);
       
-      // Informamos o ID do payment method ao componente pai
+      // Inform parent component of the payment method ID
       onPaymentMethodCreated(paymentMethod.id);
-      toast.success("Método de pagamento validado com sucesso!");
+      toast.success("Payment method validated successfully!");
     } catch (err) {
-      console.error("Erro ao processar dados de pagamento:", err);
-      toast.error("Ocorreu um erro ao processar os dados de pagamento");
+      console.error("Error processing payment data:", err);
+      toast.error("An error occurred while processing payment data");
     } finally {
       setProcessingPayment(false);
     }
   };
+  
+  const handleRefreshPage = () => {
+    window.location.reload();
+  };
 
-  // Se estamos em um estado de erro, mostrar mensagem de erro
+  // Show error state if there's a form error
   if (formError) {
     return (
       <div className="space-y-4 bg-gray-50 p-6 rounded-lg border border-gray-100">
@@ -131,9 +140,10 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
         
         <Button
           type="button"
-          onClick={() => window.location.reload()}
+          onClick={handleRefreshPage}
           className="w-full bg-[#9b87f5] hover:bg-[#8a74e8]"
         >
+          <RefreshCw className="mr-2 h-4 w-4" />
           Atualizar página
         </Button>
       </div>
@@ -150,21 +160,16 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
       </div>
       
       {!stripeReady ? (
-        <div className="py-8 flex justify-center items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#9b87f5]" />
-          <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
+        <div className="py-8 flex flex-col justify-center items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5] mb-2" />
+          <span className="text-gray-600">Carregando formulário de pagamento...</span>
         </div>
       ) : (
         <div className="mb-6 bg-white p-4 rounded-md border border-[#E5DEFF]">
           <PaymentElement 
             onReady={handleFormReady}
             options={{
-              layout: {
-                type: 'accordion',
-                defaultCollapsed: false,
-                radios: false,
-                spacedAccordionItems: false
-              },
+              layout: 'tabs',
               fields: {
                 billingDetails: {
                   name: 'never',
@@ -189,8 +194,8 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
           
           {!formLoaded && (
             <div className="mt-4 flex justify-center">
-              <Loader2 className="h-4 w-4 animate-spin text-[#9b87f5]" />
-              <span className="ml-2 text-sm text-gray-500">Carregando campos do cartão...</span>
+              <Loader2 className="h-5 w-5 animate-spin text-[#9b87f5] mr-2" />
+              <span className="text-sm text-gray-500">Carregando campos do cartão...</span>
             </div>
           )}
         </div>
