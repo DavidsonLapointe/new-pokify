@@ -21,14 +21,19 @@ export const updateStripeProduct = async (params: UpdateStripeProductParams) => 
     });
     
     if (error) {
-      console.error('Erro ao atualizar produto:', error);
+      console.error('Erro ao invocar função do Stripe:', error);
       throw error;
     }
     
-    console.log('Produto atualizado com sucesso:', data);
+    if (!data || !data.success) {
+      console.error('Erro retornado pelo Stripe:', data?.error || 'Resposta inválida');
+      throw new Error(data?.error || 'Erro ao processar a solicitação no Stripe');
+    }
+    
+    console.log('Produto atualizado com sucesso no Stripe:', data);
     return data;
   } catch (error) {
-    console.error('Erro ao atualizar produto:', error);
+    console.error('Erro ao atualizar produto no Stripe:', error);
     throw error;
   }
 };

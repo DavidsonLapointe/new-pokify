@@ -46,6 +46,8 @@ export async function createAnalysisPackage(packageData: NewPackageForm): Promis
     
     // 2. Criar o produto e preço no Stripe
     try {
+      toast.loading('Criando produto no Stripe...');
+      
       const stripeData = await updateStripeProduct({
         stripeProductId: '',  // Vazio para criar novo produto
         stripePriceId: '',    // Vazio para criar novo preço
@@ -56,26 +58,31 @@ export async function createAnalysisPackage(packageData: NewPackageForm): Promis
         credits: newPackage.credits
       });
       
-      if (stripeData) {
+      if (stripeData && stripeData.product && stripeData.price) {
         // 3. Atualizar o pacote com os IDs do Stripe
         const { error: updateError } = await supabase
           .from('analysis_packages')
           .update({
             stripe_product_id: stripeData.product.id,
-            stripe_price_id: stripeData.price?.id
+            stripe_price_id: stripeData.price.id
           })
           .eq('id', newPackage.id);
           
         if (updateError) {
           console.error('Erro ao atualizar IDs do Stripe no pacote:', updateError);
+          toast.error('O pacote foi criado, mas houve um erro ao registrar os IDs do Stripe.');
         } else {
           newPackage.stripeProductId = stripeData.product.id;
-          newPackage.stripePriceId = stripeData.price?.id;
+          newPackage.stripePriceId = stripeData.price.id;
+          toast.success('Pacote criado e registrado no Stripe com sucesso!');
         }
+      } else {
+        console.error('Dados inválidos retornados pelo Stripe:', stripeData);
+        toast.error('O pacote foi criado, mas a resposta do Stripe foi inválida.');
       }
     } catch (stripeError) {
       console.error('Erro ao criar produto no Stripe:', stripeError);
-      toast.error('O pacote foi criado, mas houve um erro ao registrá-lo no Stripe.');
+      toast.error('O pacote foi criado no Supabase, mas houve um erro ao registrá-lo no Stripe.');
     }
     
     return newPackage;
@@ -120,53 +127,60 @@ export async function updateAnalysisPackage(id: string, packageData: Partial<Ana
     
     const updatedPackage = mapDbPackageToPackage(data);
     
-    // 2. Atualizar produto no Stripe se já existir um ID do Stripe
-    if (currentPackage.stripe_product_id) {
-      try {
-        await updateStripeProduct({
-          stripeProductId: currentPackage.stripe_product_id,
-          stripePriceId: currentPackage.stripe_price_id || '',
-          name: updatedPackage.name,
-          description: `${updatedPackage.credits} créditos para análise de arquivos`,
-          price: updatedPackage.price,
-          active: updatedPackage.active,
-          credits: updatedPackage.credits
-        });
-      } catch (stripeError) {
-        console.error('Erro ao atualizar produto no Stripe:', stripeError);
-        toast.error('O pacote foi atualizado, mas houve um erro ao atualizá-lo no Stripe.');
-      }
-    } else {
-      // Se não existir um ID do Stripe, criar novo produto
-      try {
-        const stripeData = await updateStripeProduct({
-          stripeProductId: '',
-          stripePriceId: '',
-          name: updatedPackage.name,
-          description: `${updatedPackage.credits} créditos para análise de arquivos`,
-          price: updatedPackage.price,
-          active: updatedPackage.active,
-          credits: updatedPackage.credits
-        });
-        
-        if (stripeData) {
-          // Atualizar o pacote com os IDs do Stripe
-          const { error: updateError } = await supabase
-            .from('analysis_packages')
-            .update({
-              stripe_product_id: stripeData.product.id,
-              stripe_price_id: stripeData.price?.id
-            })
-            .eq('id', updatedPackage.id);
-            
-          if (updateError) {
-            console.error('Erro ao atualizar IDs do Stripe no pacote:', updateError);
+    // 2. Atualizar produto no Stripe
+    toast.loading('Atualizando produto no Stripe...');
+    
+    try {
+      // Se já existe um ID do Stripe, atualiza; caso contrário, cria um novo
+      const stripeProductId = currentPackage.stripe_product_id || '';
+      const stripePriceId = currentPackage.stripe_price_id || '';
+      
+      const stripeData = await updateStripeProduct({
+        stripeProductId,
+        stripePriceId,
+        name: updatedPackage.name,
+        description: `${updatedPackage.credits} créditos para análise de arquivos`,
+        price: updatedPackage.price,
+        active: updatedPackage.active,
+        credits: updatedPackage.credits
+      });
+      
+      if (stripeData && stripeData.product) {
+        // Se foi criado um novo produto/preço ou se os IDs estão vazios, atualiza os IDs
+        if ((stripeProductId === '' && stripeData.product.id) || 
+            (stripePriceId === '' && stripeData.price?.id)) {
+          
+          const updateData: any = {};
+          
+          if (stripeProductId === '' && stripeData.product.id) {
+            updateData.stripe_product_id = stripeData.product.id;
+          }
+          
+          if (stripePriceId === '' && stripeData.price?.id) {
+            updateData.stripe_price_id = stripeData.price.id;
+          }
+          
+          if (Object.keys(updateData).length > 0) {
+            const { error: updateError } = await supabase
+              .from('analysis_packages')
+              .update(updateData)
+              .eq('id', updatedPackage.id);
+              
+            if (updateError) {
+              console.error('Erro ao atualizar IDs do Stripe no pacote:', updateError);
+              toast.error('O pacote foi atualizado, mas houve um erro ao atualizar os IDs do Stripe.');
+            }
           }
         }
-      } catch (stripeError) {
-        console.error('Erro ao criar produto no Stripe:', stripeError);
-        toast.error('O pacote foi atualizado, mas houve um erro ao registrá-lo no Stripe.');
+        
+        toast.success('Pacote atualizado e sincronizado com o Stripe com sucesso!');
+      } else {
+        console.error('Dados inválidos retornados pelo Stripe:', stripeData);
+        toast.error('O pacote foi atualizado, mas a resposta do Stripe foi inválida.');
       }
+    } catch (stripeError) {
+      console.error('Erro ao atualizar produto no Stripe:', stripeError);
+      toast.error('O pacote foi atualizado no Supabase, mas houve um erro ao atualizá-lo no Stripe.');
     }
     
     return updatedPackage;
@@ -204,6 +218,8 @@ export async function togglePackageActive(id: string, active: boolean): Promise<
     
     // 2. Atualizar produto no Stripe se já existir um ID do Stripe
     if (currentPackage.stripe_product_id) {
+      toast.loading(`${active ? 'Ativando' : 'Desativando'} produto no Stripe...`);
+      
       try {
         await updateStripeProduct({
           stripeProductId: currentPackage.stripe_product_id,
@@ -214,10 +230,14 @@ export async function togglePackageActive(id: string, active: boolean): Promise<
           active: active,
           credits: currentPackage.credits
         });
+        
+        toast.success(`Pacote ${active ? 'ativado' : 'desativado'} e sincronizado com o Stripe com sucesso!`);
       } catch (stripeError) {
         console.error('Erro ao atualizar status do produto no Stripe:', stripeError);
         toast.error(`O pacote foi ${active ? 'ativado' : 'desativado'}, mas houve um erro ao atualizá-lo no Stripe.`);
       }
+    } else {
+      toast.success(`Pacote ${active ? 'ativado' : 'desativado'} com sucesso!`);
     }
     
     return true;

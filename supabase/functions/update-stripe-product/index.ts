@@ -39,34 +39,80 @@ serve(async (req) => {
       credits
     });
 
-    // Atualiza o produto
-    const updatedProduct = await stripe.products.update(stripeProductId, {
-      name,
-      description,
-      active,
-      metadata: {
-        credits: credits?.toString()
-      }
-    });
-
+    let updatedProduct;
     let updatedPrice;
-    // Criar novo preço se houver mudança no valor
-    if (price) {
+
+    // Se não tiver product ID, cria um novo produto
+    if (!stripeProductId) {
+      console.log('Criando novo produto no Stripe');
+      
+      // Criar o produto no Stripe
+      updatedProduct = await stripe.products.create({
+        name,
+        description,
+        active: active !== undefined ? active : true,
+        metadata: {
+          credits: credits?.toString(),
+          type: credits ? 'additional_credits' : 'subscription'
+        }
+      });
+      
+      console.log('Produto criado com sucesso:', updatedProduct.id);
+      
+      // Criar preço para o produto
       updatedPrice = await stripe.prices.create({
-        product: stripeProductId,
+        product: updatedProduct.id,
         unit_amount: Math.round(price * 100), // Converte para centavos
         currency: 'brl',
-        active: active,
+        active: active !== undefined ? active : true,
         metadata: {
           credits: credits?.toString()
         }
       });
+      
+      console.log('Preço criado com sucesso:', updatedPrice.id);
+    } else {
+      console.log('Atualizando produto existente:', stripeProductId);
 
-      // Desativa o preço anterior
-      if (stripePriceId) {
-        await stripe.prices.update(stripePriceId, {
-          active: false
+      // Atualiza o produto
+      updatedProduct = await stripe.products.update(stripeProductId, {
+        name,
+        description,
+        active,
+        metadata: {
+          credits: credits?.toString(),
+          type: credits ? 'additional_credits' : 'subscription'
+        }
+      });
+      
+      console.log('Produto atualizado com sucesso');
+
+      // Criar novo preço se houver mudança no valor ou se não existir um preço
+      if (price) {
+        console.log('Criando novo preço para o produto');
+        
+        updatedPrice = await stripe.prices.create({
+          product: stripeProductId,
+          unit_amount: Math.round(price * 100), // Converte para centavos
+          currency: 'brl',
+          active: active !== undefined ? active : true,
+          metadata: {
+            credits: credits?.toString()
+          }
         });
+        
+        console.log('Novo preço criado com sucesso:', updatedPrice.id);
+
+        // Desativa o preço anterior
+        if (stripePriceId) {
+          console.log('Desativando preço anterior:', stripePriceId);
+          
+          await stripe.prices.update(stripePriceId, {
+            active: false
+          });
+          
+          console.log('Preço anterior desativado com sucesso');
+        }
       }
     }
 
@@ -87,7 +133,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        success: false,
+        error: error.message 
+      }),
       {
         headers: {
           ...corsHeaders,
