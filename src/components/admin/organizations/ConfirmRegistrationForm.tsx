@@ -191,11 +191,13 @@ export function ConfirmRegistrationForm({
     }
   };
 
+  // Configure the options for Stripe Elements
   const options: StripeElementsOptions = {
     appearance,
     locale: 'pt-BR',
   };
 
+  // Only add clientSecret when it's available
   if (setupIntent?.clientSecret) {
     options.clientSecret = setupIntent.clientSecret;
   }
