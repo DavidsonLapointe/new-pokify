@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analysis_packages: {
+        Row: {
+          active: boolean
+          created_at: string
+          credits: number
+          id: string
+          name: string
+          price: number
+          stripe_price_id: string | null
+          stripe_product_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          credits: number
+          id?: string
+          name: string
+          price: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          credits?: number
+          id?: string
+          name?: string
+          price?: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company_leadly: {
         Row: {
           bairro: string | null

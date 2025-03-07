@@ -1,3 +1,4 @@
+
 import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
@@ -18,33 +19,18 @@ import {
 } from "@/components/ui/dialog";
 import { AnalysisPackage, NewPackageForm } from "@/types/packages";
 import { Infinity, Package, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { 
+  fetchAnalysisPackages, 
+  createAnalysisPackage, 
+  updateAnalysisPackage, 
+  togglePackageActive 
+} from "@/services/analysisPackageService";
 
 const AdminAnalysisPackages = () => {
-  const [packages, setPackages] = useState<AnalysisPackage[]>([
-    {
-      id: "1",
-      name: "Pacote Básico",
-      credits: 100,
-      price: 199.90,
-      active: true,
-    },
-    {
-      id: "2",
-      name: "Pacote Intermediário",
-      credits: 500,
-      price: 899.90,
-      active: true,
-    },
-    {
-      id: "3",
-      name: "Pacote Avançado",
-      credits: 1000,
-      price: 1599.90,
-      active: true,
-    }
-  ]);
+  const [packages, setPackages] = useState<AnalysisPackage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -55,7 +41,23 @@ const AdminAnalysisPackages = () => {
     price: ""
   });
 
-  const handleCreatePackage = (e: React.FormEvent) => {
+  useEffect(() => {
+    loadPackages();
+  }, []);
+
+  const loadPackages = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedPackages = await fetchAnalysisPackages();
+      setPackages(fetchedPackages);
+    } catch (error) {
+      console.error("Erro ao carregar pacotes:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreatePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const emptyFields: string[] = [];
@@ -90,33 +92,42 @@ const AdminAnalysisPackages = () => {
       return;
     }
 
-    const package_: AnalysisPackage = {
-      id: crypto.randomUUID(),
-      name: newPackage.name,
-      credits: credits,
-      price: price,
-      active: true,
-    };
-
-    setPackages([...packages, package_]);
-    setNewPackage({ name: "", credits: "", price: "" });
-    setIsCreateDialogOpen(false);
-    toast.success("Pacote criado com sucesso");
+    try {
+      await createAnalysisPackage(newPackage);
+      await loadPackages();
+      setNewPackage({ name: "", credits: "", price: "" });
+      setIsCreateDialogOpen(false);
+      toast.success("Pacote criado com sucesso");
+    } catch (error) {
+      console.error("Erro ao criar pacote:", error);
+      toast.error("Ocorreu um erro ao criar o pacote");
+    }
   };
 
-  const handleUpdatePackage = (e: React.FormEvent) => {
+  const handleUpdatePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!editingPackage) return;
 
-    const updatedPackages = packages.map(pkg => 
-      pkg.id === editingPackage.id ? editingPackage : pkg
-    );
+    try {
+      await updateAnalysisPackage(editingPackage.id, editingPackage);
+      await loadPackages();
+      setEditingPackage(null);
+      setIsEditDialogOpen(false);
+      toast.success("Pacote atualizado com sucesso");
+    } catch (error) {
+      console.error("Erro ao atualizar pacote:", error);
+      toast.error("Ocorreu um erro ao atualizar o pacote");
+    }
+  };
 
-    setPackages(updatedPackages);
-    setEditingPackage(null);
-    setIsEditDialogOpen(false);
-    toast.success("Pacote atualizado com sucesso");
+  const handleToggleActive = async (pkg: AnalysisPackage, active: boolean) => {
+    try {
+      await togglePackageActive(pkg.id, active);
+      await loadPackages();
+    } catch (error) {
+      console.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote:`, error);
+    }
   };
 
   return (
@@ -184,18 +195,37 @@ const AdminAnalysisPackages = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <PackagesList 
-              packages={packages}
-              onEdit={(pkg) => {
-                setEditingPackage(pkg);
-                setIsEditDialogOpen(true);
-              }}
-              onToggleActive={(pkg, active) => {
-                setPackages(packages.map(p => 
-                  p.id === pkg.id ? { ...p, active } : p
-                ));
-              }}
-            />
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div 
+                    key={i} 
+                    className="p-4 border rounded-lg flex items-center justify-between animate-pulse"
+                  >
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-3 bg-gray-200 rounded w-32"></div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                        <div className="h-6 w-10 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <PackagesList 
+                packages={packages}
+                onEdit={(pkg) => {
+                  setEditingPackage(pkg);
+                  setIsEditDialogOpen(true);
+                }}
+                onToggleActive={handleToggleActive}
+              />
+            )}
           </CardContent>
         </Card>
       </div>

@@ -5,6 +5,8 @@ export interface AnalysisPackage {
   credits: number;
   price: number;
   active: boolean;
+  stripeProductId?: string;
+  stripePriceId?: string;
 }
 
 export interface NewPackageForm {
