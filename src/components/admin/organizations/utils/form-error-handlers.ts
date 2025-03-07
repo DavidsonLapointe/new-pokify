@@ -45,6 +45,16 @@ export const useFormErrorHandlers = () => {
     });
   };
 
+  const handleEmailProviderIssue = (domain: string) => {
+    console.error(`Conhecido problema de entrega com o provedor: ${domain}`);
+    toast({
+      title: "Empresa criada com sucesso, mas...",
+      description: `Detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`,
+      variant: "warning",
+      duration: 8000,
+    });
+  };
+
   const handlePostCreationError = (error: any) => {
     console.error("Erro ao processar pós-criação da empresa:", error);
     
@@ -76,6 +86,7 @@ export const useFormErrorHandlers = () => {
     handleCnpjExistsError,
     handleOrganizationCreationError,
     handleEmailError,
+    handleEmailProviderIssue,
     handlePostCreationError,
     handleUnexpectedError,
     showSuccessToast

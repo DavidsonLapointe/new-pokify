@@ -60,6 +60,14 @@ const handler = async (req: Request): Promise<Response> => {
       adminEmail: organization.admin_email
     });
 
+    // Detect problematic email domains
+    const emailDomain = organization.admin_email.split('@')[1].toLowerCase();
+    const isKnownProblematicDomain = ['uol.com.br', 'bol.com.br', 'terra.com.br'].includes(emailDomain);
+    
+    if (isKnownProblematicDomain) {
+      console.warn(`⚠️ Warning: Sending to potentially problematic email domain: ${emailDomain}`);
+    }
+
     let emailContent;
     switch (type) {
       case "onboarding":
@@ -138,30 +146,70 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Sending ${type} email to ${organization.admin_email}`);
     
-    // Using Resend's default domain until leadly.com.br domain is verified
-    const emailResponse = await resend.emails.send({
-      from: "Leadly <onboarding@resend.dev>",
-      to: [organization.admin_email],
-      ...emailContent,
-    });
-
-    console.log(`Email sent successfully:`, emailResponse);
-
-    const { error: logError } = await supabase
-      .from('email_logs')
-      .insert({
-        organization_id: organizationId,
-        type: type,
-        sent_to: organization.admin_email,
-        status: 'sent',
-        metadata: data
+    let emailResponse;
+    try {
+      // Using Resend's default domain until leadly.com.br domain is verified
+      emailResponse = await resend.emails.send({
+        from: "Leadly <onboarding@resend.dev>",
+        to: [organization.admin_email],
+        ...emailContent,
       });
-
-    if (logError) {
-      console.error("Error logging email:", logError);
+      
+      console.log(`Email sent successfully:`, emailResponse);
+      
+      // Log email attempt to database regardless of domain
+      await supabase
+        .from('email_logs')
+        .insert({
+          organization_id: organizationId,
+          type: type,
+          sent_to: organization.admin_email,
+          status: 'sent', 
+          metadata: {
+            ...data,
+            domain: emailDomain,
+            resend_id: emailResponse.id,
+          }
+        });
+      
+    } catch (emailError: any) {
+      console.error(`Failed to send email to ${organization.admin_email}:`, emailError);
+      
+      // Log the failed attempt
+      await supabase
+        .from('email_logs')
+        .insert({
+          organization_id: organizationId,
+          type: type,
+          sent_to: organization.admin_email,
+          status: 'failed',
+          metadata: {
+            ...data,
+            domain: emailDomain,
+            error: emailError.message
+          }
+        });
+      
+      // If it's a problematic domain, provide a more detailed error
+      if (isKnownProblematicDomain) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Email delivery failed", 
+            details: `Provider ${emailDomain} may have delivery issues with Resend. Consider using an alternative email.`,
+            originalError: emailError.message
+          }),
+          {
+            status: 422,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+      
+      // Re-throw for other errors
+      throw emailError;
     }
 
-    return new Response(JSON.stringify(emailResponse), {
+    return new Response(JSON.stringify(emailResponse || { success: false }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

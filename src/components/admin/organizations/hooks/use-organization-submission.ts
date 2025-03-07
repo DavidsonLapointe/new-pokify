@@ -27,6 +27,14 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Iniciando criação da organização:", values);
 
+      // Check if email domain might have delivery issues
+      const emailDomain = values.adminEmail.split('@')[1].toLowerCase();
+      const problematicDomains = ['uol.com.br', 'bol.com.br', 'terra.com.br'];
+      
+      if (problematicDomains.includes(emailDomain)) {
+        console.warn(`⚠️ Warning: Using potentially problematic email domain: ${emailDomain}`);
+      }
+
       // Create organization
       const { data: newOrganizationData, error: orgError, planName } = await createOrganization(values);
 
@@ -79,11 +87,17 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           );
 
           if (emailError) {
-            console.error("Erro ao enviar email de onboarding:", emailError);
-            throw emailError;
+            // Check if it's a provider-specific issue
+            if (emailError.status === 422 && emailError.details?.includes(emailDomain)) {
+              console.error(`Erro ao enviar email para provedor ${emailDomain}:`, emailError);
+              errorHandlers.handleEmailProviderIssue(emailDomain);
+            } else {
+              console.error("Erro ao enviar email de onboarding:", emailError);
+              errorHandlers.handleEmailError(emailError);
+            }
+          } else {
+            console.log("Email de onboarding enviado com sucesso");
           }
-
-          console.log("Email de onboarding enviado com sucesso");
         } catch (emailError) {
           errorHandlers.handleEmailError(emailError);
           // Continue with success flow even if email fails
