@@ -72,7 +72,7 @@ export function ConfirmRegistrationForm({
   useEffect(() => {
     async function initializeStripe() {
       try {
-        console.log("Initializing Stripe with public key:", stripePublicKey);
+        console.log("Inicializando Stripe com chave pública:", stripePublicKey.substring(0, 10) + "...");
         
         const { data, error } = await supabase.functions.invoke('manage-subscription', {
           body: {
@@ -87,7 +87,7 @@ export function ConfirmRegistrationForm({
           return;
         }
 
-        console.log("Setup intent created:", data);
+        console.log("Setup intent criado:", data);
         
         if (data && data.clientSecret) {
           setSetupIntent(data);
@@ -113,7 +113,7 @@ export function ConfirmRegistrationForm({
   }, [organization.id]);
 
   const handlePaymentMethodCreated = (pmId: string) => {
-    console.log("Payment method created:", pmId);
+    console.log("Payment method criado:", pmId);
     setPaymentMethodId(pmId);
     setPaymentValidated(true);
   };
@@ -191,13 +191,13 @@ export function ConfirmRegistrationForm({
     }
   };
 
-  // Configure the options for Stripe Elements
+  // Configuração das opções para o Stripe Elements
   const options: StripeElementsOptions = {
     appearance,
     locale: 'pt-BR',
   };
 
-  // Only add clientSecret when it's available
+  // Adicionar clientSecret somente quando disponível
   if (setupIntent?.clientSecret) {
     options.clientSecret = setupIntent.clientSecret;
   }

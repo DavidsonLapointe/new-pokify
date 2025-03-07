@@ -35,10 +35,11 @@ serve(async (req) => {
 
   try {
     const requestBody = await req.json();
+    console.log('Requisição recebida:', requestBody);
     
     // Handle create_setup_intent action
     if (requestBody.action === 'create_setup_intent') {
-      console.log('Creating setup intent for organization:', requestBody.organizationId);
+      console.log('Criando setup intent para organização:', requestBody.organizationId);
       return await handleCreateSetupIntent(requestBody);
     }
     
@@ -61,6 +62,7 @@ serve(async (req) => {
 async function handleCreateSetupIntent(body: CreateSetupIntentBody) {
   try {
     const { organizationId } = body;
+    console.log('Processando setup intent para organização ID:', organizationId);
     
     // Buscar informações da organização
     const { data: organization, error: orgError } = await supabase
@@ -70,35 +72,49 @@ async function handleCreateSetupIntent(body: CreateSetupIntentBody) {
       .single();
 
     if (orgError || !organization) {
+      console.error('Organização não encontrada:', orgError);
       throw new Error('Organização não encontrada');
     }
 
+    console.log('Organização encontrada:', organization.name);
+
     // Verificar se já existe um cliente no Stripe para esta organização
     let customerId;
-    const existingCustomers = await stripe.customers.search({
-      query: `metadata['organization_id']:'${organizationId}'`,
-    });
-
-    if (existingCustomers.data.length > 0) {
-      customerId = existingCustomers.data[0].id;
-    } else {
-      // Criar novo cliente
-      const customer = await stripe.customers.create({
-        email: organization.admin_email || organization.email,
-        name: organization.name,
-        metadata: {
-          organization_id: organizationId,
-        },
+    try {
+      const existingCustomers = await stripe.customers.search({
+        query: `metadata['organization_id']:'${organizationId}'`,
       });
-      customerId = customer.id;
+
+      if (existingCustomers.data.length > 0) {
+        customerId = existingCustomers.data[0].id;
+        console.log('Cliente Stripe existente encontrado:', customerId);
+      } else {
+        // Criar novo cliente
+        console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
+        const customer = await stripe.customers.create({
+          email: organization.admin_email || organization.email,
+          name: organization.name,
+          metadata: {
+            organization_id: organizationId,
+          },
+        });
+        customerId = customer.id;
+        console.log('Novo cliente Stripe criado:', customerId);
+      }
+    } catch (stripeError) {
+      console.error('Erro ao buscar/criar cliente Stripe:', stripeError);
+      throw new Error('Erro ao processar cliente no Stripe');
     }
 
     // Criar o setup intent
+    console.log('Criando setup intent para cliente:', customerId);
     const setupIntent = await stripe.setupIntents.create({
       customer: customerId,
       payment_method_types: ['card'],
       usage: 'off_session',
     });
+
+    console.log('Setup intent criado com sucesso, client_secret:', setupIntent.client_secret?.substring(0, 10) + '...');
 
     return new Response(
       JSON.stringify({

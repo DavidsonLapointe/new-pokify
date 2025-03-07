@@ -19,14 +19,14 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
 
   useEffect(() => {
     if (stripe && elements && clientSecret) {
-      console.log("Stripe and elements are ready with client secret");
+      console.log("Stripe e elements estão prontos com client secret");
       setStripeReady(true);
     }
   }, [stripe, elements, clientSecret]);
 
-  // Log the state for debugging
+  // Log do estado para depuração
   useEffect(() => {
-    console.log("PaymentForm mounted");
+    console.log("PaymentForm montado");
     console.log("clientSecret:", clientSecret);
     console.log("stripe instance:", !!stripe);
     console.log("elements instance:", !!elements);
@@ -44,6 +44,7 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
       // Primeiro validamos os elementos do formulário
       const { error: submitError } = await elements.submit();
       if (submitError) {
+        console.error("Erro ao validar formulário:", submitError);
         toast.error(`Erro ao validar dados do cartão: ${submitError.message}`);
         return;
       }
@@ -54,10 +55,13 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
       });
 
       if (error) {
+        console.error("Erro ao criar payment method:", error);
         toast.error(`Erro ao processar cartão: ${error.message}`);
         return;
       }
 
+      console.log("Payment method criado com sucesso:", paymentMethod.id);
+      
       // Informamos o ID do payment method ao componente pai
       onPaymentMethodCreated(paymentMethod.id);
       toast.success("Método de pagamento validado com sucesso!");
