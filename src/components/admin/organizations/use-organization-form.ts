@@ -33,6 +33,27 @@ export const useOrganizationForm = (onSuccess: () => void) => {
     },
   });
 
+  // Function to check if CNPJ already exists
+  const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
+    try {
+      // Remove any non-numeric characters
+      const cleanCnpj = cnpj.replace(/[^\d]/g, '');
+      
+      const { data, error } = await checkExistingOrganization(cleanCnpj);
+      
+      if (error) {
+        console.error("Erro ao verificar CNPJ existente:", error);
+        throw error;
+      }
+      
+      // If data exists, the CNPJ is already in use
+      return !!data;
+    } catch (error) {
+      console.error("Erro ao verificar CNPJ:", error);
+      throw error;
+    }
+  };
+
   const onSubmit = async (values: CreateOrganizationFormData) => {
     try {
       // Verify user permission
@@ -42,18 +63,6 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       }
 
       console.log("Iniciando criação da organização:", values);
-
-      // Check if CNPJ exists
-      const { data: existingOrg, error: checkError } = await checkExistingOrganization(values.cnpj);
-
-      if (checkError) {
-        console.error("Erro ao verificar CNPJ existente:", checkError);
-      }
-
-      if (existingOrg) {
-        errorHandlers.handleCnpjExistsError();
-        return;
-      }
 
       // Create organization
       const { data: newOrganizationData, error: orgError } = await createOrganization(values);
@@ -131,5 +140,6 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   return {
     form,
     onSubmit,
+    checkCnpjExists
   };
 };

@@ -48,7 +48,12 @@ export const OrganizationFormFields = ({ form }: OrganizationFormFieldsProps) =>
             <FormItem>
               <FormLabel>CNPJ</FormLabel>
               <FormControl>
-                <Input placeholder="00.000.000/0000-00" {...field} />
+                <Input 
+                  placeholder="00.000.000/0000-00" 
+                  {...field} 
+                  disabled 
+                  className="bg-gray-50"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
