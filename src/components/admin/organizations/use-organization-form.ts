@@ -29,7 +29,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       cnpj: "",
       email: "",
       phone: "",
-      plan: "", // We'll set this dynamically when plans are loaded
+      plan: "", // Empty string as default
       adminName: "",
       adminEmail: "",
       status: "pending",
