@@ -22,7 +22,7 @@ export const useEditOrganizationForm = (
       cnpj: organization.cnpj || "",
       email: organization.email || "",
       phone: organization.phone || "",
-      plan: (organization.plan.toLowerCase() || "professional") as "basic" | "professional" | "enterprise",
+      plan: organization.plan, // This is already a string
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
       status: organization.status,
