@@ -104,7 +104,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                     <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
                   </div>
                 </TableCell>
-                <TableCell>{org.plan}</TableCell>
+                <TableCell>{org.planName || "Plano não especificado"}</TableCell>
                 <TableCell className="text-center">
                   <Button
                     variant="ghost"

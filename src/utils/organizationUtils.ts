@@ -56,6 +56,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     name: organization.name,
     nomeFantasia: nome_fantasia,
     plan: organization.plan,
+    planName: organization.planName || "Plano não especificado", // Adicionar nome do plano
     users: organization.users || [],
     status: status,
     pendingReason: pendingReason,

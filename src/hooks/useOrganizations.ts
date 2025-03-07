@@ -35,6 +35,26 @@ export const useOrganizations = () => {
         }
       }
       
+      // Buscar todos os planos para mapear IDs para nomes
+      console.log("Buscando planos para mapear IDs para nomes");
+      const { data: plansData, error: plansError } = await supabase
+        .from('plans')
+        .select('id, name');
+        
+      if (plansError) {
+        console.error("Erro ao buscar planos:", plansError);
+        throw new Error(`Falha ao carregar planos: ${plansError.message}`);
+      }
+      
+      // Criar mapa de ID do plano para nome do plano
+      const planIdToNameMap = new Map();
+      if (plansData) {
+        plansData.forEach(plan => {
+          planIdToNameMap.set(plan.id, plan.name);
+        });
+      }
+      console.log("Mapa de planos:", Object.fromEntries(planIdToNameMap));
+      
       // Fetch organizations from Supabase with debug logs
       console.log("Executando query para buscar organizações");
       const { data: orgsData, error: orgsError } = await supabase
@@ -75,7 +95,9 @@ export const useOrganizations = () => {
               console.error(`Erro ao buscar usuários para organização ${org.id}:`, usersError);
               return formatOrganizationData({
                 ...org,
-                users: []
+                users: [],
+                // Adicionar o nome do plano aqui
+                planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
               });
             }
 
@@ -84,7 +106,9 @@ export const useOrganizations = () => {
             // Formatar e retornar os dados da organização com usuários
             const formattedOrg = formatOrganizationData({
               ...org,
-              users: users || []
+              users: users || [],
+              // Adicionar o nome do plano aqui
+              planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
             });
             
             console.log(`Organização formatada: ${formattedOrg.name}`, formattedOrg);
@@ -93,7 +117,9 @@ export const useOrganizations = () => {
             console.error(`Erro ao processar organização ${org.id}:`, err);
             return formatOrganizationData({
               ...org,
-              users: []
+              users: [],
+              // Adicionar o nome do plano aqui em caso de erro
+              planName: planIdToNameMap.get(org.plan) || "Plano desconhecido"
             });
           }
         })
