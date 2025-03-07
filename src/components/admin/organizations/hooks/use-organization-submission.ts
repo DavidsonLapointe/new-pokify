@@ -28,7 +28,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       console.log("Iniciando criação da organização:", values);
 
       // Create organization
-      const { data: newOrganizationData, error: orgError } = await createOrganization(values);
+      const { data: newOrganizationData, error: orgError, planName } = await createOrganization(values);
 
       if (orgError) {
         errorHandlers.handleOrganizationCreationError(orgError);
@@ -37,8 +37,11 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Organização criada com sucesso:", newOrganizationData);
 
-      // Convert DB organization to Organization type
-      const organizationFormatted = mapToOrganizationType(newOrganizationData);
+      // Convert DB organization to Organization type and add plan name
+      const organizationFormatted = mapToOrganizationType({
+        ...newOrganizationData,
+        planName: planName // Inject plan name from the creation response
+      });
 
       // Criar assinatura inativa para a nova organização
       const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);

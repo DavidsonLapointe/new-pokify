@@ -10,12 +10,23 @@ import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
  * Creates a new organization in the database
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
+  // First, get the plan name to store alongside the ID
+  const { data: planData, error: planError } = await supabase
+    .from('plans')
+    .select('name')
+    .eq('id', values.plan)
+    .single();
+  
+  if (planError) {
+    console.error("Error fetching plan details:", planError);
+  }
+  
   const { data, error } = await supabase
     .from('organizations')
     .insert({
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
-      plan: values.plan,
+      plan: values.plan, // This will store the plan ID as expected
       status: "pending",
       email: values.email,
       phone: values.phone,
@@ -29,7 +40,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     .select()
     .single();
   
-  return { data, error };
+  return { data, error, planName: planData?.name };
 };
 
 /**
@@ -60,6 +71,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
+    planName: dbOrganization.planName || "Plano não especificado",
     users: [],
     status: allStepsCompleted ? 'active' as OrganizationStatus : status,
     pendingReason: currentPendingReason,
