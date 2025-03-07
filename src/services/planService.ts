@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -52,6 +53,7 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       if (Array.isArray(plan.features)) {
         features = plan.features;
       } else if (typeof plan.features === 'string') {
+        // Aqui é onde ocorria o erro - agora verificamos explicitamente se é uma string
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
       } else if (plan.features === null) {
         // Handle null case explicitly
@@ -111,6 +113,7 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       if (Array.isArray(plan.features)) {
         features = plan.features;
       } else if (typeof plan.features === 'string') {
+        // Aqui é onde ocorria o segundo erro - mesma correção
         features = plan.features.split('\n').filter((f: string) => f.trim().length > 0);
       } else if (plan.features === null) {
         // Handle null case explicitly
