@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { TermsLink, PrivacyPolicyLink } from "@/components/admin/organizations/LegalDocumentsLinks";
+import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 
 const confirmRegistrationSchema = z.object({
@@ -110,7 +110,7 @@ export const ConfirmRegistrationForm = ({
       {form.formState.errors.acceptTerms && (
         <p className="text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
       )}
-      <Button type="submit" disabled={submitting} className="w-full">
+      <Button type="submit" disabled={submitting} className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]">
         {submitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
