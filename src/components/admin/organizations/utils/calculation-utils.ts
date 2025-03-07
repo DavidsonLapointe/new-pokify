@@ -29,7 +29,8 @@ export const getPlanValue = async (planType: string): Promise<number> => {
     }
     
     if (data) {
-      return parseFloat(data.price);
+      // Convertendo explicitamente para string antes de passar para parseFloat
+      return parseFloat(String(data.price));
     } else {
       // Fallback para valores padrão caso não encontre o plano
       return getDefaultPlanValue(planType);

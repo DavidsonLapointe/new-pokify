@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
