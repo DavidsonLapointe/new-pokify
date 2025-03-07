@@ -180,6 +180,9 @@ serve(async (req) => {
               const today = new Date();
               const referenceMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
               
+              // Definir vencimento para o dia 1 do mês atual
+              const dueDate = new Date(today.getFullYear(), today.getMonth(), 1);
+              
               // Criar título financeiro já como pago
               const { error: createError } = await supabase
                 .from('financial_titles')
@@ -187,7 +190,7 @@ serve(async (req) => {
                   organization_id: subscription.organization_id,
                   type: 'mensalidade',
                   value: amountPaid,
-                  due_date: today.toISOString(),
+                  due_date: dueDate.toISOString(),
                   status: 'paid',
                   payment_date: today.toISOString(),
                   payment_method: 'credit_card',
@@ -357,7 +360,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ received: true }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
-    })
+    });
   } catch (error) {
     console.error('Error:', error)
     return new Response(
@@ -368,4 +371,4 @@ serve(async (req) => {
       }
     )
   }
-})
+});

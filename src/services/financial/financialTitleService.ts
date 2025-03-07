@@ -41,13 +41,22 @@ export const createProRataTitle = async (organization: Organization, proRataValu
 
 export const createMonthlyTitle = async (dto: CreateFinancialTitleDTO): Promise<FinancialTitle | null> => {
   try {
+    // Para títulos de mensalidade, usamos a data específica fornecida
+    // ou calculamos para o dia 1 do mês atual se nenhuma data for fornecida
+    let dueDate = dto.dueDate;
+    if (!dueDate && dto.type === 'mensalidade') {
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      dueDate = firstDayOfMonth.toISOString();
+    }
+
     const { data: title, error } = await supabase
       .from('financial_titles')
       .insert([{
         organization_id: dto.organizationId.toString(),
-        type: 'mensalidade' as const,
+        type: dto.type,
         value: dto.value,
-        due_date: dto.dueDate,
+        due_date: dueDate,
         reference_month: dto.referenceMonth,
         status: 'pending' as const
       }])

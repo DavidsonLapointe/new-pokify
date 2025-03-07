@@ -42,7 +42,6 @@ serve(async (req) => {
     // Data para vencimento (primeiro dia do mês atual)
     const today = new Date();
     const dueDate = new Date(today.getFullYear(), today.getMonth(), 1);
-    dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias após o primeiro dia do mês
     
     // Referência para o mês (formato YYYY-MM)
     const referenceMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
