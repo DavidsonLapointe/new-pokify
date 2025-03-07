@@ -39,8 +39,8 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   // Set default plan when plans are loaded
   useEffect(() => {
     if (plans.length > 0 && !form.getValues("plan")) {
-      // Set the first active plan as default
-      form.setValue("plan", plans[0].id);
+      // Set the first active plan as default, ensuring it's a string
+      form.setValue("plan", String(plans[0].id));
     }
   }, [plans, form]);
 

@@ -88,7 +88,7 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
                   <SelectContent>
                     {plans.length > 0 ? (
                       plans.map((plan) => (
-                        <SelectItem key={plan.id} value={plan.id}>
+                        <SelectItem key={plan.id} value={String(plan.id)}>
                           {plan.name}
                         </SelectItem>
                       ))

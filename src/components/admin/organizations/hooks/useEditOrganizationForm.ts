@@ -22,7 +22,7 @@ export const useEditOrganizationForm = (
       cnpj: organization.cnpj || "",
       email: organization.email || "",
       phone: organization.phone || "",
-      plan: organization.plan, // This is already a string
+      plan: String(organization.plan), // Ensure plan is a string
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
       status: organization.status,
