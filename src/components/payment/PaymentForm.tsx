@@ -17,45 +17,41 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
   const [processingPayment, setProcessingPayment] = useState(false);
   const [stripeReady, setStripeReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [formLoaded, setFormLoaded] = useState(false);
 
   useEffect(() => {
-    if (stripe && elements && clientSecret) {
-      console.log("Stripe e elements estão prontos com client secret");
-      setStripeReady(true);
-      setFormError(null);
-    } else {
-      console.log("Aguardando inicialização do Stripe:", {
-        stripe: !!stripe,
-        elements: !!elements,
-        clientSecret: clientSecret?.substring(0, 10) + "..." || "ausente"
-      });
-      
-      // Se tiver um client secret mas os outros não estiverem prontos, aguardamos
-      if (clientSecret && (!stripe || !elements)) {
-        console.log("Client secret disponível, aguardando stripe e elements");
-      }
-      
-      // Se não tiver client secret após 3 segundos, mostramos um erro
-      if (!clientSecret) {
-        const timer = setTimeout(() => {
-          if (!clientSecret) {
-            setFormError("Não foi possível inicializar o formulário de pagamento. Client secret não disponível.");
-          }
-        }, 3000);
-        
-        return () => clearTimeout(timer);
-      }
+    console.log("PaymentForm montado com clientSecret:", clientSecret?.substring(0, 10) + "...");
+    
+    // Verificamos explicitamente se todos os componentes necessários estão disponíveis
+    if (!clientSecret) {
+      console.log("Client secret não disponível");
+      setFormError("Client secret não disponível. Não é possível carregar o formulário de pagamento.");
+      return;
     }
+
+    if (!stripe || !elements) {
+      console.log("Stripe ou Elements ainda não estão disponíveis");
+      const timer = setTimeout(() => {
+        if (!stripe || !elements) {
+          console.log("Timeout: Stripe ou Elements não inicializados após 5 segundos");
+          if (!stripe) console.log("- Stripe não está disponível");
+          if (!elements) console.log("- Elements não está disponível");
+        }
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    console.log("Stripe, Elements e clientSecret estão todos disponíveis!");
+    setStripeReady(true);
+    setFormError(null);
   }, [stripe, elements, clientSecret]);
 
-  // Log do estado para depuração
-  useEffect(() => {
-    console.log("PaymentForm montado");
-    console.log("clientSecret:", clientSecret?.substring(0, 10) + "..." || "ausente");
-    console.log("stripe instance:", !!stripe);
-    console.log("elements instance:", !!elements);
-    console.log("stripeReady:", stripeReady);
-  }, [stripe, elements, clientSecret, stripeReady]);
+  // Verificamos quando o formulário termina de carregar
+  const handleFormReady = () => {
+    console.log("Formulário de pagamento carregado e pronto");
+    setFormLoaded(true);
+  };
 
   const handleCreatePaymentMethod = async () => {
     if (!stripe || !elements) {
@@ -122,20 +118,49 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
       ) : (
         <div className="mb-6 bg-white p-4 rounded-md border border-[#E5DEFF]">
           <PaymentElement 
+            onReady={handleFormReady}
             options={{
               layout: {
-                type: 'tabs',
-                defaultCollapsed: false
+                type: 'accordion',
+                defaultCollapsed: false,
+                radios: false,
+                spacedAccordionItems: false
+              },
+              fields: {
+                billingDetails: {
+                  name: 'never',
+                  email: 'never',
+                  phone: 'never',
+                  address: {
+                    country: 'never',
+                    postalCode: 'never',
+                    line1: 'never',
+                    line2: 'never',
+                    city: 'never',
+                    state: 'never',
+                  },
+                },
+              },
+              wallets: {
+                applePay: 'never',
+                googlePay: 'never'
               }
             }}
           />
+          
+          {!formLoaded && (
+            <div className="mt-4 flex justify-center">
+              <Loader2 className="h-4 w-4 animate-spin text-[#9b87f5]" />
+              <span className="ml-2 text-sm text-gray-500">Carregando campos do cartão...</span>
+            </div>
+          )}
         </div>
       )}
 
       <Button
         type="button"
         onClick={handleCreatePaymentMethod}
-        disabled={!stripe || processingPayment || isLoading || !stripeReady}
+        disabled={!stripe || processingPayment || isLoading || !stripeReady || !formLoaded}
         className="w-full bg-[#9b87f5] hover:bg-[#8a74e8]"
       >
         {processingPayment ? (
