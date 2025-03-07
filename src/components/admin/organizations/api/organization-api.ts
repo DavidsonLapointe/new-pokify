@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
-import { Organization } from "@/types";
+import { Organization, OrganizationStatus } from "@/types";
 import { createProRataTitle } from "@/services/financial";
 import { calculateProRataValue, getPlanValues, getPlanValue } from "../utils/calculation-utils";
 
@@ -63,7 +63,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     currentPendingReason = 'user_validation';
   }
 
-  // Garantir que o status seja um dos valores válidos do enum OrganizationStatus
+  // Ensure the status is one of the valid OrganizationStatus values
   const status = (dbOrganization.status || 'pending') as OrganizationStatus;
 
   return {
@@ -72,7 +72,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
     users: [],
-    status: allStepsCompleted ? 'active' : status,
+    status: allStepsCompleted ? 'active' as OrganizationStatus : status,
     pendingReason: currentPendingReason,
     contractStatus: dbOrganization.contract_status || 'pending',
     paymentStatus: dbOrganization.payment_status || 'pending',
