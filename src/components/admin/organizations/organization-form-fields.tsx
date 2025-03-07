@@ -114,8 +114,17 @@ export const OrganizationFormFields = ({ form }: OrganizationFormFieldsProps) =>
         />
       </div>
 
-      <div className="border-t pt-4 mt-4">
-        <h3 className="text-sm font-medium mb-4">Dados do Administrador</h3>
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="bg-[#F8F6FF] p-4 rounded-lg border border-[#E5DEFF] mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-4 w-1 bg-[#9b87f5] rounded-full"></div>
+            <h3 className="text-lg font-medium text-[#6E59A5]">Dados do Administrador</h3>
+          </div>
+          <p className="text-sm text-gray-600 ml-3">
+            Informe os dados do usuário que será o administrador inicial da empresa
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
