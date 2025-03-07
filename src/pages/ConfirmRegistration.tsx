@@ -89,6 +89,7 @@ export default function ConfirmRegistration() {
         // Define a valid pendingReason value
         const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
         
+        // Atualizar o status da organização
         const { error: updateError } = await supabase
           .from('organizations')
           .update({ 
@@ -103,8 +104,21 @@ export default function ConfirmRegistration() {
           throw updateError;
         }
         
-        // Create auth account if needed
-        // This part would integrate with your auth system
+        // Atualizar o status do perfil do usuário para ativo
+        // Isso é importante porque criamos o perfil como 'pending' antes
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            status: 'active'
+          })
+          .eq('email', activeOrganization?.adminEmail)
+          .eq('organization_id', orgId);
+          
+        if (profileError) {
+          console.error("Erro ao atualizar perfil do usuário:", profileError);
+          // Não vamos falhar completamente se não conseguirmos atualizar o perfil
+          // O trigger update_organization_status deve cuidar disso
+        }
       }
       
       toast({

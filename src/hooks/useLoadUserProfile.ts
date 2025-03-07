@@ -1,83 +1,103 @@
 
-import { useState, useEffect } from 'react';
-import { User } from '@/types';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { formatUserData } from '@/utils/userUtils';
-import { formatOrganizationData } from '@/utils/organizationUtils';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { formatUserData } from "@/utils/userUtils";
+import { User } from "@/types";
+import { toast } from "sonner";
 
-export const useLoadUserProfile = (sessionUserId: string | undefined) => {
+export const useLoadUserProfile = (userId: string | undefined) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadUserProfile = async () => {
-      if (!sessionUserId) {
-        setUser(null);
+      if (!userId) {
         setLoading(false);
         return;
       }
 
       try {
-        console.log("Carregando perfil do usuário:", sessionUserId);
+        console.log("Carregando perfil do usuário:", userId);
         
+        // Primeiro, verificar se o perfil do usuário já existe
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select(`
-            id,
-            name,
-            email,
-            phone,
-            role,
-            status,
-            permissions,
-            created_at,
-            last_access,
-            organization_id,
-            company_leadly_id
+            *,
+            organizations:organization_id (*)
           `)
-          .eq('id', sessionUserId)
-          .maybeSingle();
+          .eq('id', userId)
+          .single();
 
-        if (profileError) throw profileError;
-        if (!profile) throw new Error("Perfil não encontrado");
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error("Erro ao buscar perfil:", profileError);
+          toast.error("Erro ao carregar perfil de usuário");
+          setLoading(false);
+          return;
+        }
 
-        if (profile.role === 'leadly_employee') {
-          console.log("Carregando perfil de funcionário Leadly");
-          const userData = formatUserData(profile);
-          console.log("Dados do funcionário Leadly carregados:", userData);
-          setUser(userData);
-        } 
-        else if (profile.organization_id) {
-          const { data: organization, error: orgError } = await supabase
-            .from('organizations')
-            .select('*')
-            .eq('id', profile.organization_id)
-            .maybeSingle();
-
-          if (orgError) throw orgError;
-          if (!organization) throw new Error("Organização não encontrada");
-
-          const formattedOrganization = formatOrganizationData(organization);
-          const userData = formatUserData(profile, formattedOrganization);
-          console.log("Dados do usuário carregados:", userData);
-          setUser(userData);
+        if (!profile) {
+          console.warn("Perfil não encontrado para o usuário:", userId);
+          // O perfil pode não existir ainda se o handle_new_user não foi acionado
+          // ou se o usuário foi criado antes de implementarmos a criação de perfil
+          
+          // Verificar se temos dados do usuário na auth para criar um perfil
+          const { data: authUser, error: authError } = await supabase.auth.getUser();
+          
+          if (authError) {
+            console.error("Erro ao buscar dados de autenticação:", authError);
+            setLoading(false);
+            return;
+          }
+          
+          if (!authUser?.user) {
+            console.error("Dados de autenticação não encontrados");
+            setLoading(false);
+            return;
+          }
+          
+          console.log("Tentando criar perfil para usuário:", userId);
+          
+          // Criar um perfil básico baseado nos dados de auth
+          // Isso normalmente aconteceria pelo trigger handle_new_user
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              email: authUser.user.email,
+              name: authUser.user.user_metadata?.name || authUser.user.email,
+              role: 'admin', // Assumir admin por padrão
+              status: 'active',
+              organization_id: authUser.user.user_metadata?.organization_id
+            })
+            .select(`
+              *,
+              organizations:organization_id (*)
+            `)
+            .single();
+            
+          if (createError) {
+            console.error("Erro ao criar perfil:", createError);
+            setLoading(false);
+            return;
+          }
+          
+          const formattedUser = formatUserData(newProfile, newProfile.organizations);
+          setUser(formattedUser);
+        } else {
+          const formattedUser = formatUserData(profile, profile.organizations);
+          setUser(formattedUser);
         }
       } catch (error) {
-        console.error('Erro ao carregar perfil do usuário:', error);
-        toast.error('Erro ao carregar perfil do usuário');
-        await supabase.auth.signOut();
-        setUser(null);
-        navigate('/', { replace: true });
+        console.error("Erro ao carregar perfil:", error);
+        toast.error("Erro ao carregar dados do usuário");
       } finally {
         setLoading(false);
       }
     };
 
     loadUserProfile();
-  }, [sessionUserId, navigate]);
+  }, [userId]);
 
   return { user, setUser, loading };
 };
