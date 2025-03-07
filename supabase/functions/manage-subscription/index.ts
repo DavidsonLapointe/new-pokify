@@ -80,30 +80,62 @@ async function handleCreateSetupIntent(body: CreateSetupIntentBody) {
 
     // Verificar se já existe um cliente no Stripe para esta organização
     let customerId;
-    try {
-      const existingCustomers = await stripe.customers.search({
-        query: `metadata['organization_id']:'${organizationId}'`,
-      });
-
-      if (existingCustomers.data.length > 0) {
-        customerId = existingCustomers.data[0].id;
-        console.log('Cliente Stripe existente encontrado:', customerId);
-      } else {
-        // Criar novo cliente
-        console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
-        const customer = await stripe.customers.create({
-          email: organization.admin_email || organization.email,
-          name: organization.name,
-          metadata: {
-            organization_id: organizationId,
-          },
+    
+    // Verificar primeiro se existe uma assinatura para esta organização
+    const { data: subscription, error: subError } = await supabase
+      .from('subscriptions')
+      .select('stripe_customer_id')
+      .eq('organization_id', organizationId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (!subError && subscription && subscription.stripe_customer_id && subscription.stripe_customer_id !== 'pending') {
+      console.log('Assinatura encontrada com customer ID:', subscription.stripe_customer_id);
+      customerId = subscription.stripe_customer_id;
+    } else {
+      console.log('Nenhuma assinatura ativa encontrada ou customer_id é "pending". Buscando cliente pelo metadata...');
+      
+      try {
+        const existingCustomers = await stripe.customers.search({
+          query: `metadata['organization_id']:'${organizationId}'`,
         });
-        customerId = customer.id;
-        console.log('Novo cliente Stripe criado:', customerId);
+
+        if (existingCustomers.data.length > 0) {
+          customerId = existingCustomers.data[0].id;
+          console.log('Cliente Stripe existente encontrado via metadata:', customerId);
+        } else {
+          // Criar novo cliente
+          console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
+          const customer = await stripe.customers.create({
+            email: organization.admin_email || organization.email,
+            name: organization.name,
+            metadata: {
+              organization_id: organizationId,
+            },
+          });
+          customerId = customer.id;
+          console.log('Novo cliente Stripe criado:', customerId);
+          
+          // Atualizar a assinatura inativa com o customer ID se ela existir
+          if (subscription) {
+            console.log('Atualizando assinatura inativa com o novo customer ID');
+            const { error: updateError } = await supabase
+              .from('subscriptions')
+              .update({ stripe_customer_id: customerId })
+              .eq('organization_id', organizationId)
+              .eq('status', 'inactive');
+              
+            if (updateError) {
+              console.error('Erro ao atualizar assinatura inativa:', updateError);
+              // Não vamos falhar a operação por causa disso
+            }
+          }
+        }
+      } catch (stripeError) {
+        console.error('Erro ao buscar/criar cliente Stripe:', stripeError);
+        throw new Error('Erro ao processar cliente no Stripe');
       }
-    } catch (stripeError) {
-      console.error('Erro ao buscar/criar cliente Stripe:', stripeError);
-      throw new Error('Erro ao processar cliente no Stripe');
     }
 
     // Criar o setup intent

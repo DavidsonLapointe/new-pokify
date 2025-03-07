@@ -16,21 +16,46 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
   const elements = useElements();
   const [processingPayment, setProcessingPayment] = useState(false);
   const [stripeReady, setStripeReady] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (stripe && elements && clientSecret) {
       console.log("Stripe e elements estão prontos com client secret");
       setStripeReady(true);
+      setFormError(null);
+    } else {
+      console.log("Aguardando inicialização do Stripe:", {
+        stripe: !!stripe,
+        elements: !!elements,
+        clientSecret: clientSecret?.substring(0, 10) + "..." || "ausente"
+      });
+      
+      // Se tiver um client secret mas os outros não estiverem prontos, aguardamos
+      if (clientSecret && (!stripe || !elements)) {
+        console.log("Client secret disponível, aguardando stripe e elements");
+      }
+      
+      // Se não tiver client secret após 3 segundos, mostramos um erro
+      if (!clientSecret) {
+        const timer = setTimeout(() => {
+          if (!clientSecret) {
+            setFormError("Não foi possível inicializar o formulário de pagamento. Client secret não disponível.");
+          }
+        }, 3000);
+        
+        return () => clearTimeout(timer);
+      }
     }
   }, [stripe, elements, clientSecret]);
 
   // Log do estado para depuração
   useEffect(() => {
     console.log("PaymentForm montado");
-    console.log("clientSecret:", clientSecret);
+    console.log("clientSecret:", clientSecret?.substring(0, 10) + "..." || "ausente");
     console.log("stripe instance:", !!stripe);
     console.log("elements instance:", !!elements);
-  }, [stripe, elements, clientSecret]);
+    console.log("stripeReady:", stripeReady);
+  }, [stripe, elements, clientSecret, stripeReady]);
 
   const handleCreatePaymentMethod = async () => {
     if (!stripe || !elements) {
@@ -82,14 +107,28 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }:
         </h3>
       </div>
       
-      {!stripeReady ? (
+      {formError ? (
+        <div className="py-6 px-4 bg-red-50 border border-red-100 rounded-md text-center">
+          <p className="text-red-600 font-medium">{formError}</p>
+          <p className="text-red-500 mt-2 text-sm">
+            Tente novamente ou entre em contato com o suporte se o problema persistir.
+          </p>
+        </div>
+      ) : !stripeReady ? (
         <div className="py-8 flex justify-center items-center">
           <Loader2 className="h-6 w-6 animate-spin text-[#9b87f5]" />
           <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
         </div>
       ) : (
         <div className="mb-6 bg-white p-4 rounded-md border border-[#E5DEFF]">
-          <PaymentElement />
+          <PaymentElement 
+            options={{
+              layout: {
+                type: 'tabs',
+                defaultCollapsed: false
+              }
+            }}
+          />
         </div>
       )}
 
