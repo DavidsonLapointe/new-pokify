@@ -39,7 +39,6 @@ export const CreateOrganizationDialog = ({
     handleCnpjNext 
   } = useCnpjVerification({
     form,
-    checkCnpjExists,
     onCnpjVerified: () => setStep(2)
   });
 
