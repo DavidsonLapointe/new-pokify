@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -131,12 +132,12 @@ const Plans = () => {
                     <div className="h-[32px] flex items-center border-b text-sm font-medium">
                       Recursos inclusos:
                     </div>
-                    <ul className="space-y-3 min-h-[120px]">
+                    <ul className="space-y-2 min-h-[120px]">
                       {Array.isArray(plan.features) && plan.features.length > 0 ? (
                         plan.features.map((feature: string, index: number) => (
                           <li key={index} className="flex items-start gap-2 text-sm">
-                            <FileText className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                            <span className="leading-tight line-clamp-2">{feature}</span>
+                            <FileText className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                            <span className="leading-tight">{feature}</span>
                           </li>
                         ))
                       ) : (
