@@ -18,6 +18,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Invoke financial-title-handler Edge Function
+async function invokeFinancialTitleHandler(action: string, payload: any, subscription?: any) {
+  try {
+    const { data, error } = await supabase.functions.invoke('financial-title-handler', {
+      body: {
+        action,
+        payload,
+        subscription
+      }
+    });
+    
+    if (error) {
+      console.error(`Error invoking financial-title-handler for ${action}:`, error);
+      return false;
+    }
+    
+    return data.success;
+  } catch (error) {
+    console.error(`Exception invoking financial-title-handler for ${action}:`, error);
+    return false;
+  }
+}
+
 // Handler for checkout.session.completed events
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   console.log('Processing checkout.session.completed:', session.id);
@@ -73,37 +96,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   console.log('Payment intent succeeded:', paymentIntent.id);
   
-  // Check for associated financial title
-  const { data: financialTitle, error: titleError } = await supabase
-    .from('financial_titles')
-    .select('*')
-    .eq('stripe_payment_intent_id', paymentIntent.id)
-    .single();
-  
-  if (titleError) {
-    console.error('Error finding financial title:', titleError);
-    return;
-  } 
-  
-  if (financialTitle) {
-    console.log('Financial title found:', financialTitle.id);
-    
-    // Update title status to paid
-    const { error: updateError } = await supabase
-      .from('financial_titles')
-      .update({
-        status: 'paid',
-        payment_date: new Date().toISOString(),
-        payment_method: 'credit_card'
-      })
-      .eq('id', financialTitle.id);
-    
-    if (updateError) {
-      console.error('Error updating title:', updateError);
-    } else {
-      console.log('Title updated successfully:', financialTitle.id);
-    }
-  }
+  // Call financial-title-handler Edge Function
+  await invokeFinancialTitleHandler('payment_intent_succeeded', {
+    id: paymentIntent.id,
+  });
 }
 
 // Handler for invoice.payment_succeeded events
@@ -142,77 +138,8 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     console.error('Error finding organization:', orgError);
   }
   
-  // Check for pending monthly title
-  const { data: titles, error: titlesError } = await supabase
-    .from('financial_titles')
-    .select('*')
-    .eq('organization_id', subscription.organization_id)
-    .eq('type', 'mensalidade')
-    .eq('status', 'pending')
-    .order('due_date', { ascending: true })
-    .limit(1);
-  
-  if (titlesError) {
-    console.error('Error finding financial titles:', titlesError);
-    return;
-  }
-  
-  if (titles && titles.length > 0) {
-    // Update existing title to paid
-    const title = titles[0];
-    console.log('Monthly title found:', title.id);
-    
-    const { error: updateError } = await supabase
-      .from('financial_titles')
-      .update({
-        status: 'paid',
-        payment_date: new Date().toISOString(),
-        payment_method: 'credit_card',
-        stripe_payment_intent_id: invoice.payment_intent
-      })
-      .eq('id', title.id);
-    
-    if (updateError) {
-      console.error('Error updating title:', updateError);
-    } else {
-      console.log('Monthly title updated successfully:', title.id);
-    }
-  } else {
-    // Create new paid title to track payment history
-    console.log('No pending monthly title found - creating new title');
-    
-    if (organization && subscription.status === 'active') {
-      const amountPaid = invoice.amount_paid / 100; // Convert from cents
-      
-      // Set reference month (current month)
-      const today = new Date();
-      const referenceMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-      
-      // Set due date to 1st of current month
-      const dueDate = new Date(today.getFullYear(), today.getMonth(), 1);
-      
-      // Create paid financial title
-      const { error: createError } = await supabase
-        .from('financial_titles')
-        .insert({
-          organization_id: subscription.organization_id,
-          type: 'mensalidade',
-          value: amountPaid,
-          due_date: dueDate.toISOString(),
-          status: 'paid',
-          payment_date: today.toISOString(),
-          payment_method: 'credit_card',
-          stripe_payment_intent_id: invoice.payment_intent,
-          reference_month: referenceMonth
-        });
-        
-      if (createError) {
-        console.error('Error creating financial title:', createError);
-      } else {
-        console.log('Financial title created for subscription payment');
-      }
-    }
-  }
+  // Handle financial title via the Edge Function
+  await invokeFinancialTitleHandler('invoice_payment_succeeded', invoice, subscription);
   
   // Activate subscription if needed
   if (subscription.status !== 'active') {
@@ -254,48 +181,8 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   
   console.log('Subscription found for organization:', subscription.organization_id);
   
-  // Check for pending monthly title
-  const { data: titles, error: titlesError } = await supabase
-    .from('financial_titles')
-    .select('*')
-    .eq('organization_id', subscription.organization_id)
-    .eq('type', 'mensalidade')
-    .eq('status', 'pending')
-    .order('due_date', { ascending: true })
-    .limit(1);
-  
-  if (titlesError) {
-    console.error('Error finding financial titles:', titlesError);
-    return;
-  }
-  
-  if (titles && titles.length > 0) {
-    const title = titles[0];
-    console.log('Monthly title found:', title.id);
-    
-    // Get payment status details
-    let paymentStatusDetails = 'payment_failed';
-    if (invoice.last_payment_error?.code) {
-      paymentStatusDetails = invoice.last_payment_error.code;
-    } else if (invoice.next_payment_attempt) {
-      paymentStatusDetails = 'retry_scheduled';
-    }
-    
-    // Update title to overdue with status details
-    const { error: updateError } = await supabase
-      .from('financial_titles')
-      .update({
-        status: 'overdue',
-        payment_status_details: paymentStatusDetails
-      })
-      .eq('id', title.id);
-    
-    if (updateError) {
-      console.error('Error updating title to overdue:', updateError);
-    } else {
-      console.log('Title marked as overdue with details:', title.id, paymentStatusDetails);
-    }
-  }
+  // Handle financial title via the Edge Function
+  await invokeFinancialTitleHandler('invoice_payment_failed', invoice, subscription);
 }
 
 // Handler for customer.subscription.updated events
@@ -347,40 +234,11 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   if (subscription.status === 'past_due' || subscription.status === 'incomplete' || 
       subscription.status === 'incomplete_expired') {
     
-    // Look for pending financial title
-    const { data: titles, error: titlesError } = await supabase
-      .from('financial_titles')
-      .select('*')
-      .eq('organization_id', supabaseSubscription.organization_id)
-      .eq('type', 'mensalidade')
-      .eq('status', 'pending')
-      .order('due_date', { ascending: true })
-      .limit(1);
-    
-    if (titlesError) {
-      console.error('Error finding financial titles:', titlesError);
-      return;
-    }
-    
-    if (titles && titles.length > 0) {
-      const title = titles[0];
-      console.log('Monthly title found for status update:', title.id);
-      
-      // Update title to overdue with subscription status details
-      const { error: updateTitleError } = await supabase
-        .from('financial_titles')
-        .update({
-          status: 'overdue',
-          payment_status_details: subscription.status
-        })
-        .eq('id', title.id);
-      
-      if (updateTitleError) {
-        console.error('Error updating title with subscription status:', updateTitleError);
-      } else {
-        console.log(`Title updated with status: overdue, details: ${subscription.status}`);
-      }
-    }
+    // Call financial-title-handler for subscription status change
+    await invokeFinancialTitleHandler('subscription_status_change', {
+      status: subscription.status,
+      organizationId: supabaseSubscription.organization_id
+    });
   }
 }
 

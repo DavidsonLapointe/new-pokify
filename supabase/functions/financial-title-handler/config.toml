@@ -1,0 +1,5 @@
+
+project_id = "qrkovwuraehejkiiwhbi"
+
+[functions.financial-title-handler]
+verify_jwt = false
