@@ -1,18 +1,13 @@
 
-import { DollarSign } from "lucide-react";
+import { GenerateMonthlyTitlesButton } from "./GenerateMonthlyTitlesButton";
 
-export const FinancialHeader = () => {
+const FinancialHeader = () => {
   return (
-    <div className="flex justify-between items-center">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <DollarSign className="h-8 w-8" />
-          Financeiro
-        </h1>
-        <p className="text-muted-foreground">
-          Gerencie os títulos financeiros do sistema
-        </p>
-      </div>
+    <div className="flex items-center justify-between">
+      <h1 className="text-3xl font-semibold">Financeiro</h1>
+      <GenerateMonthlyTitlesButton />
     </div>
   );
 };
+
+export default FinancialHeader;
