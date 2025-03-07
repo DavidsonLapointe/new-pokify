@@ -24,6 +24,7 @@ export default function ConfirmRegistration() {
     nomeFantasia: "Empresa Exemplo",
     cnpj: "12.345.678/0001-90",
     plan: "professional",
+    planName: "Professional",
     status: "pending",
     pendingReason: "contract_signature",
     contractStatus: "pending" as const,
@@ -36,6 +37,7 @@ export default function ConfirmRegistration() {
     users: [],
     integratedCRM: null,
     integratedLLM: null,
+    contractSignedAt: null,
     createdAt: new Date().toISOString(),
   };
   

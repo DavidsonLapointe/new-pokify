@@ -19,8 +19,10 @@ const mockOrganization: Organization = {
   name: "Tech Solutions",
   nomeFantasia: "Tech Solutions Ltda",
   plan: "Enterprise",
+  planName: "Enterprise",
   users: [],
   status: "pending",
+  pendingReason: "contract_signature",
   contractStatus: "pending" as const,
   paymentStatus: "pending" as const,
   registrationStatus: "pending" as const,
@@ -31,6 +33,7 @@ const mockOrganization: Organization = {
   cnpj: "12.345.678/0001-00",
   adminName: "Admin",
   adminEmail: "admin@example.com",
+  contractSignedAt: null,
   createdAt: "2024-01-01T00:00:00.000Z"
 };
 

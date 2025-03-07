@@ -1,5 +1,5 @@
 
-import { Organization, OrganizationStatus } from '@/types/organization-types';
+import { Organization, OrganizationStatus, OrganizationPendingReason } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {
   console.log("Formatando organização (dados brutos):", organization);
@@ -18,7 +18,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   const phone = organization.phone || '';
   
   // Determine pending reason based on individual statuses
-  let pendingReason = null;
+  let pendingReason: OrganizationPendingReason = null;
   if (organization.contract_status === 'pending') {
     pendingReason = 'contract_signature';
   } else if (organization.payment_status === 'pending') {

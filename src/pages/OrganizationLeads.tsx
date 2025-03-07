@@ -13,14 +13,18 @@ import { LeadsPageHeader } from "@/components/leads/LeadsPageHeader";
 import { LeadsPageContent } from "@/components/leads/LeadsPageContent";
 import { Toaster } from "@/components/ui/toaster";
 import { Call } from "@/types/calls";
+import { User } from "@/types/user-types";
+import { Organization } from "@/types/organization-types";
 
-const mockOrganization = {
+const mockOrganization: Organization = {
   id: "1",
   name: "Tech Solutions Ltda",
   nomeFantasia: "Tech Solutions",
   plan: "enterprise",
-  users: [], // TODO: Implementar integração com a API
+  planName: "Enterprise",
+  users: [], 
   status: "active" as const,
+  pendingReason: null,
   contractStatus: "completed" as const,
   paymentStatus: "completed" as const,
   registrationStatus: "completed" as const,
@@ -31,10 +35,11 @@ const mockOrganization = {
   cnpj: "12.345.678/0001-90",
   adminName: "João Silva",
   adminEmail: "joao@empresa.com",
+  contractSignedAt: null,
   createdAt: "2024-01-01T00:00:00.000Z",
 };
 
-const mockLoggedUser = {
+const mockLoggedUser: User = {
   id: "2",
   name: "Maria Santos",
   email: "maria@empresa.com",

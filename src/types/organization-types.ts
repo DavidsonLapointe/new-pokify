@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -7,6 +8,7 @@ export interface User {
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
+  permissions?: { [key: string]: boolean }; // Added permissions property
   logs: {
     id: string;
     timestamp: string;
@@ -16,6 +18,22 @@ export interface User {
 
 export type OrganizationStatus = "active" | "pending" | "inactive";
 
+export type OrganizationPendingReason = 
+  | "contract_signature" 
+  | "pro_rata_payment" 
+  | "user_validation" 
+  | null;
+
+export interface Address {
+  logradouro: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+}
+
 export interface Organization {
   id: string;
   name: string;
@@ -24,7 +42,7 @@ export interface Organization {
   planName?: string; // Adding plan name property
   users: User[];
   status: OrganizationStatus;
-  pendingReason: string | null;
+  pendingReason: OrganizationPendingReason;
   contractStatus: "pending" | "completed";
   paymentStatus: "pending" | "completed";
   registrationStatus: "pending" | "completed";
@@ -38,13 +56,5 @@ export interface Organization {
   contractSignedAt: string | null;
   createdAt: string;
   logo?: string;
-  address?: {
-    logradouro: string;
-    numero: string;
-    complemento: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    cep: string;
-  };
+  address?: Address;
 }

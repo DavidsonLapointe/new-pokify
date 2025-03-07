@@ -14,7 +14,9 @@ export type {
 
 export type {
   Organization,
+  OrganizationStatus,
   OrganizationPendingReason,
+  Address,
 } from './organization-types';
 
 // Re-export permissions
