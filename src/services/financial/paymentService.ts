@@ -81,7 +81,7 @@ export const handleTitlePayment = async (
 export const updateTitleStatus = async (
   titleId: string, 
   status: 'paid' | 'overdue', 
-  paymentMethod?: 'pix' | 'boleto'
+  paymentMethod?: 'pix' | 'boleto' | 'credit_card'
 ): Promise<boolean> => {
   try {
     const updateData: any = {
@@ -107,3 +107,4 @@ export const updateTitleStatus = async (
     return false;
   }
 };
+
