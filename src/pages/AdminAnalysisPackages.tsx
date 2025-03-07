@@ -1,4 +1,3 @@
-
 import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
@@ -92,14 +91,18 @@ const AdminAnalysisPackages = () => {
       return;
     }
 
+    toast.loading("Criando pacote e cadastrando no Stripe...");
+    
     try {
       await createAnalysisPackage(newPackage);
       await loadPackages();
       setNewPackage({ name: "", credits: "", price: "" });
       setIsCreateDialogOpen(false);
-      toast.success("Pacote criado com sucesso");
+      toast.dismiss();
+      toast.success("Pacote criado com sucesso e registrado no Stripe");
     } catch (error) {
       console.error("Erro ao criar pacote:", error);
+      toast.dismiss();
       toast.error("Ocorreu um erro ao criar o pacote");
     }
   };
@@ -109,24 +112,34 @@ const AdminAnalysisPackages = () => {
     
     if (!editingPackage) return;
 
+    toast.loading("Atualizando pacote e sincronizando com o Stripe...");
+    
     try {
       await updateAnalysisPackage(editingPackage.id, editingPackage);
       await loadPackages();
       setEditingPackage(null);
       setIsEditDialogOpen(false);
-      toast.success("Pacote atualizado com sucesso");
+      toast.dismiss();
+      toast.success("Pacote atualizado com sucesso e sincronizado com o Stripe");
     } catch (error) {
       console.error("Erro ao atualizar pacote:", error);
+      toast.dismiss();
       toast.error("Ocorreu um erro ao atualizar o pacote");
     }
   };
 
   const handleToggleActive = async (pkg: AnalysisPackage, active: boolean) => {
+    toast.loading(`${active ? 'Ativando' : 'Desativando'} pacote e atualizando no Stripe...`);
+    
     try {
       await togglePackageActive(pkg.id, active);
       await loadPackages();
+      toast.dismiss();
+      toast.success(`Pacote ${active ? 'ativado' : 'desativado'} com sucesso`);
     } catch (error) {
       console.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote:`, error);
+      toast.dismiss();
+      toast.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote`);
     }
   };
 
