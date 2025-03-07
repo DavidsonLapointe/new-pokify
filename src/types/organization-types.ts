@@ -8,7 +8,7 @@ export interface User {
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
-  permissions?: { [key: string]: boolean }; // Added permissions property
+  permissions: { [key: string]: boolean }; // Changed from optional to required to match user-types.ts
   logs: {
     id: string;
     timestamp: string;

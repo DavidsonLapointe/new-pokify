@@ -1,5 +1,5 @@
 
-import { Organization, OrganizationStatus, OrganizationPendingReason } from '@/types/organization-types';
+import { Organization, OrganizationStatus, OrganizationPendingReason, User as OrgUser } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {
   console.log("Formatando organização (dados brutos):", organization);
@@ -50,6 +50,14 @@ export const formatOrganizationData = (organization: any): Organization => {
   // Status sempre será um dos três valores enum definidos
   const status = (organization.status || 'pending') as OrganizationStatus;
 
+  // Ensure users have the required permissions field
+  const users = Array.isArray(organization.users) ? organization.users.map((user: any) => {
+    return {
+      ...user,
+      permissions: user.permissions || {}
+    };
+  }) : [];
+
   // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {
     id: organization.id,
@@ -57,7 +65,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     nomeFantasia: nome_fantasia,
     plan: organization.plan,
     planName: organization.planName || "Plano não especificado", // Adicionar nome do plano
-    users: organization.users || [],
+    users: users,
     status: status,
     pendingReason: pendingReason,
     contractStatus: organization.contract_status || 'pending',
