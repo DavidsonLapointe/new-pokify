@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -34,6 +33,39 @@ export const createSetupIntent = async (organizationId: string): Promise<{ clien
 
 export const createInactiveSubscription = async (organizationId: string): Promise<Subscription | null> => {
   try {
+    console.log('Iniciando criação de assinatura inativa para organização:', organizationId);
+    
+    // Primeiro verificamos se já existe uma assinatura inativa para esta organização
+    const { data: existingSubscription, error: checkError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('organization_id', organizationId)
+      .eq('status', 'inactive')
+      .maybeSingle();
+      
+    if (checkError) {
+      console.error('Erro ao verificar assinaturas existentes:', checkError);
+    }
+    
+    // Se já existe uma assinatura inativa, retornamos ela
+    if (existingSubscription) {
+      console.log('Assinatura inativa já existente, retornando:', existingSubscription.id);
+      return {
+        id: existingSubscription.id,
+        organizationId: existingSubscription.organization_id,
+        stripeSubscriptionId: existingSubscription.stripe_subscription_id,
+        stripeCustomerId: existingSubscription.stripe_customer_id,
+        status: existingSubscription.status,
+        currentPeriodStart: existingSubscription.current_period_start,
+        currentPeriodEnd: existingSubscription.current_period_end,
+        cancelAt: existingSubscription.cancel_at,
+        canceledAt: existingSubscription.canceled_at,
+        createdAt: existingSubscription.created_at,
+        updatedAt: existingSubscription.updated_at,
+      };
+    }
+
+    // Caso contrário, criamos uma nova assinatura inativa
     const { data: subscription, error } = await supabase
       .from('subscriptions')
       .insert({
@@ -47,9 +79,16 @@ export const createInactiveSubscription = async (organizationId: string): Promis
 
     if (error) {
       console.error('Erro ao criar assinatura inativa:', error);
+      throw error; // Lançamos o erro para ser capturado pelo try/catch que chama esta função
+    }
+
+    if (!subscription) {
+      console.error('Nenhum dado de assinatura retornado após inserção');
       return null;
     }
 
+    console.log('Assinatura inativa criada com sucesso:', subscription.id);
+    
     return {
       id: subscription.id,
       organizationId: subscription.organization_id,
@@ -65,7 +104,7 @@ export const createInactiveSubscription = async (organizationId: string): Promis
     };
   } catch (error) {
     console.error('Erro ao criar assinatura inativa:', error);
-    return null;
+    throw error; // Relançamos o erro para que seja tratado corretamente no chamador
   }
 };
 

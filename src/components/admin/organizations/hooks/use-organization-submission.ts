@@ -9,6 +9,7 @@ import {
   mapToOrganizationType 
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
+import { toast } from "sonner";
 
 /**
  * Hook for handling organization form submission logic
@@ -52,12 +53,20 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       });
 
       // Criar assinatura inativa para a nova organização
-      const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
-      
-      if (inactiveSubscription) {
-        console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
-      } else {
-        console.error("Erro ao criar assinatura inativa");
+      try {
+        console.log("Tentando criar assinatura inativa para organização:", organizationFormatted.id);
+        const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
+        
+        if (inactiveSubscription) {
+          console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
+        } else {
+          console.error("Erro ao criar assinatura inativa - resultado nulo");
+          toast.error("Erro ao criar assinatura. Tente novamente ou contate o suporte.");
+        }
+      } catch (subscriptionError) {
+        console.error("Erro ao criar assinatura inativa:", subscriptionError);
+        toast.error("Erro ao criar assinatura. O processo continuará, mas pode haver problemas no pagamento.");
+        // Continue com o fluxo mesmo com erro na assinatura
       }
 
       // Calculate pro-rata value and create pro-rata title
