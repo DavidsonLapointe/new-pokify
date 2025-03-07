@@ -105,12 +105,14 @@ export function ConfirmRegistrationForm({
     }
   };
 
+  // Configuração da aparência do formulário do Stripe
   const appearance: Appearance = {
     theme: 'stripe' as const,
     variables: {
       colorPrimary: '#9b87f5',
       fontFamily: 'Inter, sans-serif',
       borderRadius: '4px',
+      colorBackground: '#f9fafb'
     },
     rules: {
       '.Input': {
@@ -119,14 +121,30 @@ export function ConfirmRegistrationForm({
       },
       '.Input:focus': {
         border: '1px solid #9b87f5',
+      },
+      '.Label': {
+        color: '#6E59A5',
+      },
+      '.Tab': {
+        borderColor: '#E5DEFF',
+        color: '#6E59A5',
+      },
+      '.Tab:hover': {
+        color: '#9b87f5',
+      },
+      '.Tab--selected': {
+        borderColor: '#9b87f5',
+        color: '#9b87f5',
       }
     }
   };
 
+  // Configuração das opções do elemento do Stripe
   const options: StripeElementsOptions = {
     mode: 'setup',
     currency: 'brl',
     appearance,
+    loader: 'auto',
   };
 
   return (

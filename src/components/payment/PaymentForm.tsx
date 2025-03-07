@@ -57,10 +57,11 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading }: PaymentFormPr
       <div className="flex items-center gap-2 mb-4">
         <div className="h-6 w-1 bg-[#9b87f5] rounded-full" />
         <h3 className="text-lg font-medium text-[#1A1F2C] flex items-center gap-0.5">
-          Dados de Pagamento <span>*</span>
+          Dados de Pagamento <span className="text-red-500">*</span>
         </h3>
       </div>
       
+      {/* Este é o componente do Stripe que renderiza o formulário de cartão */}
       <PaymentElement className="mb-4" />
 
       <Button

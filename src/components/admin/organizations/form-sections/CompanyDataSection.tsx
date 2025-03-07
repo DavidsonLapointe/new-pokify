@@ -18,7 +18,7 @@ export function CompanyDataSection({ organization }: CompanyDataSectionProps) {
       <div className="flex items-center gap-2 mb-4">
         <div className="h-6 w-1 bg-[#9b87f5] rounded-full" />
         <h3 className="text-lg font-medium text-[#1A1F2C] flex items-center gap-0.5">
-          Dados da Empresa <span>*</span>
+          Dados da Empresa <span className="text-red-500">*</span>
         </h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[#F1F0FB] rounded-lg">
@@ -38,20 +38,23 @@ export function CompanyDataSection({ organization }: CompanyDataSectionProps) {
             className="bg-white border-[#E5DEFF]" 
           />
         </div>
-        <div className="relative">
-          <FormLabel className="text-[#6E59A5] flex items-center gap-1">
+        <div className="relative md:col-span-2">
+          <FormLabel className="text-[#6E59A5] flex items-center gap-1.5">
             CNPJ
             <Lock size={14} className="text-gray-500" />
             <span className="text-xs text-gray-500 font-normal">(não editável)</span>
           </FormLabel>
-          <Input 
-            value={organization.cnpj} 
-            readOnly 
-            className="bg-gray-50 border-[#E5DEFF] cursor-not-allowed pr-10" 
-          />
-          <div className="absolute right-3 top-9">
-            <Lock size={16} className="text-gray-400" />
+          <div className="relative">
+            <Input 
+              value={organization.cnpj} 
+              readOnly 
+              className="bg-gray-100 border-[#E5DEFF] cursor-not-allowed pr-10 text-gray-600" 
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <Lock size={16} className="text-gray-400" />
+            </div>
           </div>
+          <p className="text-xs text-gray-500 mt-1">Este campo não pode ser alterado após a criação da empresa.</p>
         </div>
       </div>
     </div>
