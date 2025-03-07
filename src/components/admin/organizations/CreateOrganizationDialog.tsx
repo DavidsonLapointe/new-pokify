@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { OrganizationFormFields } from "./organization-form-fields";
 import { useOrganizationForm } from "./use-organization-form";
+import { useEffect } from "react";
 
 interface CreateOrganizationDialogProps {
   open: boolean;
@@ -26,6 +27,13 @@ export const CreateOrganizationDialog = ({
     onOpenChange(false);
     onSuccess();
   });
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
