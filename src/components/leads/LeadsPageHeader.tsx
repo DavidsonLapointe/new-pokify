@@ -45,7 +45,7 @@ export const LeadsPageHeader = ({
   // Verifica se o usuário tem acesso às integrações
   const hasIntegrationsAccess = Boolean(currentUser.permissions && currentUser.permissions['integrations']);
 
-  // Convert organization.users to the User type properly
+  // Convert organization.users to the User type properly, mapping the logs field
   const integrationUsers = (organization.users || [])
     .filter(user => 
       user.role === "admin" || 
@@ -57,8 +57,6 @@ export const LeadsPageHeader = ({
         id: log.id,
         date: log.timestamp,
         action: log.activity,
-        timestamp: log.timestamp,
-        activity: log.activity
       }))
     })) as User[];
 
