@@ -17,6 +17,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
+import { Loader2 } from "lucide-react";
 
 // A chave pública do Stripe foi movida para as variáveis do projeto
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY ?? '');
@@ -42,6 +43,7 @@ export function ConfirmRegistrationForm({
 }: ConfirmRegistrationFormProps) {
   const [paymentMethodId, setPaymentMethodId] = useState<string>();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentValidated, setPaymentValidated] = useState(false);
 
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -64,6 +66,7 @@ export function ConfirmRegistrationForm({
 
   const handlePaymentMethodCreated = (pmId: string) => {
     setPaymentMethodId(pmId);
+    setPaymentValidated(true);
   };
 
   const handleSubmit = async (data: ConfirmRegistrationFormData) => {
@@ -71,7 +74,7 @@ export function ConfirmRegistrationForm({
       setIsProcessing(true);
 
       if (!paymentMethodId) {
-        toast.error("Por favor, adicione um método de pagamento válido.");
+        toast.error("Por favor, adicione e valide um método de pagamento.");
         return;
       }
 
@@ -106,12 +109,22 @@ export function ConfirmRegistrationForm({
     theme: 'stripe' as const,
     variables: {
       colorPrimary: '#9b87f5',
+      fontFamily: 'Inter, sans-serif',
+      borderRadius: '4px',
     },
+    rules: {
+      '.Input': {
+        border: '1px solid #E5DEFF',
+        boxShadow: 'none',
+      },
+      '.Input:focus': {
+        border: '1px solid #9b87f5',
+      }
+    }
   };
 
   const options: StripeElementsOptions = {
-    mode: 'payment' as const,
-    amount: 1099,
+    mode: 'setup',
     currency: 'brl',
     appearance,
   };
@@ -171,9 +184,16 @@ export function ConfirmRegistrationForm({
           <Button 
             type="submit"
             className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white font-medium px-8"
-            disabled={isProcessing}
+            disabled={isProcessing || !paymentValidated}
           >
-            {isProcessing ? "Processando..." : "Confirmar Cadastro"}
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              "Confirmar Cadastro"
+            )}
           </Button>
         </div>
       </form>
