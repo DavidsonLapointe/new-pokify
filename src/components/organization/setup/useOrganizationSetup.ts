@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -18,6 +18,7 @@ export type SetupFormData = z.infer<typeof setupSchema>;
 export const useOrganizationSetup = () => {
   const { setupToken } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [showPayment, setShowPayment] = useState(false);
   const [organization, setOrganization] = useState<any>(null);
@@ -45,6 +46,16 @@ export const useOrganizationSetup = () => {
       }
       
       try {
+        // Check if this is an old-format URL from email and redirect to the confirm-registration page
+        const urlParams = new URLSearchParams(location.search);
+        const token = urlParams.get('token');
+        
+        if (token && !setupToken) {
+          console.log("Redirecting to correct registration page:", `/confirm-registration/${token}`);
+          navigate(`/confirm-registration/${token}`, { replace: true });
+          return;
+        }
+        
         const { data, error } = await supabase
           .from('organizations')
           .select('*')
@@ -77,7 +88,7 @@ export const useOrganizationSetup = () => {
     };
     
     loadOrganization();
-  }, [setupToken, location.search, toast]);
+  }, [setupToken, location.search, toast, navigate]);
 
   const handlePasswordSubmit = async (values: SetupFormData) => {
     try {

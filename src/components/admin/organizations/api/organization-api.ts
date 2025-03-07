@@ -136,7 +136,9 @@ export const sendOnboardingEmail = async (
   // Update links to use the proper formats that work with the multi-step flow
   const updatedContractUrl = `${window.location.origin}/contract/${organizationId}`;
   const updatedPaymentUrl = `${window.location.origin}/payment/${organizationId}`;
-  const updatedConfirmationToken = `${window.location.origin}/organization/setup?token=${organizationId}`;
+  
+  // Fixed: Changed from /organization/setup to /confirm-registration
+  const updatedConfirmationToken = `${window.location.origin}/confirm-registration/${organizationId}`;
 
   const { error } = await supabase.functions.invoke('send-organization-emails', {
     body: {
