@@ -8,9 +8,10 @@ import { Loader2, CreditCard } from "lucide-react";
 interface PaymentFormProps {
   onPaymentMethodCreated: (paymentMethodId: string) => void;
   isLoading: boolean;
+  clientSecret?: string;
 }
 
-export const PaymentForm = ({ onPaymentMethodCreated, isLoading }: PaymentFormProps) => {
+export const PaymentForm = ({ onPaymentMethodCreated, isLoading, clientSecret }: PaymentFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -18,9 +19,18 @@ export const PaymentForm = ({ onPaymentMethodCreated, isLoading }: PaymentFormPr
 
   useEffect(() => {
     if (stripe && elements) {
+      console.log("Stripe and elements are ready");
       setStripeReady(true);
     }
   }, [stripe, elements]);
+
+  // Log the state for debugging
+  useEffect(() => {
+    console.log("PaymentForm mounted");
+    console.log("clientSecret:", clientSecret);
+    console.log("stripe instance:", !!stripe);
+    console.log("elements instance:", !!elements);
+  }, [stripe, elements, clientSecret]);
 
   const handleCreatePaymentMethod = async () => {
     if (!stripe || !elements) {

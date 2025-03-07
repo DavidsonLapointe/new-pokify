@@ -11,6 +11,27 @@ export const createSubscription = async (dto: CreateSubscriptionDTO): Promise<{ 
   return data;
 };
 
+export const createSetupIntent = async (organizationId: string): Promise<{ clientSecret: string } | null> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('manage-subscription', {
+      body: {
+        action: 'create_setup_intent',
+        organizationId
+      }
+    });
+
+    if (error) {
+      console.error('Erro ao criar setup intent:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao criar setup intent:', error);
+    return null;
+  }
+};
+
 export const createInactiveSubscription = async (organizationId: string): Promise<Subscription | null> => {
   try {
     const { data: subscription, error } = await supabase

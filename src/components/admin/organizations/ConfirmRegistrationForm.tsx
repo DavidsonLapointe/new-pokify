@@ -18,9 +18,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import type { StripeElementsOptions, Appearance } from "@stripe/stripe-js";
 import { createSubscription } from "@/services/subscriptionService";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-// A chave pública do Stripe foi movida para as variáveis do projeto
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY ?? '');
+// Certifique-se de que a chave pública do Stripe está disponível
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
+const stripePromise = loadStripe(stripePublicKey);
 
 interface ConfirmRegistrationFormProps {
   organization: Organization;
@@ -45,6 +47,8 @@ export function ConfirmRegistrationForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentValidated, setPaymentValidated] = useState(false);
   const [stripeInitialized, setStripeInitialized] = useState(false);
+  const [setupIntent, setSetupIntent] = useState<{clientSecret: string} | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const form = useForm<ConfirmRegistrationFormData>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -65,14 +69,53 @@ export function ConfirmRegistrationForm({
     }
   });
 
+  // Inicializa o Stripe e cria um Setup Intent
   useEffect(() => {
-    // Verificar se o Stripe foi inicializado corretamente
-    if (stripePromise) {
-      setStripeInitialized(true);
+    async function initializeStripe() {
+      try {
+        console.log("Initializing Stripe with public key:", stripePublicKey);
+        
+        // Cria um setup intent para configurar o método de pagamento
+        const { data, error } = await supabase.functions.invoke('manage-subscription', {
+          body: {
+            action: 'create_setup_intent',
+            organizationId: organization.id.toString()
+          }
+        });
+
+        if (error) {
+          console.error("Erro ao criar setup intent:", error);
+          toast.error("Erro ao inicializar formulário de pagamento");
+          return;
+        }
+
+        console.log("Setup intent created:", data);
+        
+        if (data && data.clientSecret) {
+          setSetupIntent(data);
+          setStripeInitialized(true);
+        } else {
+          console.error("Client secret não encontrado na resposta");
+          toast.error("Erro ao inicializar dados de pagamento");
+        }
+      } catch (err) {
+        console.error("Erro ao inicializar Stripe:", err);
+        toast.error("Erro ao inicializar sistema de pagamento");
+      } finally {
+        setLoading(false);
+      }
     }
-  }, []);
+
+    if (stripePromise) {
+      initializeStripe();
+    } else {
+      setLoading(false);
+      toast.error("Chave do Stripe não configurada");
+    }
+  }, [organization.id]);
 
   const handlePaymentMethodCreated = (pmId: string) => {
+    console.log("Payment method created:", pmId);
     setPaymentMethodId(pmId);
     setPaymentValidated(true);
   };
@@ -158,6 +201,7 @@ export function ConfirmRegistrationForm({
     currency: 'brl',
     appearance,
     loader: 'auto',
+    clientSecret: setupIntent?.clientSecret,
   };
 
   return (
@@ -168,18 +212,26 @@ export function ConfirmRegistrationForm({
         <PasswordSection form={form} />
         <AddressSection form={form} />
 
-        {stripeInitialized ? (
+        {loading ? (
+          <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5]" />
+              <span className="ml-3 text-gray-600">Inicializando método de pagamento...</span>
+            </div>
+          </div>
+        ) : stripeInitialized && setupIntent?.clientSecret ? (
           <Elements stripe={stripePromise} options={options}>
             <PaymentForm 
               onPaymentMethodCreated={handlePaymentMethodCreated}
               isLoading={isProcessing}
+              clientSecret={setupIntent.clientSecret}
             />
           </Elements>
         ) : (
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-[#9b87f5]" />
-              <span className="ml-3 text-gray-600">Carregando formulário de pagamento...</span>
+            <div className="py-8 text-center">
+              <p className="text-red-500 font-medium">Não foi possível carregar o formulário de pagamento.</p>
+              <p className="text-gray-600 mt-2">Verifique se as chaves do Stripe estão configuradas corretamente.</p>
             </div>
           </div>
         )}
