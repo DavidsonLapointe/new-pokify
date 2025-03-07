@@ -42,6 +42,14 @@ serve(async (req) => {
       throw new Error('Organização não encontrada');
     }
 
+    // Verificar se já existe uma assinatura inativa
+    const { data: existingInactiveSubscription, error: subCheckError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('organization_id', organizationId)
+      .eq('status', 'inactive')
+      .single();
+
     // Criar ou recuperar o cliente no Stripe
     let customer;
     const existingCustomers = await stripe.customers.search({
@@ -79,20 +87,38 @@ serve(async (req) => {
       expand: ['latest_invoice.payment_intent'],
     });
 
-    // Registrar a assinatura no banco de dados
-    const { error: subError } = await supabase
-      .from('subscriptions')
-      .insert({
-        organization_id: organizationId,
-        stripe_subscription_id: subscription.id,
-        stripe_customer_id: customer.id,
-        status: subscription.status,
-        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-      });
+    // Se existir uma assinatura inativa, atualizá-la
+    if (existingInactiveSubscription) {
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update({
+          stripe_subscription_id: subscription.id,
+          stripe_customer_id: customer.id,
+          status: subscription.status,
+          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        })
+        .eq('id', existingInactiveSubscription.id);
 
-    if (subError) {
-      throw subError;
+      if (updateError) {
+        throw updateError;
+      }
+    } else {
+      // Caso não exista, criar uma nova assinatura
+      const { error: subError } = await supabase
+        .from('subscriptions')
+        .insert({
+          organization_id: organizationId,
+          stripe_subscription_id: subscription.id,
+          stripe_customer_id: customer.id,
+          status: subscription.status,
+          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+
+      if (subError) {
+        throw subError;
+      }
     }
 
     // Se a assinatura estiver ativa, atualizar o status da organização

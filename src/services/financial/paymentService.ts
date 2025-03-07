@@ -41,6 +41,19 @@ export const handleTitlePayment = async (
       .eq('role', 'admin');
 
     if (userError) throw userError;
+    
+    // Verificamos se existe alguma assinatura inactive para esta organização
+    const { data: subscription, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('organization_id', organization.id.toString())
+      .eq('status', 'inactive')
+      .single();
+    
+    // Se não existir uma assinatura inactive, o trigger irá cuidar da atualização automaticamente
+    if (subscriptionError && !subscription) {
+      console.log('Nenhuma assinatura inativa encontrada para atualizar');
+    }
   }
 
   return {

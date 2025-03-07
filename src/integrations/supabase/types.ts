@@ -1002,6 +1002,7 @@ export type Database = {
         | "past_due"
         | "incomplete"
         | "incomplete_expired"
+        | "inactive"
       user_role: "leadly_employee" | "admin" | "seller"
       user_status: "active" | "inactive" | "pending"
     }

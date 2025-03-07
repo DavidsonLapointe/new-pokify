@@ -12,6 +12,7 @@ import {
   mapToOrganizationType
 } from "./api/organization-api";
 import { useFormErrorHandlers } from "./utils/form-error-handlers";
+import { createInactiveSubscription } from "@/services/subscriptionService";
 
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -66,6 +67,15 @@ export const useOrganizationForm = (onSuccess: () => void) => {
 
       // Convert DB organization to Organization type
       const organizationFormatted = mapToOrganizationType(newOrganizationData);
+
+      // Criar assinatura inativa para a nova organização
+      const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
+      
+      if (inactiveSubscription) {
+        console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
+      } else {
+        console.error("Erro ao criar assinatura inativa");
+      }
 
       // Calculate pro-rata value
       const planValues = getPlanValues();
