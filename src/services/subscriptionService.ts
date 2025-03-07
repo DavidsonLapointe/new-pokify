@@ -1,9 +1,15 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
 export const createSubscription = async (dto: CreateSubscriptionDTO): Promise<{ subscriptionId: string; clientSecret?: string; status: string }> => {
   const { data, error } = await supabase.functions.invoke('manage-subscription', {
-    body: dto
+    body: {
+      action: 'create_subscription',
+      organizationId: dto.organizationId,
+      paymentMethodId: dto.paymentMethodId,
+      priceId: dto.priceId
+    }
   });
 
   if (error) throw error;

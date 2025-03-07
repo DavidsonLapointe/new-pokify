@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { Stripe } from 'https://esm.sh/stripe@13.10.0'
@@ -237,6 +238,121 @@ serve(async (req) => {
         JSON.stringify({ clientSecret: setupIntent.client_secret }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
+    }
+    
+    // Create active subscription with payment method and price
+    if (action === 'create_subscription') {
+      console.log('Creating active subscription for organization:', organizationId)
+      
+      // Validate required parameters
+      if (!paymentMethodId || !priceId) {
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Missing required parameters: paymentMethodId and priceId are required' 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
+      }
+      
+      // Find the inactive subscription
+      const { data: inactiveSubscription, error: fetchError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('status', 'inactive')
+        .single()
+      
+      if (fetchError || !inactiveSubscription) {
+        console.error('Error fetching inactive subscription:', fetchError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'No inactive subscription found for this organization',
+            details: fetchError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        )
+      }
+      
+      const customerId = inactiveSubscription.stripe_customer_id
+      if (customerId === 'pending') {
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Customer ID is not valid. Please create a setup intent first.' 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
+      }
+      
+      try {
+        // Attach payment method to customer if not already attached
+        await stripe.paymentMethods.attach(
+          paymentMethodId,
+          { customer: customerId }
+        )
+        
+        // Set as default payment method
+        await stripe.customers.update(
+          customerId,
+          { 
+            invoice_settings: {
+              default_payment_method: paymentMethodId,
+            }
+          }
+        )
+        
+        // Create the subscription
+        const subscription = await stripe.subscriptions.create({
+          customer: customerId,
+          items: [{ price: priceId }],
+          default_payment_method: paymentMethodId,
+          expand: ['latest_invoice.payment_intent'],
+        })
+        
+        // Update the subscription in Supabase
+        const { error: updateError } = await supabase
+          .from('subscriptions')
+          .update({
+            stripe_subscription_id: subscription.id,
+            status: subscription.status,
+            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          })
+          .eq('id', inactiveSubscription.id)
+        
+        if (updateError) {
+          console.error('Error updating subscription in database:', updateError)
+          return new Response(
+            JSON.stringify({ 
+              success: false,
+              error: 'Failed to update subscription in database',
+              details: updateError
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          )
+        }
+        
+        return new Response(
+          JSON.stringify({
+            success: true,
+            subscriptionId: subscription.id,
+            clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+            status: subscription.status
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      } catch (stripeError) {
+        console.error('Stripe error:', stripeError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: stripeError.message 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
+      }
     }
     
     // Handle other subscription actions (create subscription, etc.)
