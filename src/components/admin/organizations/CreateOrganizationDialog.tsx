@@ -80,7 +80,7 @@ export const CreateOrganizationDialog = ({
         setIsCheckingCnpj(false);
         toast({
           title: "CNPJ já cadastrado",
-          description: `Este CNPJ já está associado à empresa "${companyName}" no sistema, independente do status.`,
+          description: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".`,
           variant: "destructive",
         });
         return;
