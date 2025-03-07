@@ -7,9 +7,10 @@ import { CreateOrganizationFormData } from "./schema";
 
 interface OrganizationFormFieldsProps {
   form: UseFormReturn<CreateOrganizationFormData>;
+  cnpjValidated?: boolean;
 }
 
-export const OrganizationFormFields = ({ form }: OrganizationFormFieldsProps) => {
+export const OrganizationFormFields = ({ form, cnpjValidated = false }: OrganizationFormFieldsProps) => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -55,7 +56,12 @@ export const OrganizationFormFields = ({ form }: OrganizationFormFieldsProps) =>
                   className="bg-gray-50"
                 />
               </FormControl>
-              <FormMessage />
+              {!cnpjValidated && <FormMessage />}
+              {cnpjValidated && (
+                <p className="text-xs text-green-600 mt-1">
+                  CNPJ validado com sucesso
+                </p>
+              )}
             </FormItem>
           )}
         />

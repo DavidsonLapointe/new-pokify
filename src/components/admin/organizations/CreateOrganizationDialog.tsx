@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Dialog,
@@ -35,12 +36,14 @@ export const CreateOrganizationDialog = ({
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
+  const [cnpjValidated, setCnpjValidated] = useState(false);
 
   // Reset form and step when dialog closes
   useEffect(() => {
     if (!open) {
       form.reset();
       setStep(1);
+      setCnpjValidated(false);
     }
   }, [open, form]);
 
@@ -76,11 +79,15 @@ export const CreateOrganizationDialog = ({
       }
       
       // If everything is valid, proceed to the next step
+      setCnpjValidated(true);
       setStep(2);
       toast({
         title: "CNPJ Validado",
         description: "O CNPJ é válido. Continue o cadastro.",
       });
+      
+      // Clear any existing errors on the CNPJ field
+      form.clearErrors("cnpj");
     } catch (error) {
       console.error("Erro ao verificar CNPJ:", error);
       toast({
@@ -169,7 +176,7 @@ export const CreateOrganizationDialog = ({
                   <div className="h-3 w-1 bg-[#9b87f5] rounded-full"></div>
                   <h3 className="text-base font-medium text-[#1A1F2C]">Dados da Empresa</h3>
                 </div>
-                <OrganizationFormFields form={form} />
+                <OrganizationFormFields form={form} cnpjValidated={cnpjValidated} />
               </div>
               
               <div className="flex justify-end space-x-4 pt-3 border-t">
