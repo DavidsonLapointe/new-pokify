@@ -17,7 +17,7 @@ export const checkExistingOrganization = async (cnpj: string) => {
   // First try exact match with the formatted version (with punctuation)
   let { data, error } = await supabase
     .from('organizations')
-    .select('id, cnpj')
+    .select('id, cnpj, name')
     .eq('cnpj', cnpj)
     .maybeSingle();
   
@@ -28,7 +28,7 @@ export const checkExistingOrganization = async (cnpj: string) => {
     // Check for CNPJs that would match when cleaned (removing punctuation)
     const { data: allOrgs, error: fetchError } = await supabase
       .from('organizations')
-      .select('id, cnpj');
+      .select('id, cnpj, name');
       
     if (fetchError) {
       console.error("Error fetching organizations:", fetchError);

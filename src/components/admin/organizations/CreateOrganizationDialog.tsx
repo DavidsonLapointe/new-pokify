@@ -68,18 +68,19 @@ export const CreateOrganizationDialog = ({
     setIsCheckingCnpj(true);
     try {
       console.log("Verificando CNPJ:", formattedCnpj);
-      const { exists } = await checkCnpjExists(formattedCnpj);
-      console.log("Resultado da verificação:", exists);
+      const { exists, data } = await checkCnpjExists(formattedCnpj);
+      console.log("Resultado da verificação:", exists, data);
       
-      if (exists) {
+      if (exists && data) {
+        const companyName = data.name || "Empresa existente";
         form.setError("cnpj", { 
           type: "manual", 
-          message: "Este CNPJ já está cadastrado no sistema." 
+          message: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".` 
         });
         setIsCheckingCnpj(false);
         toast({
           title: "CNPJ já cadastrado",
-          description: "Este CNPJ já está associado a uma empresa no sistema, independente do status.",
+          description: `Este CNPJ já está associado à empresa "${companyName}" no sistema, independente do status.`,
           variant: "destructive",
         });
         return;
