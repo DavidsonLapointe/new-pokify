@@ -1,542 +1,256 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
-import Stripe from "https://esm.sh/stripe@13.6.0?target=deno"
-
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-  apiVersion: '2023-10-16',
-  httpClient: Stripe.createFetchHttpClient(),
-});
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const supabase = createClient(supabaseUrl!, supabaseKey!);
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { Stripe } from 'https://esm.sh/stripe@13.10.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface CreateSubscriptionBody {
-  organizationId: string;
-  paymentMethodId: string;
-  priceId: string;
-}
-
-interface CreateSetupIntentBody {
-  action: string;
-  organizationId: string;
-}
-
-interface CreateInactiveSubscriptionBody {
-  action: string;
-  organizationId: string;
 }
 
 serve(async (req) => {
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const requestBody = await req.json();
-    console.log('Requisição recebida:', JSON.stringify(requestBody));
-    
-    // Handle create_inactive_subscription action
-    if (requestBody.action === 'create_inactive_subscription') {
-      console.log('Criando assinatura inativa para organização:', requestBody.organizationId);
-      return await handleCreateInactiveSubscription(requestBody);
-    }
-    
-    // Handle create_setup_intent action
-    if (requestBody.action === 'create_setup_intent') {
-      console.log('Criando setup intent para organização:', requestBody.organizationId);
-      return await handleCreateSetupIntent(requestBody);
-    }
-    
-    // Handle create subscription action (default)
-    const { organizationId, paymentMethodId, priceId } = requestBody as CreateSubscriptionBody;
-    return await handleCreateSubscription(organizationId, paymentMethodId, priceId);
-  } catch (error) {
-    console.error('Erro ao processar requisição:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    // Get the request body
+    const requestData = await req.json()
+    const { action, organizationId, paymentMethodId, priceId } = requestData
+
+    // Setup Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Setup Stripe client
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    })
+
+    // Create an inactive subscription (no Stripe interaction yet)
+    if (action === 'create_inactive_subscription') {
+      console.log('Creating inactive subscription for organization:', organizationId)
+      
+      // Check if an inactive subscription already exists
+      const { data: existingSubscription, error: checkError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('status', 'inactive')
+        .maybeSingle()
+      
+      if (checkError) {
+        console.error('Error checking for existing subscriptions:', checkError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Failed to check for existing subscriptions',
+            details: checkError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
       }
-    );
-  }
-});
-
-// Handle inactive subscription creation
-async function handleCreateInactiveSubscription(body: CreateInactiveSubscriptionBody) {
-  try {
-    const { organizationId } = body;
-    console.log('Processando criação de assinatura inativa para organização ID:', organizationId);
-    
-    // Get organization information
-    const { data: organization, error: orgError } = await supabase
-      .from('organizations')
-      .select('*')
-      .eq('id', organizationId)
-      .single();
-
-    if (orgError || !organization) {
-      console.error('Organização não encontrada:', orgError);
-      throw new Error('Organização não encontrada');
-    }
-
-    console.log('Organização encontrada:', organization.name);
-
-    // Check if an inactive subscription already exists
-    const { data: existingSubscriptions, error: subError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .eq('status', 'inactive');
       
-    if (!subError && existingSubscriptions && existingSubscriptions.length > 0) {
-      console.log('Assinatura inativa já existente:', existingSubscriptions[0].id);
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          subscription: {
-            id: existingSubscriptions[0].id,
-            organizationId: existingSubscriptions[0].organization_id,
-            stripeSubscriptionId: existingSubscriptions[0].stripe_subscription_id,
-            stripeCustomerId: existingSubscriptions[0].stripe_customer_id,
-            status: existingSubscriptions[0].status,
-            currentPeriodStart: existingSubscriptions[0].current_period_start,
-            currentPeriodEnd: existingSubscriptions[0].current_period_end,
-            cancelAt: existingSubscriptions[0].cancel_at,
-            canceledAt: existingSubscriptions[0].canceled_at,
-            createdAt: existingSubscriptions[0].created_at,
-            updatedAt: existingSubscriptions[0].updated_at,
-          }
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    // Create a Stripe customer to get a proper customer ID
-    let customerId = 'pending';
-    
-    try {
-      // Try to create a new Stripe customer
-      console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
-      const customer = await stripe.customers.create({
-        email: organization.admin_email || organization.email,
-        name: organization.name,
-        metadata: {
-          organization_id: organizationId,
-        },
-      });
-      customerId = customer.id;
-      console.log('Novo cliente Stripe criado:', customerId);
-    } catch (stripeError) {
-      console.error('Erro ao criar cliente Stripe (continuando com customerId="pending"):', stripeError);
-      // Continue with pending as customer_id
-    }
-    
-    // Create inactive subscription
-    const { data: newSubscription, error: insertError } = await supabase
-      .from('subscriptions')
-      .insert({
-        organization_id: organizationId,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: 'pending',
-        status: 'inactive',
-      })
-      .select()
-      .single();
-      
-    if (insertError) {
-      console.error('Erro ao criar assinatura inativa:', insertError);
-      throw new Error('Erro ao criar assinatura inativa: ' + insertError.message);
-    }
-    
-    console.log('Assinatura inativa criada com sucesso:', newSubscription.id);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        subscription: {
-          id: newSubscription.id,
-          organizationId: newSubscription.organization_id,
-          stripeSubscriptionId: newSubscription.stripe_subscription_id,
-          stripeCustomerId: newSubscription.stripe_customer_id,
-          status: newSubscription.status,
-          currentPeriodStart: newSubscription.current_period_start,
-          currentPeriodEnd: newSubscription.current_period_end,
-          cancelAt: newSubscription.cancel_at,
-          canceledAt: newSubscription.canceled_at,
-          createdAt: newSubscription.created_at,
-          updatedAt: newSubscription.updated_at,
-        }
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      // If subscription already exists, return it
+      if (existingSubscription) {
+        console.log('Inactive subscription already exists:', existingSubscription.id)
+        return new Response(
+          JSON.stringify({ 
+            success: true,
+            subscription: {
+              id: existingSubscription.id,
+              organizationId: existingSubscription.organization_id,
+              stripeSubscriptionId: existingSubscription.stripe_subscription_id,
+              stripeCustomerId: existingSubscription.stripe_customer_id,
+              status: existingSubscription.status,
+              currentPeriodStart: existingSubscription.current_period_start,
+              currentPeriodEnd: existingSubscription.current_period_end,
+              cancelAt: existingSubscription.cancel_at,
+              canceledAt: existingSubscription.canceled_at,
+              createdAt: existingSubscription.created_at,
+              updatedAt: existingSubscription.updated_at,
+            }
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
       }
-    );
-  } catch (error) {
-    console.error('Erro ao criar assinatura inativa:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      
+      // Get organization info
+      const { data: organization, error: orgError } = await supabase
+        .from('organizations')
+        .select('name, email, admin_email')
+        .eq('id', organizationId)
+        .single()
+      
+      if (orgError) {
+        console.error('Error fetching organization:', orgError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Failed to fetch organization details',
+            details: orgError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
       }
-    );
-  }
-}
-
-// Handle setup intent creation
-async function handleCreateSetupIntent(body: CreateSetupIntentBody) {
-  try {
-    const { organizationId } = body;
-    console.log('Processando setup intent para organização ID:', organizationId);
-    
-    // Buscar informações da organização
-    const { data: organization, error: orgError } = await supabase
-      .from('organizations')
-      .select('*')
-      .eq('id', organizationId)
-      .single();
-
-    if (orgError || !organization) {
-      console.error('Organização não encontrada:', orgError);
-      throw new Error('Organização não encontrada');
-    }
-
-    console.log('Organização encontrada:', organization.name);
-
-    // Verificar se já existe um cliente no Stripe para esta organização
-    let customerId = null;
-    
-    // Verificar primeiro se existe uma assinatura para esta organização
-    const { data: subscriptions, error: subError } = await supabase
-      .from('subscriptions')
-      .select('stripe_customer_id, status')
-      .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
       
-    if (!subError && subscriptions && subscriptions.length > 0) {
-      console.log('Assinaturas encontradas:', subscriptions.length);
+      let stripeCustomerId = 'pending'
       
-      // Priorizar assinaturas ativas ou com customer_id definido que não seja 'pending'
-      const validSubscription = subscriptions.find(
-        sub => sub.stripe_customer_id && sub.stripe_customer_id !== 'pending'
-      );
-      
-      if (validSubscription) {
-        console.log('Assinatura com customer ID válido encontrada:', validSubscription.stripe_customer_id);
-        customerId = validSubscription.stripe_customer_id;
-      } else {
-        console.log('Nenhuma assinatura com customer ID válido encontrada');
-      }
-    } else {
-      console.log('Nenhuma assinatura encontrada ou erro ao buscar:', subError);
-    }
-    
-    // Se não encontrou customer_id nas assinaturas, tentar buscar por metadata
-    if (!customerId) {
-      console.log('Buscando cliente pelo metadata...');
-      
-      try {
-        const existingCustomers = await stripe.customers.search({
-          query: `metadata['organization_id']:'${organizationId}'`,
-        });
-
-        if (existingCustomers.data.length > 0) {
-          customerId = existingCustomers.data[0].id;
-          console.log('Cliente Stripe existente encontrado via metadata:', customerId);
-        }
-      } catch (stripeError) {
-        console.error('Erro ao buscar cliente Stripe via metadata:', stripeError);
-        // Vamos continuar e criar um novo cliente se necessário
-      }
-    }
-    
-    // Se ainda não encontrou customer_id, criar um novo cliente
-    if (!customerId) {
-      // Criar novo cliente
-      console.log('Criando novo cliente Stripe para:', organization.admin_email || organization.email);
+      // Create a Stripe customer in advance
       try {
         const customer = await stripe.customers.create({
           email: organization.admin_email || organization.email,
           name: organization.name,
           metadata: {
-            organization_id: organizationId,
-          },
-        });
-        customerId = customer.id;
-        console.log('Novo cliente Stripe criado:', customerId);
+            organizationId
+          }
+        })
         
-        // Atualizar a assinatura inativa com o customer ID se ela existir
-        if (subscriptions && subscriptions.length > 0) {
-          console.log('Atualizando assinatura(s) com o novo customer ID');
-          
-          // Pegamos todas as assinaturas inativas ou com customer_id pendente
-          const inactiveSubscriptions = subscriptions.filter(
-            sub => sub.status === 'inactive' || !sub.stripe_customer_id || sub.stripe_customer_id === 'pending'
-          );
-          
-          if (inactiveSubscriptions.length > 0) {
-            for (const sub of inactiveSubscriptions) {
-              const { error: updateError } = await supabase
-                .from('subscriptions')
-                .update({ stripe_customer_id: customerId })
-                .eq('organization_id', organizationId)
-                .eq('status', 'inactive');
-                
-              if (updateError) {
-                console.error('Erro ao atualizar assinatura com customer ID:', updateError);
-              } else {
-                console.log('Assinatura atualizada com o novo customer ID');
-              }
-            }
-          }
-        } else {
-          // Criar uma nova assinatura inativa se não existe
-          console.log('Nenhuma assinatura encontrada, criando assinatura inativa...');
-          const { error: insertError } = await supabase
-            .from('subscriptions')
-            .insert({
-              organization_id: organizationId,
-              stripe_customer_id: customerId,
-              stripe_subscription_id: 'pending',
-              status: 'inactive',
-            });
-            
-          if (insertError) {
-            console.error('Erro ao criar assinatura inativa:', insertError);
-          } else {
-            console.log('Assinatura inativa criada com sucesso');
-          }
-        }
-      } catch (createError) {
-        console.error('Erro ao criar cliente Stripe:', createError);
-        throw new Error('Erro ao criar cliente no Stripe');
+        stripeCustomerId = customer.id
+        console.log('Created Stripe customer:', stripeCustomerId)
+      } catch (stripeError) {
+        console.warn('Could not create Stripe customer yet, will create during subscription activation:', stripeError)
+        // Continue with pending customer ID, will be updated when subscription is activated
       }
-    }
-
-    if (!customerId) {
-      throw new Error('Não foi possível obter ou criar o ID do cliente Stripe');
-    }
-
-    // Criar o setup intent
-    console.log('Criando setup intent para cliente:', customerId);
-    const setupIntent = await stripe.setupIntents.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      usage: 'off_session',
-    });
-
-    console.log('Setup intent criado com sucesso, client_secret:', setupIntent.client_secret?.substring(0, 10) + '...');
-
-    return new Response(
-      JSON.stringify({
-        clientSecret: setupIntent.client_secret,
-        customerId: customerId,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
-  } catch (error) {
-    console.error('Erro ao criar setup intent:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
-  }
-}
-
-// Handle subscription creation
-async function handleCreateSubscription(organizationId: string, paymentMethodId: string, priceId: string) {
-  try {
-    // Buscar informações da organização
-    const { data: organization, error: orgError } = await supabase
-      .from('organizations')
-      .select('*')
-      .eq('id', organizationId)
-      .single();
-
-    if (orgError || !organization) {
-      throw new Error('Organização não encontrada');
-    }
-
-    console.log('Organizacao encontrada:', organization.name);
-
-    // Verificar se já existe uma assinatura inativa
-    const { data: existingInactiveSubscription, error: subCheckError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .eq('status', 'inactive')
-      .single();
-
-    if (subCheckError) {
-      console.error('Erro ao verificar assinatura inativa:', subCheckError);
-      console.log('Criando nova assinatura inativa...');
       
-      // Criar assinatura inativa
-      const { data: newSubscription, error: createError } = await supabase
+      // Create inactive subscription
+      const { data: subscription, error: insertError } = await supabase
         .from('subscriptions')
         .insert({
           organization_id: organizationId,
-          stripe_subscription_id: 'pending',
-          stripe_customer_id: 'pending',
           status: 'inactive',
+          stripe_subscription_id: 'pending',
+          stripe_customer_id: stripeCustomerId
         })
         .select()
-        .single();
-        
-      if (createError) {
-        console.error('Erro ao criar assinatura inativa:', createError);
-        throw new Error('Erro ao criar assinatura inativa');
+        .single()
+      
+      if (insertError) {
+        console.error('Error creating inactive subscription:', insertError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Failed to create inactive subscription',
+            details: insertError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
       }
       
-      console.log('Nova assinatura inativa criada:', newSubscription.id);
-    } else {
-      console.log('Assinatura inativa encontrada:', existingInactiveSubscription.id);
-    }
-
-    // Criar ou recuperar o cliente no Stripe
-    let customer;
-    const existingCustomers = await stripe.customers.search({
-      query: `metadata['organization_id']:'${organizationId}'`,
-    });
-
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0];
-      console.log('Cliente Stripe existente encontrado:', customer.id);
+      console.log('Created inactive subscription:', subscription.id)
       
-      // Atualizar o método de pagamento padrão
-      await stripe.customers.update(customer.id, {
-        default_payment_method: paymentMethodId,
-      });
-      console.log('Método de pagamento atualizado para o cliente:', paymentMethodId);
-    } else {
-      // Criar novo cliente
-      console.log('Criando novo cliente Stripe...');
-      customer = await stripe.customers.create({
-        email: organization.email,
-        payment_method: paymentMethodId,
-        invoice_settings: {
-          default_payment_method: paymentMethodId,
-        },
-        metadata: {
-          organization_id: organizationId,
-        },
-      });
-      console.log('Novo cliente Stripe criado:', customer.id);
+      return new Response(
+        JSON.stringify({
+          success: true,
+          subscription: {
+            id: subscription.id,
+            organizationId: subscription.organization_id,
+            stripeSubscriptionId: subscription.stripe_subscription_id,
+            stripeCustomerId: subscription.stripe_customer_id,
+            status: subscription.status,
+            currentPeriodStart: subscription.current_period_start,
+            currentPeriodEnd: subscription.current_period_end,
+            cancelAt: subscription.cancel_at,
+            canceledAt: subscription.canceled_at,
+            createdAt: subscription.created_at,
+            updatedAt: subscription.updated_at,
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
-
-    // Criar a assinatura
-    console.log('Criando assinatura no Stripe com preço:', priceId);
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      items: [{ price: priceId }],
-      payment_settings: {
-        payment_method_types: ['card'],
-        save_default_payment_method: 'on_subscription',
-      },
-      expand: ['latest_invoice.payment_intent'],
-    });
-
-    console.log('Assinatura Stripe criada com sucesso:', subscription.id);
-
-    // Se existir uma assinatura inativa, atualizá-la
-    const subscriptionToUpdate = existingInactiveSubscription || 
-                               (await supabase.from('subscriptions')
-                                 .select('*')
-                                 .eq('organization_id', organizationId)
-                                 .single()).data;
     
-    if (subscriptionToUpdate) {
-      console.log('Atualizando assinatura no Supabase:', subscriptionToUpdate.id);
-      const { error: updateError } = await supabase
+    // Create a setup intent for future payment method attachment
+    if (action === 'create_setup_intent') {
+      // Fetch the subscription to get customer ID
+      const { data: subscription, error: subscriptionError } = await supabase
         .from('subscriptions')
-        .update({
-          stripe_subscription_id: subscription.id,
-          stripe_customer_id: customer.id,
-          status: subscription.status,
-          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        })
-        .eq('id', subscriptionToUpdate.id);
-
-      if (updateError) {
-        console.error('Erro ao atualizar assinatura no Supabase:', updateError);
-        throw updateError;
+        .select('stripe_customer_id')
+        .eq('organization_id', organizationId)
+        .single()
+      
+      if (subscriptionError || !subscription) {
+        console.error('Error fetching subscription:', subscriptionError)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Failed to fetch subscription',
+            details: subscriptionError
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
       }
       
-      console.log('Assinatura atualizada com sucesso no Supabase');
-    } else {
-      // Caso não exista, criar uma nova assinatura
-      console.log('Criando nova assinatura no Supabase...');
-      const { error: subError } = await supabase
-        .from('subscriptions')
-        .insert({
-          organization_id: organizationId,
-          stripe_subscription_id: subscription.id,
-          stripe_customer_id: customer.id,
-          status: subscription.status,
-          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        });
-
-      if (subError) {
-        console.error('Erro ao criar nova assinatura no Supabase:', subError);
-        throw subError;
+      // If customer ID is pending, we need to create a Stripe customer first
+      let customerId = subscription.stripe_customer_id
+      if (customerId === 'pending') {
+        // Get organization info
+        const { data: organization, error: orgError } = await supabase
+          .from('organizations')
+          .select('name, email, admin_email')
+          .eq('id', organizationId)
+          .single()
+        
+        if (orgError) {
+          console.error('Error fetching organization:', orgError)
+          return new Response(
+            JSON.stringify({ 
+              success: false,
+              error: 'Failed to fetch organization details',
+              details: orgError
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          )
+        }
+        
+        // Create a Stripe customer
+        const customer = await stripe.customers.create({
+          email: organization.admin_email || organization.email,
+          name: organization.name,
+          metadata: {
+            organizationId
+          }
+        })
+        
+        customerId = customer.id
+        
+        // Update the subscription with the real customer ID
+        const { error: updateError } = await supabase
+          .from('subscriptions')
+          .update({ stripe_customer_id: customerId })
+          .eq('organization_id', organizationId)
+        
+        if (updateError) {
+          console.error('Error updating subscription with customer ID:', updateError)
+        }
       }
       
-      console.log('Nova assinatura criada com sucesso no Supabase');
+      // Create a setup intent
+      const setupIntent = await stripe.setupIntents.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+      })
+      
+      return new Response(
+        JSON.stringify({ clientSecret: setupIntent.client_secret }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
-
-    // Se a assinatura estiver ativa, atualizar o status da organização
-    if (subscription.status === 'active') {
-      console.log('Assinatura ativa, atualizando status da organização...');
-      const { error: updateError } = await supabase
-        .from('organizations')
-        .update({
-          status: 'active',
-          pending_reason: null,
-        })
-        .eq('id', organizationId);
-
-      if (updateError) {
-        console.error('Erro ao atualizar status da organização:', updateError);
-      } else {
-        console.log('Status da organização atualizado com sucesso');
-      }
-    }
-
+    
+    // Handle other subscription actions (create subscription, etc.)
+    // Note: We'd implement additional actions like creating an active subscription here
+    
     return new Response(
-      JSON.stringify({
-        subscriptionId: subscription.id,
-        clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
-        status: subscription.status,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+      JSON.stringify({ error: 'Invalid action requested' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+    )
   } catch (error) {
-    console.error('Erro ao criar assinatura:', error);
+    console.error('Error processing request:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    )
   }
-}
+})

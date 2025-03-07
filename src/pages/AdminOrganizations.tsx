@@ -18,7 +18,7 @@ const Organizations = () => {
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   
-  // Fetch organizations data
+  // Fetch organizations data with staleTime set to 0 to always refetch
   const { organizations, isLoading, error, refetch } = useOrganizations();
 
   // Show error toast if there's an error
@@ -29,14 +29,14 @@ const Organizations = () => {
     }
   }, [error]);
 
-  // Adicionar log para verificar os dados carregados
+  // Log loaded data
   useEffect(() => {
     if (organizations && organizations.length > 0) {
       console.log("Organizações carregadas no componente:", organizations);
     }
   }, [organizations]);
 
-  // Trigger manual load when component mounts
+  // Always refetch when component mounts to ensure fresh data
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -60,7 +60,7 @@ const Organizations = () => {
       
       // The updated data will be automatically refetched by React Query
       setEditingOrganization(null);
-      await refetch(); // Explicitamente refetching após atualização
+      await refetch(); // Explicitly refetching after update
       toast.success("Empresa atualizada com sucesso!");
     } catch (err) {
       console.error("Erro ao processar atualização da organização:", err);
