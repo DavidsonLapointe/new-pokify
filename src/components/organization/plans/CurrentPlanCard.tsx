@@ -55,11 +55,11 @@ export function CurrentPlanCard({ plan, onChangePlan, nextBillingDate }: Current
 
         <div className="mt-6">
           <h4 className="text-sm font-medium mb-3">Recursos inclusos:</h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5">
             {plan.features?.map((feature, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <span className="leading-tight">{feature}</span>
+                <span className="leading-snug">{feature}</span>
               </li>
             ))}
           </ul>
