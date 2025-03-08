@@ -7,18 +7,11 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2 } from "lucide-react";
+import { CreditCard, Loader2, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-
-// Obter a chave pública do Stripe de forma mais segura
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
-console.log("PaymentGatewayDialog - Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
-
-// Carregar Stripe apenas uma vez
-const stripePromise = loadStripe(stripePublicKey);
+import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -106,6 +99,15 @@ export function PaymentGatewayDialog({
   onOpenChange,
   package: selectedPackage,
 }: PaymentGatewayDialogProps) {
+  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
+  
+  useEffect(() => {
+    // Verificar a configuração do Stripe sempre que o diálogo abrir
+    if (open) {
+      setStripeStatus(validateStripeConfig());
+    }
+  }, [open]);
+
   if (!selectedPackage) return null;
 
   const options = {
@@ -133,9 +135,27 @@ export function PaymentGatewayDialog({
             Valor: R$ {selectedPackage.price.toFixed(2)}
           </DialogDescription>
         </DialogHeader>
-        <Elements stripe={stripePromise} options={options}>
-          <PaymentForm onSuccess={handleSuccess} />
-        </Elements>
+        
+        {!stripeStatus.valid ? (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
+                <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
+                <p className="text-xs mt-2 text-red-700">
+                  Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
+                  VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
+                  nas variáveis de ambiente do seu servidor.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Elements stripe={stripePromise} options={options}>
+            <PaymentForm onSuccess={handleSuccess} />
+          </Elements>
+        )}
       </DialogContent>
     </Dialog>
   );

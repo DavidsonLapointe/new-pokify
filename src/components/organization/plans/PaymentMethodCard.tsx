@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2 } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
+import { CreditCard, Loader2, AlertCircle } from "lucide-react";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
 import {
@@ -14,13 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getPaymentMethod, updatePaymentMethod } from "@/services/subscriptionService";
-
-// Obter a chave pública do Stripe de forma mais segura
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
-console.log("PaymentMethodCard - Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
-
-// Carregar Stripe apenas uma vez
-const stripePromise = loadStripe(stripePublicKey);
+import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
 
 interface PaymentMethodCardProps {
   organizationId: string;
@@ -121,6 +114,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [currentPaymentMethod, setCurrentPaymentMethod] = useState<PaymentMethodData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
 
   const fetchPaymentMethod = async () => {
     setIsLoading(true);
@@ -147,6 +141,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
 
   useEffect(() => {
     fetchPaymentMethod();
+    setStripeStatus(validateStripeConfig());
   }, [organizationId]);
 
   const options = {
@@ -175,7 +170,22 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {!stripeStatus.valid ? (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
+                <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
+                <p className="text-xs mt-2 text-red-700">
+                  Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
+                  VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
+                  nas variáveis de ambiente do seu servidor.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : isLoading ? (
           <div className="flex justify-center py-4">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
@@ -197,9 +207,11 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
             </Button>
           </div>
         ) : (
-          <Elements stripe={stripePromise} options={options}>
-            <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
-          </Elements>
+          stripeStatus.valid && (
+            <Elements stripe={stripePromise} options={options}>
+              <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
+            </Elements>
+          )
         )}
 
         <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
@@ -210,9 +222,26 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
                 Insira os dados do novo cartão de crédito
               </DialogDescription>
             </DialogHeader>
-            <Elements stripe={stripePromise} options={options}>
-              <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
-            </Elements>
+            {stripeStatus.valid ? (
+              <Elements stripe={stripePromise} options={options}>
+                <PaymentMethodForm organizationId={organizationId} onSuccess={handleSuccess} />
+              </Elements>
+            ) : (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
+                    <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
+                    <p className="text-xs mt-2 text-red-700">
+                      Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
+                      VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
+                      nas variáveis de ambiente do seu servidor.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </CardContent>

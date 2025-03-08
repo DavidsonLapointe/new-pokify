@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, LockIcon } from "lucide-react";
+import { Loader2, LockIcon, AlertCircle } from "lucide-react";
 import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,12 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-// Obter a chave pública do Stripe de forma mais segura
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
-console.log("Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
-
-// Carregar Stripe apenas uma vez
-const stripePromise = loadStripe(stripePublicKey);
+// Removendo a inicialização direta do Stripe e usando a utilidade
+import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
 
 const confirmRegistrationSchema = z.object({
   // Company information (editable fields)
@@ -65,10 +61,11 @@ interface ConfirmRegistrationFormProps {
 const StripePaymentSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
   
   useEffect(() => {
     console.log("Inicializando seção de pagamento do Stripe");
-    console.log("Chave pública do Stripe disponível:", !!stripePublicKey);
+    setStripeStatus(validateStripeConfig());
   }, []);
   
   const options = {
@@ -89,12 +86,30 @@ const StripePaymentSection = () => {
     },
   };
 
+  if (!stripeStatus.valid) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+        <div className="flex items-start">
+          <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+          <div>
+            <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
+            <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
+            <p className="text-xs mt-2 text-red-700">
+              Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
+              VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
+              nas variáveis de ambiente do seu servidor.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
           <p><strong>Erro ao carregar Stripe:</strong> {error}</p>
-          <p className="text-sm mt-1">Verifique se a chave pública do Stripe está configurada corretamente. Valor atual: {stripePublicKey.substring(0, 10)}...</p>
         </div>
       )}
       
