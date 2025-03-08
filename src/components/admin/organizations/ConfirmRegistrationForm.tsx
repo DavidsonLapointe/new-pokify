@@ -14,9 +14,18 @@ import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Usando a chave pública do Stripe que está configurada no Supabase
+const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
 
 const confirmRegistrationSchema = z.object({
-  // Company information (non-editable)
+  // Company information (editable fields)
+  razaoSocial: z.string().min(2, "Razão social deve ter pelo menos 2 caracteres"),
+  nomeFantasia: z.string().min(2, "Nome fantasia deve ter pelo menos 2 caracteres"),
+  email: z.string().email("Email inválido"),
+  phone: z.string().min(10, "Telefone inválido"),
   // Address information
   logradouro: z.string().min(2, "Endereço deve ter pelo menos 2 caracteres"),
   numero: z.string().min(1, "Número é obrigatório"),
@@ -25,6 +34,9 @@ const confirmRegistrationSchema = z.object({
   cidade: z.string().min(2, "Cidade é obrigatória"),
   estado: z.string().min(2, "Estado é obrigatório"),
   cep: z.string().min(8, "CEP inválido").max(9, "CEP inválido"),
+  // Administrator information
+  adminName: z.string().min(2, "Nome do administrador deve ter pelo menos 2 caracteres"),
+  adminEmail: z.string().email("Email do administrador inválido"),
   // User credentials
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string().min(6, "A confirmação de senha deve ter pelo menos 6 caracteres"),
@@ -46,6 +58,25 @@ interface ConfirmRegistrationFormProps {
   onShowPayment?: () => void;
 }
 
+const StripePaymentSection = () => {
+  const options = {
+    mode: 'payment' as const,
+    currency: 'brl',
+    amount: 9990, // R$ 99,90 (em centavos)
+  };
+
+  return (
+    <Elements stripe={stripePromise} options={options}>
+      <div className="space-y-4">
+        <PaymentElement />
+        <p className="text-sm text-gray-600">
+          Os dados do seu cartão são processados de forma segura pelo Stripe.
+        </p>
+      </div>
+    </Elements>
+  );
+};
+
 export const ConfirmRegistrationForm = ({ 
   organization, 
   onSubmit,
@@ -58,6 +89,11 @@ export const ConfirmRegistrationForm = ({
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
     defaultValues: {
+      // Company information
+      razaoSocial: organization?.name || "",
+      nomeFantasia: organization?.nomeFantasia || "",
+      email: organization?.email || "",
+      phone: organization?.phone || "",
       // Pre-fill with organization address if available
       logradouro: organization?.address?.logradouro || "",
       numero: organization?.address?.numero || "",
@@ -66,6 +102,9 @@ export const ConfirmRegistrationForm = ({
       cidade: organization?.address?.cidade || "",
       estado: organization?.address?.estado || "",
       cep: organization?.address?.cep || "",
+      // Admin information
+      adminName: organization?.adminName || "",
+      adminEmail: organization?.adminEmail || "",
       // User credentials
       password: "",
       confirmPassword: "",
@@ -84,11 +123,11 @@ export const ConfirmRegistrationForm = ({
       // Registrar o usuário na auth do Supabase
       console.log("Criando conta de usuário na auth do Supabase...");
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: organization.adminEmail,
+        email: data.adminEmail, // Use the potentially updated admin email
         password: data.password,
         options: {
           data: {
-            name: organization.adminName,
+            name: data.adminName, // Use the potentially updated admin name
             organization_id: organization.id
           }
         }
@@ -122,29 +161,69 @@ export const ConfirmRegistrationForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-        {/* Company Information Card (Non-editable) */}
+        {/* Company Information Card */}
         <Card className="border-[#E5DEFF]">
           <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
             <CardTitle className="text-[#6E59A5] text-lg">Dados da Empresa</CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm text-gray-500">Razão Social</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.name}</div>
-              </div>
-              <div>
-                <Label className="text-sm text-gray-500">Nome Fantasia</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.nomeFantasia}</div>
-              </div>
+              <FormField
+                control={form.control}
+                name="razaoSocial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Razão Social</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="nomeFantasia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome Fantasia</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div>
                 <Label className="text-sm text-gray-500">CNPJ</Label>
                 <div className="p-2 rounded bg-gray-50 border">{organization?.cnpj}</div>
               </div>
-              <div>
-                <Label className="text-sm text-gray-500">Email da Empresa</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.email}</div>
-              </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email da Empresa</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Telefone da Empresa</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div>
                 <Label className="text-sm text-gray-500">Plano</Label>
                 <div className="p-2 rounded bg-gray-50 border">{organization?.planName}</div>
@@ -160,14 +239,32 @@ export const ConfirmRegistrationForm = ({
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm text-gray-500">Nome do Administrador</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.adminName}</div>
-              </div>
-              <div>
-                <Label className="text-sm text-gray-500">Email do Administrador</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.adminEmail}</div>
-              </div>
+              <FormField
+                control={form.control}
+                name="adminName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Administrador</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="adminEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email do Administrador</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </CardContent>
         </Card>
@@ -324,17 +421,13 @@ export const ConfirmRegistrationForm = ({
           </CardContent>
         </Card>
 
-        {/* Payment Information (UI for Stripe will be handled in a dialog) */}
+        {/* Payment Information with Stripe Elements */}
         <Card className="border-[#E5DEFF]">
           <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
             <CardTitle className="text-[#6E59A5] text-lg">Pagamento</CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-4">
-            <div className="p-3 rounded-md bg-[#F8F6FF] border border-[#E5DEFF]">
-              <p className="text-sm text-gray-600">
-                Após clicar em "Concluir Cadastro", você será direcionado para inserir os dados do seu cartão de crédito para pagamento do valor pro-rata do plano selecionado.
-              </p>
-            </div>
+            <StripePaymentSection />
           </CardContent>
         </Card>
 
