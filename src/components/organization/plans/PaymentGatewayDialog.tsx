@@ -81,6 +81,13 @@ const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
           console.error("PaymentElement load error:", event);
           setError(event.error?.message || "Erro ao carregar formulário de pagamento");
         }}
+        options={{
+          paymentMethodOrder: ['card'],
+          wallets: {
+            googlePay: 'never',
+            applePay: 'never'
+          }
+        }}
       />
       <Button disabled={!stripe || isLoading} className="w-full">
         {isLoading ? (
@@ -139,6 +146,11 @@ export function PaymentGatewayDialog({
     appearance: {
       theme: 'stripe' as const,
     },
+    payment_method_types: ['card'],
+    payment_method_options: {
+      googlePay: { enabled: false },
+      applePay: { enabled: false }
+    }
   };
 
   const handleSuccess = () => {

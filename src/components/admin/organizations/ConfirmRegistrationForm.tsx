@@ -101,6 +101,11 @@ const StripePaymentSection = () => {
         },
       },
     },
+    payment_method_types: ['card'],
+    payment_method_options: {
+      googlePay: { enabled: false },
+      applePay: { enabled: false }
+    }
   };
 
   if (!stripeStatus.valid) {
@@ -197,6 +202,13 @@ const PaymentElementContainer = ({
           onLoadError={(event) => {
             console.error("PaymentElement load error:", event);
             onError(event.error?.message || "Erro ao carregar formulário de pagamento");
+          }}
+          options={{
+            paymentMethodOrder: ['card'],
+            wallets: {
+              googlePay: 'never',
+              applePay: 'never'
+            }
           }}
         />
         <p className="text-sm text-gray-600">
