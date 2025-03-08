@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, LockIcon } from "lucide-react";
 import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -194,9 +194,17 @@ export const ConfirmRegistrationForm = ({
                   </FormItem>
                 )}
               />
-              <div>
-                <Label className="text-sm text-gray-500">CNPJ</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.cnpj}</div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">CNPJ</Label>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <LockIcon size={14} />
+                    <span className="text-xs">Não editável</span>
+                  </div>
+                </div>
+                <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
+                  {organization?.cnpj}
+                </div>
               </div>
               <FormField
                 control={form.control}
@@ -224,9 +232,17 @@ export const ConfirmRegistrationForm = ({
                   </FormItem>
                 )}
               />
-              <div>
-                <Label className="text-sm text-gray-500">Plano</Label>
-                <div className="p-2 rounded bg-gray-50 border">{organization?.planName}</div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Plano</Label>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <LockIcon size={14} />
+                    <span className="text-xs">Não editável</span>
+                  </div>
+                </div>
+                <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
+                  {organization?.planName}
+                </div>
               </div>
             </div>
           </CardContent>
