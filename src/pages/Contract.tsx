@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -83,7 +84,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       console.log("Organization data retrieved:", orgData);
       
       // Extrair o nome do plano
-      if (orgData.plans && orgData.plans.length > 0 && orgData.plans[0].name) {
+      if (orgData.plans && Array.isArray(orgData.plans) && orgData.plans.length > 0) {
         setPlanName(orgData.plans[0].name);
       } else {
         // Fallback: Formatar nome do plano a partir do ID
