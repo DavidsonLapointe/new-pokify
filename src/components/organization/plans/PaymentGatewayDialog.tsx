@@ -11,7 +11,12 @@ import { CreditCard, Loader2, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
+import { 
+  stripePromise, 
+  validateStripeConfig,
+  getInitialStripeStatus,
+  type StripeConfigStatus
+} from "@/utils/stripeUtils";
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -99,7 +104,7 @@ export function PaymentGatewayDialog({
   onOpenChange,
   package: selectedPackage,
 }: PaymentGatewayDialogProps) {
-  const [stripeStatus, setStripeStatus] = useState<{ valid: boolean; message: string }>({ valid: false, message: "Verificando configuração..." });
+  const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {

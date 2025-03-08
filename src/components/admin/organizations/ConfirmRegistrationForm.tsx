@@ -14,10 +14,13 @@ import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 
-// Removendo a inicialização direta do Stripe e usando a utilidade
-import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
+import { 
+  stripePromise, 
+  validateStripeConfig, 
+  getInitialStripeStatus,
+  type StripeConfigStatus 
+} from "@/utils/stripeUtils";
 
 const confirmRegistrationSchema = z.object({
   // Company information (editable fields)
@@ -61,11 +64,25 @@ interface ConfirmRegistrationFormProps {
 const StripePaymentSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
+  const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
   
   useEffect(() => {
     console.log("Inicializando seção de pagamento do Stripe");
-    setStripeStatus(validateStripeConfig());
+    
+    const checkStripeConfig = async () => {
+      try {
+        const status = await validateStripeConfig();
+        setStripeStatus(status);
+      } catch (error) {
+        console.error("Erro ao verificar configuração do Stripe:", error);
+        setStripeStatus({
+          valid: false,
+          message: "Erro ao verificar configuração do Stripe"
+        });
+      }
+    };
+    
+    checkStripeConfig();
   }, []);
   
   const options = {
@@ -96,8 +113,7 @@ const StripePaymentSection = () => {
             <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
             <p className="text-xs mt-2 text-red-700">
               Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
-              VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
-              nas variáveis de ambiente do seu servidor.
+              STRIPE_PUBLIC_KEY está configurada corretamente nas variáveis de ambiente do Supabase.
             </p>
           </div>
         </div>

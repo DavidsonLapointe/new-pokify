@@ -85,8 +85,23 @@ export const initializeStripe = async () => {
 // Carregando o Stripe uma única vez para reuso
 export const stripePromise = initializeStripe();
 
-// Verificar e retornar status da configuração do Stripe
-export const validateStripeConfig = async (): Promise<{ valid: boolean; message: string }> => {
+// Interface para o status da configuração do Stripe
+export interface StripeConfigStatus {
+  valid: boolean;
+  message: string;
+}
+
+// Verificar e retornar status da configuração do Stripe com valor inicial
+// Retorna um objeto com status inicial e uma função para atualizar o status
+export const getInitialStripeStatus = (): StripeConfigStatus => {
+  return { 
+    valid: false, 
+    message: "Verificando configuração do Stripe..." 
+  };
+};
+
+// Função assíncrona para verificar a configuração do Stripe
+export const validateStripeConfig = async (): Promise<StripeConfigStatus> => {
   const stripeKey = await getStripePublicKey();
   
   if (!stripeKey) {

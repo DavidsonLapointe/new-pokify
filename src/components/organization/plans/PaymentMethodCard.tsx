@@ -13,7 +13,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getPaymentMethod, updatePaymentMethod } from "@/services/subscriptionService";
-import { stripePromise, validateStripeConfig } from "@/utils/stripeUtils";
+import { 
+  stripePromise, 
+  validateStripeConfig, 
+  getInitialStripeStatus, 
+  type StripeConfigStatus 
+} from "@/utils/stripeUtils";
 
 interface PaymentMethodCardProps {
   organizationId: string;
@@ -114,7 +119,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [currentPaymentMethod, setCurrentPaymentMethod] = useState<PaymentMethodData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
+  const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
 
   const fetchPaymentMethod = async () => {
     setIsLoading(true);
@@ -141,7 +146,14 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
 
   useEffect(() => {
     fetchPaymentMethod();
-    setStripeStatus(validateStripeConfig());
+    
+    // Verificar configuração do Stripe
+    const checkStripeConfig = async () => {
+      const status = await validateStripeConfig();
+      setStripeStatus(status);
+    };
+    
+    checkStripeConfig();
   }, [organizationId]);
 
   const options = {
@@ -179,8 +191,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
                 <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
                 <p className="text-xs mt-2 text-red-700">
                   Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
-                  VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
-                  nas variáveis de ambiente do seu servidor.
+                  STRIPE_PUBLIC_KEY está configurada corretamente nas variáveis de ambiente do Supabase.
                 </p>
               </div>
             </div>
@@ -235,8 +246,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
                     <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
                     <p className="text-xs mt-2 text-red-700">
                       Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
-                      VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
-                      nas variáveis de ambiente do seu servidor.
+                      STRIPE_PUBLIC_KEY está configurada corretamente nas variáveis de ambiente do Supabase.
                     </p>
                   </div>
                 </div>
