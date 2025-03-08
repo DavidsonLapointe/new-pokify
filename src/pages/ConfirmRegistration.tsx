@@ -10,6 +10,7 @@ import { SupportForm } from "@/components/admin/organizations/SupportForm";
 import { TermsDialog, PrivacyPolicyDialog, SupportFormDialog } from "@/components/admin/organizations/LegalDocumentsDialogs";
 import { RegistrationHeader } from "@/components/admin/organizations/RegistrationHeader";
 import { formatOrganizationData } from "@/utils/organizationUtils";
+import { PaymentGatewayDialog } from "@/components/organization/plans/PaymentGatewayDialog";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -19,6 +20,7 @@ export default function ConfirmRegistration() {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showSupportForm, setShowSupportForm] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -95,7 +97,15 @@ export default function ConfirmRegistration() {
           .update({ 
             registration_status: 'completed',
             status: data.acceptTerms ? 'active' : 'pending',
-            pending_reason: pendingReason
+            pending_reason: pendingReason,
+            // Update address fields
+            logradouro: data.logradouro,
+            numero: data.numero,
+            complemento: data.complemento || '',
+            bairro: data.bairro,
+            cidade: data.cidade,
+            estado: data.estado,
+            cep: data.cep
           })
           .eq('id', orgId);
           
@@ -153,7 +163,7 @@ export default function ConfirmRegistration() {
           <CardHeader className="border-b border-[#E5DEFF] bg-[#F1F0FB] rounded-t-lg">
             <CardTitle className="text-[#6E59A5]">Confirmar Registro</CardTitle>
             <CardDescription>
-              Preencha os dados abaixo para concluir seu cadastro
+              Complete seus dados cadastrais para concluir seu acesso
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
@@ -161,7 +171,8 @@ export default function ConfirmRegistration() {
               organization={activeOrganization} 
               onSubmit={handleSubmit}
               onShowTerms={() => setShowTerms(true)}
-              onShowPrivacyPolicy={() => setShowPrivacyPolicy(true)} 
+              onShowPrivacyPolicy={() => setShowPrivacyPolicy(true)}
+              onShowPayment={() => setShowPayment(true)}
             />
           </CardContent>
         </Card>
@@ -192,6 +203,16 @@ export default function ConfirmRegistration() {
       >
         <SupportForm onClose={() => setShowSupportForm(false)} />
       </SupportFormDialog>
+      
+      <PaymentGatewayDialog
+        open={showPayment}
+        onOpenChange={setShowPayment}
+        package={{
+          name: "Valor Pro Rata",
+          credits: 0,
+          price: 99.90
+        }}
+      />
     </div>
   );
 }
