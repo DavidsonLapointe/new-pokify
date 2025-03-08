@@ -99,14 +99,31 @@ export function PaymentGatewayDialog({
   onOpenChange,
   package: selectedPackage,
 }: PaymentGatewayDialogProps) {
-  const [stripeStatus, setStripeStatus] = useState(validateStripeConfig());
+  const [stripeStatus, setStripeStatus] = useState<{ valid: boolean; message: string }>({ valid: false, message: "Verificando configuração..." });
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     // Verificar a configuração do Stripe sempre que o diálogo abrir
     if (open) {
-      setStripeStatus(validateStripeConfig());
+      checkStripeConfig();
     }
   }, [open]);
+
+  const checkStripeConfig = async () => {
+    setLoading(true);
+    try {
+      const status = await validateStripeConfig();
+      setStripeStatus(status);
+    } catch (error) {
+      console.error("Erro ao verificar configuração do Stripe:", error);
+      setStripeStatus({
+        valid: false,
+        message: "Erro ao verificar configuração do Stripe"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!selectedPackage) return null;
 
@@ -136,7 +153,11 @@ export function PaymentGatewayDialog({
           </DialogDescription>
         </DialogHeader>
         
-        {!stripeStatus.valid ? (
+        {loading ? (
+          <div className="flex justify-center p-6">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : !stripeStatus.valid ? (
           <div className="p-4 bg-red-50 border border-red-200 rounded-md">
             <div className="flex items-start">
               <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
@@ -144,9 +165,8 @@ export function PaymentGatewayDialog({
                 <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
                 <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
                 <p className="text-xs mt-2 text-red-700">
-                  Para que o Stripe funcione corretamente, certifique-se de que a variável de ambiente 
-                  VITE_STRIPE_PUBLIC_KEY está configurada corretamente no seu arquivo .env ou diretamente 
-                  nas variáveis de ambiente do seu servidor.
+                  Para que o Stripe funcione corretamente, certifique-se de que a chave pública do Stripe 
+                  está configurada corretamente nas variáveis de ambiente do Supabase.
                 </p>
               </div>
             </div>

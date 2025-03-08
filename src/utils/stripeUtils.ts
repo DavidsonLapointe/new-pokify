@@ -4,24 +4,61 @@
  */
 
 import { loadStripe } from "@stripe/stripe-js";
+import { supabase } from "@/integrations/supabase/client";
 
 // Função para obter a chave pública do Stripe com validação
-export const getStripePublicKey = (): string => {
+export const getStripePublicKey = async (): Promise<string> => {
+  try {
+    // Primeiro, tentar buscar a chave do Supabase Edge Function
+    const { data, error } = await supabase.functions.invoke('get-stripe-key', {
+      body: { type: 'public' }
+    });
+    
+    if (error) {
+      console.error("Erro ao buscar chave do Stripe:", error);
+      // Fallback para variável de ambiente local
+      return getLocalStripeKey();
+    }
+    
+    if (data && data.key) {
+      console.log("Chave pública do Stripe obtida do Supabase");
+      return validateStripeKey(data.key);
+    } else {
+      console.log("Nenhuma chave encontrada no Supabase, usando variável de ambiente local");
+      return getLocalStripeKey();
+    }
+  } catch (error) {
+    console.error("Exceção ao buscar chave do Stripe:", error);
+    // Fallback para variável de ambiente local
+    return getLocalStripeKey();
+  }
+};
+
+// Função para obter a chave local da variável de ambiente
+const getLocalStripeKey = (): string => {
   const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-  
+  return validateStripeKey(stripeKey);
+};
+
+// Validar formato da chave
+const validateStripeKey = (stripeKey: string | undefined): string => {
   if (!stripeKey) {
     console.error(
-      "ERRO: Variável de ambiente VITE_STRIPE_PUBLIC_KEY não encontrada.",
-      "Certifique-se de que a variável está definida no seu arquivo .env ou nas variáveis de ambiente."
+      "ERRO: Chave pública do Stripe não encontrada.",
+      "Certifique-se de que a chave está definida no Supabase ou como variável de ambiente."
     );
     return "";
   }
   
-  // Validação básica do formato da chave (deve começar com pk_)
-  if (!stripeKey.startsWith('pk_')) {
+  // Verificar se é uma chave de teste (recomendado para desenvolvimento)
+  if (stripeKey.startsWith('pk_test_')) {
+    console.log("Usando chave de TESTE do Stripe");
+  } else if (stripeKey.startsWith('pk_live_')) {
+    console.warn("ATENÇÃO: Usando chave de PRODUÇÃO do Stripe");
+  } else if (!stripeKey.startsWith('pk_')) {
     console.error(
-      "ERRO: Formato inválido para VITE_STRIPE_PUBLIC_KEY.",
-      "A chave pública do Stripe deve começar com 'pk_'."
+      "ERRO: Formato inválido para chave pública do Stripe.",
+      "A chave pública do Stripe deve começar com 'pk_test_' ou 'pk_live_'."
     );
     return "";
   }
@@ -30,8 +67,8 @@ export const getStripePublicKey = (): string => {
 };
 
 // Função para carregar o Stripe com tratamento de erro
-export const initializeStripe = () => {
-  const stripeKey = getStripePublicKey();
+export const initializeStripe = async () => {
+  const stripeKey = await getStripePublicKey();
   
   if (!stripeKey) {
     return null;
@@ -49,13 +86,13 @@ export const initializeStripe = () => {
 export const stripePromise = initializeStripe();
 
 // Verificar e retornar status da configuração do Stripe
-export const validateStripeConfig = (): { valid: boolean; message: string } => {
-  const stripeKey = getStripePublicKey();
+export const validateStripeConfig = async (): Promise<{ valid: boolean; message: string }> => {
+  const stripeKey = await getStripePublicKey();
   
   if (!stripeKey) {
     return { 
       valid: false, 
-      message: "Chave do Stripe não configurada. Configure a variável de ambiente VITE_STRIPE_PUBLIC_KEY." 
+      message: "Chave do Stripe não configurada. Configure a chave no Supabase ou como variável de ambiente." 
     };
   }
   
@@ -66,8 +103,10 @@ export const validateStripeConfig = (): { valid: boolean; message: string } => {
     };
   }
   
+  const isTestKey = stripeKey.startsWith('pk_test_');
+  
   return { 
     valid: true, 
-    message: `Configuração do Stripe válida. Usando chave: ${stripeKey.substring(0, 8)}...` 
+    message: `Configuração do Stripe válida. Usando chave ${isTestKey ? 'de teste' : 'de produção'}: ${stripeKey.substring(0, 8)}...` 
   };
 };
