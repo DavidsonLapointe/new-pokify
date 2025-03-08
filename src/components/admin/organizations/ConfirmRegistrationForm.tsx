@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -8,12 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, LockIcon, AlertCircle } from "lucide-react";
+import { Loader2, LockIcon, AlertCircle, QrCode, FileText, CreditCard } from "lucide-react";
 import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { 
   stripePromise, 
@@ -61,10 +63,11 @@ interface ConfirmRegistrationFormProps {
 }
 
 // Component that renders the Stripe Payment Element
-const StripePaymentSection = () => {
+const StripePaymentSection = ({ onPaymentMethodChange }: { onPaymentMethodChange: (method: 'card' | 'pix' | 'boleto') => void }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix' | 'boleto'>('card');
   
   useEffect(() => {
     console.log("Inicializando seção de pagamento do Stripe");
@@ -104,6 +107,12 @@ const StripePaymentSection = () => {
     payment_method_types: ['card'] as string[]
   };
 
+  const handlePaymentMethodChange = (value: string) => {
+    const method = value as 'card' | 'pix' | 'boleto';
+    setPaymentMethod(method);
+    onPaymentMethodChange(method);
+  };
+
   if (!stripeStatus.valid) {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -123,27 +132,104 @@ const StripePaymentSection = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="space-y-6">
+      <RadioGroup 
+        value={paymentMethod} 
+        onValueChange={handlePaymentMethodChange}
+        className="grid grid-cols-3 gap-4 mb-4"
+      >
+        <div>
+          <RadioGroupItem 
+            value="card" 
+            id="card" 
+            className="peer sr-only" 
+          />
+          <Label
+            htmlFor="card"
+            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+          >
+            <CreditCard className="mb-2 h-6 w-6" />
+            <span className="text-sm font-medium">Cartão</span>
+          </Label>
+        </div>
+        
+        <div>
+          <RadioGroupItem 
+            value="pix" 
+            id="pix" 
+            className="peer sr-only" 
+          />
+          <Label
+            htmlFor="pix"
+            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+          >
+            <QrCode className="mb-2 h-6 w-6" />
+            <span className="text-sm font-medium">PIX</span>
+          </Label>
+        </div>
+        
+        <div>
+          <RadioGroupItem 
+            value="boleto" 
+            id="boleto" 
+            className="peer sr-only" 
+          />
+          <Label
+            htmlFor="boleto"
+            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+          >
+            <FileText className="mb-2 h-6 w-6" />
+            <span className="text-sm font-medium">Boleto</span>
+          </Label>
+        </div>
+      </RadioGroup>
+
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
           <p><strong>Erro ao carregar Stripe:</strong> {error}</p>
         </div>
       )}
       
-      <Elements stripe={stripePromise} options={options}>
-        <PaymentElementContainer 
-          onLoaded={() => {
-            console.log("Payment element loaded successfully!");
-            setLoading(false);
-          }} 
-          onError={(err) => {
-            console.error("Stripe error:", err);
-            setError(err);
-            setLoading(false);
-          }}
-          isLoading={loading} 
-        />
-      </Elements>
+      {paymentMethod === 'card' && (
+        <Elements stripe={stripePromise} options={options}>
+          <PaymentElementContainer 
+            onLoaded={() => {
+              console.log("Payment element loaded successfully!");
+              setLoading(false);
+            }} 
+            onError={(err) => {
+              console.error("Stripe error:", err);
+              setError(err);
+              setLoading(false);
+            }}
+            isLoading={loading} 
+          />
+        </Elements>
+      )}
+
+      {paymentMethod === 'pix' && (
+        <div className="p-6 border rounded-md bg-gray-50 text-center">
+          <QrCode className="h-12 w-12 mx-auto mb-3 text-primary" />
+          <p className="text-sm mb-3">
+            Você poderá pagar com PIX após completar o cadastro.
+          </p>
+          <p className="text-xs text-gray-500">
+            Um QR code será gerado para você na próxima etapa.
+          </p>
+        </div>
+      )}
+
+      {paymentMethod === 'boleto' && (
+        <div className="p-6 border rounded-md bg-gray-50 text-center">
+          <FileText className="h-12 w-12 mx-auto mb-3 text-primary" />
+          <p className="text-sm mb-3">
+            Você poderá pagar com Boleto após completar o cadastro.
+          </p>
+          <p className="text-xs text-gray-500">
+            Um boleto será gerado para você na próxima etapa.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -223,6 +309,8 @@ export const ConfirmRegistrationForm = ({
   onShowPayment
 }: ConfirmRegistrationFormProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const [planName, setPlanName] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix' | 'boleto'>('card');
   
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -250,6 +338,33 @@ export const ConfirmRegistrationForm = ({
     },
   });
 
+  // Fetch plan name when component loads
+  useEffect(() => {
+    const fetchPlanName = async () => {
+      if (organization?.plan) {
+        try {
+          const { data, error } = await supabase
+            .from('plans')
+            .select('name')
+            .eq('id', organization.plan)
+            .single();
+            
+          if (error) {
+            console.error("Error fetching plan name:", error);
+            setPlanName("Plano não identificado");
+          } else if (data) {
+            setPlanName(data.name);
+          }
+        } catch (err) {
+          console.error("Failed to fetch plan name:", err);
+          setPlanName("Plano não identificado");
+        }
+      }
+    };
+    
+    fetchPlanName();
+  }, [organization]);
+
   const handleFormSubmit = async (data: ConfirmRegistrationValues) => {
     try {
       setSubmitting(true);
@@ -261,12 +376,13 @@ export const ConfirmRegistrationForm = ({
       // Registrar o usuário na auth do Supabase
       console.log("Criando conta de usuário na auth do Supabase...");
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: data.adminEmail, // Use the potentially updated admin email
+        email: data.adminEmail,
         password: data.password,
         options: {
           data: {
-            name: data.adminName, // Use the potentially updated admin name
-            organization_id: organization.id
+            name: data.adminName,
+            organization_id: organization.id,
+            payment_method: paymentMethod
           }
         }
       });
@@ -279,6 +395,7 @@ export const ConfirmRegistrationForm = ({
       }
       
       console.log("Usuário criado com sucesso:", authData.user?.id);
+      console.log("Método de pagamento selecionado:", paymentMethod);
       
       // Proceed to payment if a payment handler is provided
       if (onShowPayment) {
@@ -286,7 +403,10 @@ export const ConfirmRegistrationForm = ({
       }
       
       // Prosseguir com o restante do fluxo
-      await onSubmit(data);
+      await onSubmit({
+        ...data,
+        paymentMethod
+      });
       
     } catch (error: any) {
       console.error("Erro ao processar formulário:", error);
@@ -379,7 +499,7 @@ export const ConfirmRegistrationForm = ({
                   </div>
                 </div>
                 <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
-                  {organization?.planName}
+                  {planName || "Carregando..."}
                 </div>
               </div>
             </div>
@@ -578,10 +698,10 @@ export const ConfirmRegistrationForm = ({
         {/* Payment Information with Stripe Elements */}
         <Card className="border-[#E5DEFF]">
           <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Dados do Cartão de Crédito</CardTitle>
+            <CardTitle className="text-[#6E59A5] text-lg">Formas de Pagamento</CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-4">
-            <StripePaymentSection />
+            <StripePaymentSection onPaymentMethodChange={setPaymentMethod} />
             
             {/* Botão para carregar cartões de testes do Stripe */}
             <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">

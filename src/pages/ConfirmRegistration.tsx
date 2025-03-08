@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization, OrganizationPendingReason } from "@/types";
@@ -23,6 +22,7 @@ export default function ConfirmRegistration() {
   const [showPayment, setShowPayment] = useState(false);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'pix' | 'boleto'>('card');
   
   useEffect(() => {
     const fetchOrganization = async () => {
@@ -84,6 +84,7 @@ export default function ConfirmRegistration() {
   const handleSubmit = async (data: any) => {
     try {
       console.log("Dados do formulário:", data);
+      setSelectedPaymentMethod(data.paymentMethod || 'card');
       
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
@@ -105,7 +106,8 @@ export default function ConfirmRegistration() {
             bairro: data.bairro,
             cidade: data.cidade,
             estado: data.estado,
-            cep: data.cep
+            cep: data.cep,
+            payment_method: data.paymentMethod || 'card'
           })
           .eq('id', orgId);
           
