@@ -58,6 +58,7 @@ interface ConfirmRegistrationFormProps {
   onShowPayment?: () => void;
 }
 
+// Component that renders the Stripe Payment Element
 const StripePaymentSection = () => {
   const options = {
     mode: 'payment' as const,
@@ -67,13 +68,23 @@ const StripePaymentSection = () => {
 
   return (
     <Elements stripe={stripePromise} options={options}>
-      <div className="space-y-4">
-        <PaymentElement />
-        <p className="text-sm text-gray-600">
-          Os dados do seu cartão são processados de forma segura pelo Stripe.
-        </p>
-      </div>
+      <PaymentElementContainer />
     </Elements>
+  );
+};
+
+// Separate component to use the Stripe hooks inside Elements provider
+const PaymentElementContainer = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+
+  return (
+    <div className="space-y-4">
+      <PaymentElement />
+      <p className="text-sm text-gray-600">
+        Os dados do seu cartão são processados de forma segura pelo Stripe.
+      </p>
+    </div>
   );
 };
 
@@ -89,7 +100,7 @@ export const ConfirmRegistrationForm = ({
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
     defaultValues: {
-      // Company information
+      // Company information - making sure to use organization data if available
       razaoSocial: organization?.name || "",
       nomeFantasia: organization?.nomeFantasia || "",
       email: organization?.email || "",
@@ -173,7 +184,7 @@ export const ConfirmRegistrationForm = ({
                 name="razaoSocial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Razão Social</FormLabel>
+                    <FormLabel className="text-left w-full">Razão Social</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -186,7 +197,7 @@ export const ConfirmRegistrationForm = ({
                 name="nomeFantasia"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome Fantasia</FormLabel>
+                    <FormLabel className="text-left w-full">Nome Fantasia</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -196,7 +207,7 @@ export const ConfirmRegistrationForm = ({
               />
               <div className="relative">
                 <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm">CNPJ</Label>
+                  <Label className="text-sm text-left w-full">CNPJ</Label>
                   <div className="flex items-center gap-1 text-gray-500">
                     <LockIcon size={14} />
                     <span className="text-xs">Não editável</span>
@@ -211,7 +222,7 @@ export const ConfirmRegistrationForm = ({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email da Empresa</FormLabel>
+                    <FormLabel className="text-left w-full">Email da Empresa</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -224,7 +235,7 @@ export const ConfirmRegistrationForm = ({
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone da Empresa</FormLabel>
+                    <FormLabel className="text-left w-full">Telefone da Empresa</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -234,7 +245,7 @@ export const ConfirmRegistrationForm = ({
               />
               <div className="relative">
                 <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm">Plano</Label>
+                  <Label className="text-sm text-left w-full">Plano</Label>
                   <div className="flex items-center gap-1 text-gray-500">
                     <LockIcon size={14} />
                     <span className="text-xs">Não editável</span>
@@ -260,7 +271,7 @@ export const ConfirmRegistrationForm = ({
                 name="adminName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome do Administrador</FormLabel>
+                    <FormLabel className="text-left w-full">Nome do Administrador</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -273,7 +284,7 @@ export const ConfirmRegistrationForm = ({
                 name="adminEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email do Administrador</FormLabel>
+                    <FormLabel className="text-left w-full">Email do Administrador</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -297,7 +308,7 @@ export const ConfirmRegistrationForm = ({
                 name="cep"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CEP</FormLabel>
+                    <FormLabel className="text-left w-full">CEP</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -310,7 +321,7 @@ export const ConfirmRegistrationForm = ({
                 name="logradouro"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Logradouro</FormLabel>
+                    <FormLabel className="text-left w-full">Logradouro</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -323,7 +334,7 @@ export const ConfirmRegistrationForm = ({
                 name="numero"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Número</FormLabel>
+                    <FormLabel className="text-left w-full">Número</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -336,7 +347,7 @@ export const ConfirmRegistrationForm = ({
                 name="complemento"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Complemento</FormLabel>
+                    <FormLabel className="text-left w-full">Complemento</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -349,7 +360,7 @@ export const ConfirmRegistrationForm = ({
                 name="bairro"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bairro</FormLabel>
+                    <FormLabel className="text-left w-full">Bairro</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -362,7 +373,7 @@ export const ConfirmRegistrationForm = ({
                 name="cidade"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cidade</FormLabel>
+                    <FormLabel className="text-left w-full">Cidade</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -375,7 +386,7 @@ export const ConfirmRegistrationForm = ({
                 name="estado"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel className="text-left w-full">Estado</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -399,7 +410,7 @@ export const ConfirmRegistrationForm = ({
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                    <FormLabel className="text-left w-full">Senha</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="Senha" {...field} />
                     </FormControl>
@@ -412,7 +423,7 @@ export const ConfirmRegistrationForm = ({
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirmar Senha</FormLabel>
+                    <FormLabel className="text-left w-full">Confirmar Senha</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="Confirme sua senha" {...field} />
                     </FormControl>
@@ -427,7 +438,7 @@ export const ConfirmRegistrationForm = ({
                 id="terms"
                 {...form.register("acceptTerms")}
               />
-              <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+              <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed text-left">
                 Eu li e concordo com os <TermsLink onClick={onShowTerms} /> e a <PrivacyPolicyLink onClick={onShowPrivacyPolicy} />.
               </Label>
             </div>
@@ -440,7 +451,7 @@ export const ConfirmRegistrationForm = ({
         {/* Payment Information with Stripe Elements */}
         <Card className="border-[#E5DEFF]">
           <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Pagamento</CardTitle>
+            <CardTitle className="text-[#6E59A5] text-lg">Dados do Cartão de Crédito</CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             <StripePaymentSection />
