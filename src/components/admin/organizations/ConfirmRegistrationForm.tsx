@@ -142,6 +142,10 @@ export const ConfirmRegistrationForm = ({
                 <div className="p-2 rounded bg-gray-50 border">{organization?.cnpj}</div>
               </div>
               <div>
+                <Label className="text-sm text-gray-500">Email da Empresa</Label>
+                <div className="p-2 rounded bg-gray-50 border">{organization?.email}</div>
+              </div>
+              <div>
                 <Label className="text-sm text-gray-500">Plano</Label>
                 <div className="p-2 rounded bg-gray-50 border">{organization?.planName}</div>
               </div>
