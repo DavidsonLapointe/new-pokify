@@ -26,7 +26,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [notFoundReason, setNotFoundReason] = useState<string>("");
   const [rawResponse, setRawResponse] = useState<any>(null);
   const [stepCompleted, setStepCompleted] = useState(false);
-  const [planName, setPlanName] = useState<string>("");
   
   // Track completion status of all steps
   const [contractSigned, setContractSigned] = useState(false);
@@ -54,13 +53,9 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         return;
       }
       
-      // Buscar organização junto com detalhes do plano
       const { data, error, status } = await supabase
         .from('organizations')
-        .select(`
-          *,
-          plans(name)
-        `)
+        .select('*')
         .eq('id', id);
       
       setRawResponse({ data, error, status });
@@ -82,14 +77,6 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       
       const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
-      
-      // Extrair o nome do plano
-      if (orgData.plans && Array.isArray(orgData.plans) && orgData.plans.length > 0) {
-        setPlanName(orgData.plans[0].name);
-      } else {
-        // Fallback: Formatar nome do plano a partir do ID
-        setPlanName(orgData.plan.charAt(0).toUpperCase() + orgData.plan.slice(1));
-      }
       
       // Check status of each step using the new status columns
       setContractSigned(orgData.contract_status === 'completed');
@@ -296,7 +283,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
                 <p><strong>Razão Social:</strong> {organization.name}</p>
                 <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
                 <p><strong>CNPJ:</strong> {organization.cnpj}</p>
-                <p><strong>Plano:</strong> {planName}</p>
+                <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
               </div>
 
               <div className="p-4 bg-[#F1F0FB] rounded-lg">
@@ -377,7 +364,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
               <p><strong>Razão Social:</strong> {organization.name}</p>
               <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
               <p><strong>CNPJ:</strong> {organization.cnpj}</p>
-              <p><strong>Plano:</strong> {planName}</p>
+              <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
             </div>
 
             <h3 className="text-lg font-semibold">1. Das Partes</h3>
