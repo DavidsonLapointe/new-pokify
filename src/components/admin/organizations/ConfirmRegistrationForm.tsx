@@ -80,33 +80,25 @@ const StripePaymentSection = () => {
     },
   };
 
-  // Função para registrar quando o Stripe estiver pronto
-  const handleReady = () => {
-    console.log('Stripe Elements está pronto');
-    setLoading(false);
-  };
-
   return (
-    <Elements stripe={stripePromise} options={options} onReady={handleReady}>
-      <div className="min-h-[200px]">
-        {loading && (
-          <div className="flex items-center justify-center h-40">
-            <Loader2 className="h-8 w-8 animate-spin text-[#6E59A5]" />
-            <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
-          </div>
-        )}
-        <div className={loading ? 'hidden' : 'block'}>
-          <PaymentElementContainer />
-        </div>
-      </div>
+    <Elements stripe={stripePromise} options={options}>
+      <PaymentElementContainer onLoaded={() => setLoading(false)} isLoading={loading} />
     </Elements>
   );
 };
 
 // Separate component to use the Stripe hooks inside Elements provider
-const PaymentElementContainer = () => {
+const PaymentElementContainer = ({ onLoaded, isLoading }: { onLoaded: () => void, isLoading: boolean }) => {
   const stripe = useStripe();
   const elements = useElements();
+  
+  // Efeito para detectar quando o Stripe está pronto
+  useState(() => {
+    if (stripe && elements) {
+      console.log('Stripe Elements está pronto');
+      onLoaded();
+    }
+  });
 
   if (!stripe || !elements) {
     return (
@@ -117,11 +109,19 @@ const PaymentElementContainer = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <PaymentElement className="mb-4" />
-      <p className="text-sm text-gray-600">
-        Os dados do seu cartão são processados de forma segura pelo Stripe.
-      </p>
+    <div className="min-h-[200px]">
+      {isLoading && (
+        <div className="flex items-center justify-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-[#6E59A5]" />
+          <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
+        </div>
+      )}
+      <div className={isLoading ? 'hidden' : 'block space-y-4'}>
+        <PaymentElement className="mb-4" />
+        <p className="text-sm text-gray-600">
+          Os dados do seu cartão são processados de forma segura pelo Stripe.
+        </p>
+      </div>
     </div>
   );
 };
