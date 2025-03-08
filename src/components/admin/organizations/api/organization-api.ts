@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -133,12 +132,10 @@ export const sendOnboardingEmail = async (
   paymentUrl: string,
   proRataAmount: number
 ) => {
-  // Update links to use the proper formats that work with the multi-step flow
+  // URLs diretos para as rotas específicas
   const updatedContractUrl = `${window.location.origin}/contract/${organizationId}`;
   const updatedPaymentUrl = `${window.location.origin}/payment/${organizationId}`;
-  
-  // Fixed: Changed from /organization/setup to /confirm-registration
-  const updatedConfirmationToken = `${window.location.origin}/confirm-registration/${organizationId}`;
+  const updatedConfirmationUrl = `${window.location.origin}/confirm-registration/${organizationId}`;
 
   const { error } = await supabase.functions.invoke('send-organization-emails', {
     body: {
@@ -146,7 +143,7 @@ export const sendOnboardingEmail = async (
       type: 'onboarding',
       data: {
         contractUrl: updatedContractUrl,
-        confirmationToken: updatedConfirmationToken,
+        confirmationToken: updatedConfirmationUrl,
         paymentUrl: updatedPaymentUrl,
         proRataAmount
       }
