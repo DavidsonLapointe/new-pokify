@@ -27,9 +27,13 @@ const confirmRegistrationSchema = z.object({
   cep: z.string().min(8, "CEP inválido").max(9, "CEP inválido"),
   // User credentials
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  confirmPassword: z.string().min(6, "A confirmação de senha deve ter pelo menos 6 caracteres"),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "Você deve aceitar os termos de uso e a política de privacidade",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não conferem",
+  path: ["confirmPassword"],
 });
 
 type ConfirmRegistrationValues = z.infer<typeof confirmRegistrationSchema>;
@@ -50,7 +54,6 @@ export const ConfirmRegistrationForm = ({
   onShowPayment
 }: ConfirmRegistrationFormProps) => {
   const [submitting, setSubmitting] = useState(false);
-  const [step, setStep] = useState(1); // 1: Address, 2: Password, 3: Payment
   
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -64,6 +67,8 @@ export const ConfirmRegistrationForm = ({
       estado: organization?.address?.estado || "",
       cep: organization?.address?.cep || "",
       // User credentials
+      password: "",
+      confirmPassword: "",
       acceptTerms: false,
     },
   });
@@ -114,25 +119,6 @@ export const ConfirmRegistrationForm = ({
     }
   };
 
-  const nextStep = () => {
-    // Validate current step before proceeding
-    if (step === 1) {
-      const addressFields = ['logradouro', 'numero', 'bairro', 'cidade', 'estado', 'cep'];
-      form.trigger(addressFields as any);
-      
-      const hasErrors = addressFields.some(field => form.formState.errors[field as keyof ConfirmRegistrationValues]);
-      if (!hasErrors) {
-        setStep(2);
-      }
-    }
-  };
-
-  const prevStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -163,181 +149,207 @@ export const ConfirmRegistrationForm = ({
           </CardContent>
         </Card>
 
-        {/* Step 1: Address Information */}
-        {step === 1 && (
-          <Card className="border-[#E5DEFF]">
-            <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-              <CardTitle className="text-[#6E59A5] text-lg">Endereço</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="cep"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CEP</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="logradouro"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Logradouro</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="numero"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="complemento"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Complemento</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="bairro"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bairro</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cidade"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cidade</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="estado"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Estado</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        {/* Administrator Information */}
+        <Card className="border-[#E5DEFF]">
+          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+            <CardTitle className="text-[#6E59A5] text-lg">Dados do Administrador</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm text-gray-500">Nome do Administrador</Label>
+                <div className="p-2 rounded bg-gray-50 border">{organization?.adminName}</div>
               </div>
-              <div className="flex justify-end">
-                <Button 
-                  type="button" 
-                  onClick={nextStep}
-                  className="bg-[#9b87f5] hover:bg-[#7E69AB]"
-                >
-                  Próximo
-                </Button>
+              <div>
+                <Label className="text-sm text-gray-500">Email do Administrador</Label>
+                <div className="p-2 rounded bg-gray-50 border">{organization?.adminEmail}</div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Step 2: Password and Terms */}
-        {step === 2 && (
-          <Card className="border-[#E5DEFF]">
-            <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-              <CardTitle className="text-[#6E59A5] text-lg">Credenciais</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 space-y-4">
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Senha" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="terms"
-                    {...form.register("acceptTerms")}
-                  />
-                  <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
-                    Eu li e concordo com os <TermsLink onClick={onShowTerms} /> e a <PrivacyPolicyLink onClick={onShowPrivacyPolicy} />.
-                  </Label>
-                </div>
-                {form.formState.errors.acceptTerms && (
-                  <p className="text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
+        {/* Address Information */}
+        <Card className="border-[#E5DEFF]">
+          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+            <CardTitle className="text-[#6E59A5] text-lg">Endereço</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="cep"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CEP</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
-              
-              <div className="flex justify-between">
-                <Button 
-                  type="button" 
-                  onClick={prevStep}
-                  variant="outline"
-                >
-                  Voltar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="bg-[#9b87f5] hover:bg-[#7E69AB]"
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Aguarde...
-                    </>
-                  ) : (
-                    "Concluir Cadastro"
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              />
+              <FormField
+                control={form.control}
+                name="logradouro"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Logradouro</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="numero"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Número</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="complemento"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complemento</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bairro"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bairro</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cidade"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cidade</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="estado"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estado</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Password and Terms */}
+        <Card className="border-[#E5DEFF]">
+          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+            <CardTitle className="text-[#6E59A5] text-lg">Credenciais</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Senha" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Confirme sua senha" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="terms"
+                {...form.register("acceptTerms")}
+              />
+              <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                Eu li e concordo com os <TermsLink onClick={onShowTerms} /> e a <PrivacyPolicyLink onClick={onShowPrivacyPolicy} />.
+              </Label>
+            </div>
+            {form.formState.errors.acceptTerms && (
+              <p className="text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Payment Information (UI for Stripe will be handled in a dialog) */}
+        <Card className="border-[#E5DEFF]">
+          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+            <CardTitle className="text-[#6E59A5] text-lg">Pagamento</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-4">
+            <div className="p-3 rounded-md bg-[#F8F6FF] border border-[#E5DEFF]">
+              <p className="text-sm text-gray-600">
+                Após clicar em "Concluir Cadastro", você será direcionado para inserir os dados do seu cartão de crédito para pagamento do valor pro-rata do plano selecionado.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="bg-[#9b87f5] hover:bg-[#7E69AB]"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Aguarde...
+              </>
+            ) : (
+              "Concluir Cadastro"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
