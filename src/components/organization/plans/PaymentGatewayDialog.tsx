@@ -146,11 +146,8 @@ export function PaymentGatewayDialog({
     appearance: {
       theme: 'stripe' as const,
     },
-    payment_method_types: ['card'],
-    payment_method_options: {
-      googlePay: { enabled: false },
-      applePay: { enabled: false }
-    }
+    // Correct way to define allowed payment methods
+    payment_method_types: ['card']
   };
 
   const handleSuccess = () => {

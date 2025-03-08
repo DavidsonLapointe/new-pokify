@@ -101,11 +101,7 @@ const StripePaymentSection = () => {
         },
       },
     },
-    payment_method_types: ['card'],
-    payment_method_options: {
-      googlePay: { enabled: false },
-      applePay: { enabled: false }
-    }
+    payment_method_types: ['card']
   };
 
   if (!stripeStatus.valid) {
