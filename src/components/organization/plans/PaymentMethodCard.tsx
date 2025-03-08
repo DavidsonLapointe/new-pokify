@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +69,6 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
         return;
       }
 
-      // Atualizar o método de pagamento na assinatura
       const updated = await updatePaymentMethod(organizationId, result.paymentMethod.id);
       
       if (updated) {
@@ -132,7 +130,6 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
     setIsLoading(true);
     try {
       const paymentMethod = await getPaymentMethod(organizationId);
-      // Only set if we have all required fields
       if (paymentMethod && paymentMethod.brand && paymentMethod.last4 && 
           paymentMethod.expMonth !== undefined && paymentMethod.expYear !== undefined) {
         setCurrentPaymentMethod({
@@ -154,7 +151,6 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
   useEffect(() => {
     fetchPaymentMethod();
     
-    // Verificar configuração do Stripe
     const checkStripeConfig = async () => {
       const status = await validateStripeConfig();
       setStripeStatus(status);
@@ -169,8 +165,7 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
     appearance: {
       theme: 'stripe' as const,
     },
-    // Correct way to define allowed payment methods
-    payment_method_types: ['card']
+    payment_method_types: ['card'] as string[]
   };
 
   const handleSuccess = () => {
@@ -267,3 +262,4 @@ export function PaymentMethodCard({ organizationId, onPaymentMethodUpdated }: Pa
     </Card>
   );
 }
+

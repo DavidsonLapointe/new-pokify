@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -109,7 +108,6 @@ const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
   );
 };
 
-// Componente para exibir detalhes do PIX
 const PixPaymentDetails = ({ 
   qrCodeUrl, 
   expiresAt 
@@ -153,7 +151,6 @@ const PixPaymentDetails = ({
   );
 };
 
-// Componente para exibir detalhes do Boleto
 const BoletoPaymentDetails = ({ 
   boletoUrl, 
   barCode 
@@ -217,10 +214,8 @@ export function PaymentGatewayDialog({
   const [boletoDetails, setBoletoDetails] = useState<{ boletoUrl: string; barCode?: string } | null>(null);
   
   useEffect(() => {
-    // Verificar a configuração do Stripe sempre que o diálogo abrir
     if (open) {
       checkStripeConfig();
-      // Reset payment details when dialog opens
       setPixDetails(null);
       setBoletoDetails(null);
       setPaymentMethod('card');
@@ -252,7 +247,7 @@ export function PaymentGatewayDialog({
     appearance: {
       theme: 'stripe' as const,
     },
-    payment_method_types: ['card'] as const
+    payment_method_types: ['card'] as string[]
   };
 
   const handleSuccess = () => {
@@ -266,8 +261,6 @@ export function PaymentGatewayDialog({
     setIsProcessing(true);
     
     try {
-      // Simulação de chamada à API para criar pagamento alternativo
-      // Na implementação real, seria uma chamada ao Edge Function create-payment
       const response = await fetch(`${window.location.origin}/api/create-payment`, {
         method: 'POST',
         headers: {

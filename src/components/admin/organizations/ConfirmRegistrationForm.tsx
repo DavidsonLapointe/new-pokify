@@ -101,7 +101,7 @@ const StripePaymentSection = () => {
         },
       },
     },
-    payment_method_types: ['card']
+    payment_method_types: ['card'] as string[]
   };
 
   if (!stripeStatus.valid) {
