@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -61,6 +61,13 @@ interface ConfirmRegistrationFormProps {
 // Component that renders the Stripe Payment Element
 const StripePaymentSection = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Log info about Stripe public key
+  useEffect(() => {
+    console.log("Stripe public key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'Using fallback key');
+    console.log("Initializing Stripe with options...");
+  }, []);
   
   const options = {
     mode: 'payment' as const,
@@ -81,24 +88,56 @@ const StripePaymentSection = () => {
   };
 
   return (
-    <Elements stripe={stripePromise} options={options}>
-      <PaymentElementContainer onLoaded={() => setLoading(false)} isLoading={loading} />
-    </Elements>
+    <div className="relative">
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+          <p><strong>Erro ao carregar Stripe:</strong> {error}</p>
+          <p className="text-sm mt-1">Verifique se a chave pública do Stripe está configurada corretamente.</p>
+        </div>
+      )}
+      
+      <Elements stripe={stripePromise} options={options}>
+        <PaymentElementContainer 
+          onLoaded={() => {
+            console.log("Payment element loaded successfully!");
+            setLoading(false);
+          }} 
+          onError={(err) => {
+            console.error("Stripe error:", err);
+            setError(err);
+            setLoading(false);
+          }}
+          isLoading={loading} 
+        />
+      </Elements>
+    </div>
   );
 };
 
 // Separate component to use the Stripe hooks inside Elements provider
-const PaymentElementContainer = ({ onLoaded, isLoading }: { onLoaded: () => void, isLoading: boolean }) => {
+const PaymentElementContainer = ({ 
+  onLoaded, 
+  onError, 
+  isLoading 
+}: { 
+  onLoaded: () => void, 
+  onError: (error: string) => void,
+  isLoading: boolean
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   
   // Efeito para detectar quando o Stripe está pronto
-  useState(() => {
+  useEffect(() => {
+    console.log("PaymentElementContainer rendered");
+    console.log("Stripe available:", !!stripe);
+    console.log("Elements available:", !!elements);
+    
     if (stripe && elements) {
       console.log('Stripe Elements está pronto');
       onLoaded();
     }
-  });
+  }, [stripe, elements, onLoaded]);
 
   if (!stripe || !elements) {
     return (
@@ -117,7 +156,17 @@ const PaymentElementContainer = ({ onLoaded, isLoading }: { onLoaded: () => void
         </div>
       )}
       <div className={isLoading ? 'hidden' : 'block space-y-4'}>
-        <PaymentElement className="mb-4" />
+        <PaymentElement 
+          className="mb-4" 
+          onReady={() => {
+            console.log("PaymentElement is ready");
+            onLoaded();
+          }}
+          onLoadError={(event) => {
+            console.error("PaymentElement load error:", event);
+            onError(event.message);
+          }}
+        />
         <p className="text-sm text-gray-600">
           Os dados do seu cartão são processados de forma segura pelo Stripe.
         </p>
@@ -493,6 +542,18 @@ export const ConfirmRegistrationForm = ({
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             <StripePaymentSection />
+            
+            {/* Botão para carregar cartões de testes do Stripe */}
+            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+              <p className="text-sm font-medium text-gray-700 mb-2">Modo de teste do Stripe</p>
+              <p className="text-xs text-gray-600 mb-2">Como você está no modo de teste, pode usar os seguintes dados:</p>
+              <div className="text-xs bg-white p-2 border border-gray-200 rounded mb-2">
+                <p className="font-mono">Número do cartão: 4242 4242 4242 4242</p>
+                <p className="font-mono">Data de validade: Qualquer data futura</p>
+                <p className="font-mono">CVV: Qualquer 3 dígitos</p>
+                <p className="font-mono">CEP: Qualquer 5 dígitos</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
