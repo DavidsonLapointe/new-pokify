@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, QrCode, FileText, ChevronRight } from "lucide-react";
 import { RemainingStepsCard } from "@/components/organization/setup/RemainingStepsCard";
 
 interface ContractProps {
