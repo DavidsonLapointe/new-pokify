@@ -26,6 +26,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
   const [notFoundReason, setNotFoundReason] = useState<string>("");
   const [rawResponse, setRawResponse] = useState<any>(null);
   const [stepCompleted, setStepCompleted] = useState(false);
+  const [planName, setPlanName] = useState<string>("");
   
   // Track completion status of all steps
   const [contractSigned, setContractSigned] = useState(false);
@@ -53,6 +54,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         return;
       }
       
+      // Buscar a organização junto com as informações do plano
       const { data, error, status } = await supabase
         .from('organizations')
         .select('*')
@@ -77,6 +79,22 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       
       const orgData = data[0];
       console.log("Organization data retrieved:", orgData);
+      
+      // Buscar o nome do plano baseado no ID do plano
+      if (orgData.plan) {
+        const { data: planData, error: planError } = await supabase
+          .from('plans')
+          .select('name')
+          .eq('id', orgData.plan)
+          .single();
+          
+        if (planError) {
+          console.error("Error fetching plan name:", planError);
+        } else if (planData) {
+          console.log("Plan data retrieved:", planData);
+          setPlanName(planData.name);
+        }
+      }
       
       // Check status of each step using the new status columns
       setContractSigned(orgData.contract_status === 'completed');
@@ -283,7 +301,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
                 <p><strong>Razão Social:</strong> {organization.name}</p>
                 <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
                 <p><strong>CNPJ:</strong> {organization.cnpj}</p>
-                <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
+                <p><strong>Plano:</strong> {planName || 'Plano não especificado'}</p>
               </div>
 
               <div className="p-4 bg-[#F1F0FB] rounded-lg">
@@ -364,7 +382,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
               <p><strong>Razão Social:</strong> {organization.name}</p>
               <p><strong>Nome Fantasia:</strong> {organization.nome_fantasia || 'N/A'}</p>
               <p><strong>CNPJ:</strong> {organization.cnpj}</p>
-              <p><strong>Plano:</strong> {organization.plan.charAt(0).toUpperCase() + organization.plan.slice(1)}</p>
+              <p><strong>Plano:</strong> {planName || 'Plano não especificado'}</p>
             </div>
 
             <h3 className="text-lg font-semibold">1. Das Partes</h3>
@@ -378,7 +396,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             <h3 className="text-lg font-semibold">2. Do Objeto</h3>
             <p>
               O presente contrato tem por objeto a prestação de serviços de análise 
-              de chamadas telefônicas através de inteligência artificial, conforme plano {organization.plan} contratado 
+              de chamadas telefônicas através de inteligência artificial, conforme plano {planName} contratado 
               pela CONTRATANTE, que permitirá a análise, categorização e extração de insights de chamadas 
               telefônicas realizadas pela equipe comercial da CONTRATANTE.
             </p>
