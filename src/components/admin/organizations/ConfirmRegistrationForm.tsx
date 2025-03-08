@@ -164,7 +164,8 @@ const PaymentElementContainer = ({
           }}
           onLoadError={(event) => {
             console.error("PaymentElement load error:", event);
-            onError(event.message);
+            // Fixed: Access the error message correctly from the event.error object
+            onError(event.error?.message || "Erro ao carregar formulário de pagamento");
           }}
         />
         <p className="text-sm text-gray-600">
