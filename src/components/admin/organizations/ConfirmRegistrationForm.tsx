@@ -18,7 +18,7 @@ import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-
 import { loadStripe } from "@stripe/stripe-js";
 
 // Usando a chave pública do Stripe que está configurada no Supabase
-const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
 
 const confirmRegistrationSchema = z.object({
   // Company information (editable fields)
@@ -60,6 +60,8 @@ interface ConfirmRegistrationFormProps {
 
 // Component that renders the Stripe Payment Element
 const StripePaymentSection = () => {
+  const [loading, setLoading] = useState(true);
+  
   const options = {
     mode: 'payment' as const,
     currency: 'brl',
@@ -68,13 +70,35 @@ const StripePaymentSection = () => {
       theme: 'stripe' as const,
       variables: {
         colorPrimary: '#6E59A5',
+        borderRadius: '4px',
+      },
+      rules: {
+        '.Input': {
+          borderColor: '#E5DEFF',
+        },
       },
     },
   };
 
+  // Função para registrar quando o Stripe estiver pronto
+  const handleReady = () => {
+    console.log('Stripe Elements está pronto');
+    setLoading(false);
+  };
+
   return (
-    <Elements stripe={stripePromise} options={options}>
-      <PaymentElementContainer />
+    <Elements stripe={stripePromise} options={options} onReady={handleReady}>
+      <div className="min-h-[200px]">
+        {loading && (
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin text-[#6E59A5]" />
+            <span className="ml-2 text-gray-600">Carregando formulário de pagamento...</span>
+          </div>
+        )}
+        <div className={loading ? 'hidden' : 'block'}>
+          <PaymentElementContainer />
+        </div>
+      </div>
     </Elements>
   );
 };
@@ -83,7 +107,6 @@ const StripePaymentSection = () => {
 const PaymentElementContainer = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
 
   if (!stripe || !elements) {
     return (
