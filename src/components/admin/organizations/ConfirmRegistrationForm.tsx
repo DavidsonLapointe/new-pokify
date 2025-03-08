@@ -64,6 +64,12 @@ const StripePaymentSection = () => {
     mode: 'payment' as const,
     currency: 'brl',
     amount: 9990, // R$ 99,90 (em centavos)
+    appearance: {
+      theme: 'stripe' as const,
+      variables: {
+        colorPrimary: '#6E59A5',
+      },
+    },
   };
 
   return (
@@ -77,10 +83,19 @@ const StripePaymentSection = () => {
 const PaymentElementContainer = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (!stripe || !elements) {
+    return (
+      <div className="h-40 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#6E59A5]" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <PaymentElement />
+      <PaymentElement className="mb-4" />
       <p className="text-sm text-gray-600">
         Os dados do seu cartão são processados de forma segura pelo Stripe.
       </p>
