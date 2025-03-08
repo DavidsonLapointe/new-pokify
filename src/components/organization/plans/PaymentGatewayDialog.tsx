@@ -8,13 +8,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-// Usando a chave pública do Stripe que está configurada no Supabase
-const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
+// Obter a chave pública do Stripe de forma mais segura
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
+console.log("PaymentGatewayDialog - Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
+
+// Carregar Stripe apenas uma vez
+const stripePromise = loadStripe(stripePublicKey);
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -30,10 +34,18 @@ const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log("PaymentForm component mounted with Stripe:", !!stripe);
+  }, [stripe]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      setError("Stripe não está disponível. Recarregue a página e tente novamente.");
+      return;
+    }
 
     setIsLoading(true);
 
@@ -46,11 +58,13 @@ const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
       });
 
       if (error) {
+        setError(error.message || "Erro no processamento do pagamento");
         toast.error("Erro no pagamento: " + error.message);
       } else {
         onSuccess();
       }
-    } catch (e) {
+    } catch (e: any) {
+      setError(e.message || "Erro desconhecido ao processar pagamento");
       toast.error("Erro ao processar pagamento");
     } finally {
       setIsLoading(false);
@@ -59,7 +73,17 @@ const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+          <p>{error}</p>
+        </div>
+      )}
+      <PaymentElement 
+        onLoadError={(event) => {
+          console.error("PaymentElement load error:", event);
+          setError(event.error?.message || "Erro ao carregar formulário de pagamento");
+        }}
+      />
       <Button disabled={!stripe || isLoading} className="w-full">
         {isLoading ? (
           <>
@@ -89,7 +113,7 @@ export function PaymentGatewayDialog({
     currency: 'brl',
     amount: selectedPackage.price * 100,
     appearance: {
-      theme: 'stripe' as const, // Explicitamente tipado como "stripe"
+      theme: 'stripe' as const,
     },
   };
 

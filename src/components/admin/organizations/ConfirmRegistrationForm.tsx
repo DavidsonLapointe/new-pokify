@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,8 +16,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-// Usando a chave pública do Stripe que está configurada no Supabase
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
+// Obter a chave pública do Stripe de forma mais segura
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
+console.log("Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
+
+// Carregar Stripe apenas uma vez
+const stripePromise = loadStripe(stripePublicKey);
 
 const confirmRegistrationSchema = z.object({
   // Company information (editable fields)
@@ -63,10 +66,9 @@ const StripePaymentSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Log info about Stripe public key
   useEffect(() => {
-    console.log("Stripe public key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'Using fallback key');
-    console.log("Initializing Stripe with options...");
+    console.log("Inicializando seção de pagamento do Stripe");
+    console.log("Chave pública do Stripe disponível:", !!stripePublicKey);
   }, []);
   
   const options = {
@@ -92,7 +94,7 @@ const StripePaymentSection = () => {
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
           <p><strong>Erro ao carregar Stripe:</strong> {error}</p>
-          <p className="text-sm mt-1">Verifique se a chave pública do Stripe está configurada corretamente.</p>
+          <p className="text-sm mt-1">Verifique se a chave pública do Stripe está configurada corretamente. Valor atual: {stripePublicKey.substring(0, 10)}...</p>
         </div>
       )}
       
@@ -127,7 +129,6 @@ const PaymentElementContainer = ({
   const stripe = useStripe();
   const elements = useElements();
   
-  // Efeito para detectar quando o Stripe está pronto
   useEffect(() => {
     console.log("PaymentElementContainer rendered");
     console.log("Stripe available:", !!stripe);
@@ -164,7 +165,6 @@ const PaymentElementContainer = ({
           }}
           onLoadError={(event) => {
             console.error("PaymentElement load error:", event);
-            // Fixed: Access the error message correctly from the event.error object
             onError(event.error?.message || "Erro ao carregar formulário de pagamento");
           }}
         />

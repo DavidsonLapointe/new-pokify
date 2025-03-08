@@ -15,8 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { getPaymentMethod, updatePaymentMethod } from "@/services/subscriptionService";
 
-// Usando a chave pública do Stripe que está configurada no Supabase
-const stripePromise = loadStripe('pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq');
+// Obter a chave pública do Stripe de forma mais segura
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51OgQ0mF7m1pQh7H8PgQXHUAwaXA3arTJ4vhRPaXcap3EldT3T3JU4HgQZoqqERWDkKklrDnGCnptSFVKiWrXL7sR00bEOcDlwq';
+console.log("PaymentMethodCard - Usando chave pública do Stripe:", stripePublicKey.substring(0, 8) + "...");
+
+// Carregar Stripe apenas uma vez
+const stripePromise = loadStripe(stripePublicKey);
 
 interface PaymentMethodCardProps {
   organizationId: string;
@@ -39,10 +43,18 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log("PaymentMethodForm mounted with Stripe:", !!stripe);
+  }, [stripe]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      setError("Stripe não está disponível. Recarregue a página e tente novamente.");
+      return;
+    }
 
     setIsLoading(true);
 
@@ -55,6 +67,7 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
       });
 
       if (result.error) {
+        setError(result.error.message || "Erro ao salvar cartão");
         toast.error("Erro ao salvar cartão: " + result.error.message);
         return;
       }
@@ -66,9 +79,11 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
         toast.success("Cartão salvo com sucesso!");
         onSuccess?.();
       } else {
+        setError("Erro ao atualizar método de pagamento");
         toast.error("Erro ao atualizar método de pagamento");
       }
-    } catch (e) {
+    } catch (e: any) {
+      setError(e.message || "Erro desconhecido ao processar pagamento");
       toast.error("Erro ao processar pagamento");
     } finally {
       setIsLoading(false);
@@ -77,7 +92,17 @@ const PaymentMethodForm = ({ organizationId, onSuccess }: PaymentMethodFormProps
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+          <p>{error}</p>
+        </div>
+      )}
+      <PaymentElement 
+        onLoadError={(event) => {
+          console.error("PaymentElement load error:", event);
+          setError(event.error?.message || "Erro ao carregar formulário de pagamento");
+        }}
+      />
       <Button disabled={!stripe || isLoading} variant="default" className="w-full">
         {isLoading ? (
           <>
