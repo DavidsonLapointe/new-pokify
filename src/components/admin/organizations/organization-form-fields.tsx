@@ -4,13 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePlans } from "./hooks/use-plans";
 import { StatusSelector } from "./dialog-sections/StatusSelector";
+import { OrganizationStatus } from "@/types/organization-types";
 
 interface OrganizationFormFieldsProps {
   form: any;
   showStatus?: boolean;
+  cnpjValidated?: boolean;
 }
 
-export const OrganizationFormFields = ({ form, showStatus = false }: OrganizationFormFieldsProps) => {
+export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated }: OrganizationFormFieldsProps) => {
   const { plans, isLoading } = usePlans();
 
   return (
@@ -56,6 +58,8 @@ export const OrganizationFormFields = ({ form, showStatus = false }: Organizatio
                   const value = e.target.value.replace(/\D/g, '').slice(0, 14);
                   field.onChange(value);
                 }}
+                readOnly={cnpjValidated}
+                className={cnpjValidated ? "bg-gray-100" : ""}
               />
             </FormControl>
             <FormMessage />
@@ -164,7 +168,7 @@ export const OrganizationFormFields = ({ form, showStatus = false }: Organizatio
       
       {showStatus && (
         <div className="col-span-full">
-          <StatusSelector form={form} />
+          <StatusSelector form={form} currentStatus="active" />
         </div>
       )}
     </div>
