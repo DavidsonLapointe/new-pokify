@@ -28,6 +28,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       nome_fantasia: values.nomeFantasia,
       plan: values.plan, // This will store the plan ID as expected
       status: "pending",
+      email: values.email,
       phone: values.phone,
       cnpj: values.cnpj,
       admin_name: values.adminName,
@@ -35,7 +36,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       contract_status: 'pending',
       payment_status: 'pending',
       registration_status: 'pending',
-      pending_reason: 'registration_status' // Novo valor inicial
+      pending_reason: 'user_validation' // Valor correto conforme type OrganizationPendingReason
     })
     .select()
     .single();
@@ -82,6 +83,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     registrationStatus: dbOrganization.registration_status || 'pending',
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
+    email: dbOrganization.email || dbOrganization.admin_email || "", // Garantir que email sempre tenha um valor
     phone: dbOrganization.phone || "",
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,

@@ -17,6 +17,7 @@ export const createOrganizationSchema = z.object({
       message: "CNPJ inválido. Verifique o número informado."
     }),
   plan: z.string().min(1, "Selecione um plano"),
+  email: z.string().email("Email da empresa inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
   adminEmail: z.string().email("Email do administrador inválido"),
