@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
-import { createMensalidadeTitle, createProRataTitle } from "@/services/financial";
+import { createMensalidadeTitle } from "@/services/financial";
 import { getPlanValue } from "../utils/calculation-utils";
 import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
 

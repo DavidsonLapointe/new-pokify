@@ -52,7 +52,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         planName: planName // Inject plan name from the creation response
       });
 
-      // Calculate mensalidade value and create mensalidade title
+      // Calculate mensalidade value and create mensalidade title (em vez de pro-rata)
       try {
         // Create mensalidade title
         const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);

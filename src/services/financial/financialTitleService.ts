@@ -40,10 +40,12 @@ export const createProRataTitle = async (organization: Organization, proRataValu
 };
 
 export const createMensalidadeTitle = async (organization: Organization, monthlyValue: number): Promise<FinancialTitle | null> => {
+  // Calculamos o vencimento 3 dias à frente, similar ao pro-rata
   const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
+  dueDate.setDate(dueDate.getDate() + 3);
 
   try {
+    // Cria um título de mensalidade com o mesmo padrão do pro-rata
     const { data: title, error } = await supabase
       .from('financial_titles')
       .insert([{
