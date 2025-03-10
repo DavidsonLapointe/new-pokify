@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { 
   createOrganization, 
-  handleProRataCreation, 
+  handleMensalidadeCreation, 
   sendOnboardingEmail,
   mapToOrganizationType 
 } from "../api/organization-api";
@@ -52,62 +52,28 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         planName: planName // Inject plan name from the creation response
       });
 
-      // Create inactive subscription for the new organization with retries
-      let subscriptionCreated = false;
-      let retryCount = 0;
-      const maxRetries = 3;
-      
-      while (!subscriptionCreated && retryCount < maxRetries) {
-        try {
-          console.log(`Tentativa ${retryCount + 1} de criar assinatura inativa para organização:`, organizationFormatted.id);
-          const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
-          
-          if (inactiveSubscription) {
-            console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
-            subscriptionCreated = true;
-          } else {
-            console.warn(`Tentativa ${retryCount + 1} falhou, aguardando antes de tentar novamente...`);
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            retryCount++;
-          }
-        } catch (subscriptionError) {
-          console.error(`Erro na tentativa ${retryCount + 1} de criar assinatura:`, subscriptionError);
-          retryCount++;
-          
-          if (retryCount < maxRetries) {
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-          } else {
-            console.error("Falha ao criar assinatura inativa após todas as tentativas");
-            toast.error("Erro ao criar assinatura. Tente novamente ou contate o suporte.");
-          }
-        }
-      }
-
-      // Calculate pro-rata value and create pro-rata title
+      // Calculate mensalidade value and create mensalidade title
       try {
-        // Create pro-rata title
-        const proRataTitle = await handleProRataCreation(organizationFormatted);
+        // Create mensalidade title
+        const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
 
-        console.log("Título pro-rata criado:", proRataTitle);
+        console.log("Título mensalidade criado:", mensalidadeTitle);
 
-        if (!proRataTitle) {
-          console.error("Falha ao criar título pro-rata");
+        if (!mensalidadeTitle) {
+          console.error("Falha ao criar título de mensalidade");
         }
         
-        // Get pro-rata value from the title creation process
-        const proRataValue = proRataTitle?.value || 0;
+        // Get mensalidade value from the title creation process
+        const mensalidadeValue = mensalidadeTitle?.value || 0;
         
         // Send single onboarding email with all links
         try {
           console.log("Enviando email único de onboarding...");
           const { error: emailError } = await sendOnboardingEmail(
             organizationFormatted.id,
-            `${window.location.origin}/contract/${organizationFormatted.id}`,
             `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
-            `${window.location.origin}/payment/${organizationFormatted.id}`,
-            proRataValue
+            planName || 'Não especificado',
+            mensalidadeValue
           );
 
           if (emailError) {
