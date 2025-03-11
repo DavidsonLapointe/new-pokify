@@ -37,8 +37,11 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         errorHandlers.handleCnpjExistsError();
         return;
       }
-
-      // Dados básicos da organização - sem nenhuma tipagem complexa
+      
+      // Mapear valores de pendingReason para o tipo correto baseado no enum do banco de dados
+      const pendingReason: OrganizationPendingReason = "user_validation";
+      
+      // Dados básicos da organização com tipagem explícita
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -49,20 +52,19 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone,
         plan: values.plan,
-        // Valores de status simples, sem tipagem complexa
-        status: 'pending',
-        contract_status: 'pending',
-        payment_status: 'pending',
-        registration_status: 'pending',
-        pending_reason: 'user_validation'
+        status: "pending" as OrganizationStatus,
+        contract_status: "pending",
+        payment_status: "pending",
+        registration_status: "pending",
+        pending_reason: pendingReason
       };
 
-      console.log("Dados simplificados para inserção:", organizationData);
+      console.log("Dados preparados para inserção:", organizationData);
       
-      // Inserção simplificada
+      // Inserção de organização
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
-        .insert([organizationData])
+        .insert(organizationData)
         .select()
         .single();
         
