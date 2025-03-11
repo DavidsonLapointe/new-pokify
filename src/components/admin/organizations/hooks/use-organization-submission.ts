@@ -91,11 +91,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           errorHandlers.handleCnpjExistsError();
         } else if (insertError.message && insertError.message.includes("violates row-level security policy")) {
           console.error("Violação de política RLS - verifique permissões");
-          toast({
-            title: "Erro de permissão",
-            description: "Você não tem permissão para criar organizações. Verifique suas credenciais.",
-            variant: "destructive",
-          });
+          toast.error("Erro de permissão: Você não tem permissão para criar organizações. Verifique suas credenciais.");
         } else {
           errorHandlers.handleDatabaseConfigError();
         }
