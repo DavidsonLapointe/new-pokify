@@ -1,4 +1,3 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
@@ -51,7 +50,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Dados básicos da organização
+      // Dados básicos da organização com tipagem correta
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -62,16 +61,16 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: "pending",
+        status: correctedStatus("pending"),
         contract_status: "pending",
         payment_status: "pending",
         registration_status: "pending",
-        pending_reason: "user_validation"
+        pending_reason: correctedPendingReason("user_validation")
       };
 
       console.log("Tentando inserir organização com dados:", organizationData);
       
-      // Inserção simplificada sem uso de métodos que possam gerar erro 400
+      // Inserção com tipos corrigidos
       const { error: insertError } = await supabase
         .from('organizations')
         .insert(organizationData);
