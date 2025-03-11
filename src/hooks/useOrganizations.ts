@@ -59,7 +59,7 @@ export const useOrganizations = () => {
       console.log("Executando query para buscar organizações");
       const { data: orgsData, error: orgsError } = await supabase
         .from('organizations')
-        .select('*')
+        .select('*, plans:plan(id, name)')
         .order('created_at', { ascending: false });
       
       // Verificar se houve erro na consulta
@@ -96,8 +96,8 @@ export const useOrganizations = () => {
               return formatOrganizationData({
                 ...org,
                 users: [],
-                // Get plan name from map or use fallback
-                planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
+                // Get plan name from joined plans data or from map as fallback
+                planName: org.plans?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado"
               });
             }
 
@@ -107,8 +107,8 @@ export const useOrganizations = () => {
             const formattedOrg = formatOrganizationData({
               ...org,
               users: users || [],
-              // Get plan name from map or use fallback
-              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
+              // Get plan name from joined plans data or from map as fallback
+              planName: org.plans?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado"
             });
             
             console.log(`Organização formatada: ${formattedOrg.name}`, formattedOrg);
@@ -118,8 +118,8 @@ export const useOrganizations = () => {
             return formatOrganizationData({
               ...org,
               users: [],
-              // Get plan name from map or use fallback
-              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
+              // Get plan name from joined plans data or from map as fallback
+              planName: org.plans?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado"
             });
           }
         })

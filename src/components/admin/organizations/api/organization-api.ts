@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -10,38 +9,53 @@ import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
  * Creates a new organization in the database
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
-  // First, get the plan name to store alongside the ID
-  const { data: planData, error: planError } = await supabase
-    .from('plans')
-    .select('name, price')
-    .eq('id', values.plan)
-    .single();
-  
-  if (planError) {
-    console.error("Error fetching plan details:", planError);
+  try {
+    // First, get the plan name to store alongside the ID
+    const { data: planData, error: planError } = await supabase
+      .from('plans')
+      .select('name, price')
+      .eq('id', values.plan)
+      .single();
+    
+    if (planError) {
+      console.error("Error fetching plan details:", planError);
+      throw planError;
+    }
+    
+    // Registrar o plano e seu valor para debug
+    console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
+    
+    const { data, error } = await supabase
+      .from('organizations')
+      .insert({
+        name: values.razaoSocial,
+        nome_fantasia: values.nomeFantasia,
+        plan: values.plan, // Armazenar o ID do plano, não o nome
+        status: "pending",
+        phone: values.phone,
+        cnpj: values.cnpj,
+        admin_name: values.adminName,
+        admin_email: values.adminEmail,
+        admin_phone: values.adminPhone,
+        email: values.adminEmail, // Usar o email do administrador como email da empresa
+        contract_status: 'pending',
+        payment_status: 'pending',
+        registration_status: 'pending',
+        pending_reason: 'user_validation'
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error("Error creating organization:", error);
+      throw error;
+    }
+    
+    return { data, error: null, planName: planData?.name, planPrice: planData?.price };
+  } catch (error) {
+    console.error("Error in createOrganization:", error);
+    return { data: null, error, planName: null, planPrice: null };
   }
-  
-  const { data, error } = await supabase
-    .from('organizations')
-    .insert({
-      name: values.razaoSocial,
-      nome_fantasia: values.nomeFantasia,
-      plan: planData?.name || 'professional', // Ensure we store plan name instead of ID
-      status: "pending",
-      phone: values.phone,
-      cnpj: values.cnpj,
-      admin_name: values.adminName,
-      admin_email: values.adminEmail,
-      admin_phone: values.adminPhone,
-      contract_status: 'pending',
-      payment_status: 'pending',
-      registration_status: 'pending',
-      pending_reason: 'user_validation'
-    })
-    .select()
-    .single();
-  
-  return { data, error, planName: planData?.name, planPrice: planData?.price };
 };
 
 /**
@@ -69,28 +83,37 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
   // Ensure the status is one of the valid OrganizationStatus values
   const status = (dbOrganization.status || 'pending') as OrganizationStatus;
 
-  return {
+  // Ensure users have the required permissions field
+  const users = Array.isArray(dbOrganization.users) ? dbOrganization.users.map((user: any) => {
+    return {
+      ...user,
+      permissions: user.permissions || {}
+    };
+  }) : [];
+
+  // Criar objeto de organização formatado com valores padrão para campos opcionais
+  const formattedOrg: Organization = {
     id: dbOrganization.id,
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
-    planName: dbOrganization.planName || "Plano não especificado",
-    users: [],
-    status: allStepsCompleted ? 'active' as OrganizationStatus : status,
+    planName: dbOrganization.plan_name || dbOrganization.planName || "Plano não especificado", // Ensure planName is properly set
+    users: users,
+    status: status,
     pendingReason: currentPendingReason,
     contractStatus: dbOrganization.contract_status || 'pending',
     paymentStatus: dbOrganization.payment_status || 'pending',
     registrationStatus: dbOrganization.registration_status || 'pending',
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
-    email: dbOrganization.admin_email || "",
+    email: dbOrganization.email || dbOrganization.admin_email || "",
     phone: dbOrganization.phone || "",
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,
     adminEmail: dbOrganization.admin_email,
     adminPhone: dbOrganization.admin_phone || "",
     contractSignedAt: dbOrganization.contract_signed_at,
-    createdAt: dbOrganization.created_at,
+    createdAt: dbOrganization.created_at || new Date().toISOString(),
     logo: dbOrganization.logo,
     address: dbOrganization.address || {
       logradouro: dbOrganization.logradouro || "",
@@ -102,6 +125,8 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
       cep: dbOrganization.cep || ""
     }
   };
+  
+  return formattedOrg;
 };
 
 /**

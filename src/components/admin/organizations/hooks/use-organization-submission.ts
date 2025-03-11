@@ -10,6 +10,7 @@ import {
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Hook for handling organization form submission logic
@@ -51,6 +52,75 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         ...newOrganizationData,
         planName: planName // Inject plan name from the creation response
       });
+
+      // Create admin profile manually if the trigger didn't do it
+      try {
+        // Verificar se o perfil já existe
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', values.adminEmail)
+          .eq('organization_id', organizationFormatted.id)
+          .maybeSingle();
+        
+        // Se não existir, criar perfil manualmente
+        if (!existingProfile) {
+          console.log("Criando perfil do administrador manualmente");
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              email: values.adminEmail,
+              name: values.adminName,
+              role: 'admin',
+              status: 'pending',
+              organization_id: organizationFormatted.id,
+              phone: values.adminPhone
+            });
+            
+          if (profileError) {
+            console.error("Erro ao criar perfil do administrador:", profileError);
+          } else {
+            console.log("Perfil do administrador criado manualmente com sucesso");
+          }
+        } else {
+          console.log("Perfil do administrador já existe:", existingProfile);
+        }
+      } catch (profileError) {
+        console.error("Erro ao verificar/criar perfil:", profileError);
+      }
+
+      // Criar assinatura inativa manualmente se o trigger não o fez
+      try {
+        // Verificar se já existe uma assinatura
+        const { data: existingSubscription } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('organization_id', organizationFormatted.id)
+          .maybeSingle();
+          
+        // Se não existir, criar manualmente
+        if (!existingSubscription) {
+          console.log("Criando assinatura inativa manualmente");
+          const { error: subscriptionError } = await supabase
+            .from('subscriptions')
+            .insert({
+              organization_id: organizationFormatted.id,
+              status: 'inactive',
+              stripe_subscription_id: '',
+              stripe_customer_id: ''
+            });
+            
+          if (subscriptionError) {
+            console.error("Erro ao criar assinatura inativa:", subscriptionError);
+          } else {
+            console.log("Assinatura inativa criada manualmente com sucesso");
+          }
+        } else {
+          console.log("Assinatura já existe:", existingSubscription);
+        }
+      } catch (subscriptionError) {
+        console.error("Erro ao verificar/criar assinatura:", subscriptionError);
+      }
 
       // Calculate mensalidade value and create mensalidade title
       try {
