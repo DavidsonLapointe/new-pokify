@@ -72,57 +72,61 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Dados formatados para inserção:", organizationData);
       
-      // Inserção simplificada sem qualquer ON CONFLICT
-      const { data: newOrganization, error: insertError } = await supabase
-        .from('organizations')
-        .insert(organizationData)
-        .select('*') // Use select() instead of select('*').single() to avoid any potential ON CONFLICT spec
-        .limit(1);
-        
-      if (insertError) {
-        console.error("Erro detalhado ao criar organização:", insertError);
-        errorHandlers.handleDatabaseConfigError();
-        return;
-      }
-      
-      // Certifique-se de que temos dados da organização antes de prosseguir
-      if (!newOrganization || newOrganization.length === 0) {
-        console.error("Falha ao criar organização: nenhum dado retornado");
-        errorHandlers.handleDatabaseConfigError();
-        return;
-      }
-
-      const createdOrganization = newOrganization[0];
-      
-      // Enviar email de onboarding
+      // Inserir registros um por um para evitar problemas com ON CONFLICT
       try {
-        console.log("Iniciando envio de e-mail de onboarding para:", createdOrganization.admin_email);
-        
-        const confirmationToken = `${window.location.origin}/setup/${createdOrganization.id}`;
-        
-        const response = await supabase.functions.invoke('send-organization-emails', {
-          body: {
-            organizationId: createdOrganization.id,
-            type: "onboarding",
-            data: {
-              confirmationToken
-            }
-          }
-        });
-        
-        if (response.error) {
-          console.error("Erro ao enviar e-mail de onboarding:", response.error);
-          errorHandlers.handleEmailError(response.error);
-        } else {
-          console.log("Resposta do envio de email:", response.data);
+        const { data: insertResult, error: insertError } = await supabase
+          .from('organizations')
+          .insert(organizationData)
+          .select('id, name, admin_email')
+          .single();
+          
+        if (insertError) {
+          console.error("Erro detalhado ao criar organização:", insertError);
+          errorHandlers.handleDatabaseConfigError();
+          return;
         }
-      } catch (emailError) {
-        console.error("Erro inesperado ao enviar e-mail:", emailError);
-        errorHandlers.handleEmailError(emailError);
+        
+        if (!insertResult) {
+          console.error("Falha ao criar organização: nenhum dado retornado");
+          errorHandlers.handleDatabaseConfigError();
+          return;
+        }
+        
+        // Enviar email de onboarding
+        try {
+          console.log("Iniciando envio de e-mail de onboarding para:", insertResult.admin_email);
+          
+          const confirmationToken = `${window.location.origin}/setup/${insertResult.id}`;
+          
+          const response = await supabase.functions.invoke('send-organization-emails', {
+            body: {
+              organizationId: insertResult.id,
+              type: "onboarding",
+              data: {
+                confirmationToken
+              }
+            }
+          });
+          
+          if (response.error) {
+            console.error("Erro ao enviar e-mail de onboarding:", response.error);
+            errorHandlers.handleEmailError(response.error);
+          } else {
+            console.log("Resposta do envio de email:", response.data);
+          }
+        } catch (emailError) {
+          console.error("Erro inesperado ao enviar e-mail:", emailError);
+          errorHandlers.handleEmailError(emailError);
+        }
+        
+        errorHandlers.showSuccessToast();
+        onSuccess();
+        
+      } catch (dbError) {
+        console.error("Erro inesperado durante a inserção no banco de dados:", dbError);
+        errorHandlers.handleDatabaseConfigError();
+        return;
       }
-      
-      errorHandlers.showSuccessToast();
-      onSuccess();
 
     } catch (error: any) {
       console.error("Erro inesperado durante a criação:", error);
