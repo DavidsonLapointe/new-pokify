@@ -1,13 +1,9 @@
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "../schema";
 import { usePlans } from "./use-plans";
 
-/**
- * Hook to initialize and configure the organization form
- */
 export const useOrganizationFormInit = () => {
   const { plans } = usePlans();
   
@@ -18,9 +14,10 @@ export const useOrganizationFormInit = () => {
       nomeFantasia: "",
       cnpj: "",
       phone: "",
-      plan: "", // Empty string as default
+      plan: "",
       adminName: "",
       adminEmail: "",
+      adminPhone: "",
       status: "pending",
     },
   });

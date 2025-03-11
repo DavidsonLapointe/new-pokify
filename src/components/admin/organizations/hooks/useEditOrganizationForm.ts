@@ -21,9 +21,10 @@ export const useEditOrganizationForm = (
       nomeFantasia: organization.nomeFantasia || "",
       cnpj: organization.cnpj || "",
       phone: organization.phone || "",
-      plan: String(organization.plan), // Ensure plan is a string
+      plan: String(organization.plan),
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
+      adminPhone: organization.adminPhone || "",
       status: organization.status,
     },
   });
@@ -42,6 +43,7 @@ export const useEditOrganizationForm = (
           plan: values.plan,
           admin_name: values.adminName,
           admin_email: values.adminEmail,
+          admin_phone: values.adminPhone,
           status: values.status
         })
         .eq('id', organization.id)
@@ -75,9 +77,10 @@ export const useEditOrganizationForm = (
         cnpj: values.cnpj,
         phone: values.phone,
         plan: values.plan,
-        planName: planName, // Use the fetched plan name
+        planName: planName,
         adminName: values.adminName,
         adminEmail: values.adminEmail,
+        adminPhone: values.adminPhone,
         status: values.status,
       };
 
