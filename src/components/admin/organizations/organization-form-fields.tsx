@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, Phone, User } from "lucide-react";
 import { usePlans } from "./hooks/use-plans";
+import { StatusSelector } from "./dialog-sections/StatusSelector";
 
 interface OrganizationFormFieldsProps {
   form: any;
