@@ -8,14 +8,13 @@ import { checkCnpjExists } from "../utils/cnpj-verification-utils";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
-  checkCnpjExists: (cnpj: string) => Promise<{exists: boolean, data?: any, error?: any}>;
   onCnpjVerified: () => void;
 }
 
 export const useCnpjVerification = ({ 
   form, 
   onCnpjVerified 
-}: Omit<UseCnpjVerificationProps, 'checkCnpjExists'>) => {
+}: UseCnpjVerificationProps) => {
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
   const [cnpjValidated, setCnpjValidated] = useState(false);
   const { toast } = useToast();

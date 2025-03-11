@@ -6,7 +6,8 @@ import {
   createOrganization, 
   handleProRataCreation, 
   sendOnboardingEmail,
-  mapToOrganizationType 
+  mapToOrganizationType,
+  checkExistingOrganization
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
 import { toast } from "sonner";
@@ -27,6 +28,13 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       }
 
       console.log("Iniciando criação da organização:", values);
+
+      // Double-check if CNPJ already exists
+      const { exists } = await checkExistingOrganization(values.cnpj);
+      if (exists) {
+        errorHandlers.handleCnpjExistsError();
+        return;
+      }
 
       // Check if email domain might have delivery issues
       const emailDomain = values.adminEmail.split('@')[1].toLowerCase();

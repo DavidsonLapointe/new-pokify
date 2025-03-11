@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -20,6 +21,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     console.error("Error fetching plan details:", planError);
   }
   
+  // Simple insert without ON CONFLICT - CNPJ uniqueness is checked at form validation
   const { data, error } = await supabase
     .from('organizations')
     .insert({
