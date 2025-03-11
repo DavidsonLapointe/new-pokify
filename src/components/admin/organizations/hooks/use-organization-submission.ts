@@ -1,3 +1,4 @@
+
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
@@ -47,6 +48,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       const { data: newOrganizationData, error: orgError, planName } = await createOrganization(values);
 
       if (orgError) {
+        console.error("Erro ao criar organização:", orgError);
         errorHandlers.handleOrganizationCreationError(orgError);
         return;
       }

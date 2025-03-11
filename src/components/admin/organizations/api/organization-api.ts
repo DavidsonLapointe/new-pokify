@@ -21,13 +21,13 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     console.error("Error fetching plan details:", planError);
   }
   
-  // Remove the ON CONFLICT clause that was causing the error
+  // Perform a simple insert without ON CONFLICT clause
   const { data, error } = await supabase
     .from('organizations')
     .insert({
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
-      plan: values.plan, // This will store the plan ID as expected
+      plan: values.plan, 
       status: "pending",
       email: values.email,
       phone: values.phone,

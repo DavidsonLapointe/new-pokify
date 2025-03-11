@@ -42,12 +42,12 @@ export const checkExistingOrganization = async (cnpj: string) => {
     .select('id, cnpj, name')
     .eq('cnpj', cnpj)
     .maybeSingle();
-  
-  if (!data) {
+    
+  if (!data && !error) {
     // If no exact match, try with the cleaned version (just digits)
     console.log("No exact match found, trying with cleaned CNPJ format");
     
-    // Check for CNPJs that would match when cleaned (removing punctuation)
+    // Fetch all organizations to manually check for CNPJ match
     const { data: allOrgs, error: fetchError } = await supabase
       .from('organizations')
       .select('id, cnpj, name');
@@ -59,14 +59,12 @@ export const checkExistingOrganization = async (cnpj: string) => {
     
     // Manually find if any existing CNPJ matches when non-digits are removed
     const matchingOrg = allOrgs?.find(org => {
-      const orgCleanCnpj = org.cnpj.replace(/[^\d]/g, '');
+      const orgCleanCnpj = cleanCNPJ(org.cnpj);
       return orgCleanCnpj === cleanedCnpj;
     });
     
     data = matchingOrg || null;
     console.log("Clean CNPJ match result:", !!matchingOrg, matchingOrg);
-  } else {
-    console.log("Exact CNPJ match found:", data);
   }
   
   // Return true if data exists (CNPJ is found), regardless of organization status
