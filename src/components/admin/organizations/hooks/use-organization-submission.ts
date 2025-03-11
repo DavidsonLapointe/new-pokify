@@ -72,7 +72,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Dados formatados para inserção:", organizationData);
       
-      // Inserção com dados validados
+      // Inserção sem usar ON CONFLICT para evitar o erro
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(organizationData)
