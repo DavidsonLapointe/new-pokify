@@ -67,14 +67,14 @@ export const useOrganizations = () => {
 
             if (usersError) throw usersError;
 
-            // Safe plan name access with proper null checks
+            // Safe plan name access with proper type handling
             let planName = "Plano não encontrado";
             
-            // Only proceed with accessing org.plans if it's not null
-            if (org.plans !== null) {
-              // Then check if it's an object and has a name property
-              if (typeof org.plans === 'object' && org.plans && 'name' in org.plans) {
-                planName = org.plans.name || planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            if (org.plans) {
+              // Use type assertions to handle the 'name' property safely
+              const planObject = org.plans as any;
+              if (planObject && typeof planObject === 'object' && 'name' in planObject) {
+                planName = planObject.name || planIdToNameMap.get(org.plan) || "Plano não encontrado";
               }
             } else {
               // Fallback to map if org.plans is null
