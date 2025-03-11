@@ -19,6 +19,25 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
+      // First, check if an organization with this CNPJ already exists
+      const { data: existingOrg, error: checkError } = await supabase
+        .from('organizations')
+        .select('id, cnpj')
+        .eq('cnpj', values.cnpj)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error("Erro ao verificar CNPJ existente:", checkError);
+        errorHandlers.handleDatabaseConfigError();
+        return;
+      }
+
+      if (existingOrg) {
+        console.log("CNPJ já existente:", existingOrg);
+        errorHandlers.handleCnpjExistsError();
+        return;
+      }
+
       // Prepare organization data with correct typing
       const insertData = {
         name: values.razaoSocial,
@@ -53,7 +72,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
             insertError.message.includes("organizations_cnpj_key")) {
           errorHandlers.handleCnpjExistsError();
         } else {
-          errorHandlers.handleOrganizationCreationError(insertError);
+          errorHandlers.handleDatabaseConfigError();
         }
         return;
       }

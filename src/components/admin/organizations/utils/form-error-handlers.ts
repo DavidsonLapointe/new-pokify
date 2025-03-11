@@ -44,6 +44,17 @@ export const useFormErrorHandlers = () => {
     });
   };
 
+  const handleDatabaseConfigError = () => {
+    console.error("Erro de configuração no banco de dados detectado");
+    
+    toast({
+      title: "Erro de configuração no banco de dados",
+      description: "Há um erro de configuração no banco de dados. Por favor, contate o suporte técnico.",
+      variant: "destructive",
+      duration: 8000,
+    });
+  };
+
   const handleEmailError = (error: any) => {
     console.error("Erro ao enviar email:", error);
     toast({
@@ -70,17 +81,6 @@ export const useFormErrorHandlers = () => {
       title: "Empresa criada parcialmente",
       description: "A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.",
       variant: "destructive",
-    });
-  };
-
-  const handleDatabaseConfigError = () => {
-    console.error("Erro de configuração no banco de dados detectado");
-    
-    toast({
-      title: "Erro de configuração no banco de dados",
-      description: "Há um erro de configuração no banco de dados. Por favor, contate o suporte técnico.",
-      variant: "destructive",
-      duration: 8000,
     });
   };
 
