@@ -8,7 +8,7 @@ import { type OrganizationStatus, type OrganizationPendingReason } from "@/types
 
 // Helper functions for type validation
 const correctedStatus = (status: string): OrganizationStatus => {
-  return ["active", "inactive", "pending"].includes(status) 
+  return ["active", "pending", "inactive"].includes(status) 
     ? status as OrganizationStatus 
     : "pending";
 };
@@ -72,61 +72,59 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Dados formatados para inserção:", organizationData);
       
-      // Inserir registros um por um para evitar problemas com ON CONFLICT
-      try {
-        const { data: insertResult, error: insertError } = await supabase
-          .from('organizations')
-          .insert(organizationData)
-          .select('id, name, admin_email')
-          .single();
-          
-        if (insertError) {
-          console.error("Erro detalhado ao criar organização:", insertError);
-          errorHandlers.handleDatabaseConfigError();
-          return;
-        }
+      // Inserção simplificada sem utilização de métodos que possam gerar conflitos
+      const { data, error: insertError } = await supabase
+        .from('organizations')
+        .insert(organizationData);
         
-        if (!insertResult) {
-          console.error("Falha ao criar organização: nenhum dado retornado");
-          errorHandlers.handleDatabaseConfigError();
-          return;
-        }
-        
-        // Enviar email de onboarding
-        try {
-          console.log("Iniciando envio de e-mail de onboarding para:", insertResult.admin_email);
-          
-          const confirmationToken = `${window.location.origin}/setup/${insertResult.id}`;
-          
-          const response = await supabase.functions.invoke('send-organization-emails', {
-            body: {
-              organizationId: insertResult.id,
-              type: "onboarding",
-              data: {
-                confirmationToken
-              }
-            }
-          });
-          
-          if (response.error) {
-            console.error("Erro ao enviar e-mail de onboarding:", response.error);
-            errorHandlers.handleEmailError(response.error);
-          } else {
-            console.log("Resposta do envio de email:", response.data);
-          }
-        } catch (emailError) {
-          console.error("Erro inesperado ao enviar e-mail:", emailError);
-          errorHandlers.handleEmailError(emailError);
-        }
-        
-        errorHandlers.showSuccessToast();
-        onSuccess();
-        
-      } catch (dbError) {
-        console.error("Erro inesperado durante a inserção no banco de dados:", dbError);
+      if (insertError) {
+        console.error("Erro detalhado ao criar organização:", insertError);
         errorHandlers.handleDatabaseConfigError();
         return;
       }
+      
+      // Após a inserção, buscar o registro recém-criado pelo CNPJ
+      const { data: newOrg, error: fetchError } = await supabase
+        .from('organizations')
+        .select('id, name, admin_email')
+        .eq('cnpj', values.cnpj)
+        .maybeSingle();
+      
+      if (fetchError || !newOrg) {
+        console.error("Erro ao recuperar organização criada:", fetchError);
+        errorHandlers.handleDatabaseConfigError();
+        return;
+      }
+      
+      // Enviar email de onboarding
+      try {
+        console.log("Iniciando envio de e-mail de onboarding para:", newOrg.admin_email);
+        
+        const confirmationToken = `${window.location.origin}/setup/${newOrg.id}`;
+        
+        const response = await supabase.functions.invoke('send-organization-emails', {
+          body: {
+            organizationId: newOrg.id,
+            type: "onboarding",
+            data: {
+              confirmationToken
+            }
+          }
+        });
+        
+        if (response.error) {
+          console.error("Erro ao enviar e-mail de onboarding:", response.error);
+          errorHandlers.handleEmailError(response.error);
+        } else {
+          console.log("Resposta do envio de email:", response.data);
+        }
+      } catch (emailError) {
+        console.error("Erro inesperado ao enviar e-mail:", emailError);
+        errorHandlers.handleEmailError(emailError);
+      }
+      
+      errorHandlers.showSuccessToast();
+      onSuccess();
 
     } catch (error: any) {
       console.error("Erro inesperado durante a criação:", error);
