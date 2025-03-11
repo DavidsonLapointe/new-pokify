@@ -35,6 +35,7 @@ const mockOrganization: Organization = {
   cnpj: "12.345.678/0001-90",
   adminName: "João Silva",
   adminEmail: "joao@empresa.com",
+  adminPhone: "(11) 99999-8888", // Added the missing adminPhone property
   contractSignedAt: null,
   createdAt: "2024-01-01T00:00:00.000Z",
 };
