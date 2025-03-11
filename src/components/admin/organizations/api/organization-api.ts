@@ -33,11 +33,29 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Log plan details for debugging
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
-    // Create organization without ON CONFLICT clause
+    // Create organization with direct insert to avoid ON CONFLICT error
     console.log("Attempting to insert organization with CNPJ:", values.cnpj);
+    
+    // First check if organization with this CNPJ already exists
+    const { data: existingOrgs, error: checkError } = await supabase
+      .from('organizations')
+      .select('id')
+      .eq('cnpj', values.cnpj);
+      
+    if (checkError) {
+      console.error("Error checking for existing organization:", checkError);
+      throw checkError;
+    }
+    
+    if (existingOrgs && existingOrgs.length > 0) {
+      console.error("Organization with this CNPJ already exists");
+      throw new Error("CNPJ já cadastrado no sistema.");
+    }
+    
+    // Create organization without ON CONFLICT clause
     const { data, error } = await supabase
       .from('organizations')
-      .insert([{
+      .insert({
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         plan: values.plan,
@@ -52,7 +70,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         payment_status: 'pending',
         registration_status: 'pending',
         pending_reason: 'user_validation'
-      }])
+      })
       .select('*')
       .single();
     

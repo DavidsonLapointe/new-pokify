@@ -29,6 +29,8 @@ export const useFormErrorHandlers = () => {
       errorMessage = "CNPJ já cadastrado no sistema.";
     } else if (error.code === "42P10") {
       errorMessage = "Erro de configuração no banco de dados. Por favor, contate o suporte.";
+    } else if (error.message && error.message.includes("no unique or exclusion constraint")) {
+      errorMessage = "Erro de configuração no banco de dados. Verifique a estrutura da tabela de organizações.";
     } else if (typeof error === 'string') {
       errorMessage = error;
     } else if (error.message) {

@@ -1,4 +1,3 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
@@ -50,11 +49,15 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
         if (orgError) {
           console.error("Erro ao criar organização:", orgError);
-          // Special case for database configuration error
-          if (orgError.code === "42P10") {
+          
+          // Check if this is a database configuration error
+          if (orgError.code === "42P10" || 
+              (orgError.message && orgError.message.includes("no unique or exclusion constraint"))) {
             errorHandlers.handleDatabaseConfigError();
             return;
           }
+          
+          // Other organization creation errors
           errorHandlers.handleOrganizationCreationError(orgError);
           return;
         }
@@ -119,13 +122,16 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           // Mesmo com erro no pós-processamento, consideramos que a criação foi bem-sucedida
           onSuccess();
         }
-      } catch (orgCreationError) {
+      } catch (orgCreationError: any) {
         console.error("Erro na criação da organização:", orgCreationError);
-        // Check for database configuration error
-        if (orgCreationError.code === "42P10") {
+        
+        // Check if this is a database configuration error
+        if (orgCreationError.code === "42P10" || 
+            (orgCreationError.message && orgCreationError.message.includes("no unique or exclusion constraint"))) {
           errorHandlers.handleDatabaseConfigError();
           return;
         }
+        
         errorHandlers.handleOrganizationCreationError(orgCreationError);
       }
     } catch (error: any) {
