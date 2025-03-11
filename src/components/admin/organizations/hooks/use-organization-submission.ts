@@ -57,12 +57,13 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Criando objeto com apenas campos mínimos essenciais
+      // Criando objeto com os campos mínimos essenciais incluindo o plan que é obrigatório
       const minimalOrgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
+        plan: values.plan, // Adicionando o campo plan que é obrigatório
         status: correctedStatus("pending")
       };
 
