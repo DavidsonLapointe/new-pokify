@@ -42,10 +42,7 @@ export const useOrganizations = () => {
         .from('organizations')
         .select(`
           *,
-          plans:plan (
-            id,
-            name
-          )
+          plans:plan(*)
         `)
         .order('created_at', { ascending: false });
       
@@ -70,20 +67,24 @@ export const useOrganizations = () => {
 
             if (usersError) throw usersError;
 
+            // Get the plan name from the map instead of relying on the join
+            const planName = org.plans && typeof org.plans === 'object' ? 
+              org.plans.name : planIdToNameMap.get(org.plan) || "Plano não encontrado";
+
             const formattedOrg = formatOrganizationData({
               ...org,
               users: users || [],
-              // Get plan name from joined plans data or from map as fallback
-              planName: org.plans?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado"
+              planName: planName // Use the safely determined plan name
             });
             
             return formattedOrg;
           } catch (err) {
             console.error(`Erro ao processar organização ${org.id}:`, err);
+            // Fallback to using the map if there's an error
             return formatOrganizationData({
               ...org,
               users: [],
-              planName: org.plans?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado"
+              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
             });
           }
         })
