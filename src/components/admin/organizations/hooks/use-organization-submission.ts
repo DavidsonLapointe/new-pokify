@@ -36,7 +36,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       // Verificar permissões do usuário
       if (!user || user.role !== "leadly_employee") {
         console.error("Permissão negada: usuário não é funcionário Leadly");
-        errorHandlers.handlePermissionError();
+        toast.error("Acesso negado: Apenas funcionários Leadly podem criar organizações");
         return;
       }
 
@@ -50,13 +50,13 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       if (checkError) {
         console.error("Erro ao verificar CNPJ existente:", checkError);
-        errorHandlers.handleDatabaseConfigError();
+        toast.error("Erro de configuração no banco de dados. Por favor, contate o suporte técnico.");
         return;
       }
 
       if (existingOrg) {
         console.log("CNPJ já existente:", existingOrg);
-        errorHandlers.handleCnpjExistsError();
+        toast.error("CNPJ já cadastrado: Já existe uma empresa cadastrada com este CNPJ.");
         return;
       }
 
@@ -75,23 +75,21 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Inserindo organização com dados:", orgData);
       
-      // Simplificando a inserção para garantir compatibilidade
+      // Inserção básica sem ON CONFLICT ou select
       const { error: insertError } = await supabase
         .from('organizations')
-        .insert(orgData);
+        .insert([orgData]);
 
       if (insertError) {
         console.error("Erro na inserção da organização:", insertError);
         
-        // Tratamento específico com base no código de erro
         if (insertError.code === '23505') {
-          console.error("Violação de restrição de unicidade (provavelmente CNPJ)");
-          errorHandlers.handleCnpjExistsError();
+          toast.error("CNPJ já cadastrado: Já existe uma empresa cadastrada com este CNPJ.");
         } else if (insertError.message && insertError.message.includes("violates row-level security policy")) {
-          console.error("Violação de política RLS - verifique permissões");
           toast.error("Erro de permissão: Você não tem permissão para criar organizações. Verifique suas credenciais.");
         } else {
-          errorHandlers.handleDatabaseConfigError();
+          console.log("Detalhes do erro:", JSON.stringify(insertError));
+          toast.error("Erro ao criar empresa: " + insertError.message);
         }
         return;
       }
@@ -102,7 +100,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
     } catch (error: any) {
       console.error("Erro inesperado na criação de organização:", error);
-      errorHandlers.handleUnexpectedError(error);
+      toast.error("Erro ao criar empresa: " + (error.message || "Erro desconhecido"));
     }
   };
 
