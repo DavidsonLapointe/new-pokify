@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -67,15 +68,21 @@ export const createInactiveSubscription = async (organizationId: string): Promis
       console.error('Function returned error or incomplete data:', data);
       
       // Create a default "fallback" subscription object if we can't get one from the server
-      // This prevents errors in the flow, even if the actual subscription creation failed
+      // Include all required properties from the Subscription type
+      const currentDate = new Date();
+      const nextMonth = new Date(currentDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      
       const fallbackSubscription: Subscription = {
         id: 'temp_' + new Date().getTime(),
         organizationId: organizationId,
         stripeSubscriptionId: '',
         stripeCustomerId: '',
         status: 'inactive',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: currentDate.toISOString(),
+        updatedAt: currentDate.toISOString(),
+        currentPeriodStart: currentDate.toISOString(),
+        currentPeriodEnd: nextMonth.toISOString(),
       };
       
       console.log('Created fallback subscription object:', fallbackSubscription);
@@ -88,14 +95,21 @@ export const createInactiveSubscription = async (organizationId: string): Promis
     console.error('Error creating inactive subscription:', error);
     
     // Create a default fallback subscription in case of exception
+    // Include all required properties from the Subscription type
+    const currentDate = new Date();
+    const nextMonth = new Date(currentDate);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    
     const fallbackSubscription: Subscription = {
       id: 'temp_' + new Date().getTime(),
       organizationId: organizationId,
       stripeSubscriptionId: '',
       stripeCustomerId: '',
       status: 'inactive',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: currentDate.toISOString(),
+      updatedAt: currentDate.toISOString(),
+      currentPeriodStart: currentDate.toISOString(),
+      currentPeriodEnd: nextMonth.toISOString(),
     };
     
     console.log('Created fallback subscription on exception:', fallbackSubscription);
