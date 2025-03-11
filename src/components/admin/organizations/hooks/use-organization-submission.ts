@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
 
-// Helper functions for type validation
 const correctedStatus = (status: string): OrganizationStatus => {
   return ["active", "pending", "inactive"].includes(status) 
     ? status as OrganizationStatus 
@@ -51,8 +50,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         errorHandlers.handleCnpjExistsError();
         return;
       }
-      
-      // Dados da organização com validação de tipos
+
+      // Dados básicos da organização
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -63,76 +62,69 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: "pending" as OrganizationStatus,
-        contract_status: "pending",
-        payment_status: "pending",
-        registration_status: "pending",
-        pending_reason: "user_validation" as OrganizationPendingReason
+        status: "pending" as const,
+        contract_status: "pending" as const,
+        payment_status: "pending" as const,
+        registration_status: "pending" as const,
+        pending_reason: "user_validation" as const
       };
 
-      console.log("Dados formatados para inserção:", organizationData);
+      console.log("Tentando inserir organização com dados:", organizationData);
       
-      // Inserção simplificada sem utilização de métodos que possam gerar conflitos
-      const { data, error: insertError } = await supabase
+      // Inserção básica
+      const { error: insertError } = await supabase
         .from('organizations')
-        .insert(organizationData);
-        
+        .insert([organizationData]);
+
       if (insertError) {
-        console.error("Erro detalhado ao criar organização:", insertError);
+        console.error("Erro ao inserir organização:", insertError);
         errorHandlers.handleDatabaseConfigError();
         return;
       }
-      
-      // Após a inserção, buscar o registro recém-criado pelo CNPJ
+
+      // Buscar a organização recém-criada
       const { data: newOrg, error: fetchError } = await supabase
         .from('organizations')
         .select('id, name, admin_email')
         .eq('cnpj', values.cnpj)
         .maybeSingle();
-      
+
       if (fetchError || !newOrg) {
-        console.error("Erro ao recuperar organização criada:", fetchError);
+        console.error("Erro ao buscar organização após criação:", fetchError);
         errorHandlers.handleDatabaseConfigError();
         return;
       }
-      
+
       // Enviar email de onboarding
       try {
-        console.log("Iniciando envio de e-mail de onboarding para:", newOrg.admin_email);
-        
+        console.log("Enviando email de onboarding para:", newOrg.admin_email);
         const confirmationToken = `${window.location.origin}/setup/${newOrg.id}`;
         
         const response = await supabase.functions.invoke('send-organization-emails', {
           body: {
             organizationId: newOrg.id,
             type: "onboarding",
-            data: {
-              confirmationToken
-            }
+            data: { confirmationToken }
           }
         });
         
         if (response.error) {
-          console.error("Erro ao enviar e-mail de onboarding:", response.error);
+          console.error("Erro no envio do email:", response.error);
           errorHandlers.handleEmailError(response.error);
-        } else {
-          console.log("Resposta do envio de email:", response.data);
         }
       } catch (emailError) {
-        console.error("Erro inesperado ao enviar e-mail:", emailError);
+        console.error("Erro no processo de email:", emailError);
         errorHandlers.handleEmailError(emailError);
       }
-      
+
       errorHandlers.showSuccessToast();
       onSuccess();
 
     } catch (error: any) {
-      console.error("Erro inesperado durante a criação:", error);
+      console.error("Erro inesperado:", error);
       errorHandlers.handleUnexpectedError(error);
     }
   };
 
-  return {
-    handleSubmit
-  };
+  return { handleSubmit };
 };
