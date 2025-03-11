@@ -1,3 +1,4 @@
+<lov-codelov-code>
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -50,7 +51,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
       plan: values.plan,
-      status: "pending",
+      status: "pending" as OrganizationStatus,
       phone: values.phone,
       cnpj: values.cnpj,
       admin_name: values.adminName,
@@ -60,7 +61,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       contract_status: 'pending',
       payment_status: 'pending',
       registration_status: 'pending',
-      pending_reason: 'user_validation'
+      pending_reason: 'user_validation' // This is a valid enum value
     };
 
     console.log("Inserindo organização:", insertData);
