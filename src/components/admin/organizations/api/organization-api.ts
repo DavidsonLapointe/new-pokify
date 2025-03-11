@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -86,6 +87,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,
     adminEmail: dbOrganization.admin_email,
+    adminPhone: dbOrganization.admin_phone || "", // Added the missing adminPhone property
     contractSignedAt: dbOrganization.contract_signed_at,
     createdAt: dbOrganization.created_at,
     logo: dbOrganization.logo,

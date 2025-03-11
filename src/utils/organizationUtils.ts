@@ -16,6 +16,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   const integrated_crm = organization.integrated_crm || null;
   const integrated_llm = organization.integrated_llm || null;
   const phone = organization.phone || '';
+  const admin_phone = organization.admin_phone || ''; // Added admin_phone handling
   
   // Determine pending reason based on individual statuses
   let pendingReason: OrganizationPendingReason = null;
@@ -78,6 +79,7 @@ export const formatOrganizationData = (organization: any): Organization => {
     cnpj: organization.cnpj,
     adminName: organization.admin_name,
     adminEmail: organization.admin_email,
+    adminPhone: admin_phone, // Added adminPhone property
     contractSignedAt: contract_signed_at,
     createdAt: organization.created_at || new Date().toISOString(),
     logo: logo,
