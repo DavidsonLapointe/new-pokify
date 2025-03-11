@@ -23,6 +23,7 @@ export default function OrganizationCompany() {
     cnpj: '',
     adminName: '',
     adminEmail: '',
+    adminPhone: '', // Added missing adminPhone property
     contractSignedAt: null,
     createdAt: new Date().toISOString(),
     integratedCRM: null,

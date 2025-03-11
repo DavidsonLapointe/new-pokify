@@ -1,158 +1,168 @@
 
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
-import { CreateOrganizationFormData } from "./schema";
+import { Building2, Phone, User } from "lucide-react";
 import { usePlans } from "./hooks/use-plans";
-import { Skeleton } from "@/components/ui/skeleton";
+import { StatusSelector } from "./dialog-sections/StatusSelector";
 
 interface OrganizationFormFieldsProps {
-  form: UseFormReturn<CreateOrganizationFormData>;
+  form: any;
+  showStatus?: boolean;
   cnpjValidated?: boolean;
 }
 
-export const OrganizationFormFields = ({ form, cnpjValidated = false }: OrganizationFormFieldsProps) => {
-  const { plans, isLoading: plansLoading } = usePlans();
-  
+export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated }: OrganizationFormFieldsProps) => {
+  const { plans, isLoading } = usePlans();
+
+  const formatPhone = (value: string) => {
+    // Remove tudo que não for dígito
+    value = value.replace(/\D/g, '');
+    
+    // Limitar a 11 dígitos (DDD + número)
+    value = value.slice(0, 11);
+    
+    // Aplicar formatação
+    if (value.length > 0) {
+      // Formatar DDD
+      if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else {
+        value = `(${value}`;
+      }
+      
+      // Formatar número
+      if (value.length > 10) {
+        value = `(${value.slice(1, 3)}) ${value.slice(5, 10)}-${value.slice(10)}`;
+      }
+    }
+    
+    return value;
+  };
+
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <FormField
-          control={form.control}
-          name="razaoSocial"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Razão Social</FormLabel>
-              <FormControl>
-                <Input placeholder="Digite a razão social" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="nomeFantasia"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome Fantasia</FormLabel>
-              <FormControl>
-                <Input placeholder="Digite o nome fantasia" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="cnpj"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CNPJ</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="00.000.000/0000-00" 
-                  {...field} 
-                  disabled={cnpjValidated}
-                  className={cnpjValidated ? "bg-gray-50" : ""}
-                />
-              </FormControl>
-              {!cnpjValidated && <FormMessage />}
-              {cnpjValidated && (
-                <p className="text-xs text-green-600 mt-1">
-                  CNPJ validado com sucesso
-                </p>
-              )}
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="plan"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Plano</FormLabel>
-              {plansLoading ? (
-                <Skeleton className="h-10 w-full" />
-              ) : (
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <div className="space-y-6">
+      {/* Company Data Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Building2 className="h-5 w-5 text-[#9b87f5]" />
+          <h3 className="text-base font-medium text-[#1A1F2C]">Dados da Empresa</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="razaoSocial"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Razão Social</FormLabel>
+                <FormControl>
+                  <Input placeholder="Razão Social da empresa" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="nomeFantasia"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome Fantasia</FormLabel>
+                <FormControl>
+                  <Input placeholder="Nome Fantasia" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cnpj"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CNPJ</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Apenas números"
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 14);
+                      field.onChange(value);
+                    }}
+                    readOnly={cnpjValidated}
+                    className={cnpjValidated ? "bg-gray-100" : ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telefone da Empresa</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="(XX) XXXXX-XXXX"
+                    value={formatPhone(field.value || '')}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      field.onChange(value);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="plan"
+            render={({ field }) => (
+              <FormItem className="col-span-full">
+                <FormLabel>Plano</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione o plano" />
+                      <SelectValue placeholder="Selecione um plano" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {plans.length > 0 ? (
+                    {isLoading ? (
+                      <SelectItem value="" disabled>
+                        Carregando planos...
+                      </SelectItem>
+                    ) : (
                       plans.map((plan) => (
                         <SelectItem key={plan.id} value={String(plan.id)}>
-                          {plan.name}
+                          {plan.name} - R$ {plan.price.toFixed(2)}
                         </SelectItem>
                       ))
-                    ) : (
-                      <SelectItem value="no-plans" disabled>
-                        Nenhum plano disponível
-                      </SelectItem>
                     )}
                   </SelectContent>
                 </Select>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email da Empresa</FormLabel>
-              <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder="contato@empresa.com" 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone da Empresa</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="(00) 00000-0000" 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="bg-[#F8F6FF] p-3 rounded-lg border border-[#E5DEFF] mb-3">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-1 bg-[#9b87f5] rounded-full"></div>
-            <h3 className="text-base font-medium text-[#6E59A5]">Dados do Administrador</h3>
-          </div>
-          <p className="text-xs text-gray-600 ml-4 mt-1">
-            Informe os dados do usuário que será o administrador inicial da empresa
-          </p>
+      {/* Administrator Data Section */}
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center gap-2">
+          <User className="h-5 w-5 text-[#9b87f5]" />
+          <h3 className="text-base font-medium text-[#1A1F2C]">Dados do Administrador</h3>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="adminName"
@@ -160,13 +170,12 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
               <FormItem>
                 <FormLabel>Nome do Administrador</FormLabel>
                 <FormControl>
-                  <Input placeholder="Digite o nome completo" {...field} />
+                  <Input placeholder="Nome completo" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="adminEmail"
@@ -174,10 +183,26 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
               <FormItem>
                 <FormLabel>Email do Administrador</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="email" 
-                    placeholder="admin@empresa.com" 
-                    {...field} 
+                  <Input placeholder="admin@empresa.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="adminPhone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telefone do Administrador</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="(XX) XXXXX-XXXX"
+                    value={formatPhone(field.value || '')}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      field.onChange(value);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -186,6 +211,12 @@ export const OrganizationFormFields = ({ form, cnpjValidated = false }: Organiza
           />
         </div>
       </div>
-    </>
+
+      {showStatus && (
+        <div className="col-span-full">
+          <StatusSelector form={form} currentStatus="active" />
+        </div>
+      )}
+    </div>
   );
 };

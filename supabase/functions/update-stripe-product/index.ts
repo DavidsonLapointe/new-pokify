@@ -79,7 +79,7 @@ async function processStripeProductUpdate(requestData) {
 
   // If no product ID, create a new product
   if (!stripeProductId) {
-    const result = await createNewStripeProduct(name, description, active, credits);
+    const result = await createNewStripeProduct(name, description, active, credits, price);
     updatedProduct = result.product;
     updatedPrice = result.price;
   } else {
@@ -114,7 +114,7 @@ async function processStripeProductUpdate(requestData) {
 }
 
 // Create a new product in Stripe
-async function createNewStripeProduct(name, description, active, credits) {
+async function createNewStripeProduct(name, description, active, credits, price) {
   console.log('Criando novo produto no Stripe');
   
   try {
@@ -132,9 +132,12 @@ async function createNewStripeProduct(name, description, active, credits) {
     console.log('Produto criado com sucesso:', product.id);
     
     // Create price for the product
-    const price = await stripe.prices.create({
+    const priceInCents = Math.round(price * 100); // Convert to cents
+    console.log('Criando preço em centavos:', priceInCents);
+    
+    const priceObj = await stripe.prices.create({
       product: product.id,
-      unit_amount: Math.round(price * 100), // Convert to cents
+      unit_amount: priceInCents,
       currency: 'brl',
       active: active !== undefined ? active : true,
       metadata: {
@@ -142,9 +145,9 @@ async function createNewStripeProduct(name, description, active, credits) {
       }
     });
     
-    console.log('Preço criado com sucesso:', price.id);
+    console.log('Preço criado com sucesso:', priceObj.id);
     
-    return { product, price };
+    return { product, price: priceObj };
   } catch (error) {
     console.error('Erro ao criar produto/preço no Stripe:', error);
     throw new Error(`Erro ao criar produto/preço no Stripe: ${error.message}`);
@@ -218,12 +221,12 @@ async function handlePriceUpdate(stripeProductId, stripePriceId, price, active, 
   
   // Create new price only if there isn't an active price with the same value
   // or if the price has changed from the original price
-  const createNewPrice = !existingActivePrice && 
+  const shouldCreateNewPrice = !existingActivePrice && 
                         (!currentPrice || 
                           currentPriceInCents !== newPriceInCents || 
                           !currentPrice.active);
 
-  if (createNewPrice) {
+  if (shouldCreateNewPrice) {
     return await createNewPrice(stripeProductId, stripePriceId, newPriceInCents, active, credits);
   } else if (existingActivePrice) {
     return await useExistingPrice(stripePriceId, existingActivePrice);
@@ -260,8 +263,7 @@ async function findExistingActivePrice(stripeProductId, priceInCents) {
 
 // Create a new price and deactivate the old one
 async function createNewPrice(stripeProductId, stripePriceId, newPriceInCents, active, credits) {
-  console.log('Criando novo preço para o produto. Preço antigo:', 
-              (newPriceInCents / 100).toFixed(2));
+  console.log('Criando novo preço para o produto. Preço em centavos:', newPriceInCents);
   
   const updatedPrice = await stripe.prices.create({
     product: stripeProductId,

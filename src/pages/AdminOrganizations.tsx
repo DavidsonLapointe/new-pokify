@@ -19,7 +19,7 @@ const Organizations = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   
   // Fetch organizations data with staleTime set to 0 to always refetch
-  const { organizations, isLoading, error, refetch } = useOrganizations();
+  const { data: organizations = [], isLoading, error, refetch } = useOrganizations();
 
   // Show error toast if there's an error
   useEffect(() => {

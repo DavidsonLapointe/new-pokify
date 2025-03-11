@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, LockIcon, AlertCircle } from "lucide-react";
+import { Loader2, LockIcon, AlertCircle, CreditCard } from "lucide-react";
 import { TermsLink, PrivacyPolicyLink } from "./LegalDocumentsLinks";
 import type { Organization } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -26,7 +26,6 @@ const confirmRegistrationSchema = z.object({
   // Company information (editable fields)
   razaoSocial: z.string().min(2, "Razão social deve ter pelo menos 2 caracteres"),
   nomeFantasia: z.string().min(2, "Nome fantasia deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   // Address information
   logradouro: z.string().min(2, "Endereço deve ter pelo menos 2 caracteres"),
@@ -61,7 +60,7 @@ interface ConfirmRegistrationFormProps {
 }
 
 // Component that renders the Stripe Payment Element
-const StripePaymentSection = () => {
+const StripePaymentSection = ({ planName, planValue }: { planName: string, planValue: number }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
@@ -88,7 +87,7 @@ const StripePaymentSection = () => {
   const options = {
     mode: 'payment' as const,
     currency: 'brl',
-    amount: 9990, // R$ 99,90 (em centavos)
+    amount: planValue * 100, // Converter para centavos
     appearance: {
       theme: 'stripe' as const,
       variables: {
@@ -129,6 +128,15 @@ const StripePaymentSection = () => {
           <p><strong>Erro ao carregar Stripe:</strong> {error}</p>
         </div>
       )}
+      
+      <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-md">
+        <div className="flex items-center gap-2 mb-2">
+          <CreditCard className="h-5 w-5 text-purple-600" />
+          <h3 className="text-base font-medium text-purple-800">Detalhes do Pagamento</h3>
+        </div>
+        <p className="text-purple-700 mb-2">Plano: <strong>{planName || "Professional"}</strong></p>
+        <p className="text-purple-700 mb-4">Valor a ser pago: <strong>R$ {(planValue || 99.90).toFixed(2)}</strong></p>
+      </div>
       
       <Elements stripe={stripePromise} options={options}>
         <PaymentElementContainer 
@@ -223,6 +231,9 @@ export const ConfirmRegistrationForm = ({
   onShowPayment
 }: ConfirmRegistrationFormProps) => {
   const [submitting, setSubmitting] = useState(false);
+  const [showPaymentStep, setShowPaymentStep] = useState(false);
+  const [planValue, setPlanValue] = useState<number>(99.90);
+  const [planName, setPlanName] = useState<string>("");
   
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -230,7 +241,6 @@ export const ConfirmRegistrationForm = ({
       // Company information - making sure to use organization data if available
       razaoSocial: organization?.name || "",
       nomeFantasia: organization?.nomeFantasia || "",
-      email: organization?.email || "",
       phone: organization?.phone || "",
       // Pre-fill with organization address if available
       logradouro: organization?.address?.logradouro || "",
@@ -249,6 +259,77 @@ export const ConfirmRegistrationForm = ({
       acceptTerms: false,
     },
   });
+
+  // Buscar o nome e valor do plano quando o componente carrega
+  useEffect(() => {
+    if (organization) {
+      const fetchPlanDetails = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('plans')
+            .select('name, price')
+            .eq('id', organization.plan)
+            .single();
+          
+          if (error) {
+            console.error("Erro ao buscar detalhes do plano:", error);
+            return;
+          }
+          
+          if (data) {
+            setPlanName(data.name);
+            setPlanValue(data.price);
+            console.log("Detalhes do plano carregados:", data.name, data.price);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar detalhes do plano:", error);
+        }
+      };
+      
+      fetchPlanDetails();
+    }
+  }, [organization]);
+
+  const formatPhone = (value: string) => {
+    value = value.replace(/\D/g, '');
+    value = value.slice(0, 11);
+    
+    if (value.length > 0) {
+      if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else {
+        value = `(${value}`;
+      }
+      
+      if (value.length > 10) {
+        value = `${value.slice(0, 10)}-${value.slice(10)}`;
+      }
+    }
+    
+    return value;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    
+    const event = {
+      ...e,
+      target: {
+        ...e.target,
+        name: 'phone',
+        value
+      }
+    };
+    
+    form.setValue("phone", value);
+  };
+
+  const handleProceedToPayment = async () => {
+    const formValid = await form.trigger();
+    if (formValid) {
+      setShowPaymentStep(true);
+    }
+  };
 
   const handleFormSubmit = async (data: ConfirmRegistrationValues) => {
     try {
@@ -280,8 +361,8 @@ export const ConfirmRegistrationForm = ({
       
       console.log("Usuário criado com sucesso:", authData.user?.id);
       
-      // Proceed to payment if a payment handler is provided
-      if (onShowPayment) {
+      // Proceed to payment if a payment handler is provided and we're not already showing payment
+      if (onShowPayment && !showPaymentStep) {
         onShowPayment();
       }
       
@@ -299,320 +380,320 @@ export const ConfirmRegistrationForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-        {/* Company Information Card */}
-        <Card className="border-[#E5DEFF]">
-          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Dados da Empresa</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="razaoSocial"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Razão Social</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="nomeFantasia"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Nome Fantasia</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-left w-full">CNPJ</Label>
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <LockIcon size={14} />
-                    <span className="text-xs">Não editável</span>
+        {!showPaymentStep ? (
+          <>
+            {/* Company Information Card */}
+            <Card className="border-[#E5DEFF]">
+              <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+                <CardTitle className="text-[#6E59A5] text-lg">Dados da Empresa</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="razaoSocial"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Razão Social</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="nomeFantasia"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Nome Fantasia</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm text-left w-full">CNPJ</Label>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <LockIcon size={14} />
+                        <span className="text-xs">Não editável</span>
+                      </div>
+                    </div>
+                    <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
+                      {organization?.cnpj}
+                    </div>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Telefone da Empresa</FormLabel>
+                        <FormControl>
+                          <Input 
+                            value={formatPhone(field.value || '')}
+                            onChange={handlePhoneChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm text-left w-full">Plano</Label>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <LockIcon size={14} />
+                        <span className="text-xs">Não editável</span>
+                      </div>
+                    </div>
+                    <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
+                      {planName || "Professional"}
+                    </div>
                   </div>
                 </div>
-                <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
-                  {organization?.cnpj}
+              </CardContent>
+            </Card>
+
+            {/* Administrator Information */}
+            <Card className="border-[#E5DEFF]">
+              <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+                <CardTitle className="text-[#6E59A5] text-lg">Dados do Administrador</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="adminName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Nome do Administrador</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="adminEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Email do Administrador</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Email da Empresa</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Telefone da Empresa</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-left w-full">Plano</Label>
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <LockIcon size={14} />
-                    <span className="text-xs">Não editável</span>
-                  </div>
+              </CardContent>
+            </Card>
+
+            {/* Address Information */}
+            <Card className="border-[#E5DEFF]">
+              <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+                <CardTitle className="text-[#6E59A5] text-lg">Endereço</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="cep"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">CEP</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="logradouro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Logradouro</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="numero"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Número</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="complemento"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Complemento</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="bairro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Bairro</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cidade"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Cidade</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="estado"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Estado</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <div className="p-2 rounded bg-[#F8F6FF] border border-[#E5DEFF] text-[#8E9196]">
-                  {organization?.planName}
+              </CardContent>
+            </Card>
+
+            {/* Password and Terms */}
+            <Card className="border-[#E5DEFF]">
+              <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+                <CardTitle className="text-[#6E59A5] text-lg">Credenciais</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Senha</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="Senha" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left w-full">Confirmar Senha</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="Confirme sua senha" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="terms"
+                    {...form.register("acceptTerms")}
+                  />
+                  <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed text-left">
+                    Eu li e concordo com os <TermsLink onClick={onShowTerms} /> e a <PrivacyPolicyLink onClick={onShowPrivacyPolicy} />.
+                  </Label>
+                </div>
+                {form.formState.errors.acceptTerms && (
+                  <p className="text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Administrator Information */}
-        <Card className="border-[#E5DEFF]">
-          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Dados do Administrador</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="adminName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Nome do Administrador</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="adminEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Email do Administrador</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                onClick={handleProceedToPayment}
+                disabled={submitting}
+                className="bg-[#9b87f5] hover:bg-[#7E69AB]"
+              >
+                Avançar para Pagamento
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </>
+        ) : (
+          <>
+            <Card className="border-[#E5DEFF]">
+              <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
+                <CardTitle className="text-[#6E59A5] text-lg">Pagamento da Mensalidade</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-md">
+                  <p className="text-purple-700 mb-2">Plano: <strong>{planName}</strong></p>
+                  <p className="text-purple-700">Valor a ser pago: <strong>R$ {planValue.toFixed(2)}</strong></p>
+                </div>
+                <StripePaymentSection planName={planName} planValue={planValue} />
+              </CardContent>
+            </Card>
 
-        {/* Address Information */}
-        <Card className="border-[#E5DEFF]">
-          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Endereço</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="cep"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">CEP</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="logradouro"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Logradouro</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="numero"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Número</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="complemento"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Complemento</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="bairro"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Bairro</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cidade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Cidade</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="estado"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Estado</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                onClick={() => setShowPaymentStep(false)}
+                variant="outline"
+                className="border-[#9b87f5] text-[#9b87f5]"
+              >
+                Voltar
+              </Button>
 
-        {/* Password and Terms */}
-        <Card className="border-[#E5DEFF]">
-          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Credenciais</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Senha" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-left w-full">Confirmar Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Confirme sua senha" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="bg-[#9b87f5] hover:bg-[#7E69AB]"
+              >
+                {submitting ? "Processando..." : "Concluir Pagamento"}
+              </Button>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                {...form.register("acceptTerms")}
-              />
-              <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed text-left">
-                Eu li e concordo com os <TermsLink onClick={onShowTerms} /> e a <PrivacyPolicyLink onClick={onShowPrivacyPolicy} />.
-              </Label>
-            </div>
-            {form.formState.errors.acceptTerms && (
-              <p className="text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Payment Information with Stripe Elements */}
-        <Card className="border-[#E5DEFF]">
-          <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-            <CardTitle className="text-[#6E59A5] text-lg">Dados do Cartão de Crédito</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <StripePaymentSection />
-            
-            {/* Botão para carregar cartões de testes do Stripe */}
-            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
-              <p className="text-sm font-medium text-gray-700 mb-2">Modo de teste do Stripe</p>
-              <p className="text-xs text-gray-600 mb-2">Como você está no modo de teste, pode usar os seguintes dados:</p>
-              <div className="text-xs bg-white p-2 border border-gray-200 rounded mb-2">
-                <p className="font-mono">Número do cartão: 4242 4242 4242 4242</p>
-                <p className="font-mono">Data de validade: Qualquer data futura</p>
-                <p className="font-mono">CVV: Qualquer 3 dígitos</p>
-                <p className="font-mono">CEP: Qualquer 5 dígitos</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            disabled={submitting}
-            className="bg-[#9b87f5] hover:bg-[#7E69AB]"
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aguarde...
-              </>
-            ) : (
-              "Concluir Cadastro"
-            )}
-          </Button>
-        </div>
+          </>
+        )}
       </form>
     </Form>
   );

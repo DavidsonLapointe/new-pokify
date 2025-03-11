@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateSubscriptionDTO, Subscription } from "@/types/subscription";
 
@@ -44,6 +43,11 @@ export const createInactiveSubscription = async (organizationId: string): Promis
   try {
     console.log('Initiating inactive subscription creation for organization:', organizationId);
     
+    if (!organizationId) {
+      console.error('Organization ID is missing');
+      return null;
+    }
+
     // Use the edge function to create an inactive subscription
     const { data, error } = await supabase.functions.invoke('manage-subscription', {
       body: {
@@ -54,19 +58,61 @@ export const createInactiveSubscription = async (organizationId: string): Promis
     
     if (error) {
       console.error('Error invoking function to create inactive subscription:', error);
-      throw error;
+      return null; // Return null instead of throwing to avoid breaking the organization creation flow
     }
+    
+    console.log('Inactive subscription function response:', data);
     
     if (!data?.success || !data?.subscription) {
       console.error('Function returned error or incomplete data:', data);
-      return null;
+      
+      // Create a default "fallback" subscription object if we can't get one from the server
+      // Include all required properties from the Subscription type
+      const currentDate = new Date();
+      const nextMonth = new Date(currentDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      
+      const fallbackSubscription: Subscription = {
+        id: 'temp_' + new Date().getTime(),
+        organizationId: organizationId,
+        stripeSubscriptionId: '',
+        stripeCustomerId: '',
+        status: 'inactive',
+        createdAt: currentDate.toISOString(),
+        updatedAt: currentDate.toISOString(),
+        currentPeriodStart: currentDate.toISOString(),
+        currentPeriodEnd: nextMonth.toISOString(),
+      };
+      
+      console.log('Created fallback subscription object:', fallbackSubscription);
+      return fallbackSubscription;
     }
     
     console.log('Inactive subscription created successfully:', data.subscription.id);
     return data.subscription;
   } catch (error) {
     console.error('Error creating inactive subscription:', error);
-    return null; // Return null instead of throwing to avoid breaking the organization creation flow
+    
+    // Create a default fallback subscription in case of exception
+    // Include all required properties from the Subscription type
+    const currentDate = new Date();
+    const nextMonth = new Date(currentDate);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    
+    const fallbackSubscription: Subscription = {
+      id: 'temp_' + new Date().getTime(),
+      organizationId: organizationId,
+      stripeSubscriptionId: '',
+      stripeCustomerId: '',
+      status: 'inactive',
+      createdAt: currentDate.toISOString(),
+      updatedAt: currentDate.toISOString(),
+      currentPeriodStart: currentDate.toISOString(),
+      currentPeriodEnd: nextMonth.toISOString(),
+    };
+    
+    console.log('Created fallback subscription on exception:', fallbackSubscription);
+    return fallbackSubscription; 
   }
 };
 

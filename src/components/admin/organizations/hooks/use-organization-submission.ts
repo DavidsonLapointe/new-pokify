@@ -1,148 +1,133 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { 
   createOrganization, 
-  handleProRataCreation, 
+  handleMensalidadeCreation, 
   sendOnboardingEmail,
-  mapToOrganizationType,
-  checkExistingOrganization
+  mapToOrganizationType 
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
-import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-/**
- * Hook for handling organization form submission logic
- */
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
   const errorHandlers = useFormErrorHandlers();
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      // Verify user permission
+      console.log("Processando submissão do formulário de organização:", values);
+      
       if (user.role !== "leadly_employee") {
         errorHandlers.handlePermissionError();
         return;
       }
 
-      console.log("Iniciando criação da organização:", values);
-
-      // Double-check if CNPJ already exists
-      const { exists } = await checkExistingOrganization(values.cnpj);
-      if (exists) {
-        errorHandlers.handleCnpjExistsError();
-        return;
-      }
-
-      // Check if email domain might have delivery issues
-      const emailDomain = values.adminEmail.split('@')[1].toLowerCase();
-      const problematicDomains = ['uol.com.br', 'bol.com.br', 'terra.com.br'];
+      // Verificar se o CNPJ está formatado corretamente
+      console.log("Verificando CNPJ:", values.cnpj);
       
-      if (problematicDomains.includes(emailDomain)) {
-        console.warn(`⚠️ Warning: Using potentially problematic email domain: ${emailDomain}`);
-      }
-
-      // Create organization
-      const { data: newOrganizationData, error: orgError, planName } = await createOrganization(values);
-
-      if (orgError) {
-        console.error("Erro ao criar organização:", orgError);
-        errorHandlers.handleOrganizationCreationError(orgError);
-        return;
-      }
-
-      console.log("Organização criada com sucesso:", newOrganizationData);
-
-      // Convert DB organization to Organization type and add plan name
-      const organizationFormatted = mapToOrganizationType({
-        ...newOrganizationData,
-        planName: planName // Inject plan name from the creation response
-      });
-
-      // Create inactive subscription for the new organization with retries
-      let subscriptionCreated = false;
-      let retryCount = 0;
-      const maxRetries = 3;
-      
-      while (!subscriptionCreated && retryCount < maxRetries) {
-        try {
-          console.log(`Tentativa ${retryCount + 1} de criar assinatura inativa para organização:`, organizationFormatted.id);
-          const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
-          
-          if (inactiveSubscription) {
-            console.log("Assinatura inativa criada com sucesso:", inactiveSubscription);
-            subscriptionCreated = true;
-          } else {
-            console.warn(`Tentativa ${retryCount + 1} falhou, aguardando antes de tentar novamente...`);
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            retryCount++;
-          }
-        } catch (subscriptionError) {
-          console.error(`Erro na tentativa ${retryCount + 1} de criar assinatura:`, subscriptionError);
-          retryCount++;
-          
-          if (retryCount < maxRetries) {
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-          } else {
-            console.error("Falha ao criar assinatura inativa após todas as tentativas");
-            toast.error("Erro ao criar assinatura. Tente novamente ou contate o suporte.");
-          }
-        }
-      }
-
-      // Calculate pro-rata value and create pro-rata title
+      // Try to create the organization
+      console.log("Iniciando criação da organização");
       try {
-        // Create pro-rata title
-        const proRataTitle = await handleProRataCreation(organizationFormatted);
+        const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
 
-        console.log("Título pro-rata criado:", proRataTitle);
-
-        if (!proRataTitle) {
-          console.error("Falha ao criar título pro-rata");
+        if (orgError) {
+          console.error("Erro ao criar organização:", orgError);
+          
+          // Verificar se a mensagem de erro indica CNPJ duplicado
+          if (orgError.code === "23505" && 
+              orgError.message && 
+              orgError.message.includes("organizations_cnpj_key")) {
+            errorHandlers.handleCnpjExistsError();
+            return;
+          }
+          
+          // Check if this is a database configuration error
+          if (orgError.code === "42P10" || 
+              (orgError.message && orgError.message.includes("no unique or exclusion constraint"))) {
+            errorHandlers.handleDatabaseConfigError();
+            return;
+          }
+          
+          // Other organization creation errors
+          errorHandlers.handleOrganizationCreationError(orgError);
+          return;
         }
-        
-        // Get pro-rata value from the title creation process
-        const proRataValue = proRataTitle?.value || 0;
-        
-        // Send single onboarding email with all links
-        try {
-          console.log("Enviando email único de onboarding...");
-          const { error: emailError } = await sendOnboardingEmail(
-            organizationFormatted.id,
-            `${window.location.origin}/contract/${organizationFormatted.id}`,
-            `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
-            `${window.location.origin}/payment/${organizationFormatted.id}`,
-            proRataValue
-          );
 
-          if (emailError) {
-            // Check if it's a provider-specific issue
-            if (emailError.status === 422 && emailError.details?.includes(emailDomain)) {
-              console.error(`Erro ao enviar email para provedor ${emailDomain}:`, emailError);
-              errorHandlers.handleEmailProviderIssue(emailDomain);
-            } else {
+        if (!newOrganizationData) {
+          console.error("Dados da organização não retornados após criação");
+          errorHandlers.handleUnexpectedError(new Error("Falha ao receber dados da organização após criação"));
+          return;
+        }
+
+        console.log("Organização criada com sucesso:", newOrganizationData);
+
+        const organizationFormatted = mapToOrganizationType({
+          ...newOrganizationData,
+          planName,
+          email: values.adminEmail
+        });
+
+        try {
+          // Create inactive subscription and Stripe customer
+          console.log("Criando assinatura inativa para:", organizationFormatted.id);
+          const subscription = await createInactiveSubscription(organizationFormatted.id);
+          console.log("Assinatura inativa criada:", subscription);
+          
+          // Calculate mensalidade value and create mensalidade title
+          console.log("Criando título de mensalidade");
+          const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
+          
+          if (!mensalidadeTitle) {
+            console.error("Falha ao criar título de mensalidade");
+          } else {
+            console.log("Título de mensalidade criado:", mensalidadeTitle);
+          }
+          
+          const mensalidadeValue = mensalidadeTitle?.value || 0;
+          
+          try {
+            console.log("Enviando email de onboarding");
+            const { error: emailError } = await sendOnboardingEmail(
+              organizationFormatted.id,
+              `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
+              planName || 'Não especificado',
+              mensalidadeValue
+            );
+
+            if (emailError) {
               console.error("Erro ao enviar email de onboarding:", emailError);
               errorHandlers.handleEmailError(emailError);
+            } else {
+              console.log("Email de onboarding enviado com sucesso");
             }
-          } else {
-            console.log("Email de onboarding enviado com sucesso");
+          } catch (emailError) {
+            console.error("Exceção ao enviar email:", emailError);
+            errorHandlers.handleEmailError(emailError);
           }
-        } catch (emailError) {
-          errorHandlers.handleEmailError(emailError);
-          // Continue with success flow even if email fails
-        }
 
-        errorHandlers.showSuccessToast();
-        onSuccess();
-      } catch (error) {
-        errorHandlers.handlePostCreationError(error);
-        onSuccess();
+          errorHandlers.showSuccessToast();
+          onSuccess();
+        } catch (error) {
+          console.error("Erro no processo pós-criação:", error);
+          errorHandlers.handlePostCreationError(error);
+          // Mesmo com erro no pós-processamento, consideramos que a criação foi bem-sucedida
+          onSuccess();
+        }
+      } catch (orgCreationError: any) {
+        console.error("Erro na criação da organização:", orgCreationError);
+        
+        // Check if this is a database configuration error
+        if (orgCreationError.code === "42P10" || 
+            (orgCreationError.message && orgCreationError.message.includes("no unique or exclusion constraint"))) {
+          errorHandlers.handleDatabaseConfigError();
+          return;
+        }
+        
+        errorHandlers.handleOrganizationCreationError(orgCreationError);
       }
     } catch (error: any) {
+      console.error("Erro inesperado durante a criação:", error);
       errorHandlers.handleUnexpectedError(error);
     }
   };

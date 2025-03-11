@@ -64,15 +64,15 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
           {!contractSigned && (
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-700">1. Assinar Contrato</p>
-                <p className="text-sm text-gray-500">Revise e assine o contrato de adesão</p>
+                <p className="font-medium text-gray-700">1. Aceitar Termos de Uso</p>
+                <p className="text-sm text-gray-500">Aceite os termos de uso e política de privacidade</p>
               </div>
               <Button 
                 onClick={() => window.location.href = `/contract/${organizationId}`}
                 variant="outline"
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
               >
-                Assinar Contrato
+                Aceitar Termos
               </Button>
             </div>
           )}
@@ -81,7 +81,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-700">2. Realizar Pagamento</p>
-                <p className="text-sm text-gray-500">Efetue o pagamento pro-rata</p>
+                <p className="text-sm text-gray-500">Efetue o pagamento da mensalidade</p>
               </div>
               <Button 
                 onClick={() => window.location.href = `/payment/${organizationId}`}

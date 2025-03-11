@@ -25,6 +25,8 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         throw new Error('Dados inválidos retornados pelo Stripe');
       }
       
+      console.log("Produto criado no Stripe com sucesso:", stripeData);
+      
       // Process features safely
       const features = processFeaturesInput(plan.features);
       
@@ -45,7 +47,7 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         .single();
       
       if (error) {
-        console.error('Erro ao criar plano:', error);
+        console.error('Erro ao criar plano no Supabase:', error);
         throw error;
       }
       

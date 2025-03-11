@@ -9,6 +9,48 @@ interface CompanyBasicInfoProps {
 }
 
 export function CompanyBasicInfo({ organization, onInputChange }: CompanyBasicInfoProps) {
+  const formatPhone = (value: string) => {
+    if (!value) return '';
+    
+    // Remove formatação atual para trabalhar apenas com números
+    value = value.replace(/\D/g, '');
+    
+    // Limitar a 11 dígitos (DDD + número)
+    value = value.slice(0, 11);
+    
+    // Se houver números, aplica a formatação
+    if (value.length > 0) {
+      // Formatar DDD
+      if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else {
+        value = `(${value}`;
+      }
+      
+      // Formatar número
+      if (value.length > 10) {
+        value = `(${value.slice(1, 3)}) ${value.slice(5, 10)}-${value.slice(10)}`;
+      }
+    }
+    
+    return value;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    
+    const event = {
+      ...e,
+      target: {
+        ...e.target,
+        name: 'phone',
+        value
+      }
+    };
+    
+    onInputChange(event);
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <div className="space-y-2">
@@ -59,8 +101,8 @@ export function CompanyBasicInfo({ organization, onInputChange }: CompanyBasicIn
         <Input
           id="phone"
           name="phone"
-          value={organization.phone}
-          onChange={onInputChange}
+          value={formatPhone(organization.phone)}
+          onChange={handlePhoneChange}
         />
       </div>
     </div>
