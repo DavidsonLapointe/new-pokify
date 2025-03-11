@@ -1,4 +1,3 @@
-
 import { Organization, OrganizationStatus, OrganizationPendingReason, User as OrgUser } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {
@@ -26,7 +25,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   } else if (organization.contract_status === 'pending') {
     pendingReason = 'contract_signature';
   } else if (organization.payment_status === 'pending') {
-    pendingReason = 'pro_rata_payment';
+    pendingReason = 'mensalidade_payment';
   } else if (organization.registration_status === 'pending') {
     pendingReason = 'user_validation';
   }

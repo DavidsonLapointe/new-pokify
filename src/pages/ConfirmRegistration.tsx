@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization, OrganizationPendingReason } from "@/types";
@@ -90,7 +89,7 @@ export default function ConfirmRegistration() {
         const orgId = id || activeOrganization.id;
         
         // Define a valid pendingReason value
-        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "mensalidade_payment";
+        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : 'mensalidade_payment';
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase

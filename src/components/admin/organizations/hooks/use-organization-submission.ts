@@ -1,10 +1,9 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { OrganizationPendingReason } from "@/types/organization-types";
+import { OrganizationPendingReason } from "@/types";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
