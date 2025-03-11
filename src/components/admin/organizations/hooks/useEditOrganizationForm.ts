@@ -20,7 +20,6 @@ export const useEditOrganizationForm = (
       razaoSocial: organization.name,
       nomeFantasia: organization.nomeFantasia || "",
       cnpj: organization.cnpj || "",
-      email: organization.email || "",
       phone: organization.phone || "",
       plan: String(organization.plan), // Ensure plan is a string
       adminName: organization.adminName || "",
@@ -39,7 +38,6 @@ export const useEditOrganizationForm = (
           name: values.razaoSocial,
           nome_fantasia: values.nomeFantasia,
           cnpj: values.cnpj,
-          email: values.email,
           phone: values.phone,
           plan: values.plan,
           admin_name: values.adminName,
@@ -75,7 +73,6 @@ export const useEditOrganizationForm = (
         name: values.razaoSocial,
         nomeFantasia: values.nomeFantasia,
         cnpj: values.cnpj,
-        email: values.email,
         phone: values.phone,
         plan: values.plan,
         planName: planName, // Use the fetched plan name
