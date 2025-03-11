@@ -6,17 +6,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
 
+// Função para garantir que o status seja um dos valores permitidos
 const correctedStatus = (status: string): OrganizationStatus => {
-  return ["active", "pending", "inactive"].includes(status) 
-    ? status as OrganizationStatus 
-    : "pending";
+  if (status === "active" || status === "pending" || status === "inactive") {
+    return status as OrganizationStatus;
+  }
+  return "pending";
 };
 
+// Função para garantir que pending_reason seja um dos valores permitidos
 const correctedPendingReason = (reason: string | null): OrganizationPendingReason => {
-  const validReasons = ["contract_signature", "mensalidade_payment", "user_validation", null];
-  return validReasons.includes(reason) 
-    ? reason as OrganizationPendingReason 
-    : "user_validation";
+  if (reason === "contract_signature" || 
+      reason === "mensalidade_payment" || 
+      reason === "user_validation" || 
+      reason === null) {
+    return reason as OrganizationPendingReason;
+  }
+  return "user_validation";
 };
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
@@ -25,7 +31,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      console.log("Processando submissão do formulário de organização:", values);
+      console.log("Processando submissão simplificada do formulário:", values);
       
       if (user.role !== "leadly_employee") {
         errorHandlers.handlePermissionError();
@@ -51,7 +57,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Dados básicos da organização com tipagem correta
+      // Simplificando - apenas os campos básicos necessários
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -63,18 +69,17 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_phone: values.adminPhone || "",
         plan: values.plan,
         status: correctedStatus("pending"),
-        contract_status: "pending",
-        payment_status: "pending",
-        registration_status: "pending",
         pending_reason: correctedPendingReason("user_validation")
       };
 
-      console.log("Tentando inserir organização com dados:", organizationData);
+      console.log("Tentando inserir organização com dados simplificados:", organizationData);
       
-      // Inserção com tipos corrigidos
-      const { error: insertError } = await supabase
+      // Inserção com apenas dados básicos
+      const { error: insertError, data: insertedData } = await supabase
         .from('organizations')
-        .insert(organizationData);
+        .insert(organizationData)
+        .select('id, name')
+        .single();
 
       if (insertError) {
         console.error("Erro ao inserir organização:", insertError);
@@ -82,41 +87,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Buscar a organização recém-criada
-      const { data: newOrg, error: fetchError } = await supabase
-        .from('organizations')
-        .select('id, name, admin_email')
-        .eq('cnpj', values.cnpj)
-        .maybeSingle();
-
-      if (fetchError || !newOrg) {
-        console.error("Erro ao buscar organização após criação:", fetchError);
-        errorHandlers.handleDatabaseConfigError();
-        return;
-      }
-
-      // Enviar email de onboarding
-      try {
-        console.log("Enviando email de onboarding para:", newOrg.admin_email);
-        const confirmationToken = `${window.location.origin}/setup/${newOrg.id}`;
-        
-        const response = await supabase.functions.invoke('send-organization-emails', {
-          body: {
-            organizationId: newOrg.id,
-            type: "onboarding",
-            data: { confirmationToken }
-          }
-        });
-        
-        if (response.error) {
-          console.error("Erro no envio do email:", response.error);
-          errorHandlers.handleEmailError(response.error);
-        }
-      } catch (emailError) {
-        console.error("Erro no processo de email:", emailError);
-        errorHandlers.handleEmailError(emailError);
-      }
-
+      console.log("Organização criada com sucesso:", insertedData);
       errorHandlers.showSuccessToast();
       onSuccess();
 
