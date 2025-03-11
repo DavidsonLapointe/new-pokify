@@ -22,6 +22,9 @@ interface EmailRequest {
     contractUrl?: string;
     paymentUrl?: string;
     proRataAmount?: number;
+    termsUrl?: string;
+    planName?: string;
+    mensalidadeAmount?: number;
   };
 }
 
@@ -57,7 +60,8 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Organization found:", {
       id: organization.id,
       name: organization.name,
-      adminEmail: organization.admin_email
+      adminEmail: organization.admin_email,
+      adminPhone: organization.admin_phone || "Não informado" // Add admin_phone to logs
     });
 
     // Detect problematic email domains
@@ -81,19 +85,25 @@ const handler = async (req: Request): Promise<Response> => {
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">1. Assinar o Contrato</h2>
               <p>Você precisa assinar o contrato de adesão da Leadly:</p>
-              <p><a href="${data.contractUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Acessar e Assinar Contrato</a></p>
+              <p><a href="${data.termsUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Acessar e Assinar Contrato</a></p>
             </div>
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">2. Efetuar o Pagamento</h2>
               <p>Você precisa efetuar o pagamento pro-rata para ativar sua conta:</p>
-              <p>Valor pro rata: <strong>R$ ${data.proRataAmount?.toFixed(2)}</strong></p>
+              <p>Valor pro rata: <strong>R$ ${data.mensalidadeAmount?.toFixed(2)}</strong></p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Realizar Pagamento</a></p>
             </div>
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">3. Completar seu Cadastro</h2>
               <p>Você precisa confirmar seus dados e definir sua senha:</p>
+              <p>Dados atuais:</p>
+              <ul style="list-style-type: none; padding-left: 0;">
+                <li><strong>Nome:</strong> ${organization.admin_name}</li>
+                <li><strong>Email:</strong> ${organization.admin_email}</li>
+                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
+              </ul>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Completar Cadastro</a></p>
             </div>
             
@@ -127,6 +137,12 @@ const handler = async (req: Request): Promise<Response> => {
             `
               <h1>Olá ${organization.admin_name},</h1>
               <p>Para completar seu cadastro na Leadly, acesse o link abaixo:</p>
+              <p>Dados atuais:</p>
+              <ul>
+                <li><strong>Nome:</strong> ${organization.admin_name}</li>
+                <li><strong>Email:</strong> ${organization.admin_email}</li>
+                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
+              </ul>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Completar Cadastro</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
             ` :
