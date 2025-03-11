@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,13 +67,19 @@ export const useOrganizations = () => {
 
             if (usersError) throw usersError;
 
-            // Safely determine plan name with proper null checking
-            const planName = org.plans && 
-              typeof org.plans === 'object' && 
-              'name' in org.plans && 
-              org.plans.name ? 
-                org.plans.name : 
-                planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            // Safe plan name access with proper null checks
+            let planName = "Plano não encontrado";
+            
+            // Only proceed with accessing org.plans if it's not null
+            if (org.plans !== null) {
+              // Then check if it's an object and has a name property
+              if (typeof org.plans === 'object' && org.plans && 'name' in org.plans) {
+                planName = org.plans.name || planIdToNameMap.get(org.plan) || "Plano não encontrado";
+              }
+            } else {
+              // Fallback to map if org.plans is null
+              planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            }
 
             const formattedOrg = formatOrganizationData({
               ...org,
