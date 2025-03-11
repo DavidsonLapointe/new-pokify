@@ -38,10 +38,10 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
       
-      // Mapear valores de pendingReason para o tipo correto baseado no enum do banco de dados
-      const pendingReason: OrganizationPendingReason = "user_validation";
+      // Log completo dos valores do formulário para debug
+      console.log("Valores do formulário completos:", JSON.stringify(values, null, 2));
       
-      // Dados básicos da organização com tipagem explícita
+      // Simplificar ao máximo o objeto de inserção para evitar erros de tipo
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -52,16 +52,19 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone,
         plan: values.plan,
-        status: "pending" as OrganizationStatus,
+        status: "pending",
         contract_status: "pending",
         payment_status: "pending",
         registration_status: "pending",
-        pending_reason: pendingReason
+        pending_reason: "user_validation"
       };
 
-      console.log("Dados preparados para inserção:", organizationData);
+      console.log("Dados para inserção:", JSON.stringify(organizationData, null, 2));
       
-      // Inserção de organização
+      // Logando a sintaxe exata da query que iremos executar
+      console.log(`Executando: supabase.from('organizations').insert(${JSON.stringify(organizationData)}).select().single()`);
+      
+      // Inserção simplificada, sem tipagens complexas
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(organizationData)
