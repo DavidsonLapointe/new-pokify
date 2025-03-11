@@ -31,7 +31,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      console.log("Processando submissão simplificada do formulário:", values);
+      console.log("TESTE: Processando apenas inserção básica:", values);
       
       if (user.role !== "leadly_employee") {
         errorHandlers.handlePermissionError();
@@ -57,37 +57,29 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Simplificando - apenas os campos básicos necessários
-      const organizationData = {
+      // Criando objeto com apenas campos mínimos essenciais
+      const minimalOrgData = {
         name: values.razaoSocial,
-        nome_fantasia: values.nomeFantasia,
-        email: values.adminEmail,
-        phone: values.phone,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        admin_phone: values.adminPhone || "",
-        plan: values.plan,
-        status: correctedStatus("pending"),
-        pending_reason: correctedPendingReason("user_validation")
+        status: correctedStatus("pending")
       };
 
-      console.log("Tentando inserir organização com dados simplificados:", organizationData);
+      console.log("TESTE: Tentando inserção com dados mínimos:", minimalOrgData);
       
-      // Inserção com apenas dados básicos
-      const { error: insertError, data: insertedData } = await supabase
+      // Inserção simples, sem select ou retorno de dados
+      const { error: insertError } = await supabase
         .from('organizations')
-        .insert(organizationData)
-        .select('id, name')
-        .single();
+        .insert(minimalOrgData);
 
       if (insertError) {
-        console.error("Erro ao inserir organização:", insertError);
+        console.error("TESTE: Erro na inserção básica:", insertError);
         errorHandlers.handleDatabaseConfigError();
         return;
       }
 
-      console.log("Organização criada com sucesso:", insertedData);
+      console.log("TESTE: Inserção básica bem-sucedida!");
       errorHandlers.showSuccessToast();
       onSuccess();
 
