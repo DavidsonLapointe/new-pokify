@@ -88,8 +88,8 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Use a string literal that matches the database enum
-        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : 'mensalidade_payment';
+        // Use a properly typed enum value for the database
+        const pendingReason: "mensalidade_payment" | null = data.acceptTerms ? null : "mensalidade_payment";
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase

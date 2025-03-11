@@ -18,6 +18,7 @@ export interface User {
 
 export type OrganizationStatus = "active" | "pending" | "inactive";
 
+// This should exactly match the database enum values
 export type OrganizationPendingReason = 
   | "contract_signature" 
   | "mensalidade_payment" 
