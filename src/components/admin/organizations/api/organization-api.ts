@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -33,44 +32,42 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Log plan details for debugging
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
-    // Create organization with direct insert to avoid ON CONFLICT error
-    console.log("Attempting to insert organization with CNPJ:", values.cnpj);
-    
-    // First check if organization with this CNPJ already exists
-    const { data: existingOrgs, error: checkError } = await supabase
-      .from('organizations')
-      .select('id')
-      .eq('cnpj', values.cnpj);
+    // Check if organization with this CNPJ already exists
+    const { exists, error: checkError } = await checkExistingOrganization(values.cnpj);
       
     if (checkError) {
       console.error("Error checking for existing organization:", checkError);
       throw checkError;
     }
     
-    if (existingOrgs && existingOrgs.length > 0) {
+    if (exists) {
       console.error("Organization with this CNPJ already exists");
       throw new Error("CNPJ já cadastrado no sistema.");
     }
     
-    // Create organization without ON CONFLICT clause
+    // Create organization with standard insert
+    const insertData = {
+      name: values.razaoSocial,
+      nome_fantasia: values.nomeFantasia,
+      plan: values.plan,
+      status: "pending",
+      phone: values.phone,
+      cnpj: values.cnpj,
+      admin_name: values.adminName,
+      admin_email: values.adminEmail,
+      admin_phone: values.adminPhone,
+      email: values.adminEmail,
+      contract_status: 'pending',
+      payment_status: 'pending',
+      registration_status: 'pending',
+      pending_reason: 'user_validation'
+    };
+
+    console.log("Inserindo organização:", insertData);
+    
     const { data, error } = await supabase
       .from('organizations')
-      .insert({
-        name: values.razaoSocial,
-        nome_fantasia: values.nomeFantasia,
-        plan: values.plan,
-        status: "pending",
-        phone: values.phone,
-        cnpj: values.cnpj,
-        admin_name: values.adminName,
-        admin_email: values.adminEmail,
-        admin_phone: values.adminPhone,
-        email: values.adminEmail,
-        contract_status: 'pending',
-        payment_status: 'pending',
-        registration_status: 'pending',
-        pending_reason: 'user_validation'
-      })
+      .insert(insertData)
       .select('*')
       .single();
     

@@ -92,7 +92,7 @@ export const checkExistingOrganization = async (cnpj: string) => {
     
     // Manually find if any existing CNPJ matches when non-digits are removed
     const matchingOrg = allOrgs?.find(org => {
-      const orgCleanCnpj = org.cnpj.replace(/[^\d]/g, '');
+      const orgCleanCnpj = cleanCNPJ(org.cnpj);
       return orgCleanCnpj === cleanedCnpj;
     });
     
