@@ -131,9 +131,7 @@ export const sendOnboardingEmail = async (
   planName: string,
   mensalidadeAmount: number
 ) => {
-  // URLs diretos para as rotas específicas
-  const termsUrl = `${window.location.origin}/contract/${organizationId}`;
-  const paymentUrl = `${window.location.origin}/payment/${organizationId}`;
+  // URL para a confirmação do cadastro
   const confirmationUrl = `${window.location.origin}/confirm-registration/${organizationId}`;
 
   const { error } = await supabase.functions.invoke('send-organization-emails', {
@@ -141,8 +139,6 @@ export const sendOnboardingEmail = async (
       organizationId,
       type: 'onboarding',
       data: {
-        termsUrl,
-        paymentUrl,
         confirmationToken: confirmationUrl,
         planName,
         mensalidadeAmount

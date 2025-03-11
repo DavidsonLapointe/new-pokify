@@ -65,7 +65,7 @@ export const RemainingStepsCard: React.FC<RemainingStepsProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-700">1. Aceitar Termos de Uso</p>
-                <p className="text-sm text-gray-500">Revise e aceite os termos de uso da plataforma</p>
+                <p className="text-sm text-gray-500">Aceite os termos de uso e política de privacidade</p>
               </div>
               <Button 
                 onClick={() => window.location.href = `/contract/${organizationId}`}
