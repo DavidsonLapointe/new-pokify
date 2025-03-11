@@ -67,13 +67,11 @@ export const useOrganizations = () => {
             // Get plan name from the map
             const planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
 
-            const formattedOrg = formatOrganizationData({
+            return formatOrganizationData({
               ...org,
               users: users || [],
               planName
             });
-            
-            return formattedOrg;
           } catch (err) {
             console.error(`Erro ao processar organização ${org.id}:`, err);
             return formatOrganizationData({

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -25,19 +26,20 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Registrar o plano e seu valor para debug
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
+    // Remover a cláusula ON CONFLICT que estava causando problemas
     const { data, error } = await supabase
       .from('organizations')
       .insert({
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
-        plan: values.plan, // Armazenar o ID do plano, não o nome
+        plan: values.plan,
         status: "pending",
         phone: values.phone,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone,
-        email: values.adminEmail, // Usar o email do administrador como email da empresa
+        email: values.adminEmail,
         contract_status: 'pending',
         payment_status: 'pending',
         registration_status: 'pending',
@@ -51,10 +53,20 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       throw error;
     }
     
-    return { data, error: null, planName: planData?.name, planPrice: planData?.price };
+    return { 
+      data, 
+      error: null, 
+      planName: planData?.name, 
+      planPrice: planData?.price 
+    };
   } catch (error) {
     console.error("Error in createOrganization:", error);
-    return { data: null, error, planName: null, planPrice: null };
+    return { 
+      data: null, 
+      error, 
+      planName: null, 
+      planPrice: null 
+    };
   }
 };
 
@@ -97,7 +109,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
-    planName: dbOrganization.plan_name || dbOrganization.planName || "Plano não especificado", // Ensure planName is properly set
+    planName: dbOrganization.plan_name || dbOrganization.planName || "Plano não especificado",
     users: users,
     status: status,
     pendingReason: currentPendingReason,
