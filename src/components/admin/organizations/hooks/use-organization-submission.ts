@@ -23,25 +23,9 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Check for existing organization with same CNPJ
-      console.log("Verificando se CNPJ já existe:", values.cnpj);
-      const { data: existingOrgs, error: existingError } = await supabase
-        .from('organizations')
-        .select('id')
-        .eq('cnpj', values.cnpj);
-        
-      if (existingError) {
-        console.error("Erro ao verificar CNPJ existente:", existingError);
-        errorHandlers.handleUnexpectedError(existingError);
-        return;
-      } 
+      // Verificar se o CNPJ está formatado corretamente
+      console.log("Verificando CNPJ:", values.cnpj);
       
-      if (existingOrgs && existingOrgs.length > 0) {
-        console.log("CNPJ já existe no sistema:", existingOrgs);
-        errorHandlers.handleCnpjExistsError();
-        return;
-      }
-
       // Try to create the organization
       console.log("Iniciando criação da organização");
       try {
@@ -49,6 +33,14 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
         if (orgError) {
           console.error("Erro ao criar organização:", orgError);
+          
+          // Verificar se a mensagem de erro indica CNPJ duplicado
+          if (orgError.code === "23505" && 
+              orgError.message && 
+              orgError.message.includes("organizations_cnpj_key")) {
+            errorHandlers.handleCnpjExistsError();
+            return;
+          }
           
           // Check if this is a database configuration error
           if (orgError.code === "42P10" || 

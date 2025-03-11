@@ -46,7 +46,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       throw new Error("CNPJ já cadastrado no sistema.");
     }
     
-    // Create organization with standard insert
+    // Create organization with standard insert (sem usar ON CONFLICT)
     const insertData = {
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,

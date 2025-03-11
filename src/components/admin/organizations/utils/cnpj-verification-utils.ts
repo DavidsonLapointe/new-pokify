@@ -64,44 +64,49 @@ export const checkCnpjExists = async (cnpj: string): Promise<{exists: boolean, d
  * Made this exportable for potential direct use in other components
  */
 export const checkExistingOrganization = async (cnpj: string) => {
-  // Clean the CNPJ format to ensure consistent comparison - remove all non-digit characters
-  const cleanedCnpj = cleanCNPJ(cnpj);
-  
-  console.log("Checking for existing CNPJ:", cleanedCnpj, "Original format:", cnpj);
-  
-  // First try exact match with the formatted version (with punctuation)
-  let { data, error } = await supabase
-    .from('organizations')
-    .select('id, cnpj, name')
-    .eq('cnpj', cnpj)
-    .maybeSingle();
-  
-  if (!data) {
-    // If no exact match, try with the cleaned version (just digits)
-    console.log("No exact match found, trying with cleaned CNPJ format");
+  try {
+    // Clean the CNPJ format to ensure consistent comparison - remove all non-digit characters
+    const cleanedCnpj = cleanCNPJ(cnpj);
     
-    // Check for CNPJs that would match when cleaned (removing punctuation)
-    const { data: allOrgs, error: fetchError } = await supabase
+    console.log("Checking for existing CNPJ:", cleanedCnpj, "Original format:", cnpj);
+    
+    // First try exact match with the formatted version (with punctuation)
+    let { data, error } = await supabase
       .from('organizations')
-      .select('id, cnpj, name');
+      .select('id, cnpj, name')
+      .eq('cnpj', cnpj)
+      .maybeSingle();
+    
+    if (!data) {
+      // If no exact match, try with the cleaned version (just digits)
+      console.log("No exact match found, trying with cleaned CNPJ format");
       
-    if (fetchError) {
-      console.error("Error fetching organizations:", fetchError);
-      return { exists: false, data: null, error: fetchError };
+      // Check for CNPJs that would match when cleaned (removing punctuation)
+      const { data: allOrgs, error: fetchError } = await supabase
+        .from('organizations')
+        .select('id, cnpj, name');
+        
+      if (fetchError) {
+        console.error("Error fetching organizations:", fetchError);
+        return { exists: false, data: null, error: fetchError };
+      }
+      
+      // Manually find if any existing CNPJ matches when non-digits are removed
+      const matchingOrg = allOrgs?.find(org => {
+        const orgCleanCnpj = cleanCNPJ(org.cnpj);
+        return orgCleanCnpj === cleanedCnpj;
+      });
+      
+      data = matchingOrg || null;
+      console.log("Clean CNPJ match result:", !!matchingOrg, matchingOrg);
+    } else {
+      console.log("Exact CNPJ match found:", data);
     }
     
-    // Manually find if any existing CNPJ matches when non-digits are removed
-    const matchingOrg = allOrgs?.find(org => {
-      const orgCleanCnpj = cleanCNPJ(org.cnpj);
-      return orgCleanCnpj === cleanedCnpj;
-    });
-    
-    data = matchingOrg || null;
-    console.log("Clean CNPJ match result:", !!matchingOrg, matchingOrg);
-  } else {
-    console.log("Exact CNPJ match found:", data);
+    // Return true if data exists (CNPJ is found), regardless of organization status
+    return { exists: !!data, data, error };
+  } catch (error) {
+    console.error("Erro ao verificar CNPJ existente:", error);
+    return { exists: false, data: null, error };
   }
-  
-  // Return true if data exists (CNPJ is found), regardless of organization status
-  return { exists: !!data, data, error };
 };
