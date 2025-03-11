@@ -53,25 +53,36 @@ export const useOrganizations = () => {
         return [];
       }
 
+      console.log(`${orgsData.length} organizações encontradas`);
+
       // Also need to fetch users for each organization
       const organizationsWithUsers = await Promise.all(
         orgsData.map(async (org) => {
           try {
+            console.log(`Processando organização: ${org.id} - ${org.name}`);
+            
             const { data: users, error: usersError } = await supabase
               .from('profiles')
               .select('*')
               .eq('organization_id', org.id);
 
-            if (usersError) throw usersError;
+            if (usersError) {
+              console.error(`Erro ao buscar usuários para organização ${org.id}:`, usersError);
+              throw usersError;
+            }
 
             // Get plan name from the map
             const planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            console.log(`Plano para organização ${org.id}: ${planName}`);
 
-            return formatOrganizationData({
+            // Formatando a organização com dados completos
+            const formattedOrg = formatOrganizationData({
               ...org,
               users: users || [],
               planName
             });
+            
+            return formattedOrg;
           } catch (err) {
             console.error(`Erro ao processar organização ${org.id}:`, err);
             return formatOrganizationData({

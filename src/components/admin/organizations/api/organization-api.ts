@@ -11,6 +11,8 @@ import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
   try {
+    console.log("Iniciando criação de organização com os dados:", values);
+    
     // First, get the plan name to store alongside the ID
     const { data: planData, error: planError } = await supabase
       .from('plans')
@@ -26,10 +28,10 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Registrar o plano e seu valor para debug
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
-    // Remover a cláusula ON CONFLICT que estava causando problemas
+    // Simplificando a inserção para evitar problemas
     const { data, error } = await supabase
       .from('organizations')
-      .insert({
+      .insert([{
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         plan: values.plan,
@@ -44,17 +46,21 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         payment_status: 'pending',
         registration_status: 'pending',
         pending_reason: 'user_validation'
-      })
-      .select()
-      .single();
+      }])
+      .select();
     
     if (error) {
       console.error("Error creating organization:", error);
       throw error;
     }
     
+    // Garantir que temos um objeto de dados único
+    const newOrg = Array.isArray(data) && data.length > 0 ? data[0] : data;
+    
+    console.log("Organização criada com sucesso:", newOrg);
+    
     return { 
-      data, 
+      data: newOrg, 
       error: null, 
       planName: planData?.name, 
       planPrice: planData?.price 
@@ -148,9 +154,19 @@ export const handleMensalidadeCreation = async (organization: Organization) => {
   try {
     // Buscar o valor do plano diretamente do banco de dados
     const planType = organization.plan;
+    if (!planType) {
+      console.error("Plano não definido para a organização:", organization.id);
+      return null;
+    }
+    
     const planValue = await getPlanValue(planType);
     
     console.log(`Criando título de mensalidade para organização ${organization.id} com valor ${planValue}`);
+    
+    if (!planValue || planValue <= 0) {
+      console.error("Valor do plano inválido:", planValue);
+      return null;
+    }
     
     return await createMensalidadeTitle(organization, planValue);
   } catch (error) {

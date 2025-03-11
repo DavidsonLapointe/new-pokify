@@ -5,22 +5,25 @@ export const formatOrganizationData = (organization: any): Organization => {
   console.log("Formatando organização (dados brutos):", organization);
   
   // Verificar se os dados necessários estão presentes
-  if (!organization || !organization.id || !organization.name) {
+  if (!organization || !organization.id) {
     console.error("Dados de organização inválidos:", organization);
     throw new Error("Dados de organização inválidos ou incompletos");
   }
   
   // Tratar campos opcionais explicitamente
+  const name = organization.name || organization.razao_social || '';
   const nome_fantasia = organization.nome_fantasia || '';
   const contract_signed_at = organization.contract_signed_at || null;
   const integrated_crm = organization.integrated_crm || null;
   const integrated_llm = organization.integrated_llm || null;
   const phone = organization.phone || '';
-  const admin_phone = organization.admin_phone || ''; // Added admin_phone handling
+  const admin_phone = organization.admin_phone || '';
   
   // Determine pending reason based on individual statuses
   let pendingReason: OrganizationPendingReason = null;
-  if (organization.contract_status === 'pending') {
+  if (organization.pending_reason) {
+    pendingReason = organization.pending_reason;
+  } else if (organization.contract_status === 'pending') {
     pendingReason = 'contract_signature';
   } else if (organization.payment_status === 'pending') {
     pendingReason = 'pro_rata_payment';
@@ -59,13 +62,16 @@ export const formatOrganizationData = (organization: any): Organization => {
     };
   }) : [];
 
+  // Garantir que planName esteja definido corretamente
+  const planName = organization.planName || organization.plan_name || "Plano não especificado";
+  
   // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {
     id: organization.id,
-    name: organization.name,
+    name: name,
     nomeFantasia: nome_fantasia,
     plan: organization.plan,
-    planName: organization.planName || "Plano não especificado", // Ensure planName is properly set
+    planName: planName,
     users: users,
     status: status,
     pendingReason: pendingReason,
@@ -74,12 +80,12 @@ export const formatOrganizationData = (organization: any): Organization => {
     registrationStatus: organization.registration_status || 'pending',
     integratedCRM: integrated_crm,
     integratedLLM: integrated_llm,
-    email: organization.email,
+    email: organization.email || organization.admin_email || '',
     phone: phone,
-    cnpj: organization.cnpj,
-    adminName: organization.admin_name,
-    adminEmail: organization.admin_email,
-    adminPhone: admin_phone, // Added adminPhone property
+    cnpj: organization.cnpj || '',
+    adminName: organization.admin_name || '',
+    adminEmail: organization.admin_email || '',
+    adminPhone: admin_phone,
     contractSignedAt: contract_signed_at,
     createdAt: organization.created_at || new Date().toISOString(),
     logo: logo,
