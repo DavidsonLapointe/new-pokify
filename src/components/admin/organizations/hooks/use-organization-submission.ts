@@ -9,7 +9,6 @@ import {
   mapToOrganizationType 
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
@@ -34,13 +33,18 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         
       if (existingError) {
         console.error("Erro ao verificar CNPJ existente:", existingError);
-      } else if (existingOrgs && existingOrgs.length > 0) {
+        errorHandlers.handleUnexpectedError(existingError);
+        return;
+      } 
+      
+      if (existingOrgs && existingOrgs.length > 0) {
         console.log("CNPJ já existe no sistema:", existingOrgs);
         errorHandlers.handleCnpjExistsError();
         return;
       }
 
-      // Tenta criar a organização
+      // Try to create the organization
+      console.log("Iniciando criação da organização");
       const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
 
       if (orgError) {

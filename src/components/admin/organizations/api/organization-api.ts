@@ -18,20 +18,26 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       .from('plans')
       .select('name, price')
       .eq('id', values.plan)
-      .single();
+      .maybeSingle();
     
     if (planError) {
       console.error("Error fetching plan details:", planError);
       throw planError;
     }
+
+    if (!planData) {
+      console.error("Plan not found:", values.plan);
+      throw new Error(`Plan with ID ${values.plan} not found`);
+    }
     
-    // Registrar o plano e seu valor para debug
+    // Log plan details for debugging
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
-    // Simplify the insert operation to avoid ON CONFLICT issues
+    // Create organization without ON CONFLICT clause
+    console.log("Attempting to insert organization with CNPJ:", values.cnpj);
     const { data, error } = await supabase
       .from('organizations')
-      .insert({
+      .insert([{
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         plan: values.plan,
@@ -46,21 +52,19 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         payment_status: 'pending',
         registration_status: 'pending',
         pending_reason: 'user_validation'
-      })
-      .select();
+      }])
+      .select('*')
+      .single();
     
     if (error) {
       console.error("Error creating organization:", error);
       throw error;
     }
     
-    // Garantir que temos um objeto de dados único
-    const newOrg = Array.isArray(data) && data.length > 0 ? data[0] : data;
-    
-    console.log("Organização criada com sucesso:", newOrg);
+    console.log("Organização criada com sucesso:", data);
     
     return { 
-      data: newOrg, 
+      data: data, 
       error: null, 
       planName: planData?.name, 
       planPrice: planData?.price 

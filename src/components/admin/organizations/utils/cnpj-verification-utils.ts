@@ -9,20 +9,53 @@ export const checkCnpjExists = async (cnpj: string): Promise<{exists: boolean, d
   try {
     console.log("Iniciando verificação de CNPJ:", cnpj);
     
-    const { exists, data, error } = await checkExistingOrganization(cnpj);
+    // First clean the CNPJ format
+    const cleanedCnpj = cleanCNPJ(cnpj);
+    console.log("CNPJ limpo para verificação:", cleanedCnpj);
     
-    if (error) {
-      console.error("Erro ao verificar CNPJ existente:", error);
-      throw error;
+    // Try direct query first
+    const { data: directMatchData, error: directMatchError } = await supabase
+      .from('organizations')
+      .select('id, name')
+      .eq('cnpj', cnpj);
+      
+    if (directMatchError) {
+      console.error("Erro na verificação direta de CNPJ:", directMatchError);
+      return { exists: false, error: directMatchError };
     }
     
-    console.log("Resultado da verificação:", exists ? "CNPJ já existe" : "CNPJ disponível");
+    if (directMatchData && directMatchData.length > 0) {
+      console.log("CNPJ encontrado por correspondência direta:", directMatchData);
+      return { exists: true, data: directMatchData[0] };
+    }
     
-    // Return whether CNPJ exists or not along with data
-    return { exists, data };
+    // If no direct match, try with cleaned version
+    console.log("Verificando CNPJ com formato limpo");
+    const { data: allOrgs, error: allOrgsError } = await supabase
+      .from('organizations')
+      .select('id, name, cnpj');
+    
+    if (allOrgsError) {
+      console.error("Erro ao buscar todas as organizações:", allOrgsError);
+      return { exists: false, error: allOrgsError };
+    }
+    
+    // Manually check if any CNPJ matches when cleaned
+    const matchingOrg = allOrgs?.find(org => {
+      const orgCleanCnpj = cleanCNPJ(org.cnpj);
+      return orgCleanCnpj === cleanedCnpj;
+    });
+    
+    if (matchingOrg) {
+      console.log("CNPJ encontrado por correspondência com formato limpo:", matchingOrg);
+      return { exists: true, data: matchingOrg };
+    }
+    
+    console.log("CNPJ não encontrado no sistema");
+    return { exists: false };
   } catch (error) {
-    console.error("Erro ao verificar CNPJ:", error);
-    throw error;
+    console.error("Erro inesperado ao verificar CNPJ:", error);
+    return { exists: false, error };
   }
 };
 
