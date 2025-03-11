@@ -71,6 +71,17 @@ export const useFormErrorHandlers = () => {
     });
   };
 
+  const handleDatabaseConfigError = () => {
+    console.error("Erro de configuração no banco de dados detectado");
+    
+    toast({
+      title: "Erro de configuração no banco de dados",
+      description: "Há um erro de configuração no banco de dados. Por favor, contate o suporte técnico.",
+      variant: "destructive",
+      duration: 8000,
+    });
+  };
+
   const handleUnexpectedError = (error: any) => {
     console.error("Erro não tratado ao criar empresa:", error);
     let errorMessage = "Não foi possível criar a empresa. Tente novamente.";
@@ -102,6 +113,7 @@ export const useFormErrorHandlers = () => {
     handleEmailError,
     handleEmailProviderIssue,
     handlePostCreationError,
+    handleDatabaseConfigError,
     handleUnexpectedError,
     showSuccessToast
   };

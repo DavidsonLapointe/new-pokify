@@ -45,73 +45,88 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       // Try to create the organization
       console.log("Iniciando criação da organização");
-      const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
-
-      if (orgError) {
-        console.error("Erro ao criar organização:", orgError);
-        errorHandlers.handleOrganizationCreationError(orgError);
-        return;
-      }
-
-      if (!newOrganizationData) {
-        console.error("Dados da organização não retornados após criação");
-        errorHandlers.handleUnexpectedError(new Error("Falha ao receber dados da organização após criação"));
-        return;
-      }
-
-      console.log("Organização criada com sucesso:", newOrganizationData);
-
-      const organizationFormatted = mapToOrganizationType({
-        ...newOrganizationData,
-        planName,
-        email: values.adminEmail
-      });
-
       try {
-        // Create inactive subscription and Stripe customer
-        console.log("Criando assinatura inativa para:", organizationFormatted.id);
-        const subscription = await createInactiveSubscription(organizationFormatted.id);
-        console.log("Assinatura inativa criada:", subscription);
-        
-        // Calculate mensalidade value and create mensalidade title
-        console.log("Criando título de mensalidade");
-        const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
-        
-        if (!mensalidadeTitle) {
-          console.error("Falha ao criar título de mensalidade");
-        } else {
-          console.log("Título de mensalidade criado:", mensalidadeTitle);
-        }
-        
-        const mensalidadeValue = mensalidadeTitle?.value || 0;
-        
-        try {
-          console.log("Enviando email de onboarding");
-          const { error: emailError } = await sendOnboardingEmail(
-            organizationFormatted.id,
-            `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
-            planName || 'Não especificado',
-            mensalidadeValue
-          );
+        const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
 
-          if (emailError) {
-            console.error("Erro ao enviar email de onboarding:", emailError);
-            errorHandlers.handleEmailError(emailError);
-          } else {
-            console.log("Email de onboarding enviado com sucesso");
+        if (orgError) {
+          console.error("Erro ao criar organização:", orgError);
+          // Special case for database configuration error
+          if (orgError.code === "42P10") {
+            errorHandlers.handleDatabaseConfigError();
+            return;
           }
-        } catch (emailError) {
-          console.error("Exceção ao enviar email:", emailError);
-          errorHandlers.handleEmailError(emailError);
+          errorHandlers.handleOrganizationCreationError(orgError);
+          return;
         }
 
-        errorHandlers.showSuccessToast();
-        onSuccess();
-      } catch (error) {
-        console.error("Erro no processo pós-criação:", error);
-        errorHandlers.handlePostCreationError(error);
-        // Mesmo com erro no pós-processamento, consideramos que a criação foi bem-sucedida
-        onSuccess();
+        if (!newOrganizationData) {
+          console.error("Dados da organização não retornados após criação");
+          errorHandlers.handleUnexpectedError(new Error("Falha ao receber dados da organização após criação"));
+          return;
+        }
+
+        console.log("Organização criada com sucesso:", newOrganizationData);
+
+        const organizationFormatted = mapToOrganizationType({
+          ...newOrganizationData,
+          planName,
+          email: values.adminEmail
+        });
+
+        try {
+          // Create inactive subscription and Stripe customer
+          console.log("Criando assinatura inativa para:", organizationFormatted.id);
+          const subscription = await createInactiveSubscription(organizationFormatted.id);
+          console.log("Assinatura inativa criada:", subscription);
+          
+          // Calculate mensalidade value and create mensalidade title
+          console.log("Criando título de mensalidade");
+          const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
+          
+          if (!mensalidadeTitle) {
+            console.error("Falha ao criar título de mensalidade");
+          } else {
+            console.log("Título de mensalidade criado:", mensalidadeTitle);
+          }
+          
+          const mensalidadeValue = mensalidadeTitle?.value || 0;
+          
+          try {
+            console.log("Enviando email de onboarding");
+            const { error: emailError } = await sendOnboardingEmail(
+              organizationFormatted.id,
+              `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
+              planName || 'Não especificado',
+              mensalidadeValue
+            );
+
+            if (emailError) {
+              console.error("Erro ao enviar email de onboarding:", emailError);
+              errorHandlers.handleEmailError(emailError);
+            } else {
+              console.log("Email de onboarding enviado com sucesso");
+            }
+          } catch (emailError) {
+            console.error("Exceção ao enviar email:", emailError);
+            errorHandlers.handleEmailError(emailError);
+          }
+
+          errorHandlers.showSuccessToast();
+          onSuccess();
+        } catch (error) {
+          console.error("Erro no processo pós-criação:", error);
+          errorHandlers.handlePostCreationError(error);
+          // Mesmo com erro no pós-processamento, consideramos que a criação foi bem-sucedida
+          onSuccess();
+        }
+      } catch (orgCreationError) {
+        console.error("Erro na criação da organização:", orgCreationError);
+        // Check for database configuration error
+        if (orgCreationError.code === "42P10") {
+          errorHandlers.handleDatabaseConfigError();
+          return;
+        }
+        errorHandlers.handleOrganizationCreationError(orgCreationError);
       }
     } catch (error: any) {
       console.error("Erro inesperado durante a criação:", error);
