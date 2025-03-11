@@ -43,7 +43,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         plan: values.plan,
-        status: "pending" as const,
+        status: 'pending' as const,
         phone: values.phone,
         cnpj: values.cnpj,
         admin_name: values.adminName,
@@ -53,28 +53,21 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         contract_status: 'pending' as const,
         payment_status: 'pending' as const,
         registration_status: 'pending' as const,
-        pending_reason: "user_validation" as OrganizationPendingReason // Properly cast to the enum type
+        pending_reason: "user_validation" as OrganizationPendingReason
       };
 
       console.log("Dados de inserção preparados:", insertData);
       
-      // Create the organization in the database
+      // Remove the ON CONFLICT clause and just do a simple insert
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(insertData)
-        .select()
+        .select('*')
         .single();
         
       if (insertError) {
         console.error("Erro ao criar organização:", insertError);
-        
-        if (insertError.code === "23505" && 
-            insertError.message && 
-            insertError.message.includes("organizations_cnpj_key")) {
-          errorHandlers.handleCnpjExistsError();
-        } else {
-          errorHandlers.handleDatabaseConfigError();
-        }
+        errorHandlers.handleDatabaseConfigError();
         return;
       }
       
@@ -84,7 +77,6 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       try {
         console.log("Iniciando envio de e-mail de onboarding para:", newOrganization.admin_email);
         
-        // Generate confirmation token for the registration link
         const confirmationToken = `${window.location.origin}/setup/${newOrganization.id}`;
         
         const response = await supabase.functions.invoke('send-organization-emails', {
@@ -97,16 +89,13 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           }
         });
         
-        // Check email sending response
         if (response.error) {
           console.error("Erro ao enviar e-mail de onboarding:", response.error);
           errorHandlers.handleEmailError(response.error);
         } else {
           console.log("Resposta do envio de email:", response.data);
           
-          // Handle different response types
           if (response.data && response.data.status === 'warning') {
-            // Email had issues but organization was created
             if (response.data.details && response.data.details.includes('problematic email domain')) {
               const domain = newOrganization.admin_email.split('@')[1];
               errorHandlers.handleEmailProviderIssue(domain);
@@ -120,7 +109,6 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         errorHandlers.handleEmailError(emailError);
       }
       
-      // Single success toast at the end of the process
       errorHandlers.showSuccessToast();
       onSuccess();
 
