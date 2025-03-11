@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
 
-// Funções auxiliares para validação de tipos
+// Helper functions for type validation
 const correctedStatus = (status: string): OrganizationStatus => {
   return ["active", "inactive", "pending"].includes(status) 
     ? status as OrganizationStatus 
@@ -63,11 +63,11 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: "pending", // Usando string literal em vez de correctedStatus
+        status: "pending" as OrganizationStatus,
         contract_status: "pending",
         payment_status: "pending",
         registration_status: "pending",
-        pending_reason: "user_validation" // Usando string literal em vez de correctedPendingReason
+        pending_reason: "user_validation" as OrganizationPendingReason
       };
 
       console.log("Dados formatados para inserção:", organizationData);
