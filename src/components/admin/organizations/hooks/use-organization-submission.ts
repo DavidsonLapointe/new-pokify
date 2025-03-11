@@ -1,4 +1,3 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";

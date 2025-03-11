@@ -21,7 +21,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     console.error("Error fetching plan details:", planError);
   }
   
-  // Simple insert without ON CONFLICT - CNPJ uniqueness is checked at form validation
+  // Remove the ON CONFLICT clause that was causing the error
   const { data, error } = await supabase
     .from('organizations')
     .insert({
