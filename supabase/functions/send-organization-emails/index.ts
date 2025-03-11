@@ -90,8 +90,8 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">2. Efetuar o Pagamento</h2>
-              <p>Você precisa efetuar o pagamento pro-rata para ativar sua conta:</p>
-              <p>Valor pro rata: <strong>R$ ${data.mensalidadeAmount?.toFixed(2)}</strong></p>
+              <p>Você precisa efetuar o pagamento da mensalidade para ativar sua conta:</p>
+              <p>Valor da mensalidade: <strong>R$ ${data.mensalidadeAmount?.toFixed(2)}</strong></p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Realizar Pagamento</a></p>
             </div>
             
@@ -123,7 +123,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailContent = {
           subject: type === "contract" ? "Contrato de Adesão - Leadly" : 
                    type === "confirmation" ? "Complete seu cadastro - Leadly" : 
-                   "Pagamento Pro Rata - Leadly",
+                   "Pagamento da Mensalidade - Leadly",
           html: type === "contract" ? 
             `
               <h1>Olá ${organization.admin_name},</h1>
@@ -148,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
             ` :
             `
               <h1>Olá ${organization.admin_name},</h1>
-              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento pro rata no valor de R$ ${data.proRataAmount?.toFixed(2)}.</p>
+              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento da mensalidade no valor de R$ ${data.mensalidadeAmount?.toFixed(2)}.</p>
               <p>Acesse o link abaixo para efetuar o pagamento:</p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Realizar Pagamento</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>

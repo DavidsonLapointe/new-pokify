@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -12,7 +13,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
   // First, get the plan name to store alongside the ID
   const { data: planData, error: planError } = await supabase
     .from('plans')
-    .select('name')
+    .select('name, price')
     .eq('id', values.plan)
     .single();
   
@@ -25,7 +26,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     .insert({
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
-      plan: values.plan,
+      plan: planData?.name || 'professional', // Ensure we store plan name instead of ID
       status: "pending",
       phone: values.phone,
       cnpj: values.cnpj,
@@ -40,7 +41,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     .select()
     .single();
   
-  return { data, error, planName: planData?.name };
+  return { data, error, planName: planData?.name, planPrice: planData?.price };
 };
 
 /**
@@ -87,7 +88,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,
     adminEmail: dbOrganization.admin_email,
-    adminPhone: dbOrganization.admin_phone || "", // Added mapping for admin_phone
+    adminPhone: dbOrganization.admin_phone || "",
     contractSignedAt: dbOrganization.contract_signed_at,
     createdAt: dbOrganization.created_at,
     logo: dbOrganization.logo,
@@ -112,6 +113,8 @@ export const handleMensalidadeCreation = async (organization: Organization) => {
     const planType = organization.plan;
     const planValue = await getPlanValue(planType);
     
+    console.log(`Criando título de mensalidade para organização ${organization.id} com valor ${planValue}`);
+    
     return await createMensalidadeTitle(organization, planValue);
   } catch (error) {
     console.error('Erro ao criar título de mensalidade:', error);
@@ -130,6 +133,7 @@ export const sendOnboardingEmail = async (
 ) => {
   // URLs diretos para as rotas específicas
   const termsUrl = `${window.location.origin}/contract/${organizationId}`;
+  const paymentUrl = `${window.location.origin}/payment/${organizationId}`;
   const confirmationUrl = `${window.location.origin}/confirm-registration/${organizationId}`;
 
   const { error } = await supabase.functions.invoke('send-organization-emails', {
@@ -138,6 +142,7 @@ export const sendOnboardingEmail = async (
       type: 'onboarding',
       data: {
         termsUrl,
+        paymentUrl,
         confirmationToken: confirmationUrl,
         planName,
         mensalidadeAmount

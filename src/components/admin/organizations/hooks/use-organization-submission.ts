@@ -52,11 +52,10 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         planName: planName // Inject plan name from the creation response
       });
 
-      // Calculate mensalidade value and create mensalidade title (em vez de pro-rata)
+      // Calculate mensalidade value and create mensalidade title
       try {
         // Create mensalidade title
         const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
-
         console.log("Título mensalidade criado:", mensalidadeTitle);
 
         if (!mensalidadeTitle) {
@@ -65,6 +64,10 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         
         // Get mensalidade value from the title creation process
         const mensalidadeValue = mensalidadeTitle?.value || 0;
+        
+        // Create inactive subscription and Stripe customer
+        const subscription = await createInactiveSubscription(organizationFormatted.id);
+        console.log("Assinatura inativa criada:", subscription);
         
         // Send single onboarding email with all links
         try {
