@@ -31,14 +31,17 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      console.log("TESTE: Processando apenas inserção básica:", values);
+      console.log("Processando submissão de organização:", values);
       
-      if (user.role !== "leadly_employee") {
+      // Verificar permissões do usuário
+      if (!user || user.role !== "leadly_employee") {
+        console.error("Permissão negada: usuário não é funcionário Leadly");
         errorHandlers.handlePermissionError();
         return;
       }
 
       // Verificar se já existe organização com este CNPJ
+      console.log("Verificando CNPJ existente:", values.cnpj);
       const { data: existingOrg, error: checkError } = await supabase
         .from('organizations')
         .select('id, cnpj')
@@ -57,35 +60,54 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Criando objeto com os campos mínimos essenciais incluindo o plan que é obrigatório
-      const minimalOrgData = {
+      // Criando objeto com os campos obrigatórios
+      const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        plan: values.plan, // Adicionando o campo plan que é obrigatório
-        status: correctedStatus("pending")
+        plan: values.plan,
+        status: correctedStatus("pending"),
+        nome_fantasia: values.nomeFantasia,
+        phone: values.phone,
+        admin_phone: values.adminPhone
       };
 
-      console.log("TESTE: Tentando inserção com dados mínimos:", minimalOrgData);
+      console.log("Inserindo organização com dados:", orgData);
       
-      // Inserção simples, sem select ou retorno de dados
-      const { error: insertError } = await supabase
+      // Inserção com tratamento de erro detalhado
+      const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
-        .insert(minimalOrgData);
+        .insert(orgData)
+        .select('id')
+        .single();
 
       if (insertError) {
-        console.error("TESTE: Erro na inserção básica:", insertError);
-        errorHandlers.handleDatabaseConfigError();
+        console.error("Erro na inserção da organização:", insertError);
+        
+        // Tratamento específico com base no código de erro
+        if (insertError.code === '23505') {
+          console.error("Violação de restrição de unicidade (provavelmente CNPJ)");
+          errorHandlers.handleCnpjExistsError();
+        } else if (insertError.message && insertError.message.includes("violates row-level security policy")) {
+          console.error("Violação de política RLS - verifique permissões");
+          toast({
+            title: "Erro de permissão",
+            description: "Você não tem permissão para criar organizações. Verifique suas credenciais.",
+            variant: "destructive",
+          });
+        } else {
+          errorHandlers.handleDatabaseConfigError();
+        }
         return;
       }
 
-      console.log("TESTE: Inserção básica bem-sucedida!");
+      console.log("Organização criada com sucesso:", insertedOrg);
       errorHandlers.showSuccessToast();
       onSuccess();
 
     } catch (error: any) {
-      console.error("Erro inesperado:", error);
+      console.error("Erro inesperado na criação de organização:", error);
       errorHandlers.handleUnexpectedError(error);
     }
   };
