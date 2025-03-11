@@ -1,6 +1,7 @@
+
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
-import type { Organization, OrganizationPendingReason } from "@/types";
+import type { Organization } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useState, useEffect } from "react";
@@ -88,8 +89,8 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Use a properly typed enum value for the database
-        const pendingReason: "mensalidade_payment" | null = data.acceptTerms ? null : "mensalidade_payment";
+        // Use string literal that exactly matches the database enum
+        const pendingReason = data.acceptTerms ? null : "mensalidade_payment";
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase
