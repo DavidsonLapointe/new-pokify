@@ -8,6 +8,8 @@ export const handleTitlePayment = async (
   title: FinancialTitle, 
   organization: Organization
 ): Promise<FinancialTitle> => {
+  console.log(`Processando pagamento para título: ${title.id}, tipo: ${title.type}`);
+  
   const { data: updatedTitle, error } = await supabase
     .from('financial_titles')
     .update({
@@ -20,11 +22,16 @@ export const handleTitlePayment = async (
     .single();
 
   if (error) {
+    console.error('Erro ao processar pagamento:', error);
     throw new Error('Erro ao processar pagamento');
   }
 
+  console.log(`Título atualizado com sucesso: ${updatedTitle.id}, status: ${updatedTitle.status}`);
+
   // Se for um título mensalidade ou pro-rata, atualiza o payment_status da organização
   if (title.type === 'pro_rata' || title.type === 'mensalidade') {
+    console.log(`Atualizando status de pagamento da organização: ${organization.id}`);
+    
     const { error: orgError } = await supabase
       .from('organizations')
       .update({
@@ -32,7 +39,12 @@ export const handleTitlePayment = async (
       })
       .eq('id', organization.id.toString());
 
-    if (orgError) throw orgError;
+    if (orgError) {
+      console.error('Erro ao atualizar status de pagamento da organização:', orgError);
+      throw orgError;
+    }
+    
+    console.log('Status de pagamento da organização atualizado com sucesso');
     
     // Verificamos se existe alguma assinatura inactive para esta organização
     const subscription = await getOrganizationSubscription(organization.id.toString());
@@ -40,6 +52,8 @@ export const handleTitlePayment = async (
     // Se existir uma assinatura e ela estiver inativa, vamos acionar a função para criar no Stripe
     if (subscription && subscription.status === 'inactive') {
       try {
+        console.log('Tentando criar assinatura no Stripe para organização:', organization.id);
+        
         // Chamar a função Edge Function para criar a assinatura no Stripe
         const { data: stripeData, error: stripeError } = await supabase.functions.invoke('create-stripe-subscription', {
           body: {
@@ -75,6 +89,8 @@ export const updateTitleStatus = async (
   paymentMethod?: 'pix' | 'boleto' | 'credit_card'
 ): Promise<boolean> => {
   try {
+    console.log(`Atualizando status do título ${titleId} para ${status}`);
+    
     const updateData: any = {
       status,
     };
@@ -91,7 +107,12 @@ export const updateTitleStatus = async (
       .update(updateData)
       .eq('id', titleId);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao atualizar status do título:', error);
+      throw error;
+    }
+    
+    console.log(`Status do título ${titleId} atualizado com sucesso para ${status}`);
     return true;
   } catch (error) {
     console.error('Erro ao atualizar status do título:', error);

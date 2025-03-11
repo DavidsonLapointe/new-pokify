@@ -63,11 +63,11 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: correctedStatus("pending"),
+        status: "pending", // Usando string literal em vez de correctedStatus
         contract_status: "pending",
         payment_status: "pending",
         registration_status: "pending",
-        pending_reason: correctedPendingReason("user_validation")
+        pending_reason: "user_validation" // Usando string literal em vez de correctedPendingReason
       };
 
       console.log("Dados formatados para inserção:", organizationData);
