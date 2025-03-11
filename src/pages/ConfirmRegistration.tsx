@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
 import type { Organization, OrganizationPendingReason } from "@/types";
@@ -89,7 +88,7 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Define a valid pendingReason value
+        // Use a string literal that matches the database enum
         const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : 'mensalidade_payment';
         
         // Atualizar o status da organização

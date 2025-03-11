@@ -1,4 +1,3 @@
-
 import { Organization, OrganizationStatus, OrganizationPendingReason, User as OrgUser } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {

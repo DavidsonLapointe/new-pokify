@@ -38,7 +38,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Prepare organization data with correct typing
+      // Prepare organization data with correct typing for the database
       const insertData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -53,7 +53,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         contract_status: 'pending' as const,
         payment_status: 'pending' as const,
         registration_status: 'pending' as const,
-        pending_reason: 'user_validation' as OrganizationPendingReason
+        pending_reason: 'user_validation' // Using string literal that matches the database enum
       };
 
       console.log("Dados de inserção preparados:", insertData);
