@@ -82,13 +82,14 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           toast.error("Empresa criada, mas houve um erro ao enviar o e-mail de onboarding");
         } else {
           console.log("E-mail de onboarding enviado com sucesso:", emailResponse);
-          toast.success("Empresa criada e e-mail de onboarding enviado com sucesso!");
+          // Removido o toast redundante aqui para evitar notificações duplicadas
         }
       } catch (emailError) {
         console.error("Erro inesperado ao enviar e-mail:", emailError);
         toast.error("Empresa criada, mas houve um erro ao enviar o e-mail");
       }
       
+      // Toast único de sucesso ao final do processo
       toast.success("Empresa criada com sucesso!");
       onSuccess();
 
