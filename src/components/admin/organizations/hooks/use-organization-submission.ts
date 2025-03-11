@@ -75,11 +75,10 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Inserindo organização com dados:", orgData);
       
-      // Alterando a inserção para não usar ON CONFLICT
-      const { data: insertedOrg, error: insertError } = await supabase
+      // Simplificando a inserção para garantir compatibilidade
+      const { error: insertError } = await supabase
         .from('organizations')
-        .insert(orgData)
-        .select('id');
+        .insert(orgData);
 
       if (insertError) {
         console.error("Erro na inserção da organização:", insertError);
@@ -97,8 +96,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      console.log("Organização criada com sucesso:", insertedOrg);
-      errorHandlers.showSuccessToast();
+      console.log("Organização criada com sucesso!");
+      toast.success("Empresa criada com sucesso! Um email será enviado para o administrador contendo todas as instruções de onboarding.");
       onSuccess();
 
     } catch (error: any) {
