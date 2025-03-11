@@ -38,13 +38,9 @@ export const useOrganizations = () => {
       
       // Fetch organizations from Supabase with debug logs
       console.log("Executando query para buscar organizações");
-      // Modified query to use a simpler join approach
       const { data: orgsData, error: orgsError } = await supabase
         .from('organizations')
-        .select(`
-          *,
-          plans(id, name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (orgsError) {
@@ -68,16 +64,8 @@ export const useOrganizations = () => {
 
             if (usersError) throw usersError;
 
-            // Extract plan name safely
-            let planName = "Plano não encontrado";
-            
-            if (org.plans && Array.isArray(org.plans) && org.plans.length > 0) {
-              // Plans will be returned as an array from the join
-              planName = org.plans[0]?.name || planIdToNameMap.get(org.plan) || "Plano não encontrado";
-            } else {
-              // Fallback to map if org.plans is null or empty
-              planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
-            }
+            // Get plan name from the map
+            const planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
 
             const formattedOrg = formatOrganizationData({
               ...org,
