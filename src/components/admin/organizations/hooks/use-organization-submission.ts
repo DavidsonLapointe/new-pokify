@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { OrganizationPendingReason } from "@/types/organization-types";
+import { OrganizationPendingReason, type OrganizationStatus } from "@/types/organization-types";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -19,7 +19,6 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // First, check if an organization with this CNPJ already exists
       const { data: existingOrg, error: checkError } = await supabase
         .from('organizations')
         .select('id, cnpj')
@@ -38,31 +37,34 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
+      // Define the organization status and pending reason
+      const status: OrganizationStatus = "pending";
+      const pendingReason: OrganizationPendingReason = "user_validation";
+
       // Prepare organization data with correct typing for the database
       const insertData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
-        plan: values.plan,
-        status: 'pending' as const,
+        email: values.adminEmail,
         phone: values.phone,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone,
-        email: values.adminEmail,
-        contract_status: 'pending' as const,
-        payment_status: 'pending' as const,
-        registration_status: 'pending' as const,
-        pending_reason: "user_validation" as OrganizationPendingReason
+        plan: values.plan,
+        status,
+        contract_status: 'pending',
+        payment_status: 'pending',
+        registration_status: 'pending',
+        pending_reason: pendingReason
       };
 
       console.log("Dados de inserção preparados:", insertData);
       
-      // Remove the ON CONFLICT clause and just do a simple insert
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
-        .insert(insertData)
-        .select('*')
+        .insert([insertData])
+        .select()
         .single();
         
       if (insertError) {
