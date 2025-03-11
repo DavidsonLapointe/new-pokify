@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -28,7 +27,6 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       nome_fantasia: values.nomeFantasia,
       plan: values.plan, // This will store the plan ID as expected
       status: "pending",
-      email: values.email,
       phone: values.phone,
       cnpj: values.cnpj,
       admin_name: values.adminName,
@@ -83,7 +81,7 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     registrationStatus: dbOrganization.registration_status || 'pending',
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
-    email: dbOrganization.email || dbOrganization.admin_email || "", // Garantir que email sempre tenha um valor
+    email: dbOrganization.admin_email || "", // Use admin_email as main contact email
     phone: dbOrganization.phone || "",
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,

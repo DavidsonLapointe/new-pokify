@@ -104,20 +104,6 @@ export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated
       
       <FormField
         control={form.control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email da Empresa</FormLabel>
-            <FormControl>
-              <Input placeholder="email@empresa.com" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      
-      <FormField
-        control={form.control}
         name="phone"
         render={({ field }) => (
           <FormItem>

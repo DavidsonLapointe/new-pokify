@@ -17,7 +17,6 @@ export const useOrganizationFormInit = () => {
       razaoSocial: "",
       nomeFantasia: "",
       cnpj: "",
-      email: "",
       phone: "",
       plan: "", // Empty string as default
       adminName: "",

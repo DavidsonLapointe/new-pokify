@@ -628,7 +628,7 @@ export type Database = {
           contract_signed_at: string | null
           contract_status: string | null
           created_at: string | null
-          email: string
+          email: string | null
           estado: string | null
           id: string
           integrated_crm: string | null
@@ -658,7 +658,7 @@ export type Database = {
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null
-          email: string
+          email?: string | null
           estado?: string | null
           id?: string
           integrated_crm?: string | null
@@ -688,7 +688,7 @@ export type Database = {
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null
-          email?: string
+          email?: string | null
           estado?: string | null
           id?: string
           integrated_crm?: string | null
