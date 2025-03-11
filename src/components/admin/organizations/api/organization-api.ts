@@ -1,4 +1,4 @@
-<lov-codelov-code>
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -61,7 +61,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       contract_status: 'pending',
       payment_status: 'pending',
       registration_status: 'pending',
-      pending_reason: 'user_validation' // This is a valid enum value
+      pending_reason: 'user_validation' as const
     };
 
     console.log("Inserindo organização:", insertData);
