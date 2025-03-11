@@ -1,14 +1,9 @@
+
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
-import { 
-  createOrganization, 
-  handleMensalidadeCreation, 
-  sendOnboardingEmail,
-  mapToOrganizationType 
-} from "../api/organization-api";
-import { createInactiveSubscription } from "@/services/subscriptionService";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -26,106 +21,109 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       // Verificar se o CNPJ está formatado corretamente
       console.log("Verificando CNPJ:", values.cnpj);
       
+      // Primeiro, verificar se a empresa já existe com esse CNPJ
+      const { exists, error: checkError } = await checkExistingOrganization(values.cnpj);
+      
+      if (checkError) {
+        console.error("Erro ao verificar CNPJ existente:", checkError);
+        errorHandlers.handleUnexpectedError(checkError);
+        return;
+      }
+      
+      if (exists) {
+        console.error("CNPJ já cadastrado no sistema");
+        errorHandlers.handleCnpjExistsError();
+        return;
+      }
+      
+      // Get the plan name for reference
+      const { data: planData, error: planError } = await supabase
+        .from('plans')
+        .select('name, price')
+        .eq('id', values.plan)
+        .single();
+        
+      if (planError) {
+        console.error("Erro ao buscar detalhes do plano:", planError);
+        errorHandlers.handleUnexpectedError(planError);
+        return;
+      }
+      
+      const planName = planData?.name || 'Não especificado';
+      const planPrice = planData?.price || 0;
+      
       // Try to create the organization
       console.log("Iniciando criação da organização");
-      try {
-        const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
+      
+      const insertData = {
+        name: values.razaoSocial,
+        nome_fantasia: values.nomeFantasia,
+        plan: values.plan,
+        status: "pending",
+        phone: values.phone,
+        cnpj: values.cnpj,
+        admin_name: values.adminName,
+        admin_email: values.adminEmail,
+        admin_phone: values.adminPhone,
+        email: values.adminEmail,
+        contract_status: 'pending',
+        payment_status: 'pending',
+        registration_status: 'pending',
+        pending_reason: 'user_validation'
+      };
 
-        if (orgError) {
-          console.error("Erro ao criar organização:", orgError);
-          
-          // Verificar se a mensagem de erro indica CNPJ duplicado
-          if (orgError.code === "23505" && 
-              orgError.message && 
-              orgError.message.includes("organizations_cnpj_key")) {
-            errorHandlers.handleCnpjExistsError();
-            return;
-          }
-          
-          // Check if this is a database configuration error
-          if (orgError.code === "42P10" || 
-              (orgError.message && orgError.message.includes("no unique or exclusion constraint"))) {
-            errorHandlers.handleDatabaseConfigError();
-            return;
-          }
-          
-          // Other organization creation errors
-          errorHandlers.handleOrganizationCreationError(orgError);
-          return;
-        }
-
-        if (!newOrganizationData) {
-          console.error("Dados da organização não retornados após criação");
-          errorHandlers.handleUnexpectedError(new Error("Falha ao receber dados da organização após criação"));
-          return;
-        }
-
-        console.log("Organização criada com sucesso:", newOrganizationData);
-
-        const organizationFormatted = mapToOrganizationType({
-          ...newOrganizationData,
-          planName,
-          email: values.adminEmail
-        });
-
-        try {
-          // Create inactive subscription and Stripe customer
-          console.log("Criando assinatura inativa para:", organizationFormatted.id);
-          const subscription = await createInactiveSubscription(organizationFormatted.id);
-          console.log("Assinatura inativa criada:", subscription);
-          
-          // Calculate mensalidade value and create mensalidade title
-          console.log("Criando título de mensalidade");
-          const mensalidadeTitle = await handleMensalidadeCreation(organizationFormatted);
-          
-          if (!mensalidadeTitle) {
-            console.error("Falha ao criar título de mensalidade");
-          } else {
-            console.log("Título de mensalidade criado:", mensalidadeTitle);
-          }
-          
-          const mensalidadeValue = mensalidadeTitle?.value || 0;
-          
-          try {
-            console.log("Enviando email de onboarding");
-            const { error: emailError } = await sendOnboardingEmail(
-              organizationFormatted.id,
-              `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
-              planName || 'Não especificado',
-              mensalidadeValue
-            );
-
-            if (emailError) {
-              console.error("Erro ao enviar email de onboarding:", emailError);
-              errorHandlers.handleEmailError(emailError);
-            } else {
-              console.log("Email de onboarding enviado com sucesso");
-            }
-          } catch (emailError) {
-            console.error("Exceção ao enviar email:", emailError);
-            errorHandlers.handleEmailError(emailError);
-          }
-
-          errorHandlers.showSuccessToast();
-          onSuccess();
-        } catch (error) {
-          console.error("Erro no processo pós-criação:", error);
-          errorHandlers.handlePostCreationError(error);
-          // Mesmo com erro no pós-processamento, consideramos que a criação foi bem-sucedida
-          onSuccess();
-        }
-      } catch (orgCreationError: any) {
-        console.error("Erro na criação da organização:", orgCreationError);
+      console.log("Dados de inserção preparados:", insertData);
+      
+      const { data: newOrganization, error: insertError } = await supabase
+        .from('organizations')
+        .insert(insertData)
+        .select()
+        .single();
         
-        // Check if this is a database configuration error
-        if (orgCreationError.code === "42P10" || 
-            (orgCreationError.message && orgCreationError.message.includes("no unique or exclusion constraint"))) {
-          errorHandlers.handleDatabaseConfigError();
-          return;
-        }
+      if (insertError) {
+        console.error("Erro ao criar organização:", insertError);
         
-        errorHandlers.handleOrganizationCreationError(orgCreationError);
+        if (insertError.code === "23505" && 
+            insertError.message && 
+            insertError.message.includes("organizations_cnpj_key")) {
+          errorHandlers.handleCnpjExistsError();
+        } else {
+          errorHandlers.handleOrganizationCreationError(insertError);
+        }
+        return;
       }
+      
+      console.log("Organização criada com sucesso:", newOrganization);
+      
+      try {
+        // Send confirmation email via Supabase Edge Function
+        const confirmationUrl = `${window.location.origin}/confirm-registration/${newOrganization.id}`;
+        
+        const { error: emailError } = await supabase.functions.invoke('send-organization-emails', {
+          body: {
+            organizationId: newOrganization.id,
+            type: 'onboarding',
+            data: {
+              confirmationToken: confirmationUrl,
+              planName,
+              mensalidadeAmount: planPrice
+            }
+          }
+        });
+        
+        if (emailError) {
+          console.error("Erro ao enviar e-mail:", emailError);
+          toast.error("Organização criada, mas houve um erro ao enviar o e-mail de confirmação.");
+        } else {
+          console.log("E-mail de onboarding enviado com sucesso");
+          toast.success("Empresa criada com sucesso! Um e-mail foi enviado com as instruções de acesso.");
+        }
+      } catch (emailError) {
+        console.error("Exceção ao enviar e-mail:", emailError);
+        toast.error("Organização criada, mas houve um erro ao enviar o e-mail de confirmação.");
+      }
+      
+      onSuccess();
     } catch (error: any) {
       console.error("Erro inesperado durante a criação:", error);
       errorHandlers.handleUnexpectedError(error);
@@ -136,3 +134,30 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
     handleSubmit
   };
 };
+
+// Função auxiliar para verificar CNPJ existente
+async function checkExistingOrganization(cnpj: string) {
+  try {
+    console.log("Verificando se CNPJ já existe:", cnpj);
+    
+    const { data, error } = await supabase
+      .from('organizations')
+      .select('id, name')
+      .eq('cnpj', cnpj)
+      .maybeSingle();
+      
+    if (error) {
+      console.error("Erro na verificação de CNPJ:", error);
+      return { exists: false, error };
+    }
+    
+    return { 
+      exists: !!data, 
+      data, 
+      error: null 
+    };
+  } catch (error) {
+    console.error("Erro ao verificar CNPJ existente:", error);
+    return { exists: false, error };
+  }
+}

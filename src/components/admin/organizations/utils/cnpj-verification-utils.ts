@@ -1,6 +1,6 @@
 
-import { cleanCNPJ } from "@/utils/cnpjValidation";
 import { supabase } from "@/integrations/supabase/client";
+import { cleanCNPJ } from "@/utils/cnpjValidation";
 
 /**
  * Checks if an organization with the given CNPJ already exists
@@ -13,24 +13,21 @@ export const checkExistingOrganization = async (cnpj: string) => {
     
     console.log("Checking for existing CNPJ:", cleanedCnpj, "Original format:", cnpj);
     
-    // Get all organizations
-    const { data: allOrgs, error: fetchError } = await supabase
+    // Get all organizations with this CNPJ
+    const { data, error } = await supabase
       .from('organizations')
-      .select('id, cnpj, name');
+      .select('id, cnpj, name')
+      .eq('cnpj', cnpj)
+      .maybeSingle();
       
-    if (fetchError) {
-      console.error("Error fetching organizations:", fetchError);
-      return { exists: false, data: null, error: fetchError };
+    if (error) {
+      console.error("Error fetching organizations:", error);
+      return { exists: false, data: null, error };
     }
     
-    // Check both original format and cleaned format
-    const matchingOrg = allOrgs?.find(org => {
-      return org.cnpj === cnpj || cleanCNPJ(org.cnpj) === cleanedCnpj;
-    });
-    
     return { 
-      exists: !!matchingOrg, 
-      data: matchingOrg || null, 
+      exists: !!data, 
+      data, 
       error: null 
     };
   } catch (error) {

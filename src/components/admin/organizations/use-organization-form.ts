@@ -12,6 +12,8 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   const { handleSubmit } = useOrganizationSubmission(onSuccess);
 
   const onSubmit = async (values: CreateOrganizationFormData) => {
+    console.log("Iniciando submissão do formulário com valores:", values);
+    
     // Reset form after submission is handled
     try {
       await handleSubmit(values);

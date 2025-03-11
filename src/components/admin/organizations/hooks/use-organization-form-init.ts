@@ -26,7 +26,8 @@ export const useOrganizationFormInit = () => {
   // Set default plan when plans are loaded
   useEffect(() => {
     if (plans.length > 0 && !form.getValues("plan")) {
-      // Set the first active plan as default, ensuring it's a string
+      // Set the first active plan as default
+      console.log("Definindo plano padrão:", plans[0].id);
       form.setValue("plan", String(plans[0].id));
     }
   }, [plans, form]);

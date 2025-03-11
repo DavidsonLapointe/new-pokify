@@ -40,8 +40,19 @@ export const useCnpjVerification = ({
     setIsCheckingCnpj(true);
     try {
       console.log("Verifying CNPJ:", formattedCnpj);
-      const { exists, data } = await checkExistingOrganization(formattedCnpj);
-      console.log("Verification result:", exists, data);
+      const { exists, data, error } = await checkExistingOrganization(formattedCnpj);
+      console.log("Verification result:", { exists, data, error });
+      
+      if (error) {
+        console.error("Error checking CNPJ:", error);
+        toast({
+          title: "Erro ao verificar CNPJ",
+          description: "Ocorreu um erro ao verificar o CNPJ. Tente novamente.",
+          variant: "destructive",
+        });
+        setIsCheckingCnpj(false);
+        return;
+      }
       
       if (exists && data) {
         const companyName = data.name || "Empresa existente";
