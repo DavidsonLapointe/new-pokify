@@ -620,6 +620,7 @@ export type Database = {
         Row: {
           admin_email: string
           admin_name: string
+          admin_phone: string | null
           bairro: string | null
           cep: string | null
           cidade: string | null
@@ -650,6 +651,7 @@ export type Database = {
         Insert: {
           admin_email: string
           admin_name: string
+          admin_phone?: string | null
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
@@ -680,6 +682,7 @@ export type Database = {
         Update: {
           admin_email?: string
           admin_name?: string
+          admin_phone?: string | null
           bairro?: string | null
           cep?: string | null
           cidade?: string | null

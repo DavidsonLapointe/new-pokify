@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -26,16 +25,17 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     .insert({
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
-      plan: values.plan, // This will store the plan ID as expected
+      plan: values.plan,
       status: "pending",
       phone: values.phone,
       cnpj: values.cnpj,
       admin_name: values.adminName,
       admin_email: values.adminEmail,
+      admin_phone: values.adminPhone,
       contract_status: 'pending',
       payment_status: 'pending',
       registration_status: 'pending',
-      pending_reason: 'user_validation' // Valor correto conforme type OrganizationPendingReason
+      pending_reason: 'user_validation'
     })
     .select()
     .single();
@@ -82,12 +82,12 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     registrationStatus: dbOrganization.registration_status || 'pending',
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
-    email: dbOrganization.admin_email || "", // Use admin_email as main contact email
+    email: dbOrganization.admin_email || "",
     phone: dbOrganization.phone || "",
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,
     adminEmail: dbOrganization.admin_email,
-    adminPhone: dbOrganization.admin_phone || "", // Added the missing adminPhone property
+    adminPhone: dbOrganization.admin_phone || "", // Added mapping for admin_phone
     contractSignedAt: dbOrganization.contract_signed_at,
     createdAt: dbOrganization.created_at,
     logo: dbOrganization.logo,
