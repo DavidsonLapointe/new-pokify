@@ -90,7 +90,7 @@ export default function ConfirmRegistration() {
         const orgId = id || activeOrganization.id;
         
         // Define a valid pendingReason value
-        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
+        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "mensalidade_payment";
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase
@@ -209,7 +209,7 @@ export default function ConfirmRegistration() {
         open={showPayment}
         onOpenChange={setShowPayment}
         package={{
-          name: "Valor Pro Rata",
+          name: "Valor Mensalidade",
           credits: 0,
           price: 99.90
         }}

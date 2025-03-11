@@ -3,7 +3,7 @@ import { FinancialTitle, CreateFinancialTitleDTO } from "@/types/financial";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 
-export const createProRataTitle = async (organization: Organization, proRataValue: number): Promise<FinancialTitle | null> => {
+export const createMensalidadeTitle = async (organization: Organization, mensalidadeValue: number): Promise<FinancialTitle | null> => {
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
 
@@ -12,46 +12,8 @@ export const createProRataTitle = async (organization: Organization, proRataValu
       .from('financial_titles')
       .insert([{
         organization_id: organization.id.toString(),
-        type: 'pro_rata' as const,
-        value: proRataValue,
-        due_date: dueDate.toISOString(),
-        status: 'pending' as const
-      }])
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    return {
-      id: title.id,
-      organizationId: title.organization_id,
-      type: title.type,
-      value: Number(title.value),
-      dueDate: title.due_date,
-      status: title.status,
-      createdAt: title.created_at,
-      paymentDate: title.payment_date,
-      paymentMethod: title.payment_method,
-    };
-  } catch (error) {
-    console.error('Erro ao criar título pro rata:', error);
-    return null;
-  }
-};
-
-export const createMensalidadeTitle = async (organization: Organization, monthlyValue: number): Promise<FinancialTitle | null> => {
-  // Calculamos o vencimento 3 dias à frente, similar ao pro-rata
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 3);
-
-  try {
-    // Cria um título de mensalidade com o mesmo padrão do pro-rata
-    const { data: title, error } = await supabase
-      .from('financial_titles')
-      .insert([{
-        organization_id: organization.id.toString(),
         type: 'mensalidade' as const,
-        value: monthlyValue,
+        value: mensalidadeValue,
         due_date: dueDate.toISOString(),
         status: 'pending' as const
       }])

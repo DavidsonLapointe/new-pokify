@@ -21,10 +21,9 @@ interface EmailRequest {
     confirmationToken?: string;
     contractUrl?: string;
     paymentUrl?: string;
-    proRataAmount?: number;
+    mensalidadeAmount?: number;
     termsUrl?: string;
     planName?: string;
-    mensalidadeAmount?: number;
   };
 }
 
