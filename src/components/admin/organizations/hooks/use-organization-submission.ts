@@ -59,6 +59,36 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       }
       
       console.log("Organização criada com sucesso:", newOrganization);
+      
+      // Enviar e-mail de onboarding para o administrador da organização
+      try {
+        console.log("Iniciando envio de e-mail de onboarding para:", newOrganization.admin_email);
+        
+        // Gerar token de confirmação para o link de cadastro
+        const confirmationToken = `${window.location.origin}/setup/${newOrganization.id}`;
+        
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-organization-emails', {
+          body: {
+            organizationId: newOrganization.id,
+            type: "onboarding",
+            data: {
+              confirmationToken
+            }
+          }
+        });
+        
+        if (emailError) {
+          console.error("Erro ao enviar e-mail de onboarding:", emailError);
+          toast.error("Empresa criada, mas houve um erro ao enviar o e-mail de onboarding");
+        } else {
+          console.log("E-mail de onboarding enviado com sucesso:", emailResponse);
+          toast.success("Empresa criada e e-mail de onboarding enviado com sucesso!");
+        }
+      } catch (emailError) {
+        console.error("Erro inesperado ao enviar e-mail:", emailError);
+        toast.error("Empresa criada, mas houve um erro ao enviar o e-mail");
+      }
+      
       toast.success("Empresa criada com sucesso!");
       onSuccess();
 
