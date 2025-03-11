@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +16,7 @@ export const useOrganizations = () => {
         throw new Error(`Falha ao verificar autenticação: ${sessionError.message}`);
       }
       
-      // Fetch all plans to map IDs to names - IMPORTANT for displaying plan name instead of ID
+      // Fetch all plans to map IDs to names
       console.log("Buscando planos para mapear IDs para nomes");
       const { data: plansData, error: plansError } = await supabase
         .from('plans')
@@ -67,20 +66,23 @@ export const useOrganizations = () => {
 
             if (usersError) throw usersError;
 
-            // Get the plan name from the map instead of relying on the join
-            const planName = org.plans && typeof org.plans === 'object' ? 
-              org.plans.name : planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            // Safely determine plan name with proper null checking
+            const planName = org.plans && 
+              typeof org.plans === 'object' && 
+              'name' in org.plans && 
+              org.plans.name ? 
+                org.plans.name : 
+                planIdToNameMap.get(org.plan) || "Plano não encontrado";
 
             const formattedOrg = formatOrganizationData({
               ...org,
               users: users || [],
-              planName: planName // Use the safely determined plan name
+              planName
             });
             
             return formattedOrg;
           } catch (err) {
             console.error(`Erro ao processar organização ${org.id}:`, err);
-            // Fallback to using the map if there's an error
             return formatOrganizationData({
               ...org,
               users: [],
