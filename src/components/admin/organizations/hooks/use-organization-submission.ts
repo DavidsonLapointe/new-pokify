@@ -1,3 +1,4 @@
+
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
@@ -12,7 +13,7 @@ const correctedStatus = (status: string): OrganizationStatus => {
     : "pending";
 };
 
-const correctedPendingReason = (reason: string): OrganizationPendingReason => {
+const correctedPendingReason = (reason: string | null): OrganizationPendingReason => {
   const validReasons = ["contract_signature", "mensalidade_payment", "user_validation", null];
   return validReasons.includes(reason) 
     ? reason as OrganizationPendingReason 
