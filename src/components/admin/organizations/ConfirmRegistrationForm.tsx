@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -233,8 +232,8 @@ export const ConfirmRegistrationForm = ({
 }: ConfirmRegistrationFormProps) => {
   const [submitting, setSubmitting] = useState(false);
   const [showPaymentStep, setShowPaymentStep] = useState(false);
-  const [planName, setPlanName] = useState<string>("Professional");
   const [planValue, setPlanValue] = useState<number>(99.90);
+  const [planName, setPlanName] = useState<string>("");
   
   const form = useForm<ConfirmRegistrationValues>({
     resolver: zodResolver(confirmRegistrationSchema),
@@ -264,7 +263,6 @@ export const ConfirmRegistrationForm = ({
   // Buscar o nome e valor do plano quando o componente carrega
   useEffect(() => {
     if (organization) {
-      // Buscar o nome e valor do plano do banco de dados
       const fetchPlanDetails = async () => {
         try {
           const { data, error } = await supabase
@@ -293,24 +291,18 @@ export const ConfirmRegistrationForm = ({
   }, [organization]);
 
   const formatPhone = (value: string) => {
-    // Remove formatação atual para trabalhar apenas com números
     value = value.replace(/\D/g, '');
-    
-    // Limitar a 11 dígitos (DDD + número)
     value = value.slice(0, 11);
     
-    // Se houver números, aplica a formatação
     if (value.length > 0) {
-      // Formatar DDD
       if (value.length > 2) {
         value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
       } else {
         value = `(${value}`;
       }
       
-      // Formatar número
       if (value.length > 10) {
-        value = `(${value.slice(1, 3)}) ${value.slice(5, 10)}-${value.slice(10)}`;
+        value = `${value.slice(0, 10)}-${value.slice(10)}`;
       }
     }
     
@@ -334,7 +326,6 @@ export const ConfirmRegistrationForm = ({
 
   const handleProceedToPayment = async () => {
     const formValid = await form.trigger();
-    
     if (formValid) {
       setShowPaymentStep(true);
     }
@@ -664,38 +655,22 @@ export const ConfirmRegistrationForm = ({
                 disabled={submitting}
                 className="bg-[#9b87f5] hover:bg-[#7E69AB]"
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Aguarde...
-                  </>
-                ) : (
-                  "Avançar para Pagamento"
-                )}
+                Avançar para Pagamento
               </Button>
             </div>
           </>
         ) : (
           <>
-            {/* Payment Information with Stripe Elements */}
             <Card className="border-[#E5DEFF]">
               <CardHeader className="bg-[#F1F0FB] border-b border-[#E5DEFF]">
-                <CardTitle className="text-[#6E59A5] text-lg">Dados do Cartão de Crédito</CardTitle>
+                <CardTitle className="text-[#6E59A5] text-lg">Pagamento da Mensalidade</CardTitle>
               </CardHeader>
               <CardContent className="p-4 space-y-4">
-                <StripePaymentSection planName={planName} planValue={planValue} />
-                
-                {/* Botão para carregar cartões de testes do Stripe */}
-                <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Modo de teste do Stripe</p>
-                  <p className="text-xs text-gray-600 mb-2">Como você está no modo de teste, pode usar os seguintes dados:</p>
-                  <div className="text-xs bg-white p-2 border border-gray-200 rounded mb-2">
-                    <p className="font-mono">Número do cartão: 4242 4242 4242 4242</p>
-                    <p className="font-mono">Data de validade: Qualquer data futura</p>
-                    <p className="font-mono">CVV: Qualquer 3 dígitos</p>
-                    <p className="font-mono">CEP: Qualquer 5 dígitos</p>
-                  </div>
+                <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-md">
+                  <p className="text-purple-700 mb-2">Plano: <strong>{planName}</strong></p>
+                  <p className="text-purple-700">Valor a ser pago: <strong>R$ {planValue.toFixed(2)}</strong></p>
                 </div>
+                <StripePaymentSection planName={planName} planValue={planValue} />
               </CardContent>
             </Card>
 
@@ -703,7 +678,6 @@ export const ConfirmRegistrationForm = ({
               <Button
                 type="button"
                 onClick={() => setShowPaymentStep(false)}
-                disabled={submitting}
                 variant="outline"
                 className="border-[#9b87f5] text-[#9b87f5]"
               >
@@ -715,14 +689,7 @@ export const ConfirmRegistrationForm = ({
                 disabled={submitting}
                 className="bg-[#9b87f5] hover:bg-[#7E69AB]"
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  "Concluir Cadastro"
-                )}
+                {submitting ? "Processando..." : "Concluir Pagamento"}
               </Button>
             </div>
           </>
