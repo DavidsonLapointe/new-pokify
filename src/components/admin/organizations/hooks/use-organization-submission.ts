@@ -58,6 +58,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Dados de inserção preparados:", insertData);
       
+      // Create the organization in the database
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(insertData)
@@ -79,14 +80,14 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       
       console.log("Organização criada com sucesso:", newOrganization);
       
-      // Enviar e-mail de onboarding para o administrador da organização
+      // Send onboarding email to the organization's administrator
       try {
         console.log("Iniciando envio de e-mail de onboarding para:", newOrganization.admin_email);
         
-        // Gerar token de confirmação para o link de cadastro
+        // Generate confirmation token for the registration link
         const confirmationToken = `${window.location.origin}/setup/${newOrganization.id}`;
         
-        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-organization-emails', {
+        const response = await supabase.functions.invoke('send-organization-emails', {
           body: {
             organizationId: newOrganization.id,
             type: "onboarding",
@@ -96,20 +97,31 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           }
         });
         
-        if (emailError) {
-          console.error("Erro ao enviar e-mail de onboarding:", emailError);
-          toast.error("Empresa criada, mas houve um erro ao enviar o e-mail de onboarding");
+        // Check email sending response
+        if (response.error) {
+          console.error("Erro ao enviar e-mail de onboarding:", response.error);
+          errorHandlers.handleEmailError(response.error);
         } else {
-          console.log("E-mail de onboarding enviado com sucesso:", emailResponse);
-          // Removido o toast redundante aqui para evitar notificações duplicadas
+          console.log("Resposta do envio de email:", response.data);
+          
+          // Handle different response types
+          if (response.data && response.data.status === 'warning') {
+            // Email had issues but organization was created
+            if (response.data.details && response.data.details.includes('problematic email domain')) {
+              const domain = newOrganization.admin_email.split('@')[1];
+              errorHandlers.handleEmailProviderIssue(domain);
+            } else {
+              errorHandlers.handleEmailError(response.data.message || "Erro ao enviar email");
+            }
+          }
         }
       } catch (emailError) {
         console.error("Erro inesperado ao enviar e-mail:", emailError);
-        toast.error("Empresa criada, mas houve um erro ao enviar o e-mail");
+        errorHandlers.handleEmailError(emailError);
       }
       
-      // Toast único de sucesso ao final do processo
-      toast.success("Empresa criada com sucesso!");
+      // Single success toast at the end of the process
+      errorHandlers.showSuccessToast();
       onSuccess();
 
     } catch (error: any) {

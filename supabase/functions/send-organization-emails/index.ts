@@ -61,8 +61,14 @@ const handler = async (req: Request): Promise<Response> => {
       id: organization.id,
       name: organization.name,
       adminEmail: organization.admin_email,
-      adminPhone: organization.admin_phone || "Não informado" // Add admin_phone to logs
+      adminPhone: organization.admin_phone || "Não informado"
     });
+
+    // Check for valid admin email
+    if (!organization.admin_email || !organization.admin_email.includes('@')) {
+      console.error("Invalid admin email:", organization.admin_email);
+      throw new Error('Email do administrador inválido');
+    }
 
     // Detect problematic email domains
     const emailDomain = organization.admin_email.split('@')[1].toLowerCase();
@@ -106,7 +112,7 @@ const handler = async (req: Request): Promise<Response> => {
       case "contract":
       case "confirmation":
       case "payment":
-        // Mantendo os emails individuais para compatibilidade, mas com template atualizado
+        // Templates for other email types
         emailContent = {
           subject: type === "contract" ? "Termos de Uso - Leadly" : 
                    type === "confirmation" ? "Complete seu cadastro - Leadly" : 
@@ -160,7 +166,7 @@ const handler = async (req: Request): Promise<Response> => {
       
       console.log(`Email sent successfully:`, emailResponse);
       
-      // Log email attempt to database regardless of domain
+      // Log email attempt to database
       await supabase
         .from('email_logs')
         .insert({
@@ -193,34 +199,55 @@ const handler = async (req: Request): Promise<Response> => {
           }
         });
       
-      // If it's a problematic domain, provide a more detailed error
+      // Return a more detailed error for problematic domains
       if (isKnownProblematicDomain) {
         return new Response(
           JSON.stringify({ 
             error: "Email delivery failed", 
             details: `Provider ${emailDomain} may have delivery issues with Resend. Consider using an alternative email.`,
-            originalError: emailError.message
+            originalError: emailError.message,
+            status: 'warning'
           }),
           {
-            status: 422,
+            status: 200, // Still return 200 to allow the organization creation to complete
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           }
         );
       }
       
-      // Re-throw for other errors
-      throw emailError;
+      // Return a failure but don't block organization creation
+      return new Response(
+        JSON.stringify({ 
+          error: "Email delivery failed", 
+          message: "Organization created, but email could not be sent. Support team will be notified.",
+          status: 'warning'
+        }),
+        {
+          status: 200, // Still return 200 to allow the organization creation to complete
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
-    return new Response(JSON.stringify(emailResponse || { success: false }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        data: emailResponse || { status: 'sent' },
+        message: "Email sent successfully"
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
 
   } catch (error: any) {
     console.error("Error in send-organization-emails function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        status: 'error'
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
