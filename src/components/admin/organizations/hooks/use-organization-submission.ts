@@ -72,12 +72,12 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Dados formatados para inserção:", organizationData);
       
-      // Inserção sem usar ON CONFLICT para evitar o erro
+      // Inserção simplificada sem qualquer ON CONFLICT
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(organizationData)
-        .select()
-        .single();
+        .select('*') // Use select() instead of select('*').single() to avoid any potential ON CONFLICT spec
+        .limit(1);
         
       if (insertError) {
         console.error("Erro detalhado ao criar organização:", insertError);
@@ -85,15 +85,24 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
       
+      // Certifique-se de que temos dados da organização antes de prosseguir
+      if (!newOrganization || newOrganization.length === 0) {
+        console.error("Falha ao criar organização: nenhum dado retornado");
+        errorHandlers.handleDatabaseConfigError();
+        return;
+      }
+
+      const createdOrganization = newOrganization[0];
+      
       // Enviar email de onboarding
       try {
-        console.log("Iniciando envio de e-mail de onboarding para:", newOrganization.admin_email);
+        console.log("Iniciando envio de e-mail de onboarding para:", createdOrganization.admin_email);
         
-        const confirmationToken = `${window.location.origin}/setup/${newOrganization.id}`;
+        const confirmationToken = `${window.location.origin}/setup/${createdOrganization.id}`;
         
         const response = await supabase.functions.invoke('send-organization-emails', {
           body: {
-            organizationId: newOrganization.id,
+            organizationId: createdOrganization.id,
             type: "onboarding",
             data: {
               confirmationToken
