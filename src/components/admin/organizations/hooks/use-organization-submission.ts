@@ -3,7 +3,7 @@ import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { OrganizationPendingReason } from "@/types";
+import { OrganizationPendingReason } from "@/types/organization-types";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();

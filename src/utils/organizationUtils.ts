@@ -25,7 +25,7 @@ export const formatOrganizationData = (organization: any): Organization => {
   } else if (organization.contract_status === 'pending') {
     pendingReason = 'contract_signature';
   } else if (organization.payment_status === 'pending') {
-    pendingReason = 'mensalidade_payment';
+    pendingReason = 'pro_rata_payment';
   } else if (organization.registration_status === 'pending') {
     pendingReason = 'user_validation';
   }

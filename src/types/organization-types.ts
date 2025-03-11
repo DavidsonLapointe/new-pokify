@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -19,7 +20,7 @@ export type OrganizationStatus = "active" | "pending" | "inactive";
 
 export type OrganizationPendingReason = 
   | "contract_signature" 
-  | "mensalidade_payment" 
+  | "pro_rata_payment" 
   | "user_validation" 
   | null;
 
