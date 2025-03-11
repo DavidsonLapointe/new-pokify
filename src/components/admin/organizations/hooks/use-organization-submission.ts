@@ -75,12 +75,11 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("Inserindo organização com dados:", orgData);
       
-      // Inserção com tratamento de erro detalhado
+      // Alterando a inserção para não usar ON CONFLICT
       const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
         .insert(orgData)
-        .select('id')
-        .single();
+        .select('id');
 
       if (insertError) {
         console.error("Erro na inserção da organização:", insertError);
