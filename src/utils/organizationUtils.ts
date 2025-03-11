@@ -62,8 +62,13 @@ export const formatOrganizationData = (organization: any): Organization => {
     };
   }) : [];
 
-  // Garantir que planName esteja definido corretamente
-  const planName = organization.planName || organization.plan_name || "Plano não especificado";
+  // Handle planName - ensure it's properly extracted from various possible sources
+  const planName = organization.planName || 
+                  organization.plan_name || 
+                  (typeof organization.plan === 'object' && organization.plan.name) || 
+                  "Plano não especificado";
+  
+  console.log("Usando planName:", planName);
   
   // Criar objeto de organização formatado com valores padrão para campos opcionais
   const formattedOrg: Organization = {

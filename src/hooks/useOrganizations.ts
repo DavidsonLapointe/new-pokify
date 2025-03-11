@@ -21,20 +21,22 @@ export const useOrganizations = () => {
       console.log("Buscando planos para mapear IDs para nomes");
       const { data: plansData, error: plansError } = await supabase
         .from('plans')
-        .select('id, name');
+        .select('id, name, price');
         
       if (plansError) {
         console.error("Erro ao buscar planos:", plansError);
         throw new Error(`Falha ao carregar planos: ${plansError.message}`);
       }
       
-      // Create map of plan ID to plan name
-      const planIdToNameMap = new Map();
+      // Create map of plan ID to plan name and price
+      const planMap = new Map();
       if (plansData) {
         plansData.forEach(plan => {
-          planIdToNameMap.set(plan.id, plan.name);
+          planMap.set(plan.id, { name: plan.name, price: plan.price });
         });
       }
+      
+      console.log("Mapa de planos criado:", Object.fromEntries(planMap));
       
       // Fetch organizations from Supabase with debug logs
       console.log("Executando query para buscar organizações");
@@ -71,8 +73,9 @@ export const useOrganizations = () => {
               throw usersError;
             }
 
-            // Get plan name from the map
-            const planName = planIdToNameMap.get(org.plan) || "Plano não encontrado";
+            // Get plan info from the map
+            const planInfo = planMap.get(org.plan);
+            const planName = planInfo ? planInfo.name : "Plano não encontrado";
             console.log(`Plano para organização ${org.id}: ${planName}`);
 
             // Formatando a organização com dados completos
@@ -85,10 +88,11 @@ export const useOrganizations = () => {
             return formattedOrg;
           } catch (err) {
             console.error(`Erro ao processar organização ${org.id}:`, err);
+            // Still return something to prevent Promise.all from failing
             return formatOrganizationData({
               ...org,
               users: [],
-              planName: planIdToNameMap.get(org.plan) || "Plano não encontrado"
+              planName: planMap.get(org.plan)?.name || "Plano não encontrado"
             });
           }
         })

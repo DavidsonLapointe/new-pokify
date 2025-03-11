@@ -28,10 +28,10 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Registrar o plano e seu valor para debug
     console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
     
-    // Simplificando a inserção para evitar problemas
+    // Simplify the insert operation to avoid ON CONFLICT issues
     const { data, error } = await supabase
       .from('organizations')
-      .insert([{
+      .insert({
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         plan: values.plan,
@@ -46,7 +46,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         payment_status: 'pending',
         registration_status: 'pending',
         pending_reason: 'user_validation'
-      }])
+      })
       .select();
     
     if (error) {

@@ -25,6 +25,21 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
+      // Check for existing organization with same CNPJ
+      console.log("Verificando se CNPJ já existe:", values.cnpj);
+      const { data: existingOrgs, error: existingError } = await supabase
+        .from('organizations')
+        .select('id')
+        .eq('cnpj', values.cnpj);
+        
+      if (existingError) {
+        console.error("Erro ao verificar CNPJ existente:", existingError);
+      } else if (existingOrgs && existingOrgs.length > 0) {
+        console.log("CNPJ já existe no sistema:", existingOrgs);
+        errorHandlers.handleCnpjExistsError();
+        return;
+      }
+
       // Tenta criar a organização
       const { data: newOrganizationData, error: orgError, planName, planPrice } = await createOrganization(values);
 
@@ -78,6 +93,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           if (emailError) {
             console.error("Erro ao enviar email de onboarding:", emailError);
             errorHandlers.handleEmailError(emailError);
+          } else {
+            console.log("Email de onboarding enviado com sucesso");
           }
         } catch (emailError) {
           console.error("Exceção ao enviar email:", emailError);
