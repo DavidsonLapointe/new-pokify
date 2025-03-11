@@ -46,7 +46,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       throw new Error("CNPJ já cadastrado no sistema.");
     }
     
-    // Create organization - no conflict handling, we already checked
+    // Create organization with a simple insert, no conflict handling
     const insertData = {
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
@@ -66,6 +66,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
 
     console.log("Inserting organization:", insertData);
     
+    // Use simple insert without ON CONFLICT - we already checked for existing CNPJ
     const { data, error } = await supabase
       .from('organizations')
       .insert(insertData)
