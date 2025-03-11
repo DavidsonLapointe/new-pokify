@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { OrganizationPendingReason, type OrganizationStatus } from "@/types/organization-types";
+import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -19,6 +19,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
+      // Verificar se já existe organização com este CNPJ
       const { data: existingOrg, error: checkError } = await supabase
         .from('organizations')
         .select('id, cnpj')
@@ -37,12 +38,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Define the organization status and pending reason
-      const status: OrganizationStatus = "pending";
-      const pendingReason: OrganizationPendingReason = "user_validation";
-
-      // Prepare organization data with correct typing for the database
-      const insertData = {
+      // Dados básicos da organização - sem nenhuma tipagem complexa
+      const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         email: values.adminEmail,
@@ -52,30 +49,44 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone,
         plan: values.plan,
-        status,
+        // Valores de status simples, sem tipagem complexa
+        status: 'pending',
         contract_status: 'pending',
         payment_status: 'pending',
         registration_status: 'pending',
-        pending_reason: pendingReason
+        pending_reason: 'user_validation'
       };
 
-      console.log("Dados de inserção preparados:", insertData);
+      console.log("Dados simplificados para inserção:", organizationData);
       
+      // Inserção simplificada
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
-        .insert([insertData])
+        .insert([organizationData])
         .select()
         .single();
         
       if (insertError) {
-        console.error("Erro ao criar organização:", insertError);
+        console.error("Erro detalhado ao criar organização:", insertError);
+        
+        // Log mais detalhado para ajudar no diagnóstico
+        if (insertError.code) {
+          console.error(`Código do erro: ${insertError.code}`);
+        }
+        if (insertError.message) {
+          console.error(`Mensagem do erro: ${insertError.message}`);
+        }
+        if (insertError.details) {
+          console.error(`Detalhes do erro: ${insertError.details}`);
+        }
+        
         errorHandlers.handleDatabaseConfigError();
         return;
       }
       
       console.log("Organização criada com sucesso:", newOrganization);
       
-      // Send onboarding email to the organization's administrator
+      // Enviar email de onboarding
       try {
         console.log("Iniciando envio de e-mail de onboarding para:", newOrganization.admin_email);
         
@@ -96,15 +107,6 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
           errorHandlers.handleEmailError(response.error);
         } else {
           console.log("Resposta do envio de email:", response.data);
-          
-          if (response.data && response.data.status === 'warning') {
-            if (response.data.details && response.data.details.includes('problematic email domain')) {
-              const domain = newOrganization.admin_email.split('@')[1];
-              errorHandlers.handleEmailProviderIssue(domain);
-            } else {
-              errorHandlers.handleEmailError(response.data.message || "Erro ao enviar email");
-            }
-          }
         }
       } catch (emailError) {
         console.error("Erro inesperado ao enviar e-mail:", emailError);
