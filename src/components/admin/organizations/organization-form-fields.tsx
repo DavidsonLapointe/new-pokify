@@ -15,6 +15,31 @@ interface OrganizationFormFieldsProps {
 export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated }: OrganizationFormFieldsProps) => {
   const { plans, isLoading } = usePlans();
 
+  const formatPhone = (value: string) => {
+    // Remove tudo que não for dígito
+    value = value.replace(/\D/g, '');
+    
+    // Limitar a 11 dígitos (DDD + número)
+    value = value.slice(0, 11);
+    
+    // Aplicar formatação
+    if (value.length > 0) {
+      // Formatar DDD
+      if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else {
+        value = `(${value}`;
+      }
+      
+      // Formatar número
+      if (value.length > 10) {
+        value = `(${value.slice(1, 3)}) ${value.slice(5, 10)}-${value.slice(10)}`;
+      }
+    }
+    
+    return value;
+  };
+
   return (
     <div className="space-y-6">
       {/* Company Data Section */}
@@ -82,7 +107,7 @@ export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated
                 <FormControl>
                   <Input
                     placeholder="(XX) XXXXX-XXXX"
-                    {...field}
+                    value={formatPhone(field.value || '')}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, '');
                       field.onChange(value);
@@ -173,7 +198,7 @@ export const OrganizationFormFields = ({ form, showStatus = false, cnpjValidated
                 <FormControl>
                   <Input
                     placeholder="(XX) XXXXX-XXXX"
-                    {...field}
+                    value={formatPhone(field.value || '')}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, '');
                       field.onChange(value);
