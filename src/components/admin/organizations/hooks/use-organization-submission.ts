@@ -1,10 +1,23 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
+
+// Funções auxiliares para validação de tipos
+const correctedStatus = (status: string): OrganizationStatus => {
+  return ["active", "inactive", "pending"].includes(status) 
+    ? status as OrganizationStatus 
+    : "pending";
+};
+
+const correctedPendingReason = (reason: string): OrganizationPendingReason => {
+  const validReasons = ["contract_signature", "mensalidade_payment", "user_validation", null];
+  return validReasons.includes(reason) 
+    ? reason as OrganizationPendingReason 
+    : "user_validation";
+};
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
@@ -38,10 +51,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
       
-      // Log completo dos valores do formulário para debug
-      console.log("Valores do formulário completos:", JSON.stringify(values, null, 2));
-      
-      // Simplificar ao máximo o objeto de inserção para evitar erros de tipo
+      // Dados da organização com validação de tipos
       const organizationData = {
         name: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
@@ -50,21 +60,18 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        admin_phone: values.adminPhone,
+        admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: "pending",
+        status: correctedStatus("pending"),
         contract_status: "pending",
         payment_status: "pending",
         registration_status: "pending",
-        pending_reason: "user_validation"
+        pending_reason: correctedPendingReason("user_validation")
       };
 
-      console.log("Dados para inserção:", JSON.stringify(organizationData, null, 2));
+      console.log("Dados formatados para inserção:", organizationData);
       
-      // Logando a sintaxe exata da query que iremos executar
-      console.log(`Executando: supabase.from('organizations').insert(${JSON.stringify(organizationData)}).select().single()`);
-      
-      // Inserção simplificada, sem tipagens complexas
+      // Inserção com dados validados
       const { data: newOrganization, error: insertError } = await supabase
         .from('organizations')
         .insert(organizationData)
@@ -73,23 +80,9 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         
       if (insertError) {
         console.error("Erro detalhado ao criar organização:", insertError);
-        
-        // Log mais detalhado para ajudar no diagnóstico
-        if (insertError.code) {
-          console.error(`Código do erro: ${insertError.code}`);
-        }
-        if (insertError.message) {
-          console.error(`Mensagem do erro: ${insertError.message}`);
-        }
-        if (insertError.details) {
-          console.error(`Detalhes do erro: ${insertError.details}`);
-        }
-        
         errorHandlers.handleDatabaseConfigError();
         return;
       }
-      
-      console.log("Organização criada com sucesso:", newOrganization);
       
       // Enviar email de onboarding
       try {
