@@ -1,5 +1,5 @@
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, safeQueryResult } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
 import { createProRataTitle } from "@/services/financial";
@@ -10,44 +10,58 @@ import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
  * Creates a new organization in the database
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
-  // First, get the plan name to store alongside the ID
-  const { data: planData, error: planError } = await supabase
-    .from('plans')
-    .select('name')
-    .eq('id', values.plan)
-    .single();
-  
-  if (planError) {
-    console.error("Error fetching plan details:", planError);
+  try {
+    // First, get the plan name to store alongside the ID
+    const { data: planData, error: planError } = await supabase
+      .from('plans')
+      .select('name')
+      .eq('id', values.plan)
+      .single();
+    
+    if (planError) {
+      console.error("Error fetching plan details:", planError);
+      return { data: null, error: planError, planName: null };
+    }
+    
+    // Perform a simple insert without ON CONFLICT clause
+    const { data, error } = await supabase
+      .from('organizations')
+      .insert({
+        name: values.razaoSocial,
+        nome_fantasia: values.nomeFantasia,
+        plan: values.plan, 
+        status: "pending" as OrganizationStatus,
+        email: values.email,
+        phone: values.phone,
+        cnpj: values.cnpj,
+        admin_name: values.adminName,
+        admin_email: values.adminEmail,
+        contract_status: 'pending',
+        payment_status: 'pending',
+        registration_status: 'pending'
+      })
+      .select()
+      .single();
+    
+    return { 
+      data, 
+      error, 
+      planName: planData?.name || null 
+    };
+  } catch (error) {
+    console.error("Error in createOrganization:", error);
+    return { data: null, error, planName: null };
   }
-  
-  // Perform a simple insert without ON CONFLICT clause
-  const { data, error } = await supabase
-    .from('organizations')
-    .insert({
-      name: values.razaoSocial,
-      nome_fantasia: values.nomeFantasia,
-      plan: values.plan, 
-      status: "pending",
-      email: values.email,
-      phone: values.phone,
-      cnpj: values.cnpj,
-      admin_name: values.adminName,
-      admin_email: values.adminEmail,
-      contract_status: 'pending',
-      payment_status: 'pending',
-      registration_status: 'pending'
-    })
-    .select()
-    .single();
-  
-  return { data, error, planName: planData?.name };
 };
 
 /**
  * Transforms database organization format to match Organization type
  */
 export const mapToOrganizationType = (dbOrganization: any): Organization => {
+  if (!dbOrganization) {
+    throw new Error("Cannot map null or undefined organization data");
+  }
+
   // Calculate overall status based on individual statuses
   const allStepsCompleted = 
     dbOrganization.contract_status === 'completed' && 
