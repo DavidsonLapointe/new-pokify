@@ -1,7 +1,7 @@
 
 import { useOrganizationFormInit } from "./hooks/use-organization-form-init";
 import { useOrganizationSubmission } from "./hooks/use-organization-submission";
-import { checkExistingOrganization } from "./utils/cnpj-verification-utils";
+import { checkCnpjExists } from "./utils/cnpj-verification-utils";
 import { CreateOrganizationFormData } from "./schema";
 
 /**
@@ -24,6 +24,6 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   return {
     form,
     onSubmit,
-    checkExistingOrganization
+    checkCnpjExists
   };
 };

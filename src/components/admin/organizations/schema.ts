@@ -9,6 +9,7 @@ export const createOrganizationSchema = z.object({
   cnpj: z.string()
     .min(14, "CNPJ inválido")
     .refine((val) => {
+      // Use the validation function from the utility
       const isValid = validateCNPJ(val);
       console.log(`CNPJ validation result for ${val}: ${isValid}`);
       return isValid;
@@ -16,10 +17,10 @@ export const createOrganizationSchema = z.object({
       message: "CNPJ inválido. Verifique o número informado."
     }),
   plan: z.string().min(1, "Selecione um plano"),
+  email: z.string().email("Email da empresa inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
   adminEmail: z.string().email("Email do administrador inválido"),
-  adminPhone: z.string().min(10, "Telefone do administrador inválido"),
   status: z.enum(["active", "pending", "inactive"] as const),
 });
 

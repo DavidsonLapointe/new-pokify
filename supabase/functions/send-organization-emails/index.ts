@@ -22,9 +22,6 @@ interface EmailRequest {
     contractUrl?: string;
     paymentUrl?: string;
     proRataAmount?: number;
-    termsUrl?: string;
-    planName?: string;
-    mensalidadeAmount?: number;
   };
 }
 
@@ -60,8 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Organization found:", {
       id: organization.id,
       name: organization.name,
-      adminEmail: organization.admin_email,
-      adminPhone: organization.admin_phone || "Não informado" // Add admin_phone to logs
+      adminEmail: organization.admin_email
     });
 
     // Detect problematic email domains
@@ -80,21 +76,28 @@ const handler = async (req: Request): Promise<Response> => {
           html: `
             <h1>Olá ${organization.admin_name},</h1>
             <p>Bem-vindo à Leadly! Estamos muito felizes em ter você conosco.</p>
-            <p>Para completar seu cadastro e começar a utilizar a plataforma, conclua as etapas abaixo:</p>
+            <p>Para completar seu cadastro e começar a utilizar a plataforma, siga as etapas abaixo. Você pode realizá-las em qualquer ordem.</p>
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
-              <h2 style="color: #6E59A5; margin-top: 0;">Completar seu Cadastro</h2>
-              <p>Você precisa confirmar seus dados, aceitar os termos de uso e política de privacidade, definir sua senha e realizar o pagamento:</p>
-              <p>Dados atuais:</p>
-              <ul style="list-style-type: none; padding-left: 0;">
-                <li><strong>Nome:</strong> ${organization.admin_name}</li>
-                <li><strong>Email:</strong> ${organization.admin_email}</li>
-                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
-              </ul>
+              <h2 style="color: #6E59A5; margin-top: 0;">1. Assinar o Contrato</h2>
+              <p>Você precisa assinar o contrato de adesão da Leadly:</p>
+              <p><a href="${data.contractUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Acessar e Assinar Contrato</a></p>
+            </div>
+            
+            <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
+              <h2 style="color: #6E59A5; margin-top: 0;">2. Efetuar o Pagamento</h2>
+              <p>Você precisa efetuar o pagamento pro-rata para ativar sua conta:</p>
+              <p>Valor pro rata: <strong>R$ ${data.proRataAmount?.toFixed(2)}</strong></p>
+              <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Realizar Pagamento</a></p>
+            </div>
+            
+            <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
+              <h2 style="color: #6E59A5; margin-top: 0;">3. Completar seu Cadastro</h2>
+              <p>Você precisa confirmar seus dados e definir sua senha:</p>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Completar Cadastro</a></p>
             </div>
             
-            <p>Após a conclusão do cadastro e pagamento, sua conta será automaticamente ativada e você poderá acessar a plataforma.</p>
+            <p>Você pode completar estas etapas em qualquer ordem. Após a conclusão de todas as etapas, sua conta será automaticamente ativada e você poderá acessar a plataforma.</p>
             
             <p>Se tiver alguma dúvida, não hesite em nos contatar pelo email <a href="mailto:suporte@leadly.com.br">suporte@leadly.com.br</a>.</p>
             
@@ -106,17 +109,17 @@ const handler = async (req: Request): Promise<Response> => {
       case "contract":
       case "confirmation":
       case "payment":
-        // Mantendo os emails individuais para compatibilidade, mas com template atualizado
+        // Mantendo os emails individuais para compatibilidade, mas o foco principal é o email de onboarding único
         emailContent = {
-          subject: type === "contract" ? "Termos de Uso - Leadly" : 
+          subject: type === "contract" ? "Contrato de Adesão - Leadly" : 
                    type === "confirmation" ? "Complete seu cadastro - Leadly" : 
-                   "Pagamento da Mensalidade - Leadly",
+                   "Pagamento Pro Rata - Leadly",
           html: type === "contract" ? 
             `
               <h1>Olá ${organization.admin_name},</h1>
               <p>Bem-vindo à Leadly! Estamos muito felizes em ter você conosco.</p>
-              <p>Para continuar com seu cadastro, você precisa aceitar os nossos Termos de Uso e Política de Privacidade:</p>
-              <p><a href="${data.termsUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Aceitar Termos</a></p>
+              <p>Segue o link para acessar seu contrato de adesão:</p>
+              <p><a href="${data.contractUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Acessar Contrato</a></p>
               <p>Se tiver alguma dúvida, não hesite em nos contatar.</p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
             ` : 
@@ -124,18 +127,12 @@ const handler = async (req: Request): Promise<Response> => {
             `
               <h1>Olá ${organization.admin_name},</h1>
               <p>Para completar seu cadastro na Leadly, acesse o link abaixo:</p>
-              <p>Dados atuais:</p>
-              <ul>
-                <li><strong>Nome:</strong> ${organization.admin_name}</li>
-                <li><strong>Email:</strong> ${organization.admin_email}</li>
-                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
-              </ul>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Completar Cadastro</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
             ` :
             `
               <h1>Olá ${organization.admin_name},</h1>
-              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento da mensalidade no valor de R$ ${data.mensalidadeAmount?.toFixed(2)}.</p>
+              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento pro rata no valor de R$ ${data.proRataAmount?.toFixed(2)}.</p>
               <p>Acesse o link abaixo para efetuar o pagamento:</p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Realizar Pagamento</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>

@@ -13,12 +13,10 @@ export const calculateProRataValue = (planValue: number): number => {
 };
 
 /**
- * Obtém o valor do plano diretamente do banco de dados
+ * Obtem o valor do plano diretamente do banco de dados
  */
 export const getPlanValue = async (planType: string): Promise<number> => {
   try {
-    console.log(`Buscando valor do plano: ${planType}`);
-    
     const { data, error } = await supabase
       .from('plans')
       .select('price')
@@ -31,12 +29,9 @@ export const getPlanValue = async (planType: string): Promise<number> => {
     }
     
     if (data) {
-      console.log(`Valor do plano ${planType} encontrado: ${data.price}`);
       // Convertendo explicitamente para string antes de passar para parseFloat
-      const planPrice = parseFloat(String(data.price));
-      return planPrice;
+      return parseFloat(String(data.price));
     } else {
-      console.warn(`Plano ${planType} não encontrado no banco de dados, usando valor padrão`);
       // Fallback para valores padrão caso não encontre o plano
       return getDefaultPlanValue(planType);
     }
@@ -52,7 +47,7 @@ export const getPlanValue = async (planType: string): Promise<number> => {
 export const getPlanValues = () => {
   return {
     basic: 99.90,
-    professional: 199.90, // Este valor está diferente do banco de dados (200.00)
+    professional: 199.90,
     enterprise: 399.90
   };
 };
@@ -63,8 +58,6 @@ export const getPlanValues = () => {
 const getDefaultPlanValue = (planType: string): number => {
   const planValues = getPlanValues();
   const normalizedPlanType = planType.toLowerCase();
-  
-  console.log(`Usando valor padrão para o plano ${normalizedPlanType}`);
   
   // Verificando se o tipo de plano existe no objeto planValues
   if (normalizedPlanType in planValues) {

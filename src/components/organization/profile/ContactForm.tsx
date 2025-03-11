@@ -37,33 +37,30 @@ export function ContactForm({ formData, isLoading, onInputChange, onImageUpload 
     }
   }, [user, onInputChange]);
 
-  const formatPhone = (value: string) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    
     // Remove formatação atual para trabalhar apenas com números
     value = value.replace(/\D/g, '');
     
-    // Limitar a 11 dígitos (DDD + número)
-    value = value.slice(0, 11);
-    
     // Se houver números, aplica a formatação
     if (value.length > 0) {
-      // Formatar DDD
-      if (value.length > 2) {
-        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-      } else {
-        value = `(${value}`;
-      }
-      
-      // Formatar número
-      if (value.length > 10) {
-        value = `(${value.slice(1, 3)}) ${value.slice(5, 10)}-${value.slice(10)}`;
+      if (value.length <= 11) {
+        let formattedValue = '';
+        
+        if (value.length > 2) {
+          formattedValue = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        } else {
+          formattedValue = value;
+        }
+        
+        if (value.length > 7) {
+          formattedValue = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+        }
+        
+        value = formattedValue;
       }
     }
-    
-    return value;
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
     
     const event = {
       ...e,
@@ -117,9 +114,10 @@ export function ContactForm({ formData, isLoading, onInputChange, onImageUpload 
               id="phone"
               name="phone"
               type="tel"
-              value={formatPhone(formData.phone || '')}
+              value={formData.phone}
               onChange={handlePhoneChange}
               required
+              maxLength={15}
               className="w-full transition-all duration-200 ease-in-out focus:ring-offset-0"
               placeholder="(00) 00000-0000"
             />

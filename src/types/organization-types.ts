@@ -53,7 +53,6 @@ export interface Organization {
   cnpj: string;
   adminName: string;
   adminEmail: string;
-  adminPhone: string; // Added adminPhone property
   contractSignedAt: string | null;
   createdAt: string;
   logo?: string;

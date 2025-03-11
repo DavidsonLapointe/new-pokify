@@ -21,20 +21,12 @@ export const useFormErrorHandlers = () => {
     });
   };
 
-  const handleOrganizationCreationError = (error: PostgrestError | any) => {
+  const handleOrganizationCreationError = (error: PostgrestError) => {
     console.error("Erro ao criar organização:", error);
     let errorMessage = "Não foi possível criar a empresa.";
     
-    if (error.code === "23505" && error.message && error.message.includes("organizations_cnpj_key")) {
+    if (error.code === "23505" && error.message.includes("organizations_cnpj_key")) {
       errorMessage = "CNPJ já cadastrado no sistema.";
-    } else if (error.code === "42P10") {
-      errorMessage = "Erro de configuração no banco de dados. Por favor, contate o suporte.";
-    } else if (error.message && error.message.includes("no unique or exclusion constraint")) {
-      errorMessage = "Erro de configuração no banco de dados. Verifique a estrutura da tabela de organizações.";
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-    } else if (error.message) {
-      errorMessage = error.message;
     }
     
     toast({
@@ -58,7 +50,7 @@ export const useFormErrorHandlers = () => {
     toast({
       title: "Empresa criada com sucesso, mas...",
       description: `Detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`,
-      variant: "destructive",
+      variant: "destructive", // Changed from "warning" to "destructive" as "warning" is not a valid variant
       duration: 8000,
     });
   };
@@ -73,30 +65,11 @@ export const useFormErrorHandlers = () => {
     });
   };
 
-  const handleDatabaseConfigError = () => {
-    console.error("Erro de configuração no banco de dados detectado");
-    
-    toast({
-      title: "Erro de configuração no banco de dados",
-      description: "Há um erro de configuração no banco de dados. Por favor, contate o suporte técnico.",
-      variant: "destructive",
-      duration: 8000,
-    });
-  };
-
   const handleUnexpectedError = (error: any) => {
     console.error("Erro não tratado ao criar empresa:", error);
-    let errorMessage = "Não foi possível criar a empresa. Tente novamente.";
-    
-    if (typeof error === 'string') {
-      errorMessage = error;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    
     toast({
       title: "Erro ao criar empresa",
-      description: errorMessage,
+      description: "Não foi possível criar a empresa. Tente novamente.",
       variant: "destructive",
     });
   };
@@ -115,7 +88,6 @@ export const useFormErrorHandlers = () => {
     handleEmailError,
     handleEmailProviderIssue,
     handlePostCreationError,
-    handleDatabaseConfigError,
     handleUnexpectedError,
     showSuccessToast
   };

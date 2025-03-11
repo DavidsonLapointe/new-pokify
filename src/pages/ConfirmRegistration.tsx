@@ -72,7 +72,6 @@ export default function ConfirmRegistration() {
     phone: "(11) 99999-9999",
     adminName: "João Silva",
     adminEmail: "joao@exemplo.com",
-    adminPhone: "(11) 99999-9999", // Added missing adminPhone property
     users: [],
     integratedCRM: null,
     integratedLLM: null,

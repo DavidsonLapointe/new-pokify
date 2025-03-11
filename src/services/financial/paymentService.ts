@@ -23,8 +23,8 @@ export const handleTitlePayment = async (
     throw new Error('Erro ao processar pagamento');
   }
 
-  // Se for um título mensalidade ou pro-rata, atualiza o payment_status da organização
-  if (title.type === 'pro_rata' || title.type === 'mensalidade') {
+  // Se for um título pro-rata, apenas atualiza o payment_status da organização
+  if (title.type === 'pro_rata') {
     const { error: orgError } = await supabase
       .from('organizations')
       .update({
