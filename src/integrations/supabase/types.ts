@@ -998,7 +998,7 @@ export type Database = {
       financial_title_type: "pro_rata" | "mensalidade"
       organization_pending_reason:
         | "contract_signature"
-        | "pro_rata_payment"
+        | "mensalidade_payment"
         | "null"
         | "user_validation"
       organization_status: "active" | "pending" | "inactive"

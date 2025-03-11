@@ -20,7 +20,7 @@ export type OrganizationStatus = "active" | "pending" | "inactive";
 
 export type OrganizationPendingReason = 
   | "contract_signature" 
-  | "pro_rata_payment" 
+  | "mensalidade_payment" 
   | "user_validation" 
   | null;
 
