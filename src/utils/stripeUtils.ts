@@ -1,4 +1,3 @@
-
 /**
  * Utilitário para gerenciar a configuração e validação do Stripe
  */
@@ -9,27 +8,27 @@ import { supabase } from "@/integrations/supabase/client";
 // Função para obter a chave pública do Stripe com validação
 export const getStripePublicKey = async (): Promise<string> => {
   try {
-    // Primeiro, tentar buscar a chave do Supabase Edge Function
     const { data, error } = await supabase.functions.invoke('get-stripe-key', {
-      body: { type: 'public' }
+      body: { type: 'public' },
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     
     if (error) {
-      console.error("Erro ao buscar chave do Stripe:", error);
-      // Fallback para variável de ambiente local
+      console.error("Error fetching Stripe key:", error);
       return getLocalStripeKey();
     }
     
-    if (data && data.key) {
-      console.log("Chave pública do Stripe obtida do Supabase");
+    if (data?.key) {
+      console.log("Stripe public key obtained from Supabase");
       return validateStripeKey(data.key);
     } else {
-      console.log("Nenhuma chave encontrada no Supabase, usando variável de ambiente local");
+      console.log("No key found in Supabase, using local environment variable");
       return getLocalStripeKey();
     }
   } catch (error) {
-    console.error("Exceção ao buscar chave do Stripe:", error);
-    // Fallback para variável de ambiente local
+    console.error("Exception fetching Stripe key:", error);
     return getLocalStripeKey();
   }
 };
