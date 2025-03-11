@@ -4,18 +4,17 @@ import { validateCNPJ, formatCNPJ } from "@/utils/cnpjValidation";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "../schema";
 import { useToast } from "@/hooks/use-toast";
-import { checkCnpjExists } from "../utils/cnpj-verification-utils";
+import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
-  checkCnpjExists: (cnpj: string) => Promise<{exists: boolean, data?: any, error?: any}>;
   onCnpjVerified: () => void;
 }
 
 export const useCnpjVerification = ({ 
   form, 
   onCnpjVerified 
-}: Omit<UseCnpjVerificationProps, 'checkCnpjExists'>) => {
+}: UseCnpjVerificationProps) => {
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
   const [cnpjValidated, setCnpjValidated] = useState(false);
   const { toast } = useToast();
@@ -40,9 +39,9 @@ export const useCnpjVerification = ({
     // Check if CNPJ already exists in the database
     setIsCheckingCnpj(true);
     try {
-      console.log("Verificando CNPJ:", formattedCnpj);
-      const { exists, data } = await checkCnpjExists(formattedCnpj);
-      console.log("Resultado da verificação:", exists, data);
+      console.log("Verifying CNPJ:", formattedCnpj);
+      const { exists, data } = await checkExistingOrganization(formattedCnpj);
+      console.log("Verification result:", exists, data);
       
       if (exists && data) {
         const companyName = data.name || "Empresa existente";
@@ -70,7 +69,7 @@ export const useCnpjVerification = ({
       // Clear any existing errors on the CNPJ field
       form.clearErrors("cnpj");
     } catch (error) {
-      console.error("Erro ao verificar CNPJ:", error);
+      console.error("Error verifying CNPJ:", error);
       toast({
         title: "Erro ao verificar CNPJ",
         description: "Ocorreu um erro ao verificar o CNPJ. Tente novamente.",

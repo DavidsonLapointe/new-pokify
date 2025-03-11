@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
@@ -10,7 +11,7 @@ import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
   try {
-    console.log("Iniciando criação de organização com os dados:", values);
+    console.log("Starting organization creation with data:", values);
     
     // First, get the plan name to store alongside the ID
     const { data: planData, error: planError } = await supabase
@@ -30,7 +31,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     }
     
     // Log plan details for debugging
-    console.log("Plano selecionado:", planData?.name, "Valor:", planData?.price);
+    console.log("Selected plan:", planData?.name, "Price:", planData?.price);
     
     // Check if organization with this CNPJ already exists
     const { exists, error: checkError } = await checkExistingOrganization(values.cnpj);
@@ -45,7 +46,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       throw new Error("CNPJ já cadastrado no sistema.");
     }
     
-    // Create organization with standard insert (sem usar ON CONFLICT)
+    // Create organization - no conflict handling, we already checked
     const insertData = {
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
@@ -63,12 +64,12 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       pending_reason: 'user_validation' as const
     };
 
-    console.log("Inserindo organização:", insertData);
+    console.log("Inserting organization:", insertData);
     
     const { data, error } = await supabase
       .from('organizations')
       .insert(insertData)
-      .select('*')
+      .select()
       .single();
     
     if (error) {
@@ -76,7 +77,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       throw error;
     }
     
-    console.log("Organização criada com sucesso:", data);
+    console.log("Organization created successfully:", data);
     
     return { 
       data: data, 
