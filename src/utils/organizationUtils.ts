@@ -9,7 +9,9 @@ export const formatOrganizationData = (rawData: any): Organization => {
   let pendingReason: OrganizationPendingReason = null;
   if (rawData.pending_reason) {
     // Ensure the value exactly matches one of the defined enum values
-    if (["contract_signature", "mensalidade_payment", "user_validation"].includes(rawData.pending_reason)) {
+    if (rawData.pending_reason === "contract_signature" || 
+        rawData.pending_reason === "mensalidade_payment" || 
+        rawData.pending_reason === "user_validation") {
       pendingReason = rawData.pending_reason as OrganizationPendingReason;
     }
   }

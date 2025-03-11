@@ -11,6 +11,7 @@ import { TermsDialog, PrivacyPolicyDialog, SupportFormDialog } from "@/component
 import { RegistrationHeader } from "@/components/admin/organizations/RegistrationHeader";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { PaymentGatewayDialog } from "@/components/organization/plans/PaymentGatewayDialog";
+import { OrganizationPendingReason } from "@/types/organization-types";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -72,7 +73,7 @@ export default function ConfirmRegistration() {
     phone: "(11) 99999-9999",
     adminName: "João Silva",
     adminEmail: "joao@exemplo.com",
-    adminPhone: "(11) 99999-9999", // Added missing adminPhone property
+    adminPhone: "(11) 99999-9999",
     users: [],
     integratedCRM: null,
     integratedLLM: null,
@@ -89,8 +90,8 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Use string literal that exactly matches the database enum
-        const pendingReason = data.acceptTerms ? null : "mensalidade_payment";
+        // Use properly typed pending reason that matches database enum
+        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "mensalidade_payment";
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase

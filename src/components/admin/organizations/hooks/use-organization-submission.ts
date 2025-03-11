@@ -53,7 +53,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         contract_status: 'pending' as const,
         payment_status: 'pending' as const,
         registration_status: 'pending' as const,
-        pending_reason: "user_validation" // Using exact string literal value that matches the database enum
+        pending_reason: "user_validation" as OrganizationPendingReason // Properly cast to the enum type
       };
 
       console.log("Dados de inserção preparados:", insertData);
