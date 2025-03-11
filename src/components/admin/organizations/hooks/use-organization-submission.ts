@@ -62,19 +62,19 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_email: values.adminEmail,
         admin_phone: values.adminPhone || "",
         plan: values.plan,
-        status: "pending" as const,
-        contract_status: "pending" as const,
-        payment_status: "pending" as const,
-        registration_status: "pending" as const,
-        pending_reason: "user_validation" as const
+        status: "pending",
+        contract_status: "pending",
+        payment_status: "pending",
+        registration_status: "pending",
+        pending_reason: "user_validation"
       };
 
       console.log("Tentando inserir organização com dados:", organizationData);
       
-      // Inserção básica
+      // Inserção simplificada sem uso de métodos que possam gerar erro 400
       const { error: insertError } = await supabase
         .from('organizations')
-        .insert([organizationData]);
+        .insert(organizationData);
 
       if (insertError) {
         console.error("Erro ao inserir organização:", insertError);
