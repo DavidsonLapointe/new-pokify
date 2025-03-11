@@ -24,7 +24,7 @@ export const CreateOrganizationDialog = ({
   onOpenChange,
   onSuccess = () => {}
 }: CreateOrganizationDialogProps) => {
-  const { form, onSubmit, checkCnpjExists } = useOrganizationForm(() => {
+  const { form, onSubmit } = useOrganizationForm(() => {
     onOpenChange(false);
     onSuccess();
   });

@@ -13,10 +13,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { session, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const isPublicRoute = ['/', '/auth', '/confirm-registration', '/contract'].includes(location.pathname);
+  const isPublicRoute = ['/', '/auth', '/confirm-registration', '/contract'].some(
+    route => location.pathname === route || location.pathname.startsWith(route + '/')
+  );
 
   useEffect(() => {
-    // Só redireciona se não estiver carregando e não for uma rota pública
+    // Only redirect if not loading and not a public route
     if (!loading && !session && !isPublicRoute) {
       navigate('/auth', { 
         replace: true,
@@ -25,7 +27,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [session, loading, isPublicRoute, navigate, location]);
 
-  // Se estiver carregando, mostra uma tela de loading
+  // If loading, show a loading screen
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center">
@@ -34,16 +36,16 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Se for rota pública, renderiza normalmente
+  // If it's a public route, render normally
   if (isPublicRoute) {
     return <>{children}</>;
   }
 
-  // Se não tiver sessão e não for rota pública, redireciona para /auth
+  // If there's no session and it's not a public route, redirect to /auth
   if (!session && !isPublicRoute) {
     return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
   }
 
-  // Se tiver sessão ou for rota pública, renderiza normalmente
+  // If there's a session or it's a public route, render normally
   return <>{children}</>;
 }

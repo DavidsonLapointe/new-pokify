@@ -12,10 +12,19 @@ export const supabase = createClient<Database>(
   {
     auth: {
       autoRefreshToken: true,
-      persistSession: true
+      persistSession: true,
+      storageKey: 'supabase-auth'
+    },
+    global: {
+      headers: {
+        'x-application-name': 'leadly'
+      }
     },
     db: {
       schema: 'public'
+    },
+    storage: {
+      storageKey: 'supabase-storage'
     }
   }
 );
