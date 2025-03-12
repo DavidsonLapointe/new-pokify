@@ -38,10 +38,6 @@ import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
 
-// New page imports
-import OrganizationContracting from "./pages/OrganizationContracting";
-import SalesProcess from "./pages/SalesProcess";
-
 const LogoutButton = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -93,10 +89,6 @@ function AppRoutes() {
         <Route path="/payment/:id" element={<Contract paymentMode={true} />} />
         <Route path="/organization/setup" element={<OrganizationSetup />} />
         <Route path="/organization/setup/:setupToken" element={<OrganizationSetup />} />
-
-        {/* Development Routes - Remove in production */}
-        <Route path="/dev/contracting" element={<OrganizationContracting />} />
-        <Route path="/dev/sales-process" element={<SalesProcess />} />
 
         {/* Admin Routes */}
         <Route

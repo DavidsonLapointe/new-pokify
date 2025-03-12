@@ -1,7 +1,7 @@
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
-import type { Organization } from "@/types";
+import type { Organization, OrganizationPendingReason } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useState, useEffect } from "react";
@@ -11,7 +11,6 @@ import { TermsDialog, PrivacyPolicyDialog, SupportFormDialog } from "@/component
 import { RegistrationHeader } from "@/components/admin/organizations/RegistrationHeader";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { PaymentGatewayDialog } from "@/components/organization/plans/PaymentGatewayDialog";
-import { OrganizationPendingReason } from "@/types/organization-types";
 
 export default function ConfirmRegistration() {
   const location = useLocation();
@@ -73,7 +72,6 @@ export default function ConfirmRegistration() {
     phone: "(11) 99999-9999",
     adminName: "João Silva",
     adminEmail: "joao@exemplo.com",
-    adminPhone: "(11) 99999-9999",
     users: [],
     integratedCRM: null,
     integratedLLM: null,
@@ -90,8 +88,8 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Use properly typed pending reason that matches database enum
-        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "mensalidade_payment";
+        // Define a valid pendingReason value
+        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
         
         // Atualizar o status da organização
         const { error: updateError } = await supabase
@@ -210,7 +208,7 @@ export default function ConfirmRegistration() {
         open={showPayment}
         onOpenChange={setShowPayment}
         package={{
-          name: "Valor Mensalidade",
+          name: "Valor Pro Rata",
           credits: 0,
           price: 99.90
         }}

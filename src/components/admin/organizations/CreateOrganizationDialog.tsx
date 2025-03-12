@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -11,7 +12,6 @@ import { useOrganizationForm } from "./use-organization-form";
 import { CnpjVerificationStep } from "./dialog-steps/CnpjVerificationStep";
 import { OrganizationFormStep } from "./dialog-steps/OrganizationFormStep";
 import { useCnpjVerification } from "./hooks/use-cnpj-verification";
-import { toast } from "sonner";
 
 interface CreateOrganizationDialogProps {
   open: boolean;
@@ -24,16 +24,14 @@ export const CreateOrganizationDialog = ({
   onOpenChange,
   onSuccess = () => {}
 }: CreateOrganizationDialogProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState(1);
-  
-  const { form, onSubmit } = useOrganizationForm(() => {
-    setIsSubmitting(false);
+  const { form, onSubmit, checkCnpjExists } = useOrganizationForm(() => {
     onOpenChange(false);
     onSuccess();
-    toast.success("Empresa criada com sucesso!");
   });
 
+  const [step, setStep] = useState(1);
+
+  // Handle CNPJ verification with the custom hook
   const { 
     isCheckingCnpj, 
     cnpjValidated, 
@@ -50,30 +48,11 @@ export const CreateOrganizationDialog = ({
       form.reset();
       setStep(1);
       setCnpjValidated(false);
-      setIsSubmitting(false);
     }
   }, [open, form, setCnpjValidated]);
 
-  const handleSubmit = async (values: any) => {
-    try {
-      setIsSubmitting(true);
-      console.log("Iniciando submissão do formulário:", values);
-      await onSubmit(values);
-    } catch (error) {
-      console.error("Erro na submissão do formulário:", error);
-      setIsSubmitting(false);
-      toast.error("Erro ao criar empresa. Por favor, tente novamente.");
-    }
-  };
-
   return (
-    <Dialog open={open} onOpenChange={(newState) => {
-      if (isSubmitting && !newState) {
-        toast.error("Por favor, aguarde enquanto processamos sua solicitação.");
-        return;
-      }
-      onOpenChange(newState);
-    }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader className="border-b pb-3">
           <DialogTitle className="text-lg font-semibold text-[#1A1F2C]">Nova Empresa</DialogTitle>
@@ -95,10 +74,9 @@ export const CreateOrganizationDialog = ({
           ) : (
             <OrganizationFormStep 
               form={form} 
-              onSubmit={handleSubmit} 
+              onSubmit={onSubmit} 
               onBack={() => setStep(1)} 
-              cnpjValidated={cnpjValidated}
-              isSubmitting={isSubmitting}
+              cnpjValidated={cnpjValidated} 
             />
           )}
         </Form>

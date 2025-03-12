@@ -18,10 +18,9 @@ export interface User {
 
 export type OrganizationStatus = "active" | "pending" | "inactive";
 
-// This should exactly match the database enum values
 export type OrganizationPendingReason = 
   | "contract_signature" 
-  | "mensalidade_payment" 
+  | "pro_rata_payment" 
   | "user_validation" 
   | null;
 
@@ -54,7 +53,6 @@ export interface Organization {
   cnpj: string;
   adminName: string;
   adminEmail: string;
-  adminPhone: string; // Added adminPhone property
   contractSignedAt: string | null;
   createdAt: string;
   logo?: string;

@@ -1,99 +1,45 @@
 import { supabase } from "@/integrations/supabase/client";
 import { CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationStatus } from "@/types";
-import { createMensalidadeTitle } from "@/services/financial";
-import { getPlanValue } from "../utils/calculation-utils";
+import { createProRataTitle } from "@/services/financial";
+import { calculateProRataValue, getPlanValues, getPlanValue } from "../utils/calculation-utils";
 import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
 
 /**
  * Creates a new organization in the database
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
-  try {
-    console.log("Starting organization creation with data:", values);
-    
-    // First, get the plan name to store alongside the ID
-    const { data: planData, error: planError } = await supabase
-      .from('plans')
-      .select('name, price')
-      .eq('id', values.plan)
-      .maybeSingle();
-    
-    if (planError) {
-      console.error("Error fetching plan details:", planError);
-      throw planError;
-    }
-
-    if (!planData) {
-      console.error("Plan not found:", values.plan);
-      throw new Error(`Plan with ID ${values.plan} not found`);
-    }
-    
-    // Log plan details for debugging
-    console.log("Selected plan:", planData?.name, "Price:", planData?.price);
-    
-    // Check if organization with this CNPJ already exists
-    const { exists, error: checkError } = await checkExistingOrganization(values.cnpj);
-      
-    if (checkError) {
-      console.error("Error checking for existing organization:", checkError);
-      throw checkError;
-    }
-    
-    if (exists) {
-      console.error("Organization with this CNPJ already exists");
-      throw new Error("CNPJ já cadastrado no sistema.");
-    }
-    
-    // Create organization with a simple insert, no conflict handling
-    const insertData = {
+  // First, get the plan name to store alongside the ID
+  const { data: planData, error: planError } = await supabase
+    .from('plans')
+    .select('name')
+    .eq('id', values.plan)
+    .single();
+  
+  if (planError) {
+    console.error("Error fetching plan details:", planError);
+  }
+  
+  const { data, error } = await supabase
+    .from('organizations')
+    .insert({
       name: values.razaoSocial,
       nome_fantasia: values.nomeFantasia,
-      plan: values.plan,
-      status: "pending" as OrganizationStatus,
+      plan: values.plan, // This will store the plan ID as expected
+      status: "pending",
+      email: values.email,
       phone: values.phone,
       cnpj: values.cnpj,
       admin_name: values.adminName,
       admin_email: values.adminEmail,
-      admin_phone: values.adminPhone,
-      email: values.adminEmail,
       contract_status: 'pending',
       payment_status: 'pending',
-      registration_status: 'pending',
-      pending_reason: 'user_validation' as const
-    };
-
-    console.log("Inserting organization:", insertData);
-    
-    // Use simple insert without ON CONFLICT - we already checked for existing CNPJ
-    const { data, error } = await supabase
-      .from('organizations')
-      .insert(insertData)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error("Error creating organization:", error);
-      throw error;
-    }
-    
-    console.log("Organization created successfully:", data);
-    
-    return { 
-      data: data, 
-      error: null, 
-      planName: planData?.name, 
-      planPrice: planData?.price 
-    };
-  } catch (error) {
-    console.error("Error in createOrganization:", error);
-    return { 
-      data: null, 
-      error, 
-      planName: null, 
-      planPrice: null 
-    };
-  }
+      registration_status: 'pending'
+    })
+    .select()
+    .single();
+  
+  return { data, error, planName: planData?.name };
 };
 
 /**
@@ -107,51 +53,39 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
     dbOrganization.registration_status === 'completed';
   
   // Determine current pending reason based on first incomplete step
-  let currentPendingReason = dbOrganization.pending_reason || null;
-  if (!currentPendingReason) {
-    if (dbOrganization.registration_status === 'pending') {
-      currentPendingReason = 'user_validation';
-    } else if (dbOrganization.contract_status === 'pending') {
-      currentPendingReason = 'contract_signature';
-    } else if (dbOrganization.payment_status === 'pending') {
-      currentPendingReason = 'pro_rata_payment';
-    }
+  let currentPendingReason = null;
+  if (dbOrganization.contract_status === 'pending') {
+    currentPendingReason = 'contract_signature';
+  } else if (dbOrganization.payment_status === 'pending') {
+    currentPendingReason = 'pro_rata_payment';
+  } else if (dbOrganization.registration_status === 'pending') {
+    currentPendingReason = 'user_validation';
   }
 
   // Ensure the status is one of the valid OrganizationStatus values
   const status = (dbOrganization.status || 'pending') as OrganizationStatus;
 
-  // Ensure users have the required permissions field
-  const users = Array.isArray(dbOrganization.users) ? dbOrganization.users.map((user: any) => {
-    return {
-      ...user,
-      permissions: user.permissions || {}
-    };
-  }) : [];
-
-  // Criar objeto de organização formatado com valores padrão para campos opcionais
-  const formattedOrg: Organization = {
+  return {
     id: dbOrganization.id,
     name: dbOrganization.name,
     nomeFantasia: dbOrganization.nome_fantasia || "",
     plan: dbOrganization.plan,
-    planName: dbOrganization.plan_name || dbOrganization.planName || "Plano não especificado",
-    users: users,
-    status: status,
+    planName: dbOrganization.planName || "Plano não especificado",
+    users: [],
+    status: allStepsCompleted ? 'active' as OrganizationStatus : status,
     pendingReason: currentPendingReason,
     contractStatus: dbOrganization.contract_status || 'pending',
     paymentStatus: dbOrganization.payment_status || 'pending',
     registrationStatus: dbOrganization.registration_status || 'pending',
     integratedCRM: dbOrganization.integrated_crm,
     integratedLLM: dbOrganization.integrated_llm,
-    email: dbOrganization.email || dbOrganization.admin_email || "",
+    email: dbOrganization.email,
     phone: dbOrganization.phone || "",
     cnpj: dbOrganization.cnpj,
     adminName: dbOrganization.admin_name,
     adminEmail: dbOrganization.admin_email,
-    adminPhone: dbOrganization.admin_phone || "",
     contractSignedAt: dbOrganization.contract_signed_at,
-    createdAt: dbOrganization.created_at || new Date().toISOString(),
+    createdAt: dbOrganization.created_at,
     logo: dbOrganization.logo,
     address: dbOrganization.address || {
       logradouro: dbOrganization.logradouro || "",
@@ -163,35 +97,28 @@ export const mapToOrganizationType = (dbOrganization: any): Organization => {
       cep: dbOrganization.cep || ""
     }
   };
-  
-  return formattedOrg;
 };
 
 /**
- * Creates a monthly title for the newly created organization
+ * Creates a pro-rata title for the newly created organization
  */
-export const handleMensalidadeCreation = async (organization: Organization) => {
+export const handleProRataCreation = async (organization: Organization) => {
   try {
     // Buscar o valor do plano diretamente do banco de dados
     const planType = organization.plan;
-    if (!planType) {
-      console.error("Plano não definido para a organização:", organization.id);
-      return null;
-    }
-    
     const planValue = await getPlanValue(planType);
+    const proRataValue = calculateProRataValue(planValue);
     
-    console.log(`Criando título de mensalidade para organização ${organization.id} com valor ${planValue}`);
-    
-    if (!planValue || planValue <= 0) {
-      console.error("Valor do plano inválido:", planValue);
-      return null;
-    }
-    
-    return await createMensalidadeTitle(organization, planValue);
+    return await createProRataTitle(organization, proRataValue);
   } catch (error) {
-    console.error('Erro ao criar título de mensalidade:', error);
-    return null;
+    console.error('Erro ao criar título pro-rata:', error);
+    
+    // Fallback para o método antigo em caso de erro
+    const planValues = getPlanValues();
+    const planType = organization.plan as keyof typeof planValues;
+    const proRataValue = calculateProRataValue(planValues[planType]);
+    
+    return await createProRataTitle(organization, proRataValue);
   }
 };
 
@@ -200,21 +127,25 @@ export const handleMensalidadeCreation = async (organization: Organization) => {
  */
 export const sendOnboardingEmail = async (
   organizationId: string,
+  contractUrl: string,
   confirmationToken: string,
-  planName: string,
-  mensalidadeAmount: number
+  paymentUrl: string,
+  proRataAmount: number
 ) => {
-  // URL para a confirmação do cadastro
-  const confirmationUrl = `${window.location.origin}/confirm-registration/${organizationId}`;
+  // URLs diretos para as rotas específicas
+  const updatedContractUrl = `${window.location.origin}/contract/${organizationId}`;
+  const updatedPaymentUrl = `${window.location.origin}/payment/${organizationId}`;
+  const updatedConfirmationUrl = `${window.location.origin}/confirm-registration/${organizationId}`;
 
   const { error } = await supabase.functions.invoke('send-organization-emails', {
     body: {
       organizationId,
       type: 'onboarding',
       data: {
-        confirmationToken: confirmationUrl,
-        planName,
-        mensalidadeAmount
+        contractUrl: updatedContractUrl,
+        confirmationToken: updatedConfirmationUrl,
+        paymentUrl: updatedPaymentUrl,
+        proRataAmount
       }
     }
   });

@@ -1,87 +1,84 @@
 
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export const useFormErrorHandlers = () => {
+  const { toast } = useToast();
+
   const handlePermissionError = () => {
-    console.error("🛑 Erro de permissão: Acesso negado");
-    toast.error("Acesso negado: Apenas funcionários Leadly podem criar organizações");
+    toast({
+      title: "Acesso negado",
+      description: "Apenas funcionários Leadly podem criar organizações",
+      variant: "destructive",
+    });
   };
 
   const handleCnpjExistsError = () => {
-    console.error("🛑 Erro de CNPJ: CNPJ já cadastrado");
-    toast.error("CNPJ já cadastrado: Já existe uma empresa cadastrada com este CNPJ.");
+    toast({
+      title: "CNPJ já cadastrado",
+      description: "Já existe uma empresa cadastrada com este CNPJ.",
+      variant: "destructive",
+    });
   };
 
-  const handleOrganizationCreationError = (error: any) => {
-    console.error("🛑 Erro ao criar organização:", error);
-    console.error("Stack trace:", new Error().stack);
-    
+  const handleOrganizationCreationError = (error: PostgrestError) => {
+    console.error("Erro ao criar organização:", error);
     let errorMessage = "Não foi possível criar a empresa.";
     
-    if (error.code === "23505" && error.message && error.message.includes("organizations_cnpj_key")) {
+    if (error.code === "23505" && error.message.includes("organizations_cnpj_key")) {
       errorMessage = "CNPJ já cadastrado no sistema.";
-    } else if (error.code === "42P10") {
-      errorMessage = "Erro de configuração no banco de dados. Por favor, contate o suporte.";
-    } else if (error.message && error.message.includes("violates row-level security policy")) {
-      errorMessage = "Erro de permissão: Você não tem permissão para criar organizações.";
-    } else if (error.message && error.message.includes("constraint")) {
-      errorMessage = "Erro de estrutura do banco de dados. Por favor, contate o suporte técnico.";
-    } else if (error.message && error.message.includes("Foreign key")) {
-      errorMessage = "Erro de referência: Verifique se todos os valores são válidos.";
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-    } else if (error.message) {
-      errorMessage = error.message;
     }
     
-    toast.error(`Erro ao criar empresa: ${errorMessage}`);
-    
-    // Log additional details for debugging
-    if (error.details) {
-      console.error("Detalhes do erro:", error.details);
-    }
-    if (error.hint) {
-      console.error("Dica do erro:", error.hint);
-    }
-  };
-
-  const handleDatabaseConfigError = () => {
-    console.error("🛑 Erro de configuração do banco de dados detectado");
-    toast.error("Erro de configuração no banco de dados. Por favor, contate o suporte técnico.");
+    toast({
+      title: "Erro ao criar empresa",
+      description: errorMessage,
+      variant: "destructive",
+    });
   };
 
   const handleEmailError = (error: any) => {
-    console.error("🛑 Erro ao enviar email:", error);
-    toast.error("Empresa criada, mas houve um erro ao enviar o email. Nossa equipe será notificada.");
+    console.error("Erro ao enviar email:", error);
+    toast({
+      title: "Aviso",
+      description: "Empresa criada, mas houve um erro ao enviar o email. Nossa equipe será notificada.",
+      variant: "destructive",
+    });
   };
 
   const handleEmailProviderIssue = (domain: string) => {
-    console.error(`🛑 Problema conhecido com provedor: ${domain}`);
-    toast.error(`Empresa criada com sucesso, mas detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`);
+    console.error(`Conhecido problema de entrega com o provedor: ${domain}`);
+    toast({
+      title: "Empresa criada com sucesso, mas...",
+      description: `Detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`,
+      variant: "destructive", // Changed from "warning" to "destructive" as "warning" is not a valid variant
+      duration: 8000,
+    });
   };
 
   const handlePostCreationError = (error: any) => {
-    console.error("🛑 Erro ao processar pós-criação da empresa:", error);
-    toast.error("Empresa criada parcialmente. A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.");
+    console.error("Erro ao processar pós-criação da empresa:", error);
+    
+    toast({
+      title: "Empresa criada parcialmente",
+      description: "A empresa foi criada, mas houve um erro no processamento. A equipe será notificada.",
+      variant: "destructive",
+    });
   };
 
   const handleUnexpectedError = (error: any) => {
-    console.error("🛑 Erro não tratado ao criar empresa:", error);
-    console.error("Stack trace:", new Error().stack);
-    
-    let errorMessage = "Não foi possível criar a empresa. Tente novamente.";
-    
-    if (typeof error === 'string') {
-      errorMessage = error;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    
-    toast.error(`Erro ao criar empresa: ${errorMessage}`);
+    console.error("Erro não tratado ao criar empresa:", error);
+    toast({
+      title: "Erro ao criar empresa",
+      description: "Não foi possível criar a empresa. Tente novamente.",
+      variant: "destructive",
+    });
   };
 
   const showSuccessToast = () => {
-    toast.success("Empresa criada com sucesso! Um email será enviado para o administrador contendo todas as instruções de onboarding.");
+    toast({
+      title: "Empresa criada com sucesso",
+      description: "Um email será enviado para o administrador contendo todas as instruções de onboarding.",
+    });
   };
 
   return {
@@ -91,7 +88,6 @@ export const useFormErrorHandlers = () => {
     handleEmailError,
     handleEmailProviderIssue,
     handlePostCreationError,
-    handleDatabaseConfigError,
     handleUnexpectedError,
     showSuccessToast
   };

@@ -56,7 +56,7 @@ export default function OrganizationSetup() {
         open={showPayment}
         onOpenChange={setShowPayment}
         package={{
-          name: "Valor Mensalidade",
+          name: "Valor Pro Rata",
           credits: 0,
           price: 99.90
         }}

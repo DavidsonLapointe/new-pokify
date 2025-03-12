@@ -5,6 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "../schema";
 import { usePlans } from "./use-plans";
 
+/**
+ * Hook to initialize and configure the organization form
+ */
 export const useOrganizationFormInit = () => {
   const { plans } = usePlans();
   
@@ -14,11 +17,11 @@ export const useOrganizationFormInit = () => {
       razaoSocial: "",
       nomeFantasia: "",
       cnpj: "",
+      email: "",
       phone: "",
-      plan: "",
+      plan: "", // Empty string as default
       adminName: "",
       adminEmail: "",
-      adminPhone: "",
       status: "pending",
     },
   });
@@ -26,8 +29,7 @@ export const useOrganizationFormInit = () => {
   // Set default plan when plans are loaded
   useEffect(() => {
     if (plans.length > 0 && !form.getValues("plan")) {
-      // Set the first active plan as default
-      console.log("Definindo plano padrão:", plans[0].id);
+      // Set the first active plan as default, ensuring it's a string
       form.setValue("plan", String(plans[0].id));
     }
   }, [plans, form]);

@@ -3,7 +3,7 @@ import { FinancialTitle, CreateFinancialTitleDTO } from "@/types/financial";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 
-export const createMensalidadeTitle = async (organization: Organization, mensalidadeValue: number): Promise<FinancialTitle | null> => {
+export const createProRataTitle = async (organization: Organization, proRataValue: number): Promise<FinancialTitle | null> => {
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
 
@@ -12,8 +12,8 @@ export const createMensalidadeTitle = async (organization: Organization, mensali
       .from('financial_titles')
       .insert([{
         organization_id: organization.id.toString(),
-        type: 'mensalidade' as const,
-        value: mensalidadeValue,
+        type: 'pro_rata' as const,
+        value: proRataValue,
         due_date: dueDate.toISOString(),
         status: 'pending' as const
       }])
@@ -34,7 +34,7 @@ export const createMensalidadeTitle = async (organization: Organization, mensali
       paymentMethod: title.payment_method,
     };
   } catch (error) {
-    console.error('Erro ao criar título de mensalidade:', error);
+    console.error('Erro ao criar título pro rata:', error);
     return null;
   }
 };

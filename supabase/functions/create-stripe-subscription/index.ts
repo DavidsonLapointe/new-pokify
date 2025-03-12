@@ -64,14 +64,23 @@ serve(async (req) => {
       throw new Error('Organização não encontrada');
     }
 
-    // Usar email do admin se o email da organização não estiver definido
-    const customerEmail = organization.email || organization.admin_email;
-    
-    if (!customerEmail) {
-      console.error('Erro: Organização sem email definido');
-      throw new Error('Email do cliente não definido');
+    // Buscar detalhes do método de pagamento do usuário admin
+    const { data: adminUsers, error: adminError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('organization_id', organizationId)
+      .eq('role', 'admin')
+      .single();
+
+    if (adminError) {
+      console.error('Erro ao buscar admin da organização:', adminError);
+      throw new Error('Admin não encontrado');
     }
 
+    // Buscar método de pagamento salvo (normalmente seria armazenado na tabela de métodos de pagamento)
+    // Como exemplo, vamos supor que temos o ID do método de pagamento associado ao usuário
+    // Esta parte depende de como os métodos de pagamento são armazenados no seu sistema
+    
     // Criar ou recuperar o cliente no Stripe
     let customer;
     const existingCustomers = await stripe.customers.search({
@@ -81,24 +90,16 @@ serve(async (req) => {
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
       console.log(`Cliente existente encontrado no Stripe: ${customer.id}`);
-      
-      // Atualizar o email do cliente se necessário
-      if (!customer.email) {
-        await stripe.customers.update(customer.id, {
-          email: customerEmail
-        });
-        console.log(`Email do cliente atualizado: ${customerEmail}`);
-      }
     } else {
       // Criar novo cliente no Stripe
       customer = await stripe.customers.create({
-        email: customerEmail,
+        email: organization.email,
         name: organization.name,
         metadata: {
           organization_id: organizationId,
         },
       });
-      console.log(`Novo cliente criado no Stripe: ${customer.id} com email: ${customerEmail}`);
+      console.log(`Novo cliente criado no Stripe: ${customer.id}`);
     }
 
     // Obter o preço do plano

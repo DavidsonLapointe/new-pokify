@@ -1,55 +1,89 @@
 
-import { Organization, OrganizationPendingReason } from "@/types/organization-types";
+import { Organization, OrganizationStatus, OrganizationPendingReason, User as OrgUser } from '@/types/organization-types';
 
-/**
- * Formats and converts raw organization data from Supabase to the Organization type
- */
-export const formatOrganizationData = (rawData: any): Organization => {
-  // Map pending_reason to the correct type
+export const formatOrganizationData = (organization: any): Organization => {
+  console.log("Formatando organização (dados brutos):", organization);
+  
+  // Verificar se os dados necessários estão presentes
+  if (!organization || !organization.id || !organization.name) {
+    console.error("Dados de organização inválidos:", organization);
+    throw new Error("Dados de organização inválidos ou incompletos");
+  }
+  
+  // Tratar campos opcionais explicitamente
+  const nome_fantasia = organization.nome_fantasia || '';
+  const contract_signed_at = organization.contract_signed_at || null;
+  const integrated_crm = organization.integrated_crm || null;
+  const integrated_llm = organization.integrated_llm || null;
+  const phone = organization.phone || '';
+  
+  // Determine pending reason based on individual statuses
   let pendingReason: OrganizationPendingReason = null;
-  if (rawData.pending_reason) {
-    // Ensure the value exactly matches one of the defined enum values
-    if (rawData.pending_reason === "contract_signature" || 
-        rawData.pending_reason === "mensalidade_payment" || 
-        rawData.pending_reason === "user_validation") {
-      pendingReason = rawData.pending_reason as OrganizationPendingReason;
-    }
+  if (organization.contract_status === 'pending') {
+    pendingReason = 'contract_signature';
+  } else if (organization.payment_status === 'pending') {
+    pendingReason = 'pro_rata_payment';
+  } else if (organization.registration_status === 'pending') {
+    pendingReason = 'user_validation';
+  }
+  
+  // Verificar campos que podem ser undefined para evitar serializações incorretas
+  let logo = undefined;
+  if (organization.logo !== null && organization.logo !== undefined) {
+    logo = organization.logo;
+  }
+  
+  // Verificar se há dados de endereço
+  let address = undefined;
+  if (organization.logradouro) {
+    address = {
+      logradouro: organization.logradouro,
+      numero: organization.numero || '',
+      complemento: organization.complemento || '',
+      bairro: organization.bairro || '',
+      cidade: organization.cidade || '',
+      estado: organization.estado || '',
+      cep: organization.cep || '',
+    };
   }
 
-  // Create address object if address fields are present
-  const address = rawData.logradouro ? {
-    logradouro: rawData.logradouro || '',
-    numero: rawData.numero || '',
-    complemento: rawData.complemento || '',
-    bairro: rawData.bairro || '',
-    cidade: rawData.cidade || '',
-    estado: rawData.estado || '',
-    cep: rawData.cep || ''
-  } : undefined;
+  // Status sempre será um dos três valores enum definidos
+  const status = (organization.status || 'pending') as OrganizationStatus;
 
-  return {
-    id: rawData.id,
-    name: rawData.name,
-    nomeFantasia: rawData.nome_fantasia,
-    plan: rawData.plan,
-    planName: rawData.planName || rawData.plan,
-    users: rawData.users || [],
-    status: rawData.status,
+  // Ensure users have the required permissions field
+  const users = Array.isArray(organization.users) ? organization.users.map((user: any) => {
+    return {
+      ...user,
+      permissions: user.permissions || {}
+    };
+  }) : [];
+
+  // Criar objeto de organização formatado com valores padrão para campos opcionais
+  const formattedOrg: Organization = {
+    id: organization.id,
+    name: organization.name,
+    nomeFantasia: nome_fantasia,
+    plan: organization.plan,
+    planName: organization.planName || "Plano não especificado", // Ensure planName is properly set
+    users: users,
+    status: status,
     pendingReason: pendingReason,
-    contractStatus: rawData.contract_status || 'pending',
-    paymentStatus: rawData.payment_status || 'pending',
-    registrationStatus: rawData.registration_status || 'pending',
-    integratedCRM: rawData.integrated_crm,
-    integratedLLM: rawData.integrated_llm,
-    email: rawData.email,
-    phone: rawData.phone,
-    cnpj: rawData.cnpj,
-    adminName: rawData.admin_name,
-    adminEmail: rawData.admin_email,
-    adminPhone: rawData.admin_phone,
-    contractSignedAt: rawData.contract_signed_at,
-    createdAt: rawData.created_at,
-    logo: rawData.logo,
-    address
+    contractStatus: organization.contract_status || 'pending',
+    paymentStatus: organization.payment_status || 'pending',
+    registrationStatus: organization.registration_status || 'pending',
+    integratedCRM: integrated_crm,
+    integratedLLM: integrated_llm,
+    email: organization.email,
+    phone: phone,
+    cnpj: organization.cnpj,
+    adminName: organization.admin_name,
+    adminEmail: organization.admin_email,
+    contractSignedAt: contract_signed_at,
+    createdAt: organization.created_at || new Date().toISOString(),
+    logo: logo,
+    address: address
   };
+  
+  console.log("Organização formatada com sucesso:", formattedOrg);
+  return formattedOrg;
 };

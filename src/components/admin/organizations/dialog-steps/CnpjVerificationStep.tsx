@@ -1,4 +1,3 @@
-
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,7 +53,7 @@ export const CnpjVerificationStep = ({
       <div className="flex justify-end space-x-4 mt-6 pt-3 border-t">
         <Button
           type="button"
-          variant="outline"
+          variant="cancel"
           onClick={onCancel}
         >
           Cancelar

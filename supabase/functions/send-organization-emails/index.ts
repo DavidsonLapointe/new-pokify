@@ -15,15 +15,13 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  organizationId: string;
+  organizationId: number;
   type: "onboarding" | "contract" | "confirmation" | "payment";
   data: {
     confirmationToken?: string;
     contractUrl?: string;
     paymentUrl?: string;
-    mensalidadeAmount?: number;
-    termsUrl?: string;
-    planName?: string;
+    proRataAmount?: number;
   };
 }
 
@@ -36,16 +34,9 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     console.log("Parsing request body...");
-    const requestBody = await req.json();
-    console.log("Request body:", JSON.stringify(requestBody, null, 2));
-    
-    const { organizationId, type, data } = requestBody as EmailRequest;
+    const { organizationId, type, data } = await req.json();
     console.log(`Request received for organization ${organizationId}, type: ${type}`);
     console.log("Email data:", data);
-
-    if (!organizationId) {
-      throw new Error('organizationId is required');
-    }
 
     const { data: organization, error: orgError } = await supabase
       .from('organizations')
@@ -59,22 +50,15 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     if (!organization) {
-      console.error(`Organization not found with ID: ${organizationId}`);
+      console.error("Organization not found");
       throw new Error('Organização não encontrada');
     }
 
     console.log("Organization found:", {
       id: organization.id,
       name: organization.name,
-      adminEmail: organization.admin_email,
-      adminPhone: organization.admin_phone || "Não informado"
+      adminEmail: organization.admin_email
     });
-
-    // Check for valid admin email
-    if (!organization.admin_email || !organization.admin_email.includes('@')) {
-      console.error("Invalid admin email:", organization.admin_email);
-      throw new Error('Email do administrador inválido');
-    }
 
     // Detect problematic email domains
     const emailDomain = organization.admin_email.split('@')[1].toLowerCase();
@@ -92,21 +76,28 @@ const handler = async (req: Request): Promise<Response> => {
           html: `
             <h1>Olá ${organization.admin_name},</h1>
             <p>Bem-vindo à Leadly! Estamos muito felizes em ter você conosco.</p>
-            <p>Para completar seu cadastro e começar a utilizar a plataforma, conclua as etapas abaixo:</p>
+            <p>Para completar seu cadastro e começar a utilizar a plataforma, siga as etapas abaixo. Você pode realizá-las em qualquer ordem.</p>
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
-              <h2 style="color: #6E59A5; margin-top: 0;">Completar seu Cadastro</h2>
-              <p>Você precisa confirmar seus dados, aceitar os termos de uso e política de privacidade, definir sua senha e realizar o pagamento:</p>
-              <p>Dados atuais:</p>
-              <ul style="list-style-type: none; padding-left: 0;">
-                <li><strong>Nome:</strong> ${organization.admin_name}</li>
-                <li><strong>Email:</strong> ${organization.admin_email}</li>
-                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
-              </ul>
+              <h2 style="color: #6E59A5; margin-top: 0;">1. Assinar o Contrato</h2>
+              <p>Você precisa assinar o contrato de adesão da Leadly:</p>
+              <p><a href="${data.contractUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Acessar e Assinar Contrato</a></p>
+            </div>
+            
+            <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
+              <h2 style="color: #6E59A5; margin-top: 0;">2. Efetuar o Pagamento</h2>
+              <p>Você precisa efetuar o pagamento pro-rata para ativar sua conta:</p>
+              <p>Valor pro rata: <strong>R$ ${data.proRataAmount?.toFixed(2)}</strong></p>
+              <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Realizar Pagamento</a></p>
+            </div>
+            
+            <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
+              <h2 style="color: #6E59A5; margin-top: 0;">3. Completar seu Cadastro</h2>
+              <p>Você precisa confirmar seus dados e definir sua senha:</p>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Completar Cadastro</a></p>
             </div>
             
-            <p>Após a conclusão do cadastro e pagamento, sua conta será automaticamente ativada e você poderá acessar a plataforma.</p>
+            <p>Você pode completar estas etapas em qualquer ordem. Após a conclusão de todas as etapas, sua conta será automaticamente ativada e você poderá acessar a plataforma.</p>
             
             <p>Se tiver alguma dúvida, não hesite em nos contatar pelo email <a href="mailto:suporte@leadly.com.br">suporte@leadly.com.br</a>.</p>
             
@@ -118,17 +109,17 @@ const handler = async (req: Request): Promise<Response> => {
       case "contract":
       case "confirmation":
       case "payment":
-        // Templates for other email types
+        // Mantendo os emails individuais para compatibilidade, mas o foco principal é o email de onboarding único
         emailContent = {
-          subject: type === "contract" ? "Termos de Uso - Leadly" : 
+          subject: type === "contract" ? "Contrato de Adesão - Leadly" : 
                    type === "confirmation" ? "Complete seu cadastro - Leadly" : 
-                   "Pagamento da Mensalidade - Leadly",
+                   "Pagamento Pro Rata - Leadly",
           html: type === "contract" ? 
             `
               <h1>Olá ${organization.admin_name},</h1>
               <p>Bem-vindo à Leadly! Estamos muito felizes em ter você conosco.</p>
-              <p>Para continuar com seu cadastro, você precisa aceitar os nossos Termos de Uso e Política de Privacidade:</p>
-              <p><a href="${data.termsUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Aceitar Termos</a></p>
+              <p>Segue o link para acessar seu contrato de adesão:</p>
+              <p><a href="${data.contractUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Acessar Contrato</a></p>
               <p>Se tiver alguma dúvida, não hesite em nos contatar.</p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
             ` : 
@@ -136,18 +127,12 @@ const handler = async (req: Request): Promise<Response> => {
             `
               <h1>Olá ${organization.admin_name},</h1>
               <p>Para completar seu cadastro na Leadly, acesse o link abaixo:</p>
-              <p>Dados atuais:</p>
-              <ul>
-                <li><strong>Nome:</strong> ${organization.admin_name}</li>
-                <li><strong>Email:</strong> ${organization.admin_email}</li>
-                <li><strong>Telefone:</strong> ${organization.admin_phone || "Não informado"}</li>
-              </ul>
               <p><a href="${data.confirmationToken}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Completar Cadastro</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
             ` :
             `
               <h1>Olá ${organization.admin_name},</h1>
-              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento da mensalidade no valor de R$ ${data.mensalidadeAmount?.toFixed(2)}.</p>
+              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento pro rata no valor de R$ ${data.proRataAmount?.toFixed(2)}.</p>
               <p>Acesse o link abaixo para efetuar o pagamento:</p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Realizar Pagamento</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
@@ -172,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
       
       console.log(`Email sent successfully:`, emailResponse);
       
-      // Log email attempt to database
+      // Log email attempt to database regardless of domain
       await supabase
         .from('email_logs')
         .insert({
@@ -205,55 +190,34 @@ const handler = async (req: Request): Promise<Response> => {
           }
         });
       
-      // Return a more detailed error for problematic domains
+      // If it's a problematic domain, provide a more detailed error
       if (isKnownProblematicDomain) {
         return new Response(
           JSON.stringify({ 
             error: "Email delivery failed", 
             details: `Provider ${emailDomain} may have delivery issues with Resend. Consider using an alternative email.`,
-            originalError: emailError.message,
-            status: 'warning'
+            originalError: emailError.message
           }),
           {
-            status: 200, // Still return 200 to allow the organization creation to complete
+            status: 422,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           }
         );
       }
       
-      // Return a failure but don't block organization creation
-      return new Response(
-        JSON.stringify({ 
-          error: "Email delivery failed", 
-          message: "Organization created, but email could not be sent. Support team will be notified.",
-          status: 'warning'
-        }),
-        {
-          status: 200, // Still return 200 to allow the organization creation to complete
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      // Re-throw for other errors
+      throw emailError;
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: emailResponse || { status: 'sent' },
-        message: "Email sent successfully"
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify(emailResponse || { success: false }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
 
   } catch (error: any) {
     console.error("Error in send-organization-emails function:", error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        status: 'error'
-      }),
+      JSON.stringify({ error: error.message }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

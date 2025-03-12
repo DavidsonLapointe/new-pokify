@@ -23,17 +23,14 @@ export const updateStripeProduct = async (params: UpdateStripeProductParams) => 
       returnIds: true
     };
     
-    const response = await supabase.functions.invoke('update-stripe-product', {
+    const { data, error } = await supabase.functions.invoke('update-stripe-product', {
       body: requestParams
     });
     
-    // Verificar se a resposta contém um erro
-    if (response.error) {
-      console.error('Erro ao invocar função do Stripe:', response.error);
-      throw response.error;
+    if (error) {
+      console.error('Erro ao invocar função do Stripe:', error);
+      throw error;
     }
-    
-    const data = response.data;
     
     // Validar a resposta
     if (!data || !data.success) {

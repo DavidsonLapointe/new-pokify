@@ -620,7 +620,6 @@ export type Database = {
         Row: {
           admin_email: string
           admin_name: string
-          admin_phone: string | null
           bairro: string | null
           cep: string | null
           cidade: string | null
@@ -629,7 +628,7 @@ export type Database = {
           contract_signed_at: string | null
           contract_status: string | null
           created_at: string | null
-          email: string | null
+          email: string
           estado: string | null
           id: string
           integrated_crm: string | null
@@ -651,7 +650,6 @@ export type Database = {
         Insert: {
           admin_email: string
           admin_name: string
-          admin_phone?: string | null
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
@@ -660,7 +658,7 @@ export type Database = {
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null
-          email?: string | null
+          email: string
           estado?: string | null
           id?: string
           integrated_crm?: string | null
@@ -682,7 +680,6 @@ export type Database = {
         Update: {
           admin_email?: string
           admin_name?: string
-          admin_phone?: string | null
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
@@ -691,7 +688,7 @@ export type Database = {
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null
-          email?: string | null
+          email?: string
           estado?: string | null
           id?: string
           integrated_crm?: string | null
@@ -998,7 +995,7 @@ export type Database = {
       financial_title_type: "pro_rata" | "mensalidade"
       organization_pending_reason:
         | "contract_signature"
-        | "mensalidade_payment"
+        | "pro_rata_payment"
         | "null"
         | "user_validation"
       organization_status: "active" | "pending" | "inactive"

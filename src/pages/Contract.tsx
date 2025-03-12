@@ -106,18 +106,18 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           .from('financial_titles')
           .select('*')
           .eq('organization_id', id)
-          .eq('type', 'mensalidade') // Alteração de pro_rata para mensalidade
+          .eq('type', 'pro_rata')
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle();
           
         if (titleError) {
-          console.error("Error fetching mensalidade title:", titleError);
+          console.error("Error fetching pro-rata title:", titleError);
         } else if (titleData) {
-          console.log("Mensalidade title data:", titleData);
+          console.log("Pro-rata title data:", titleData);
           setProRataValue(titleData.value ? parseFloat(titleData.value.toString()) : null);
         } else {
-          console.log("No mensalidade title found");
+          console.log("No pro-rata title found");
         }
       }
       
@@ -143,21 +143,21 @@ export default function Contract({ paymentMode = false }: ContractProps) {
       const { error: updateError } = await supabase
         .from('organizations')
         .update({ 
-          contract_status: 'completed',
-          contract_signed_at: new Date().toISOString()
+          contract_signed_at: new Date().toISOString(),
+          contract_status: 'completed'
         })
         .eq('id', id);
 
       if (updateError) throw updateError;
       
-      toast.success("Termos de uso aceitos com sucesso!");
+      toast.success("Contrato assinado com sucesso!");
       setContractSigned(true);
       setStepCompleted(true);
       
       // Don't navigate automatically - let user choose next step
     } catch (error: any) {
-      console.error('Erro ao processar aceite dos termos:', error);
-      toast.error("Erro ao processar aceite dos termos de uso");
+      console.error('Erro ao assinar contrato:', error);
+      toast.error("Erro ao processar assinatura do contrato");
     } finally {
       setProcessing(false);
     }
@@ -248,12 +248,12 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           <div className="text-center mb-8">
             <h1 className="text-xl font-semibold text-primary mb-2">Leadly</h1>
             <h2 className="text-2xl font-semibold text-gray-900">
-              {paymentMode ? "Pagamento Concluído" : "Termos de Uso Aceitos"}
+              {paymentMode ? "Pagamento Concluído" : "Contrato Assinado"}
             </h2>
             <p className="text-gray-600 mt-2">
               {paymentMode 
                 ? "Seu pagamento foi processado com sucesso!" 
-                : "Os termos de uso foram aceitos com sucesso!"}
+                : "Seu contrato foi assinado com sucesso!"}
             </p>
           </div>
           
@@ -276,7 +276,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
           <div className="text-center mb-8">
             <h1 className="text-xl font-semibold text-primary mb-2">Leadly</h1>
             <h2 className="text-2xl font-semibold text-gray-900">
-              Pagamento da Mensalidade
+              Pagamento Pro Rata
             </h2>
           </div>
 
@@ -293,7 +293,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Finalizar Cadastro - Pagamento da Mensalidade</CardTitle>
+              <CardTitle>Finalizar Cadastro - Pagamento Pro Rata</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-[#F1F0FB] rounded-lg">
@@ -306,10 +306,10 @@ export default function Contract({ paymentMode = false }: ContractProps) {
 
               <div className="p-4 bg-[#F1F0FB] rounded-lg">
                 <h3 className="font-medium text-lg mb-2">Detalhes do Pagamento</h3>
-                <p className="mb-2">Valor da mensalidade: <strong>R$ {proRataValue?.toFixed(2) || '0.00'}</strong></p>
+                <p className="mb-2">Valor pro rata: <strong>R$ {proRataValue?.toFixed(2) || '0.00'}</strong></p>
                 <p className="text-sm text-gray-600">
-                  Este é o pagamento da primeira mensalidade referente ao plano contratado.
-                  A partir do próximo mês, na mesma data, será cobrado o valor automaticamente.
+                  Este é um pagamento único proporcional referente ao período restante do mês atual. 
+                  A partir do próximo mês, será cobrado o valor integral do plano contratado.
                 </p>
               </div>
 
@@ -357,7 +357,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
         <div className="text-center mb-8">
           <h1 className="text-xl font-semibold text-primary mb-2">Leadly</h1>
           <h2 className="text-2xl font-semibold text-gray-900">
-            Termos de Uso e Política de Privacidade
+            Contrato de Prestação de Serviços
           </h2>
         </div>
 
@@ -374,7 +374,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Termos de Uso</CardTitle>
+            <CardTitle>Contrato de Adesão</CardTitle>
           </CardHeader>
           <CardContent className="prose max-w-none">
             <div className="p-4 bg-[#F1F0FB] rounded-lg mb-6">
@@ -421,8 +421,9 @@ export default function Contract({ paymentMode = false }: ContractProps) {
             <h3 className="text-lg font-semibold">4. Dos Valores</h3>
             <p>
               Pelo serviço objeto deste contrato, a CONTRATANTE pagará à CONTRATADA 
-              o valor mensal conforme o plano contratado, com pagamentos sendo realizados 
-              mensalmente, sempre na mesma data do primeiro pagamento, via cartão de crédito.
+              o valor mensal conforme o plano contratado, sendo o primeiro pagamento proporcional (pro rata) 
+              aos dias restantes do mês corrente. Os pagamentos subsequentes serão realizados 
+              mensalmente, sempre no dia 10 de cada mês.
             </p>
 
             <h3 className="text-lg font-semibold">5. Da Vigência</h3>
@@ -460,7 +461,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
                 htmlFor="terms"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Li e aceito os termos de uso e a política de privacidade
+                Li e aceito os termos do contrato
               </label>
             </div>
             <Button 
@@ -474,7 +475,7 @@ export default function Contract({ paymentMode = false }: ContractProps) {
                   Processando...
                 </>
               ) : (
-                "Aceitar Termos"
+                "Assinar Contrato"
               )}
             </Button>
           </CardFooter>
