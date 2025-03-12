@@ -19,7 +19,7 @@ export interface User {
   lastAccess: string;  // Made this required to match organization-types
   permissions: { [key: string]: boolean };
   logs: UserLog[];
-  avatar?: string;
+  avatar?: string | null; // Made nullable to match organization-types
   organization?: Organization;
   company_leadly_id?: string;
 }

@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { User } from "@/types";
+import { User } from "@/types/organization-types"; // Import from organization-types
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
