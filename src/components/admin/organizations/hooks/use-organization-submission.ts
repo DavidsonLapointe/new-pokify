@@ -46,24 +46,17 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         .from('organizations')
         .insert(orgData)
         .select('id, name')
-        .single();
+        .maybeSingle();
 
       if (insertError) {
         console.error("❌ Erro ao inserir organização:", insertError);
-        
-        // Check if it's a unique constraint violation
-        if (insertError.code === '23505') {
-          toast.error("CNPJ já cadastrado para outra empresa");
-          return;
-        }
-        
         toast.error("Erro ao criar organização: " + insertError.message);
         throw insertError;
       }
 
       if (!insertedOrg?.id) {
         console.error("❌ Organização criada mas nenhum ID foi retornado");
-        toast.error("Organização criada mas nenhum ID foi retornado");
+        toast.error("Erro ao criar organização: nenhum ID foi retornado");
         throw new Error("Organização criada mas nenhum ID foi retornado");
       }
 
