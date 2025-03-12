@@ -16,7 +16,7 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
-  lastAccess?: string;
+  lastAccess: string;  // Made this required to match organization-types
   permissions: { [key: string]: boolean };
   logs: UserLog[];
   avatar?: string;

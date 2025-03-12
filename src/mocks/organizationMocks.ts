@@ -1,4 +1,3 @@
-
 import { Organization, OrganizationStatus } from '../types/organization-types';
 import { generateMockUsers, setMockOrganizations } from './userMocks';
 import { generateRandomCNPJ } from './utils';
@@ -12,7 +11,8 @@ export const createMockOrganization = (
   const id = `org-${Math.random().toString(36).substr(2, 9)}`;
   const users = generateMockUsers(userCount, index).map(user => ({
     ...user,
-    avatar: user.avatar || null
+    avatar: user.avatar || null,
+    lastAccess: user.lastAccess || new Date().toISOString() // Ensure lastAccess is always set
   }));
   const now = new Date().toISOString();
 

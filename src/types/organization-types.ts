@@ -1,12 +1,13 @@
+
 export interface User {
   id: string;
   name: string;
   email: string;
-  avatar: string | null;
+  avatar: string | null;  // Changed from required to nullable to match user-types
   role: "admin" | "seller" | "leadly_employee";
   status: "active" | "inactive" | "pending";
   createdAt: string;
-  lastAccess: string;
+  lastAccess: string;  // This is required according to the error
   permissions: { [key: string]: boolean };
   logs: {
     id: string;
@@ -21,7 +22,7 @@ export type OrganizationPendingReason =
   | "contract_signature" 
   | "user_validation" 
   | "mensalidade_payment"
-  | "pro_rata_payment" 
+  | "pro_rata_payment"   // Added this value
   | null;
 
 export interface Address {
