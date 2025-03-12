@@ -42,20 +42,13 @@ export const useCnpjVerification = ({
       // Proceed to the next step
       setCnpjValidated(true);
       onCnpjVerified();
-      toast({
-        title: "CNPJ Validado",
-        description: "O CNPJ é válido. Continue o cadastro.",
-      });
+      toast("O CNPJ é válido. Continue o cadastro.");
       
       // Clear any existing errors on the CNPJ field
       form.clearErrors("cnpj");
     } catch (error) {
       console.error("Erro ao validar CNPJ:", error);
-      toast({
-        title: "Erro ao validar CNPJ",
-        description: "Ocorreu um erro ao validar o CNPJ. Tente novamente.",
-        variant: "destructive",
-      });
+      toast.error("Ocorreu um erro ao validar o CNPJ. Tente novamente.");
     } finally {
       setIsCheckingCnpj(false);
     }
