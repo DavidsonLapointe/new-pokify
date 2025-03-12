@@ -8,7 +8,7 @@ export interface User {
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
-  permissions: { [key: string]: boolean }; // Changed from optional to required to match user-types.ts
+  permissions: { [key: string]: boolean };
   logs: {
     id: string;
     timestamp: string;
@@ -39,7 +39,7 @@ export interface Organization {
   id: string;
   name: string;
   nomeFantasia?: string;
-  plan: any; // Plan ID
+  plan: any; // Plan ID or full Plan object
   planName?: string; // Adding plan name property
   users: User[];
   status: OrganizationStatus;

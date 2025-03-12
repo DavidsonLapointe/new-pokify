@@ -1,18 +1,21 @@
 
 import { Call, LeadCalls } from "../types";
 import { useState, useCallback, useEffect } from "react";
+import { mockCalls } from "@/mocks/callsMocks";
 
 /**
  * Hook para gerenciar os dados dos leads e suas chamadas.
  * @param initialCalls Array inicial de chamadas
  * @returns Objeto contendo os leads processados e função para atualização
  */
-export const useLeadsData = (initialCalls: Call[]) => {
-  const [calls, setCalls] = useState(initialCalls);
+export const useLeadsData = (initialCalls: Call[] = []) => {
+  const [calls, setCalls] = useState<Call[]>(initialCalls.length > 0 ? initialCalls : mockCalls);
 
   // Atualiza o estado local quando as chamadas iniciais mudarem
   useEffect(() => {
-    setCalls(initialCalls);
+    if (initialCalls.length > 0) {
+      setCalls(initialCalls);
+    }
   }, [initialCalls]);
 
   /**

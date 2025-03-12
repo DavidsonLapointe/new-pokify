@@ -1,34 +1,85 @@
 
-import { useCallsPage } from "./useCallsPage";
-import { useLeadsData } from "./dashboard/useLeadsData";
-import { useCallsData } from "./dashboard/useCallsData";
-import { useObjectionsData } from "./dashboard/useObjectionsData";
-import { usePerformanceData } from "./dashboard/usePerformanceData";
-import { useSuggestionsData } from "./dashboard/useSuggestionsData";
+import { useState } from "react";
+import { mockDashboardData } from "@/mocks/dashboardMocks";
 
 export const useDashboardData = () => {
-  const { monthStats: callsMonthStats } = useCallsPage();
-  const leadsData = useLeadsData();
-  const callsData = useCallsData();
-  const objectionsData = useObjectionsData();
-  const performanceData = usePerformanceData();
-  const suggestionsData = useSuggestionsData();
+  // Estados para gerenciar as seleções de data e filtros
+  const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(new Date());
+  const [dailyLeadsDate, setDailyLeadsDate] = useState(new Date());
+  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(new Date());
+  const [callsDate, setCallsDate] = useState(new Date());
+  const [performanceDate] = useState(new Date());
+  const [monthlyCallsSeller, setMonthlyCallsSeller] = useState("all");
+  const [dailyCallsSeller, setDailyCallsSeller] = useState("all");
+  const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
+  const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
+  const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
+  const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
+  const [dailyMetric, setDailyMetric] = useState("calls");
+  const [monthlyMetric, setMonthlyMetric] = useState("calls");
+  const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
+  const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
 
-  // Transform monthStats to include active property
-  const monthStats = {
-    total: callsMonthStats.total,
-    active: callsMonthStats.processed || 0, // Use processed as active
-    pending: callsMonthStats.pending,
-    processed: callsMonthStats.processed,
-    failed: callsMonthStats.failed,
-  };
-
+  // Retornamos os dados mockados e os estados de filtro
   return {
-    monthStats,
-    ...leadsData,
-    ...callsData,
-    ...objectionsData,
-    ...performanceData,
-    ...suggestionsData,
+    // Estatísticas do mês
+    monthStats: mockDashboardData.monthStats,
+    
+    // Dados de leads
+    dailyLeadsData: mockDashboardData.dailyLeadsData,
+    monthlyLeadsData: mockDashboardData.monthlyLeadsData,
+    
+    // Dados de chamadas
+    dailyCallsData: mockDashboardData.dailyCallsData,
+    monthlyCallsData: mockDashboardData.monthlyCallsData,
+    
+    // Dados de desempenho
+    dailyPerformanceData: mockDashboardData.dailyPerformanceData,
+    monthlyPerformanceData: mockDashboardData.monthlyPerformanceData,
+    
+    // Dados de objeções
+    objectionsData: mockDashboardData.objectionsData,
+    objectionTrendsData: mockDashboardData.objectionTrendsData,
+    objectionExamples: mockDashboardData.objectionExamples,
+    
+    // Dados de sugestões
+    suggestionsData: mockDashboardData.suggestionsData,
+    
+    // Estados de seleção de datas
+    monthlyLeadsDate,
+    setMonthlyLeadsDate,
+    dailyLeadsDate,
+    setDailyLeadsDate,
+    monthlyObjectionsDate,
+    setMonthlyObjectionsDate,
+    callsDate,
+    setCallsDate,
+    performanceDate,
+    
+    // Estados de seleção de vendedores
+    monthlyCallsSeller,
+    setMonthlyCallsSeller,
+    dailyCallsSeller,
+    setDailyCallsSeller,
+    monthlyLeadsSeller,
+    setMonthlyLeadsSeller,
+    dailyLeadsSeller,
+    setDailyLeadsSeller,
+    monthlyObjectionsSeller,
+    setMonthlyObjectionsSeller,
+    objectionTrendsSeller,
+    setObjectionTrendsSeller,
+    
+    // Estados de seleção de métricas
+    dailyMetric,
+    setDailyMetric,
+    monthlyMetric,
+    setMonthlyMetric,
+    
+    // Estados para sugestões
+    monthlySuggestionsDate,
+    setMonthlySuggestionsDate,
+    monthlySuggestionsSeller,
+    setMonthlySuggestionsSeller,
   };
 };
