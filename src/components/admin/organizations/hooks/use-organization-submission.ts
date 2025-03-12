@@ -1,18 +1,16 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
-import { type OrganizationStatus } from "@/types/organization-types";
 import { toast } from "sonner";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const checkExistingOrganization = async (cnpj: string): Promise<boolean> => {
     try {
-      // Garantir que estamos verificando apenas os dígitos do CNPJ
+      // Clean CNPJ to ensure consistent format
       const cleanedCnpj = cnpj.replace(/[^\d]/g, '');
       
-      console.log("Verificando CNPJ na submissão:", cleanedCnpj);
+      console.log("Checking CNPJ during submission:", cleanedCnpj);
       
-      // Verificar se já existe uma organização com este CNPJ
       const { data, error } = await supabase
         .from('organizations')
         .select('id')
@@ -20,23 +18,23 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         .maybeSingle();
       
       if (error) {
-        console.error("❌ Erro ao verificar CNPJ:", error);
+        console.error("❌ Error checking CNPJ:", error);
         throw error;
       }
       
-      return !!data; // Retorna true se uma organização com este CNPJ existir
+      return !!data; // Returns true if organization with this CNPJ exists
     } catch (error) {
-      console.error("❌ Erro ao verificar CNPJ:", error);
-      throw error; // Propagar erro para tratamento adequado
+      console.error("❌ Error checking CNPJ:", error);
+      throw error;
     }
   };
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      // Limpar CNPJ para garantir formato consistente no banco
+      // Clean CNPJ to ensure consistent format
       const cleanedCnpj = values.cnpj.replace(/[^\d]/g, '');
       
-      // Verificar se já existe uma organização com este CNPJ
+      // Check if organization already exists
       const exists = await checkExistingOrganization(cleanedCnpj);
       
       if (exists) {
@@ -44,31 +42,30 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Dados mínimos necessários para criar uma organização
+      // Minimum required data for creating an organization
       const orgData = {
         name: values.razaoSocial,
-        cnpj: cleanedCnpj, // Usar CNPJ limpo
+        cnpj: cleanedCnpj,
         admin_email: values.adminEmail,
         admin_name: values.adminName,
         plan: values.plan,
-        status: "pending" as OrganizationStatus,
+        status: "pending" as const,
         nome_fantasia: values.nomeFantasia,
         phone: values.phone,
         admin_phone: values.adminPhone
       };
 
-      console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
+      console.log("📝 Attempting to create organization with data:", JSON.stringify(orgData, null, 2));
 
-      // Inserção simplificada sem opções adicionais
       const { error } = await supabase
         .from('organizations')
         .insert(orgData);
 
       if (error) {
-        console.error("❌ Erro ao inserir organização:", error);
+        console.error("❌ Error inserting organization:", error);
         
-        // Verificar se o erro é de duplicação
-        if (error.code === '23505') { // Código para violação de chave única
+        // Check if error is due to duplicate CNPJ
+        if (error.code === '23505') {
           toast.error("Uma organização com este CNPJ já existe no sistema.");
         } else {
           toast.error("Erro ao criar organização: " + error.message);
@@ -77,12 +74,12 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         throw error;
       }
 
-      console.log("✅ Organização criada com sucesso!");
+      console.log("✅ Organization created successfully!");
       toast.success("Organização criada com sucesso!");
       onSuccess();
 
     } catch (error) {
-      console.error("❌ Erro ao criar organização:", error);
+      console.error("❌ Error creating organization:", error);
       toast.error("Falha ao criar organização. Por favor, tente novamente.");
       throw error;
     }
