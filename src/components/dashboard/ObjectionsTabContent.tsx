@@ -55,13 +55,13 @@ export const ObjectionsTabContent = ({
             objection="Preço muito alto"
             count={28}
             previousCount={22}
-            examples={objectionExamples["Preço muito alto"]}
+            examples={objectionExamples["Preço muito alto"] || []}
           />
           <ObjectionDetails
             objection="Não tenho orçamento no momento"
             count={24}
             previousCount={28}
-            examples={objectionExamples["Não tenho orçamento no momento"]}
+            examples={objectionExamples["Não tenmo orçamento no momento"] || []}
           />
         </div>
       </div>

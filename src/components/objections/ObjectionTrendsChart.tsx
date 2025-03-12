@@ -54,7 +54,10 @@ export const ObjectionTrendsChart = ({
   onSellerChange,
   sellers 
 }: ObjectionTrendsChartProps) => {
-  const objectionTypes = Object.keys(data[0] || {}).filter(key => key !== 'month');
+  // Ensure data exists and has at least one item before accessing
+  const objectionTypes = data && data.length > 0 
+    ? Object.keys(data[0] || {}).filter(key => key !== 'month') 
+    : [];
 
   return (
     <Card className="p-4">
@@ -72,7 +75,7 @@ export const ObjectionTrendsChart = ({
         </div>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <LineChart data={data || []} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />

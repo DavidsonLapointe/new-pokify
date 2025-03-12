@@ -6,10 +6,10 @@ interface ObjectionDetailProps {
   objection: string;
   count: number;
   previousCount: number;
-  examples: string[];
+  examples: string[] | undefined;
 }
 
-export const ObjectionDetails = ({ objection, count, previousCount, examples }: ObjectionDetailProps) => {
+export const ObjectionDetails = ({ objection, count, previousCount, examples = [] }: ObjectionDetailProps) => {
   const percentageChange = previousCount > 0 
     ? Math.round(((count - previousCount) / previousCount) * 100) 
     : 0;
@@ -30,7 +30,7 @@ export const ObjectionDetails = ({ objection, count, previousCount, examples }: 
       <div>
         <h5 className="font-medium mb-2">Exemplos detectados:</h5>
         <ul className="space-y-2 text-sm text-muted-foreground">
-          {examples.map((example, index) => (
+          {examples && examples.map((example, index) => (
             <li key={index} className="bg-muted p-2 rounded-md">
               "{example}"
             </li>

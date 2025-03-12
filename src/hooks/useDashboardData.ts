@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { mockDashboardData } from "@/mocks/dashboardMocks";
 
@@ -23,6 +22,17 @@ export const useDashboardData = () => {
   const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
   const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
 
+  // Make sure objectionExamples has fallback values
+  const ensuredObjectionExamples = {
+    'Preço muito alto': ['O valor está acima do nosso orçamento neste momento.', 'Encontramos opções mais acessíveis.'],
+    'Concorrente melhor': ['Já estamos em negociação com outro fornecedor que oferece mais recursos.', 'O concorrente oferece condições melhores.'],
+    'Sem orçamento': ['Não temos verba disponível para este tipo de investimento agora.', 'Precisamos esperar o próximo ciclo orçamentário.'],
+    'Não tenho orçamento no momento': ['Não temos recurso financeiro no momento para este investimento.', 'Nosso orçamento já foi comprometido para este trimestre.'],
+    'Não é prioridade': ['No momento estamos focados em outros projetos mais urgentes.', 'Esta solução não está entre nossas prioridades atuais.'],
+    'Já tem solução': ['Já contratamos uma ferramenta semelhante recentemente.', 'Já temos uma solução implementada.'],
+    ...mockDashboardData.objectionExamples,
+  };
+
   // Retornamos os dados mockados e os estados de filtro
   return {
     // Estatísticas do mês
@@ -41,9 +51,9 @@ export const useDashboardData = () => {
     monthlyPerformanceData: mockDashboardData.monthlyPerformanceData,
     
     // Dados de objeções
-    objectionsData: mockDashboardData.objectionsData,
-    objectionTrendsData: mockDashboardData.objectionTrendsData,
-    objectionExamples: mockDashboardData.objectionExamples,
+    objectionsData: mockDashboardData.objectionsData || [],
+    objectionTrendsData: mockDashboardData.objectionTrendsData || [],
+    objectionExamples: ensuredObjectionExamples,
     
     // Dados de sugestões
     suggestionsData: mockDashboardData.suggestionsData,
