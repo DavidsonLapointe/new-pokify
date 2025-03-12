@@ -6,6 +6,7 @@ import { useUser } from "@/contexts/UserContext";
 import { OrganizationHeader } from "./organization/layout/OrganizationHeader";
 import { OrganizationSidebar } from "./organization/layout/OrganizationSidebar";
 import { useMenuItems } from "./organization/layout/useMenuItems";
+import { UserRole, UserStatus } from "@/types/user-types";
 
 // Flag para desenvolvimento - ative para visualizar sem autenticação
 const DEV_MODE = false;
@@ -41,8 +42,8 @@ const OrganizationLayout = () => {
     id: "dev-user-id",
     name: "Usuário de Desenvolvimento",
     email: "dev@example.com",
-    role: "admin",
-    status: "active",
+    role: "admin" as UserRole,
+    status: "active" as UserStatus,
     permissions: {
       dashboard: true,
       leads: true,
