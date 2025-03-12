@@ -69,7 +69,7 @@ const AI_TOOLS = [
   },
   {
     id: "call_qualification",
-    name: "Qualificação de Call",
+    name: "Análise de Call",
     icon: UserCheck,
     description: "Analise automaticamente as calls com leads para identificar fit e próximos passos.",
     isSubscribed: true,
