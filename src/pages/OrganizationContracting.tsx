@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,18 +24,27 @@ const OrganizationContracting = () => {
       <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
         <nav className="flex flex-col h-full py-6 px-3">
           <div className="space-y-0.5">
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#9b87f5]">
+            <Link
+              to="/dev/contracting"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#9b87f5]"
+            >
               <ChartBar className="w-4 h-4 mr-3 text-[#9b87f5]" />
               Dashboard
-            </a>
-            <Link to="/dev/sales-process" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
+            </Link>
+            <Link
+              to="/dev/sales-process"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600"
+            >
               <Users className="w-4 h-4 mr-3 text-gray-600" />
               Processo de Vendas
             </Link>
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
+            <Link
+              to="#"
+              className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600"
+            >
               <Phone className="w-4 h-4 mr-3 text-gray-600" />
               Chamadas
-            </a>
+            </Link>
           </div>
         </nav>
       </aside>
