@@ -4,7 +4,6 @@ import { validateCNPJ, formatCNPJ } from "@/utils/cnpjValidation";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "../schema";
 import { useToast } from "@/hooks/use-toast";
-import { checkExistingOrganization } from "../utils/cnpj-verification-utils";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
@@ -27,7 +26,7 @@ export const useCnpjVerification = ({
     const formattedCnpj = formatCNPJ(cnpj);
     form.setValue("cnpj", formattedCnpj);
     
-    // Validate format
+    // Only validate format, nothing more
     if (!validateCNPJ(cnpj)) {
       form.setError("cnpj", { 
         type: "manual", 
@@ -36,12 +35,12 @@ export const useCnpjVerification = ({
       return;
     }
     
-    // We'll skip checking if the CNPJ exists in the database
+    // Format is valid, so move to next step immediately
     setIsCheckingCnpj(true);
     try {
-      console.log("Verificando formato do CNPJ:", formattedCnpj);
+      console.log("Formato do CNPJ validado:", formattedCnpj);
       
-      // If everything is valid, proceed to the next step
+      // Proceed to the next step
       setCnpjValidated(true);
       onCnpjVerified();
       toast({
@@ -52,10 +51,10 @@ export const useCnpjVerification = ({
       // Clear any existing errors on the CNPJ field
       form.clearErrors("cnpj");
     } catch (error) {
-      console.error("Error verifying CNPJ:", error);
+      console.error("Erro ao validar CNPJ:", error);
       toast({
-        title: "Erro ao verificar CNPJ",
-        description: "Ocorreu um erro ao verificar o CNPJ. Tente novamente.",
+        title: "Erro ao validar CNPJ",
+        description: "Ocorreu um erro ao validar o CNPJ. Tente novamente.",
         variant: "destructive",
       });
     } finally {
