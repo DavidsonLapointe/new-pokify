@@ -70,13 +70,17 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         status: correctedStatus("pending"),
         nome_fantasia: values.nomeFantasia,
         phone: values.phone,
-        admin_phone: values.adminPhone
+        admin_phone: values.adminPhone,
+        // Set contract_status to completed since we're skipping this step
+        contract_status: 'completed',
+        payment_status: 'pending',
+        registration_status: 'pending'
       };
 
       console.log("Inserindo organização com dados:", orgData);
       
-      // Inserção básica sem ON CONFLICT ou select
-      const { error: insertError } = await supabase
+      // Inserção simplificada
+      const { data, error: insertError } = await supabase
         .from('organizations')
         .insert([orgData]);
 
