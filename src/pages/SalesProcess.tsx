@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { 
   Building2, Users, Phone, ChartBar, Video, MessageCircle, 
-  ShieldCheck, Lock, HeadphonesIcon, UserCheck, ArrowRight
+  ShieldCheck, Lock, HeadphonesIcon, UserCheck, ArrowRight,
+  Info, Lightbulb, Play
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -23,24 +25,47 @@ const AI_TOOLS = [
     icon: Video,
     description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
     isSubscribed: true,
+    howItWorks: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Como funciona:</h4>
+        <ol className="list-decimal ml-5 space-y-2 text-sm">
+          <li>Selecione o lead ou insira informações manualmente</li>
+          <li>A IA analisa o perfil e gera um roteiro personalizado</li>
+          <li>Escolha um avatar ou use sua própria imagem</li>
+          <li>O vídeo é gerado e pode ser enviado diretamente ao lead</li>
+        </ol>
+      </div>
+    ),
+    benefits: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Benefícios:</h4>
+        <ul className="list-disc ml-5 space-y-1 text-sm">
+          <li>Aumento de 47% nas taxas de resposta</li>
+          <li>Personalização em escala sem esforço manual</li>
+          <li>Diferenciação da concorrência com abordagem única</li>
+          <li>Economia de tempo na criação de conteúdo</li>
+        </ul>
+      </div>
+    ),
     content: (
       <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e 
           automaticamente criar vídeos com seu avatar digital.
         </p>
-        <div className="bg-gray-50 border rounded-md p-4">
-          <h4 className="font-medium mb-2">Como funciona:</h4>
-          <ol className="list-decimal ml-5 space-y-2 text-sm">
-            <li>Selecione o lead ou insira informações manualmente</li>
-            <li>A IA analisa o perfil e gera um roteiro personalizado</li>
-            <li>Escolha um avatar ou use sua própria imagem</li>
-            <li>O vídeo é gerado e pode ser enviado diretamente ao lead</li>
-          </ol>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Info className="h-4 w-4" />
+            <span>Como Funciona</span>
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4" />
+            <span>Benefícios</span>
+          </Button>
         </div>
-        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] mt-4 py-6 text-lg w-full md:w-auto">
+        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] mt-4 py-6 text-lg w-full">
+          <Play className="mr-2 h-5 w-5" />
           <span>Criar novo vídeo</span>
-          <ArrowRight className="ml-2" />
         </Button>
       </div>
     )
@@ -51,6 +76,28 @@ const AI_TOOLS = [
     icon: HeadphonesIcon,
     description: "Automatize o atendimento inicial com um agente de IA para qualificação de leads inbound.",
     isSubscribed: false,
+    howItWorks: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Como funciona:</h4>
+        <ol className="list-decimal ml-5 space-y-2 text-sm">
+          <li>O sistema intercepta leads que chegam por formulários ou chat</li>
+          <li>A IA qualifica o lead com perguntas estratégicas</li>
+          <li>Priorização automática baseada em critérios personalizáveis</li>
+          <li>Transferência para equipe humana quando necessário</li>
+        </ol>
+      </div>
+    ),
+    benefits: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Benefícios:</h4>
+        <ul className="list-disc ml-5 space-y-1 text-sm">
+          <li>Atendimento 24/7 sem aumento de equipe</li>
+          <li>Qualificação consistente de todos os leads</li>
+          <li>Redução no tempo de resposta inicial</li>
+          <li>Maior eficiência da equipe de vendas</li>
+        </ul>
+      </div>
+    ),
     content: (
       <div className="space-y-4">
         <div className="flex items-center justify-center h-64 bg-gray-50 border rounded-md">
@@ -58,6 +105,16 @@ const AI_TOOLS = [
             <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-medium">Módulo não contratado</h3>
             <p className="text-sm text-gray-500 mt-2 mb-4">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <div className="flex flex-wrap gap-3 justify-center mb-4">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                <span>Como Funciona</span>
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                <span>Benefícios</span>
+              </Button>
+            </div>
             <Button className="mt-4 bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg px-8">
               <span>Saiba mais</span>
               <ArrowRight className="ml-2" />
@@ -73,30 +130,48 @@ const AI_TOOLS = [
     icon: UserCheck,
     description: "Analise automaticamente as calls com leads para identificar fit e próximos passos.",
     isSubscribed: true,
+    howItWorks: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Como funciona:</h4>
+        <ol className="list-decimal ml-5 space-y-2 text-sm">
+          <li>Faça upload da gravação da chamada</li>
+          <li>A IA transcreve e analisa o conteúdo</li>
+          <li>Identificação de padrões e pontos de atenção</li>
+          <li>Relatório detalhado com recomendações</li>
+        </ol>
+      </div>
+    ),
+    benefits: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Benefícios:</h4>
+        <ul className="list-disc ml-5 space-y-1 text-sm">
+          <li>Análise automática de sentimentos durante a call</li>
+          <li>Identificação de objeções e dúvidas frequentes</li>
+          <li>Sugestões de abordagem para o próximo contato</li>
+          <li>Resumo detalhado da conversa</li>
+        </ul>
+      </div>
+    ),
     content: (
       <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Nossa IA analisa as gravações de chamadas com leads e extrai informações valiosas como objeções, nível de interesse e pontos 
           a serem abordados em contatos futuros.
         </p>
-        <div className="bg-gray-50 border rounded-md p-4 space-y-2">
-          <h4 className="font-medium">Benefícios:</h4>
-          <ul className="list-disc ml-5 text-sm space-y-1">
-            <li>Análise automática de sentimentos durante a call</li>
-            <li>Identificação de objeções e dúvidas frequentes</li>
-            <li>Sugestões de abordagem para o próximo contato</li>
-            <li>Resumo detalhado da conversa</li>
-          </ul>
-        </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg flex-1">
-            <span>Analisar gravação</span>
-            <ArrowRight className="ml-2" />
+        <div className="flex flex-wrap gap-3">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Info className="h-4 w-4" />
+            <span>Como Funciona</span>
           </Button>
-          <Button variant="outline" className="py-6 text-lg flex-1">
-            Ver análises anteriores
+          <Button variant="outline" className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4" />
+            <span>Benefícios</span>
           </Button>
         </div>
+        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg w-full">
+          <Play className="mr-2 h-5 w-5" />
+          <span>Analisar gravação</span>
+        </Button>
       </div>
     )
   },
@@ -106,6 +181,28 @@ const AI_TOOLS = [
     icon: MessageCircle,
     description: "Crie sequências automatizadas de emails personalizados com IA.",
     isSubscribed: false,
+    howItWorks: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Como funciona:</h4>
+        <ol className="list-decimal ml-5 space-y-2 text-sm">
+          <li>Configure segmentos e triggers para a jornada</li>
+          <li>A IA gera conteúdos personalizados para cada etapa</li>
+          <li>Automatização do envio conforme comportamento</li>
+          <li>Análise de desempenho e otimização contínua</li>
+        </ol>
+      </div>
+    ),
+    benefits: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Benefícios:</h4>
+        <ul className="list-disc ml-5 space-y-1 text-sm">
+          <li>Nutrição constante de leads sem intervenção manual</li>
+          <li>Conteúdo altamente personalizado e relevante</li>
+          <li>Aumento nas taxas de conversão em cada etapa</li>
+          <li>Integração completa com seu CRM</li>
+        </ul>
+      </div>
+    ),
     content: (
       <div className="space-y-4">
         <div className="flex items-center justify-center h-64 bg-gray-50 border rounded-md">
@@ -113,6 +210,16 @@ const AI_TOOLS = [
             <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-medium">Módulo não contratado</h3>
             <p className="text-sm text-gray-500 mt-2 mb-4">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <div className="flex flex-wrap gap-3 justify-center mb-4">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                <span>Como Funciona</span>
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                <span>Benefícios</span>
+              </Button>
+            </div>
             <Button className="mt-4 bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg px-8">
               <span>Saiba mais</span>
               <ArrowRight className="ml-2" />
@@ -128,12 +235,44 @@ const AI_TOOLS = [
     icon: ShieldCheck,
     description: "IA para sugerir respostas a objeções comuns durante o processo de vendas.",
     isSubscribed: true,
+    howItWorks: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Como funciona:</h4>
+        <ol className="list-decimal ml-5 space-y-2 text-sm">
+          <li>Identifique a objeção enfrentada durante a prospecção</li>
+          <li>A IA analisa o contexto e histórico do cliente</li>
+          <li>Sugestão de argumentos baseados em casos de sucesso</li>
+          <li>Feedback sobre as abordagens utilizadas</li>
+        </ol>
+      </div>
+    ),
+    benefits: (
+      <div className="space-y-3">
+        <h4 className="font-medium mb-2">Benefícios:</h4>
+        <ul className="list-disc ml-5 space-y-1 text-sm">
+          <li>Aumento na taxa de conversão</li>
+          <li>Preparação rápida para objeções comuns</li>
+          <li>Argumentos testados e comprovados</li>
+          <li>Aprendizado contínuo com cada interação</li>
+        </ul>
+      </div>
+    ),
     content: (
       <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Sistema inteligente que auxilia na prospecção ativa, identificando objeções comuns durante o contato com potenciais clientes 
           e sugerindo as melhores abordagens baseadas em casos de sucesso anteriores.
         </p>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Info className="h-4 w-4" />
+            <span>Como Funciona</span>
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4" />
+            <span>Benefícios</span>
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <Card className="bg-gray-50">
             <CardHeader className="pb-2">
@@ -175,8 +314,8 @@ const AI_TOOLS = [
           </Card>
         </div>
         <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] mt-4 py-6 text-lg w-full">
+          <Play className="mr-2 h-5 w-5" />
           <span>Consultar banco de objeções</span>
-          <ArrowRight className="ml-2" />
         </Button>
       </div>
     )
@@ -185,6 +324,12 @@ const AI_TOOLS = [
 
 const SalesProcess = () => {
   const [selectedTool, setSelectedTool] = useState("video_prospecting");
+  const [showExplanation, setShowExplanation] = useState<null | "howItWorks" | "benefits">(null);
+  const currentTool = AI_TOOLS.find(tool => tool.id === selectedTool);
+
+  const handleShowExplanation = (type: "howItWorks" | "benefits") => {
+    setShowExplanation(showExplanation === type ? null : type);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -311,7 +456,47 @@ const SalesProcess = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="pt-4 pb-8">
-                      {tool.content}
+                      {showExplanation === "howItWorks" && (
+                        <div className="bg-[#F1F0FB] border border-[#9b87f5]/30 rounded-md p-5 mb-6">
+                          {tool.howItWorks}
+                        </div>
+                      )}
+                      {showExplanation === "benefits" && (
+                        <div className="bg-[#F1F0FB] border border-[#9b87f5]/30 rounded-md p-5 mb-6">
+                          {tool.benefits}
+                        </div>
+                      )}
+                      {!showExplanation && tool.content}
+                      {showExplanation && (
+                        <div className="flex flex-wrap gap-3 mt-4">
+                          <Button 
+                            variant="outline" 
+                            className={cn("flex items-center gap-2", 
+                              showExplanation === "howItWorks" && "border-[#9b87f5] bg-[#F1F0FB]"
+                            )}
+                            onClick={() => handleShowExplanation("howItWorks")}
+                          >
+                            <Info className="h-4 w-4" />
+                            <span>Como Funciona</span>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            className={cn("flex items-center gap-2",
+                              showExplanation === "benefits" && "border-[#9b87f5] bg-[#F1F0FB]"
+                            )}
+                            onClick={() => handleShowExplanation("benefits")}
+                          >
+                            <Lightbulb className="h-4 w-4" />
+                            <span>Benefícios</span>
+                          </Button>
+                          <Button 
+                            className="bg-[#9b87f5] hover:bg-[#7E69AB] ml-auto"
+                            onClick={() => setShowExplanation(null)}
+                          >
+                            Voltar
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 )
