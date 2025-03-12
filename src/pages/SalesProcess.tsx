@@ -5,71 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Building2, Users, Phone, ChartBar, List, SearchIcon, PhoneOutgoing, 
-  Calendar, FileBarChart, XCircle, CheckCircle2, ArrowRight,
   Video, MessageCircle, ShieldCheck, Lock, HeadphonesIcon, UserCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-
-// Configuração das etapas do processo de vendas
-const SALES_STAGES = [
-  {
-    id: "lead_generation",
-    name: "Geração de Leads",
-    icon: List,
-    description: "Criação de listas de potenciais clientes para contato.",
-    aiSolution: "IA para identificação e qualificação prévia de leads com maior potencial."
-  },
-  {
-    id: "inbound_prospecting",
-    name: "Prospecção Inbound",
-    icon: SearchIcon,
-    description: "Atração de leads através de conteúdo e marketing digital.",
-    aiSolution: "Chatbots inteligentes para qualificação inicial e direcionamento."
-  },
-  {
-    id: "outbound_prospecting",
-    name: "Prospecção Outbound",
-    icon: PhoneOutgoing,
-    description: "Abordagem ativa de leads através de ligações e emails.",
-    aiSolution: "Recomendação de scripts personalizados baseados no perfil do lead."
-  },
-  {
-    id: "call_scheduling",
-    name: "Agendamento de Call",
-    icon: Calendar,
-    description: "Marcação de horário para call de qualificação.",
-    aiSolution: "Assistente virtual para gerenciamento de agenda e follow-ups automáticos."
-  },
-  {
-    id: "qualification_call",
-    name: "Call de Qualificação",
-    icon: Phone,
-    description: "Ligação para avaliação de fit e qualificação do lead.",
-    aiSolution: "Sugestões em tempo real durante a call baseadas na conversa."
-  },
-  {
-    id: "qualification_analysis",
-    name: "Análise de Qualificação",
-    icon: FileBarChart,
-    description: "Avaliação dos dados coletados na call de qualificação.",
-    aiSolution: "Análise automática da call com identificação de pontos-chave e próximos passos."
-  },
-  {
-    id: "closer_won",
-    name: "Ganho para Closer",
-    icon: CheckCircle2,
-    description: "Lead qualificado e pronto para ser passado ao closer.",
-    aiSolution: "Resumo automático do lead e recomendações para abordagem do closer."
-  },
-  {
-    id: "lead_lost",
-    name: "Perda do Lead",
-    icon: XCircle,
-    description: "Lead descartado por falta de fit ou outros motivos.",
-    aiSolution: "Análise das razões de perda e sugestões para melhorias no processo."
-  }
-];
 
 // Definição das ferramentas de IA disponíveis
 const AI_TOOLS = [
@@ -235,15 +174,7 @@ const AI_TOOLS = [
 ];
 
 const SalesProcess = () => {
-  const [selectedStage, setSelectedStage] = useState("all");
   const [selectedTool, setSelectedTool] = useState("video_prospecting");
-
-  const renderStageIcon = (stage: string) => {
-    const stageConfig = SALES_STAGES.find(s => s.id === stage);
-    if (!stageConfig?.icon) return null;
-    const Icon = stageConfig.icon;
-    return <Icon className="w-4 h-4 text-[#9b87f5]" />;
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -270,7 +201,7 @@ const SalesProcess = () => {
             </Link>
             <Link to="/dev/sales-process" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] bg-[#F1F0FB] text-[#9b87f5]">
               <Users className="w-4 h-4 mr-3 text-[#9b87f5]" />
-              Processo de Vendas
+              Ferramentas de IA
             </Link>
             <Link to="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
               <Phone className="w-4 h-4 mr-3 text-gray-600" />
@@ -285,70 +216,14 @@ const SalesProcess = () => {
         <div className="p-8">
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold">Processo de Vendas</h1>
+              <h1 className="text-3xl font-bold">Ferramentas de IA</h1>
               <p className="text-muted-foreground">
                 Ferramentas de IA para otimizar seu processo de vendas
               </p>
             </div>
 
-            {/* Sales Process Flow */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h2 className="text-xl font-semibold mb-4">Jornada do Lead</h2>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                {SALES_STAGES.map((stage, index) => (
-                  <React.Fragment key={stage.id}>
-                    <div 
-                      className={cn(
-                        "flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all",
-                        selectedStage === stage.id ? "bg-[#F1F0FB] ring-2 ring-[#9b87f5]" : "hover:bg-gray-50"
-                      )}
-                      onClick={() => setSelectedStage(stage.id)}
-                    >
-                      <div className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center",
-                        selectedStage === stage.id ? "bg-[#9b87f5] text-white" : "bg-gray-100 text-gray-600"
-                      )}>
-                        {React.createElement(stage.icon, { className: "w-6 h-6" })}
-                      </div>
-                      <span className="text-xs font-medium mt-2 text-center max-w-[80px]">{stage.name}</span>
-                    </div>
-                    {index < SALES_STAGES.length - 1 && (
-                      <ArrowRight className="w-4 h-4 text-gray-400" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            {/* Stage Details and AI Solutions */}
-            {selectedStage !== "all" && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    {renderStageIcon(selectedStage)}
-                    {SALES_STAGES.find(s => s.id === selectedStage)?.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {SALES_STAGES.find(s => s.id === selectedStage)?.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-[#F1F0FB] p-4 rounded-md">
-                    <h3 className="text-sm font-semibold flex items-center gap-2 mb-2">
-                      <FileBarChart className="w-4 h-4 text-[#9b87f5]" />
-                      Solução de IA para esta etapa
-                    </h3>
-                    <p className="text-sm text-gray-700">
-                      {SALES_STAGES.find(s => s.id === selectedStage)?.aiSolution}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             {/* AI Tools Tabs */}
             <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">Ferramentas de IA</h2>
               <p className="text-sm text-gray-600 mb-6">
                 Escolha uma das ferramentas abaixo para otimizar seu processo de vendas:
               </p>
