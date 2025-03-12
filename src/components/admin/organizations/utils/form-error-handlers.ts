@@ -22,6 +22,8 @@ export const useFormErrorHandlers = () => {
       errorMessage = "Erro de permissão: Você não tem permissão para criar organizações.";
     } else if (error.message && error.message.includes("constraint")) {
       errorMessage = "Erro de estrutura do banco de dados. Por favor, contate o suporte técnico.";
+    } else if (error.message && error.message.includes("Foreign key")) {
+      errorMessage = "Erro de referência: Verifique se todos os valores são válidos.";
     } else if (typeof error === 'string') {
       errorMessage = error;
     } else if (error.message) {
@@ -29,6 +31,14 @@ export const useFormErrorHandlers = () => {
     }
     
     toast.error(`Erro ao criar empresa: ${errorMessage}`);
+    
+    // Log additional details for debugging
+    if (error.details) {
+      console.error("Error details:", error.details);
+    }
+    if (error.hint) {
+      console.error("Error hint:", error.hint);
+    }
   };
 
   const handleDatabaseConfigError = () => {

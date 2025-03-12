@@ -3,8 +3,8 @@ import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
+import { toast } from "sonner";
 
 // Function to ensure status is one of the allowed values
 const correctedStatus = (status: string): OrganizationStatus => {
@@ -67,22 +67,24 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_name: values.adminName,
         admin_email: values.adminEmail,
         plan: values.plan,
-        status: correctedStatus("pending"),
+        status: "pending" as OrganizationStatus,
         nome_fantasia: values.nomeFantasia,
         phone: values.phone,
         admin_phone: values.adminPhone,
-        // Set contract_status to completed since we're skipping this step
-        contract_status: 'completed',
+        contract_status: 'completed', // Contract step is now skipped
         payment_status: 'pending',
-        registration_status: 'pending'
+        registration_status: 'pending',
+        pending_reason: 'user_validation' as OrganizationPendingReason
       };
 
       console.log("Inserting organization with data:", orgData);
       
-      // Simplified insertion
-      const { error: insertError } = await supabase
+      // Insert the organization
+      const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
-        .insert([orgData]);
+        .insert(orgData)
+        .select('id')
+        .single();
 
       if (insertError) {
         console.error("Error inserting organization:", insertError);
@@ -90,7 +92,38 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      console.log("Organization created successfully!");
+      if (!insertedOrg || !insertedOrg.id) {
+        console.error("Organization created but no ID returned");
+        toast.error("Erro ao criar empresa: Resposta incompleta do servidor");
+        return;
+      }
+
+      console.log("Organization created successfully with ID:", insertedOrg.id);
+
+      // Send email to admin
+      try {
+        const emailResponse = await supabase.functions.invoke('send-organization-emails', {
+          body: {
+            organizationId: insertedOrg.id,
+            type: "onboarding",
+            data: {
+              confirmationToken: `${window.location.origin}/confirmacao/${insertedOrg.id}`
+            }
+          }
+        });
+        
+        console.log("Email function response:", emailResponse);
+        
+        if (emailResponse.error) {
+          console.warn("Email sending warning:", emailResponse.error);
+          // We don't fail the organization creation if email fails
+        }
+      } catch (emailError) {
+        console.error("Failed to invoke email function:", emailError);
+        // Continue with success, we don't want email failures to block organization creation
+      }
+
+      console.log("Organization creation process completed successfully");
       showSuccessToast();
       onSuccess();
 

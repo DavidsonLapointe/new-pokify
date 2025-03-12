@@ -15,7 +15,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  organizationId: number;
+  organizationId: string;
   type: "onboarding" | "contract" | "confirmation" | "payment";
   data: {
     confirmationToken?: string;
@@ -36,9 +36,16 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     console.log("Parsing request body...");
-    const { organizationId, type, data } = await req.json();
+    const requestBody = await req.json();
+    console.log("Request body:", JSON.stringify(requestBody, null, 2));
+    
+    const { organizationId, type, data } = requestBody as EmailRequest;
     console.log(`Request received for organization ${organizationId}, type: ${type}`);
     console.log("Email data:", data);
+
+    if (!organizationId) {
+      throw new Error('organizationId is required');
+    }
 
     const { data: organization, error: orgError } = await supabase
       .from('organizations')
@@ -52,7 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     if (!organization) {
-      console.error("Organization not found");
+      console.error(`Organization not found with ID: ${organizationId}`);
       throw new Error('Organização não encontrada');
     }
 
