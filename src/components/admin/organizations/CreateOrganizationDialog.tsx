@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -28,10 +27,11 @@ export const CreateOrganizationDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   
-  const { form, onSubmit, checkExistingOrganization } = useOrganizationForm(() => {
+  const { form, onSubmit } = useOrganizationForm(() => {
     setIsSubmitting(false);
     onOpenChange(false);
     onSuccess();
+    toast.success("Empresa criada com sucesso!");
   });
 
   const { 
@@ -54,16 +54,14 @@ export const CreateOrganizationDialog = ({
     }
   }, [open, form, setCnpjValidated]);
 
-  // Custom submit handler with loading state
   const handleSubmit = async (values: any) => {
     try {
       setIsSubmitting(true);
-      console.log("Iniciando o processo de submissão", values);
+      console.log("Iniciando submissão do formulário:", values);
       await onSubmit(values);
-      // onSuccess is called in useOrganizationForm's callback
     } catch (error) {
-      console.error("Error submitting form:", error);
-      setIsSubmitting(false); // Reset loading state on error
+      console.error("Erro na submissão do formulário:", error);
+      setIsSubmitting(false);
       toast.error("Erro ao criar empresa. Por favor, tente novamente.");
     }
   };
