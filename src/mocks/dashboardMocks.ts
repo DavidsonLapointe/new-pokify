@@ -1,94 +1,180 @@
 
 import { randomNumber } from './utils';
 import { Suggestion } from '@/components/dashboard/types/suggestions';
+import { format, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-// Dados mockados para o dashboard
+// Generate consistent lead data
+const generateLeadData = (count: number, baseValue: number, variance: number) => 
+  Math.round(baseValue + (Math.random() * variance * 2) - variance);
+
+// Generate consistent trend data
+const generateTrendData = (months: number, values: {[key: string]: number}) => {
+  const currentDate = new Date();
+  
+  return Array.from({ length: months }, (_, i) => {
+    const date = subMonths(currentDate, months - i - 1);
+    const monthStr = format(date, 'MMM/yy', { locale: ptBR });
+    
+    const result: {[key: string]: any} = { month: monthStr };
+    
+    Object.keys(values).forEach(key => {
+      const baseValue = values[key];
+      const trend = i / (months - 1); // 0 to 1 trend factor
+      const variance = baseValue * 0.2; // 20% variance
+      
+      // Slightly increase values over time for an upward trend
+      result[key] = Math.round(baseValue * (0.8 + trend * 0.5) + (Math.random() * variance * 2) - variance);
+    });
+    
+    return result;
+  });
+};
+
+// Generate daily data with consistent pattern
+const generateDailyData = (daysCount: number, baseValues: {[key: string]: number}) => {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - daysCount + 1);
+  
+  return Array.from({ length: daysCount }, (_, i) => {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() + i);
+    const dayStr = format(date, 'dd/MM');
+    
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const weekdayFactor = isWeekend ? 0.4 : 1; // Less activity on weekends
+    
+    const result: {[key: string]: any} = { 
+      date: format(date, 'yyyy-MM-dd'),
+      day: dayStr
+    };
+    
+    Object.keys(baseValues).forEach(key => {
+      const baseValue = baseValues[key];
+      const variance = baseValue * 0.3; // 30% variance
+      
+      result[key] = Math.round(baseValue * weekdayFactor + (Math.random() * variance * 2) - variance);
+      // Ensure we don't get negative values
+      result[key] = Math.max(0, result[key]);
+    });
+    
+    return result;
+  });
+};
+
+// Dados mockados para o dashboard com valores mais coerentes
 export const mockDashboardData = {
-  // Dados de estatísticas gerais
+  // Dados de estatísticas gerais com valores mais realistas
   monthStats: {
-    total: randomNumber(100, 500),
-    active: randomNumber(80, 400),
-    pending: randomNumber(5, 50),
-    processed: randomNumber(60, 300),
-    failed: randomNumber(5, 30),
-    leads: randomNumber(50, 200),
-    conversions: randomNumber(10, 50),
+    total: 450,
+    active: 382,
+    pending: 48,
+    processed: 362,
+    failed: 20,
+    leads: 180,
+    conversions: 42,
   },
   
   // Gráfico de leads diários
-  dailyLeadsData: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    total: randomNumber(5, 30),
-    conversions: randomNumber(1, 10),
-    rate: Math.random() * 0.5 + 0.1,
+  dailyLeadsData: generateDailyData(30, {
+    total: 15,
+    conversions: 4,
+    novos: 8,
+    rate: 0.25
+  }).map(day => ({
+    ...day,
+    rate: day.conversions / day.total
   })),
   
   // Gráfico de leads mensais
-  monthlyLeadsData: Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(2023, i, 1).toISOString().split('T')[0],
-    total: randomNumber(100, 500),
-    conversions: randomNumber(20, 150),
-    rate: Math.random() * 0.5 + 0.1,
+  monthlyLeadsData: generateTrendData(12, {
+    total: 350,
+    conversions: 80,
+    novos: 120
+  }).map(month => ({
+    ...month,
+    rate: month.conversions / month.total
   })),
   
   // Gráfico de chamadas diárias
-  dailyCallsData: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    total: randomNumber(5, 50),
-    processed: randomNumber(4, 45),
-    failed: randomNumber(0, 5),
-  })),
+  dailyCallsData: generateDailyData(30, {
+    total: 25,
+    processed: 22,
+    failed: 3,
+    uploads: 18
+  }),
   
   // Gráfico de chamadas mensais
-  monthlyCallsData: Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(2023, i, 1).toISOString().split('T')[0],
-    total: randomNumber(150, 800),
-    processed: randomNumber(140, 750),
-    failed: randomNumber(5, 50),
-  })),
+  monthlyCallsData: generateTrendData(12, {
+    total: 600,
+    processed: 560,
+    failed: 40,
+    uploads: 450
+  }),
   
   // Desempenho diário
-  dailyPerformanceData: Array.from({ length: 30 }, (_, i) => ({
-    day: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    joao: randomNumber(10, 50),
-    maria: randomNumber(5, 30),
-  })),
+  dailyPerformanceData: generateDailyData(30, {
+    joao: 28,
+    maria: 22
+  }),
   
   // Desempenho mensal
-  monthlyPerformanceData: Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(2023, i, 1).toISOString().split('T')[0],
-    joao: randomNumber(300, 1500),
-    maria: randomNumber(150, 600),
-  })),
+  monthlyPerformanceData: generateTrendData(12, {
+    joao: 650,
+    maria: 520
+  }),
   
-  // Dados de objeções
+  // Dados de objeções - valores coerentes e consistentes
   objectionsData: [
-    { name: 'Preço alto', value: randomNumber(20, 100) },
-    { name: 'Concorrente melhor', value: randomNumber(15, 80) },
-    { name: 'Sem orçamento', value: randomNumber(10, 70) },
-    { name: 'Não é prioridade', value: randomNumber(10, 60) },
-    { name: 'Já tem solução', value: randomNumber(5, 50) },
-    { name: 'Outros', value: randomNumber(5, 30) },
+    { name: 'Preço muito alto', value: 28, count: 28 },
+    { name: 'Não tenho orçamento no momento', value: 24, count: 24 },
+    { name: 'Concorrente oferece mais', value: 18, count: 18 },
+    { name: 'Sem necessidade atual', value: 16, count: 16 },
+    { name: 'Já possuímos solução similar', value: 12, count: 12 },
+    { name: 'Outros', value: 22, count: 22 },
   ],
   
-  // Tendências de objeções
-  objectionTrendsData: Array.from({ length: 6 }, (_, i) => ({
-    month: new Date(2023, i, 1).toISOString().split('T')[0],
-    'Preço alto': randomNumber(10, 50),
-    'Concorrente melhor': randomNumber(5, 40),
-    'Sem orçamento': randomNumber(5, 35),
-    'Não é prioridade': randomNumber(5, 30),
-    'Já tem solução': randomNumber(5, 25),
-    'Outros': randomNumber(3, 20),
-  })),
+  // Tendências de objeções - 6 meses de dados com padrões realistas
+  objectionTrendsData: generateTrendData(6, {
+    'Preço muito alto': 22,
+    'Não tenho orçamento no momento': 25,
+    'Concorrente oferece mais': 16,
+    'Sem necessidade atual': 14,
+    'Já possuímos solução similar': 10
+  }),
   
-  // Exemplos de objeções
+  // Exemplos de objeções - ampliados para cobrir todos os tipos
   objectionExamples: {
-    'Preço alto': ['O valor está acima do nosso orçamento neste momento.', 'Encontramos opções mais acessíveis.'],
-    'Concorrente melhor': ['Já estamos em negociação com outro fornecedor que oferece mais recursos.', 'O concorrente oferece condições melhores.'],
-    'Sem orçamento': ['Não temos verba disponível para este tipo de investimento agora.', 'Precisamos esperar o próximo ciclo orçamentário.'],
-    'Não é prioridade': ['No momento estamos focados em outros projetos mais urgentes.', 'Esta solução não está entre nossas prioridades atuais.'],
-    'Já tem solução': ['Já contratamos uma ferramenta semelhante recentemente.', 'Já temos uma solução implementada.'],
+    'Preço muito alto': [
+      'O valor está acima do nosso orçamento neste momento.',
+      'Encontramos opções mais acessíveis no mercado.',
+      'O custo-benefício não justifica o investimento.'
+    ],
+    'Não tenho orçamento no momento': [
+      'Não temos recurso financeiro no momento para este investimento.',
+      'Nosso orçamento já foi comprometido para este trimestre.',
+      'Precisaremos esperar o próximo ciclo orçamentário.'
+    ],
+    'Concorrente oferece mais': [
+      'Já estamos em negociação com outro fornecedor que oferece mais recursos.',
+      'O concorrente oferece condições melhores para nosso segmento.',
+      'Encontramos uma solução que se encaixa melhor nas nossas necessidades.'
+    ],
+    'Sem necessidade atual': [
+      'No momento não temos demanda para este tipo de solução.',
+      'Nossa equipe atual consegue atender nossos processos sem problemas.',
+      'Não é uma prioridade para nossa empresa neste momento.'
+    ],
+    'Já possuímos solução similar': [
+      'Já contratamos uma ferramenta semelhante recentemente.',
+      'Já temos uma solução implementada que cumpre essa função.',
+      'Acabamos de renovar contrato com outro fornecedor.'
+    ],
+    'Outros': [
+      'Precisamos de mais tempo para avaliar todas as opções disponíveis.',
+      'Estamos passando por reestruturação interna no momento.',
+      'Aguardamos definição da matriz sobre padronização global.'
+    ]
   },
   
   // Dados de sugestões

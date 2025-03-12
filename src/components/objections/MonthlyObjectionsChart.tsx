@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import {
   BarChart,
@@ -14,6 +15,7 @@ import { User } from "@/types";
 
 interface ObjectionData {
   name: string;
+  value: number;
   count: number;
 }
 
@@ -64,7 +66,7 @@ export const MonthlyObjectionsChart = ({
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
-            data={data} 
+            data={data || []} 
             margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
             layout="vertical"
           >
@@ -77,7 +79,7 @@ export const MonthlyObjectionsChart = ({
               tick={{ fontSize: 13 }}
             />
             <RechartsTooltip content={<CustomTooltip />} />
-            <Bar dataKey="count" name="Ocorrências" fill="#2563eb" />
+            <Bar dataKey="value" name="Ocorrências" fill="#2563eb" />
           </BarChart>
         </ResponsiveContainer>
       </div>

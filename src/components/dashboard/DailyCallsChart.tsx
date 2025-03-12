@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import {
   BarChart,
@@ -79,6 +80,8 @@ export const DailyCallsChart = ({
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
             <Bar dataKey="uploads" name="Uploads" fill="#2563eb" />
+            <Bar dataKey="processed" name="Processados" fill="#16a34a" />
+            <Bar dataKey="failed" name="Falhas" fill="#dc2626" />
           </BarChart>
         </ResponsiveContainer>
       </div>

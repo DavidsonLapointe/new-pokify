@@ -33,6 +33,11 @@ export const ObjectionsTabContent = ({
 }: ObjectionsTabContentProps) => {
   return (
     <div className="space-y-6">
+      <ObjectionsStats 
+        totalObjections={120}
+        uniqueObjections={6}
+        mostFrequent={28}
+      />
       <div className="grid grid-cols-1 gap-6">
         <MonthlyObjectionsChart 
           data={objectionsData}
@@ -61,7 +66,7 @@ export const ObjectionsTabContent = ({
             objection="Não tenho orçamento no momento"
             count={24}
             previousCount={28}
-            examples={objectionExamples["Não tenmo orçamento no momento"] || []}
+            examples={objectionExamples["Não tenho orçamento no momento"] || []}
           />
         </div>
       </div>
