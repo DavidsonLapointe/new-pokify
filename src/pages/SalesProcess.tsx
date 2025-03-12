@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -132,8 +131,8 @@ const AI_TOOLS = [
     content: (
       <div className="space-y-6">
         <p className="text-sm text-gray-600">
-          Sistema inteligente que identifica objeções comuns durante o processo de vendas e sugere as melhores respostas 
-          baseadas em casos de sucesso anteriores.
+          Sistema inteligente que auxilia na prospecção ativa, identificando objeções comuns durante o contato com potenciais clientes 
+          e sugerindo as melhores abordagens baseadas em casos de sucesso anteriores.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <Card className="bg-gray-50">
