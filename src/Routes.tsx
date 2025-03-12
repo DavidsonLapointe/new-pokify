@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -37,6 +36,9 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
+
+// New page import
+import OrganizationContracting from "./pages/OrganizationContracting";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -89,6 +91,9 @@ function AppRoutes() {
         <Route path="/payment/:id" element={<Contract paymentMode={true} />} />
         <Route path="/organization/setup" element={<OrganizationSetup />} />
         <Route path="/organization/setup/:setupToken" element={<OrganizationSetup />} />
+
+        {/* Development Route - Remove in production */}
+        <Route path="/dev/contracting" element={<OrganizationContracting />} />
 
         {/* Admin Routes */}
         <Route
