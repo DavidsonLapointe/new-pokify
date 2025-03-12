@@ -1,7 +1,6 @@
 
-import { createContext, useContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, useContext, ReactNode, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
   session: Session | null;
@@ -10,50 +9,28 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create a mock session object
+const mockSession: Session = {
+  access_token: "mock-access-token",
+  refresh_token: "mock-refresh-token",
+  expires_in: 3600,
+  expires_at: new Date().getTime() + 3600000,
+  user: {
+    id: "mock-user-id",
+    aud: "authenticated",
+    role: "authenticated",
+    email: "mock@example.com",
+    app_metadata: {},
+    user_metadata: { name: "Mock User" },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    // Get initial session
-    const initializeAuth = async () => {
-      try {
-        console.log("Initializing auth...");
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        if (mounted) {
-          console.log("Initial session:", initialSession);
-          setSession(initialSession);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error getting initial session:", error);
-        if (mounted) {
-          setSession(null);
-          setLoading(false);
-        }
-      }
-    };
-
-    initializeAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      if (mounted) {
-        console.log("Auth state changed:", _event, newSession);
-        setSession(newSession);
-        setLoading(false);
-      }
-    });
-
-    // Cleanup
-    return () => {
-      console.log("Cleaning up auth context...");
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
+  // Always provide a mock session with no loading state
+  const [session] = useState<Session | null>(mockSession);
+  const [loading] = useState(false);
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
