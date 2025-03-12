@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallAnalysisDialog } from "@/components/calls/CallAnalysisDialog";
@@ -15,11 +16,14 @@ import { Call } from "@/types/calls";
 import { User } from "@/types/user-types";
 import { Organization } from "@/types/organization-types";
 import { MonthStats } from "@/types/calls";
+import { leadsOrganizacao1 } from "@/mocks/leadsMocks";
+import { toast } from "sonner";
 
+// Mock organization specifically for "Organização 1 Ltda."
 const mockOrganization: Organization = {
-  id: "1",
-  name: "Tech Solutions Ltda",
-  nomeFantasia: "Tech Solutions",
+  id: "org-1",
+  name: "Organização 1 Ltda.",
+  nomeFantasia: "Org 1",
   plan: "enterprise",
   planName: "Enterprise",
   users: [], 
@@ -30,29 +34,29 @@ const mockOrganization: Organization = {
   registrationStatus: "completed" as const,
   integratedCRM: "HubSpot",
   integratedLLM: "OpenAI",
-  email: "contato@techsolutions.com",
+  email: "contato@organizacao1.com.br",
   phone: "(11) 3333-3333",
   cnpj: "12.345.678/0001-90",
   adminName: "João Silva",
-  adminEmail: "joao@empresa.com",
+  adminEmail: "joao@organizacao1.com.br",
   contractSignedAt: null,
   createdAt: "2024-01-01T00:00:00.000Z",
-  logo: "",
+  logo: "https://ui-avatars.com/api/?name=Org+1&background=random",
   address: {
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    cep: ""
+    logradouro: "Av. Paulista",
+    numero: "123",
+    complemento: "Sala 45",
+    bairro: "Bela Vista",
+    cidade: "São Paulo",
+    estado: "SP",
+    cep: "01311-000"
   }
 };
 
 const mockLoggedUser: User = {
   id: "2",
   name: "Maria Santos",
-  email: "maria@empresa.com",
+  email: "maria@organizacao1.com.br",
   phone: "(11) 98888-8888",
   role: "seller" as const,
   status: "active" as const,
@@ -76,6 +80,34 @@ const mockLoggedUser: User = {
   avatar: "",
 };
 
+// Helper function to convert a lead to a call for display
+const leadToCall = (lead: any): Call => {
+  return {
+    id: `call-${lead.id}`,
+    leadId: lead.id,
+    leadInfo: {
+      personType: "pf",
+      firstName: lead.firstName,
+      lastName: lead.lastName || "",
+      razaoSocial: "",
+      email: lead.contactType === "email" ? lead.contactValue : "",
+      phone: lead.contactType === "phone" ? lead.contactValue : "",
+    },
+    emptyLead: false,
+    date: lead.createdAt,
+    duration: lead.calls && lead.calls.length > 0 ? lead.calls[0].duration : "00:00",
+    status: lead.status === "contacted" ? "success" : lead.status === "failed" ? "failed" : "pending",
+    analysis: lead.calls && lead.calls.length > 0 ? {
+      summary: `Análise da chamada com ${lead.firstName} ${lead.lastName}`,
+      transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      objections: lead.status === "failed" ? ["Preço muito alto", "Não é prioridade"] : [],
+      suggestions: lead.status === "contacted" ? ["Enviar proposta detalhada", "Agendar demonstração"] : [],
+    } : undefined,
+    crmInfo: lead.crmInfo,
+    audioUrl: lead.calls && lead.calls.length > 0 ? "https://example.com/audio.mp3" : undefined,
+  };
+};
+
 const OrganizationLeads = () => {
   const location = useLocation();
   const showCreateLeadFromState = location.state?.showCreateLead || false;
@@ -85,6 +117,14 @@ const OrganizationLeads = () => {
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(showCreateLeadFromState);
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
   const [currentCalls, setCurrentCalls] = useState<Call[]>([]);
+
+  // Carregar os leads mockados quando o componente montar
+  useEffect(() => {
+    // Converter leads para o formato de calls
+    const calls = leadsOrganizacao1.map(leadToCall);
+    setCurrentCalls(calls);
+    toast.success(`${calls.length} leads da Organização 1 Ltda. carregados com sucesso!`);
+  }, []);
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);
@@ -129,7 +169,7 @@ const OrganizationLeads = () => {
     active: currentCalls.filter(call => call.status === "success").length,
     processed: currentCalls.filter(call => call.status === "success").length,
     failed: currentCalls.filter(call => call.status === "failed").length,
-    pending: 0
+    pending: currentCalls.filter(call => call.status === "pending").length
   };
 
   return (
