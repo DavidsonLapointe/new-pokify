@@ -20,18 +20,23 @@ export const useCnpjVerification = ({
 
   const checkExistingCnpj = async (cnpj: string): Promise<boolean> => {
     try {
+      // Consultar CNPJ formatado sem caracteres especiais
+      const cleanedCnpj = cnpj.replace(/[^\d]/g, '');
+      
+      console.log("Verificando CNPJ no banco:", cleanedCnpj);
+      
       const { data, error } = await supabase
         .from('organizations')
         .select('id')
-        .eq('cnpj', cnpj)
+        .eq('cnpj', cleanedCnpj)
         .maybeSingle();
       
       if (error) {
         console.error("Erro ao verificar CNPJ existente:", error);
-        return false; // Assume no duplicate in case of error
+        throw error;
       }
       
-      return !!data; // Return true if organization with this CNPJ exists
+      return !!data; // Retorna true se organização com este CNPJ existir
     } catch (error) {
       console.error("Erro ao verificar CNPJ existente:", error);
       return false;
@@ -39,14 +44,14 @@ export const useCnpjVerification = ({
   };
 
   const handleCnpjNext = async () => {
-    // Get the CNPJ value
+    // Obter valor do CNPJ
     const cnpj = form.getValues("cnpj");
     
-    // Format CNPJ as user types and update the form
+    // Formatar CNPJ e atualizar no formulário
     const formattedCnpj = formatCNPJ(cnpj);
     form.setValue("cnpj", formattedCnpj);
     
-    // Only validate format, nothing more
+    // Validar formato do CNPJ
     if (!validateCNPJ(cnpj)) {
       form.setError("cnpj", { 
         type: "manual", 
@@ -55,7 +60,7 @@ export const useCnpjVerification = ({
       return;
     }
     
-    // Check if CNPJ already exists
+    // Verificar se CNPJ já existe
     setIsCheckingCnpj(true);
     try {
       const exists = await checkExistingCnpj(formattedCnpj);
@@ -71,12 +76,12 @@ export const useCnpjVerification = ({
       
       console.log("Formato do CNPJ validado:", formattedCnpj);
       
-      // Proceed to the next step
+      // Avançar para o próximo passo
       setCnpjValidated(true);
       onCnpjVerified();
-      toast("O CNPJ é válido. Continue o cadastro.");
+      toast.success("O CNPJ é válido. Continue o cadastro.");
       
-      // Clear any existing errors on the CNPJ field
+      // Limpar erros existentes no campo de CNPJ
       form.clearErrors("cnpj");
     } catch (error) {
       console.error("Erro ao validar CNPJ:", error);
