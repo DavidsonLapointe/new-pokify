@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import {
   Select,
@@ -30,9 +29,11 @@ interface DailyPerformanceChartProps {
 }
 
 const metricLabels: Record<PerformanceMetric, string> = {
+  joao: "João Silva",
+  maria: "Maria Santos",
   leads: "Leads Cadastrados",
   uploads: "Uploads de Arquivos",
-  logins: "Logins no Sistema",
+  logins: "Logins no Sistema"
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {

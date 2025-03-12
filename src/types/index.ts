@@ -1,4 +1,3 @@
-
 // Re-export everything from individual files
 export * from './user-types';
 export * from './organization-types';
@@ -21,3 +20,4 @@ export type {
 
 // Re-export permissions
 export { availablePermissions } from './permissions-types';
+export type { Lead } from './leads';

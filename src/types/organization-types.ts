@@ -1,10 +1,9 @@
-
 export interface User {
   id: string;
   name: string;
   email: string;
   avatar: string | null;
-  role: "admin" | "seller";
+  role: "admin" | "seller" | "leadly_employee";
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
