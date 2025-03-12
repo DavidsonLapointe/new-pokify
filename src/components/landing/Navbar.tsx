@@ -10,7 +10,14 @@ export function Navbar() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center">
           <div className="font-bold text-2xl text-gray-900">Leadly</div>
-          <div className="ml-auto mr-20">
+          <div className="flex items-center gap-4 ml-auto">
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/dev/contracting")}
+              className="mr-2"
+            >
+              Dev Contracting
+            </Button>
             <Button onClick={() => navigate("/auth")}>
               Acessar Plataforma
             </Button>
