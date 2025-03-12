@@ -56,7 +56,10 @@ const OrganizationLayout = () => {
     organization: {
       name: "Empresa de Desenvolvimento",
       logo: null
-    }
+    },
+    // Adicionando os campos que faltavam para satisfazer o tipo User
+    createdAt: new Date().toISOString(),
+    logs: [] // Array vazio de logs
   };
 
   // Renderização condicional baseada no modo de desenvolvimento
