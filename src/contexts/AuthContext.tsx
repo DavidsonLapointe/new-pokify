@@ -15,6 +15,7 @@ const mockSession: Session = {
   refresh_token: "mock-refresh-token",
   expires_in: 3600,
   expires_at: new Date().getTime() + 3600000,
+  token_type: "bearer", // Add the missing token_type property
   user: {
     id: "mock-user-id",
     aud: "authenticated",

@@ -11,11 +11,9 @@ import {
   Building,
 } from "lucide-react";
 import { User } from "@/types";
-import { usePermissions } from "@/hooks/usePermissions";
 
 export const useMenuItems = (user: User) => {
   const [menuItems, setMenuItems] = useState<any[]>([]);
-  const { hasRoutePermission } = usePermissions(user);
 
   const allMenuItems = [
     {
@@ -69,18 +67,10 @@ export const useMenuItems = (user: User) => {
   ];
 
   useEffect(() => {
-    if (user) {
-      console.log('Verificando permissões para menu items:', user.permissions);
-      const filteredItems = allMenuItems.filter(item => {
-        // Verifica se o usuário tem a permissão específica para o item
-        const hasPermission = hasRoutePermission(item.permissionId);
-        console.log(`Permissão para ${item.label}:`, hasPermission);
-        return hasPermission;
-      });
-
-      setMenuItems(filteredItems);
-    }
-  }, [user, hasRoutePermission]);
+    // In development mode, show all menu items regardless of permissions
+    console.log('Development mode: Showing all menu items');
+    setMenuItems(allMenuItems);
+  }, [user]);
 
   return menuItems;
 };

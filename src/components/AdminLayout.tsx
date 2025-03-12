@@ -5,7 +5,6 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
-import { usePermissions } from "@/hooks/usePermissions";
 import { SidebarMenuItem } from "./organization/layout/SidebarMenuItem";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -19,7 +18,6 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const location = useLocation();
   const { user } = useUser();
-  const { hasRoutePermission } = usePermissions(user);
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -62,12 +60,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return null;
   }
 
-  // Filtra os itens do menu baseado nas permissões
-  const filteredMenuItems = adminMenuItems.filter(item => {
-    const hasPermission = hasRoutePermission(item.permissionId);
-    console.log(`Verificando permissão do menu para ${item.permissionId}:`, hasPermission);
-    return hasPermission;
-  });
+  // In development mode, always show all menu items without filtering by permissions
+  const filteredMenuItems = adminMenuItems;
+  console.log('Development mode: Showing all admin menu items');
 
   return (
     <QueryClientProvider client={queryClient}>
