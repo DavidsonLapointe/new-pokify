@@ -13,7 +13,7 @@ const generateRandomLead = (id: string): Call['leadInfo'] => {
   
   if (isPF) {
     return {
-      personType: 'PF',
+      personType: "pf",
       firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
       lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
       razaoSocial: '',
@@ -21,7 +21,7 @@ const generateRandomLead = (id: string): Call['leadInfo'] => {
     };
   } else {
     return {
-      personType: 'PJ',
+      personType: "pj",
       firstName: '',
       lastName: '',
       razaoSocial: companies[Math.floor(Math.random() * companies.length)],
@@ -33,54 +33,43 @@ const generateRandomLead = (id: string): Call['leadInfo'] => {
 // Gera uma chamada aleatória
 const generateRandomCall = (id: string, leadId?: string): Call => {
   const callDate = randomDate(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
-  const status = Math.random() > 0.1 ? 'success' : 'error';
+  const callStatus = Math.random() > 0.1 ? 'success' : 'failed';
   const emptyLead = Math.random() > 0.9;
   
   // Gera ou usa o leadId fornecido
   const actualLeadId = leadId || `lead-${Math.random().toString(36).substr(2, 9)}`;
   const leadInfo = generateRandomLead(actualLeadId);
+  const durationInSeconds = randomNumber(30, 900);
   
   return {
     id,
     leadId: actualLeadId,
     date: callDate.toISOString(),
-    duration: randomNumber(30, 900),
-    status,
+    duration: durationInSeconds.toString(),
+    status: callStatus,
     emptyLead,
     leadInfo,
-    audioUrl: status === 'success' ? `https://example.com/audio/${id}.mp3` : null,
+    audioUrl: callStatus === 'success' ? `https://example.com/audio/${id}.mp3` : null,
     videoUrl: Math.random() > 0.7 ? `https://example.com/video/${id}.mp4` : null,
-    transcriptionUrl: status === 'success' ? `https://example.com/transcription/${id}.txt` : null,
+    transcriptionUrl: callStatus === 'success' ? `https://example.com/transcription/${id}.txt` : null,
     phone: leadInfo.phone,
+    seller: `Vendedor ${Math.floor(Math.random() * 10) + 1}`,
+    mediaType: Math.random() > 0.7 ? 'video' : 'audio',
     crmInfo: Math.random() > 0.3 ? {
-      id: `crm-${Math.random().toString(36).substr(2, 9)}`,
-      source: Math.random() > 0.5 ? 'hubspot' : 'pipedrive',
-      dealId: `deal-${Math.random().toString(36).substr(2, 9)}`,
-      status: ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'][randomNumber(0, 6)],
-      value: Math.random() > 0.3 ? randomNumber(1000, 50000) : null,
-      updatedAt: new Date(callDate.getTime() + randomNumber(1, 48) * 60 * 60 * 1000).toISOString()
-    } : null,
-    analysis: status === 'success' ? {
-      sentiment: ['positive', 'neutral', 'negative'][randomNumber(0, 2)],
-      temperature: ['hot', 'warm', 'cold'][randomNumber(0, 2)],
-      mainPoints: [
-        'Interesse no produto',
-        'Preocupação com preço',
-        'Dúvidas técnicas',
-        'Solicitou demonstração',
-        'Mencionou concorrente'
-      ].slice(0, randomNumber(2, 5)),
-      objections: Math.random() > 0.5 ? [
-        {
-          text: ['Preço alto', 'Falta de funcionalidade', 'Experiência com concorrente', 'Sem orçamento disponível'][randomNumber(0, 3)],
-          response: Math.random() > 0.3 ? 'Resposta adequada' : 'Resposta inadequada'
-        }
-      ] : [],
-      nextSteps: ['Agendar reunião', 'Enviar proposta', 'Demonstração técnica', 'Seguir por email'][randomNumber(0, 3)],
-      score: randomNumber(1, 10) / 10
-    } : null,
-    uploadedAt: callDate.toISOString(),
-    uploadedBy: `user-${Math.random().toString(36).substr(2, 9)}`
+      funnel: `Funil ${Math.floor(Math.random() * 3) + 1}`,
+      stage: ['Novo', 'Contatado', 'Qualificado', 'Proposta', 'Negociação', 'Ganho', 'Perdido'][randomNumber(0, 6)],
+      lastUpdate: new Date(callDate.getTime() + randomNumber(1, 48) * 60 * 60 * 1000).toISOString()
+    } : undefined,
+    analysis: callStatus === 'success' ? {
+      transcription: `Esta é uma transcrição simulada para a chamada ${id}...`,
+      summary: `Resumo da conversa com o lead ${leadInfo.personType === 'pf' ? leadInfo.firstName : leadInfo.razaoSocial}`,
+      sentiment: {
+        temperature: ['cold', 'warm', 'hot'][randomNumber(0, 2)] as any,
+        reason: ['Demonstrou interesse', 'Solicitou mais informações', 'Mencionou concorrentes'][randomNumber(0, 2)]
+      },
+      leadInfo: leadInfo
+    } : undefined,
+    isNewLead: Math.random() > 0.7
   };
 };
 

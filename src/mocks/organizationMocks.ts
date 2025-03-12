@@ -1,5 +1,5 @@
 
-import { Organization, OrganizationStatus, User } from '../types';
+import { Organization, OrganizationStatus, User } from '../types/organization-types';
 import { generateMockUsers, setMockOrganizations } from './userMocks';
 import { generateRandomCNPJ } from './utils';
 

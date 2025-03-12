@@ -27,7 +27,11 @@ export const createMockUser = (role: User['role'] = 'seller', status: User['stat
       company: isAdmin,
       profile: true,
     },
-    logs: generateRandomLogs(10),
+    logs: generateRandomLogs(10).map(log => ({
+      id: log.id,
+      date: log.timestamp,
+      action: log.activity
+    })),
   };
 };
 

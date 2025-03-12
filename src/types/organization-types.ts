@@ -11,8 +11,8 @@ export interface User {
   permissions: { [key: string]: boolean };
   logs: {
     id: string;
-    timestamp: string;
-    activity: string;
+    date: string;
+    action: string;
   }[];
 }
 

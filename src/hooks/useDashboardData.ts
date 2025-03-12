@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { mockDashboardData } from "@/mocks/dashboardMocks";
 
+// Define the PerformanceMetric type
+type PerformanceMetric = 'joao' | 'maria';
+
 export const useDashboardData = () => {
   // Estados para gerenciar as seleções de data e filtros
   const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(new Date());
@@ -15,8 +18,8 @@ export const useDashboardData = () => {
   const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
   const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
   const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
-  const [dailyMetric, setDailyMetric] = useState("calls");
-  const [monthlyMetric, setMonthlyMetric] = useState("calls");
+  const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>('joao');
+  const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>('joao');
   const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
   const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
 

@@ -1,13 +1,16 @@
 
 import { randomNumber } from './utils';
+import { Suggestion } from '@/components/dashboard/types/suggestions';
 
 // Dados mockados para o dashboard
 export const mockDashboardData = {
   // Dados de estatísticas gerais
   monthStats: {
     total: randomNumber(100, 500),
-    processed: randomNumber(80, 400),
-    failed: randomNumber(5, 50),
+    active: randomNumber(80, 400),
+    pending: randomNumber(5, 50),
+    processed: randomNumber(60, 300),
+    failed: randomNumber(5, 30),
     leads: randomNumber(50, 200),
     conversions: randomNumber(10, 50),
   },
@@ -46,20 +49,16 @@ export const mockDashboardData = {
   
   // Desempenho diário
   dailyPerformanceData: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    calls: randomNumber(10, 50),
-    leads: randomNumber(5, 30),
-    conversions: randomNumber(1, 10),
-    conversionRate: Math.random() * 0.5 + 0.1,
+    day: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    joao: randomNumber(10, 50),
+    maria: randomNumber(5, 30),
   })),
   
   // Desempenho mensal
   monthlyPerformanceData: Array.from({ length: 12 }, (_, i) => ({
     month: new Date(2023, i, 1).toISOString().split('T')[0],
-    calls: randomNumber(300, 1500),
-    leads: randomNumber(150, 600),
-    conversions: randomNumber(20, 150),
-    conversionRate: Math.random() * 0.5 + 0.2,
+    joao: randomNumber(300, 1500),
+    maria: randomNumber(150, 600),
   })),
   
   // Dados de objeções
@@ -84,21 +83,19 @@ export const mockDashboardData = {
   })),
   
   // Exemplos de objeções
-  objectionExamples: [
-    { id: '1', objection: 'Preço alto', example: 'O valor está acima do nosso orçamento neste momento.', leadName: 'Empresa ABC' },
-    { id: '2', objection: 'Concorrente melhor', example: 'Já estamos em negociação com outro fornecedor que oferece mais recursos.', leadName: 'Empresa XYZ' },
-    { id: '3', objection: 'Sem orçamento', example: 'Não temos verba disponível para este tipo de investimento agora.', leadName: 'Empresa 123' },
-    { id: '4', objection: 'Não é prioridade', example: 'No momento estamos focados em outros projetos mais urgentes.', leadName: 'Empresa DEF' },
-    { id: '5', objection: 'Já tem solução', example: 'Já contratamos uma ferramenta semelhante recentemente.', leadName: 'Empresa GHI' },
-  ],
+  objectionExamples: {
+    'Preço alto': ['O valor está acima do nosso orçamento neste momento.', 'Encontramos opções mais acessíveis.'],
+    'Concorrente melhor': ['Já estamos em negociação com outro fornecedor que oferece mais recursos.', 'O concorrente oferece condições melhores.'],
+    'Sem orçamento': ['Não temos verba disponível para este tipo de investimento agora.', 'Precisamos esperar o próximo ciclo orçamentário.'],
+    'Não é prioridade': ['No momento estamos focados em outros projetos mais urgentes.', 'Esta solução não está entre nossas prioridades atuais.'],
+    'Já tem solução': ['Já contratamos uma ferramenta semelhante recentemente.', 'Já temos uma solução implementada.'],
+  },
   
   // Dados de sugestões
   suggestionsData: Array.from({ length: 15 }, (_, i) => ({
     id: `sugestao-${i + 1}`,
     date: new Date(Date.now() - randomNumber(1, 60) * 24 * 60 * 60 * 1000).toISOString(),
-    seller: `Vendedor ${randomNumber(1, 10)}`,
-    call: `Chamada ${randomNumber(1000, 9999)}`,
-    lead: `Lead ${randomNumber(1000, 9999)}`,
+    leadName: `Lead ${randomNumber(1000, 9999)}`,
     suggestion: [
       'Explicar melhor os benefícios do produto',
       'Oferecer desconto para fechar a venda',
@@ -109,6 +106,8 @@ export const mockDashboardData = {
       'Melhorar abordagem inicial',
       'Seguir com negociação via email',
     ][randomNumber(0, 7)],
-    status: ['pending', 'implemented', 'rejected'][randomNumber(0, 2)],
+    type: ['Abordagem', 'Negociação', 'Produto', 'Técnica'][randomNumber(0, 3)],
+    subType: ['Preço', 'Apresentação', 'Funcionalidade', 'Comunicação', 'Demonstração'][randomNumber(0, 4)],
+    status: ['pending', 'implemented', 'rejected'][randomNumber(0, 2)] as Suggestion['status'],
   })),
 };

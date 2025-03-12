@@ -42,7 +42,9 @@ export interface Call {
   status: "success" | "failed";
   phone: string;
   seller: string;
-  audioUrl: string;
+  audioUrl: string | null;
+  videoUrl?: string | null;
+  transcriptionUrl?: string | null;
   mediaType: "audio" | "video";
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
@@ -64,6 +66,8 @@ export interface StatusMap {
 
 export interface MonthStats {
   total: number;
-  processed: number;
-  failed: number;
+  active: number;
+  pending: number;
+  processed?: number;
+  failed?: number;
 }
