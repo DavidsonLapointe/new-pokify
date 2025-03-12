@@ -397,9 +397,7 @@ const SalesProcess = () => {
                             <div>
                               <h3 className="text-sm font-medium text-gray-500">Etapa Atual</h3>
                               <p className="flex items-center gap-2">
-                                {SALES_STAGES.find(s => s.id === lead.stage)?.icon && (
-                                  <SALES_STAGES.find(s => s.id === lead.stage)?.icon className="w-4 h-4 text-[#9b87f5]" />
-                                )}
+                                {renderStageIcon(lead.stage)}
                                 {SALES_STAGES.find(s => s.id === lead.stage)?.name}
                               </p>
                             </div>
