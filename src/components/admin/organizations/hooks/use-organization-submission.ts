@@ -22,11 +22,10 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
 
-      // Simplified insert without any conflict handling
-      const { data, error } = await supabase
+      // Inserção simplificada sem nenhum tratamento de conflito
+      const { error } = await supabase
         .from('organizations')
-        .insert(orgData)
-        .select('id, name');
+        .insert(orgData);
 
       if (error) {
         console.error("❌ Erro ao inserir organização:", error);
@@ -34,7 +33,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         throw error;
       }
 
-      console.log("✅ Organização criada com sucesso! ID:", data?.[0]?.id);
+      console.log("✅ Organização criada com sucesso!");
       toast.success("Organização criada com sucesso!");
       onSuccess();
 
