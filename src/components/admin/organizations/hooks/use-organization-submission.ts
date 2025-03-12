@@ -14,6 +14,9 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         admin_name: values.adminName,
         plan: values.plan,
         status: "pending" as OrganizationStatus,
+        nome_fantasia: values.nomeFantasia,
+        phone: values.phone,
+        admin_phone: values.adminPhone
       };
 
       console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
@@ -44,4 +47,3 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
   return { handleSubmit };
 };
-
