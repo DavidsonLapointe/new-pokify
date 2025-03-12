@@ -10,6 +10,7 @@ import {
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Hook for handling organization form submission logic
@@ -34,6 +35,25 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       
       if (problematicDomains.includes(emailDomain)) {
         console.warn(`⚠️ Warning: Using potentially problematic email domain: ${emailDomain}`);
+      }
+
+      // Check if organization with same CNPJ already exists before trying to create
+      const { data: existingOrgs, error: checkError } = await supabase
+        .from('organizations')
+        .select('id, cnpj')
+        .eq('cnpj', values.cnpj.replace(/[^0-9]/g, ''))
+        .limit(1);
+        
+      if (checkError) {
+        console.error("Erro ao verificar existência de CNPJ:", checkError);
+      }
+      
+      if (existingOrgs && existingOrgs.length > 0) {
+        console.error(`Organização com CNPJ ${values.cnpj} já existe`, existingOrgs[0]);
+        errorHandlers.handleDuplicateOrganizationError({
+          message: `Organização com CNPJ ${values.cnpj} já existe.`
+        });
+        return;
       }
 
       // Create organization

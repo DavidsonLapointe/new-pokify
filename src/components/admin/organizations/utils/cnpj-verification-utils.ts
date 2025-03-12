@@ -1,74 +1,62 @@
 
-import { cleanCNPJ } from "@/utils/cnpjValidation";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 /**
- * Checks if an organization with the given CNPJ already exists
+ * Checks if a CNPJ exists in the Receita Federal database
+ * This is a mock implementation - in a real scenario, this would call
+ * an API to verify the CNPJ in the Receita Federal database
  */
-export const checkCnpjExists = async (cnpj: string): Promise<{exists: boolean, data?: any, error?: any}> => {
+export const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
   try {
-    console.log("Iniciando verificação de CNPJ:", cnpj);
+    // Clean CNPJ before checking (remove any non-numeric characters)
+    const cleanedCnpj = cnpj.replace(/[^0-9]/g, '');
     
-    const { exists, data, error } = await checkExistingOrganization(cnpj);
-    
-    if (error) {
-      console.error("Erro ao verificar CNPJ existente:", error);
-      throw error;
+    // In a real application, we would call an external API to verify the CNPJ
+    // This is just a mock that checks that the CNPJ is valid format and length
+    if (cleanedCnpj.length !== 14) {
+      toast.error("CNPJ inválido. O CNPJ deve ter 14 dígitos.");
+      return false;
     }
     
-    console.log("Resultado da verificação:", exists ? "CNPJ já existe" : "CNPJ disponível");
+    // Mock API request
+    console.log(`Verificando CNPJ ${cleanedCnpj} (simulado)`);
     
-    // Return whether CNPJ exists or not along with data
-    return { exists, data };
+    // Simulate a delay for API call 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // For demonstration purposes, consider the CNPJ valid
+    return true;
   } catch (error) {
     console.error("Erro ao verificar CNPJ:", error);
-    throw error;
+    toast.error("Erro ao verificar CNPJ. Tente novamente.");
+    return false;
   }
 };
 
 /**
- * Helper function to check if an organization exists with the given CNPJ
- * Made this exportable for potential direct use in other components
+ * Checks if a CNPJ already exists in our database
  */
-export const checkExistingOrganization = async (cnpj: string) => {
-  // Clean the CNPJ format to ensure consistent comparison - remove all non-digit characters
-  const cleanedCnpj = cleanCNPJ(cnpj);
-  
-  console.log("Checking for existing CNPJ:", cleanedCnpj, "Original format:", cnpj);
-  
-  // First try exact match with the formatted version (with punctuation)
-  let { data, error } = await supabase
-    .from('organizations')
-    .select('id, cnpj, name')
-    .eq('cnpj', cnpj)
-    .maybeSingle();
-  
-  if (!data) {
-    // If no exact match, try with the cleaned version (just digits)
-    console.log("No exact match found, trying with cleaned CNPJ format");
+export const checkCnpjExistsInDatabase = async (cnpj: string): Promise<boolean> => {
+  try {
+    // Clean CNPJ before checking
+    const cleanedCnpj = cnpj.replace(/[^0-9]/g, '');
     
-    // Check for CNPJs that would match when cleaned (removing punctuation)
-    const { data: allOrgs, error: fetchError } = await supabase
+    // Check if CNPJ exists in our database
+    const { data, error } = await supabase
       .from('organizations')
-      .select('id, cnpj, name');
+      .select('id')
+      .eq('cnpj', cleanedCnpj)
+      .limit(1);
       
-    if (fetchError) {
-      console.error("Error fetching organizations:", fetchError);
-      return { exists: false, data: null, error: fetchError };
+    if (error) {
+      console.error("Erro ao verificar CNPJ no banco de dados:", error);
+      return false;
     }
     
-    // Manually find if any existing CNPJ matches when non-digits are removed
-    const matchingOrg = allOrgs?.find(org => {
-      const orgCleanCnpj = org.cnpj.replace(/[^\d]/g, '');
-      return orgCleanCnpj === cleanedCnpj;
-    });
-    
-    data = matchingOrg || null;
-    console.log("Clean CNPJ match result:", !!matchingOrg, matchingOrg);
-  } else {
-    console.log("Exact CNPJ match found:", data);
+    return data && data.length > 0;
+  } catch (error) {
+    console.error("Erro inesperado ao verificar CNPJ no banco de dados:", error);
+    return false;
   }
-  
-  // Return true if data exists (CNPJ is found), regardless of organization status
-  return { exists: !!data, data, error };
 };
