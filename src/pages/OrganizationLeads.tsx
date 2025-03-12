@@ -96,15 +96,28 @@ const leadToCall = (lead: any): Call => {
     emptyLead: false,
     date: lead.createdAt,
     duration: lead.calls && lead.calls.length > 0 ? lead.calls[0].duration : "00:00",
-    status: lead.status === "contacted" ? "success" : lead.status === "failed" ? "failed" : "pending",
+    status: lead.status === "contacted" ? "success" : "failed",
     analysis: lead.calls && lead.calls.length > 0 ? {
       summary: `Análise da chamada com ${lead.firstName} ${lead.lastName}`,
       transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      objections: lead.status === "failed" ? ["Preço muito alto", "Não é prioridade"] : [],
-      suggestions: lead.status === "contacted" ? ["Enviar proposta detalhada", "Agendar demonstração"] : [],
+      sentiment: {
+        temperature: "warm" as const,
+        reason: "Lead demonstrou interesse no produto"
+      },
+      leadInfo: {
+        personType: "pf",
+        firstName: lead.firstName,
+        lastName: lead.lastName || "",
+        razaoSocial: "",
+        phone: lead.contactType === "phone" ? lead.contactValue : "",
+        email: lead.contactType === "email" ? lead.contactValue : "",
+      }
     } : undefined,
     crmInfo: lead.crmInfo,
     audioUrl: lead.calls && lead.calls.length > 0 ? "https://example.com/audio.mp3" : undefined,
+    phone: lead.contactType === "phone" ? lead.contactValue : "",
+    seller: "Maria Santos",
+    mediaType: "audio",
   };
 };
 
@@ -169,7 +182,7 @@ const OrganizationLeads = () => {
     active: currentCalls.filter(call => call.status === "success").length,
     processed: currentCalls.filter(call => call.status === "success").length,
     failed: currentCalls.filter(call => call.status === "failed").length,
-    pending: currentCalls.filter(call => call.status === "pending").length
+    pending: 0 // There's no "pending" type in Call status, so we set it to 0
   };
 
   return (

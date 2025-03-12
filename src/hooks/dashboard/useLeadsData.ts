@@ -1,97 +1,69 @@
 
 import { useState, useMemo } from "react";
-import { format, parseISO, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { leadsOrganizacao1 } from "@/mocks/leadsMocks";
 
-export const useLeadsData = (organizationName?: string) => {
-  // Usar os leads da Organização 1 se for essa a solicitada
-  const organizationLeads = organizationName?.includes("1") ? leadsOrganizacao1 : leadsOrganizacao1;
-  
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedSeller, setSelectedSeller] = useState("all");
-  
-  const monthlyLeadsData = useMemo(() => {
-    // Agrupa leads por mês
-    const leadsPerMonth = new Map();
-    
-    organizationLeads.forEach(lead => {
-      const date = parseISO(lead.createdAt);
-      const monthKey = format(date, 'MMM/yy', { locale: ptBR });
-      
-      if (!leadsPerMonth.has(monthKey)) {
-        leadsPerMonth.set(monthKey, {
-          month: monthKey,
-          novos: 0,
-          conversions: 0
-        });
-      }
-      
-      const monthData = leadsPerMonth.get(monthKey);
-      monthData.novos += 1;
-      
-      // Lead com pelo menos uma chamada bem sucedida conta como conversão
-      if (lead.calls?.some(call => call.status === "success")) {
-        monthData.conversions += 1;
-      }
-    });
-    
-    return Array.from(leadsPerMonth.values()).sort((a, b) => {
-      // Extrai o ano e o mês para comparação
-      const [monthA, yearA] = a.month.split('/').reverse();
-      const [monthB, yearB] = b.month.split('/').reverse();
-      
-      // Compara pelo ano primeiro, depois pelo mês
-      return yearA === yearB 
-        ? ptBR.localize?.month(ptBR.months.indexOf(monthA)) - ptBR.localize?.month(ptBR.months.indexOf(monthB))
-        : parseInt(yearA) - parseInt(yearB);
-    });
-  }, [organizationLeads]);
-  
+export interface DailyLeadsData {
+  day: string;
+  leads: number;
+}
+
+export interface MonthlyLeadsData {
+  month: string;
+  leads: number;
+}
+
+export const useLeadsData = () => {
+  const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(() => new Date());
+  const [dailyLeadsDate, setDailyLeadsDate] = useState(() => new Date());
+  const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
+  const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
+
+  // Generate mock daily leads data for the current month
   const dailyLeadsData = useMemo(() => {
-    // Filtra leads do mês selecionado
-    const monthStart = startOfMonth(selectedDate);
-    const monthEnd = endOfMonth(selectedDate);
+    const currentDate = new Date(dailyLeadsDate);
+    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     
-    const daysInMonth = new Map();
-    
-    // Inicializa todos os dias do mês
-    for (let day = 1; day <= monthEnd.getDate(); day++) {
-      const formattedDay = day < 10 ? `0${day}` : `${day}`;
-      daysInMonth.set(`${formattedDay}/${format(selectedDate, 'MM')}`, {
-        day: `${formattedDay}/${format(selectedDate, 'MM')}`,
-        novos: 0,
-        contactados: 0
+    const data: DailyLeadsData[] = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      data.push({
+        day: i.toString().padStart(2, '0'),
+        leads: Math.floor(Math.random() * 10) + 1
       });
     }
     
-    // Conta leads por dia
-    organizationLeads.forEach(lead => {
-      const leadDate = parseISO(lead.createdAt);
-      
-      if (isWithinInterval(leadDate, { start: monthStart, end: monthEnd })) {
-        const dayKey = format(leadDate, 'dd/MM');
-        
-        if (daysInMonth.has(dayKey)) {
-          const dayData = daysInMonth.get(dayKey);
-          dayData.novos += 1;
-          
-          if (lead.status === "contacted") {
-            dayData.contactados += 1;
-          }
-        }
-      }
-    });
+    return data;
+  }, [dailyLeadsDate, dailyLeadsSeller]);
+
+  // Generate mock monthly leads data for the last 12 months
+  const monthlyLeadsData = useMemo(() => {
+    const data: MonthlyLeadsData[] = [];
+    const currentDate = new Date(monthlyLeadsDate);
     
-    return Array.from(daysInMonth.values());
-  }, [selectedDate, organizationLeads]);
-  
+    for (let i = 11; i >= 0; i--) {
+      const date = subMonths(currentDate, i);
+      const monthName = format(date, 'MMM', { locale: ptBR });
+      const year = format(date, 'yy');
+      
+      data.push({
+        month: `${monthName}/${year}`,
+        leads: Math.floor(Math.random() * 50) + 10
+      });
+    }
+    
+    return data;
+  }, [monthlyLeadsDate, monthlyLeadsSeller]);
+
   return {
-    monthlyLeadsData,
     dailyLeadsData,
-    selectedDate,
-    setSelectedDate,
-    selectedSeller,
-    setSelectedSeller
+    monthlyLeadsData,
+    monthlyLeadsDate,
+    setMonthlyLeadsDate,
+    dailyLeadsDate,
+    setDailyLeadsDate,
+    monthlyLeadsSeller,
+    setMonthlyLeadsSeller,
+    dailyLeadsSeller,
+    setDailyLeadsSeller
   };
 };

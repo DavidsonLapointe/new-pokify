@@ -41,7 +41,7 @@ export const generateMockLeads = (count: number): Lead[] => {
         id: `call-${i}-${j}`,
         date: callDate.toISOString(),
         duration: `${randomNumber(1, 15)}:${randomNumber(10, 59)}`,
-        status: Math.random() > 0.2 ? "success" : "failed"
+        status: Math.random() > 0.2 ? "success" : "failed" as "success" | "failed"
       }
     });
     
