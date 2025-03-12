@@ -1,18 +1,19 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
+import { type OrganizationStatus } from "@/types/organization-types";
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      // Simplified organization data with only required fields
+      // Simplified organization data with only required fields and proper typing
       const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
         plan: values.plan,
-        status: "pending",
+        status: "pending" as OrganizationStatus,
         nome_fantasia: values.nomeFantasia,
         phone: values.phone || '',
         admin_phone: values.adminPhone || ''
