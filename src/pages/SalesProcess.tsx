@@ -125,7 +125,7 @@ const AI_TOOLS = [
   },
   {
     id: "objection_handler",
-    name: "Tratamento de Objeções",
+    name: "Assistente de Prospecção",
     icon: ShieldCheck,
     description: "IA para sugerir respostas a objeções comuns durante o processo de vendas.",
     isSubscribed: true,
