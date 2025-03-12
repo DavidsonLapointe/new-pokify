@@ -14,12 +14,13 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   const onSubmit = async (values: CreateOrganizationFormData) => {
     console.log("Iniciando submissão do formulário com valores:", values);
     
-    // Reset form after submission is handled
     try {
       await handleSubmit(values);
       form.reset();
     } catch (error) {
       console.error("Error in form submission:", error);
+      // Error will be handled by the UI component that called this function
+      throw error; // Re-throw to allow the calling component to handle it
     }
   };
 

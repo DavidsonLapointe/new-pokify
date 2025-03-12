@@ -67,7 +67,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         return;
       }
 
-      // Create object with required fields
+      // Create object with required fields - ensuring a clean object without undefined values
       const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
@@ -76,8 +76,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         plan: values.plan,
         status: "pending" as OrganizationStatus,
         nome_fantasia: values.nomeFantasia,
-        phone: values.phone,
-        admin_phone: values.adminPhone || '',  // Ensure admin_phone is never null
+        phone: values.phone || '',  // Ensure phone is never undefined
+        admin_phone: values.adminPhone || '',  // Ensure admin_phone is never undefined
         contract_status: 'completed', // Contract step is now skipped
         payment_status: 'pending',
         registration_status: 'pending',
@@ -91,63 +91,68 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       console.log("🔑 Sessão atual:", sessionData ? "Autenticado" : "Não autenticado");
       console.log("👤 Usuário atual:", user ? `${user.id} (${user.role})` : "Sem usuário");
       
-      // Insert the organization with explicit RLS bypass if possible
-      let insertQuery = supabase.from('organizations').insert(orgData);
+      // Insert the organization with standard insert operation
+      const { data: insertedOrg, error: insertError } = await supabase
+        .from('organizations')
+        .insert(orgData)
+        .select('id')
+        .single();
       
-      // Check if we have an admin role that can bypass RLS
-      if (user.role === "leadly_employee") {
-        console.log("🔓 Tentando inserção com bypassRLS (como leadly_employee)");
-        const { data: insertedOrg, error: insertError } = await insertQuery.select('id').single();
+      if (insertError) {
+        console.error("❌ Erro na inserção:", insertError);
         
-        if (insertError) {
-          console.error("❌ Erro na inserção:", insertError);
+        // Show specific error message based on error code
+        if (insertError.code === '42P10') {
+          toast.error("Erro de configuração no banco de dados. Por favor, contate o suporte técnico.");
+        } else if (insertError.message && insertError.message.includes("violates row-level security policy")) {
+          handlePermissionError();
+        } else {
           handleOrganizationCreationError(insertError);
-          return;
         }
-
-        if (!insertedOrg || !insertedOrg.id) {
-          console.error("❌ Organização criada mas sem ID retornado");
-          handleUnexpectedError("Resposta incompleta do servidor ao criar empresa");
-          return;
-        }
-
-        console.log("✅ Organização criada com sucesso! ID:", insertedOrg.id);
-
-        // Send email to admin
-        try {
-          console.log("📧 Enviando email para o administrador...");
-          const emailResponse = await supabase.functions.invoke('send-organization-emails', {
-            body: {
-              organizationId: insertedOrg.id,
-              type: "onboarding",
-              data: {
-                confirmationToken: `${window.location.origin}/confirmacao/${insertedOrg.id}`
-              }
-            }
-          });
-          
-          console.log("📬 Resposta da função de email:", emailResponse);
-          
-          if (emailResponse.error) {
-            console.warn("⚠️ Aviso de envio de email:", emailResponse.error);
-            // Continue with success even if email fails
-          }
-        } catch (emailError) {
-          console.error("📭 Falha ao invocar função de email:", emailError);
-          // Continue with success, we don't want email failures to block organization creation
-        }
-
-        console.log("🏁 Processo de criação concluído com sucesso!");
-        showSuccessToast();
-        onSuccess();
-      } else {
-        console.error("❌ Usuário não tem permissão para criar organização");
-        handlePermissionError();
+        return;
       }
+
+      if (!insertedOrg || !insertedOrg.id) {
+        console.error("❌ Organização criada mas sem ID retornado");
+        handleUnexpectedError("Resposta incompleta do servidor ao criar empresa");
+        return;
+      }
+
+      console.log("✅ Organização criada com sucesso! ID:", insertedOrg.id);
+
+      // Send email to admin
+      try {
+        console.log("📧 Enviando email para o administrador...");
+        const emailResponse = await supabase.functions.invoke('send-organization-emails', {
+          body: {
+            organizationId: insertedOrg.id,
+            type: "onboarding",
+            data: {
+              confirmationToken: `${window.location.origin}/confirmacao/${insertedOrg.id}`
+            }
+          }
+        });
+        
+        console.log("📬 Resposta da função de email:", emailResponse);
+        
+        if (emailResponse.error) {
+          console.warn("⚠️ Aviso de envio de email:", emailResponse.error);
+          // Continue with success even if email fails
+        }
+      } catch (emailError) {
+        console.error("📭 Falha ao invocar função de email:", emailError);
+        // Continue with success, we don't want email failures to block organization creation
+      }
+
+      console.log("🏁 Processo de criação concluído com sucesso!");
+      showSuccessToast();
+      onSuccess();
     } catch (error: any) {
       console.error("❌ Erro inesperado na criação de organização:", error);
       console.error("Detalhes completos do erro:", JSON.stringify(error, null, 2));
+      console.error("Stack trace:", new Error().stack);
       handleOrganizationCreationError(error);
+      throw error; // Re-throw to allow the calling component to handle it
     }
   };
 
