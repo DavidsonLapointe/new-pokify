@@ -24,7 +24,7 @@ export const LeadsStats = ({ total, active, pending }: LeadsStatsProps) => {
         value={active}
         icon={CheckCircle2}
         color="text-green-500"
-        tooltip="Total de leads foram submetidos a pelo menos uma ferramenta de IA do sistema"
+        tooltip="Total de leads que foram submetidos a pelo menos uma ferramenta de IA do sistema"
       />
       <StatCard
         title="Leads Pendentes (Geral)"

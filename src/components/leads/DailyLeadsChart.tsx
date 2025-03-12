@@ -13,6 +13,7 @@ import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types";
 import { useMemo } from "react";
+import { format, parse, isValid } from "date-fns";
 
 interface DailyLeadsChartProps {
   data: any[];
@@ -45,20 +46,36 @@ export const DailyLeadsChart = ({
   onSellerChange,
   sellers
 }: DailyLeadsChartProps) => {
-  // Filter data based on selected seller
+  // Filter data based on selected seller and selected date (month/year)
   const filteredData = useMemo(() => {
+    // First filter by month/year if a date is selected
+    let dateFilteredData = data;
+    if (selectedDate && isValid(selectedDate)) {
+      const selectedMonth = selectedDate.getMonth();
+      const selectedYear = selectedDate.getFullYear();
+      
+      dateFilteredData = data.filter(item => {
+        // Parse the day string to get a date object
+        const itemDate = parse(item.day, 'dd/MM/yyyy', new Date());
+        return (
+          isValid(itemDate) && 
+          itemDate.getMonth() === selectedMonth && 
+          itemDate.getFullYear() === selectedYear
+        );
+      });
+    }
+    
+    // Then filter by seller if a specific seller is selected
     if (selectedSeller === "all") {
-      return data; // Return all data
+      return dateFilteredData; // Return data filtered only by date
     } else {
-      // Return data for the specific seller if available
-      // This is a mock implementation since we don't have real seller-specific data
-      // In a real implementation, you'd filter based on actual seller data
-      return data.map(item => ({
+      // Return data for the specific seller
+      return dateFilteredData.map(item => ({
         ...item,
         novos: Math.floor(item.novos * (Math.random() * 0.5 + 0.2)) // Mock data for seller
       }));
     }
-  }, [data, selectedSeller]);
+  }, [data, selectedSeller, selectedDate]);
 
   return (
     <Card className="p-4">
