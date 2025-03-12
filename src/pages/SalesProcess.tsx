@@ -1,11 +1,12 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
   Building2, Users, Phone, ChartBar, List, SearchIcon, PhoneOutgoing, 
-  Calendar, User, FileBarChart, XCircle, CheckCircle2, ArrowRight
+  Calendar, User, FileBarChart, XCircle, CheckCircle2, ArrowRight, PlusCircle,
+  MoreHorizontal
 } from "lucide-react";
 import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
 import { LeadTemperatureBadge } from "@/components/calls/LeadTemperatureBadge";
@@ -157,10 +158,6 @@ const SalesProcess = () => {
   const [selectedStage, setSelectedStage] = useState("all");
   const [selectedLead, setSelectedLead] = useState<string | null>(null);
 
-  const filteredLeads = selectedStage === "all" 
-    ? SAMPLE_LEADS 
-    : SAMPLE_LEADS.filter(lead => lead.stage === selectedStage);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { 
@@ -177,6 +174,11 @@ const SalesProcess = () => {
     if (!stageConfig?.icon) return null;
     const Icon = stageConfig.icon;
     return <Icon className="w-4 h-4 text-[#9b87f5]" />;
+  };
+
+  // Group leads by stage for Kanban view
+  const getLeadsByStage = (stageId: string) => {
+    return SAMPLE_LEADS.filter(lead => lead.stage === stageId);
   };
 
   return (
@@ -280,82 +282,89 @@ const SalesProcess = () => {
               </Card>
             )}
 
-            {/* Leads Table */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">
-                  Leads
-                  {selectedStage !== "all" && (
-                    <span className="ml-2 text-sm font-normal text-gray-500">
-                      ({SALES_STAGES.find(s => s.id === selectedStage)?.name})
-                    </span>
-                  )}
-                </CardTitle>
-                <div className="flex justify-between items-center">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setSelectedStage("all")}
-                    className={selectedStage === "all" ? "bg-[#F1F0FB] text-[#9b87f5]" : ""}
-                  >
-                    Todos os Leads
-                  </Button>
-                  <Button variant="default" size="sm" className="bg-[#9b87f5] hover:bg-[#8a76e4]">
-                    <User className="w-4 h-4 mr-2" />
-                    Novo Lead
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>Etapa</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Interesse</TableHead>
-                      <TableHead>Última Atividade</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredLeads.map(lead => (
-                      <TableRow key={lead.id} className={selectedLead === lead.id ? "bg-[#F1F0FB]" : ""}>
-                        <TableCell className="font-medium">{lead.name}</TableCell>
-                        <TableCell>{lead.company}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            {renderStageIcon(lead.stage)}
-                            <span className="text-xs">
-                              {SALES_STAGES.find(s => s.id === lead.stage)?.name}
-                            </span>
+            {/* Kanban Board replacing the table */}
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setSelectedStage("all")}
+                  className={selectedStage === "all" ? "bg-[#F1F0FB] text-[#9b87f5]" : ""}
+                >
+                  Todos os Leads
+                </Button>
+                <Button variant="default" size="sm" className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  Novo Lead
+                </Button>
+              </div>
+
+              <div className="overflow-x-auto pb-6">
+                <div className="flex gap-4 min-w-max">
+                  {SALES_STAGES.map((stage) => (
+                    <div 
+                      key={stage.id}
+                      className="flex-shrink-0 w-72"
+                    >
+                      <div className="bg-gray-50 rounded-t-lg border border-gray-200 p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {React.createElement(stage.icon, { className: "w-4 h-4 text-[#9b87f5]" })}
+                            <h3 className="font-medium text-sm">{stage.name}</h3>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <LeadStatusBadge status={lead.status as any} />
-                        </TableCell>
-                        <TableCell>
-                          <LeadTemperatureBadge calls={lead.calls as any} hasProcessed={lead.hasProcessed} />
-                        </TableCell>
-                        <TableCell>{formatDate(lead.lastActivity)}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => setSelectedLead(lead.id === selectedLead ? null : lead.id)}
-                            >
-                              {lead.id === selectedLead ? "Fechar" : "Detalhes"}
+                          <div className="bg-white text-xs font-semibold px-2 py-1 rounded-full text-gray-600">
+                            {getLeadsByStage(stage.id).length}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="min-h-[70vh] bg-gray-50 rounded-b-lg border-x border-b border-gray-200 p-2 space-y-2">
+                        {getLeadsByStage(stage.id).length === 0 ? (
+                          <div className="flex flex-col items-center justify-center h-24 border border-dashed border-gray-300 rounded-lg bg-gray-50">
+                            <p className="text-xs text-gray-500">Sem leads nesta etapa</p>
+                            <Button variant="ghost" size="sm" className="mt-2">
+                              <PlusCircle className="w-3 h-3 mr-1" />
+                              Adicionar lead
                             </Button>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                        ) : (
+                          getLeadsByStage(stage.id).map(lead => (
+                            <Card 
+                              key={lead.id} 
+                              className={cn(
+                                "shadow-sm hover:shadow transition-all cursor-pointer",
+                                selectedLead === lead.id ? "ring-2 ring-[#9b87f5]" : ""
+                              )}
+                              onClick={() => setSelectedLead(lead.id === selectedLead ? null : lead.id)}
+                            >
+                              <CardContent className="p-3 space-y-2">
+                                <div className="flex justify-between items-start">
+                                  <h4 className="font-medium text-sm">{lead.name}</h4>
+                                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                
+                                <div className="text-xs text-gray-500">{lead.company}</div>
+                                
+                                <div className="flex items-center justify-between gap-2">
+                                  <LeadStatusBadge status={lead.status as any} />
+                                  <LeadTemperatureBadge calls={lead.calls as any} hasProcessed={lead.hasProcessed} />
+                                </div>
+                                
+                                <div className="text-xs text-gray-500 mt-2">
+                                  Última atividade: {formatDate(lead.lastActivity)}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
             {/* Lead Details (when a lead is selected) */}
             {selectedLead && (
