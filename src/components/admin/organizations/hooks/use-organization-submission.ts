@@ -22,26 +22,19 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
 
-      // Insert organization without checking for existing CNPJ
-      const { data: insertedOrg, error: insertError } = await supabase
+      // Simplified insert without any conflict handling
+      const { data, error } = await supabase
         .from('organizations')
         .insert(orgData)
-        .select('id, name')
-        .maybeSingle();
+        .select('id, name');
 
-      if (insertError) {
-        console.error("❌ Erro ao inserir organização:", insertError);
-        toast.error("Erro ao criar organização: " + insertError.message);
-        throw insertError;
+      if (error) {
+        console.error("❌ Erro ao inserir organização:", error);
+        toast.error("Erro ao criar organização: " + error.message);
+        throw error;
       }
 
-      if (!insertedOrg?.id) {
-        console.error("❌ Organização criada mas nenhum ID foi retornado");
-        toast.error("Erro ao criar organização: nenhum ID foi retornado");
-        throw new Error("Organização criada mas nenhum ID foi retornado");
-      }
-
-      console.log("✅ Organização criada com sucesso! ID:", insertedOrg.id);
+      console.log("✅ Organização criada com sucesso! ID:", data?.[0]?.id);
       toast.success("Organização criada com sucesso!");
       onSuccess();
 
