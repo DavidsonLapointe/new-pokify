@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUser } from "@/contexts/UserContext";
 import AuthForm from "@/components/auth/AuthForm";
@@ -29,21 +29,12 @@ const Auth = () => {
     }
   }, [session, user, loading, navigate]);
 
-  // Se não tiver sessão e não estiver carregando, mostra página de login
-  if (!session && !loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center">
-        <AuthForm />
-      </div>
-    );
-  }
-
-  // Enquanto carrega, mostra loading
+  // Always show login form, but it's not required for navigation
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <AuthForm />
     </div>
   );
-};
+}
 
 export default Auth;
