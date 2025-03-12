@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
-  Building2, Users, Phone, ChartBar, List, SearchIcon, PhoneOutgoing, 
-  Video, MessageCircle, ShieldCheck, Lock, HeadphonesIcon, UserCheck
+  Building2, Users, Phone, ChartBar, Video, MessageCircle, 
+  ShieldCheck, Lock, HeadphonesIcon, UserCheck, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -19,7 +19,7 @@ const AI_TOOLS = [
     description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
     isSubscribed: true,
     content: (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e 
           automaticamente criar vídeos com seu avatar digital.
@@ -33,8 +33,9 @@ const AI_TOOLS = [
             <li>O vídeo é gerado e pode ser enviado diretamente ao lead</li>
           </ol>
         </div>
-        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-4">
-          Criar novo vídeo
+        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] mt-4 py-6 text-lg w-full md:w-auto">
+          <span>Criar novo vídeo</span>
+          <ArrowRight className="ml-2" />
         </Button>
       </div>
     )
@@ -47,13 +48,14 @@ const AI_TOOLS = [
     isSubscribed: false,
     content: (
       <div className="space-y-4">
-        <div className="flex items-center justify-center h-52 bg-gray-50 border rounded-md">
+        <div className="flex items-center justify-center h-64 bg-gray-50 border rounded-md">
           <div className="text-center p-6">
-            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-            <h3 className="text-lg font-medium">Módulo não contratado</h3>
-            <p className="text-sm text-gray-500 mt-1">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
-            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#8a76e4]">
-              Saiba mais
+            <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-medium">Módulo não contratado</h3>
+            <p className="text-sm text-gray-500 mt-2 mb-4">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg px-8">
+              <span>Saiba mais</span>
+              <ArrowRight className="ml-2" />
             </Button>
           </div>
         </div>
@@ -67,7 +69,7 @@ const AI_TOOLS = [
     description: "Analise automaticamente as calls com leads para identificar fit e próximos passos.",
     isSubscribed: true,
     content: (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Nossa IA analisa as gravações de chamadas com leads e extrai informações valiosas como objeções, nível de interesse e pontos 
           a serem abordados em contatos futuros.
@@ -81,11 +83,12 @@ const AI_TOOLS = [
             <li>Resumo detalhado da conversa</li>
           </ul>
         </div>
-        <div className="flex space-x-3">
-          <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-4">
-            Analisar gravação
+        <div className="flex flex-col md:flex-row gap-4">
+          <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg flex-1">
+            <span>Analisar gravação</span>
+            <ArrowRight className="ml-2" />
           </Button>
-          <Button variant="outline" className="mt-4">
+          <Button variant="outline" className="py-6 text-lg flex-1">
             Ver análises anteriores
           </Button>
         </div>
@@ -100,13 +103,14 @@ const AI_TOOLS = [
     isSubscribed: false,
     content: (
       <div className="space-y-4">
-        <div className="flex items-center justify-center h-52 bg-gray-50 border rounded-md">
+        <div className="flex items-center justify-center h-64 bg-gray-50 border rounded-md">
           <div className="text-center p-6">
-            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-            <h3 className="text-lg font-medium">Módulo não contratado</h3>
-            <p className="text-sm text-gray-500 mt-1">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
-            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#8a76e4]">
-              Saiba mais
+            <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-medium">Módulo não contratado</h3>
+            <p className="text-sm text-gray-500 mt-2 mb-4">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#7E69AB] py-6 text-lg px-8">
+              <span>Saiba mais</span>
+              <ArrowRight className="ml-2" />
             </Button>
           </div>
         </div>
@@ -120,7 +124,7 @@ const AI_TOOLS = [
     description: "IA para sugerir respostas a objeções comuns durante o processo de vendas.",
     isSubscribed: true,
     content: (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <p className="text-sm text-gray-600">
           Sistema inteligente que identifica objeções comuns durante o processo de vendas e sugere as melhores respostas 
           baseadas em casos de sucesso anteriores.
@@ -165,8 +169,9 @@ const AI_TOOLS = [
             </CardContent>
           </Card>
         </div>
-        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-2">
-          Consultar banco de objeções
+        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB] mt-4 py-6 text-lg w-full">
+          <span>Consultar banco de objeções</span>
+          <ArrowRight className="ml-2" />
         </Button>
       </div>
     )
@@ -229,17 +234,17 @@ const SalesProcess = () => {
               </p>
               
               <Tabs defaultValue={selectedTool} onValueChange={setSelectedTool} className="w-full">
-                <TabsList className="w-full justify-start overflow-auto">
+                <TabsList className="w-full justify-start overflow-auto mb-4 p-1.5">
                   {AI_TOOLS.map(tool => (
                     <TabsTrigger 
                       key={tool.id} 
                       value={tool.id}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 px-4 py-2.5 text-base"
                     >
-                      {React.createElement(tool.icon, { className: "w-4 h-4" })}
+                      {React.createElement(tool.icon, { className: "w-5 h-5" })}
                       <span>{tool.name}</span>
                       {!tool.isSubscribed && (
-                        <Lock className="w-3 h-3 text-gray-400" />
+                        <Lock className="w-3.5 h-3.5 text-gray-400" />
                       )}
                     </TabsTrigger>
                   ))}
@@ -247,34 +252,34 @@ const SalesProcess = () => {
                 
                 {AI_TOOLS.map(tool => (
                   <TabsContent key={tool.id} value={tool.id} className="mt-6">
-                    <Card>
-                      <CardHeader>
+                    <Card className="border shadow-md">
+                      <CardHeader className="pb-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="flex items-center gap-2">
-                              {React.createElement(tool.icon, { className: "w-5 h-5 text-[#9b87f5]" })}
+                            <CardTitle className="flex items-center gap-2 text-xl">
+                              {React.createElement(tool.icon, { className: "w-6 h-6 text-[#9b87f5]" })}
                               {tool.name}
                               {!tool.isSubscribed && (
-                                <Lock className="w-4 h-4 text-gray-400" />
+                                <Lock className="w-5 h-5 text-gray-400" />
                               )}
                             </CardTitle>
-                            <CardDescription className="mt-1">
+                            <CardDescription className="mt-2 text-base">
                               {tool.description}
                             </CardDescription>
                           </div>
                           {tool.isSubscribed && (
-                            <div className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                            <div className="px-3 py-1.5 bg-green-100 text-green-800 text-sm font-medium rounded-full">
                               Ativo
                             </div>
                           )}
                           {!tool.isSubscribed && (
-                            <div className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                            <div className="px-3 py-1.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">
                               Não contratado
                             </div>
                           )}
                         </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="pt-4 pb-8">
                         {tool.content}
                       </CardContent>
                     </Card>
