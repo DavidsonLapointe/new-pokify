@@ -172,7 +172,7 @@ const SalesProcess = () => {
     });
   };
 
-  const StageIcon = ({ stage }: { stage: string }) => {
+  const renderStageIcon = (stage: string) => {
     const stageConfig = SALES_STAGES.find(s => s.id === stage);
     if (!stageConfig?.icon) return null;
     const Icon = stageConfig.icon;
@@ -242,7 +242,7 @@ const SalesProcess = () => {
                         "w-12 h-12 rounded-full flex items-center justify-center",
                         selectedStage === stage.id ? "bg-[#9b87f5] text-white" : "bg-gray-100 text-gray-600"
                       )}>
-                        <stage.icon className="w-6 h-6" />
+                        {React.createElement(stage.icon, { className: "w-6 h-6" })}
                       </div>
                       <span className="text-xs font-medium mt-2 text-center max-w-[80px]">{stage.name}</span>
                     </div>
@@ -259,7 +259,7 @@ const SalesProcess = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <StageIcon stage={selectedStage} />
+                    {renderStageIcon(selectedStage)}
                     {SALES_STAGES.find(s => s.id === selectedStage)?.name}
                   </CardTitle>
                   <CardDescription>
@@ -326,9 +326,7 @@ const SalesProcess = () => {
                         <TableCell>{lead.company}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            {SALES_STAGES.find(s => s.id === lead.stage)?.icon && (
-                              <SALES_STAGES.find(s => s.id === lead.stage)?.icon className="w-4 h-4 text-[#9b87f5]" />
-                            )}
+                            {renderStageIcon(lead.stage)}
                             <span className="text-xs">
                               {SALES_STAGES.find(s => s.id === lead.stage)?.name}
                             </span>
