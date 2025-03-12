@@ -1,31 +1,11 @@
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string | null;  // Changed from required to nullable to match user-types
-  role: "admin" | "seller" | "leadly_employee";
-  status: "active" | "inactive" | "pending";
-  createdAt: string;
-  lastAccess: string;  // This is required according to the error
-  permissions: { [key: string]: boolean };
-  logs: {
-    id: string;
-    date: string;
-    action: string;
-  }[];
-}
+// Organization status types
+export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled";
 
-export type OrganizationStatus = "active" | "pending" | "inactive";
+// Organization pending reason types (add pro_rata_payment)
+export type OrganizationPendingReason = "contract_signature" | "user_validation" | "mensalidade_payment" | "pro_rata_payment" | null;
 
-export type OrganizationPendingReason = 
-  | "contract_signature" 
-  | "user_validation" 
-  | "mensalidade_payment"
-  | "pro_rata_payment"
-  | null;
-
-export interface Address {
+export interface OrganizationAddress {
   logradouro: string;
   numero: string;
   complemento: string;
@@ -38,17 +18,17 @@ export interface Address {
 export interface Organization {
   id: string;
   name: string;
-  nomeFantasia?: string;
-  plan: any; // Plan ID or full Plan object
-  planName?: string; // Adding plan name property
+  nomeFantasia: string;
+  plan: string;
+  planName?: string;
   users: User[];
   status: OrganizationStatus;
   pendingReason: OrganizationPendingReason;
   contractStatus: "pending" | "completed";
   paymentStatus: "pending" | "completed";
   registrationStatus: "pending" | "completed";
-  integratedCRM: string | null;
-  integratedLLM: string | null;
+  integratedCRM?: string;
+  integratedLLM?: string;
   email: string;
   phone: string;
   cnpj: string;
@@ -57,5 +37,28 @@ export interface Organization {
   contractSignedAt: string | null;
   createdAt: string;
   logo?: string;
-  address?: Address;
+  address?: OrganizationAddress;
+}
+
+interface UserLog {
+  id: string;
+  date: string;
+  action: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: "admin" | "seller";
+  status: "active" | "inactive" | "pending";
+  createdAt: string;
+  lastAccess: string;
+  permissions: {
+    [key: string]: boolean;
+  };
+  logs: UserLog[];
+  organization: Organization;
+  avatar: string;
 }

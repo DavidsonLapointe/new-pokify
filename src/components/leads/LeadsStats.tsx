@@ -24,7 +24,7 @@ export const LeadsStats = ({ total, active, pending }: LeadsStatsProps) => {
         value={active}
         icon={CheckCircle2}
         color="text-green-500"
-        tooltip="Total de leads que possuem pelo menos um arquivo de áudio ou vídeo processado desde o início"
+        tooltip="Total de leads foram submetidos a pelo menos uma ferramenta de IA do sistema"
       />
       <StatCard
         title="Leads Pendentes (Geral)"
@@ -32,7 +32,7 @@ export const LeadsStats = ({ total, active, pending }: LeadsStatsProps) => {
         value={pending}
         icon={Clock}
         color="text-yellow-500"
-        tooltip="Total de leads que ainda não possuem nenhum arquivo de áudio ou vídeo processado desde o início"
+        tooltip="Total de leads que ainda não foram submetidos a nenhuma ferramenta de IA do sistema"
       />
     </div>
   );

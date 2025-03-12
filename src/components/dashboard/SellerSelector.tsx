@@ -39,10 +39,16 @@ export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }:
                   text-xs py-0.5 px-2
                   ${seller.status === "active" 
                     ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-100"}
+                    : seller.status === "inactive"
+                      ? "bg-gray-100 text-gray-800 hover:bg-gray-100"
+                      : "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"}
                 `}
               >
-                {seller.status === "active" ? "Ativo" : "Inativo"}
+                {seller.status === "active" 
+                  ? "Ativo" 
+                  : seller.status === "inactive" 
+                    ? "Inativo" 
+                    : "Pendente"}
               </Badge>
             </div>
           </SelectItem>
