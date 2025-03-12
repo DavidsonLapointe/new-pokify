@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -102,7 +103,7 @@ const AI_TOOLS = [
   },
   {
     id: "email_automation",
-    name: "Automação de Emails",
+    name: "Nutrição de leads (MKT)",
     icon: MessageCircle,
     description: "Crie sequências automatizadas de emails personalizados com IA.",
     isSubscribed: false,
