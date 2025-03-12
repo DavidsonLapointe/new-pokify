@@ -21,7 +21,7 @@ export type OrganizationPendingReason =
   | "contract_signature" 
   | "user_validation" 
   | "mensalidade_payment"
-  | "pro_rata_payment"   // Added this value
+  | "pro_rata_payment"   // Value is now included in the type
   | null;
 
 export interface Address {

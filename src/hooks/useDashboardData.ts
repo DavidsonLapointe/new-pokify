@@ -1,9 +1,7 @@
 
 import { useState } from "react";
 import { mockDashboardData } from "@/mocks/dashboardMocks";
-
-// Define the PerformanceMetric type
-type PerformanceMetric = 'joao' | 'maria';
+import { DailyPerformanceData, MonthlyPerformanceData, PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 
 export const useDashboardData = () => {
   // Estados para gerenciar as seleções de data e filtros
@@ -34,6 +32,21 @@ export const useDashboardData = () => {
     ...mockDashboardData.objectionExamples,
   };
 
+  // Ensure the performance data is correctly typed
+  const typedDailyPerformanceData: DailyPerformanceData[] = 
+    (mockDashboardData.dailyPerformanceData || []).map(item => ({
+      day: item.day || '',
+      joao: typeof item.joao === 'number' ? item.joao : 0,
+      maria: typeof item.maria === 'number' ? item.maria : 0
+    }));
+
+  const typedMonthlyPerformanceData: MonthlyPerformanceData[] = 
+    (mockDashboardData.monthlyPerformanceData || []).map(item => ({
+      month: item.month || '',
+      joao: typeof item.joao === 'number' ? item.joao : 0,
+      maria: typeof item.maria === 'number' ? item.maria : 0
+    }));
+
   // Retornamos os dados mockados e os estados de filtro
   return {
     // Estatísticas do mês
@@ -48,8 +61,8 @@ export const useDashboardData = () => {
     monthlyCallsData: mockDashboardData.monthlyCallsData,
     
     // Dados de desempenho
-    dailyPerformanceData: mockDashboardData.dailyPerformanceData,
-    monthlyPerformanceData: mockDashboardData.monthlyPerformanceData,
+    dailyPerformanceData: typedDailyPerformanceData,
+    monthlyPerformanceData: typedMonthlyPerformanceData,
     
     // Dados de objeções
     objectionsData: mockDashboardData.objectionsData || [],
