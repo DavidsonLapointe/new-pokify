@@ -4,6 +4,7 @@ import { validateCNPJ, formatCNPJ } from "@/utils/cnpjValidation";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "../schema";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
@@ -16,6 +17,26 @@ export const useCnpjVerification = ({
 }: UseCnpjVerificationProps) => {
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
   const [cnpjValidated, setCnpjValidated] = useState(false);
+
+  const checkExistingCnpj = async (cnpj: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('organizations')
+        .select('id')
+        .eq('cnpj', cnpj)
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Erro ao verificar CNPJ existente:", error);
+        return false; // Assume no duplicate in case of error
+      }
+      
+      return !!data; // Return true if organization with this CNPJ exists
+    } catch (error) {
+      console.error("Erro ao verificar CNPJ existente:", error);
+      return false;
+    }
+  };
 
   const handleCnpjNext = async () => {
     // Get the CNPJ value
@@ -34,9 +55,20 @@ export const useCnpjVerification = ({
       return;
     }
     
-    // Format is valid, so move to next step immediately
+    // Check if CNPJ already exists
     setIsCheckingCnpj(true);
     try {
+      const exists = await checkExistingCnpj(formattedCnpj);
+      
+      if (exists) {
+        form.setError("cnpj", { 
+          type: "manual", 
+          message: "Este CNPJ já está cadastrado no sistema." 
+        });
+        toast.error("Este CNPJ já está cadastrado no sistema.");
+        return;
+      }
+      
       console.log("Formato do CNPJ validado:", formattedCnpj);
       
       // Proceed to the next step
