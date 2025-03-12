@@ -10,6 +10,9 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
+        admin_email: values.adminEmail,
+        admin_name: values.adminName,
+        plan: values.plan,
         status: "pending" as OrganizationStatus,
       };
 
@@ -41,3 +44,4 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
   return { handleSubmit };
 };
+
