@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
 import { LeadTemperatureBadge } from "@/components/calls/LeadTemperatureBadge";
+import { cn } from "@/lib/utils";
 
 // Sample data for demonstration
 const SAMPLE_LEADS = [
@@ -172,6 +172,13 @@ const SalesProcess = () => {
     });
   };
 
+  const StageIcon = ({ stage }: { stage: string }) => {
+    const stageConfig = SALES_STAGES.find(s => s.id === stage);
+    if (!stageConfig?.icon) return null;
+    const Icon = stageConfig.icon;
+    return <Icon className="w-4 h-4 text-[#9b87f5]" />;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -225,14 +232,16 @@ const SalesProcess = () => {
                 {SALES_STAGES.map((stage, index) => (
                   <React.Fragment key={stage.id}>
                     <div 
-                      className={`flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all ${
+                      className={cn(
+                        "flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all",
                         selectedStage === stage.id ? "bg-[#F1F0FB] ring-2 ring-[#9b87f5]" : "hover:bg-gray-50"
-                      }`}
+                      )}
                       onClick={() => setSelectedStage(stage.id)}
                     >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                      <div className={cn(
+                        "w-12 h-12 rounded-full flex items-center justify-center",
                         selectedStage === stage.id ? "bg-[#9b87f5] text-white" : "bg-gray-100 text-gray-600"
-                      }`}>
+                      )}>
                         <stage.icon className="w-6 h-6" />
                       </div>
                       <span className="text-xs font-medium mt-2 text-center max-w-[80px]">{stage.name}</span>
@@ -250,9 +259,7 @@ const SalesProcess = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    {SALES_STAGES.find(s => s.id === selectedStage)?.icon && (
-                      <SALES_STAGES.find(s => s.id === selectedStage)?.icon className="w-5 h-5 text-[#9b87f5]" />
-                    )}
+                    <StageIcon stage={selectedStage} />
                     {SALES_STAGES.find(s => s.id === selectedStage)?.name}
                   </CardTitle>
                   <CardDescription>
