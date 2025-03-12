@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,6 +7,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from "@/components/ui/carousel";
 
 // Definição das ferramentas de IA disponíveis
 const AI_TOOLS = [
@@ -226,38 +232,52 @@ const SalesProcess = () => {
               </p>
             </div>
 
-            {/* AI Tools Module Grid */}
+            {/* AI Tools Module Carousel */}
             <div className="mt-8">
               <p className="text-sm text-gray-600 mb-6">
                 Escolha uma das ferramentas abaixo para otimizar seu processo de vendas:
               </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {AI_TOOLS.map(tool => (
-                  <button
-                    key={tool.id}
-                    onClick={() => setSelectedTool(tool.id)}
-                    className={cn(
-                      "flex flex-col items-center text-center p-5 rounded-lg border-2 transition-all duration-200 h-full",
-                      selectedTool === tool.id
-                        ? "border-[#9b87f5] bg-[#F1F0FB] shadow-md"
-                        : "border-gray-200 hover:border-[#9b87f5] hover:bg-[#F1F0FB]/50"
-                    )}
-                  >
-                    <div className="relative mb-4">
-                      {React.createElement(tool.icon, { 
-                        className: "w-12 h-12 text-[#9b87f5]" 
-                      })}
-                      {!tool.isSubscribed && (
-                        <div className="absolute -top-2 -right-2 bg-gray-100 rounded-full p-1">
-                          <Lock className="w-4 h-4 text-gray-500" />
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-medium text-lg mb-2">{tool.name}</h3>
-                    <p className="text-sm text-gray-600">{tool.description}</p>
-                  </button>
-                ))}
+              <div className="relative w-full mb-10">
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {AI_TOOLS.map(tool => (
+                      <CarouselItem key={tool.id} className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/5">
+                        <button
+                          onClick={() => setSelectedTool(tool.id)}
+                          className={cn(
+                            "flex flex-col items-center text-center p-5 rounded-lg border-2 transition-all duration-200 h-full w-full",
+                            selectedTool === tool.id
+                              ? "border-[#9b87f5] bg-[#F1F0FB] shadow-md"
+                              : "border-gray-200 hover:border-[#9b87f5] hover:bg-[#F1F0FB]/50"
+                          )}
+                        >
+                          <div className="relative mb-4">
+                            {React.createElement(tool.icon, { 
+                              className: "w-12 h-12 text-[#9b87f5]" 
+                            })}
+                            {!tool.isSubscribed && (
+                              <div className="absolute -top-2 -right-2 bg-gray-100 rounded-full p-1">
+                                <Lock className="w-4 h-4 text-gray-500" />
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="font-medium text-lg mb-2">{tool.name}</h3>
+                        </button>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <div className="hidden md:block">
+                    <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
+                  </div>
+                </Carousel>
               </div>
               
               {/* Selected Tool Content */}
