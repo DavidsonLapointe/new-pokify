@@ -5,6 +5,18 @@ import { ptBR } from "date-fns/locale";
 
 export type PerformanceMetric = "leads" | "uploads" | "logins" | "joao" | "maria";
 
+export interface DailyPerformanceData {
+  day: string;
+  joao: number;
+  maria: number;
+}
+
+export interface MonthlyPerformanceData {
+  month: string;
+  joao: number;
+  maria: number;
+}
+
 export const usePerformanceData = () => {
   const [performanceDate, setPerformanceDate] = useState(() => new Date());
   const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>("joao");
@@ -25,7 +37,7 @@ export const usePerformanceData = () => {
     }
   };
 
-  const dailyPerformanceData = useMemo(() => {
+  const dailyPerformanceData: DailyPerformanceData[] = useMemo(() => {
     const monthStart = startOfMonth(performanceDate);
     const daysInMonth = endOfMonth(performanceDate).getDate();
     
@@ -39,7 +51,7 @@ export const usePerformanceData = () => {
     });
   }, [performanceDate, dailyMetric]);
 
-  const monthlyPerformanceData = useMemo(() => {
+  const monthlyPerformanceData: MonthlyPerformanceData[] = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 13 }).map((_, index) => {
       const date = subMonths(today, index);
