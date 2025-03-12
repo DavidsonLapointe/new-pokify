@@ -1,5 +1,5 @@
 
-import { Organization, OrganizationStatus, User } from '../types/organization-types';
+import { Organization, OrganizationStatus } from '../types/organization-types';
 import { generateMockUsers, setMockOrganizations } from './userMocks';
 import { generateRandomCNPJ } from './utils';
 
@@ -10,7 +10,10 @@ export const createMockOrganization = (
   userCount: number = 5
 ): Organization => {
   const id = `org-${Math.random().toString(36).substr(2, 9)}`;
-  const users = generateMockUsers(userCount, index);
+  const users = generateMockUsers(userCount, index).map(user => ({
+    ...user,
+    avatar: user.avatar || null
+  }));
   const now = new Date().toISOString();
 
   const mockPlans = [

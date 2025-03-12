@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Call } from "@/types/calls";
 import { User } from "@/types/user-types";
 import { Organization } from "@/types/organization-types";
+import { MonthStats } from "@/types/calls";
 
 const mockOrganization: Organization = {
   id: "1",
@@ -37,6 +37,16 @@ const mockOrganization: Organization = {
   adminEmail: "joao@empresa.com",
   contractSignedAt: null,
   createdAt: "2024-01-01T00:00:00.000Z",
+  logo: "",
+  address: {
+    logradouro: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
+    cep: ""
+  }
 };
 
 const mockLoggedUser: User = {
@@ -114,8 +124,9 @@ const OrganizationLeads = () => {
     }
   });
 
-  const monthStats = {
+  const monthStats: MonthStats = {
     total: currentCalls.length,
+    active: currentCalls.filter(call => call.status === "success").length,
     processed: currentCalls.filter(call => call.status === "success").length,
     failed: currentCalls.filter(call => call.status === "failed").length,
     pending: 0

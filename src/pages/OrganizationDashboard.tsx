@@ -12,6 +12,7 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useUser } from "@/contexts/UserContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 
 const OrganizationDashboard = () => {
   const { user, loading } = useUser(); // Adicionamos loading do contexto
@@ -135,8 +136,8 @@ const OrganizationDashboard = () => {
         <TabsContent value="calls" className="space-y-6">
           <CallsStats
             total={monthStats.total}
-            processed={monthStats.processed}
-            failed={monthStats.failed}
+            processed={monthStats.processed || 0}
+            failed={monthStats.failed || 0}
             subtitle="Total acumulado desde o início"
           />
           <div className="grid gap-6">
@@ -162,13 +163,13 @@ const OrganizationDashboard = () => {
           <div className="grid gap-6">
             <DailyPerformanceChart 
               data={dailyPerformanceData}
-              selectedMetric={dailyMetric}
-              onMetricChange={setDailyMetric}
+              selectedMetric={dailyMetric as PerformanceMetric}
+              onMetricChange={(metric) => setDailyMetric(metric as any)}
             />
             <MonthlyPerformanceChart 
               data={monthlyPerformanceData}
-              selectedMetric={monthlyMetric}
-              onMetricChange={setMonthlyMetric}
+              selectedMetric={monthlyMetric as PerformanceMetric}
+              onMetricChange={(metric) => setMonthlyMetric(metric as any)}
             />
           </div>
         </TabsContent>
@@ -177,7 +178,7 @@ const OrganizationDashboard = () => {
           <ObjectionsTabContent
             objectionsData={objectionsData}
             objectionTrendsData={objectionTrendsData}
-            objectionExamples={objectionExamples}
+            objectionExamples={objectionExamples as any}
             monthlyObjectionsDate={monthlyObjectionsDate}
             setMonthlyObjectionsDate={setMonthlyObjectionsDate}
             monthlyObjectionsSeller={monthlyObjectionsSeller}
@@ -190,7 +191,7 @@ const OrganizationDashboard = () => {
 
         <TabsContent value="suggestions" className="space-y-6">
           <SuggestionsTabContent
-            suggestions={suggestionsData}
+            suggestions={suggestionsData as any}
             monthlySuggestionsDate={monthlySuggestionsDate}
             setMonthlySuggestionsDate={setMonthlySuggestionsDate}
             monthlySuggestionsSeller={monthlySuggestionsSeller}

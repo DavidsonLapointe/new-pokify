@@ -3,12 +3,12 @@ import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, addDays, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export type PerformanceMetric = "leads" | "uploads" | "logins";
+export type PerformanceMetric = "leads" | "uploads" | "logins" | "joao" | "maria";
 
 export const usePerformanceData = () => {
   const [performanceDate, setPerformanceDate] = useState(() => new Date());
-  const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>("leads");
-  const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>("leads");
+  const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>("joao");
+  const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>("joao");
 
   const getRandomValue = (metric: PerformanceMetric, isMonthly: boolean) => {
     switch (metric) {
@@ -18,8 +18,10 @@ export const usePerformanceData = () => {
         return isMonthly ? Math.floor(Math.random() * 40) + 15 : Math.floor(Math.random() * 4) + 1;
       case "logins":
         return isMonthly ? Math.floor(Math.random() * 100) + 30 : Math.floor(Math.random() * 8) + 3;
+      case "joao":
+      case "maria":
       default:
-        return 0;
+        return isMonthly ? Math.floor(Math.random() * 50) + 10 : Math.floor(Math.random() * 5) + 1;
     }
   };
 
@@ -31,8 +33,8 @@ export const usePerformanceData = () => {
       const date = addDays(monthStart, index);
       return {
         day: format(date, 'dd/MM'),
-        joao: getRandomValue(dailyMetric, false),
-        maria: getRandomValue(dailyMetric, false),
+        joao: getRandomValue("joao", false),
+        maria: getRandomValue("maria", false),
       };
     });
   }, [performanceDate, dailyMetric]);
@@ -43,8 +45,8 @@ export const usePerformanceData = () => {
       const date = subMonths(today, index);
       return {
         month: format(date, 'MMM/yy', { locale: ptBR }),
-        joao: getRandomValue(monthlyMetric, true),
-        maria: getRandomValue(monthlyMetric, true),
+        joao: getRandomValue("joao", true),
+        maria: getRandomValue("maria", true),
       };
     }).reverse();
   }, [monthlyMetric]);

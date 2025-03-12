@@ -55,8 +55,8 @@ export const LeadsPageHeader = ({
       ...user,
       logs: user.logs.map(log => ({
         id: log.id,
-        date: log.timestamp,
-        action: log.activity,
+        date: log.date,
+        action: log.action,
       }))
     })) as User[];
 

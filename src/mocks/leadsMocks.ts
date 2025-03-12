@@ -1,5 +1,5 @@
 
-import { Lead } from '@/types/leads';
+import { Lead } from '@/types';
 import { randomNumber, randomDate } from './utils';
 
 // Gera leads mockados
@@ -8,6 +8,7 @@ export const generateMockLeads = (count: number): Lead[] => {
   
   for (let i = 0; i < count; i++) {
     const firstName = ['João', 'Maria', 'Pedro', 'Ana', 'Carlos'][randomNumber(0, 4)];
+    const statuses: ("pending" | "contacted" | "failed")[] = ["pending", "contacted", "failed"];
     
     leads.push({
       id: `lead-${Math.random().toString(36).substr(2, 9)}`,
@@ -17,7 +18,7 @@ export const generateMockLeads = (count: number): Lead[] => {
       contactValue: Math.random() > 0.5 
         ? `(${randomNumber(11, 99)}) ${randomNumber(91000, 99999)}-${randomNumber(1000, 9999)}`
         : `contato${randomNumber(1, 1000)}@gmail.com`,
-      status: ["pending", "contacted", "failed"][randomNumber(0, 2)],
+      status: statuses[randomNumber(0, 2)],
       createdAt: randomDate(new Date(Date.now() - 180 * 24 * 60 * 60 * 1000)).toISOString(),
       callCount: randomNumber(0, 5),
       calls: Array.from({ length: randomNumber(0, 3) }, (_, j) => ({

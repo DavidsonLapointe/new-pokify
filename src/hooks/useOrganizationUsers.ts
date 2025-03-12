@@ -26,13 +26,32 @@ export const useOrganizationUsers = (organizationId: string | undefined) => {
         const organization = mockOrganizations.find(org => org.id === organizationId);
         
         if (organization) {
-          setUsers(organization.users);
-          console.log("Usuários mockados carregados:", organization.users);
+          // Ensure users are properly typed as Organization.User
+          const orgUsers = organization.users.map(user => ({
+            ...user,
+            avatar: user.avatar || null,
+            logs: user.logs.map(log => ({
+              id: log.id,
+              date: log.date,
+              action: log.action
+            }))
+          }));
+          setUsers(orgUsers);
+          console.log("Usuários mockados carregados:", orgUsers);
         } else {
           // Se não encontrar a organização específica, usa a primeira
           const firstOrg = mockOrganizations[0];
-          setUsers(firstOrg.users);
-          console.log("Organização não encontrada, usando primeira:", firstOrg.users);
+          const firstOrgUsers = firstOrg.users.map(user => ({
+            ...user,
+            avatar: user.avatar || null,
+            logs: user.logs.map(log => ({
+              id: log.id,
+              date: log.date,
+              action: log.action
+            }))
+          }));
+          setUsers(firstOrgUsers);
+          console.log("Organização não encontrada, usando primeira:", firstOrgUsers);
         }
         
         setLoading(false);
