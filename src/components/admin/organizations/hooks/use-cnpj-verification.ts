@@ -36,38 +36,10 @@ export const useCnpjVerification = ({
       return;
     }
     
-    // Check if CNPJ already exists in the database
+    // We'll skip checking if the CNPJ exists in the database
     setIsCheckingCnpj(true);
     try {
-      console.log("Verifying CNPJ:", formattedCnpj);
-      const { exists, data, error } = await checkExistingOrganization(formattedCnpj);
-      console.log("Verification result:", { exists, data, error });
-      
-      if (error) {
-        console.error("Error checking CNPJ:", error);
-        toast({
-          title: "Erro ao verificar CNPJ",
-          description: "Ocorreu um erro ao verificar o CNPJ. Tente novamente.",
-          variant: "destructive",
-        });
-        setIsCheckingCnpj(false);
-        return;
-      }
-      
-      if (exists && data) {
-        const companyName = data.name || "Empresa existente";
-        form.setError("cnpj", { 
-          type: "manual", 
-          message: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".` 
-        });
-        setIsCheckingCnpj(false);
-        toast({
-          title: "CNPJ já cadastrado",
-          description: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".`,
-          variant: "destructive",
-        });
-        return;
-      }
+      console.log("Verificando formato do CNPJ:", formattedCnpj);
       
       // If everything is valid, proceed to the next step
       setCnpjValidated(true);

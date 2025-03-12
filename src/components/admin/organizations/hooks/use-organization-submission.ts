@@ -7,25 +7,6 @@ import { toast } from "sonner";
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
-      // First check if an organization with this CNPJ already exists
-      const { data: existingOrg, error: checkError } = await supabase
-        .from('organizations')
-        .select('id, name')
-        .eq('cnpj', values.cnpj)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error("❌ Erro ao verificar existência da organização:", checkError);
-        toast.error("Erro ao verificar se CNPJ já está cadastrado");
-        throw checkError;
-      }
-
-      if (existingOrg) {
-        console.error("❌ Organização com este CNPJ já existe:", existingOrg);
-        toast.error(`CNPJ já cadastrado para empresa "${existingOrg.name || 'existente'}"`);
-        return; // Return early without throwing to prevent form reset
-      }
-
       // Dados mínimos necessários para criar uma organização
       const orgData = {
         name: values.razaoSocial,
@@ -41,7 +22,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
 
-      // Now we're sure this CNPJ doesn't exist, proceed with insert
+      // Insert organization without checking for existing CNPJ
       const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
         .insert(orgData)
