@@ -26,15 +26,14 @@ export const CreateOrganizationDialog = ({
   onSuccess = () => {}
 }: CreateOrganizationDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
+  
   const { form, onSubmit, checkExistingOrganization } = useOrganizationForm(() => {
     setIsSubmitting(false);
     onOpenChange(false);
     onSuccess();
   });
 
-  const [step, setStep] = useState(1);
-
-  // Handle CNPJ verification with the custom hook
   const { 
     isCheckingCnpj, 
     cnpjValidated, 
@@ -58,20 +57,17 @@ export const CreateOrganizationDialog = ({
   // Custom submit handler with loading state
   const handleSubmit = async (values: any) => {
     try {
-      console.log("🔄 Iniciando submissão do formulário de organização");
       setIsSubmitting(true);
-      // Utilize o onSubmit original do hook
       await onSubmit(values);
     } catch (error) {
-      console.error("❌ Erro na submissão do formulário:", error);
-      toast.error("Erro ao processar o formulário, tente novamente.");
-      setIsSubmitting(false);
+      console.error("Error submitting form:", error);
+      setIsSubmitting(false); // Reset loading state on error
+      toast.error("Erro ao criar empresa. Por favor, tente novamente.");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={(newState) => {
-      // Impedir fechamento durante submissão
       if (isSubmitting && !newState) {
         toast.error("Por favor, aguarde enquanto processamos sua solicitação.");
         return;

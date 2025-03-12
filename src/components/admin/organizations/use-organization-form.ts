@@ -2,11 +2,8 @@
 import { useOrganizationFormInit } from "./hooks/use-organization-form-init";
 import { useOrganizationSubmission } from "./hooks/use-organization-submission";
 import { checkExistingOrganization } from "./utils/cnpj-verification-utils";
-import { CreateOrganizationFormData } from "./schema";
+import { type CreateOrganizationFormData } from "./schema";
 
-/**
- * Main hook that combines all organization form functionality
- */
 export const useOrganizationForm = (onSuccess: () => void) => {
   const { form } = useOrganizationFormInit();
   const { handleSubmit } = useOrganizationSubmission(onSuccess);
@@ -19,8 +16,7 @@ export const useOrganizationForm = (onSuccess: () => void) => {
       form.reset();
     } catch (error) {
       console.error("Error in form submission:", error);
-      // Error will be handled by the UI component that called this function
-      throw error; // Re-throw to allow the calling component to handle it
+      throw error; // Re-throw to allow the UI component to handle it
     }
   };
 
