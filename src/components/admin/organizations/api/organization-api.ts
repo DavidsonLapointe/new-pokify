@@ -1,8 +1,8 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
 import { Organization } from "@/types/organization-types";
-import { createProRataTitle } from "@/services/financial/organizationTitleService";
-import { addDays, endOfMonth, format, startOfMonth } from "date-fns";
+import { addDays, endOfMonth, format, startOfMonth, differenceInDays } from "date-fns";
 
 /**
  * Creates a new organization in the database
@@ -81,6 +81,41 @@ const calculateProRataValue = (planPrice: number): number => {
   return proRata;
 };
 
+// Instead of using createProRataTitle from organizationTitleService, let's implement it directly
+/**
+ * Creates a pro-rata financial title for a new organization
+ */
+const createProRataTitle = async (params: {
+  organizationId: string;
+  dueDate: string;
+  value: number;
+}) => {
+  try {
+    const { data, error } = await supabase
+      .from('financial_titles')
+      .insert({
+        organization_id: params.organizationId,
+        type: 'pro_rata',
+        value: params.value,
+        due_date: params.dueDate,
+        status: 'pending',
+        reference_month: format(new Date(), 'yyyy-MM')
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Erro ao criar título pro-rata:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro inesperado ao criar título pro-rata:", error);
+    return null;
+  }
+};
+
 /**
  * Handles the creation of a pro-rata financial title for a new organization
  */
@@ -111,8 +146,6 @@ export const handleProRataCreation = async (organization: Organization) => {
     return null;
   }
 };
-
-import { differenceInDays } from 'date-fns';
 
 /**
  * Sends an onboarding email to the organization's admin

@@ -20,6 +20,14 @@ export const useFormErrorHandlers = () => {
       variant: "destructive",
     });
   };
+  
+  const handleDuplicateOrganizationError = (error: any) => {
+    toast({
+      title: "Organização duplicada",
+      description: error.message || "Já existe uma organização com este CNPJ.",
+      variant: "destructive",
+    });
+  };
 
   const handleOrganizationCreationError = (error: PostgrestError) => {
     console.error("Erro ao criar organização:", error);
@@ -50,7 +58,7 @@ export const useFormErrorHandlers = () => {
     toast({
       title: "Empresa criada com sucesso, mas...",
       description: `Detectamos que o email ${domain} pode ter problemas de recebimento. Considere usar um Gmail ou outro provedor como alternativa.`,
-      variant: "destructive", // Changed from "warning" to "destructive" as "warning" is not a valid variant
+      variant: "destructive",
       duration: 8000,
     });
   };
@@ -84,6 +92,7 @@ export const useFormErrorHandlers = () => {
   return {
     handlePermissionError,
     handleCnpjExistsError,
+    handleDuplicateOrganizationError,
     handleOrganizationCreationError,
     handleEmailError,
     handleEmailProviderIssue,

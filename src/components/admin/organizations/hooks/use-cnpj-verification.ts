@@ -8,14 +8,13 @@ import { checkCnpjExists } from "../utils/cnpj-verification-utils";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
-  checkCnpjExists: (cnpj: string) => Promise<{exists: boolean, data?: any, error?: any}>;
   onCnpjVerified: () => void;
 }
 
 export const useCnpjVerification = ({ 
   form, 
   onCnpjVerified 
-}: Omit<UseCnpjVerificationProps, 'checkCnpjExists'>) => {
+}: UseCnpjVerificationProps) => {
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
   const [cnpjValidated, setCnpjValidated] = useState(false);
   const { toast } = useToast();
@@ -41,19 +40,18 @@ export const useCnpjVerification = ({
     setIsCheckingCnpj(true);
     try {
       console.log("Verificando CNPJ:", formattedCnpj);
-      const { exists, data } = await checkCnpjExists(formattedCnpj);
-      console.log("Resultado da verificação:", exists, data);
+      const isValid = await checkCnpjExists(formattedCnpj);
+      console.log("Resultado da verificação:", isValid);
       
-      if (exists && data) {
-        const companyName = data.name || "Empresa existente";
+      if (!isValid) {
         form.setError("cnpj", { 
           type: "manual", 
-          message: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".` 
+          message: "Este CNPJ já está cadastrado no sistema ou é inválido." 
         });
         setIsCheckingCnpj(false);
         toast({
           title: "CNPJ já cadastrado",
-          description: `Este CNPJ já está cadastrado no sistema para a empresa "${companyName}".`,
+          description: "Este CNPJ já está cadastrado no sistema ou é inválido.",
           variant: "destructive",
         });
         return;

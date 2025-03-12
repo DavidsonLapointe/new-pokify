@@ -19,13 +19,32 @@ export const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
       return false;
     }
     
+    // Check if the CNPJ already exists in our database
+    const { data, error } = await supabase
+      .from('organizations')
+      .select('id, name')
+      .eq('cnpj', cleanedCnpj)
+      .limit(1);
+      
+    if (error) {
+      console.error("Erro ao verificar CNPJ existente:", error);
+      toast.error("Erro ao verificar CNPJ. Tente novamente.");
+      return false;
+    }
+    
+    if (data && data.length > 0) {
+      console.warn(`CNPJ ${cnpj} já existe para a organização "${data[0].name}"`);
+      toast.error(`CNPJ ${cnpj} já cadastrado para a empresa "${data[0].name}"`);
+      return false;
+    }
+    
     // Mock API request
     console.log(`Verificando CNPJ ${cleanedCnpj} (simulado)`);
     
     // Simulate a delay for API call 
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // For demonstration purposes, consider the CNPJ valid
+    // For demonstration purposes, consider the CNPJ valid if it doesn't exist in our database
     return true;
   } catch (error) {
     console.error("Erro ao verificar CNPJ:", error);

@@ -20,8 +20,9 @@ export type OrganizationStatus = "active" | "pending" | "inactive";
 
 export type OrganizationPendingReason = 
   | "contract_signature" 
-  | "pro_rata_payment" 
   | "user_validation" 
+  | "mensalidade_payment"
+  | "pro_rata_payment"  // Added this missing type to fix the error
   | null;
 
 export interface Address {
