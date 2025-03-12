@@ -1,3 +1,4 @@
+
 import { Organization, OrganizationStatus } from '../types/organization-types';
 import { generateMockUsers, setMockOrganizations } from './userMocks';
 import { generateRandomCNPJ } from './utils';
@@ -9,7 +10,10 @@ export const createMockOrganization = (
   userCount: number = 5
 ): Organization => {
   const id = `org-${Math.random().toString(36).substr(2, 9)}`;
-  const users = generateMockUsers(userCount, index).map(user => ({
+  // Para a primeira organização, sempre garantir 23 usuários
+  const actualUserCount = index === 0 ? 23 : userCount;
+  
+  const users = generateMockUsers(actualUserCount, index).map(user => ({
     ...user,
     avatar: user.avatar || null,
     lastAccess: user.lastAccess || new Date().toISOString() // Ensure lastAccess is always set
