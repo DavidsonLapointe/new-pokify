@@ -3,7 +3,7 @@ import { useState } from "react";
 import { validateCNPJ, formatCNPJ } from "@/utils/cnpjValidation";
 import { UseFormReturn } from "react-hook-form";
 import { CreateOrganizationFormData } from "../schema";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface UseCnpjVerificationProps {
   form: UseFormReturn<CreateOrganizationFormData>;
@@ -16,7 +16,6 @@ export const useCnpjVerification = ({
 }: UseCnpjVerificationProps) => {
   const [isCheckingCnpj, setIsCheckingCnpj] = useState(false);
   const [cnpjValidated, setCnpjValidated] = useState(false);
-  const { toast } = useToast();
 
   const handleCnpjNext = async () => {
     // Get the CNPJ value
