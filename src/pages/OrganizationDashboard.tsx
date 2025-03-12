@@ -83,24 +83,19 @@ const OrganizationDashboard = () => {
     return null;
   }
 
-  // Define as tabs disponíveis e suas permissões necessárias
+  // Define as tabs disponíveis
   const availableTabs = [
-    { id: "leads", label: "Leads", permission: "dashboard.leads" },
-    { id: "calls", label: "Uploads", permission: "dashboard.uploads" },
-    { id: "sellers", label: "Performance Vendedores", permission: "dashboard.performance" },
-    { id: "objections", label: "Objeções", permission: "dashboard.objections" },
-    { id: "suggestions", label: "Sugestões", permission: "dashboard.suggestions" },
-    { id: "sellers-info", label: "Vendedores", permission: "dashboard.sellers" }
+    { id: "leads", label: "Leads" },
+    { id: "calls", label: "Uploads" },
+    { id: "sellers", label: "Performance Vendedores" },
+    { id: "objections", label: "Objeções" },
+    { id: "suggestions", label: "Sugestões" },
+    { id: "sellers-info", label: "Vendedores" }
   ];
 
-  // Filtra as tabs baseado nas permissões do usuário
-  const userPermissions = user.permissions || {};
-  const userTabs = availableTabs.filter(tab => 
-    !!userPermissions[tab.permission]
-  );
-
-  // Define a primeira tab disponível como padrão
-  const defaultTab = userTabs[0]?.id || "leads";
+  // Mostra todas as tabs em desenvolvimento
+  const userTabs = availableTabs;
+  const defaultTab = "leads";
 
   return (
     <div className="space-y-6">
@@ -120,105 +115,93 @@ const OrganizationDashboard = () => {
           ))}
         </TabsList>
         
-        {!!userPermissions["dashboard.leads"] && (
-          <TabsContent value="leads">
-            <LeadsTabContent
-              monthStats={monthStats}
-              monthlyLeadsData={monthlyLeadsData}
-              dailyLeadsData={dailyLeadsData}
-              monthlyLeadsDate={monthlyLeadsDate}
-              setMonthlyLeadsDate={setMonthlyLeadsDate}
-              dailyLeadsDate={dailyLeadsDate}
-              setDailyLeadsDate={setDailyLeadsDate}
-              monthlyLeadsSeller={monthlyLeadsSeller}
-              setMonthlyLeadsSeller={setMonthlyLeadsSeller}
-              dailyLeadsSeller={dailyLeadsSeller}
-              setDailyLeadsSeller={setDailyLeadsSeller}
+        <TabsContent value="leads">
+          <LeadsTabContent
+            monthStats={monthStats}
+            monthlyLeadsData={monthlyLeadsData}
+            dailyLeadsData={dailyLeadsData}
+            monthlyLeadsDate={monthlyLeadsDate}
+            setMonthlyLeadsDate={setMonthlyLeadsDate}
+            dailyLeadsDate={dailyLeadsDate}
+            setDailyLeadsDate={setDailyLeadsDate}
+            monthlyLeadsSeller={monthlyLeadsSeller}
+            setMonthlyLeadsSeller={setMonthlyLeadsSeller}
+            dailyLeadsSeller={dailyLeadsSeller}
+            setDailyLeadsSeller={setDailyLeadsSeller}
+            sellers={[]} // TODO: Implementar integração com a API
+          />
+        </TabsContent>
+
+        <TabsContent value="calls" className="space-y-6">
+          <CallsStats
+            total={monthStats.total}
+            processed={monthStats.processed}
+            failed={monthStats.failed}
+            subtitle="Total acumulado desde o início"
+          />
+          <div className="grid gap-6">
+            <DailyCallsChart 
+              data={monthlyCallsData}
+              isMonthly={true}
+              selectedSeller={monthlyCallsSeller}
+              onSellerChange={setMonthlyCallsSeller}
               sellers={[]} // TODO: Implementar integração com a API
             />
-          </TabsContent>
-        )}
-
-        {!!userPermissions["dashboard.uploads"] && (
-          <TabsContent value="calls" className="space-y-6">
-            <CallsStats
-              total={monthStats.total}
-              processed={monthStats.processed}
-              failed={monthStats.failed}
-              subtitle="Total acumulado desde o início"
-            />
-            <div className="grid gap-6">
-              <DailyCallsChart 
-                data={monthlyCallsData}
-                isMonthly={true}
-                selectedSeller={monthlyCallsSeller}
-                onSellerChange={setMonthlyCallsSeller}
-                sellers={[]} // TODO: Implementar integração com a API
-              />
-              <DailyCallsChart 
-                data={dailyCallsData}
-                selectedDate={callsDate}
-                onDateChange={setCallsDate}
-                selectedSeller={dailyCallsSeller}
-                onSellerChange={setDailyCallsSeller}
-                sellers={[]} // TODO: Implementar integração com a API
-              />
-            </div>
-          </TabsContent>
-        )}
-
-        {!!userPermissions["dashboard.performance"] && (
-          <TabsContent value="sellers" className="space-y-6">
-            <div className="grid gap-6">
-              <DailyPerformanceChart 
-                data={dailyPerformanceData}
-                selectedMetric={dailyMetric}
-                onMetricChange={setDailyMetric}
-              />
-              <MonthlyPerformanceChart 
-                data={monthlyPerformanceData}
-                selectedMetric={monthlyMetric}
-                onMetricChange={setMonthlyMetric}
-              />
-            </div>
-          </TabsContent>
-        )}
-
-        {!!userPermissions["dashboard.objections"] && (
-          <TabsContent value="objections" className="space-y-6">
-            <ObjectionsTabContent
-              objectionsData={objectionsData}
-              objectionTrendsData={objectionTrendsData}
-              objectionExamples={objectionExamples}
-              monthlyObjectionsDate={monthlyObjectionsDate}
-              setMonthlyObjectionsDate={setMonthlyObjectionsDate}
-              monthlyObjectionsSeller={monthlyObjectionsSeller}
-              setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
-              objectionTrendsSeller={objectionTrendsSeller}
-              setObjectionTrendsSeller={setObjectionTrendsSeller}
+            <DailyCallsChart 
+              data={dailyCallsData}
+              selectedDate={callsDate}
+              onDateChange={setCallsDate}
+              selectedSeller={dailyCallsSeller}
+              onSellerChange={setDailyCallsSeller}
               sellers={[]} // TODO: Implementar integração com a API
             />
-          </TabsContent>
-        )}
+          </div>
+        </TabsContent>
 
-        {!!userPermissions["dashboard.suggestions"] && (
-          <TabsContent value="suggestions" className="space-y-6">
-            <SuggestionsTabContent
-              suggestions={suggestionsData}
-              monthlySuggestionsDate={monthlySuggestionsDate}
-              setMonthlySuggestionsDate={setMonthlySuggestionsDate}
-              monthlySuggestionsSeller={monthlySuggestionsSeller}
-              setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-              sellers={[]} // TODO: Implementar integração com a API
+        <TabsContent value="sellers" className="space-y-6">
+          <div className="grid gap-6">
+            <DailyPerformanceChart 
+              data={dailyPerformanceData}
+              selectedMetric={dailyMetric}
+              onMetricChange={setDailyMetric}
             />
-          </TabsContent>
-        )}
+            <MonthlyPerformanceChart 
+              data={monthlyPerformanceData}
+              selectedMetric={monthlyMetric}
+              onMetricChange={setMonthlyMetric}
+            />
+          </div>
+        </TabsContent>
 
-        {!!userPermissions["dashboard.sellers"] && (
-          <TabsContent value="sellers-info">
-            <SellersTabContent sellers={[]} />
-          </TabsContent>
-        )}
+        <TabsContent value="objections" className="space-y-6">
+          <ObjectionsTabContent
+            objectionsData={objectionsData}
+            objectionTrendsData={objectionTrendsData}
+            objectionExamples={objectionExamples}
+            monthlyObjectionsDate={monthlyObjectionsDate}
+            setMonthlyObjectionsDate={setMonthlyObjectionsDate}
+            monthlyObjectionsSeller={monthlyObjectionsSeller}
+            setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
+            objectionTrendsSeller={objectionTrendsSeller}
+            setObjectionTrendsSeller={setObjectionTrendsSeller}
+            sellers={[]} // TODO: Implementar integração com a API
+          />
+        </TabsContent>
+
+        <TabsContent value="suggestions" className="space-y-6">
+          <SuggestionsTabContent
+            suggestions={suggestionsData}
+            monthlySuggestionsDate={monthlySuggestionsDate}
+            setMonthlySuggestionsDate={setMonthlySuggestionsDate}
+            monthlySuggestionsSeller={monthlySuggestionsSeller}
+            setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
+            sellers={[]} // TODO: Implementar integração com a API
+          />
+        </TabsContent>
+
+        <TabsContent value="sellers-info">
+          <SellersTabContent sellers={[]} />
+        </TabsContent>
       </Tabs>
     </div>
   );

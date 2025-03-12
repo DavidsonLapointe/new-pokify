@@ -67,7 +67,7 @@ export const useMenuItems = (user: User) => {
   ];
 
   useEffect(() => {
-    // In development mode, show all menu items regardless of permissions
+    // Always show all menu items for development
     console.log('Development mode: Showing all menu items');
     setMenuItems(allMenuItems);
   }, [user]);

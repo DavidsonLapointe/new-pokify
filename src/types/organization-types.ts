@@ -22,7 +22,7 @@ export type OrganizationPendingReason =
   | "contract_signature" 
   | "user_validation" 
   | "mensalidade_payment"
-  | "pro_rata_payment" // This was causing the error, now it's added to the type
+  | "pro_rata_payment" 
   | null;
 
 export interface Address {
