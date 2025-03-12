@@ -22,26 +22,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("📝 Tentando criar organização com dados:", JSON.stringify(orgData, null, 2));
 
-      // First check if an organization with this CNPJ already exists
-      const { data: existingOrg, error: checkError } = await supabase
-        .from('organizations')
-        .select('id, name')
-        .eq('cnpj', values.cnpj)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error("❌ Erro ao verificar existência da organização:", checkError);
-        toast.error("Erro ao verificar se CNPJ já está cadastrado");
-        throw checkError;
-      }
-
-      if (existingOrg) {
-        console.error("❌ Organização com este CNPJ já existe:", existingOrg);
-        toast.error(`CNPJ já cadastrado para empresa "${existingOrg.name}"`);
-        throw new Error(`CNPJ já cadastrado para empresa "${existingOrg.name}"`);
-      }
-
-      // If no existing organization, proceed with insert
+      // Insert with ON CONFLICT handling
       const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
         .insert(orgData)
@@ -50,6 +31,13 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       if (insertError) {
         console.error("❌ Erro ao inserir organização:", insertError);
+        
+        // Check if it's a unique constraint violation
+        if (insertError.code === '23505') {
+          toast.error("CNPJ já cadastrado para outra empresa");
+          return;
+        }
+        
         toast.error("Erro ao criar organização: " + insertError.message);
         throw insertError;
       }
