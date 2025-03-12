@@ -5,96 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Building2, Users, Phone, ChartBar, List, SearchIcon, PhoneOutgoing, 
-  Calendar, User, FileBarChart, XCircle, CheckCircle2, ArrowRight, PlusCircle,
-  MoreHorizontal
+  Calendar, FileBarChart, XCircle, CheckCircle2, ArrowRight,
+  Video, MessageCircle, ShieldCheck, Lock, HeadphonesIcon, UserCheck
 } from "lucide-react";
-import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
-import { LeadTemperatureBadge } from "@/components/calls/LeadTemperatureBadge";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
-// Sample data for demonstration
-const SAMPLE_LEADS = [
-  {
-    id: "1",
-    name: "João Silva",
-    company: "ABC Tech",
-    stage: "lead_generation",
-    status: "active",
-    temperature: "hot",
-    lastActivity: "2023-06-15T10:30:00",
-    phone: "(11) 98765-4321",
-    email: "joao.silva@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "hot", date: "2023-06-15T10:30:00" }]
-  },
-  {
-    id: "2",
-    name: "Maria Oliveira",
-    company: "XYZ Solutions",
-    stage: "inbound_prospecting",
-    status: "active",
-    temperature: "warm",
-    lastActivity: "2023-06-14T14:45:00",
-    phone: "(11) 91234-5678",
-    email: "maria.oliveira@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "warm", date: "2023-06-14T14:45:00" }]
-  },
-  {
-    id: "3",
-    name: "Carlos Mendes",
-    company: "GlobalTech",
-    stage: "qualification_call",
-    status: "pending",
-    temperature: "cold",
-    lastActivity: "2023-06-13T09:15:00",
-    phone: "(11) 95555-4444",
-    email: "carlos.mendes@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "cold", date: "2023-06-13T09:15:00" }]
-  },
-  {
-    id: "4",
-    name: "Ana Castro",
-    company: "Inovação Ltda",
-    stage: "qualification_analysis",
-    status: "active",
-    temperature: "warm",
-    lastActivity: "2023-06-12T16:20:00",
-    phone: "(11) 97777-8888",
-    email: "ana.castro@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "warm", date: "2023-06-12T16:20:00" }]
-  },
-  {
-    id: "5",
-    name: "Roberto Almeida",
-    company: "RB Consulting",
-    stage: "closer_won",
-    status: "active",
-    temperature: "hot",
-    lastActivity: "2023-06-11T11:00:00",
-    phone: "(11) 93333-2222",
-    email: "roberto.almeida@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "hot", date: "2023-06-11T11:00:00" }]
-  },
-  {
-    id: "6",
-    name: "Lucia Ferreira",
-    company: "Ferreira Solutions",
-    stage: "lead_lost",
-    status: "pending",
-    temperature: "cold",
-    lastActivity: "2023-06-10T15:30:00",
-    phone: "(11) 94444-3333",
-    email: "lucia.ferreira@example.com",
-    hasProcessed: true,
-    calls: [{ temperature: "cold", date: "2023-06-10T15:30:00" }]
-  }
-];
-
-// Stage configuration with icons and descriptions
+// Configuração das etapas do processo de vendas
 const SALES_STAGES = [
   {
     id: "lead_generation",
@@ -154,31 +71,178 @@ const SALES_STAGES = [
   }
 ];
 
+// Definição das ferramentas de IA disponíveis
+const AI_TOOLS = [
+  {
+    id: "video_prospecting",
+    name: "Prospecção com Vídeo",
+    icon: Video,
+    description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
+    isSubscribed: true,
+    content: (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e 
+          automaticamente criar vídeos com seu avatar digital.
+        </p>
+        <div className="bg-gray-50 border rounded-md p-4">
+          <h4 className="font-medium mb-2">Como funciona:</h4>
+          <ol className="list-decimal ml-5 space-y-2 text-sm">
+            <li>Selecione o lead ou insira informações manualmente</li>
+            <li>A IA analisa o perfil e gera um roteiro personalizado</li>
+            <li>Escolha um avatar ou use sua própria imagem</li>
+            <li>O vídeo é gerado e pode ser enviado diretamente ao lead</li>
+          </ol>
+        </div>
+        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-4">
+          Criar novo vídeo
+        </Button>
+      </div>
+    )
+  },
+  {
+    id: "inbound_agent",
+    name: "Atendente Inbound",
+    icon: HeadphonesIcon,
+    description: "Automatize o atendimento inicial com um agente de IA para qualificação de leads inbound.",
+    isSubscribed: false,
+    content: (
+      <div className="space-y-4">
+        <div className="flex items-center justify-center h-52 bg-gray-50 border rounded-md">
+          <div className="text-center p-6">
+            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+            <h3 className="text-lg font-medium">Módulo não contratado</h3>
+            <p className="text-sm text-gray-500 mt-1">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#8a76e4]">
+              Saiba mais
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "call_qualification",
+    name: "Qualificação de Call",
+    icon: UserCheck,
+    description: "Analise automaticamente as calls com leads para identificar fit e próximos passos.",
+    isSubscribed: true,
+    content: (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Nossa IA analisa as gravações de chamadas com leads e extrai informações valiosas como objeções, nível de interesse e pontos 
+          a serem abordados em contatos futuros.
+        </p>
+        <div className="bg-gray-50 border rounded-md p-4 space-y-2">
+          <h4 className="font-medium">Benefícios:</h4>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            <li>Análise automática de sentimentos durante a call</li>
+            <li>Identificação de objeções e dúvidas frequentes</li>
+            <li>Sugestões de abordagem para o próximo contato</li>
+            <li>Resumo detalhado da conversa</li>
+          </ul>
+        </div>
+        <div className="flex space-x-3">
+          <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-4">
+            Analisar gravação
+          </Button>
+          <Button variant="outline" className="mt-4">
+            Ver análises anteriores
+          </Button>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "email_automation",
+    name: "Automação de Emails",
+    icon: MessageCircle,
+    description: "Crie sequências automatizadas de emails personalizados com IA.",
+    isSubscribed: false,
+    content: (
+      <div className="space-y-4">
+        <div className="flex items-center justify-center h-52 bg-gray-50 border rounded-md">
+          <div className="text-center p-6">
+            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+            <h3 className="text-lg font-medium">Módulo não contratado</h3>
+            <p className="text-sm text-gray-500 mt-1">Entre em contato com nosso time comercial para adicionar este módulo ao seu plano.</p>
+            <Button className="mt-4 bg-[#9b87f5] hover:bg-[#8a76e4]">
+              Saiba mais
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "objection_handler",
+    name: "Tratamento de Objeções",
+    icon: ShieldCheck,
+    description: "IA para sugerir respostas a objeções comuns durante o processo de vendas.",
+    isSubscribed: true,
+    content: (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Sistema inteligente que identifica objeções comuns durante o processo de vendas e sugere as melhores respostas 
+          baseadas em casos de sucesso anteriores.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <Card className="bg-gray-50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Objeções mais comuns</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs space-y-2">
+              <div className="flex justify-between">
+                <span>Preço alto</span>
+                <span className="font-medium">32%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Já tem fornecedor</span>
+                <span className="font-medium">28%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Não é prioridade</span>
+                <span className="font-medium">17%</span>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Taxa de conversão</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs space-y-2">
+              <div className="flex justify-between">
+                <span>Com IA</span>
+                <span className="font-medium text-green-600">68%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Sem IA</span>
+                <span className="font-medium">42%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Melhoria</span>
+                <span className="font-medium text-green-600">+26%</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Button className="bg-[#9b87f5] hover:bg-[#8a76e4] mt-2">
+          Consultar banco de objeções
+        </Button>
+      </div>
+    )
+  }
+];
+
 const SalesProcess = () => {
   const [selectedStage, setSelectedStage] = useState("all");
-  const [selectedLead, setSelectedLead] = useState<string | null>(null);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  const [selectedTool, setSelectedTool] = useState("video_prospecting");
 
   const renderStageIcon = (stage: string) => {
     const stageConfig = SALES_STAGES.find(s => s.id === stage);
     if (!stageConfig?.icon) return null;
     const Icon = stageConfig.icon;
     return <Icon className="w-4 h-4 text-[#9b87f5]" />;
-  };
-
-  // Group leads by stage for Kanban view
-  const getLeadsByStage = (stageId: string) => {
-    return SAMPLE_LEADS.filter(lead => lead.stage === stageId);
   };
 
   return (
@@ -200,18 +264,18 @@ const SalesProcess = () => {
       <aside className="w-64 bg-white fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 border-r border-gray-200">
         <nav className="flex flex-col h-full py-6 px-3">
           <div className="space-y-0.5">
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#9b87f5]">
+            <Link to="/dev/contracting" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-[#9b87f5]">
               <ChartBar className="w-4 h-4 mr-3 text-[#9b87f5]" />
               Dashboard
-            </a>
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] bg-[#F1F0FB] text-[#9b87f5]">
+            </Link>
+            <Link to="/dev/sales-process" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] bg-[#F1F0FB] text-[#9b87f5]">
               <Users className="w-4 h-4 mr-3 text-[#9b87f5]" />
               Processo de Vendas
-            </a>
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
+            </Link>
+            <Link to="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
               <Phone className="w-4 h-4 mr-3 text-gray-600" />
               Chamadas
-            </a>
+            </Link>
           </div>
         </nav>
       </aside>
@@ -223,7 +287,7 @@ const SalesProcess = () => {
             <div>
               <h1 className="text-3xl font-bold">Processo de Vendas</h1>
               <p className="text-muted-foreground">
-                Acompanhe a jornada de seus leads pelo funil de vendas
+                Ferramentas de IA para otimizar seu processo de vendas
               </p>
             </div>
 
@@ -282,195 +346,67 @@ const SalesProcess = () => {
               </Card>
             )}
 
-            {/* Kanban Board replacing the table */}
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setSelectedStage("all")}
-                  className={selectedStage === "all" ? "bg-[#F1F0FB] text-[#9b87f5]" : ""}
-                >
-                  Todos os Leads
-                </Button>
-                <Button variant="default" size="sm" className="bg-[#9b87f5] hover:bg-[#8a76e4]">
-                  <PlusCircle className="w-4 h-4 mr-2" />
-                  Novo Lead
-                </Button>
-              </div>
-
-              <div className="overflow-x-auto pb-6">
-                <div className="flex gap-4 min-w-max">
-                  {SALES_STAGES.map((stage) => (
-                    <div 
-                      key={stage.id}
-                      className="flex-shrink-0 w-72"
+            {/* AI Tools Tabs */}
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Ferramentas de IA</h2>
+              <p className="text-sm text-gray-600 mb-6">
+                Escolha uma das ferramentas abaixo para otimizar seu processo de vendas:
+              </p>
+              
+              <Tabs defaultValue={selectedTool} onValueChange={setSelectedTool} className="w-full">
+                <TabsList className="w-full justify-start overflow-auto">
+                  {AI_TOOLS.map(tool => (
+                    <TabsTrigger 
+                      key={tool.id} 
+                      value={tool.id}
+                      className="flex items-center gap-2"
                     >
-                      <div className="bg-gray-50 rounded-t-lg border border-gray-200 p-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {React.createElement(stage.icon, { className: "w-4 h-4 text-[#9b87f5]" })}
-                            <h3 className="font-medium text-sm">{stage.name}</h3>
-                          </div>
-                          <div className="bg-white text-xs font-semibold px-2 py-1 rounded-full text-gray-600">
-                            {getLeadsByStage(stage.id).length}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="min-h-[70vh] bg-gray-50 rounded-b-lg border-x border-b border-gray-200 p-2 space-y-2">
-                        {getLeadsByStage(stage.id).length === 0 ? (
-                          <div className="flex flex-col items-center justify-center h-24 border border-dashed border-gray-300 rounded-lg bg-gray-50">
-                            <p className="text-xs text-gray-500">Sem leads nesta etapa</p>
-                            <Button variant="ghost" size="sm" className="mt-2">
-                              <PlusCircle className="w-3 h-3 mr-1" />
-                              Adicionar lead
-                            </Button>
-                          </div>
-                        ) : (
-                          getLeadsByStage(stage.id).map(lead => (
-                            <Card 
-                              key={lead.id} 
-                              className={cn(
-                                "shadow-sm hover:shadow transition-all cursor-pointer",
-                                selectedLead === lead.id ? "ring-2 ring-[#9b87f5]" : ""
-                              )}
-                              onClick={() => setSelectedLead(lead.id === selectedLead ? null : lead.id)}
-                            >
-                              <CardContent className="p-3 space-y-2">
-                                <div className="flex justify-between items-start">
-                                  <h4 className="font-medium text-sm">{lead.name}</h4>
-                                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                                
-                                <div className="text-xs text-gray-500">{lead.company}</div>
-                                
-                                <div className="flex items-center justify-between gap-2">
-                                  <LeadStatusBadge status={lead.status as any} />
-                                  <LeadTemperatureBadge calls={lead.calls as any} hasProcessed={lead.hasProcessed} />
-                                </div>
-                                
-                                <div className="text-xs text-gray-500 mt-2">
-                                  Última atividade: {formatDate(lead.lastActivity)}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))
-                        )}
-                      </div>
-                    </div>
+                      {React.createElement(tool.icon, { className: "w-4 h-4" })}
+                      <span>{tool.name}</span>
+                      {!tool.isSubscribed && (
+                        <Lock className="w-3 h-3 text-gray-400" />
+                      )}
+                    </TabsTrigger>
                   ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Lead Details (when a lead is selected) */}
-            {selectedLead && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Detalhes do Lead</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="info">
-                    <TabsList className="mb-4">
-                      <TabsTrigger value="info">Informações</TabsTrigger>
-                      <TabsTrigger value="history">Histórico</TabsTrigger>
-                      <TabsTrigger value="analysis">Análise de IA</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="info">
-                      {(() => {
-                        const lead = SAMPLE_LEADS.find(l => l.id === selectedLead);
-                        if (!lead) return null;
-                        
-                        return (
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Nome</h3>
-                              <p>{lead.name}</p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Empresa</h3>
-                              <p>{lead.company}</p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                              <p>{lead.email}</p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Telefone</h3>
-                              <p>{lead.phone}</p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Etapa Atual</h3>
-                              <p className="flex items-center gap-2">
-                                {renderStageIcon(lead.stage)}
-                                {SALES_STAGES.find(s => s.id === lead.stage)?.name}
-                              </p>
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-medium text-gray-500">Última Atividade</h3>
-                              <p>{formatDate(lead.lastActivity)}</p>
-                            </div>
+                </TabsList>
+                
+                {AI_TOOLS.map(tool => (
+                  <TabsContent key={tool.id} value={tool.id} className="mt-6">
+                    <Card>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="flex items-center gap-2">
+                              {React.createElement(tool.icon, { className: "w-5 h-5 text-[#9b87f5]" })}
+                              {tool.name}
+                              {!tool.isSubscribed && (
+                                <Lock className="w-4 h-4 text-gray-400" />
+                              )}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                              {tool.description}
+                            </CardDescription>
                           </div>
-                        );
-                      })()}
-                    </TabsContent>
-                    
-                    <TabsContent value="history">
-                      <p className="text-sm text-gray-500 mb-4">Histórico de interações com o lead</p>
-                      <div className="space-y-4">
-                        <div className="border-l-2 border-[#9b87f5] pl-4 py-1">
-                          <p className="text-sm font-medium">Lead criado</p>
-                          <p className="text-xs text-gray-500">12/06/2023, 10:30</p>
+                          {tool.isSubscribed && (
+                            <div className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                              Ativo
+                            </div>
+                          )}
+                          {!tool.isSubscribed && (
+                            <div className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                              Não contratado
+                            </div>
+                          )}
                         </div>
-                        <div className="border-l-2 border-[#9b87f5] pl-4 py-1">
-                          <p className="text-sm font-medium">Email de apresentação enviado</p>
-                          <p className="text-xs text-gray-500">13/06/2023, 14:45</p>
-                        </div>
-                        <div className="border-l-2 border-[#9b87f5] pl-4 py-1">
-                          <p className="text-sm font-medium">Call de qualificação agendada</p>
-                          <p className="text-xs text-gray-500">14/06/2023, 09:15</p>
-                        </div>
-                        <div className="border-l-2 border-[#9b87f5] pl-4 py-1">
-                          <p className="text-sm font-medium">Call de qualificação realizada</p>
-                          <p className="text-xs text-gray-500">15/06/2023, 15:00</p>
-                        </div>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="analysis">
-                      <div className="bg-[#F1F0FB] p-4 rounded-md mb-4">
-                        <h3 className="text-sm font-semibold mb-2">Análise de Sentimento</h3>
-                        <p className="text-sm">Lead demonstrou interesse alto nos produtos de gestão financeira, mas tem preocupações com o prazo de implementação.</p>
-                      </div>
-                      
-                      <div className="bg-white p-4 rounded-md border mb-4">
-                        <h3 className="text-sm font-semibold mb-2">Pontos-chave da Conversa</h3>
-                        <ul className="text-sm list-disc pl-5 space-y-1">
-                          <li>Empresa está buscando solução para gestão financeira</li>
-                          <li>Orçamento aprovado para o próximo trimestre</li>
-                          <li>Preocupação com prazo de implementação (máximo 45 dias)</li>
-                          <li>Já utiliza outras soluções da concorrência</li>
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-white p-4 rounded-md border">
-                        <h3 className="text-sm font-semibold mb-2">Recomendações da IA</h3>
-                        <ul className="text-sm list-disc pl-5 space-y-1">
-                          <li>Enfatizar a rapidez de implementação em comparação com a concorrência</li>
-                          <li>Apresentar casos de sucesso semelhantes com implementação rápida</li>
-                          <li>Destacar integração com as ferramentas que já utilizam</li>
-                          <li>Preparar proposta comercial com opções de prazo escalonado</li>
-                        </ul>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            )}
+                      </CardHeader>
+                      <CardContent>
+                        {tool.content}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
           </div>
         </div>
       </main>
