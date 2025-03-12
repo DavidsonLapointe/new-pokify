@@ -9,7 +9,6 @@ import {
   UserCircle,
   CreditCard,
   Building,
-  Briefcase
 } from "lucide-react";
 import { User } from "@/types";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -60,12 +59,6 @@ export const useMenuItems = (user: User) => {
       label: "Minha Empresa",
       path: "/organization/company",
       permissionId: "company"
-    },
-    {
-      icon: Briefcase,
-      label: "Empresa Contratante",
-      path: "/organization/contracting",
-      permissionId: "dashboard" // Usando uma permissão existente para exemplo
     },
     {
       icon: UserCircle,

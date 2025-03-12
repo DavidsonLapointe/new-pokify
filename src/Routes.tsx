@@ -37,7 +37,6 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
-import ContractingCompanyDashboard from "./pages/ContractingCompanyDashboard";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -119,9 +118,11 @@ function AppRoutes() {
         <Route
           path="/organization"
           element={
-            <UserProvider>
-              <OrganizationLayout />
-            </UserProvider>
+            <ProtectedRoute>
+              <UserProvider>
+                <OrganizationLayout />
+              </UserProvider>
+            </ProtectedRoute>
           }
         >
           <Route path="" element={<Navigate to="dashboard" replace />} />
@@ -134,7 +135,6 @@ function AppRoutes() {
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="plan" element={<OrganizationPlan />} />
           <Route path="company" element={<OrganizationCompany />} />
-          <Route path="contracting" element={<ContractingCompanyDashboard />} />
         </Route>
 
         {/* Not Found */}
