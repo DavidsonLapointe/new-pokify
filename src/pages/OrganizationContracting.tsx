@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Users, Phone, ChartBar } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const OrganizationContracting = () => {
   return (
@@ -28,13 +29,13 @@ const OrganizationContracting = () => {
               <ChartBar className="w-4 h-4 mr-3 text-[#9b87f5]" />
               Dashboard
             </a>
+            <Link to="/dev/sales-process" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
+              <Users className="w-4 h-4 mr-3 text-gray-600" />
+              Processo de Vendas
+            </Link>
             <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
               <Phone className="w-4 h-4 mr-3 text-gray-600" />
               Chamadas
-            </a>
-            <a href="#" className="w-full flex items-center px-3 py-2 text-sm transition-colors rounded-md hover:bg-[#F1F0FB] text-gray-600">
-              <Users className="w-4 h-4 mr-3 text-gray-600" />
-              Usuários
             </a>
           </div>
         </nav>
@@ -96,6 +97,15 @@ const OrganizationContracting = () => {
                   </p>
                 </CardContent>
               </Card>
+            </div>
+
+            <div className="mt-6">
+              <Link to="/dev/sales-process">
+                <Button className="bg-[#9b87f5] hover:bg-[#8a76e4]">
+                  <Users className="w-4 h-4 mr-2" />
+                  Ver Processo de Vendas
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

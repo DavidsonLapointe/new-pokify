@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -37,8 +38,9 @@ import OrganizationPlan from "./pages/OrganizationPlan";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
 
-// New page import
+// New page imports
 import OrganizationContracting from "./pages/OrganizationContracting";
+import SalesProcess from "./pages/SalesProcess";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -92,8 +94,9 @@ function AppRoutes() {
         <Route path="/organization/setup" element={<OrganizationSetup />} />
         <Route path="/organization/setup/:setupToken" element={<OrganizationSetup />} />
 
-        {/* Development Route - Remove in production */}
+        {/* Development Routes - Remove in production */}
         <Route path="/dev/contracting" element={<OrganizationContracting />} />
+        <Route path="/dev/sales-process" element={<SalesProcess />} />
 
         {/* Admin Routes */}
         <Route
