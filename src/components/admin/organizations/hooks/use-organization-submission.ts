@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { type OrganizationStatus, type OrganizationPendingReason } from "@/types/organization-types";
 
-// Função para garantir que o status seja um dos valores permitidos
+// Function to ensure status is one of the allowed values
 const correctedStatus = (status: string): OrganizationStatus => {
   if (status === "active" || status === "pending" || status === "inactive") {
     return status as OrganizationStatus;
@@ -14,7 +14,7 @@ const correctedStatus = (status: string): OrganizationStatus => {
   return "pending";
 };
 
-// Função para garantir que pending_reason seja um dos valores permitidos
+// Function to ensure pending_reason is one of the allowed values
 const correctedPendingReason = (reason: string | null): OrganizationPendingReason => {
   if (reason === "contract_signature" || 
       reason === "mensalidade_payment" || 
@@ -27,21 +27,21 @@ const correctedPendingReason = (reason: string | null): OrganizationPendingReaso
 
 export const useOrganizationSubmission = (onSuccess: () => void) => {
   const { user } = useUser();
-  const errorHandlers = useFormErrorHandlers();
+  const { handlePermissionError, handleCnpjExistsError, handleOrganizationCreationError, showSuccessToast } = useFormErrorHandlers();
 
   const handleSubmit = async (values: CreateOrganizationFormData) => {
     try {
       console.log("Processando submissão de organização:", values);
       
-      // Verificar permissões do usuário
+      // Check user permissions
       if (!user || user.role !== "leadly_employee") {
-        console.error("Permissão negada: usuário não é funcionário Leadly");
-        toast.error("Acesso negado: Apenas funcionários Leadly podem criar organizações");
+        console.error("Permission denied: user is not a Leadly employee");
+        handlePermissionError();
         return;
       }
 
-      // Verificar se já existe organização com este CNPJ
-      console.log("Verificando CNPJ existente:", values.cnpj);
+      // Check if organization with this CNPJ already exists
+      console.log("Checking existing CNPJ:", values.cnpj);
       const { data: existingOrg, error: checkError } = await supabase
         .from('organizations')
         .select('id, cnpj')
@@ -49,18 +49,18 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         .maybeSingle();
 
       if (checkError) {
-        console.error("Erro ao verificar CNPJ existente:", checkError);
-        toast.error("Erro de configuração no banco de dados. Por favor, contate o suporte técnico.");
+        console.error("Error checking existing CNPJ:", checkError);
+        handleOrganizationCreationError(checkError);
         return;
       }
 
       if (existingOrg) {
-        console.log("CNPJ já existente:", existingOrg);
-        toast.error("CNPJ já cadastrado: Já existe uma empresa cadastrada com este CNPJ.");
+        console.log("CNPJ already exists:", existingOrg);
+        handleCnpjExistsError();
         return;
       }
 
-      // Criando objeto com os campos obrigatórios
+      // Create object with required fields
       const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
@@ -77,34 +77,26 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         registration_status: 'pending'
       };
 
-      console.log("Inserindo organização com dados:", orgData);
+      console.log("Inserting organization with data:", orgData);
       
-      // Inserção simplificada
-      const { data, error: insertError } = await supabase
+      // Simplified insertion
+      const { error: insertError } = await supabase
         .from('organizations')
         .insert([orgData]);
 
       if (insertError) {
-        console.error("Erro na inserção da organização:", insertError);
-        
-        if (insertError.code === '23505') {
-          toast.error("CNPJ já cadastrado: Já existe uma empresa cadastrada com este CNPJ.");
-        } else if (insertError.message && insertError.message.includes("violates row-level security policy")) {
-          toast.error("Erro de permissão: Você não tem permissão para criar organizações. Verifique suas credenciais.");
-        } else {
-          console.log("Detalhes do erro:", JSON.stringify(insertError));
-          toast.error("Erro ao criar empresa: " + insertError.message);
-        }
+        console.error("Error inserting organization:", insertError);
+        handleOrganizationCreationError(insertError);
         return;
       }
 
-      console.log("Organização criada com sucesso!");
-      toast.success("Empresa criada com sucesso! Um email será enviado para o administrador contendo todas as instruções de onboarding.");
+      console.log("Organization created successfully!");
+      showSuccessToast();
       onSuccess();
 
     } catch (error: any) {
-      console.error("Erro inesperado na criação de organização:", error);
-      toast.error("Erro ao criar empresa: " + (error.message || "Erro desconhecido"));
+      console.error("Unexpected error creating organization:", error);
+      handleOrganizationCreationError(error);
     }
   };
 
