@@ -67,6 +67,7 @@ const OrganizationDashboard = () => {
     setMonthlySuggestionsDate,
     monthlySuggestionsSeller,
     setMonthlySuggestionsSeller,
+    sellers
   } = useDashboardData();
 
   // Mostra loading enquanto carrega o usuário
@@ -128,7 +129,7 @@ const OrganizationDashboard = () => {
             setMonthlyLeadsSeller={setMonthlyLeadsSeller}
             dailyLeadsSeller={dailyLeadsSeller}
             setDailyLeadsSeller={setDailyLeadsSeller}
-            sellers={[]} // TODO: Implementar integração com a API
+            sellers={sellers}
           />
         </TabsContent>
 
@@ -145,7 +146,7 @@ const OrganizationDashboard = () => {
               isMonthly={true}
               selectedSeller={monthlyCallsSeller}
               onSellerChange={setMonthlyCallsSeller}
-              sellers={[]} // TODO: Implementar integração com a API
+              sellers={sellers}
             />
             <DailyCallsChart 
               data={dailyCallsData}
@@ -153,7 +154,7 @@ const OrganizationDashboard = () => {
               onDateChange={setCallsDate}
               selectedSeller={dailyCallsSeller}
               onSellerChange={setDailyCallsSeller}
-              sellers={[]} // TODO: Implementar integração com a API
+              sellers={sellers}
             />
           </div>
         </TabsContent>
@@ -184,7 +185,7 @@ const OrganizationDashboard = () => {
             setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
             objectionTrendsSeller={objectionTrendsSeller}
             setObjectionTrendsSeller={setObjectionTrendsSeller}
-            sellers={[]} // TODO: Implementar integração com a API
+            sellers={sellers}
           />
         </TabsContent>
 
@@ -195,7 +196,7 @@ const OrganizationDashboard = () => {
             setMonthlySuggestionsDate={setMonthlySuggestionsDate}
             monthlySuggestionsSeller={monthlySuggestionsSeller}
             setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-            sellers={[]} // TODO: Implementar integração com a API
+            sellers={sellers}
           />
         </TabsContent>
 

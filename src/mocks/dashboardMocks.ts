@@ -62,39 +62,33 @@ const generateDailyData = (daysCount: number, baseValues: {[key: string]: number
   });
 };
 
+// Cálculo de acumulados para garantir dados coerentes
+const calcActiveLeads = 382;
+const calcPendingLeads = 68;
+const calcTotalLeads = calcActiveLeads + calcPendingLeads;
+
 // Dados mockados para o dashboard com valores mais coerentes
 export const mockDashboardData = {
   // Dados de estatísticas gerais com valores mais realistas
   monthStats: {
-    total: 450,
-    active: 382,
-    pending: 48,
+    total: calcTotalLeads,
+    active: calcActiveLeads,
+    pending: calcPendingLeads,
     processed: 362,
     failed: 20,
     leads: 180,
     conversions: 42,
   },
   
-  // Gráfico de leads diários
+  // Gráfico de leads diários (somente novos leads)
   dailyLeadsData: generateDailyData(30, {
-    total: 15,
-    conversions: 4,
     novos: 8,
-    rate: 0.25
-  }).map(day => ({
-    ...day,
-    rate: day.conversions / day.total
-  })),
+  }),
   
-  // Gráfico de leads mensais
+  // Gráfico de leads mensais (somente novos leads)
   monthlyLeadsData: generateTrendData(12, {
-    total: 350,
-    conversions: 80,
-    novos: 120
-  }).map(month => ({
-    ...month,
-    rate: month.conversions / month.total
-  })),
+    novos: 40,
+  }),
   
   // Gráfico de chamadas diárias
   dailyCallsData: generateDailyData(30, {

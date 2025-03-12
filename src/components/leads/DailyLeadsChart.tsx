@@ -30,11 +30,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="text-primary">
           Novos Leads: {payload[0].value}
         </p>
-        {payload.length > 1 && (
-          <p className="text-green-600">
-            Conversões: {payload[1].value}
-          </p>
-        )}
       </div>
     );
   }
@@ -80,7 +75,6 @@ export const DailyLeadsChart = ({
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} />
             <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
-            <Bar dataKey="conversions" name="Conversões" fill="#16a34a" />
           </BarChart>
         </ResponsiveContainer>
       </div>

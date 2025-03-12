@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { mockDashboardData } from "@/mocks/dashboardMocks";
 import { DailyPerformanceData, MonthlyPerformanceData, PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
+import { mockOrganizations } from "@/mocks/organizationMocks";
 
 export const useDashboardData = () => {
   // Estados para gerenciar as seleções de data e filtros
@@ -20,6 +21,9 @@ export const useDashboardData = () => {
   const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>('joao');
   const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
   const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
+
+  // Get sellers from the first organization
+  const sellers = mockOrganizations[0]?.users.filter(user => user.status === 'active') || [];
 
   // Make sure objectionExamples has fallback values
   const ensuredObjectionExamples = {
@@ -71,6 +75,9 @@ export const useDashboardData = () => {
     
     // Dados de sugestões
     suggestionsData: mockDashboardData.suggestionsData,
+    
+    // Lista de vendedores
+    sellers,
     
     // Estados de seleção de datas
     monthlyLeadsDate,
