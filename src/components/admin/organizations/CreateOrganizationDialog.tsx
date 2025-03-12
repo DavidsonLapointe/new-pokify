@@ -58,7 +58,9 @@ export const CreateOrganizationDialog = ({
   const handleSubmit = async (values: any) => {
     try {
       setIsSubmitting(true);
+      console.log("Iniciando o processo de submissão", values);
       await onSubmit(values);
+      // onSuccess is called in useOrganizationForm's callback
     } catch (error) {
       console.error("Error submitting form:", error);
       setIsSubmitting(false); // Reset loading state on error

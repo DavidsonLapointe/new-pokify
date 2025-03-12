@@ -14,8 +14,10 @@ export const useOrganizationForm = (onSuccess: () => void) => {
     try {
       await handleSubmit(values);
       form.reset();
+      // onSuccess is called by useOrganizationSubmission
     } catch (error) {
       console.error("Error in form submission:", error);
+      // Do not reset the form on error, let the user correct any issues
       throw error; // Re-throw to allow the UI component to handle it
     }
   };

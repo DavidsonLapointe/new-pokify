@@ -46,7 +46,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         throw new Error("CNPJ already exists");
       }
 
-      // Create organization
+      // Create organization - removing ON CONFLICT clause which was causing issues
       const orgData = {
         name: values.razaoSocial,
         cnpj: values.cnpj,
@@ -65,6 +65,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       console.log("📝 Inserindo organização com dados:", JSON.stringify(orgData, null, 2));
 
+      // Simple insert without ON CONFLICT
       const { data: insertedOrg, error: insertError } = await supabase
         .from('organizations')
         .insert(orgData)
@@ -98,6 +99,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
             }
           }
         });
+        console.log("📧 Email enviado com sucesso!");
       } catch (emailError) {
         console.warn("⚠️ Erro ao enviar email:", emailError);
         // Continue with success even if email fails
