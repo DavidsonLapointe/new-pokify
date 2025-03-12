@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import { Organization } from "@/types";
+import { Organization, OrganizationStatus } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { createOrganizationSchema, type CreateOrganizationFormData } from "../schema";
 
@@ -22,7 +22,7 @@ export const useEditOrganizationForm = (
       cnpj: organization.cnpj || "",
       email: organization.email || "",
       phone: organization.phone || "",
-      plan: String(organization.plan), // Ensure plan is a string
+      plan: typeof organization.plan === 'string' ? organization.plan : organization.plan.id,
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
       status: organization.status,
@@ -81,7 +81,7 @@ export const useEditOrganizationForm = (
         planName: planName, // Use the fetched plan name
         adminName: values.adminName,
         adminEmail: values.adminEmail,
-        status: values.status,
+        status: values.status as OrganizationStatus,
       };
 
       onSave(updatedOrganization);

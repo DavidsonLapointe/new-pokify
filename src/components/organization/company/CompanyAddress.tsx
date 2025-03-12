@@ -1,10 +1,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Address } from "@/types/organization-types";
+import { OrganizationAddress } from "@/types/organization-types";
 
 interface CompanyAddressProps {
-  address?: Address;
+  address?: OrganizationAddress;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

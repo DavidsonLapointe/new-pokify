@@ -16,10 +16,10 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
-  lastAccess: string;  // Made this required to match organization-types
+  lastAccess: string;  
   permissions: { [key: string]: boolean };
   logs: UserLog[];
-  avatar?: string | null; // Made nullable to match organization-types
+  avatar?: string | null;
   organization?: Organization;
   company_leadly_id?: string;
 }

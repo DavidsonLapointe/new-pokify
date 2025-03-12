@@ -20,6 +20,10 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
         return [{ value: "active", label: "Ativo" }];
       case "pending":
         return [{ value: "inactive", label: "Inativo" }];
+      case "suspended":
+        return [{ value: "active", label: "Ativo" }, { value: "inactive", label: "Inativo" }];
+      case "canceled":
+        return [{ value: "active", label: "Ativo" }];
       default:
         return [];
     }
@@ -29,8 +33,9 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
 
   // Handling the value change with proper type casting
   const handleValueChange = (value: string) => {
-    // Only set the value if it's one of the allowed status values
-    if (value === "active" || value === "pending" || value === "inactive") {
+    // Only set the value if it's a valid organization status
+    if (value === "active" || value === "pending" || value === "inactive" || 
+        value === "suspended" || value === "canceled") {
       form.setValue("status", value as OrganizationStatus);
     }
   };

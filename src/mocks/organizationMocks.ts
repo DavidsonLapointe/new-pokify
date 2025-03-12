@@ -1,5 +1,6 @@
 
 import { Organization, OrganizationStatus } from '../types/organization-types';
+import { User } from '../types/user-types';
 import { generateMockUsers, setMockOrganizations } from './userMocks';
 import { generateRandomCNPJ } from './utils';
 
@@ -13,11 +14,7 @@ export const createMockOrganization = (
   // Para a primeira organização, sempre garantir 23 usuários
   const actualUserCount = index === 0 ? 23 : userCount;
   
-  const users = generateMockUsers(actualUserCount, index).map(user => ({
-    ...user,
-    avatar: user.avatar || null,
-    lastAccess: user.lastAccess || new Date().toISOString() // Ensure lastAccess is always set
-  }));
+  const users = generateMockUsers(actualUserCount, index) as User[];
   const now = new Date().toISOString();
 
   const mockPlans = [
@@ -26,9 +23,9 @@ export const createMockOrganization = (
     { id: 'premium', name: 'Plano Premium' }
   ];
 
-  const pendingReasons: Organization['pendingReason'][] = [
+  const pendingReasons = [
     "contract_signature", "user_validation", "mensalidade_payment", "pro_rata_payment", null
-  ];
+  ] as const;
 
   return {
     id,

@@ -1,6 +1,6 @@
 
 // Organization status types
-export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled";
+export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled" | "inactive";
 
 // Organization pending reason types (add pro_rata_payment)
 export type OrganizationPendingReason = "contract_signature" | "user_validation" | "mensalidade_payment" | "pro_rata_payment" | null;
@@ -15,11 +15,20 @@ export interface OrganizationAddress {
   cep: string;
 }
 
+// Export Address for backward compatibility
+export type Address = OrganizationAddress;
+
+export interface OrganizationPlan {
+  id: string;
+  name: string;
+  price: number;
+}
+
 export interface Organization {
   id: string;
   name: string;
   nomeFantasia: string;
-  plan: string;
+  plan: string | OrganizationPlan;
   planName?: string;
   users: User[];
   status: OrganizationStatus;

@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
-import { Organization } from "@/types/organization-types";
+import { Organization, OrganizationPlan } from "@/types/organization-types";
 import { addDays, endOfMonth, format, startOfMonth, differenceInDays } from "date-fns";
 
 /**
@@ -17,7 +17,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Fetch plan name for the selected plan ID
     const { data: planData, error: planError } = await supabase
       .from('plans')
-      .select('name')
+      .select('name, price')
       .eq('id', values.plan)
       .single();
       
@@ -51,7 +51,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     return { 
       data, 
       error: null, 
-      planName: planData?.name || null 
+      planName: planData?.name || null,
+      planPrice: planData?.price || 0
     };
   } catch (error) {
     console.error("Erro inesperado ao criar organização:", error);
@@ -61,7 +62,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         message: "Erro inesperado ao criar organização",
         details: JSON.stringify(error)
       }, 
-      planName: null 
+      planName: null,
+      planPrice: 0
     };
   }
 };
@@ -129,8 +131,25 @@ export const handleProRataCreation = async (organization: Organization) => {
     // Format the due date to the last day of the current month
     const dueDate = format(endOfMonth(currentDate), 'yyyy-MM-dd');
 
+    // Get the plan data
+    let planPrice = 0;
+    
+    if (typeof organization.plan === 'string') {
+      // Fetch plan info from the database
+      const { data: planData } = await supabase
+        .from('plans')
+        .select('price')
+        .eq('id', organization.plan)
+        .single();
+        
+      planPrice = planData?.price || 0;
+    } else {
+      // Plan is already an object with price
+      planPrice = (organization.plan as OrganizationPlan).price;
+    }
+
     // Calculate the pro-rata value
-    const proRataValue = calculateProRataValue(organization.plan.price);
+    const proRataValue = calculateProRataValue(planPrice);
 
     // Create the pro-rata title
     const proRataTitle = await createProRataTitle({
@@ -191,11 +210,7 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     id: dbOrg.id,
     name: dbOrg.name,
     nomeFantasia: dbOrg.nome_fantasia,
-    plan: {
-      id: dbOrg.plan,
-      name: dbOrg.planName,
-      price: 0, // You might need to fetch the actual price from the plans table
-    },
+    plan: dbOrg.plan,
     planName: dbOrg.planName,
     users: [], // You might need to fetch the users separately
     status: dbOrg.status,
