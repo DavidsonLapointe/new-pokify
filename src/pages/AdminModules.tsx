@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +31,12 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Map of icon names to their Lucide components
 const iconMap = {
@@ -102,7 +107,7 @@ const mockModules: Plan[] = [
       "Edite e ajuste conforme necessário"
     ],
     active: true,
-    comingSoon: false,
+    comingSoon: true,
     actionButtonText: "Criar Vídeos",
     icon: "Video"
   },
@@ -196,50 +201,66 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     : MessageCircle; // Default to MessageCircle if not found
 
   return (
-    <Card 
-      className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'bg-[#F1F0FB]' : ''}`}
-      onClick={onClick}
-    >
-      <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start">
-          <div className="p-2 bg-primary-lighter rounded-md">
-            <IconComponent className="h-6 w-6 text-primary" />
+    <TooltipProvider>
+      <Card 
+        className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'bg-[#F1F0FB]' : ''}`}
+        onClick={onClick}
+      >
+        <CardHeader className="p-4 pb-2">
+          <div className="flex justify-between items-start">
+            <div className="p-2 bg-primary-lighter rounded-md">
+              <IconComponent className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex items-center gap-1">
+              {plan.comingSoon && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-blue-100 text-blue-800 p-1 rounded-full">
+                      <Clock className="h-4 w-4" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Em breve disponível</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              <Badge 
+                variant="secondary"
+                className={`
+                  ${plan.active 
+                    ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                    : "bg-red-100 text-red-800 hover:bg-red-100"}
+                `}
+              >
+                {plan.active ? "Ativo" : "Inativo"}
+              </Badge>
+            </div>
           </div>
-          <Badge 
-            variant="secondary"
-            className={`
-              ${plan.active 
-                ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                : "bg-red-100 text-red-800 hover:bg-red-100"}
-            `}
+          <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
+            {plan.name}
+          </CardTitle>
+          <div className="text-primary font-semibold">
+            R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {plan.shortDescription}
+          </p>
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <div 
+            className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick(); // Use the onClick prop to select this plan, not open the edit dialog
+            }}
           >
-            {plan.active ? "Ativo" : "Inativo"}
-          </Badge>
-        </div>
-        <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
-          {plan.name}
-        </CardTitle>
-        <div className="text-primary font-semibold">
-          R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {plan.shortDescription}
-        </p>
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <div 
-          className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick(); // Use the onClick prop to select this plan, not open the edit dialog
-          }}
-        >
-          Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
-        </div>
-      </CardFooter>
-    </Card>
+            Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
+          </div>
+        </CardFooter>
+      </Card>
+    </TooltipProvider>
   );
 };
 
@@ -323,6 +344,12 @@ const ModuleDetailedSection: React.FC<{
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {selectedModule.comingSoon && (
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 flex items-center gap-1">
+                <Clock className="h-3 w-3 mr-1" />
+                Em breve
+              </Badge>
+            )}
             <Badge 
               variant="secondary"
               className={`
