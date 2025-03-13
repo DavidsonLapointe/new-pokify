@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -318,9 +317,9 @@ const OrganizationModules = () => {
                 const isSelected = selectedToolDetails?.id === tool.id;
                 
                 return (
-                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pr-2 first:pl-0 pl-0">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-0 pr-4">
                     <Card 
-                      className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
+                      className={`w-[220px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4 flex flex-col items-center justify-between h-full">
@@ -337,8 +336,8 @@ const OrganizationModules = () => {
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 ml-1 rounded-full p-0">
-                                  <MoreVertical size={15} className="text-gray-500" />
+                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-1 rounded-full p-0">
+                                  <MoreVertical size={16} className="text-gray-500" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -361,7 +360,7 @@ const OrganizationModules = () => {
                           {React.createElement(tool.icon, { size: 24 })}
                         </div>
                         
-                        <div className="text-center w-full">
+                        <div className="text-center w-full mt-2">
                           <p className="font-medium text-xs mb-1">{tool.title}</p>
                           <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
                         </div>
