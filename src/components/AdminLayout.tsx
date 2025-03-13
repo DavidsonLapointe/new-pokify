@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -27,7 +27,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
     { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
     { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
-    { icon: DollarSign, label: "Planos", path: "/admin/plans", permissionId: "plans" },
+    { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionId: "financial" },
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },

@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -18,7 +19,7 @@ import AdminProfile from "./pages/AdminProfile";
 import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminUsers from "./pages/AdminUsers";
 import AdminIntegrations from "./pages/AdminIntegrations";
-import AdminPlans from "./pages/AdminPlans";
+import AdminModules from "./pages/AdminModules";
 import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
@@ -107,7 +108,7 @@ function AppRoutes() {
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
-          <Route path="plans" element={<AdminPlans />} />
+          <Route path="modules" element={<AdminModules />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="profile" element={<AdminProfile />} />
