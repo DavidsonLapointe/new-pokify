@@ -10,7 +10,11 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Info,
-  HelpCircle
+  HelpCircle,
+  PlayCircle,
+  LineChart,
+  Mail,
+  Brain
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -24,35 +28,55 @@ const AIToolsPage = () => {
       title: "Prospecção com Vídeo",
       icon: Video,
       description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
-      locked: false
+      locked: false,
+      detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
+      actionLabel: "Criar novo vídeo",
+      actionIcon: Video,
+      status: "Ativo"
     },
     {
       id: "inbound",
       title: "Atendente Inbound",
       icon: Headphones,
       description: "Atendimento automatizado para leads inbound com IA conversacional.",
-      locked: true
+      locked: true,
+      detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
+      actionLabel: "Configurar atendente",
+      actionIcon: Headphones,
+      status: "Em breve"
     },
     {
       id: "call",
       title: "Análise de Call",
       icon: UserRound,
       description: "Análise automática de chamadas para identificar padrões e insights.",
-      locked: false
+      locked: false,
+      detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
+      actionLabel: "Analisar chamada",
+      actionIcon: LineChart,
+      status: "Ativo"
     },
     {
       id: "nutrition",
       title: "Nutrição de leads (MKT)",
       icon: MessageCircle,
       description: "Automação de campanhas de nutrição de leads com conteúdo personalizado.",
-      locked: true
+      locked: true,
+      detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
+      actionLabel: "Configurar campanha",
+      actionIcon: Mail,
+      status: "Em breve"
     },
     {
       id: "assistant",
       title: "Assistente de Prospecção",
       icon: ShieldCheck,
       description: "Assistente virtual para auxiliar na prospecção de novos clientes.",
-      locked: false
+      locked: false,
+      detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
+      actionLabel: "Iniciar assistente",
+      actionIcon: Brain,
+      status: "Ativo"
     }
   ];
 
@@ -115,40 +139,46 @@ const AIToolsPage = () => {
       </div>
 
       {/* Detalhes da ferramenta selecionada */}
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Video className="text-[#9b87f5]" />
-          <h2 className="text-lg font-semibold">Prospecção com Vídeo</h2>
-          <Badge variant="outline" className="bg-green-100 text-green-700 ml-auto">
-            Ativo
-          </Badge>
-        </div>
-        
-        <p className="text-gray-600 mb-4">
-          Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.
-        </p>
+      {tools.map((tool) => (
+        selectedTool === tool.id && (
+          <Card key={`details-${tool.id}`} className="p-6">
+            <div className="flex items-center gap-2 mb-2">
+              <tool.icon className="text-[#9b87f5]" />
+              <h2 className="text-lg font-semibold">{tool.title}</h2>
+              <Badge variant="outline" className={tool.locked ? "bg-gray-100 text-gray-700" : "bg-green-100 text-green-700"} ml-auto="true">
+                {tool.locked ? "Em breve" : "Ativo"}
+              </Badge>
+            </div>
+            
+            <p className="text-gray-600 mb-4">
+              {tool.description}
+            </p>
 
-        <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-600 text-sm mb-6">
-          Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e 
-          automaticamente criar vídeos com seu avatar digital.
-        </div>
+            <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-600 text-sm mb-6">
+              {tool.detailedDescription}
+            </div>
 
-        <div className="flex gap-4 mb-6">
-          <Button variant="outline" className="flex items-center gap-2">
-            <Info size={18} />
-            Como Funciona
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <HelpCircle size={18} />
-            Benefícios
-          </Button>
-        </div>
+            <div className="flex gap-4 mb-6">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Info size={18} />
+                Como Funciona
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                <HelpCircle size={18} />
+                Benefícios
+              </Button>
+            </div>
 
-        <Button className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] flex items-center justify-center gap-2">
-          <Video size={18} />
-          Criar novo vídeo
-        </Button>
-      </Card>
+            <Button 
+              className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] flex items-center justify-center gap-2"
+              disabled={tool.locked}
+            >
+              <tool.actionIcon size={18} />
+              {tool.actionLabel}
+            </Button>
+          </Card>
+        )
+      ))}
     </div>
   );
 };
