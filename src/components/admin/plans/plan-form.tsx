@@ -17,7 +17,7 @@ import { type PlanFormValues } from "./plan-form-schema";
 import { type UseFormReturn } from "react-hook-form";
 import { Separator } from "@/components/ui/separator";
 import { 
-  AlertTriangle, MessageCircle, Video, Headphones, 
+  MessageCircle, Video, Headphones, 
   UserRound, ShieldCheck, Check, Search,
   Bell, Brain, BookOpen, CreditCard, FileText, LineChart,
   Mail, Share2, Smartphone, Star, Zap, Briefcase
