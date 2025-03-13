@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,16 +19,8 @@ import {
   MessageCircle, Video, Headphones, 
   UserRound, ShieldCheck, Check, Search,
   Bell, Brain, BookOpen, CreditCard, FileText, LineChart,
-  Mail, Share2, Smartphone, Star, Zap, Briefcase, Clock
+  Mail, Share2, Smartphone, Star, Zap, Briefcase, Clock, Package, Blocks, AppWindow
 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
 import { 
   Popover,
   PopoverContent,
@@ -63,24 +54,19 @@ const moduleIcons = [
   { value: "Zap", label: "Automação", icon: Zap },
   { value: "Briefcase", label: "Negócios", icon: Briefcase },
   { value: "Clock", label: "Em Breve", icon: Clock },
+  { value: "Package", label: "Pacote", icon: Package },
+  { value: "Blocks", label: "Blocos", icon: Blocks },
+  { value: "AppWindow", label: "Aplicativo", icon: AppWindow },
 ];
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [popoverOpen, setPopoverOpen] = useState(false);
   
   // Filter icons based on search term
   const filteredIcons = moduleIcons.filter(icon => 
     icon.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     icon.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Função para lidar com a seleção de ícone
-  const handleIconSelect = (value: string) => {
-    form.setValue("icon", value);
-    setSearchTerm("");
-    setPopoverOpen(false);
-  };
 
   return (
     <Form {...form}>
@@ -137,66 +123,52 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ícone do Módulo</FormLabel>
-                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                      type="button"
-                    >
-                      <div className="flex items-center gap-2">
-                        {field.value && (
-                          <>
-                            {moduleIcons.find(i => i.value === field.value)?.icon && 
-                              React.createElement(
-                                moduleIcons.find(i => i.value === field.value)!.icon, 
-                                { className: "h-4 w-4" }
-                              )
-                            }
-                            <span>{moduleIcons.find(i => i.value === field.value)?.label}</span>
-                          </>
-                        )}
-                        {!field.value && "Selecione um ícone"}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 p-2 border rounded-md">
+                    {field.value && (
+                      <>
+                        {moduleIcons.find(i => i.value === field.value)?.icon && 
+                          React.createElement(
+                            moduleIcons.find(i => i.value === field.value)!.icon, 
+                            { className: "h-5 w-5 text-primary" }
+                          )
+                        }
+                        <span className="font-medium">{moduleIcons.find(i => i.value === field.value)?.label || "Selecione um ícone"}</span>
+                      </>
+                    )}
+                    {!field.value && "Selecione um ícone abaixo"}
+                  </div>
+                  
+                  <div className="border rounded-md p-2">
+                    <Input
+                      placeholder="Buscar ícone..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full mb-3"
+                    />
+                    
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[200px] overflow-y-auto">
+                      {filteredIcons.map(({ value, label, icon: Icon }) => (
+                        <Button
+                          key={value}
+                          type="button"
+                          variant={field.value === value ? "default" : "outline"}
+                          className={`flex flex-col items-center justify-center gap-1 h-20 p-2 ${field.value === value ? "ring-2 ring-primary" : ""}`}
+                          onClick={() => field.onChange(value)}
+                        >
+                          <Icon className="h-6 w-6" />
+                          <span className="text-xs text-center truncate w-full">{label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                    
+                    {filteredIcons.length === 0 && (
+                      <div className="p-4 text-center text-sm text-muted-foreground">
+                        Nenhum ícone encontrado
                       </div>
-                      <Search className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0" align="start">
-                    <div className="p-2 border-b">
-                      <Input
-                        placeholder="Buscar ícone..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="max-h-[300px] overflow-y-auto p-2">
-                      {filteredIcons.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-2">
-                          {filteredIcons.map(({ value, label, icon: Icon }) => (
-                            <Button
-                              key={value}
-                              type="button"
-                              variant={field.value === value ? "default" : "outline"}
-                              className="justify-start gap-2 w-full h-auto py-2"
-                              onClick={() => handleIconSelect(value)}
-                            >
-                              <Icon className="h-5 w-5" />
-                              <span className="truncate">{label}</span>
-                              {field.value === value && (
-                                <Check className="h-4 w-4 ml-auto" />
-                              )}
-                            </Button>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="p-4 text-center text-sm text-muted-foreground">
-                          Nenhum ícone encontrado
-                        </div>
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                    )}
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

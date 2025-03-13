@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, Trash2, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Brain, BookOpen, CreditCard, LineChart, Mail, Share2, Smartphone, Star, Zap, Briefcase, Bell, Clock } from "lucide-react";
+import { Plus, FileText, Trash2, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Brain, BookOpen, CreditCard, LineChart, Mail, Share2, Smartphone, Star, Zap, Briefcase, Bell, Clock, Package, Blocks, AppWindow } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -34,7 +33,10 @@ const iconMap = {
   Star,
   Zap,
   Briefcase,
-  Clock
+  Clock,
+  Package,
+  Blocks,
+  AppWindow
 };
 
 interface ModuleCardProps {
