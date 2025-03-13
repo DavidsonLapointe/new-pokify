@@ -1,10 +1,10 @@
 
 import { ReactNode } from 'react';
-import { UserType } from '@/types';
+import { User } from '@/types';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  user?: UserType;
+  user?: User;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {

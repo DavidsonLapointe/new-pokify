@@ -8,6 +8,7 @@ export * from "./organization-types";
 export { 
   type UserRole, 
   type UserStatus,
+  type User, 
   type User as UserType, 
   type UserLog 
 } from "./user-types";

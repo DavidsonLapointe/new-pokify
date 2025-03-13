@@ -1,10 +1,10 @@
 
-import { UserType } from '../types';
+import { User } from '../types';
 import { generateRandomLogs } from './utils';
 import { Organization } from '@/types/organization-types';
 
 // Função para gerar usuários mock com diferentes funções e status
-export const createMockUser = (role: UserType['role'] = 'seller', status: UserType['status'] = 'active', orgIndex: number = 0, nameIndex: number = 0): UserType => {
+export const createMockUser = (role: User['role'] = 'seller', status: User['status'] = 'active', orgIndex: number = 0, nameIndex: number = 0): User => {
   const now = new Date().toISOString();
   const isAdmin = role === 'admin';
   
@@ -40,8 +40,8 @@ export const createMockUser = (role: UserType['role'] = 'seller', status: UserTy
 };
 
 // Gera uma lista específica de usuários mock para garantir 23 usuários (1 admin + 22 vendedores)
-export const generateMockUsers = (count: number, orgIndex: number = 0): UserType[] => {
-  const users: UserType[] = [];
+export const generateMockUsers = (count: number, orgIndex: number = 0): User[] => {
+  const users: User[] = [];
   
   // Garantir sempre 1 admin
   users.push(createMockUser('admin', 'active', orgIndex));
@@ -69,7 +69,7 @@ export const generateMockUsers = (count: number, orgIndex: number = 0): UserType
   
   // Para outras organizações, manter a lógica original
   for (let i = 1; i < count; i++) {
-    const status: UserType['status'] = Math.random() > 0.8 
+    const status: User['status'] = Math.random() > 0.8 
       ? (Math.random() > 0.5 ? 'inactive' : 'pending') 
       : 'active';
     
@@ -88,7 +88,7 @@ export const setMockOrganizations = (orgs: Organization[]) => {
 };
 
 // Criamos um usuário autenticado que será atualizado com a organização
-export const createMockAuthenticatedUser = (): UserType => {
+export const createMockAuthenticatedUser = (): User => {
   const user = createMockUser('admin');
   
   // Se as organizações já estiverem disponíveis, associamos a primeira ao usuário
@@ -106,4 +106,4 @@ export const createMockAuthenticatedUser = (): UserType => {
 export const mockUsers = generateMockUsers(15);
 
 // Mock para o usuário autenticado (será atualizado depois com a organização)
-export const mockAuthenticatedUser: UserType = createMockAuthenticatedUser();
+export const mockAuthenticatedUser: User = createMockAuthenticatedUser();
