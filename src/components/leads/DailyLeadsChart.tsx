@@ -167,7 +167,7 @@ export const DailyLeadsChart = ({
                 tick={{ fontSize: 13 }}
               />
               <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} />
+              <RechartsTooltip content={<CustomTooltip />} cursor={false} />
               <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
             </BarChart>
           </ResponsiveContainer>

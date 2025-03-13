@@ -104,7 +104,7 @@ export const MonthlyLeadsChart = ({
                 tick={{ fontSize: 12 }}
               />
               <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} />
+              <RechartsTooltip content={<CustomTooltip />} cursor={false} />
               <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
             </BarChart>
           </ResponsiveContainer>
