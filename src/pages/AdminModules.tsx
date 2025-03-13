@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +15,7 @@ import {
   BookOpen, CreditCard, LineChart, Mail, Share2, 
   Smartphone, Star, Zap, Briefcase, Bell, Clock, 
   Package, Blocks, AppWindow, ChevronLeft, ChevronRight,
-  CheckCircle, AlertCircle
+  CheckCircle, AlertCircle, Pencil
 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
@@ -292,7 +293,10 @@ const LoadingState: React.FC = () => {
 };
 
 // Detailed Module Section Component
-const ModuleDetailedSection: React.FC<{ selectedModule: Plan | null }> = ({ selectedModule }) => {
+const ModuleDetailedSection: React.FC<{ 
+  selectedModule: Plan | null;
+  onEditModule: (plan: Plan) => void; 
+}> = ({ selectedModule, onEditModule }) => {
   if (!selectedModule) return null;
   
   // Get the appropriate icon component
@@ -301,51 +305,72 @@ const ModuleDetailedSection: React.FC<{ selectedModule: Plan | null }> = ({ sele
     : MessageCircle;
 
   return (
-    <div className="mt-8 bg-white rounded-lg border p-6">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary-lighter rounded-md">
-            <IconComponent className="h-8 w-8 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">{selectedModule.name}</h2>
-            <div className="text-primary font-medium">
-              R$ {selectedModule.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+    <div className="mt-8 bg-white rounded-lg border shadow-sm p-0 overflow-hidden">
+      {/* Cabeçalho com ícone, nome, preço e status */}
+      <div className="p-6 pb-0">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary-lighter rounded-md">
+              <IconComponent className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">{selectedModule.name}</h2>
+              <div className="text-primary font-medium">
+                R$ {selectedModule.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+              </div>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant={selectedModule.active ? "default" : "destructive"}
+              className={selectedModule.active ? "bg-green-500 hover:bg-green-500" : ""}
+            >
+              {selectedModule.active ? "Ativo" : "Inativo"}
+            </Badge>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={() => onEditModule(selectedModule)}
+            >
+              <Pencil className="h-4 w-4" />
+              Editar
+            </Button>
+          </div>
         </div>
-        <Badge 
-          variant={selectedModule.active ? "default" : "destructive"}
-          className={selectedModule.active ? "bg-green-500 hover:bg-green-500" : ""}
-        >
-          {selectedModule.active ? "Ativo" : "Inativo"}
-        </Badge>
       </div>
 
       <Separator className="my-4" />
 
-      <div className="space-y-6">
+      {/* Conteúdo com descrição, benefícios e como funciona */}
+      <div className="p-6 pt-2 space-y-8">
         <div>
-          <h3 className="text-lg font-medium mb-2">Descrição</h3>
-          <p className="text-muted-foreground">{selectedModule.description}</p>
+          <h3 className="text-lg font-medium mb-3 text-center">Descrição</h3>
+          <p className="text-muted-foreground text-center">{selectedModule.description}</p>
         </div>
 
         <div>
-          <h3 className="text-lg font-medium mb-2">Benefícios</h3>
-          <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+          <h3 className="text-lg font-medium mb-3 text-center">Benefícios</h3>
+          <ul className="space-y-1">
             {selectedModule.benefits.map((benefit, index) => (
-              <li key={index}>{benefit}</li>
+              <li key={index} className="flex items-start">
+                <span className="mr-2 text-muted-foreground">•</span>
+                <span className="text-muted-foreground flex-1 text-center">{benefit}</span>
+              </li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h3 className="text-lg font-medium mb-2">Como Funciona</h3>
-          <ul className="list-decimal pl-5 space-y-1 text-muted-foreground">
+          <h3 className="text-lg font-medium mb-3 text-center">Como Funciona</h3>
+          <ol className="space-y-1">
             {selectedModule.howItWorks.map((step, index) => (
-              <li key={index}>{step}</li>
+              <li key={index} className="flex items-start">
+                <span className="mr-2 text-muted-foreground">{index + 1}.</span>
+                <span className="text-muted-foreground flex-1 text-center">{step}</span>
+              </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </div>
     </div>
@@ -552,7 +577,10 @@ const Modules = () => {
           </div>
 
           {/* Detailed Module Section */}
-          <ModuleDetailedSection selectedModule={selectedPlan} />
+          <ModuleDetailedSection 
+            selectedModule={selectedPlan} 
+            onEditModule={handleEditPlan}
+          />
         </>
       )}
 
