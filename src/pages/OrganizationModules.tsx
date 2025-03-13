@@ -305,13 +305,13 @@ const OrganizationModules = () => {
           </p>
         </div>
 
-        <div className="relative px-12">
+        <div className="relative px-16">
           <Carousel
             opts={{
               align: "start",
               loop: false // Parar no primeiro e último registro
             }}
-            className="w-full" // Removido o padding para não sobrepor as setas
+            className="w-full" 
           >
             <CarouselContent>
               {tools.map((tool) => {
@@ -345,8 +345,8 @@ const OrganizationModules = () => {
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 ml-1">
-                                  <MoreVertical size={14} />
+                                <Button variant="ghost" size="icon" className="h-7 w-7 ml-1 rounded-full p-0">
+                                  <MoreVertical size={15} className="text-gray-500" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -405,8 +405,8 @@ const OrganizationModules = () => {
                 );
               })}
             </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
+            <CarouselPrevious className="left-4" />
+            <CarouselNext className="right-4" />
           </Carousel>
         </div>
 
