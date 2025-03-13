@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -322,9 +323,16 @@ const OrganizationModules = () => {
                       className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
-                      <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2 relative">
+                      <CardContent className="p-4 flex flex-col items-center justify-between h-full">
                         <div className="absolute top-2 right-2 flex items-center">
-                          {statusInfo.icon}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>{statusInfo.icon}</div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{statusInfo.tooltip}</p>
+                            </TooltipContent>
+                          </Tooltip>
                           
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
@@ -349,11 +357,41 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <div className={`p-2 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                          <tool.icon size={28} />
+                        <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
+                          <tool.icon size={24} />
                         </div>
-                        <div className="text-center">
-                          <p className="font-medium text-sm">{tool.title}</p>
+                        
+                        <div className="text-center w-full">
+                          <p className="font-medium text-xs mb-1">{tool.title}</p>
+                          <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
+                        </div>
+                        
+                        <div className="mt-1 w-full">
+                          {tool.status === "not_contracted" ? (
+                            <Button 
+                              className="w-full bg-red-600 hover:bg-red-700 h-6 text-[10px] px-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleContractTool(tool.id);
+                              }}
+                            >
+                              <CreditCard size={10} className="mr-1" />
+                              Contratar
+                            </Button>
+                          ) : (
+                            <Link 
+                              href="#" 
+                              className="text-[10px] text-[#9b87f5] hover:text-[#8a76e5] flex items-center justify-center w-full"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                showToolDetails(tool);
+                              }}
+                            >
+                              Ver Detalhes
+                              <ChevronDown size={10} className="ml-1" />
+                            </Link>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
