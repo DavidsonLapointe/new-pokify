@@ -406,61 +406,59 @@ const OrganizationModules = () => {
         </div>
 
         {selectedToolDetails && (
-          <div className="mt-6 bg-white rounded-lg border shadow-sm">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 text-[#9b87f5]">
-                  {React.createElement(selectedToolDetails.icon, { size: 24 })}
-                </div>
-                <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${getBadgeClass(selectedToolDetails.status)}`}>
-                  {selectedToolDetails.badgeLabel}
-                </span>
+          <Card className="p-5 bg-[#F8F8FB]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 text-[#9b87f5]">
+                {React.createElement(selectedToolDetails.icon, { size: 24 })}
+              </div>
+              <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${getBadgeClass(selectedToolDetails.status)}`}>
+                {selectedToolDetails.badgeLabel}
+              </span>
 
-                {selectedToolDetails.status === "contracted" && (
-                  <span className="text-yellow-600 text-xs font-medium flex items-center">
-                    <AlertTriangle className="h-4 w-4 mr-1" /> Necessita configuração
-                  </span>
-                )}
+              {selectedToolDetails.status === "contracted" && (
+                <span className="text-yellow-600 text-xs font-medium flex items-center">
+                  <AlertTriangle className="h-4 w-4 mr-1" /> Necessita configuração
+                </span>
+              )}
+            </div>
+            
+            <p className="text-gray-600 mb-6 text-sm text-left">{selectedToolDetails.detailedDescription}</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+                <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
+                  <CheckCircle2 className="h-5 w-5 mr-2" />
+                  Benefícios
+                </h4>
+                <ul className="space-y-2">
+                  {selectedToolDetails.benefits.map((benefit, idx) => (
+                    <li key={idx} className="flex items-start text-sm text-left">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-left">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
               
-              <p className="text-gray-600 mb-6 text-sm text-left">{selectedToolDetails.detailedDescription}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-5 rounded-lg border border-gray-100">
-                  <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 mr-2" />
-                    Benefícios
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedToolDetails.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start text-sm text-left">
-                        <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="bg-white p-5 rounded-lg border border-gray-100">
-                  <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
-                    <CheckCircle2 className="h-5 w-5 mr-2" />
-                    Como Funciona
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedToolDetails.howItWorks.map((step, idx) => (
-                      <li key={idx} className="flex items-start text-sm text-left">
-                        {selectedToolDetails.icon && React.createElement(selectedToolDetails.icon, { 
-                          className: "h-4 w-4 text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" 
-                        })}
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+                <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
+                  <CheckCircle2 className="h-5 w-5 mr-2" />
+                  Como Funciona
+                </h4>
+                <ul className="space-y-2">
+                  {selectedToolDetails.howItWorks.map((step, idx) => (
+                    <li key={idx} className="flex items-start text-sm text-left">
+                      {selectedToolDetails.icon && React.createElement(selectedToolDetails.icon, { 
+                        className: "h-4 w-4 text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" 
+                      })}
+                      <span className="text-left">{step}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Diálogo de confirmação para contratar/cancelar módulo */}
