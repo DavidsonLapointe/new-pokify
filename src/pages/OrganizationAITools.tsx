@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -309,7 +310,7 @@ const AIToolsPage = () => {
 
       {tools.map((tool) => (
         selectedTool === tool.id && (
-          <Card key={`details-${tool.id}`} className="p-5">
+          <Card key={`details-${tool.id}`} className="p-5 bg-[#F8F8FB]">
             <div className="flex items-center gap-2 mb-4">
               <tool.icon className="text-[#9b87f5]" size={24} />
               <h2 className="text-xl font-semibold">{tool.title}</h2>
@@ -330,7 +331,7 @@ const AIToolsPage = () => {
             {/* Nova seção de Como Funciona e Benefícios lado a lado */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {/* Seção Como Funciona */}
-              <div className="bg-[#F8F8FB] p-5 rounded-lg shadow-sm h-full">
+              <div className="bg-white p-5 rounded-lg shadow-sm h-full">
                 <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                   <HelpCircle size={18} className="mr-2" />
                   Como Funciona
@@ -346,7 +347,7 @@ const AIToolsPage = () => {
               </div>
               
               {/* Seção Benefícios */}
-              <div className="bg-[#F8F8FB] p-5 rounded-lg shadow-sm h-full">
+              <div className="bg-white p-5 rounded-lg shadow-sm h-full">
                 <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                   <CheckCircle2 size={18} className="mr-2" />
                   Benefícios
