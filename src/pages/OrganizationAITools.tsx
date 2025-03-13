@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -360,7 +359,7 @@ const AIToolsPage = () => {
                 <ArrowRight size={18} />
               </Button>
               
-              {/* Novo botão secundário baseado no status */}
+              {/* Botão secundário baseado no status */}
               {(() => {
                 const secondaryProps = getSecondaryButtonProps(tool);
                 return (
@@ -385,8 +384,7 @@ const AIToolsPage = () => {
             <DialogTitle>
               {currentConfigTool && (
                 <div className="flex items-center gap-2">
-                  {/* Aqui estava o erro: corrigido a renderização do ícone dinâmico */}
-                  {currentConfigTool && (() => {
+                  {(() => {
                     const ToolIcon = getToolById(currentConfigTool).icon;
                     return <ToolIcon className="text-[#9b87f5]" size={18} />;
                   })()}
