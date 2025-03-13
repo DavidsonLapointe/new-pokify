@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +14,7 @@ import {
   BookOpen, CreditCard, LineChart, Mail, Share2, 
   Smartphone, Star, Zap, Briefcase, Bell, Clock, 
   Package, Blocks, AppWindow, ChevronLeft, ChevronRight,
-  CheckCircle, AlertCircle, Pencil
+  CheckCircle, AlertCircle, Pencil, ChevronDown, 
 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
@@ -227,13 +226,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         <Button 
           variant="outline" 
           size="sm" 
-          className="w-full text-xs"
+          className="w-full text-xs text-primary"
           onClick={(e) => {
             e.stopPropagation();
             onEditPlan(plan);
           }}
         >
-          Ver Detalhes
+          Ver Detalhes <ChevronDown className="h-3 w-3 ml-1" />
         </Button>
       </CardFooter>
     </Card>
@@ -343,34 +342,39 @@ const ModuleDetailedSection: React.FC<{
       <Separator className="my-4" />
 
       {/* Conteúdo com descrição, benefícios e como funciona */}
-      <div className="p-6 pt-2 space-y-8">
-        <div>
-          <h3 className="text-lg font-medium mb-3 text-center">Descrição</h3>
-          <p className="text-muted-foreground text-center">{selectedModule.description}</p>
-        </div>
+      <div className="p-6 pt-2">
+        <p className="text-muted-foreground mb-8">{selectedModule.description}</p>
 
-        <div>
-          <h3 className="text-lg font-medium mb-3 text-center">Benefícios</h3>
-          <ul className="space-y-1">
-            {selectedModule.benefits.map((benefit, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2 text-muted-foreground">•</span>
-                <span className="text-muted-foreground flex-1 text-center">{benefit}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Benefícios
+            </h3>
+            <ul className="space-y-3">
+              {selectedModule.benefits.map((benefit, index) => (
+                <li key={index} className="flex items-start">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span className="text-muted-foreground">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div>
-          <h3 className="text-lg font-medium mb-3 text-center">Como Funciona</h3>
-          <ol className="space-y-1">
-            {selectedModule.howItWorks.map((step, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2 text-muted-foreground">{index + 1}.</span>
-                <span className="text-muted-foreground flex-1 text-center">{step}</span>
-              </li>
-            ))}
-          </ol>
+          <div>
+            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Como Funciona
+            </h3>
+            <ol className="space-y-3">
+              {selectedModule.howItWorks.map((step, index) => (
+                <li key={index} className="flex items-start">
+                  <div className="flex-shrink-0 mr-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-muted-foreground">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </div>
