@@ -339,9 +339,11 @@ const AIToolsPage = () => {
             <DialogTitle>
               {currentConfigTool && (
                 <div className="flex items-center gap-2">
-                  {getToolById(currentConfigTool).icon && 
-                    <getToolById(currentConfigTool).icon className="text-[#9b87f5]" size={18} />
-                  }
+                  {/* Aqui estava o erro: corrigido a renderização do ícone dinâmico */}
+                  {currentConfigTool && (() => {
+                    const ToolIcon = getToolById(currentConfigTool).icon;
+                    return <ToolIcon className="text-[#9b87f5]" size={18} />;
+                  })()}
                   Configurar {getToolById(currentConfigTool).title}
                 </div>
               )}
