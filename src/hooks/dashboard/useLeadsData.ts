@@ -38,12 +38,13 @@ export const useLeadsData = () => {
     return data;
   }, [dailyLeadsDate, dailyLeadsSeller]);
 
-  // Generate mock monthly leads data for the last 12 months
+  // Generate mock monthly leads data for the last 13 months
   const monthlyLeadsData = useMemo(() => {
     const data: MonthlyLeadsData[] = [];
     const currentDate = new Date(monthlyLeadsDate);
     
-    for (let i = 11; i >= 0; i--) {
+    // Gerando 13 meses (em vez de 12) para atender ao requisito
+    for (let i = 12; i >= 0; i--) {
       const date = subMonths(currentDate, i);
       const monthName = format(date, 'MMM', { locale: ptBR });
       const year = format(date, 'yy');

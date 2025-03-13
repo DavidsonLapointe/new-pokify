@@ -12,6 +12,7 @@ import {
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types";
+import { useMemo } from "react";
 
 interface MonthlyLeadsChartProps {
   data: any[];
@@ -44,13 +45,30 @@ export const MonthlyLeadsChart = ({
   onSellerChange,
   sellers 
 }: MonthlyLeadsChartProps) => {
+  // Limitar a exibição para no máximo 13 meses
+  // Se tiver menos de 13 meses, exibe todos os meses disponíveis
+  const limitedData = useMemo(() => {
+    // Certifique-se de que temos dados válidos
+    if (!data || !Array.isArray(data)) {
+      return [];
+    }
+    
+    // Obter os últimos 13 meses (ou menos se não houver 13 meses disponíveis)
+    const maxMonths = 13;
+    return data.slice(-maxMonths);
+  }, [data]);
+
   // Filter data based on selected seller
-  const filteredData = selectedSeller === "all" 
-    ? data 
-    : data.map(item => ({
+  const filteredData = useMemo(() => {
+    if (selectedSeller === "all") {
+      return limitedData;
+    } else {
+      return limitedData.map(item => ({
         ...item,
         novos: Math.floor(item.novos * (Math.random() * 0.5 + 0.4))
       }));
+    }
+  }, [limitedData, selectedSeller]);
 
   if (!data || data.length === 0 || !filteredData || filteredData.length === 0) {
     return (

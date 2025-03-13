@@ -85,8 +85,8 @@ export const mockDashboardData = {
     novos: 8,
   }),
   
-  // Gráfico de leads mensais (somente novos leads)
-  monthlyLeadsData: generateTrendData(12, {
+  // Gráfico de leads mensais (somente novos leads) - agora com 13 meses
+  monthlyLeadsData: generateTrendData(13, {
     novos: 40,
   }),
   
