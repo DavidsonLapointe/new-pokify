@@ -18,7 +18,8 @@ import {
   MessageCircle,
   ShieldCheck,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  X
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -37,6 +38,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -59,7 +67,7 @@ const OrganizationModules = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
-  const [openBenefits, setOpenBenefits] = useState<string[]>([]);
+  const [selectedToolDetails, setSelectedToolDetails] = useState<Tool | null>(null);
 
   const tools: Tool[] = [
     {
@@ -237,15 +245,9 @@ const OrganizationModules = () => {
     });
   };
 
-  // Função para alternar a exibição dos benefícios
-  const toggleBenefits = (toolId: string) => {
-    setOpenBenefits(prev => {
-      if (prev.includes(toolId)) {
-        return prev.filter(id => id !== toolId);
-      } else {
-        return [...prev, toolId];
-      }
-    });
+  // Função para mostrar os detalhes da ferramenta
+  const showToolDetails = (tool: Tool) => {
+    setSelectedToolDetails(tool === selectedToolDetails ? null : tool);
   };
 
   return (
@@ -258,116 +260,171 @@ const OrganizationModules = () => {
           </p>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {tools.map((tool) => {
-            const statusInfo = getStatusInfo(tool.status);
-            const isBenefitsOpen = openBenefits.includes(tool.id);
-            
-            return (
-              <Card key={tool.id} className="overflow-hidden border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
-                        <tool.icon size={22} />
-                      </div>
-                      <h3 className="text-lg font-semibold">{tool.title}</h3>
-                    </div>
+        <div className="relative mx-1">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true
+            }}
+            className="w-full"
+          >
+            <CarouselContent>
+              {tools.map((tool) => {
+                const statusInfo = getStatusInfo(tool.status);
+                const isSelected = selectedToolDetails?.id === tool.id;
+                
+                return (
+                  <CarouselItem key={tool.id} className="basis-full md:basis-1/2 lg:basis-1/3">
+                    <Card className="border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full">
+                      <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
+                              <tool.icon size={22} />
+                            </div>
+                            <h3 className="text-lg font-semibold">{tool.title}</h3>
+                          </div>
 
-                    <Tooltip>
-                      <TooltipTrigger>
-                        {statusInfo.icon}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{statusInfo.tooltip}</p>
-                      </TooltipContent>
-                    </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              {statusInfo.icon}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{statusInfo.tooltip}</p>
+                            </TooltipContent>
+                          </Tooltip>
 
-                    {(tool.status === "contracted" || tool.status === "configured") && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
-                            <MoreVertical size={16} />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem 
-                            className="text-red-600 flex items-center gap-2"
-                            onClick={() => handleCancelTool(tool.id)}
+                          {(tool.status === "contracted" || tool.status === "configured") && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                  <MoreVertical size={16} />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem 
+                                  className="text-red-600 flex items-center gap-2"
+                                  onClick={() => handleCancelTool(tool.id)}
+                                >
+                                  <Trash2 size={14} />
+                                  <span>Cancelar módulo</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
+                        
+                        <p className="text-gray-600 mb-4 text-sm">
+                          {tool.description}
+                        </p>
+
+                        <div className="flex items-center justify-between mb-5">
+                          <span className="font-bold text-xl text-[#6E59A5]">
+                            {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
+                          </span>
+                        </div>
+
+                        <div className="space-y-3 mt-auto">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={`w-full justify-between ${isSelected ? "bg-primary-lighter text-primary" : ""}`}
+                            onClick={() => showToolDetails(tool)}
                           >
-                            <Trash2 size={14} />
-                            <span>Cancelar módulo</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
+                            Benefícios
+                            {isSelected ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </Button>
+
+                          {tool.status === "not_contracted" && (
+                            <Button 
+                              className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
+                              onClick={() => handleContractTool(tool.id)}
+                            >
+                              <CreditCard size={16} />
+                              Contratar Módulo
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
+        </div>
+
+        {selectedToolDetails && (
+          <div className="mt-8 bg-white rounded-lg border shadow-sm animate-fade-in">
+            <div className="flex justify-between items-center p-4 border-b">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
+                  <selectedToolDetails.icon size={24} />
+                </div>
+                <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setSelectedToolDetails(null)}
+                className="h-8 w-8"
+              >
+                <X size={18} />
+              </Button>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-lg font-medium mb-4">Descrição Detalhada</h4>
+                  <p className="text-gray-600 mb-6">{selectedToolDetails.detailedDescription}</p>
                   
-                  <p className="text-gray-600 mb-4 text-sm">
-                    {tool.description}
-                  </p>
-
-                  <div className="flex items-center justify-between mb-5">
-                    <span className="font-bold text-xl text-[#6E59A5]">
-                      {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
-                    </span>
-                  </div>
-
-                  <Collapsible 
-                    open={isBenefitsOpen} 
-                    onOpenChange={() => toggleBenefits(tool.id)}
-                    className="mb-4 space-y-2"
-                  >
-                    <CollapsibleTrigger asChild>
+                  <h4 className="text-lg font-medium mb-3">Benefícios</h4>
+                  <ul className="space-y-3 mb-6">
+                    {selectedToolDetails.benefits.map((benefit, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <CheckCircle2 size={16} className="text-green-500 mr-3 mt-1 flex-shrink-0" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="text-lg font-medium mb-4">Como Funciona</h4>
+                  <ul className="space-y-4">
+                    {selectedToolDetails.howItWorks.map((step, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <div className="bg-[#9b87f5] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5 flex-shrink-0">{idx + 1}</div>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="mt-8 bg-[#F8F7FE] p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gray-600">Valor mensal:</span>
+                      <span className="font-bold text-xl text-[#6E59A5]">
+                        {formatPrice(selectedToolDetails.price)}
+                      </span>
+                    </div>
+                    
+                    {selectedToolDetails.status === "not_contracted" && (
                       <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-between"
+                        className="w-full mt-4 bg-[#9b87f5] hover:bg-[#8a76e5]"
+                        onClick={() => handleContractTool(selectedToolDetails.id)}
                       >
-                        Benefícios
-                        {isBenefitsOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="bg-gray-50 p-3 rounded-md">
-                      <ul className="space-y-2">
-                        {tool.benefits.map((benefit, idx) => (
-                          <li key={idx} className="flex items-start">
-                            <CheckCircle2 size={14} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm">{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium mb-2">Como funciona:</h4>
-                        <ul className="space-y-2">
-                          {tool.howItWorks.map((step, idx) => (
-                            <li key={idx} className="flex items-start">
-                              <span className="bg-[#9b87f5] text-white rounded-full w-4 h-4 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">{idx + 1}</span>
-                              <span className="text-sm">{step}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  <div className="space-y-3">
-                    {tool.status === "not_contracted" && (
-                      <Button 
-                        className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
-                        onClick={() => handleContractTool(tool.id)}
-                      >
-                        <CreditCard size={16} />
+                        <CreditCard className="mr-2" size={16} />
                         Contratar Módulo
                       </Button>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
           <DialogContent className="sm:max-w-md">
