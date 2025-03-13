@@ -217,11 +217,11 @@ const AIToolsPage = () => {
   const getStatusIcon = (status: ToolStatus) => {
     switch (status) {
       case "not_contracted": 
-        return <Lock size={14} className="text-red-500" />;
+        return <Lock size={16} className="text-red-500" />;
       case "contracted": 
-        return <AlertTriangle size={14} className="text-yellow-500" />;
+        return <AlertTriangle size={16} className="text-yellow-500" />;
       case "configured": 
-        return <CheckCircle2 size={14} className="text-green-500" />;
+        return <CheckCircle2 size={16} className="text-green-500" />;
     }
   };
 
@@ -277,11 +277,9 @@ const AIToolsPage = () => {
                 onClick={() => setSelectedTool(tool.id)}
               >
                 <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2 relative">
-                  {tool.status === "not_contracted" && (
-                    <div className="absolute top-2 right-2">
-                      <Lock size={16} className="text-red-500" />
-                    </div>
-                  )}
+                  <div className="absolute top-2 right-2">
+                    {getStatusIcon(tool.status)}
+                  </div>
                   <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
                     <tool.icon size={28} />
                   </div>
@@ -302,7 +300,6 @@ const AIToolsPage = () => {
         </div>
       </div>
 
-      {/* Detalhes da ferramenta selecionada */}
       {tools.map((tool) => (
         selectedTool === tool.id && (
           <Card key={`details-${tool.id}`} className="p-5">
@@ -355,7 +352,6 @@ const AIToolsPage = () => {
               </div>
             </div>
 
-            {/* Botões de ação - modificados para mostrar apenas o botão contratar para ferramentas não contratadas */}
             <div className="flex gap-3">
               {tool.status !== "not_contracted" && (
                 <Button 
@@ -391,7 +387,6 @@ const AIToolsPage = () => {
         )
       ))}
 
-      {/* Modal de configuração da ferramenta */}
       <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -423,7 +418,6 @@ const AIToolsPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de execução da ferramenta */}
       <Dialog open={isExecuteModalOpen} onOpenChange={setIsExecuteModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -443,7 +437,6 @@ const AIToolsPage = () => {
             <p className="text-gray-600 mb-5">
               Selecione um lead para executar esta ferramenta de IA. A ferramenta será aplicada usando os dados do lead selecionado.
             </p>
-            {/* Aqui poderia ter um seletor de leads */}
             <div className="flex justify-end gap-2 mt-4">
               <Button variant="cancel" onClick={() => setIsExecuteModalOpen(false)}>
                 Cancelar
