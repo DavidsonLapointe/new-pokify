@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 interface PlanFormProps {
   form: UseFormReturn<PlanFormValues>;
@@ -60,14 +69,6 @@ const moduleIcons = [
 ];
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Filter icons based on search term
-  const filteredIcons = moduleIcons.filter(icon => 
-    icon.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    icon.value.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -123,52 +124,56 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ícone do Módulo</FormLabel>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 p-2 border rounded-md">
-                    {field.value && (
-                      <>
-                        {moduleIcons.find(i => i.value === field.value)?.icon && 
-                          React.createElement(
-                            moduleIcons.find(i => i.value === field.value)!.icon, 
-                            { className: "h-5 w-5 text-primary" }
-                          )
-                        }
-                        <span className="font-medium">{moduleIcons.find(i => i.value === field.value)?.label || "Selecione um ícone"}</span>
-                      </>
-                    )}
-                    {!field.value && "Selecione um ícone abaixo"}
-                  </div>
-                  
-                  <div className="border rounded-md p-2">
-                    <Input
-                      placeholder="Buscar ícone..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full mb-3"
-                    />
-                    
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[200px] overflow-y-auto">
-                      {filteredIcons.map(({ value, label, icon: Icon }) => (
-                        <Button
-                          key={value}
-                          type="button"
-                          variant={field.value === value ? "default" : "outline"}
-                          className={`flex flex-col items-center justify-center gap-1 h-20 p-2 ${field.value === value ? "ring-2 ring-primary" : ""}`}
-                          onClick={() => field.onChange(value)}
-                        >
-                          <Icon className="h-6 w-6" />
-                          <span className="text-xs text-center truncate w-full">{label}</span>
-                        </Button>
-                      ))}
-                    </div>
-                    
-                    {filteredIcons.length === 0 && (
-                      <div className="p-4 text-center text-sm text-muted-foreground">
-                        Nenhum ícone encontrado
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {field.value ? (
+                        <div className="flex items-center gap-2">
+                          {moduleIcons.find(i => i.value === field.value)?.icon && 
+                            React.createElement(
+                              moduleIcons.find(i => i.value === field.value)!.icon, 
+                              { className: "h-4 w-4" }
+                            )
+                          }
+                          <span>{moduleIcons.find(i => i.value === field.value)?.label}</span>
+                        </div>
+                      ) : (
+                        "Selecione um ícone"
+                      )}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Buscar ícone..." />
+                      <CommandEmpty>Nenhum ícone encontrado.</CommandEmpty>
+                      <CommandGroup>
+                        <div className="grid grid-cols-3 gap-1 p-2">
+                          {moduleIcons.map(({ value, label, icon: Icon }) => (
+                            <CommandItem
+                              key={value}
+                              value={label}
+                              onSelect={() => {
+                                field.onChange(value);
+                              }}
+                              className="flex flex-col items-center justify-center px-1 py-2 gap-1 cursor-pointer"
+                            >
+                              <Icon className="h-5 w-5" />
+                              <span className="text-xs truncate w-full text-center">{label}</span>
+                              {value === field.value && (
+                                <Check className="h-3 w-3 absolute right-1 top-1 text-primary" />
+                              )}
+                            </CommandItem>
+                          ))}
+                        </div>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
