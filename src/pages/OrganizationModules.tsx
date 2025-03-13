@@ -5,14 +5,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { 
-  Sparkles, 
   CheckCircle2, 
   AlertTriangle, 
   Lock, 
   Clock, 
   CreditCard,
   MoreVertical,
-  Trash2
+  Trash2,
+  Video,
+  Headphones,
+  UserRound,
+  MessageCircle,
+  ShieldCheck
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -53,7 +57,7 @@ const OrganizationModules = () => {
     {
       id: "video",
       title: "Prospecção com Vídeo",
-      icon: Sparkles,
+      icon: Video,
       description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
       status: "contracted",
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
@@ -75,7 +79,7 @@ const OrganizationModules = () => {
     {
       id: "inbound",
       title: "Atendente Inbound",
-      icon: Sparkles,
+      icon: Headphones,
       description: "Atendimento automatizado para leads inbound com IA conversacional.",
       status: "not_contracted",
       detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
@@ -97,7 +101,7 @@ const OrganizationModules = () => {
     {
       id: "call",
       title: "Análise de Call",
-      icon: Sparkles,
+      icon: UserRound,
       description: "Análise automática de chamadas para identificar padrões e insights.",
       status: "configured",
       detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
@@ -119,7 +123,7 @@ const OrganizationModules = () => {
     {
       id: "nutrition",
       title: "Nutrição de leads (MKT)",
-      icon: Sparkles,
+      icon: MessageCircle,
       description: "Automação de campanhas de nutrição de leads com conteúdo personalizado.",
       status: "coming_soon",
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
@@ -141,7 +145,7 @@ const OrganizationModules = () => {
     {
       id: "assistant",
       title: "Assistente de Prospecção",
-      icon: Sparkles,
+      icon: ShieldCheck,
       description: "Assistente virtual para auxiliar na prospecção de novos clientes.",
       status: "contracted",
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
