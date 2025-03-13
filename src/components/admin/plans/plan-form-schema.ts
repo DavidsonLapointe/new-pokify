@@ -14,6 +14,7 @@ export const planFormSchema = z.object({
   stripeProductId: z.string().optional(),
   stripePriceId: z.string().optional(),
   credits: z.number().optional(),
+  icon: z.string().default("MessageCircle"),
 });
 
 export type PlanFormValues = z.infer<typeof planFormSchema>;
@@ -31,7 +32,7 @@ export interface Plan {
   actionButtonText: string;
   stripeProductId?: string;
   stripePriceId?: string;
-  // Add the missing properties
   credits?: number;
   features?: string[]; // An alias for benefits used in some components
+  icon?: string; // Icon name for the module
 }

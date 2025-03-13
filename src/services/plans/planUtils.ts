@@ -18,6 +18,8 @@ export function mapDbPlanToPlan(dbPlan: any): Plan {
     credits: dbPlan.credits,
     // Map features (database field) to features in our app model
     features: dbPlan.features || [],
+    // Add icon mapping
+    icon: dbPlan.icon || "MessageCircle"
   };
 }
 

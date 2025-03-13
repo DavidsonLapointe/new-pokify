@@ -47,6 +47,12 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
         features = processFeaturesInput(plan.benefits);
       }
       
+      // Process howItWorks safely
+      let howItWorks = undefined;
+      if (plan.howItWorks !== undefined) {
+        howItWorks = processFeaturesInput(plan.howItWorks);
+      }
+      
       const updateData: Record<string, any> = {};
       
       // Only include defined fields in the update
@@ -55,6 +61,11 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       if (plan.description !== undefined) updateData.description = plan.description;
       if (plan.active !== undefined) updateData.active = plan.active;
       if (features !== undefined) updateData.features = features;
+      if (plan.shortDescription !== undefined) updateData.short_description = plan.shortDescription;
+      if (plan.comingSoon !== undefined) updateData.coming_soon = plan.comingSoon;
+      if (plan.actionButtonText !== undefined) updateData.action_button_text = plan.actionButtonText;
+      if (howItWorks !== undefined) updateData.how_it_works = howItWorks;
+      if (plan.icon !== undefined) updateData.icon = plan.icon;
       
       // Adicionar os IDs do Stripe
       updateData.stripe_product_id = stripeData.product.id;

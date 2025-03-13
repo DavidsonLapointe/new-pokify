@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSwitch } from "@/components/ui/custom-switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -14,7 +15,14 @@ import {
 import { type PlanFormValues } from "./plan-form-schema";
 import { type UseFormReturn } from "react-hook-form";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Check } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PlanFormProps {
   form: UseFormReturn<PlanFormValues>;
@@ -22,6 +30,14 @@ interface PlanFormProps {
   onSubmit: () => void;
   onCancel: () => void;
 }
+
+const moduleIcons = [
+  { value: "MessageCircle", label: "Mensagem", icon: MessageCircle },
+  { value: "Video", label: "Vídeo", icon: Video },
+  { value: "Headphones", label: "Atendimento", icon: Headphones },
+  { value: "UserRound", label: "Usuário", icon: UserRound },
+  { value: "ShieldCheck", label: "Segurança", icon: ShieldCheck },
+];
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
   return (
@@ -53,20 +69,50 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             control={form.control}
             name="comingSoon"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
-                <div className="space-y-0.5 flex items-center gap-2">
-                  <FormLabel className="text-base">Módulo "Em Breve"</FormLabel>
-                  {field.value && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-                  <div className="text-sm text-muted-foreground">
-                    {field.value ? "Mostrar como 'Em Breve'" : "Não mostrar como 'Em Breve'"}
-                  </div>
-                </div>
+              <FormItem className="flex items-start space-x-3 space-y-0 rounded-lg border p-4 shadow-sm">
                 <FormControl>
-                  <CustomSwitch
+                  <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-base flex items-center gap-2">
+                    Módulo "Em Breve" 
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </FormLabel>
+                  <div className="text-sm text-muted-foreground">
+                    Marque esta opção para exibir o módulo com status "Em Breve"
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="icon"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ícone do Módulo</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um ícone" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {moduleIcons.map(({ value, label, icon: Icon }) => (
+                      <SelectItem key={value} value={value} className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4" />
+                          <span>{label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />

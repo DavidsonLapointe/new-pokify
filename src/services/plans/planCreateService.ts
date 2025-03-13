@@ -39,7 +39,12 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
           active: plan.active,
           stripe_product_id: stripeData.product.id,
           stripe_price_id: stripeData.price.id,
-          credits: plan.credits
+          credits: plan.credits,
+          short_description: plan.shortDescription,
+          coming_soon: plan.comingSoon,
+          action_button_text: plan.actionButtonText,
+          how_it_works: processFeaturesInput(plan.howItWorks),
+          icon: plan.icon
         })
         .select()
         .single();
