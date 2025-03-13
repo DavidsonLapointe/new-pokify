@@ -304,7 +304,7 @@ const OrganizationModules = () => {
           </p>
         </div>
 
-        <div className="relative px-8">
+        <div className="relative">
           <Carousel
             opts={{
               align: "start",
@@ -312,13 +312,13 @@ const OrganizationModules = () => {
             }}
             className="w-full" 
           >
-            <CarouselContent className="-ml-2 md:-ml-3">
+            <CarouselContent className="-ml-1 md:-ml-2">
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
                 
                 return (
-                  <CarouselItem key={tool.id} className="pl-2 md:pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <CarouselItem key={tool.id} className="pl-1 md:pl-2 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card 
                       className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
@@ -358,7 +358,7 @@ const OrganizationModules = () => {
                         </div>
                         
                         <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                          <tool.icon size={24} />
+                          {React.createElement(tool.icon, { size: 24 })}
                         </div>
                         
                         <div className="text-center w-full">
@@ -399,8 +399,8 @@ const OrganizationModules = () => {
                 );
               })}
             </CarouselContent>
-            <CarouselPrevious className="-left-1" />
-            <CarouselNext className="-right-1" />
+            <CarouselPrevious className="-left-4" />
+            <CarouselNext className="-right-4" />
           </Carousel>
         </div>
 
