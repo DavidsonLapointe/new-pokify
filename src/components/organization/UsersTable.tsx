@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -55,7 +54,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     return pages;
   };
 
-  const getLogsCount = (logs: User["logs"]) => {
+  const getLogsCount = (logs: OrgUser["logs"]) => {
     return logs.length;
   };
 
@@ -65,7 +64,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
   };
 
-  const getStatusBadgeClasses = (status: User["status"]) => {
+  const getStatusBadgeClasses = (status: OrgUser["status"]) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-700";
@@ -78,7 +77,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
     }
   };
 
-  const getStatusLabel = (status: User["status"]) => {
+  const getStatusLabel = (status: OrgUser["status"]) => {
     switch (status) {
       case "active":
         return "Ativo";

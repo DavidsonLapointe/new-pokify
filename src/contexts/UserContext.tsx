@@ -1,13 +1,13 @@
 
 import { createContext, useContext, ReactNode, useState } from 'react';
-import { User } from '@/types';
+import { UserType } from '@/types';
 import { mockAuthenticatedUser } from '@/mocks/userMocks';
 import { mockOrganizations } from '@/mocks/organizationMocks';
 
 interface UserContextType {
-  user: User | null;
+  user: UserType | null;
   loading: boolean;
-  updateUser: (newUser: User) => void;
+  updateUser: (newUser: UserType) => void;
   logout: () => void;
 }
 
@@ -15,15 +15,15 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   // Garantir que o usuário autenticado tenha a organização associada
-  const initialUser: User = {
+  const initialUser: UserType = {
     ...mockAuthenticatedUser,
     organization: mockOrganizations[0]
   };
   
-  const [user, setUser] = useState<User | null>(initialUser);
+  const [user, setUser] = useState<UserType | null>(initialUser);
   const [loading, setLoading] = useState(false);
 
-  const updateUser = (newUser: User) => {
+  const updateUser = (newUser: UserType) => {
     setUser(newUser);
     console.log("Usuário atualizado:", newUser);
   };

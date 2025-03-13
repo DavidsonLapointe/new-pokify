@@ -1,5 +1,5 @@
 
-import { Organization, OrganizationStatus, OrganizationPendingReason, User as OrgUser } from '@/types/organization-types';
+import { Organization, OrganizationStatus, OrganizationPendingReason, OrgUser } from '@/types/organization-types';
 
 export const formatOrganizationData = (organization: any): Organization => {
   console.log("Formatando organização (dados brutos):", organization);

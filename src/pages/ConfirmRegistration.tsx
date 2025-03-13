@@ -1,217 +1,293 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { ConfirmRegistrationForm } from "@/components/admin/organizations/ConfirmRegistrationForm";
-import type { Organization, OrganizationPendingReason } from "@/types";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { SupportForm } from "@/components/admin/organizations/SupportForm";
-import { TermsDialog, PrivacyPolicyDialog, SupportFormDialog } from "@/components/admin/organizations/LegalDocumentsDialogs";
-import { RegistrationHeader } from "@/components/admin/organizations/RegistrationHeader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { Organization, OrganizationPendingReason } from "@/types/organization-types";
 import { formatOrganizationData } from "@/utils/organizationUtils";
-import { PaymentGatewayDialog } from "@/components/organization/plans/PaymentGatewayDialog";
 
-export default function ConfirmRegistration() {
-  const location = useLocation();
+const ConfirmRegistration = () => {
+  const { token } = useParams();
   const navigate = useNavigate();
-  const { id } = useParams(); 
-  const { toast } = useToast();
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  const [showSupportForm, setShowSupportForm] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
-  const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [verifying, setVerifying] = useState(false);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [pendingReason, setPendingReason] = useState<OrganizationPendingReason>(null);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   useEffect(() => {
-    const fetchOrganization = async () => {
+    const verifyToken = async () => {
+      if (!token) {
+        toast.error("Token inválido");
+        navigate("/");
+        return;
+      }
+
       try {
-        if (id) {
-          const { data, error } = await supabase
-            .from('organizations')
-            .select('*')
-            .eq('id', id)
-            .single();
-            
-          if (error) throw error;
-          
-          if (data) {
-            // Use the formatOrganizationData utility to properly convert DB data to Organization type
-            setOrganization(formatOrganizationData(data));
-          }
+        setLoading(true);
+        // Verificar o token e obter informações da organização
+        const { data, error } = await supabase
+          .from("organization_invites")
+          .select(`
+            *,
+            organizations:organization_id (*)
+          `)
+          .eq("token", token)
+          .single();
+
+        if (error || !data) {
+          console.error("Erro ao verificar token:", error);
+          toast.error("Token inválido ou expirado");
+          navigate("/");
+          return;
         }
+
+        // Verificar se o convite já foi usado
+        if (data.used) {
+          toast.error("Este convite já foi utilizado");
+          navigate("/");
+          return;
+        }
+
+        // Formatar os dados da organização
+        const orgData = formatOrganizationData(data.organizations);
+        setOrganization(orgData);
+        setPendingReason(orgData.pendingReason);
+
+        console.log("Organização encontrada:", orgData);
       } catch (error) {
-        console.error("Error fetching organization:", error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar os dados da organização",
-          variant: "destructive"
-        });
+        console.error("Erro ao verificar token:", error);
+        toast.error("Erro ao verificar token");
+        navigate("/");
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchOrganization();
-  }, [id, toast]);
-  
-  const mockOrganization: Organization = {
-    id: "1",
-    name: "Empresa Exemplo LTDA",
-    nomeFantasia: "Empresa Exemplo",
-    cnpj: "12.345.678/0001-90",
-    plan: "professional",
-    planName: "Professional",
-    status: "pending",
-    pendingReason: "contract_signature",
-    contractStatus: "pending",
-    paymentStatus: "pending",
-    registrationStatus: "pending",
-    email: "contato@exemplo.com",
-    phone: "(11) 99999-9999",
-    adminName: "João Silva",
-    adminEmail: "joao@exemplo.com",
-    users: [],
-    integratedCRM: null,
-    integratedLLM: null,
-    contractSignedAt: null,
-    createdAt: new Date().toISOString(),
-  };
-  
-  const activeOrganization = organization || location.state?.organization || mockOrganization;
 
-  const handleSubmit = async (data: any) => {
+    verifyToken();
+  }, [token, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validar senha
+    if (password.length < 8) {
+      setPasswordError("A senha deve ter pelo menos 8 caracteres");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setPasswordError("As senhas não coincidem");
+      return;
+    }
+    
+    setPasswordError("");
+    setVerifying(true);
+    
     try {
-      console.log("Dados do formulário:", data);
+      if (!organization || !token) {
+        toast.error("Dados inválidos");
+        return;
+      }
       
-      if (id || activeOrganization?.id) {
-        const orgId = id || activeOrganization.id;
-        
-        // Define a valid pendingReason value that matches the updated type
-        const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
-        
-        // Atualizar o status da organização
-        const { error: updateError } = await supabase
-          .from('organizations')
-          .update({ 
-            registration_status: 'completed',
-            status: data.acceptTerms ? 'active' : 'pending',
-            pending_reason: pendingReason,
-            // Update address fields
-            logradouro: data.logradouro,
-            numero: data.numero,
-            complemento: data.complemento || '',
-            bairro: data.bairro,
-            cidade: data.cidade,
-            estado: data.estado,
-            cep: data.cep
-          })
-          .eq('id', orgId);
-          
-        if (updateError) {
-          console.error("Erro ao atualizar organização:", updateError);
-          throw updateError;
+      // 1. Criar usuário no Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: organization.adminEmail,
+        password: password,
+        options: {
+          data: {
+            name: organization.adminName,
+            organization_id: organization.id
+          }
         }
+      });
+      
+      if (authError) {
+        console.error("Erro ao criar usuário:", authError);
+        toast.error("Erro ao criar usuário");
+        return;
+      }
+      
+      // 2. Marcar o convite como usado
+      const { error: inviteError } = await supabase
+        .from("organization_invites")
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq("token", token);
         
-        // Atualizar o status do perfil do usuário para ativo
-        // Isso é importante porque criamos o perfil como 'pending' antes
-        const { error: profileError } = await supabase
-          .from('profiles')
+      if (inviteError) {
+        console.error("Erro ao atualizar convite:", inviteError);
+      }
+      
+      // 3. Atualizar o status da organização se necessário
+      if (pendingReason === "user_validation") {
+        const { error: orgError } = await supabase
+          .from("organizations")
           .update({ 
-            status: 'active'
+            registration_status: "completed",
+            status: organization.contractStatus === "completed" && 
+                   organization.paymentStatus === "completed" ? "active" : "pending"
           })
-          .eq('email', activeOrganization?.adminEmail)
-          .eq('organization_id', orgId);
+          .eq("id", organization.id);
           
-        if (profileError) {
-          console.error("Erro ao atualizar perfil do usuário:", profileError);
-          // Não vamos falhar completamente se não conseguirmos atualizar o perfil
-          // O trigger update_organization_status deve cuidar disso
+        if (orgError) {
+          console.error("Erro ao atualizar organização:", orgError);
         }
       }
       
-      toast({
-        title: "Cadastro confirmado!",
-        description: "Você já pode fazer login no sistema.",
-      });
-
-      navigate("/");
+      toast.success("Cadastro confirmado com sucesso!");
+      
+      // Redirecionar para a página de login
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      
     } catch (error) {
-      toast({
-        title: "Erro ao confirmar cadastro",
-        description: "Por favor, tente novamente.",
-        variant: "destructive",
-      });
+      console.error("Erro ao confirmar cadastro:", error);
+      toast.error("Erro ao confirmar cadastro");
+    } finally {
+      setVerifying(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
-      <div className="max-w-4xl mx-auto pt-8 px-4 sm:px-6 lg:px-8 pb-16">
-        <RegistrationHeader />
-
-        <Card className="w-full shadow-lg border-[#E5DEFF]">
-          <CardHeader className="border-b border-[#E5DEFF] bg-[#F1F0FB] rounded-t-lg">
-            <CardTitle className="text-[#6E59A5]">Confirmar Registro</CardTitle>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-md p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Confirmar Cadastro</CardTitle>
             <CardDescription>
-              Complete seus dados cadastrais para concluir seu acesso
+              Complete seu cadastro para acessar a plataforma
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <ConfirmRegistrationForm 
-              organization={activeOrganization} 
-              onSubmit={handleSubmit}
-              onShowTerms={() => setShowTerms(true)}
-              onShowPrivacyPolicy={() => setShowPrivacyPolicy(true)}
-              onShowPayment={() => setShowPayment(true)}
-            />
+          <CardContent>
+            {organization ? (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="organization">Organização</Label>
+                  <Input
+                    id="organization"
+                    value={organization.name}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome do Administrador</Label>
+                  <Input
+                    id="name"
+                    value={organization.adminName}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={organization.adminEmail}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Senha</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Digite sua senha"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirme sua senha"
+                    required
+                  />
+                  {passwordError && (
+                    <p className="text-sm text-red-500">{passwordError}</p>
+                  )}
+                </div>
+
+                {pendingReason === "contract_signature" ? (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      Você precisa assinar o contrato para ativar sua conta.
+                      Após confirmar seu cadastro, você receberá instruções por email.
+                    </p>
+                  </div>
+                ) : pendingReason === "pro_rata_payment" ? (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      Você precisa realizar o pagamento pro-rata para ativar sua conta.
+                      Após confirmar seu cadastro, você receberá instruções por email.
+                    </p>
+                  </div>
+                ) : null}
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={verifying}
+                >
+                  {verifying ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Confirmando...
+                    </>
+                  ) : (
+                    "Confirmar Cadastro"
+                  )}
+                </Button>
+              </form>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-red-500">
+                  Não foi possível carregar os dados da organização.
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => navigate("/")}
+                >
+                  Voltar para o início
+                </Button>
+              </div>
+            )}
           </CardContent>
+          <CardFooter className="flex justify-center">
+            <p className="text-sm text-gray-500">
+              Já tem uma conta?{" "}
+              <a
+                href="/login"
+                className="text-primary hover:underline"
+              >
+                Faça login
+              </a>
+            </p>
+          </CardFooter>
         </Card>
-
-        <div className="text-center mt-6 mb-8">
-          <button 
-            onClick={() => setShowSupportForm(true)}
-            className="text-sm text-[#8E9196] hover:underline transition-all"
-          >
-            Precisa de ajuda? Entre em contato com nosso suporte
-          </button>
-        </div>
       </div>
-
-      <TermsDialog 
-        open={showTerms} 
-        onOpenChange={setShowTerms}
-      />
-
-      <PrivacyPolicyDialog 
-        open={showPrivacyPolicy} 
-        onOpenChange={setShowPrivacyPolicy}
-      />
-
-      <SupportFormDialog 
-        open={showSupportForm} 
-        onOpenChange={setShowSupportForm}
-      >
-        <SupportForm onClose={() => setShowSupportForm(false)} />
-      </SupportFormDialog>
-      
-      <PaymentGatewayDialog
-        open={showPayment}
-        onOpenChange={setShowPayment}
-        package={{
-          name: "Valor Pro Rata",
-          credits: 0,
-          price: 99.90
-        }}
-      />
     </div>
   );
-}
+};
+
+export default ConfirmRegistration;

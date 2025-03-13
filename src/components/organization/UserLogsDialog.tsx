@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -14,12 +15,12 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { User } from "@/types";
+import { OrgUser } from "@/types/organization-types";
 
 interface UserLogsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  user: User;
+  user: OrgUser;
 }
 
 export const UserLogsDialog = ({ isOpen, onClose, user }: UserLogsDialogProps) => {

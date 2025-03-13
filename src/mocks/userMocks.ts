@@ -1,3 +1,4 @@
+
 import { UserType } from '../types';
 import { generateRandomLogs } from './utils';
 import { Organization } from '@/types/organization-types';
