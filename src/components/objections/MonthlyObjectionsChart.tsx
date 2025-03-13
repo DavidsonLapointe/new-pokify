@@ -78,7 +78,7 @@ export const MonthlyObjectionsChart = ({
               width={250}
               tick={{ fontSize: 13 }}
             />
-            <RechartsTooltip content={<CustomTooltip />} />
+            <RechartsTooltip content={<CustomTooltip />} cursor={false} />
             <Bar dataKey="value" name="Ocorrências" fill="#2563eb" />
           </BarChart>
         </ResponsiveContainer>

@@ -79,7 +79,7 @@ export const ObjectionTrendsChart = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} />
+              <RechartsTooltip content={<CustomTooltip />} cursor={false} />
               <Legend />
               {objectionTypes.map((type, index) => (
                 <Line

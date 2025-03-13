@@ -22,8 +22,8 @@ export const useDashboardData = () => {
   const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
   const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
 
-  // Get sellers from the first organization
-  const sellers = mockOrganizations[0]?.users.filter(user => user.status === 'active') || [];
+  // Get ALL sellers from the first organization, regardless of status
+  const sellers = mockOrganizations[0]?.users || [];
 
   // Make sure objectionExamples has fallback values
   const ensuredObjectionExamples = {
