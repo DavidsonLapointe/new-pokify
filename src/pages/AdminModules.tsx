@@ -15,6 +15,7 @@ import {
   Smartphone, Star, Zap, Briefcase, Bell, Clock, 
   Package, Blocks, AppWindow, ChevronLeft, ChevronRight,
   CheckCircle, AlertCircle, Pencil, ChevronDown, 
+  ChevronUp
 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
@@ -227,17 +228,15 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full text-xs text-primary"
+        <div 
+          className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
           onClick={(e) => {
             e.stopPropagation();
             onEditPlan(plan);
           }}
         >
-          Ver Detalhes <ChevronDown className="h-3 w-3 ml-1" />
-        </Button>
+          Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
+        </div>
       </CardFooter>
     </Card>
   );
