@@ -15,7 +15,7 @@ import {
   BookOpen, CreditCard, LineChart, Mail, Share2, 
   Smartphone, Star, Zap, Briefcase, Bell, Clock, 
   Package, Blocks, AppWindow, ChevronLeft, ChevronRight,
-  MoreVertical, AlertTriangle, CheckCircle, AlertCircle
+  CheckCircle, AlertCircle
 } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
@@ -192,20 +192,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     ? iconMap[plan.icon as keyof typeof iconMap] 
     : MessageCircle; // Default to MessageCircle if not found
 
-  // Determinar o status do módulo e configurar seu ícone de status
-  const getStatusIndicator = () => {
-    if (!plan.active) return null;
-    
-    if (plan.comingSoon) {
-      return <Clock className="h-5 w-5 text-amber-500" />;
-    }
-    
-    return <CheckCircle className="h-5 w-5 text-green-500" />;
-  };
-
   return (
     <Card 
-      className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'ring-2 ring-primary' : ''} ${!plan.active ? 'opacity-60' : ''}`}
+      className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'bg-[#F1F0FB]' : ''}`}
       onClick={onClick}
     >
       <CardHeader className="p-4 pb-2">
@@ -213,10 +202,12 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           <div className="p-2 bg-primary-lighter rounded-md">
             <IconComponent className="h-6 w-6 text-primary" />
           </div>
-          <div className="flex space-x-1">
-            {getStatusIndicator()}
-            <MoreVertical className="h-5 w-5 text-muted-foreground" />
-          </div>
+          <Badge 
+            variant={plan.active ? "default" : "destructive"}
+            className={plan.active ? "bg-green-500 hover:bg-green-600" : ""}
+          >
+            {plan.active ? "Ativo" : "Inativo"}
+          </Badge>
         </div>
         <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
           {plan.name}
@@ -246,13 +237,11 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 interface DetailedModuleViewProps {
   plan: Plan;
   onEdit: () => void;
-  onClose: () => void;
 }
 
 const DetailedModuleView: React.FC<DetailedModuleViewProps> = ({
   plan,
-  onEdit,
-  onClose
+  onEdit
 }) => {
   const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
     ? iconMap[plan.icon as keyof typeof iconMap] 
@@ -289,14 +278,6 @@ const DetailedModuleView: React.FC<DetailedModuleViewProps> = ({
               onClick={onEdit}
             >
               Editar Módulo
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-white/80"
-              onClick={onClose}
-            >
-              Fechar
             </Button>
           </div>
         </div>
@@ -392,9 +373,9 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({ setIsCreateDialogOpen }) => {
   return (
     <div className="space-y-2">
-      <h1 className="text-3xl font-semibold">Módulos do Sistema</h1>
+      <h1 className="text-3xl font-semibold">Módulos</h1>
       <p className="text-muted-foreground">
-        Gerencie as ferramentas de IA disponíveis para sua empresa
+        Gerencie as ferramentas de IA disponíveis no sistema
       </p>
       <div className="flex justify-end">
         <Button onClick={() => setIsCreateDialogOpen(true)}>
@@ -448,6 +429,13 @@ const Modules = () => {
   useEffect(() => {
     loadPlans();
   }, []);
+
+  useEffect(() => {
+    // Selecionar o primeiro plano ao carregar
+    if (plans.length > 0 && !selectedPlan) {
+      setSelectedPlan(plans[0]);
+    }
+  }, [plans, selectedPlan]);
 
   const loadPlans = async () => {
     setIsLoading(true);
@@ -632,7 +620,6 @@ const Modules = () => {
             <DetailedModuleView 
               plan={selectedPlan}
               onEdit={() => handleEditPlan(selectedPlan)}
-              onClose={() => setSelectedPlan(null)}
             />
           )}
         </>
