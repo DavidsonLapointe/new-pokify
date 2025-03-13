@@ -450,7 +450,9 @@ const OrganizationModules = () => {
                   <ul className="space-y-2">
                     {selectedToolDetails.howItWorks.map((step, idx) => (
                       <li key={idx} className="flex items-start text-sm text-left">
-                        <Video className="h-4 w-4 text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
+                        {selectedToolDetails.icon && React.createElement(selectedToolDetails.icon, { 
+                          className: "h-4 w-4 text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" 
+                        })}
                         <span>{step}</span>
                       </li>
                     ))}
