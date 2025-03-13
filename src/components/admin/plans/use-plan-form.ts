@@ -16,7 +16,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
   const { toast } = useToast();
   const isEditing = !!plan;
 
-  console.log("usePlanForm iniciado com plano:", plan);
+  console.log("usePlanForm iniciado com módulo:", plan);
 
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planFormSchema),
@@ -34,7 +34,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   useEffect(() => {
     if (plan) {
-      console.log("Carregando dados do plano no formulário:", plan);
+      console.log("Carregando dados do módulo no formulário:", plan);
       
       // Prepare features for form
       let featuresString = "";
@@ -152,24 +152,24 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       }
       
       if (savedPlan) {
-        console.log('Plano salvo com sucesso:', savedPlan);
+        console.log('Módulo salvo com sucesso:', savedPlan);
         await onSave(savedPlan);
         
         toast({
-          title: `Plano ${isEditing ? "atualizado" : "criado"} com sucesso!`,
-          description: `O plano ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
+          title: `Módulo ${isEditing ? "atualizado" : "criado"} com sucesso!`,
+          description: `O módulo ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
         });
         
         onOpenChange(false);
       } else {
-        console.error('Não foi possível salvar o plano, resposta vazia');
-        throw new Error('Não foi possível salvar o plano');
+        console.error('Não foi possível salvar o módulo, resposta vazia');
+        throw new Error('Não foi possível salvar o módulo');
       }
     } catch (error) {
-      console.error('Erro ao salvar plano:', error);
+      console.error('Erro ao salvar módulo:', error);
       toast({
-        title: "Erro ao salvar plano",
-        description: error.message || "Ocorreu um erro ao salvar o plano. Tente novamente.",
+        title: "Erro ao salvar módulo",
+        description: error.message || "Ocorreu um erro ao salvar o módulo. Tente novamente.",
         variant: "destructive",
       });
     }

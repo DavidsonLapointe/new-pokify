@@ -33,11 +33,11 @@ export const EditPlanDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar Plano" : "Novo Plano"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Editar Módulo" : "Novo Módulo"}</DialogTitle>
           <DialogDescription>
             {isEditing 
-              ? "Atualize as informações do plano conforme necessário."
-              : "Preencha as informações do novo plano."
+              ? "Atualize as informações do módulo conforme necessário."
+              : "Preencha as informações do novo módulo."
             }
           </DialogDescription>
         </DialogHeader>

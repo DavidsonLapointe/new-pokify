@@ -28,23 +28,23 @@ const Modules = () => {
   const loadPlans = async () => {
     setIsLoading(true);
     try {
-      console.log("Carregando planos...");
+      console.log("Carregando módulos...");
       const fetchedPlans = await fetchPlans();
-      console.log("Planos carregados:", fetchedPlans);
+      console.log("Módulos carregados:", fetchedPlans);
       setPlans(fetchedPlans);
     } catch (error) {
-      console.error("Erro ao carregar planos:", error);
-      toast.error("Não foi possível carregar os planos. Tente novamente.");
+      console.error("Erro ao carregar módulos:", error);
+      toast.error("Não foi possível carregar os módulos. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSavePlan = async (data: Partial<Plan>) => {
-    console.log("Salvando plano:", data);
+    console.log("Salvando módulo:", data);
     try {
       if (editingPlan) {
-        console.log("Atualizando plano existente:", editingPlan.id);
+        console.log("Atualizando módulo existente:", editingPlan.id);
         const updatedPlans = plans.map(plan => 
           plan.id === editingPlan.id 
             ? { ...plan, ...data, id: plan.id }
@@ -53,16 +53,16 @@ const Modules = () => {
         setPlans(updatedPlans);
         setEditingPlan(null);
       } else {
-        console.log("Adicionando novo plano");
+        console.log("Adicionando novo módulo");
         const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
         setPlans([...plans, newPlan]);
       }
 
       await loadPlans();
-      toast.success(editingPlan ? "Plano atualizado com sucesso!" : "Plano criado com sucesso!");
+      toast.success(editingPlan ? "Módulo atualizado com sucesso!" : "Módulo criado com sucesso!");
     } catch (error) {
-      console.error("Erro ao salvar plano:", error);
-      toast.error("Ocorreu um erro ao salvar o plano.");
+      console.error("Erro ao salvar módulo:", error);
+      toast.error("Ocorreu um erro ao salvar o módulo.");
     }
   };
   
@@ -80,8 +80,8 @@ const Modules = () => {
         await loadPlans();
       }
     } catch (error) {
-      console.error("Erro ao desativar plano:", error);
-      toast.error("Ocorreu um erro ao desativar o plano.");
+      console.error("Erro ao desativar módulo:", error);
+      toast.error("Ocorreu um erro ao desativar o módulo.");
     } finally {
       setDeletingPlanId(null);
     }
@@ -178,7 +178,7 @@ const Modules = () => {
                     variant="default"
                     onClick={() => setEditingPlan(plan)}
                   >
-                    Editar Plano
+                    Editar Módulo
                   </Button>
                   
                   {plan.active && (

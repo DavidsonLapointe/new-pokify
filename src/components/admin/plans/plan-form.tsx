@@ -31,9 +31,9 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Status do Plano</FormLabel>
+                <FormLabel className="text-base">Status do Módulo</FormLabel>
                 <div className="text-sm text-muted-foreground">
-                  {field.value ? "Plano ativo" : "Plano inativo"}
+                  {field.value ? "Módulo ativo" : "Módulo inativo"}
                 </div>
               </div>
               <FormControl>
@@ -51,7 +51,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome do Plano</FormLabel>
+              <FormLabel>Nome do Módulo</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -132,7 +132,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             Cancelar
           </Button>
           <Button type="submit">
-            {isEditing ? "Salvar Alterações" : "Criar Plano"}
+            {isEditing ? "Salvar Alterações" : "Criar Módulo"}
           </Button>
         </div>
       </form>
