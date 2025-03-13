@@ -205,7 +205,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           </div>
           <Badge 
             variant={plan.active ? "default" : "destructive"}
-            className={plan.active ? "bg-green-500 hover:bg-green-600" : ""}
+            className={plan.active ? "bg-green-500 hover:bg-green-500" : ""}
           >
             {plan.active ? "Ativo" : "Inativo"}
           </Badge>
@@ -304,11 +304,11 @@ const Modules = () => {
   }, []);
 
   useEffect(() => {
-    // Selecionar o primeiro plano ao carregar
-    if (plans.length > 0 && !selectedPlan) {
+    // Selecionar o primeiro plano ao carregar os planos
+    if (plans.length > 0) {
       setSelectedPlan(plans[0]);
     }
-  }, [plans, selectedPlan]);
+  }, [plans]);
 
   const loadPlans = async () => {
     setIsLoading(true);
