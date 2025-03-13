@@ -10,7 +10,8 @@ import {
   CreditCard,
   Building,
   List,
-  Sparkles
+  Sparkles,
+  Layers
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -55,9 +56,9 @@ export const useMenuItems = (user: User) => {
       permissionId: "settings"
     },
     {
-      icon: CreditCard,
-      label: "Meu Plano",
-      path: "/organization/plan",
+      icon: Layers,
+      label: "Módulos do Sistema",
+      path: "/organization/modules",
       permissionId: "plan"
     },
     {
