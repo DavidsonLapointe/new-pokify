@@ -1,16 +1,16 @@
 
 import { useState, useMemo } from "react";
-import { format, subMonths } from "date-fns";
+import { format, subMonths, addDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export interface DailyLeadsData {
   day: string;
-  leads: number;
+  novos: number; // Alterando de 'leads' para 'novos' para corresponder ao DailyLeadsChart
 }
 
 export interface MonthlyLeadsData {
   month: string;
-  leads: number;
+  novos: number; // Alterando de 'leads' para 'novos' para corresponder ao MonthlyLeadsChart
 }
 
 export const useLeadsData = () => {
@@ -25,10 +25,13 @@ export const useLeadsData = () => {
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     
     const data: DailyLeadsData[] = [];
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
     for (let i = 1; i <= daysInMonth; i++) {
+      const day = addDays(startOfMonth, i - 1);
       data.push({
-        day: i.toString().padStart(2, '0'),
-        leads: Math.floor(Math.random() * 10) + 1
+        day: format(day, 'dd/MM'),
+        novos: Math.floor(Math.random() * 10) + 1
       });
     }
     
@@ -47,7 +50,7 @@ export const useLeadsData = () => {
       
       data.push({
         month: `${monthName}/${year}`,
-        leads: Math.floor(Math.random() * 50) + 10
+        novos: Math.floor(Math.random() * 50) + 10
       });
     }
     

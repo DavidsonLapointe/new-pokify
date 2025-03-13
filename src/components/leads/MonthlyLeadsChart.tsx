@@ -9,16 +9,12 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types";
-import { useMemo } from "react";
 
 interface MonthlyLeadsChartProps {
-  data: Array<{
-    month: string;
-    novos: number;
-    [key: string]: any;
-  }>;
+  data: any[];
   selectedDate: Date;
   onDateChange: (date: Date) => void;
   selectedSeller: string;
@@ -42,35 +38,54 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export const MonthlyLeadsChart = ({ 
   data, 
+  selectedDate, 
+  onDateChange,
   selectedSeller,
   onSellerChange,
-  sellers
+  sellers 
 }: MonthlyLeadsChartProps) => {
   // Filter data based on selected seller
-  const filteredData = useMemo(() => {
-    if (selectedSeller === "all") {
-      return data; // Return all data
-    } else {
-      // Return data for the specific seller if available
-      // This is a mock implementation since we don't have real seller-specific data
-      // In a real implementation, you'd filter based on actual seller data
-      return data.map(item => ({
+  const filteredData = selectedSeller === "all" 
+    ? data 
+    : data.map(item => ({
         ...item,
-        novos: Math.floor(item.novos * (Math.random() * 0.5 + 0.2)) // Mock data for seller
+        novos: Math.floor(item.novos * (Math.random() * 0.5 + 0.4))
       }));
-    }
-  }, [data, selectedSeller]);
+
+  if (!data || data.length === 0 || !filteredData || filteredData.length === 0) {
+    return (
+      <Card className="p-4">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
+            <div className="flex items-center gap-4">
+              <SellerSelector 
+                selectedSeller={selectedSeller}
+                onSellerChange={onSellerChange}
+                sellers={sellers}
+              />
+            </div>
+          </div>
+          <div className="h-[400px] w-full flex items-center justify-center">
+            <p className="text-muted-foreground">Nenhum dado disponível.</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
-          <SellerSelector 
-            selectedSeller={selectedSeller}
-            onSellerChange={onSellerChange}
-            sellers={sellers}
-          />
+          <div className="flex items-center gap-4">
+            <SellerSelector 
+              selectedSeller={selectedSeller}
+              onSellerChange={onSellerChange}
+              sellers={sellers}
+            />
+          </div>
         </div>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -82,7 +97,7 @@ export const MonthlyLeadsChart = ({
                 textAnchor="end"
                 height={40}
                 interval={0}
-                tick={{ fontSize: 13 }}
+                tick={{ fontSize: 12 }}
               />
               <YAxis />
               <RechartsTooltip content={<CustomTooltip />} />
