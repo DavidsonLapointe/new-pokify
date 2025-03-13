@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationPlan, OrganizationStatus } from "@/types/organization-types";
@@ -27,7 +26,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     }
     
     // Insert the new organization
-    // Note: We're converting our application's field names to the database column names
+    // Note: Field names must match the database column names
     const { data, error } = await supabase
       .from('organizations')
       .insert({
@@ -39,7 +38,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         plan: values.plan,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        status: values.status // Keep status as is - The RLS policy will handle conversion
+        status: values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status 
+        // Map to database-supported values
       })
       .select('*')
       .single();
@@ -222,6 +222,12 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     planValue = dbOrg.plan || '';
   }
 
+  // Map database status to OrganizationStatus, ensuring it's valid
+  let status: OrganizationStatus = dbOrg.status as OrganizationStatus;
+  if (!["active", "pending", "suspended", "canceled", "inactive"].includes(status)) {
+    status = "pending"; // Default to pending if invalid status
+  }
+
   return {
     id: dbOrg.id,
     name: dbOrg.name,
@@ -229,7 +235,7 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     plan: planValue,
     planName: dbOrg.planName,
     users: [], // You might need to fetch the users separately
-    status: dbOrg.status as OrganizationStatus,
+    status: status,
     pendingReason: dbOrg.pending_reason || null,
     contractStatus: dbOrg.contract_status,
     paymentStatus: dbOrg.payment_status,
@@ -244,7 +250,7 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     contractSignedAt: dbOrg.contract_signed_at,
     createdAt: dbOrg.created_at,
     logo: dbOrg.logo,
-    address: {
+    address: dbOrg.logradouro ? {
       logradouro: dbOrg.logradouro,
       numero: dbOrg.numero,
       complemento: dbOrg.complemento,
@@ -252,7 +258,7 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
       cidade: dbOrg.cidade,
       estado: dbOrg.estado,
       cep: dbOrg.cep,
-    },
+    } : undefined,
   };
 };
 

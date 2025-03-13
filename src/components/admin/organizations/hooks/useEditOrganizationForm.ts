@@ -33,6 +33,9 @@ export const useEditOrganizationForm = (
     try {
       console.log("Submitting form with values:", values);
       
+      // Map statuses that aren't directly supported in the database to a supported value
+      const dbStatus = values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status;
+      
       const { data, error } = await supabase
         .from('organizations')
         .update({
@@ -44,7 +47,7 @@ export const useEditOrganizationForm = (
           plan: values.plan,
           admin_name: values.adminName,
           admin_email: values.adminEmail,
-          status: values.status // Status will be validated by our schema now
+          status: dbStatus // Use mapped status for database
         })
         .eq('id', organization.id)
         .select();

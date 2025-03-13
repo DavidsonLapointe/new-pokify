@@ -87,7 +87,7 @@ export default function ConfirmRegistration() {
       if (id || activeOrganization?.id) {
         const orgId = id || activeOrganization.id;
         
-        // Define a valid pendingReason value that matches the type
+        // Define a valid pendingReason value that matches the updated type
         const pendingReason: OrganizationPendingReason = data.acceptTerms ? null : "pro_rata_payment";
         
         // Atualizar o status da organização
