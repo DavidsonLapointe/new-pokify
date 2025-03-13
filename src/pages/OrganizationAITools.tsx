@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -48,9 +47,7 @@ interface Tool {
 const AIToolsPage = () => {
   const [selectedTool, setSelectedTool] = useState<string>("video");
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
-  const [isExecuteModalOpen, setIsExecuteModalOpen] = useState(false);
   const [currentConfigTool, setCurrentConfigTool] = useState<string>("");
-  const [currentExecuteTool, setCurrentExecuteTool] = useState<string>("");
 
   const tools: Tool[] = [
     {
@@ -187,19 +184,6 @@ const AIToolsPage = () => {
     }
   };
 
-  const handleExecuteTool = (toolId: string) => {
-    // Não permite executar ferramentas não contratadas
-    const tool = getToolById(toolId);
-    if (tool.status === "not_contracted") {
-      console.log("Ferramenta não contratada:", toolId);
-      return;
-    }
-
-    // Abre o modal de execução para ferramentas contratadas
-    setCurrentExecuteTool(toolId);
-    setIsExecuteModalOpen(true);
-  };
-
   // Função para retornar o ícone de status apropriado
   const getStatusIcon = (status: ToolStatus) => {
     switch (status) {
@@ -256,59 +240,6 @@ const AIToolsPage = () => {
           label: "Editar configuração",
           icon: Edit,
           class: "bg-green-600 hover:bg-green-700"
-        };
-    }
-  };
-
-  // Função para retornar o rótulo e ícone do botão de execução
-  const getExecuteButtonProps = (tool: Tool) => {
-    const baseClass = "bg-[#9b87f5] hover:bg-[#7E69AB] text-white w-full";
-    
-    if (tool.status === "not_contracted") {
-      return {
-        label: "Contratar para utilizar",
-        icon: CreditCard,
-        class: `${baseClass} opacity-50 cursor-not-allowed`
-      };
-    }
-    
-    // Personalização por tipo de ferramenta
-    switch (tool.id) {
-      case "video":
-        return {
-          label: "Criar vídeo personalizado",
-          icon: Video,
-          class: baseClass
-        };
-      case "inbound":
-        return {
-          label: "Configurar atendente",
-          icon: Headphones,
-          class: baseClass
-        };
-      case "call":
-        return {
-          label: "Analisar gravação",
-          icon: UserRound,
-          class: baseClass
-        };
-      case "nutrition":
-        return {
-          label: "Criar campanha de nutrição",
-          icon: MessageCircle,
-          class: baseClass
-        };
-      case "assistant":
-        return {
-          label: "Executar assistente",
-          icon: Zap,
-          class: baseClass
-        };
-      default:
-        return {
-          label: "Executar ferramenta",
-          icon: Zap,
-          class: baseClass
         };
     }
   };
@@ -419,43 +350,35 @@ const AIToolsPage = () => {
               </div>
             </div>
 
-            {/* Botão de execução da ferramenta */}
-            {(() => {
-              const executeProps = getExecuteButtonProps(tool);
-              return (
-                <Button 
-                  className={`mb-4 flex items-center justify-center py-5 ${executeProps.class}`}
-                  onClick={() => handleExecuteTool(tool.id)}
-                  disabled={tool.status === "not_contracted"}
-                >
-                  <executeProps.icon size={18} className="mr-2" />
-                  <span>{executeProps.label}</span>
-                  <ArrowRight size={18} className="ml-2" />
-                </Button>
-              );
-            })()}
-
+            {/* Botões de ação - apenas 2 botões por card */}
             <div className="flex gap-4">
-              <Button 
-                className={`flex-1 flex items-center justify-center gap-2 py-5 ${getButtonClass(tool.status)}`}
-                onClick={() => handleToolAction(tool.id)}
-              >
-                <tool.actionIcon size={18} />
-                <span>{tool.actionLabel}</span>
-                <ArrowRight size={18} />
-              </Button>
-              
-              {/* Botão secundário baseado no status */}
               {(() => {
+                const primaryProps = {
+                  label: tool.status === "not_contracted" ? "Contratar" : "Configurar",
+                  icon: tool.status === "not_contracted" ? CreditCard : Settings,
+                  class: getButtonClass(tool.status)
+                };
+                
                 const secondaryProps = getSecondaryButtonProps(tool);
+                
                 return (
-                  <Button 
-                    className={`flex items-center justify-center gap-2 py-5 ${secondaryProps.class}`}
-                    onClick={() => handleToolAction(tool.id)}
-                  >
-                    <secondaryProps.icon size={18} />
-                    <span>{secondaryProps.label}</span>
-                  </Button>
+                  <>
+                    <Button 
+                      className={`flex items-center justify-center gap-2 min-w-40 py-4 ${primaryProps.class}`}
+                      onClick={() => handleToolAction(tool.id)}
+                    >
+                      <primaryProps.icon size={18} />
+                      <span>{primaryProps.label}</span>
+                    </Button>
+                    
+                    <Button 
+                      className={`flex items-center justify-center gap-2 min-w-40 py-4 ${secondaryProps.class}`}
+                      onClick={() => handleToolAction(tool.id)}
+                    >
+                      <secondaryProps.icon size={18} />
+                      <span>{secondaryProps.label}</span>
+                    </Button>
+                  </>
                 );
               })()}
             </div>
@@ -489,52 +412,6 @@ const AIToolsPage = () => {
               </Button>
               <Button onClick={() => setIsConfigModalOpen(false)}>
                 Salvar Configurações
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal de execução da ferramenta */}
-      <Dialog open={isExecuteModalOpen} onOpenChange={setIsExecuteModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {currentExecuteTool && (
-                <div className="flex items-center gap-2">
-                  {(() => {
-                    const ToolIcon = getToolById(currentExecuteTool).icon;
-                    return <ToolIcon className="text-[#9b87f5]" size={18} />;
-                  })()}
-                  Executar {getToolById(currentExecuteTool).title}
-                </div>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
-            <p className="text-gray-600 mb-5">
-              Selecione um lead para aplicar a ferramenta {currentExecuteTool && getToolById(currentExecuteTool).title}:
-            </p>
-            
-            {/* Interface de seleção de lead (simplificada para este exemplo) */}
-            <div className="mb-4">
-              <select className="w-full p-3 border border-gray-300 rounded-md">
-                <option value="">Selecione um lead</option>
-                <option value="1">João Silva - Empresa ABC</option>
-                <option value="2">Maria Oliveira - XYZ Corp</option>
-                <option value="3">Carlos Santos - Tech Solutions</option>
-              </select>
-            </div>
-            
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="cancel" onClick={() => setIsExecuteModalOpen(false)}>
-                Cancelar
-              </Button>
-              <Button 
-                className="bg-[#9b87f5] hover:bg-[#7E69AB]"
-                onClick={() => setIsExecuteModalOpen(false)}
-              >
-                Executar
               </Button>
             </div>
           </div>
