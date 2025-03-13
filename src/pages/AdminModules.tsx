@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -232,7 +233,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
           onClick={(e) => {
             e.stopPropagation();
-            onEditPlan(plan);
+            onClick(); // Use the onClick prop to select this plan, not open the edit dialog
           }}
         >
           Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
@@ -308,7 +309,7 @@ const ModuleDetailedSection: React.FC<{
 
   return (
     <div className="mt-8 rounded-lg overflow-hidden">
-      <div className="bg-white p-6 pb-0 border border-gray-200">
+      <div className="bg-white p-6 pb-0 border border-gray-200 border-b-0">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary-lighter rounded-md">
