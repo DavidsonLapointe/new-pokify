@@ -204,8 +204,12 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             <IconComponent className="h-6 w-6 text-primary" />
           </div>
           <Badge 
-            variant={plan.active ? "default" : "destructive"}
-            className={plan.active ? "bg-green-500 hover:bg-green-500" : ""}
+            variant="secondary"
+            className={`
+              ${plan.active 
+                ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                : "bg-red-100 text-red-800 hover:bg-red-100"}
+            `}
           >
             {plan.active ? "Ativo" : "Inativo"}
           </Badge>
@@ -321,8 +325,12 @@ const ModuleDetailedSection: React.FC<{
           </div>
           <div className="flex items-center gap-2">
             <Badge 
-              variant={selectedModule.active ? "default" : "destructive"}
-              className={selectedModule.active ? "bg-green-500 hover:bg-green-500" : ""}
+              variant="secondary"
+              className={`
+                ${selectedModule.active 
+                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                  : "bg-red-100 text-red-800 hover:bg-red-100"}
+              `}
             >
               {selectedModule.active ? "Ativo" : "Inativo"}
             </Badge>
