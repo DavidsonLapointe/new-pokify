@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -58,7 +59,7 @@ const AIToolsPage = () => {
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
       actionLabel: "Configurar ferramenta",
       actionIcon: Settings,
-      badgeLabel: "Ativo",
+      badgeLabel: "Contratada",
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
         "Geração de roteiro personalizado com base no perfil",
@@ -81,7 +82,7 @@ const AIToolsPage = () => {
       detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
       actionLabel: "Contratar ferramenta",
       actionIcon: CreditCard,
-      badgeLabel: "Não contratado",
+      badgeLabel: "Não contratada",
       howItWorks: [
         "Instalação de widget de chat no seu website",
         "Configuração de respostas para perguntas frequentes",
@@ -104,7 +105,7 @@ const AIToolsPage = () => {
       detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
       actionLabel: "Editar configuração",
       actionIcon: Edit,
-      badgeLabel: "Configurado",
+      badgeLabel: "Configurada",
       howItWorks: [
         "Upload da gravação da chamada na plataforma",
         "Processamento e transcrição automática do áudio",
@@ -127,7 +128,7 @@ const AIToolsPage = () => {
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
       actionLabel: "Contratar ferramenta",
       actionIcon: CreditCard,
-      badgeLabel: "Não contratado",
+      badgeLabel: "Não contratada",
       howItWorks: [
         "Segmentação dos leads por perfil e comportamento",
         "Criação de sequências de conteúdo personalizado",
@@ -150,7 +151,7 @@ const AIToolsPage = () => {
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
       actionLabel: "Configurar ferramenta",
       actionIcon: Settings,
-      badgeLabel: "Ativo",
+      badgeLabel: "Contratada",
       howItWorks: [
         "Pesquisa automática de informações sobre empresas-alvo",
         "Elaboração de abordagens personalizadas para cada lead",
