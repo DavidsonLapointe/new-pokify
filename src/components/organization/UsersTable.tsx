@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "@/types";
+import { OrgUser } from "@/types/organization-types";
 import { Mail, PencilIcon, LockIcon, ChevronFirst, ChevronLast } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -16,18 +17,18 @@ import { useState } from "react";
 import { UserLogsDialog } from "./UserLogsDialog";
 
 interface UsersTableProps {
-  users: User[];
-  onEditUser: (user: User) => void;
-  onEditPermissions: (user: User) => void;
+  users: OrgUser[];
+  onEditUser: (user: OrgUser) => void;
+  onEditPermissions: (user: OrgUser) => void;
 }
 
 export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableProps) => {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<OrgUser | null>(null);
   const [logsDialogOpen, setLogsDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const handleViewLogs = (user: User) => {
+  const handleViewLogs = (user: OrgUser) => {
     setSelectedUser(user);
     setLogsDialogOpen(true);
   };

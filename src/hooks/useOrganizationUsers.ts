@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { User } from "@/types/organization-types";
+import { OrgUser } from "@/types/organization-types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { mockOrganizations } from "@/mocks";
 
 export const useOrganizationUsers = (organizationId: string | undefined) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<OrgUser[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchOrganizationUsers = async () => {
@@ -59,7 +59,7 @@ export const useOrganizationUsers = (organizationId: string | undefined) => {
     }
   };
 
-  const updateUser = async (updatedUser: User) => {
+  const updateUser = async (updatedUser: OrgUser) => {
     try {
       setUsers(prevUsers => 
         prevUsers.map(user => 
