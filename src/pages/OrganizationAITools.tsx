@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,7 +14,8 @@ import {
   Brain,
   CheckCircle2,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  Lock
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -169,15 +169,10 @@ const AIToolsPage = () => {
                 onClick={() => setSelectedTool(tool.id)}
               >
                 <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2">
-                  <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-500'}`}>
+                  <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
                     {tool.locked && (
                       <div className="absolute top-2 right-2">
-                        <span className="text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                          </svg>
-                        </span>
+                        <Lock size={14} className="text-gray-400" />
                       </div>
                     )}
                     <tool.icon size={28} />
@@ -206,13 +201,13 @@ const AIToolsPage = () => {
             <div className="flex items-center gap-2 mb-4">
               <tool.icon className="text-[#9b87f5]" size={24} />
               <h2 className="text-xl font-semibold">{tool.title}</h2>
-              <Badge variant="outline" className={tool.locked ? "bg-gray-100 text-gray-700" : "bg-green-100 text-green-700"} ml-auto="true">
+              <Badge variant="outline" className={tool.locked ? "bg-gray-100 text-gray-700" : "bg-green-100 text-green-700"}>
                 {tool.locked ? "Em breve" : "Ativo"}
               </Badge>
             </div>
             
             <p className="text-gray-600 mb-5 text-sm text-left">
-              {tool.description}
+              {tool.detailedDescription}
             </p>
 
             <div className="bg-[#F8F8FB] p-5 rounded-lg mb-6 shadow-sm">
