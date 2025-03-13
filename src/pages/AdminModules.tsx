@@ -179,12 +179,14 @@ interface ModuleCardProps {
   plan: Plan;
   onClick: () => void;
   isActive: boolean;
+  onEditPlan: (plan: Plan) => void;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
   plan,
   onClick,
-  isActive
+  isActive,
+  onEditPlan
 }) => {
   // Get the appropriate icon component
   const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
@@ -227,7 +229,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           className="w-full text-xs"
           onClick={(e) => {
             e.stopPropagation();
-            handleEditPlan(plan);
+            onEditPlan(plan);
           }}
         >
           Ver Detalhes
@@ -477,6 +479,7 @@ const Modules = () => {
                     plan={plan} 
                     onClick={() => selectPlan(plan)}
                     isActive={selectedPlan?.id === plan.id}
+                    onEditPlan={handleEditPlan}
                   />
                 </CarouselItem>
               ))}
