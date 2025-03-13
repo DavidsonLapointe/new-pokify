@@ -328,25 +328,9 @@ const AIToolsPage = () => {
               {tool.detailedDescription}
             </p>
 
-            {/* Nova seção de Como Funciona e Benefícios lado a lado */}
+            {/* Seções "Benefícios" e "Como Funciona" com a ordem invertida */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {/* Seção Como Funciona */}
-              <div className="bg-white p-5 rounded-lg shadow-sm h-full">
-                <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
-                  <HelpCircle size={18} className="mr-2" />
-                  Como Funciona
-                </h3>
-                <ul className="space-y-2">
-                  {tool.howItWorks.map((item, index) => (
-                    <li key={index} className="flex items-start text-sm text-left">
-                      <PlayCircle size={16} className="text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-left">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              {/* Seção Benefícios */}
+              {/* Seção Benefícios - Agora à esquerda */}
               <div className="bg-white p-5 rounded-lg shadow-sm h-full">
                 <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                   <CheckCircle2 size={18} className="mr-2" />
@@ -357,6 +341,22 @@ const AIToolsPage = () => {
                     <li key={index} className="flex items-start text-sm text-left">
                       <CheckCircle2 size={16} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                       <span className="text-left">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              {/* Seção Como Funciona - Agora à direita */}
+              <div className="bg-white p-5 rounded-lg shadow-sm h-full">
+                <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
+                  <HelpCircle size={18} className="mr-2" />
+                  Como Funciona
+                </h3>
+                <ul className="space-y-2">
+                  {tool.howItWorks.map((item, index) => (
+                    <li key={index} className="flex items-start text-sm text-left">
+                      <PlayCircle size={16} className="text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-left">{item}</span>
                     </li>
                   ))}
                 </ul>
