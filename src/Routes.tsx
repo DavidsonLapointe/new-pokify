@@ -22,7 +22,6 @@ import AdminPlans from "./pages/AdminPlans";
 import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
-import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminDashboard from "./pages/AdminDashboard";
 
 // Organization Pages
@@ -111,7 +110,6 @@ function AppRoutes() {
           <Route path="plans" element={<AdminPlans />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
-          <Route path="analysis-packages" element={<AdminAnalysisPackages />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 
