@@ -9,12 +9,13 @@ import {
   ShieldCheck, 
   ChevronLeft, 
   ChevronRight, 
-  Info,
-  HelpCircle,
   PlayCircle,
   LineChart,
   Mail,
-  Brain
+  Brain,
+  CheckCircle2,
+  HelpCircle,
+  ArrowRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -32,7 +33,19 @@ const AIToolsPage = () => {
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
       actionLabel: "Criar novo vídeo",
       actionIcon: Video,
-      status: "Ativo"
+      status: "Ativo",
+      howItWorks: [
+        "Importação de dados do lead a partir do seu CRM",
+        "Geração de roteiro personalizado com base no perfil",
+        "Criação automática de vídeo com seu avatar digital",
+        "Entrega por e-mail ou WhatsApp diretamente ao cliente"
+      ],
+      benefits: [
+        "Aumento de 35% na taxa de resposta em comparação a e-mails convencionais",
+        "Redução de tempo na criação de conteúdos personalizados",
+        "Maior engajamento com os leads e clientes potenciais",
+        "Personalização em escala sem perder qualidade"
+      ]
     },
     {
       id: "inbound",
@@ -43,7 +56,19 @@ const AIToolsPage = () => {
       detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
       actionLabel: "Configurar atendente",
       actionIcon: Headphones,
-      status: "Em breve"
+      status: "Em breve",
+      howItWorks: [
+        "Instalação de widget de chat no seu website",
+        "Configuração de respostas para perguntas frequentes",
+        "Integração com seu calendário para agendamentos",
+        "Qualificação automática dos leads"
+      ],
+      benefits: [
+        "Atendimento 24/7 sem necessidade de equipe disponível",
+        "Qualificação de leads automatizada antes do contato humano",
+        "Redução no tempo de resposta inicial para clientes",
+        "Aumento na conversão de visitantes em leads qualificados"
+      ]
     },
     {
       id: "call",
@@ -54,7 +79,19 @@ const AIToolsPage = () => {
       detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
       actionLabel: "Analisar chamada",
       actionIcon: LineChart,
-      status: "Ativo"
+      status: "Ativo",
+      howItWorks: [
+        "Upload da gravação da chamada na plataforma",
+        "Processamento e transcrição automática do áudio",
+        "Análise de sentimento, objeções e oportunidades",
+        "Geração de relatório com pontos de melhoria"
+      ],
+      benefits: [
+        "Identificação das principais objeções dos clientes",
+        "Feedback objetivo sobre desempenho nas chamadas",
+        "Sugestões personalizadas para aumentar conversão",
+        "Treinamento de equipe baseado em dados reais"
+      ]
     },
     {
       id: "nutrition",
@@ -65,7 +102,19 @@ const AIToolsPage = () => {
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
       actionLabel: "Configurar campanha",
       actionIcon: Mail,
-      status: "Em breve"
+      status: "Em breve",
+      howItWorks: [
+        "Segmentação dos leads por perfil e comportamento",
+        "Criação de sequências de conteúdo personalizado",
+        "Envio automático baseado em gatilhos de comportamento",
+        "Análise de engajamento e ajustes contínuos"
+      ],
+      benefits: [
+        "Redução de 45% no tempo de preparação de campanhas",
+        "Aumento na taxa de conversão do funil de vendas",
+        "Maior engajamento com conteúdo relevante personalizado",
+        "Escala nas ações de marketing mesmo com equipe pequena"
+      ]
     },
     {
       id: "assistant",
@@ -76,7 +125,19 @@ const AIToolsPage = () => {
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
       actionLabel: "Iniciar assistente",
       actionIcon: Brain,
-      status: "Ativo"
+      status: "Ativo",
+      howItWorks: [
+        "Pesquisa automática de informações sobre empresas-alvo",
+        "Elaboração de abordagens personalizadas para cada lead",
+        "Sugestão de melhores canais e horários para contato",
+        "Preparação de material de apoio para reuniões iniciais"
+      ],
+      benefits: [
+        "Aumento de 28% na taxa de agendamento de reuniões",
+        "Redução do tempo de pesquisa e preparação para contatos",
+        "Abordagens mais assertivas baseadas em dados",
+        "Maior produtividade do time comercial"
+      ]
     }
   ];
 
@@ -142,40 +203,58 @@ const AIToolsPage = () => {
       {tools.map((tool) => (
         selectedTool === tool.id && (
           <Card key={`details-${tool.id}`} className="p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <tool.icon className="text-[#9b87f5]" size={20} />
-              <h2 className="text-lg font-semibold">{tool.title}</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <tool.icon className="text-[#9b87f5]" size={24} />
+              <h2 className="text-xl font-semibold">{tool.title}</h2>
               <Badge variant="outline" className={tool.locked ? "bg-gray-100 text-gray-700" : "bg-green-100 text-green-700"} ml-auto="true">
                 {tool.locked ? "Em breve" : "Ativo"}
               </Badge>
             </div>
             
-            <p className="text-gray-600 mb-3 text-sm">
+            <p className="text-gray-600 mb-5 text-sm text-left">
               {tool.description}
             </p>
 
-            <div className="bg-gray-50 p-3 rounded-lg text-center text-gray-600 text-xs mb-4">
-              {tool.detailedDescription}
-            </div>
-
-            <div className="flex gap-3 mb-4">
-              <Button variant="outline" size="sm" className="flex items-center gap-1 text-xs">
-                <Info size={14} />
-                Como Funciona
-              </Button>
-              <Button variant="outline" size="sm" className="flex items-center gap-1 text-xs">
-                <HelpCircle size={14} />
-                Benefícios
-              </Button>
+            <div className="bg-[#F8F8FB] p-5 rounded-lg mb-6 shadow-sm">
+              <div className="mb-5">
+                <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
+                  <HelpCircle size={18} className="mr-2" />
+                  Como Funciona
+                </h3>
+                <ul className="space-y-2">
+                  {tool.howItWorks.map((item, index) => (
+                    <li key={index} className="flex items-start text-sm">
+                      <PlayCircle size={16} className="text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
+                  <CheckCircle2 size={18} className="mr-2" />
+                  Benefícios
+                </h3>
+                <ul className="space-y-2">
+                  {tool.benefits.map((benefit, index) => (
+                    <li key={index} className="flex items-start text-sm">
+                      <CheckCircle2 size={16} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <Button 
               size="sm"
-              className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] flex items-center justify-center gap-1 text-xs"
+              className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] flex items-center justify-center gap-2 py-5"
               disabled={tool.locked}
             >
-              <tool.actionIcon size={14} />
-              {tool.actionLabel}
+              <tool.actionIcon size={18} />
+              <span>{tool.actionLabel}</span>
+              <ArrowRight size={18} />
             </Button>
           </Card>
         )
