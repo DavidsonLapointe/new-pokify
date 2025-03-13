@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import {
   BarChart,
@@ -14,6 +13,7 @@ import { SellerSelector } from "@/components/dashboard/SellerSelector";
 import { User } from "@/types";
 import { useMemo } from "react";
 import { format, parse, isValid } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface DailyLeadsChartProps {
   data: any[];
@@ -171,7 +171,7 @@ export const DailyLeadsChart = ({
 
   // Gera rótulo para o gráfico com base na data selecionada
   const selectedMonthLabel = selectedDate ? 
-    format(selectedDate, 'MMMM/yyyy') : 'Mês Atual';
+    format(selectedDate, 'MMMM/yyyy', { locale: ptBR }) : 'Mês Atual';
 
   return (
     <Card className="p-4">
@@ -221,4 +221,3 @@ export const DailyLeadsChart = ({
     </Card>
   );
 };
-
