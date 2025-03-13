@@ -102,7 +102,7 @@ const AIToolsPage = () => {
             {tools.map((tool) => (
               <Card 
                 key={tool.id}
-                className={`min-w-[180px] cursor-pointer transition-all ${
+                className={`w-[220px] cursor-pointer transition-all ${
                   selectedTool === tool.id ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white'
                 }`}
                 onClick={() => setSelectedTool(tool.id)}
@@ -184,3 +184,4 @@ const AIToolsPage = () => {
 };
 
 export default AIToolsPage;
+
