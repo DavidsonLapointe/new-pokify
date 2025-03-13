@@ -15,11 +15,11 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
   const getAvailableStatusOptions = (currentStatus: OrganizationStatus) => {
     switch (currentStatus) {
       case "active":
-        return [{ value: "inactive", label: "Inativo" }];
+        return [{ value: "inactive", label: "Inativo" }, { value: "suspended", label: "Suspenso" }];
       case "inactive":
         return [{ value: "active", label: "Ativo" }];
       case "pending":
-        return [{ value: "inactive", label: "Inativo" }];
+        return [{ value: "active", label: "Ativo" }, { value: "inactive", label: "Inativo" }];
       case "suspended":
         return [{ value: "active", label: "Ativo" }, { value: "inactive", label: "Inativo" }];
       case "canceled":
@@ -33,9 +33,8 @@ export const StatusSelector = ({ form, currentStatus }: StatusSelectorProps) => 
 
   // Handling the value change with proper type casting
   const handleValueChange = (value: string) => {
-    // Only set the value if it's a valid organization status
-    if (value === "active" || value === "pending" || value === "inactive" || 
-        value === "suspended" || value === "canceled") {
+    // Cast to OrganizationStatus since we're controlling the available options
+    if (["active", "pending", "inactive", "suspended", "canceled"].includes(value)) {
       form.setValue("status", value as OrganizationStatus);
     }
   };

@@ -44,7 +44,7 @@ export const useEditOrganizationForm = (
           plan: values.plan,
           admin_name: values.adminName,
           admin_email: values.adminEmail,
-          status: values.status
+          status: values.status as string // Cast to string for the database
         })
         .eq('id', organization.id)
         .select();
@@ -81,7 +81,7 @@ export const useEditOrganizationForm = (
         planName: planName, // Use the fetched plan name
         adminName: values.adminName,
         adminEmail: values.adminEmail,
-        status: values.status as OrganizationStatus,
+        status: values.status,
       };
 
       onSave(updatedOrganization);

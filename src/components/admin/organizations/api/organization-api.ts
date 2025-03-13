@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { type CreateOrganizationFormData } from "../schema";
-import { Organization, OrganizationPlan } from "@/types/organization-types";
+import { Organization, OrganizationPlan, OrganizationStatus } from "@/types/organization-types";
 import { addDays, endOfMonth, format, startOfMonth, differenceInDays } from "date-fns";
 
 /**
@@ -27,6 +27,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     }
     
     // Insert the new organization
+    // Note: We're converting our application's field names to the database column names
     const { data, error } = await supabase
       .from('organizations')
       .insert({
@@ -38,7 +39,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         plan: values.plan,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        status: values.status,
+        status: values.status as string // Cast to string for database
       })
       .select('*')
       .single();
@@ -145,7 +146,7 @@ export const handleProRataCreation = async (organization: Organization) => {
       planPrice = planData?.price || 0;
     } else {
       // Plan is already an object with price
-      planPrice = (organization.plan as OrganizationPlan).price;
+      planPrice = organization.plan.price;
     }
 
     // Calculate the pro-rata value
@@ -206,14 +207,29 @@ export const sendOnboardingEmail = async (
  * Maps the database organization type to the application's Organization type
  */
 export const mapToOrganizationType = (dbOrg: any): Organization => {
+  let planValue: string | OrganizationPlan;
+  
+  // Convert plan to either string or OrganizationPlan
+  if (typeof dbOrg.plan === 'string') {
+    planValue = dbOrg.plan;
+  } else if (dbOrg.plan && typeof dbOrg.plan === 'object') {
+    planValue = {
+      id: dbOrg.plan.id,
+      name: dbOrg.plan.name,
+      price: dbOrg.plan.price || 0
+    };
+  } else {
+    planValue = dbOrg.plan || '';
+  }
+
   return {
     id: dbOrg.id,
     name: dbOrg.name,
     nomeFantasia: dbOrg.nome_fantasia,
-    plan: dbOrg.plan,
+    plan: planValue,
     planName: dbOrg.planName,
     users: [], // You might need to fetch the users separately
-    status: dbOrg.status,
+    status: dbOrg.status as OrganizationStatus,
     pendingReason: dbOrg.pending_reason || null,
     contractStatus: dbOrg.contract_status,
     paymentStatus: dbOrg.payment_status,

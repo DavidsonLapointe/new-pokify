@@ -40,6 +40,10 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
         return "Pendente";
       case "inactive":
         return "Inativo";
+      case "suspended":
+        return "Suspenso";
+      case "canceled":
+        return "Cancelado";
       default:
         return status;
     }
@@ -53,6 +57,10 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
         return "bg-yellow-100 text-yellow-800";
       case "inactive":
         return "bg-red-100 text-red-800";
+      case "suspended":
+        return "bg-orange-100 text-orange-800";
+      case "canceled":
+        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -80,6 +88,14 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     return pendingSteps;
   };
 
+  // Helper function to render plan name safely
+  const renderPlanName = (org: Organization) => {
+    if (typeof org.plan === 'object' && org.plan !== null) {
+      return org.plan.name;
+    }
+    return org.planName || "Plano não especificado";
+  };
+
   return (
     <TooltipProvider>
       <div className="rounded-md border">
@@ -104,7 +120,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                     <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
                   </div>
                 </TableCell>
-                <TableCell>{org.planName || "Plano não especificado"}</TableCell>
+                <TableCell>{renderPlanName(org)}</TableCell>
                 <TableCell className="text-center">
                   <Button
                     variant="ghost"

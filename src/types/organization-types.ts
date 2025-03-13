@@ -49,18 +49,12 @@ export interface Organization {
   address?: OrganizationAddress;
 }
 
-interface UserLog {
-  id: string;
-  date: string;
-  action: string;
-}
-
 export interface User {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  role: "admin" | "seller";
+  role: "admin" | "seller" | "leadly_employee";
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
@@ -70,4 +64,10 @@ export interface User {
   logs: UserLog[];
   organization: Organization;
   avatar: string;
+}
+
+export interface UserLog {
+  id: string;
+  date: string;
+  action: string;
 }
