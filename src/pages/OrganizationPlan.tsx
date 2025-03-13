@@ -3,7 +3,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/organization/plans/CurrentPlanCard";
 import { CreditsBalanceCard } from "@/components/organization/plans/CreditsBalanceCard";
-import { PaymentMethodCard } from "@/components/organization/plans/PaymentMethodCard";
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
 import { ChangePlanDialog } from "@/components/organization/plans/ChangePlanDialog";
 import type { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -125,13 +124,6 @@ const OrganizationPlan = () => {
           additionalCredits={usageInfo.additionalCredits}
           onBuyMoreCredits={handleBuyMoreAnalyses}
           isLoading={isLoading}
-        />
-      </div>
-
-      <div className="mt-2">
-        <PaymentMethodCard 
-          organizationId={organizationId}
-          onPaymentMethodUpdated={() => toast.success("Método de pagamento atualizado")}
         />
       </div>
 

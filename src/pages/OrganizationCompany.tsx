@@ -4,9 +4,13 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Organization } from "@/types/organization-types";
 import { CompanyForm } from "@/components/organization/company/CompanyForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PaymentMethodCard } from "@/components/organization/plans/PaymentMethodCard";
+import { Building2, CreditCard } from "lucide-react";
 
 export default function OrganizationCompany() {
   const { user, updateUser } = useUser();
+  const [activeTab, setActiveTab] = useState("company-data");
   
   // Initialize with default empty organization if not present
   const defaultOrganization: Organization = {
@@ -103,16 +107,38 @@ export default function OrganizationCompany() {
       <div className="mb-8">
         <h1 className="text-2xl font-medium mb-2">Minha Empresa</h1>
         <p className="text-muted-foreground">
-          Gerencie as informações da sua empresa
+          Gerencie as informações da sua empresa e método de pagamento
         </p>
       </div>
 
-      <CompanyForm
-        organization={organization}
-        onLogoUpload={handleLogoUpload}
-        onInputChange={handleInputChange}
-        onSubmit={handleSubmit}
-      />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="company-data" className="flex items-center gap-2">
+            <Building2 size={16} />
+            Dados da Empresa
+          </TabsTrigger>
+          <TabsTrigger value="payment-method" className="flex items-center gap-2">
+            <CreditCard size={16} />
+            Método de Pagamento
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="company-data" className="mt-4">
+          <CompanyForm
+            organization={organization}
+            onLogoUpload={handleLogoUpload}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
+          />
+        </TabsContent>
+
+        <TabsContent value="payment-method" className="mt-4">
+          <PaymentMethodCard
+            organizationId={organization.id}
+            onPaymentMethodUpdated={() => toast.success("Método de pagamento atualizado")}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
