@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -311,13 +312,13 @@ const OrganizationModules = () => {
             }}
             className="w-full" 
           >
-            <CarouselContent className="-ml-0">
+            <CarouselContent className="ml-0">
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
                 
                 return (
-                  <CarouselItem key={tool.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 first:pl-0">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pr-2 first:pl-0 pl-0">
                     <Card 
                       className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
@@ -398,8 +399,8 @@ const OrganizationModules = () => {
                 );
               })}
             </CarouselContent>
-            <CarouselPrevious className="-left-10" />
-            <CarouselNext className="-right-10" />
+            <CarouselPrevious className="-left-12" />
+            <CarouselNext className="-right-12" />
           </Carousel>
         </div>
 
@@ -408,7 +409,7 @@ const OrganizationModules = () => {
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 text-[#9b87f5]">
-                  <selectedToolDetails.icon size={24} />
+                  {React.createElement(selectedToolDetails.icon, { size: 24 })}
                 </div>
                 <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${getBadgeClass(selectedToolDetails.status)}`}>
