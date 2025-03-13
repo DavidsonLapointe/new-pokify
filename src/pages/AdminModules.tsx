@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,12 +8,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, AlertTriangle, Trash2 } from "lucide-react";
+import { Plus, FileText, AlertTriangle, Trash2, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Brain, BookOpen, CreditCard, LineChart, Mail, Share2, Smartphone, Star, Zap, Briefcase, Bell } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+
+// Map of icon names to their Lucide components
+const iconMap = {
+  MessageCircle,
+  Video,
+  Headphones,
+  UserRound,
+  ShieldCheck,
+  Bell,
+  Brain,
+  BookOpen,
+  CreditCard,
+  FileText,
+  LineChart,
+  Mail,
+  Share2,
+  Smartphone,
+  Star,
+  Zap,
+  Briefcase
+};
 
 interface ModuleCardProps {
   plan: Plan;
@@ -29,6 +51,11 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   deletingPlanId,
   handleDeletePlan,
 }) => {
+  // Get the appropriate icon component
+  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
+    ? iconMap[plan.icon as keyof typeof iconMap] 
+    : MessageCircle; // Default to MessageCircle if not found
+
   return (
     <Card
       key={plan.id}
@@ -61,49 +88,53 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         <div className="space-y-6 flex-1">
           <div className="space-y-4">
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
+              <IconComponent className="h-4 w-4 mr-2 text-primary" />
               Descrição:
             </div>
             <p className="text-sm">{plan.description}</p>
 
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
+              <IconComponent className="h-4 w-4 mr-2 text-primary" />
               Benefícios:
             </div>
             <ul className="space-y-0.5 min-h-[80px]">
               {Array.isArray(plan.benefits) && plan.benefits.length > 0 ? (
                 plan.benefits.map((benefit: string, index: number) => (
                   <li key={index} className="flex items-start gap-2 text-sm">
-                    <FileText className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                    <IconComponent className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                     <span className="leading-tight" style={{ lineHeight: 1.2 }}>{benefit}</span>
                   </li>
                 ))
               ) : (
                 <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <FileText className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
+                  <IconComponent className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
                   <span>Nenhum benefício listado</span>
                 </li>
               )}
             </ul>
 
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
+              <IconComponent className="h-4 w-4 mr-2 text-primary" />
               Como Funciona:
             </div>
             <ul className="space-y-0.5 min-h-[80px]">
               {Array.isArray(plan.howItWorks) && plan.howItWorks.length > 0 ? (
                 plan.howItWorks.map((step: string, index: number) => (
                   <li key={index} className="flex items-start gap-2 text-sm">
-                    <FileText className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                    <IconComponent className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                     <span className="leading-tight" style={{ lineHeight: 1.2 }}>{step}</span>
                   </li>
                 ))
               ) : (
                 <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <FileText className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
+                  <IconComponent className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
                   <span>Nenhum passo listado</span>
                 </li>
               )}
             </ul>
 
             <div className="h-[32px] flex items-center border-b text-sm font-medium">
+              <IconComponent className="h-4 w-4 mr-2 text-primary" />
               Botão de Ação:
             </div>
             <div className="text-sm">
