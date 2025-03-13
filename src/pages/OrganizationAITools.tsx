@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -328,8 +327,10 @@ const AIToolsPage = () => {
               {tool.detailedDescription}
             </p>
 
-            <div className="bg-[#F8F8FB] p-5 rounded-lg mb-6 shadow-sm">
-              <div className="mb-5">
+            {/* Nova seção de Como Funciona e Benefícios lado a lado */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Seção Como Funciona */}
+              <div className="bg-[#F8F8FB] p-5 rounded-lg shadow-sm h-full">
                 <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                   <HelpCircle size={18} className="mr-2" />
                   Como Funciona
@@ -344,7 +345,8 @@ const AIToolsPage = () => {
                 </ul>
               </div>
               
-              <div>
+              {/* Seção Benefícios */}
+              <div className="bg-[#F8F8FB] p-5 rounded-lg shadow-sm h-full">
                 <h3 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                   <CheckCircle2 size={18} className="mr-2" />
                   Benefícios
