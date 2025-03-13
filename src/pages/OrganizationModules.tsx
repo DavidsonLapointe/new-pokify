@@ -16,7 +16,9 @@ import {
   Headphones,
   UserRound,
   MessageCircle,
-  ShieldCheck
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -30,6 +32,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -52,6 +59,7 @@ const OrganizationModules = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
+  const [openBenefits, setOpenBenefits] = useState<string[]>([]);
 
   const tools: Tool[] = [
     {
@@ -229,6 +237,17 @@ const OrganizationModules = () => {
     });
   };
 
+  // Função para alternar a exibição dos benefícios
+  const toggleBenefits = (toolId: string) => {
+    setOpenBenefits(prev => {
+      if (prev.includes(toolId)) {
+        return prev.filter(id => id !== toolId);
+      } else {
+        return [...prev, toolId];
+      }
+    });
+  };
+
   return (
     <TooltipProvider>
       <div className="space-y-6">
@@ -242,6 +261,7 @@ const OrganizationModules = () => {
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool) => {
             const statusInfo = getStatusInfo(tool.status);
+            const isBenefitsOpen = openBenefits.includes(tool.id);
             
             return (
               <Card key={tool.id} className="overflow-hidden border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow">
@@ -283,7 +303,7 @@ const OrganizationModules = () => {
                     )}
                   </div>
                   
-                  <p className="text-gray-600 mb-4 text-sm line-clamp-2 h-10">
+                  <p className="text-gray-600 mb-4 text-sm">
                     {tool.description}
                   </p>
 
@@ -293,17 +313,44 @@ const OrganizationModules = () => {
                     </span>
                   </div>
 
-                  <div className="mt-4 mb-4 bg-gray-50 p-3 rounded-md text-sm">
-                    <h4 className="font-medium mb-2">Benefícios principais:</h4>
-                    <ul className="space-y-2">
-                      {tool.benefits.map((benefit, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <CheckCircle2 size={14} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                          <span>{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <Collapsible 
+                    open={isBenefitsOpen} 
+                    onOpenChange={() => toggleBenefits(tool.id)}
+                    className="mb-4 space-y-2"
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full justify-between"
+                      >
+                        Benefícios
+                        {isBenefitsOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-gray-50 p-3 rounded-md">
+                      <ul className="space-y-2">
+                        {tool.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <CheckCircle2 size={14} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <h4 className="text-sm font-medium mb-2">Como funciona:</h4>
+                        <ul className="space-y-2">
+                          {tool.howItWorks.map((step, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="bg-[#9b87f5] text-white rounded-full w-4 h-4 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">{idx + 1}</span>
+                              <span className="text-sm">{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
 
                   <div className="space-y-3">
                     {tool.status === "not_contracted" && (
