@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +39,125 @@ const iconMap = {
   Blocks,
   AppWindow
 };
+
+// Mock data para os módulos baseado nos módulos do ambiente da organização
+const mockModules: Plan[] = [
+  {
+    id: 1,
+    name: "Chat AI Assistente",
+    price: 97,
+    shortDescription: "Atendimento inteligente com IA para seus clientes",
+    description: "O Chat AI Assistente é um módulo que utiliza inteligência artificial para automatizar e aprimorar o atendimento ao cliente. Com ele, sua empresa pode oferecer respostas rápidas e precisas 24 horas por dia.",
+    benefits: [
+      "Atendimento 24/7 para seus clientes",
+      "Redução de até 65% no tempo de resposta",
+      "Integração com CRM e sistemas de atendimento",
+      "Análise de sentimento e personalização de respostas"
+    ],
+    howItWorks: [
+      "Instale o widget em seu site ou plataforma",
+      "Configure as respostas e conhecimento base",
+      "A IA aprende continuamente com as interações",
+      "Relatórios detalhados de desempenho"
+    ],
+    active: true,
+    comingSoon: false,
+    actionButtonText: "Contratar Assistente",
+    icon: "MessageCircle"
+  },
+  {
+    id: 2,
+    name: "Criador de Vídeos AI",
+    price: 197,
+    shortDescription: "Crie vídeos profissionais automaticamente com IA",
+    description: "O Criador de Vídeos AI permite que você produza vídeos profissionais automaticamente a partir de textos, roteiros ou instruções. Economize tempo e recursos na criação de conteúdo visual.",
+    benefits: [
+      "Criação de vídeos em minutos, não dias",
+      "Diversas opções de formato e estilo",
+      "Biblioteca com milhares de templates",
+      "Narração com vozes realistas em português"
+    ],
+    howItWorks: [
+      "Adicione texto ou roteiro para o vídeo",
+      "Selecione o estilo e formato desejado",
+      "A IA gera automaticamente o vídeo",
+      "Edite e ajuste conforme necessário"
+    ],
+    active: true,
+    comingSoon: false,
+    actionButtonText: "Criar Vídeos",
+    icon: "Video"
+  },
+  {
+    id: 3,
+    name: "Transcrição de Áudio",
+    price: 147,
+    shortDescription: "Transforme áudios em textos com precisão incrível",
+    description: "O módulo de Transcrição de Áudio converte automaticamente qualquer tipo de gravação de voz ou áudio em texto, com suporte a múltiplos idiomas e alta precisão para termos técnicos.",
+    benefits: [
+      "Precisão de transcrição superior a 95%",
+      "Reconhecimento de múltiplos idiomas",
+      "Identificação de diferentes falantes",
+      "Integração com plataformas de reuniões"
+    ],
+    howItWorks: [
+      "Faça upload do arquivo de áudio ou link",
+      "Selecione o idioma principal",
+      "A IA transcreve automaticamente",
+      "Exporte em diversos formatos"
+    ],
+    active: true,
+    comingSoon: false,
+    actionButtonText: "Transcrever Áudios",
+    icon: "Headphones"
+  },
+  {
+    id: 4,
+    name: "CRM Inteligente",
+    price: 247,
+    shortDescription: "Gerencie relacionamentos com clientes usando IA",
+    description: "O CRM Inteligente é um sistema completo de gestão de relacionamento com clientes potencializado por inteligência artificial, que analisa comportamentos, prevê tendências e sugere ações.",
+    benefits: [
+      "Aumento de 40% na taxa de conversão",
+      "Previsão de propensão de compra",
+      "Automação de tarefas repetitivas",
+      "Insights detalhados sobre clientes"
+    ],
+    howItWorks: [
+      "Importe seus contatos e histórico",
+      "Configure os parâmetros de negócio",
+      "A IA analisa e categoriza seus leads",
+      "Receba recomendações de ações"
+    ],
+    active: true,
+    comingSoon: false,
+    actionButtonText: "Adquirir CRM",
+    icon: "UserRound"
+  },
+  {
+    id: 5,
+    name: "Análise de Tendências",
+    price: 397,
+    shortDescription: "Antecipe tendências de mercado com análise preditiva",
+    description: "O módulo de Análise de Tendências utiliza algoritmos avançados de IA para identificar padrões e prever tendências futuras no seu mercado, dando vantagem competitiva à sua empresa.",
+    benefits: [
+      "Previsão de tendências com 3-6 meses de antecedência",
+      "Análise competitiva automatizada",
+      "Monitoramento de mercado em tempo real",
+      "Recomendações estratégicas personalizadas"
+    ],
+    howItWorks: [
+      "Conecte suas fontes de dados",
+      "Defina os indicadores relevantes",
+      "O sistema analisa continuamente o mercado",
+      "Receba relatórios periódicos e alertas"
+    ],
+    active: false,
+    comingSoon: true,
+    actionButtonText: "Analisar Tendências",
+    icon: "LineChart"
+  }
+];
 
 interface ModuleCardProps {
   plan: Plan;
@@ -236,13 +354,16 @@ const Modules = () => {
     setIsLoading(true);
     try {
       console.log("Carregando módulos...");
-      const fetchedPlans = await fetchPlans();
-      console.log("Módulos carregados:", fetchedPlans);
-      setPlans(fetchedPlans);
+      // Simulamos a busca no banco de dados usando dados mockados
+      // Em um ambiente real, nós usaríamos fetchPlans()
+      setTimeout(() => {
+        console.log("Módulos carregados com mock data:", mockModules);
+        setPlans(mockModules);
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
       console.error("Erro ao carregar módulos:", error);
       toast.error("Não foi possível carregar os módulos. Tente novamente.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -293,7 +414,7 @@ const Modules = () => {
         setPlans([...plans, newPlan]);
       }
 
-      await loadPlans();
+      // Em um ambiente real, nós chamaríamos o loadPlans() novamente para atualizar
       toast.success(editingPlan ? "Módulo atualizado com sucesso!" : "Módulo criado com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar módulo:", error);
@@ -338,16 +459,21 @@ const Modules = () => {
       }
       
       setDeletingPlanId(planId);
-      const success = await deletePlan(planId);
-
-      if (success) {
-        // Reload plans to get the updated status
-        await loadPlans();
-      }
+      // Em um ambiente real, chamaríamos deletePlan(planId)
+      // Simulando a exclusão localmente
+      setTimeout(() => {
+        const updatedPlans = plans.map(plan => 
+          plan.id.toString() === planId 
+            ? { ...plan, active: false }
+            : plan
+        );
+        setPlans(updatedPlans);
+        setDeletingPlanId(null);
+        toast.success("Módulo desativado com sucesso!");
+      }, 1000);
     } catch (error) {
       console.error("Erro ao desativar módulo:", error);
       toast.error("Ocorreu um erro ao desativar o módulo.");
-    } finally {
       setDeletingPlanId(null);
     }
   };
