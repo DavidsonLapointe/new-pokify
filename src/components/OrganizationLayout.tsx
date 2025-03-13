@@ -45,8 +45,8 @@ const OrganizationLayout = () => {
             handleLogout={handleLogout}
           />
 
-          <main className="flex-1 ml-64">
-            <div className="p-8">
+          <main className="flex-1 ml-48">
+            <div className="p-6">
               <Outlet />
             </div>
           </main>
