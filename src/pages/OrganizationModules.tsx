@@ -19,7 +19,6 @@ import {
   ShieldCheck,
   ChevronDown,
   ChevronUp,
-  X,
   HelpCircle
 } from "lucide-react";
 import {
@@ -320,27 +319,13 @@ const OrganizationModules = () => {
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card 
-                      className={`border ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'border-gray-200'} hover:shadow-md transition-shadow h-full cursor-pointer`}
+                      className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
-                              <tool.icon size={20} />
-                            </div>
-                            <h3 className="text-base font-semibold">{tool.title}</h3>
-                          </div>
-
-                          <Tooltip>
-                            <TooltipTrigger>
-                              {statusInfo.icon}
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{statusInfo.tooltip}</p>
-                            </TooltipContent>
-                          </Tooltip>
-
+                      <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2 relative">
+                        <div className="absolute top-2 right-2 flex items-center">
+                          {statusInfo.icon}
+                          
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -364,39 +349,11 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="font-bold text-lg text-[#6E59A5]">
-                            {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
-                          </span>
+                        <div className={`p-2 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
+                          <tool.icon size={28} />
                         </div>
-
-                        <div className="space-y-2">
-                          <Link 
-                            href="#" 
-                            className={`w-full flex justify-between items-center text-xs text-[#9b87f5] hover:text-[#8a76e5]`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation(); // Evita que o clique propague para o card
-                              showToolDetails(tool);
-                            }}
-                          >
-                            Ver Detalhes
-                            {isSelected ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </Link>
-
-                          {tool.status === "not_contracted" && (
-                            <Button 
-                              className="w-full bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2 text-xs"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation(); // Evita que o clique propague para o card
-                                handleContractTool(tool.id);
-                              }}
-                            >
-                              <CreditCard size={14} />
-                              Contratar Módulo
-                            </Button>
-                          )}
+                        <div className="text-center">
+                          <p className="font-medium text-sm">{tool.title}</p>
                         </div>
                       </CardContent>
                     </Card>
