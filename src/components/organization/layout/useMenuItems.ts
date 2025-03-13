@@ -34,7 +34,7 @@ export const useMenuItems = (user: User) => {
     },
     { 
       icon: List, 
-      label: "Análise de Leads", 
+      label: "Leads", 
       path: "/organization/leads",
       permissionId: "leads"
     },

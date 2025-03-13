@@ -56,7 +56,7 @@ export const LeadsPageHeader = ({
     <>
       <div className="flex items-center justify-between">
         <CallsHeader 
-          title="Análise de Leads"
+          title="Leads"
           description="Visualize e gerencie todos os seus leads."
         />
 
