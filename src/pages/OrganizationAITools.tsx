@@ -338,9 +338,9 @@ const AIToolsPage = () => {
                 </h3>
                 <ul className="space-y-2">
                   {tool.howItWorks.map((item, index) => (
-                    <li key={index} className="flex items-start text-sm">
+                    <li key={index} className="flex items-start text-sm text-left">
                       <PlayCircle size={16} className="text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
-                      <span>{item}</span>
+                      <span className="text-left">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -354,9 +354,9 @@ const AIToolsPage = () => {
                 </h3>
                 <ul className="space-y-2">
                   {tool.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start text-sm">
+                    <li key={index} className="flex items-start text-sm text-left">
                       <CheckCircle2 size={16} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span>{benefit}</span>
+                      <span className="text-left">{benefit}</span>
                     </li>
                   ))}
                 </ul>
