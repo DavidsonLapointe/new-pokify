@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -226,142 +225,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           variant="outline" 
           size="sm" 
           className="w-full text-xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditPlan(plan);
+          }}
         >
           Ver Detalhes
         </Button>
       </CardFooter>
-    </Card>
-  );
-};
-
-interface DetailedModuleViewProps {
-  plan: Plan;
-  onEdit: () => void;
-}
-
-const DetailedModuleView: React.FC<DetailedModuleViewProps> = ({
-  plan,
-  onEdit
-}) => {
-  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
-    ? iconMap[plan.icon as keyof typeof iconMap] 
-    : MessageCircle;
-
-  return (
-    <Card className="w-full mt-8 overflow-hidden">
-      <CardHeader className="p-6 pb-4 bg-primary-lighter">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/80 rounded-md">
-              <IconComponent className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                {plan.name}
-                {plan.comingSoon && (
-                  <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Em Breve
-                  </Badge>
-                )}
-              </CardTitle>
-              <CardDescription className="mt-1">
-                R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
-              </CardDescription>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="bg-white/80"
-              onClick={onEdit}
-            >
-              Editar Módulo
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <p className="mb-6">{plan.description}</p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-primary font-medium">
-              <IconComponent className="h-5 w-5" />
-              <h3>Benefícios</h3>
-            </div>
-            <ul className="space-y-2">
-              {Array.isArray(plan.benefits) && plan.benefits.length > 0 ? (
-                plan.benefits.map((benefit: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />
-                    <span>{benefit}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="text-muted-foreground">Nenhum benefício listado</li>
-              )}
-            </ul>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-primary font-medium">
-              <IconComponent className="h-5 w-5" />
-              <h3>Como Funciona</h3>
-            </div>
-            <ul className="space-y-2">
-              {Array.isArray(plan.howItWorks) && plan.howItWorks.length > 0 ? (
-                plan.howItWorks.map((step: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2 text-sm">
-                    <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-lighter text-primary text-[10px] font-bold shrink-0 mt-0.5">
-                      {index + 1}
-                    </div>
-                    <span>{step}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="text-muted-foreground">Nenhum passo listado</li>
-              )}
-            </ul>
-          </div>
-        </div>
-        
-        <div className="mt-6">
-          <div className="flex items-center gap-2 text-primary font-medium mb-4">
-            <IconComponent className="h-5 w-5" />
-            <h3>Texto do Botão de Ação</h3>
-          </div>
-          <div className="p-3 bg-primary-lighter rounded-md inline-block">
-            {plan.actionButtonText || "Contratar"}
-          </div>
-        </div>
-        
-        <div className="mt-6">
-          <div className="flex items-center gap-2 text-primary font-medium mb-4">
-            <IconComponent className="h-5 w-5" />
-            <h3>Status do Módulo</h3>
-          </div>
-          <div className="flex gap-3">
-            {!plan.active ? (
-              <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-300">
-                <AlertCircle className="h-3 w-3 mr-1" />
-                Inativo
-              </Badge>
-            ) : plan.comingSoon ? (
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
-                <Clock className="h-3 w-3 mr-1" />
-                Em Breve
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                <CheckCircle className="h-3 w-3 mr-1" />
-                Ativo
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardContent>
     </Card>
   );
 };
@@ -597,32 +468,23 @@ const Modules = () => {
       {isLoading ? (
         <LoadingState />
       ) : (
-        <>
-          <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent className="px-2">
-                {plans.map((plan) => (
-                  <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
-                    <ModuleCard 
-                      plan={plan} 
-                      onClick={() => selectPlan(plan)}
-                      isActive={selectedPlan?.id === plan.id}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-0" />
-              <CarouselNext className="right-0" />
-            </Carousel>
-          </div>
-
-          {selectedPlan && (
-            <DetailedModuleView 
-              plan={selectedPlan}
-              onEdit={() => handleEditPlan(selectedPlan)}
-            />
-          )}
-        </>
+        <div className="relative">
+          <Carousel className="w-full">
+            <CarouselContent className="px-2">
+              {plans.map((plan) => (
+                <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
+                  <ModuleCard 
+                    plan={plan} 
+                    onClick={() => selectPlan(plan)}
+                    isActive={selectedPlan?.id === plan.id}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
+        </div>
       )}
 
       <EditPlanDialog
