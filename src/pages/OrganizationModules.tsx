@@ -308,19 +308,20 @@ const OrganizationModules = () => {
           <Carousel
             opts={{
               align: "start",
-              loop: false // Parar no primeiro e último registro
+              loop: false
             }}
             className="w-full" 
           >
-            <CarouselContent className="ml-0">
+            <CarouselContent>
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
+                const IconComponent = tool.icon;
                 
                 return (
-                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pr-2 first:pl-0 pl-0">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-0 pr-4">
                     <Card 
-                      className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
+                      className={`w-[220px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4 flex flex-col items-center justify-between h-full">
@@ -337,19 +338,19 @@ const OrganizationModules = () => {
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 ml-1 rounded-full p-0">
-                                  <MoreVertical size={15} className="text-gray-500" />
+                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-1 rounded-full p-0">
+                                  <MoreVertical className="h-4 w-4 text-gray-500" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem 
                                   className="text-red-600 flex items-center gap-2"
                                   onClick={(e) => {
-                                    e.stopPropagation(); // Evita que o clique propague para o card
+                                    e.stopPropagation();
                                     handleCancelTool(tool.id);
                                   }}
                                 >
-                                  <Trash2 size={14} />
+                                  <Trash2 className="h-4 w-4" />
                                   <span>Cancelar módulo</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -358,10 +359,10 @@ const OrganizationModules = () => {
                         </div>
                         
                         <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                          {React.createElement(tool.icon, { size: 24 })}
+                          <IconComponent size={24} />
                         </div>
                         
-                        <div className="text-center w-full">
+                        <div className="text-center w-full mt-2">
                           <p className="font-medium text-xs mb-1">{tool.title}</p>
                           <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
                         </div>
@@ -375,7 +376,7 @@ const OrganizationModules = () => {
                                 handleContractTool(tool.id);
                               }}
                             >
-                              <CreditCard size={10} className="mr-1" />
+                              <CreditCard className="h-3 w-3 mr-1" />
                               Contratar
                             </Button>
                           ) : (
@@ -389,7 +390,7 @@ const OrganizationModules = () => {
                               }}
                             >
                               Ver Detalhes
-                              <ChevronDown size={10} className="ml-1" />
+                              <ChevronDown className="h-3 w-3 ml-1" />
                             </Link>
                           )}
                         </div>
@@ -418,7 +419,7 @@ const OrganizationModules = () => {
 
                 {selectedToolDetails.status === "contracted" && (
                   <span className="text-yellow-600 text-xs font-medium flex items-center">
-                    <AlertTriangle size={14} className="mr-1" /> Necessita configuração
+                    <AlertTriangle className="h-4 w-4 mr-1" /> Necessita configuração
                   </span>
                 )}
               </div>
@@ -428,13 +429,13 @@ const OrganizationModules = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-5 rounded-lg border border-gray-100">
                   <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
-                    <CheckCircle2 size={18} className="mr-2" />
+                    <CheckCircle2 className="h-5 w-5 mr-2" />
                     Benefícios
                   </h4>
                   <ul className="space-y-2">
                     {selectedToolDetails.benefits.map((benefit, idx) => (
                       <li key={idx} className="flex items-start text-sm text-left">
-                        <CheckCircle2 size={16} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span>{benefit}</span>
                       </li>
                     ))}
@@ -443,13 +444,13 @@ const OrganizationModules = () => {
                 
                 <div className="bg-white p-5 rounded-lg border border-gray-100">
                   <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
-                    <CheckCircle2 size={18} className="mr-2" />
+                    <CheckCircle2 className="h-5 w-5 mr-2" />
                     Como Funciona
                   </h4>
                   <ul className="space-y-2">
                     {selectedToolDetails.howItWorks.map((step, idx) => (
                       <li key={idx} className="flex items-start text-sm text-left">
-                        <Video size={16} className="text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
+                        <Video className="h-4 w-4 text-[#9b87f5] mr-2 mt-0.5 flex-shrink-0" />
                         <span>{step}</span>
                       </li>
                     ))}
