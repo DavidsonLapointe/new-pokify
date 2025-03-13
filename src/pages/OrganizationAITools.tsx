@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -42,12 +43,16 @@ interface Tool {
   badgeLabel: string;
   howItWorks: string[];
   benefits: string[];
+  executeLabel: string;
+  executeIcon: React.ElementType;
 }
 
 const AIToolsPage = () => {
   const [selectedTool, setSelectedTool] = useState<string>("video");
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isExecuteModalOpen, setIsExecuteModalOpen] = useState(false);
   const [currentConfigTool, setCurrentConfigTool] = useState<string>("");
+  const [currentExecuteTool, setCurrentExecuteTool] = useState<string>("");
 
   const tools: Tool[] = [
     {
@@ -60,6 +65,8 @@ const AIToolsPage = () => {
       actionLabel: "Configurar ferramenta",
       actionIcon: Settings,
       badgeLabel: "Contratada",
+      executeLabel: "Criar vídeo personalizado",
+      executeIcon: Zap,
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
         "Geração de roteiro personalizado com base no perfil",
@@ -83,6 +90,8 @@ const AIToolsPage = () => {
       actionLabel: "Contratar ferramenta",
       actionIcon: CreditCard,
       badgeLabel: "Não contratada",
+      executeLabel: "Configurar atendente virtual",
+      executeIcon: Headphones,
       howItWorks: [
         "Instalação de widget de chat no seu website",
         "Configuração de respostas para perguntas frequentes",
@@ -106,6 +115,8 @@ const AIToolsPage = () => {
       actionLabel: "Editar configuração",
       actionIcon: Edit,
       badgeLabel: "Configurada",
+      executeLabel: "Analisar chamada",
+      executeIcon: PlayCircle,
       howItWorks: [
         "Upload da gravação da chamada na plataforma",
         "Processamento e transcrição automática do áudio",
@@ -129,6 +140,8 @@ const AIToolsPage = () => {
       actionLabel: "Contratar ferramenta",
       actionIcon: CreditCard,
       badgeLabel: "Não contratada",
+      executeLabel: "Criar campanha de nutrição",
+      executeIcon: Mail,
       howItWorks: [
         "Segmentação dos leads por perfil e comportamento",
         "Criação de sequências de conteúdo personalizado",
@@ -152,6 +165,8 @@ const AIToolsPage = () => {
       actionLabel: "Configurar ferramenta",
       actionIcon: Settings,
       badgeLabel: "Contratada",
+      executeLabel: "Buscar leads potenciais",
+      executeIcon: Brain,
       howItWorks: [
         "Pesquisa automática de informações sobre empresas-alvo",
         "Elaboração de abordagens personalizadas para cada lead",
@@ -182,6 +197,21 @@ const AIToolsPage = () => {
       setCurrentConfigTool(toolId);
       setIsConfigModalOpen(true);
     }
+  };
+
+  const handleToolExecution = (toolId: string) => {
+    const tool = getToolById(toolId);
+    
+    if (tool.status === "not_contracted") {
+      // Não permitir execução de ferramentas não contratadas
+      return;
+    }
+    
+    // Abrir modal de execução
+    setCurrentExecuteTool(toolId);
+    setIsExecuteModalOpen(true);
+    
+    console.log("Executando ferramenta:", toolId);
   };
 
   // Função para retornar o ícone de status apropriado
@@ -217,30 +247,6 @@ const AIToolsPage = () => {
         return "bg-[#9b87f5] hover:bg-[#7E69AB]";
       case "configured": 
         return "bg-green-600 hover:bg-green-700";
-    }
-  };
-
-  // Função para retornar o rótulo e ícone do botão secundário
-  const getSecondaryButtonProps = (tool: Tool) => {
-    switch (tool.status) {
-      case "not_contracted":
-        return {
-          label: "Contratar ferramenta",
-          icon: CreditCard,
-          class: "bg-red-600 hover:bg-red-700"
-        };
-      case "contracted":
-        return {
-          label: "Configurar ferramenta",
-          icon: Settings,
-          class: "bg-yellow-600 hover:bg-yellow-700"
-        };
-      case "configured":
-        return {
-          label: "Editar configuração",
-          icon: Edit,
-          class: "bg-green-600 hover:bg-green-700"
-        };
     }
   };
 
@@ -351,36 +357,39 @@ const AIToolsPage = () => {
             </div>
 
             {/* Botões de ação - apenas 2 botões por card */}
-            <div className="flex gap-4">
-              {(() => {
-                const primaryProps = {
-                  label: tool.status === "not_contracted" ? "Contratar" : "Configurar",
-                  icon: tool.status === "not_contracted" ? CreditCard : Settings,
-                  class: getButtonClass(tool.status)
-                };
-                
-                const secondaryProps = getSecondaryButtonProps(tool);
-                
-                return (
-                  <>
-                    <Button 
-                      className={`flex items-center justify-center gap-2 min-w-40 py-4 ${primaryProps.class}`}
-                      onClick={() => handleToolAction(tool.id)}
-                    >
-                      <primaryProps.icon size={18} />
-                      <span>{primaryProps.label}</span>
-                    </Button>
-                    
-                    <Button 
-                      className={`flex items-center justify-center gap-2 min-w-40 py-4 ${secondaryProps.class}`}
-                      onClick={() => handleToolAction(tool.id)}
-                    >
-                      <secondaryProps.icon size={18} />
-                      <span>{secondaryProps.label}</span>
-                    </Button>
-                  </>
-                );
-              })()}
+            <div className="flex gap-3">
+              <Button 
+                className={`flex items-center justify-center gap-2 ${
+                  tool.status === "not_contracted" 
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed" 
+                    : "bg-[#9b87f5] hover:bg-[#8a76e5]"
+                } px-6`}
+                onClick={() => handleToolExecution(tool.id)}
+                disabled={tool.status === "not_contracted"}
+              >
+                <tool.executeIcon size={18} />
+                <span>{tool.executeLabel}</span>
+              </Button>
+              
+              <Button 
+                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-6`}
+                onClick={() => handleToolAction(tool.id)}
+              >
+                {tool.status === "not_contracted" ? (
+                  <CreditCard size={18} />
+                ) : tool.status === "configured" ? (
+                  <Edit size={18} />
+                ) : (
+                  <Settings size={18} />
+                )}
+                <span>
+                  {tool.status === "not_contracted" 
+                    ? "Contratar" 
+                    : tool.status === "configured" 
+                      ? "Editar configuração" 
+                      : "Configurar"}
+                </span>
+              </Button>
             </div>
           </Card>
         )
@@ -412,6 +421,39 @@ const AIToolsPage = () => {
               </Button>
               <Button onClick={() => setIsConfigModalOpen(false)}>
                 Salvar Configurações
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de execução da ferramenta */}
+      <Dialog open={isExecuteModalOpen} onOpenChange={setIsExecuteModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {currentExecuteTool && (
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    const ToolIcon = getToolById(currentExecuteTool).executeIcon;
+                    return <ToolIcon className="text-[#9b87f5]" size={18} />;
+                  })()}
+                  {getToolById(currentExecuteTool).executeLabel}
+                </div>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p className="text-gray-600 mb-5">
+              Selecione um lead para executar esta ferramenta de IA. A ferramenta será aplicada usando os dados do lead selecionado.
+            </p>
+            {/* Aqui poderia ter um seletor de leads */}
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="cancel" onClick={() => setIsExecuteModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={() => setIsExecuteModalOpen(false)}>
+                Executar
               </Button>
             </div>
           </div>
