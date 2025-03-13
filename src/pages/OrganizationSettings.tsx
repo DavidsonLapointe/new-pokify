@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings } from "lucide-react";
 import { CustomField } from "@/components/settings/types";
 import { useFunnelManagement } from "@/hooks/settings/useFunnelManagement";
+import { CompanyBriefingSection } from "@/components/settings/CompanyBriefingSection";
 
 const OrganizationSettings = () => {
   const { toast } = useToast();
@@ -50,6 +51,7 @@ const OrganizationSettings = () => {
           <Tabs defaultValue="crm" className="space-y-4">
             <TabsList>
               <TabsTrigger value="crm">CRM</TabsTrigger>
+              <TabsTrigger value="briefing">Briefing</TabsTrigger>
             </TabsList>
             
             <TabsContent value="crm" className="space-y-8">
@@ -71,6 +73,10 @@ const OrganizationSettings = () => {
                   handleOpenEditField={handleOpenEditField}
                 />
               </div>
+            </TabsContent>
+            
+            <TabsContent value="briefing" className="space-y-8">
+              <CompanyBriefingSection />
             </TabsContent>
           </Tabs>
         </CardContent>
