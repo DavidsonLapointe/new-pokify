@@ -66,12 +66,20 @@ const moduleIcons = [
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [popoverOpen, setPopoverOpen] = useState(false);
   
   // Filter icons based on search term
   const filteredIcons = moduleIcons.filter(icon => 
     icon.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     icon.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Função para lidar com a seleção de ícone
+  const handleIconSelect = (value: string) => {
+    form.setValue("icon", value);
+    setSearchTerm("");
+    setPopoverOpen(false);
+  };
 
   return (
     <Form {...form}>
@@ -112,7 +120,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-base flex items-center gap-2">
                     Módulo "Em Breve" 
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                    <Star className="h-4 w-4 text-amber-500" />
                   </FormLabel>
                   <div className="text-sm text-muted-foreground">
                     Marque esta opção para exibir o módulo com status "Em Breve"
@@ -128,7 +136,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ícone do Módulo</FormLabel>
-                <Popover>
+                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -170,10 +178,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                               type="button"
                               variant={field.value === value ? "default" : "outline"}
                               className="justify-start gap-2 w-full h-auto py-2"
-                              onClick={() => {
-                                field.onChange(value);
-                                setSearchTerm("");
-                              }}
+                              onClick={() => handleIconSelect(value)}
                             >
                               <Icon className="h-5 w-5" />
                               <span className="truncate">{label}</span>

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, FileText, AlertTriangle, Trash2, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Brain, BookOpen, CreditCard, LineChart, Mail, Share2, Smartphone, Star, Zap, Briefcase, Bell } from "lucide-react";
+import { Plus, FileText, Trash2, MessageCircle, Video, Headphones, UserRound, ShieldCheck, Brain, BookOpen, CreditCard, LineChart, Mail, Share2, Smartphone, Star, Zap, Briefcase, Bell } from "lucide-react";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -69,7 +69,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                 {plan.name}
                 {plan.comingSoon && (
                   <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 border-amber-300">
-                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    <Star className="h-3 w-3 mr-1" />
                     Em Breve
                   </Badge>
                 )}
