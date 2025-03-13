@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -292,7 +291,7 @@ const OrganizationModules = () => {
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card 
                       className={`border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full cursor-pointer ${isSelected ? 'ring-2 ring-[#9b87f5]' : ''}`}
-                      onClick={() => showToolDetails(tool)} // Adicionando onClick no card inteiro
+                      onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-3">
@@ -393,13 +392,7 @@ const OrganizationModules = () => {
                 </div>
                 <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${getBadgeClass(selectedToolDetails.status)}`}>
-                  {selectedToolDetails.status === "configured" 
-                    ? "Configurada" 
-                    : selectedToolDetails.status === "contracted"
-                    ? "Contratada"
-                    : selectedToolDetails.status === "not_contracted"
-                    ? "Não contratada"
-                    : "Em breve"}
+                  {selectedToolDetails.badgeLabel}
                 </span>
 
                 {selectedToolDetails.status === "contracted" && (
@@ -413,7 +406,7 @@ const OrganizationModules = () => {
               <p className="text-gray-600 mb-6 text-sm">{selectedToolDetails.detailedDescription}</p>
               
               {/* Grid com benefícios e como funciona lado a lado */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-5 rounded-lg border border-gray-100">
                   <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
                     <CheckCircle2 size={18} className="mr-2" />
@@ -443,44 +436,6 @@ const OrganizationModules = () => {
                     ))}
                   </ul>
                 </div>
-              </div>
-              
-              <div className="flex gap-3">
-                {selectedToolDetails.status !== "not_contracted" && selectedToolDetails.status !== "coming_soon" && (
-                  <Button 
-                    className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5]"
-                  >
-                    <Zap size={18} />
-                    {selectedToolDetails.id === "video" ? "Criar vídeo personalizado" : 
-                     selectedToolDetails.id === "call" ? "Analisar chamada" :
-                     selectedToolDetails.id === "assistant" ? "Buscar leads potenciais" : 
-                     "Utilizar módulo"}
-                  </Button>
-                )}
-                
-                {selectedToolDetails.status !== "coming_soon" && (
-                  <Button 
-                    className={`flex items-center justify-center gap-2 ${
-                      selectedToolDetails.status === "not_contracted" 
-                        ? "bg-red-600 hover:bg-red-700 text-white" 
-                        : selectedToolDetails.status === "configured"
-                        ? "bg-green-600 hover:bg-green-700 text-white"
-                        : "bg-yellow-500 hover:bg-yellow-600 text-white"
-                    }`}
-                  >
-                    {selectedToolDetails.status === "not_contracted" ? (
-                      <>
-                        <CreditCard size={18} />
-                        Contratar
-                      </>
-                    ) : (
-                      <>
-                        <AlertTriangle size={18} />
-                        {selectedToolDetails.status === "configured" ? "Editar configuração" : "Configurar"}
-                      </>
-                    )}
-                  </Button>
-                )}
               </div>
             </div>
           </div>
