@@ -19,7 +19,8 @@ import {
   Lock,
   CreditCard,
   Settings,
-  Edit
+  Edit,
+  AlertTriangle
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -189,7 +190,7 @@ const AIToolsPage = () => {
       case "not_contracted": 
         return <Lock size={14} className="text-red-500" />;
       case "contracted": 
-        return <CheckCircle2 size={14} className="text-yellow-500" />;
+        return <AlertTriangle size={14} className="text-yellow-500" />;
       case "configured": 
         return <CheckCircle2 size={14} className="text-green-500" />;
     }
@@ -199,7 +200,7 @@ const AIToolsPage = () => {
   const getBadgeClass = (status: ToolStatus) => {
     switch (status) {
       case "not_contracted": 
-        return "bg-gray-100 text-gray-700";
+        return "bg-red-100 text-red-700";
       case "contracted": 
         return "bg-yellow-100 text-yellow-700";
       case "configured": 
@@ -216,6 +217,30 @@ const AIToolsPage = () => {
         return "bg-[#9b87f5] hover:bg-[#7E69AB]";
       case "configured": 
         return "bg-green-600 hover:bg-green-700";
+    }
+  };
+
+  // Função para retornar o rótulo e ícone do botão secundário
+  const getSecondaryButtonProps = (tool: Tool) => {
+    switch (tool.status) {
+      case "not_contracted":
+        return {
+          label: "Contratar ferramenta",
+          icon: CreditCard,
+          class: "bg-red-600 hover:bg-red-700"
+        };
+      case "contracted":
+        return {
+          label: "Configurar ferramenta",
+          icon: Settings,
+          class: "bg-yellow-600 hover:bg-yellow-700"
+        };
+      case "configured":
+        return {
+          label: "Editar configuração",
+          icon: Edit,
+          class: "bg-green-600 hover:bg-green-700"
+        };
     }
   };
 
@@ -282,6 +307,11 @@ const AIToolsPage = () => {
               <Badge variant="outline" className={getBadgeClass(tool.status)}>
                 {tool.badgeLabel}
               </Badge>
+              {tool.status === "contracted" && (
+                <span className="text-yellow-600 text-xs font-medium flex items-center ml-2">
+                  <AlertTriangle size={14} className="mr-1" /> Necessita configuração
+                </span>
+              )}
             </div>
             
             <p className="text-gray-600 mb-5 text-sm text-left">
@@ -320,14 +350,30 @@ const AIToolsPage = () => {
               </div>
             </div>
 
-            <Button 
-              className={`w-full flex items-center justify-center gap-2 py-5 ${getButtonClass(tool.status)}`}
-              onClick={() => handleToolAction(tool.id)}
-            >
-              <tool.actionIcon size={18} />
-              <span>{tool.actionLabel}</span>
-              <ArrowRight size={18} />
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                className={`flex-1 flex items-center justify-center gap-2 py-5 ${getButtonClass(tool.status)}`}
+                onClick={() => handleToolAction(tool.id)}
+              >
+                <tool.actionIcon size={18} />
+                <span>{tool.actionLabel}</span>
+                <ArrowRight size={18} />
+              </Button>
+              
+              {/* Novo botão secundário baseado no status */}
+              {(() => {
+                const secondaryProps = getSecondaryButtonProps(tool);
+                return (
+                  <Button 
+                    className={`flex items-center justify-center gap-2 py-5 ${secondaryProps.class}`}
+                    onClick={() => handleToolAction(tool.id)}
+                  >
+                    <secondaryProps.icon size={18} />
+                    <span>{secondaryProps.label}</span>
+                  </Button>
+                );
+              })()}
+            </div>
           </Card>
         )
       ))}
