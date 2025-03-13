@@ -316,6 +316,7 @@ const OrganizationModules = () => {
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
+                const Icon = tool.icon;
                 
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-0 pr-4">
@@ -323,7 +324,7 @@ const OrganizationModules = () => {
                       className={`w-[220px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
-                      <CardContent className="p-4 flex flex-col items-center justify-between h-full">
+                      <CardContent className="p-4 flex flex-col items-center justify-between h-full relative">
                         <div className="absolute top-2 right-2 flex items-center">
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -357,15 +358,15 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                          {tool.icon && (
-                            <tool.icon size={24} />
-                          )}
-                        </div>
-                        
-                        <div className="text-center w-full mt-2">
-                          <p className="font-medium text-xs mb-1">{tool.title}</p>
-                          <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
+                        <div className="flex flex-col items-center mt-4">
+                          <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
+                            {Icon && <Icon size={24} />}
+                          </div>
+                          
+                          <div className="text-center w-full mt-2">
+                            <p className="font-medium text-xs mb-1">{tool.title}</p>
+                            <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
+                          </div>
                         </div>
                         
                         <div className="mt-1 w-full">
