@@ -38,6 +38,33 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
+// Função auxiliar para formatar dias no eixo X
+const formatXAxis = (tickItem: string) => {
+  // Mantém apenas o dia, removendo o mês
+  const day = tickItem.split('/')[0];
+  return day;
+};
+
+// Função para customizar o tooltip incluindo o mês
+const CustomizedAxisTick = (props: any) => {
+  const { x, y, payload } = props;
+  
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fill="#666"
+        fontSize={12}
+      >
+        {formatXAxis(payload.value)}
+      </text>
+    </g>
+  );
+};
+
 export const DailyLeadsChart = ({ 
   data, 
   onDateChange, 
@@ -142,6 +169,10 @@ export const DailyLeadsChart = ({
     );
   }
 
+  // Gera rótulo para o gráfico com base na data selecionada
+  const selectedMonthLabel = selectedDate ? 
+    format(selectedDate, 'MMMM/yyyy') : 'Mês Atual';
+
   return (
     <Card className="p-4">
       <div className="space-y-4">
@@ -164,23 +195,30 @@ export const DailyLeadsChart = ({
         </div>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+            <BarChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="day" 
-                angle={-30}
-                textAnchor="end"
                 height={40}
-                interval={0}
-                tick={{ fontSize: 13 }}
+                tick={<CustomizedAxisTick />}
+                tickLine={false}
+                axisLine={{ stroke: '#E0E0E0' }}
+                interval={1}
               />
               <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} cursor={false} />
+              <RechartsTooltip 
+                content={<CustomTooltip />} 
+                cursor={false} 
+              />
               <Bar dataKey="novos" name="Novos Leads" fill="#2563eb" />
             </BarChart>
           </ResponsiveContainer>
+        </div>
+        <div className="text-xs text-center text-gray-500">
+          Mês selecionado: {selectedMonthLabel}
         </div>
       </div>
     </Card>
   );
 };
+
