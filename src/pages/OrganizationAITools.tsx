@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,25 +16,49 @@ import {
   CheckCircle2,
   HelpCircle,
   ArrowRight,
-  Lock
+  Lock,
+  CreditCard,
+  Settings,
+  Edit
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+// Status da ferramenta
+type ToolStatus = "not_contracted" | "contracted" | "configured";
+
+// Interface para as ferramentas
+interface Tool {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  description: string;
+  status: ToolStatus;
+  detailedDescription: string;
+  actionLabel: string;
+  actionIcon: React.ElementType;
+  badgeLabel: string;
+  howItWorks: string[];
+  benefits: string[];
+}
 
 const AIToolsPage = () => {
   const [selectedTool, setSelectedTool] = useState<string>("video");
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [currentConfigTool, setCurrentConfigTool] = useState<string>("");
 
-  const tools = [
+  const tools: Tool[] = [
     {
       id: "video",
       title: "Prospecção com Vídeo",
       icon: Video,
       description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
-      locked: false,
+      status: "contracted",
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
-      actionLabel: "Criar novo vídeo",
-      actionIcon: Video,
-      status: "Ativo",
+      actionLabel: "Configurar ferramenta",
+      actionIcon: Settings,
+      badgeLabel: "Ativo",
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
         "Geração de roteiro personalizado com base no perfil",
@@ -52,11 +77,11 @@ const AIToolsPage = () => {
       title: "Atendente Inbound",
       icon: Headphones,
       description: "Atendimento automatizado para leads inbound com IA conversacional.",
-      locked: true,
+      status: "not_contracted",
       detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
-      actionLabel: "Configurar atendente",
-      actionIcon: Headphones,
-      status: "Em breve",
+      actionLabel: "Contratar ferramenta",
+      actionIcon: CreditCard,
+      badgeLabel: "Não contratado",
       howItWorks: [
         "Instalação de widget de chat no seu website",
         "Configuração de respostas para perguntas frequentes",
@@ -75,11 +100,11 @@ const AIToolsPage = () => {
       title: "Análise de Call",
       icon: UserRound,
       description: "Análise automática de chamadas para identificar padrões e insights.",
-      locked: false,
+      status: "configured",
       detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
-      actionLabel: "Analisar chamada",
-      actionIcon: LineChart,
-      status: "Ativo",
+      actionLabel: "Editar configuração",
+      actionIcon: Edit,
+      badgeLabel: "Configurado",
       howItWorks: [
         "Upload da gravação da chamada na plataforma",
         "Processamento e transcrição automática do áudio",
@@ -98,11 +123,11 @@ const AIToolsPage = () => {
       title: "Nutrição de leads (MKT)",
       icon: MessageCircle,
       description: "Automação de campanhas de nutrição de leads com conteúdo personalizado.",
-      locked: true,
+      status: "not_contracted",
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
-      actionLabel: "Configurar campanha",
-      actionIcon: Mail,
-      status: "Em breve",
+      actionLabel: "Contratar ferramenta",
+      actionIcon: CreditCard,
+      badgeLabel: "Não contratado",
       howItWorks: [
         "Segmentação dos leads por perfil e comportamento",
         "Criação de sequências de conteúdo personalizado",
@@ -121,11 +146,11 @@ const AIToolsPage = () => {
       title: "Assistente de Prospecção",
       icon: ShieldCheck,
       description: "Assistente virtual para auxiliar na prospecção de novos clientes.",
-      locked: false,
+      status: "contracted",
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
-      actionLabel: "Iniciar assistente",
-      actionIcon: Brain,
-      status: "Ativo",
+      actionLabel: "Configurar ferramenta",
+      actionIcon: Settings,
+      badgeLabel: "Ativo",
       howItWorks: [
         "Pesquisa automática de informações sobre empresas-alvo",
         "Elaboração de abordagens personalizadas para cada lead",
@@ -140,6 +165,59 @@ const AIToolsPage = () => {
       ]
     }
   ];
+
+  const getToolById = (id: string) => {
+    return tools.find(tool => tool.id === id) || tools[0];
+  };
+
+  const handleToolAction = (toolId: string) => {
+    const tool = getToolById(toolId);
+    
+    if (tool.status === "not_contracted") {
+      // Lógica para contratação
+      console.log("Iniciando contratação da ferramenta:", toolId);
+    } else {
+      // Abrir modal de configuração
+      setCurrentConfigTool(toolId);
+      setIsConfigModalOpen(true);
+    }
+  };
+
+  // Função para retornar o ícone de status apropriado
+  const getStatusIcon = (status: ToolStatus) => {
+    switch (status) {
+      case "not_contracted": 
+        return <Lock size={14} className="text-red-500" />;
+      case "contracted": 
+        return <CheckCircle2 size={14} className="text-yellow-500" />;
+      case "configured": 
+        return <CheckCircle2 size={14} className="text-green-500" />;
+    }
+  };
+
+  // Função para retornar a cor de fundo do badge baseado no status
+  const getBadgeClass = (status: ToolStatus) => {
+    switch (status) {
+      case "not_contracted": 
+        return "bg-gray-100 text-gray-700";
+      case "contracted": 
+        return "bg-yellow-100 text-yellow-700";
+      case "configured": 
+        return "bg-green-100 text-green-700";
+    }
+  };
+
+  // Função para retornar a cor do botão baseado no status
+  const getButtonClass = (status: ToolStatus) => {
+    switch (status) {
+      case "not_contracted": 
+        return "bg-blue-600 hover:bg-blue-700";
+      case "contracted": 
+        return "bg-[#9b87f5] hover:bg-[#7E69AB]";
+      case "configured": 
+        return "bg-green-600 hover:bg-green-700";
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -170,9 +248,9 @@ const AIToolsPage = () => {
               >
                 <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2">
                   <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                    {tool.locked && (
+                    {tool.status === "not_contracted" && (
                       <div className="absolute top-2 right-2">
-                        <Lock size={14} className="text-gray-400" />
+                        <Lock size={14} className="text-red-500" />
                       </div>
                     )}
                     <tool.icon size={28} />
@@ -201,8 +279,8 @@ const AIToolsPage = () => {
             <div className="flex items-center gap-2 mb-4">
               <tool.icon className="text-[#9b87f5]" size={24} />
               <h2 className="text-xl font-semibold">{tool.title}</h2>
-              <Badge variant="outline" className={tool.locked ? "bg-gray-100 text-gray-700" : "bg-green-100 text-green-700"}>
-                {tool.locked ? "Em breve" : "Ativo"}
+              <Badge variant="outline" className={getBadgeClass(tool.status)}>
+                {tool.badgeLabel}
               </Badge>
             </div>
             
@@ -243,9 +321,8 @@ const AIToolsPage = () => {
             </div>
 
             <Button 
-              size="sm"
-              className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] flex items-center justify-center gap-2 py-5"
-              disabled={tool.locked}
+              className={`w-full flex items-center justify-center gap-2 py-5 ${getButtonClass(tool.status)}`}
+              onClick={() => handleToolAction(tool.id)}
             >
               <tool.actionIcon size={18} />
               <span>{tool.actionLabel}</span>
@@ -254,6 +331,37 @@ const AIToolsPage = () => {
           </Card>
         )
       ))}
+
+      {/* Modal de configuração da ferramenta */}
+      <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {currentConfigTool && (
+                <div className="flex items-center gap-2">
+                  {getToolById(currentConfigTool).icon && 
+                    <getToolById(currentConfigTool).icon className="text-[#9b87f5]" size={18} />
+                  }
+                  Configurar {getToolById(currentConfigTool).title}
+                </div>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p className="text-gray-600 mb-5">
+              Aqui você pode configurar as opções específicas desta ferramenta de IA para personalizar seu funcionamento de acordo com suas necessidades.
+            </p>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="cancel" onClick={() => setIsConfigModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={() => setIsConfigModalOpen(false)}>
+                Salvar Configurações
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
