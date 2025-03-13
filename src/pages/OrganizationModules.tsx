@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -312,13 +311,13 @@ const OrganizationModules = () => {
             }}
             className="w-full" 
           >
-            <CarouselContent className="-ml-1 md:-ml-2">
+            <CarouselContent className="-ml-0">
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
                 
                 return (
-                  <CarouselItem key={tool.id} className="pl-1 md:pl-2 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <CarouselItem key={tool.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 first:pl-0">
                     <Card 
                       className={`w-[180px] h-[120px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
@@ -399,8 +398,8 @@ const OrganizationModules = () => {
                 );
               })}
             </CarouselContent>
-            <CarouselPrevious className="-left-4" />
-            <CarouselNext className="-right-4" />
+            <CarouselPrevious className="-left-10" />
+            <CarouselNext className="-right-10" />
           </Carousel>
         </div>
 
