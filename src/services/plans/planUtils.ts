@@ -6,12 +6,15 @@ export function mapDbPlanToPlan(dbPlan: any): Plan {
     id: dbPlan.id,
     name: dbPlan.name,
     price: parseFloat(dbPlan.price),
+    shortDescription: dbPlan.short_description || "",
     description: dbPlan.description,
-    features: dbPlan.features || [], // Sempre garantir que features seja um array
+    benefits: dbPlan.benefits || [], 
+    howItWorks: dbPlan.how_it_works || [],
     active: dbPlan.active,
+    comingSoon: dbPlan.coming_soon || false,
+    actionButtonText: dbPlan.action_button_text || "Contratar",
     stripeProductId: dbPlan.stripe_product_id,
     stripePriceId: dbPlan.stripe_price_id,
-    credits: dbPlan.credits,
   };
 }
 

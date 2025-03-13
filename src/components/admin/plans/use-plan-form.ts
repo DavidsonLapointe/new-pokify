@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
@@ -23,12 +24,15 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     defaultValues: {
       name: "",
       price: "",
+      shortDescription: "",
       description: "",
-      features: "",
+      benefits: "",
+      howItWorks: "",
       active: true,
+      comingSoon: false,
+      actionButtonText: "Contratar",
       stripeProductId: "",
       stripePriceId: "",
-      credits: undefined,
     },
   });
 
@@ -36,37 +40,48 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     if (plan) {
       console.log("Carregando dados do módulo no formulário:", plan);
       
-      // Prepare features for form
-      let featuresString = "";
-      if (Array.isArray(plan.features)) {
-        featuresString = plan.features.join("\n");
-      } else if (typeof plan.features === 'string') {
-        featuresString = plan.features;
-      } else if (plan.features) {
-        // Fallback for any other case
-        featuresString = String(plan.features);
+      // Prepare benefits for form
+      let benefitsString = "";
+      if (Array.isArray(plan.benefits)) {
+        benefitsString = plan.benefits.join("\n");
+      } else if (typeof plan.benefits === 'string') {
+        benefitsString = plan.benefits;
+      }
+      
+      // Prepare howItWorks for form
+      let howItWorksString = "";
+      if (Array.isArray(plan.howItWorks)) {
+        howItWorksString = plan.howItWorks.join("\n");
+      } else if (typeof plan.howItWorks === 'string') {
+        howItWorksString = plan.howItWorks;
       }
 
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
+        shortDescription: plan.shortDescription || "",
         description: plan.description,
-        features: featuresString,
+        benefits: benefitsString,
+        howItWorks: howItWorksString,
         active: plan.active,
+        comingSoon: plan.comingSoon || false,
+        actionButtonText: plan.actionButtonText || "Contratar",
         stripeProductId: plan.stripeProductId || "",
         stripePriceId: plan.stripePriceId || "",
-        credits: plan.credits,
       });
     } else {
       form.reset({
         name: "",
         price: "",
+        shortDescription: "",
         description: "",
-        features: "",
+        benefits: "",
+        howItWorks: "",
         active: true,
+        comingSoon: false,
+        actionButtonText: "Contratar",
         stripeProductId: "",
         stripePriceId: "",
-        credits: undefined,
       });
     }
   }, [plan, form]);
@@ -75,16 +90,14 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     try {
       console.log("Dados do formulário para salvar:", values);
       
-      // Ensure price is a number and features is an array
+      // Ensure price is a number and parse string lists to arrays
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
-        features: values.features.split("\n").filter(f => f.trim()),
-        active: values.active, 
-        // Ensure credits is a number if provided
-        credits: typeof values.credits === 'string' 
-          ? parseInt(values.credits, 10) 
-          : (values.credits === undefined ? undefined : Number(values.credits))
+        benefits: values.benefits.split("\n").filter(f => f.trim()),
+        howItWorks: values.howItWorks.split("\n").filter(f => f.trim()),
+        active: values.active,
+        comingSoon: values.comingSoon
       };
       
       console.log("Valores formatados para salvar:", formattedValues);
@@ -103,7 +116,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
             description: formattedValues.description,
             price: formattedValues.price,
             active: formattedValues.active,
-            credits: formattedValues.credits,
           });
           
           console.log("Produto atualizado no Stripe com sucesso:", stripeResult);
@@ -122,7 +134,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
           console.error("Erro ao atualizar no Stripe:", stripeError);
           toast({
             title: "Erro ao atualizar no Stripe",
-            description: "O plano será atualizado apenas no banco de dados local.",
+            description: "O módulo será atualizado apenas no banco de dados local.",
             variant: "destructive",
           });
         }
@@ -130,25 +142,28 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       
       // Salvar no banco de dados
       if (isEditing && plan) {
-        console.log('Atualizando plano', plan.id, formattedValues);
+        console.log('Atualizando módulo', plan.id, formattedValues);
         savedPlan = await updatePlan(plan.id, formattedValues);
-        console.log('Plano atualizado:', savedPlan);
+        console.log('Módulo atualizado:', savedPlan);
       } else {
         // Ensure active is explicitly included for new plans
         const newPlanData: Omit<Plan, "id"> = {
           name: formattedValues.name,
           price: formattedValues.price,
+          shortDescription: formattedValues.shortDescription,
           description: formattedValues.description,
-          features: formattedValues.features,
+          benefits: formattedValues.benefits,
+          howItWorks: formattedValues.howItWorks,
           active: formattedValues.active,
+          comingSoon: formattedValues.comingSoon,
+          actionButtonText: formattedValues.actionButtonText,
           stripeProductId: formattedValues.stripeProductId,
           stripePriceId: formattedValues.stripePriceId,
-          credits: formattedValues.credits,
         };
         
-        console.log('Criando novo plano:', newPlanData);
+        console.log('Criando novo módulo:', newPlanData);
         savedPlan = await createPlan(newPlanData);
-        console.log('Novo plano criado:', savedPlan);
+        console.log('Novo módulo criado:', savedPlan);
       }
       
       if (savedPlan) {
