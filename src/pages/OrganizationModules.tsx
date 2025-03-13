@@ -310,16 +310,16 @@ const OrganizationModules = () => {
             }}
             className="w-full" 
           >
-            <CarouselContent className="-ml-2">
+            <CarouselContent className="-ml-4">
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
                 const Icon = tool.icon;
                 
                 return (
-                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-1">
                     <Card 
-                      className={`w-[220px] h-[160px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
+                      className={`w-[220px] h-[180px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4 flex flex-col items-center justify-between h-full relative">
@@ -356,21 +356,21 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <div className="flex flex-col items-center mt-5">
+                        <div className="flex flex-col items-center mt-6">
                           <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                            {Icon && <Icon size={28} />}
+                            {Icon && <Icon size={32} />}
                           </div>
                           
-                          <div className="text-center w-full mt-2">
-                            <p className="font-medium text-xs mb-1">{tool.title}</p>
-                            <p className="text-xs text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-[10px] text-gray-500">/mês</span></p>
+                          <div className="text-center w-full mt-3">
+                            <p className="font-medium text-sm mb-1">{tool.title}</p>
+                            <p className="text-sm text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span></p>
                           </div>
                         </div>
                         
-                        <div className="mt-3 w-full">
+                        <div className="mt-4 w-full">
                           {tool.status === "not_contracted" ? (
                             <Button 
-                              className="w-full bg-red-600 hover:bg-red-700 h-8 text-[10px] px-1"
+                              className="w-full bg-red-600 hover:bg-red-700 h-9 text-xs px-1"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleContractTool(tool.id);
@@ -382,7 +382,7 @@ const OrganizationModules = () => {
                           ) : (
                             <Link 
                               href="#" 
-                              className="text-[10px] text-[#9b87f5] hover:text-[#8a76e5] flex items-center justify-center w-full"
+                              className="text-xs text-[#9b87f5] hover:text-[#8a76e5] flex items-center justify-center w-full"
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
