@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -247,7 +246,7 @@ const OrganizationModules = () => {
 
   // Função para mostrar os detalhes da ferramenta
   const showToolDetails = (tool: Tool) => {
-    setSelectedToolDetails(tool === selectedToolDetails ? null : tool);
+    setSelectedToolDetails(tool);
   };
 
   return (
@@ -264,7 +263,7 @@ const OrganizationModules = () => {
           <Carousel
             opts={{
               align: "start",
-              loop: true
+              loop: false // Altere para false para parar no primeiro e último registro
             }}
             className="w-full"
           >
@@ -275,7 +274,10 @@ const OrganizationModules = () => {
                 
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                    <Card className="border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full">
+                    <Card 
+                      className={`border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full cursor-pointer ${isSelected ? 'ring-2 ring-[#9b87f5]' : ''}`}
+                      onClick={() => showToolDetails(tool)} // Adicionando onClick no card inteiro
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
@@ -304,7 +306,10 @@ const OrganizationModules = () => {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem 
                                   className="text-red-600 flex items-center gap-2"
-                                  onClick={() => handleCancelTool(tool.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Evita que o clique propague para o card
+                                    handleCancelTool(tool.id);
+                                  }}
                                 >
                                   <Trash2 size={14} />
                                   <span>Cancelar módulo</span>
@@ -329,9 +334,12 @@ const OrganizationModules = () => {
                             variant="outline" 
                             size="sm" 
                             className={`w-full justify-between text-xs ${isSelected ? "bg-primary-lighter text-primary" : ""}`}
-                            onClick={() => showToolDetails(tool)}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Evita que o clique propague para o card
+                              showToolDetails(tool);
+                            }}
                           >
-                            Benefícios
+                            Ver Detalhes
                             {isSelected ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                           </Button>
 
@@ -339,7 +347,10 @@ const OrganizationModules = () => {
                             <Button 
                               className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2 text-xs"
                               size="sm"
-                              onClick={() => handleContractTool(tool.id)}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Evita que o clique propague para o card
+                                handleContractTool(tool.id);
+                              }}
                             >
                               <CreditCard size={14} />
                               Contratar Módulo
@@ -371,11 +382,23 @@ const OrganizationModules = () => {
                       {formatPrice(selectedToolDetails.price)}
                     </span>
                     <span className="text-xs text-gray-500 ml-1">/mês</span>
-                    {selectedToolDetails.status !== "not_contracted" && (
-                      <span className="ml-3 text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
-                        {selectedToolDetails.badgeLabel}
-                      </span>
-                    )}
+                    <span className={`ml-3 text-xs px-2 py-0.5 rounded-full ${
+                      selectedToolDetails.status === "configured" 
+                        ? "bg-green-100 text-green-800"
+                        : selectedToolDetails.status === "contracted"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : selectedToolDetails.status === "not_contracted"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}>
+                      {selectedToolDetails.status === "configured" 
+                        ? "Configurada" 
+                        : selectedToolDetails.status === "contracted"
+                        ? "Contratada"
+                        : selectedToolDetails.status === "not_contracted"
+                        ? "Não contratada"
+                        : "Em breve"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -390,96 +413,53 @@ const OrganizationModules = () => {
             </div>
             
             <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
-                    <h4 className="text-lg font-medium mb-3 flex items-center text-[#403E43]">
-                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
-                      Descrição Detalhada
-                    </h4>
-                    <p className="text-gray-600 leading-relaxed">{selectedToolDetails.detailedDescription}</p>
-                  </div>
-                  
-                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
-                    <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
-                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
-                      Benefícios
-                    </h4>
-                    <ul className="space-y-3">
-                      {selectedToolDetails.benefits.map((benefit, idx) => (
-                        <li key={idx} className="flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm transition-transform hover:translate-x-1">
-                          <CheckCircle2 size={18} className="text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              {/* Descrição detalhada ocupando toda a largura */}
+              <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
+                <h4 className="text-lg font-medium mb-3 flex items-center text-[#403E43]">
+                  <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                  Descrição Detalhada
+                </h4>
+                <p className="text-gray-600 leading-relaxed">{selectedToolDetails.detailedDescription}</p>
+              </div>
+              
+              {/* Grid com benefícios e como funciona lado a lado */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100 h-full">
+                  <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
+                    <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                    Benefícios
+                  </h4>
+                  <ul className="space-y-3">
+                    {selectedToolDetails.benefits.map((benefit, idx) => (
+                      <li key={idx} className="flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm transition-transform hover:translate-x-1">
+                        <CheckCircle2 size={18} className="text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 
-                <div>
-                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
-                    <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
-                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
-                      Como Funciona
-                    </h4>
-                    <ul className="space-y-4">
-                      {selectedToolDetails.howItWorks.map((step, idx) => (
-                        <li key={idx} className="relative pl-10 pb-5 border-l-2 border-[#E5DEFF] last:border-0 last:pb-0">
-                          <div className="absolute left-[-13px] top-0 bg-[#9b87f5] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm shadow-md">
-                            {idx + 1}
-                          </div>
-                          <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                            <span className="text-gray-700">{step}</span>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-[#F1F0FB] to-[#FFFFFF] p-5 rounded-lg border border-[#E5DEFF] shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-gray-600 font-medium">Valor mensal:</span>
-                      <span className="font-bold text-xl text-[#6E59A5]">
-                        {formatPrice(selectedToolDetails.price)}
-                      </span>
-                    </div>
-                    
-                    {selectedToolDetails.status === "not_contracted" ? (
-                      <Button 
-                        className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] text-white shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
-                        onClick={() => handleContractTool(selectedToolDetails.id)}
-                      >
-                        <CreditCard className="mr-2" size={16} />
-                        Contratar Módulo
-                      </Button>
-                    ) : (
-                      <div className="bg-white p-3 rounded-lg border border-gray-200">
-                        <div className="flex items-center">
-                          <div className="mr-3 text-[#9b87f5]">
-                            {selectedToolDetails.status === "configured" ? (
-                              <CheckCircle2 size={24} className="text-green-500" />
-                            ) : (
-                              <AlertTriangle size={24} className="text-yellow-500" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800">
-                              {selectedToolDetails.status === "configured" 
-                                ? "Módulo configurado e ativo" 
-                                : "Módulo contratado, pendente configuração"}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {selectedToolDetails.status === "configured" 
-                                ? "Você já pode utilizar todas as funcionalidades" 
-                                : "Entre em contato com o suporte para configuração"}
-                            </p>
-                          </div>
+                <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100 h-full">
+                  <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
+                    <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                    Como Funciona
+                  </h4>
+                  <ul className="space-y-4">
+                    {selectedToolDetails.howItWorks.map((step, idx) => (
+                      <li key={idx} className="relative pl-10 pb-5 border-l-2 border-[#E5DEFF] last:border-0 last:pb-0">
+                        <div className="absolute left-[-13px] top-0 bg-[#9b87f5] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm shadow-md">
+                          {idx + 1}
                         </div>
-                      </div>
-                    )}
-                  </div>
+                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                          <span className="text-gray-700">{step}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
+              
+              {/* Removi o contêiner com retângulo vermelho conforme solicitado */}
             </div>
           </div>
         )}
