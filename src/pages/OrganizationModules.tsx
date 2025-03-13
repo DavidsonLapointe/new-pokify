@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Link } from "@/components/ui/link";
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -19,7 +21,7 @@ import {
   ChevronDown,
   ChevronUp,
   X,
-  Zap
+  HelpCircle
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -40,6 +42,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Textarea } from "@/components/ui/textarea";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -58,11 +61,19 @@ interface Tool {
   benefits: string[];
 }
 
+interface CancelModuleFormValues {
+  moduleId: string;
+  reason: string;
+}
+
 const OrganizationModules = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
   const [selectedToolDetails, setSelectedToolDetails] = useState<Tool | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelModuleId, setCancelModuleId] = useState<string | null>(null);
 
   const tools: Tool[] = [
     {
@@ -189,9 +200,8 @@ const OrganizationModules = () => {
   };
 
   const handleCancelTool = (toolId: string) => {
-    setSelectedTool(toolId);
-    setAction("cancel");
-    setIsConfirmDialogOpen(true);
+    setCancelModuleId(toolId);
+    setIsCancelDialogOpen(true);
   };
 
   const confirmAction = () => {
@@ -209,6 +219,21 @@ const OrganizationModules = () => {
     setIsConfirmDialogOpen(false);
     setSelectedTool(null);
     setAction(null);
+  };
+
+  const confirmCancelation = () => {
+    if (!cancelModuleId || !cancelReason.trim()) {
+      toast.error("Por favor, informe o motivo do cancelamento");
+      return;
+    }
+    
+    const tool = tools.find(t => t.id === cancelModuleId);
+    if (!tool) return;
+
+    toast.success(`Módulo "${tool.title}" cancelado com sucesso!`);
+    setIsCancelDialogOpen(false);
+    setCancelModuleId(null);
+    setCancelReason("");
   };
 
   // Função para retornar o ícone de status apropriado e seu tooltip
@@ -264,23 +289,29 @@ const OrganizationModules = () => {
     }
   };
 
+  const getContratadosCount = () => {
+    return tools.filter(tool => 
+      tool.status === "contracted" || tool.status === "configured"
+    ).length;
+  };
+
   return (
     <TooltipProvider>
       <div className="space-y-6">
         <div className="mb-2">
           <h1 className="text-2xl font-bold">Módulos do Sistema</h1>
           <p className="text-muted-foreground text-sm">
-            Gerencie os módulos de IA disponíveis para sua empresa
+            Gerencie as ferramentas de IA disponíveis para sua empresa
           </p>
         </div>
 
-        <div className="relative mx-1">
+        <div className="relative">
           <Carousel
             opts={{
               align: "start",
               loop: false // Parar no primeiro e último registro
             }}
-            className="w-full"
+            className="w-full px-10" // Adicionando padding para evitar sobreposição das setas
           >
             <CarouselContent>
               {tools.map((tool) => {
@@ -290,7 +321,7 @@ const OrganizationModules = () => {
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card 
-                      className={`border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full cursor-pointer ${isSelected ? 'ring-2 ring-[#9b87f5]' : ''}`}
+                      className={`border-t-4 ${isSelected ? 'border-[#9b87f5] bg-[#F1F0FB]' : 'border-[#9b87f5]'} hover:shadow-md transition-shadow h-full cursor-pointer ${isSelected ? 'ring-2 ring-[#9b87f5]' : ''}`}
                       onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4">
@@ -334,10 +365,6 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <p className="text-gray-600 mb-4 text-xs">
-                          {tool.description}
-                        </p>
-
                         <div className="flex items-center justify-between mb-4">
                           <span className="font-bold text-lg text-[#6E59A5]">
                             {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
@@ -345,22 +372,22 @@ const OrganizationModules = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`w-full justify-between text-xs ${isSelected ? "bg-primary-lighter text-primary" : ""}`}
+                          <Link 
+                            href="#" 
+                            className={`w-full flex justify-between items-center text-xs text-[#9b87f5] hover:text-[#8a76e5]`}
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation(); // Evita que o clique propague para o card
                               showToolDetails(tool);
                             }}
                           >
                             Ver Detalhes
                             {isSelected ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </Button>
+                          </Link>
 
                           {tool.status === "not_contracted" && (
                             <Button 
-                              className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2 text-xs"
+                              className="w-full bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2 text-xs"
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation(); // Evita que o clique propague para o card
@@ -378,8 +405,8 @@ const OrganizationModules = () => {
                 );
               })}
             </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
           </Carousel>
         </div>
 
@@ -402,10 +429,8 @@ const OrganizationModules = () => {
                 )}
               </div>
               
-              {/* Descrição detalhada ocupando toda a largura */}
               <p className="text-gray-600 mb-6 text-sm">{selectedToolDetails.detailedDescription}</p>
               
-              {/* Grid com benefícios e como funciona lado a lado */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-5 rounded-lg border border-gray-100">
                   <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
@@ -473,10 +498,80 @@ const OrganizationModules = () => {
               </Button>
               <Button 
                 onClick={confirmAction}
-                className={action === "contract" ? "bg-[#9b87f5] hover:bg-[#8a76e5]" : ""}
+                className={action === "contract" ? "bg-red-600 hover:bg-red-700" : ""}
                 variant={action === "cancel" ? "destructive" : "default"}
               >
                 {action === "contract" ? "Confirmar Contratação" : "Confirmar Cancelamento"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de cancelamento com coleta de motivo */}
+        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                Cancelamento de Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <div className="mb-4">
+                <p className="text-sm font-medium mb-1">Módulo selecionado para cancelamento:</p>
+                {cancelModuleId && (
+                  <div className="p-3 bg-gray-50 rounded-md flex items-center gap-2">
+                    <div className="p-1.5 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
+                      {tools.find(t => t.id === cancelModuleId)?.icon && 
+                        React.createElement(tools.find(t => t.id === cancelModuleId)?.icon as React.ElementType, { size: 16 })}
+                    </div>
+                    <span className="font-medium">{tools.find(t => t.id === cancelModuleId)?.title}</span>
+                    <span className="text-xs text-gray-500">
+                      ({formatPrice(tools.find(t => t.id === cancelModuleId)?.price || 0)}/mês)
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="cancelReason" className="block text-sm font-medium mb-2 flex items-center">
+                  <HelpCircle size={16} className="mr-1 text-[#9b87f5]" />
+                  Por que você está cancelando este módulo?
+                </label>
+                <Textarea
+                  id="cancelReason"
+                  placeholder="Informe o motivo do cancelamento..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="w-full"
+                  rows={4}
+                />
+                {cancelReason.trim() === "" && (
+                  <p className="text-xs text-red-500 mt-1">
+                    O motivo do cancelamento é obrigatório
+                  </p>
+                )}
+              </div>
+              
+              <p className="text-sm text-gray-500 flex items-start gap-2">
+                <AlertTriangle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                <span>
+                  Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo ao final do período de faturamento atual. 
+                  Esta ação não pode ser desfeita.
+                </span>
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Voltar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                variant="destructive"
+                disabled={cancelReason.trim() === ""}
+              >
+                Confirmar Cancelamento
               </Button>
             </DialogFooter>
           </DialogContent>
