@@ -308,9 +308,8 @@ const ModuleDetailedSection: React.FC<{
     : MessageCircle;
 
   return (
-    <div className="mt-8 bg-white rounded-lg border shadow-sm p-0 overflow-hidden">
-      {/* Cabeçalho com ícone, nome, preço e status */}
-      <div className="p-6 pb-0">
+    <div className="mt-8 rounded-lg overflow-hidden">
+      <div className="bg-white p-6 pb-0">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary-lighter rounded-md">
@@ -347,14 +346,14 @@ const ModuleDetailedSection: React.FC<{
         </div>
       </div>
 
-      <Separator className="my-4" />
+      <Separator className="mb-0" />
 
       {/* Conteúdo com descrição, benefícios e como funciona */}
-      <div className="p-6 pt-2">
-        <p className="text-muted-foreground mb-8">{selectedModule.description}</p>
+      <div className="bg-[#F1F0FB] p-6">
+        <p className="text-muted-foreground mb-8 bg-white p-5 rounded-lg border border-gray-100">{selectedModule.description}</p>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
             <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
               <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Benefícios
             </h3>
@@ -368,7 +367,7 @@ const ModuleDetailedSection: React.FC<{
             </ul>
           </div>
 
-          <div>
+          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
             <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
               <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Como Funciona
             </h3>
