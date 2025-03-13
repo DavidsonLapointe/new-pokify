@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import { User } from "@/types";
+import { UserType } from "@/types";
 import { useUser } from "@/contexts/UserContext";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { AddLeadlyEmployeeDialog } from "@/components/admin/users/AddLeadlyEmployeeDialog";
@@ -17,8 +16,8 @@ const AdminUsers = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
@@ -64,12 +63,12 @@ const AdminUsers = () => {
     setIsAddDialogOpen(false);
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: UserType) => {
     setSelectedUser(user);
     setIsEditDialogOpen(true);
   };
 
-  const handleUserUpdate = async (updatedUser: User) => {
+  const handleUserUpdate = async (updatedUser: UserType) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -96,7 +95,7 @@ const AdminUsers = () => {
     }
   };
 
-  const handleEditPermissions = (user: User) => {
+  const handleEditPermissions = (user: UserType) => {
     setSelectedUser(user);
     setIsPermissionsDialogOpen(true);
   };
@@ -154,4 +153,3 @@ const AdminUsers = () => {
 };
 
 export default AdminUsers;
-

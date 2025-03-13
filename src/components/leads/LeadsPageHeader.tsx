@@ -5,12 +5,12 @@ import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { IntegrationAlertDialog } from "@/components/calls/IntegrationAlertDialog";
 import { Organization } from "@/types/organization-types";
-import { User } from "@/types/user-types";
+import { UserType } from "@/types";
 
 interface LeadsPageHeaderProps {
   onUploadClick: () => void;
   onNewLeadClick: () => void;
-  currentUser: User;
+  currentUser: UserType;
   organization: Organization;
 }
 
@@ -50,15 +50,7 @@ export const LeadsPageHeader = ({
     .filter(user => 
       user.role === "admin" || 
       (user.permissions && Boolean(user.permissions['integrations']) && user.status === "active")
-    )
-    .map(user => ({
-      ...user,
-      logs: user.logs.map(log => ({
-        id: log.id,
-        date: log.date,
-        action: log.action,
-      }))
-    })) as User[];
+    );
 
   return (
     <>

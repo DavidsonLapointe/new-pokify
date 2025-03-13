@@ -15,7 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Organization, User } from "@/types";
+import { Organization } from "@/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -61,6 +61,15 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
     ? format(new Date(organization.createdAt), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     : "Data não disponível";
 
+  // Get plan display text from either string or object
+  const getPlanDisplay = () => {
+    if (typeof organization.plan === 'string') {
+      return organization.planName || organization.plan;
+    } else {
+      return organization.plan.name;
+    }
+  };
+
   return (
     <Card ref={cardRef} className="hover:shadow-md transition-shadow cursor-pointer group">
       <CardHeader className="pb-3">
@@ -71,7 +80,7 @@ export const OrganizationCard = ({ organization, onEdit }: OrganizationCardProps
               {organization.name}
             </CardTitle>
             <CardDescription className="mt-1">
-              <span className="font-medium text-sm">Plano:</span> {organization.plan}
+              <span className="font-medium text-sm">Plano:</span> {getPlanDisplay()}
               <br />
               <span className="text-xs">Cadastrado em: {formattedDate}</span>
             </CardDescription>

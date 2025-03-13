@@ -1,10 +1,10 @@
 
-import { User } from '@/types';
+import { User, UserType } from '@/types';
 import { Organization } from '@/types/organization-types';
 
 export const getInitialUserState = (): User | null => null;
 
-export const formatUserData = (profile: any, organization?: Organization): User => {
+export const formatUserData = (profile: any, organization?: Organization): UserType => {
   // Ensure permissions is properly formatted as non-null object
   const permissions = profile.permissions && typeof profile.permissions === 'object' 
     ? profile.permissions 

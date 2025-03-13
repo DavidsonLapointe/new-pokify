@@ -32,6 +32,10 @@ export const createMockUser = (role: User['role'] = 'seller', status: User['stat
       date: log.timestamp,
       action: log.activity
     })),
+    // Add optional organization field - will be populated later
+    organization: undefined,
+    // Add company_leadly_id for leadly_employee role
+    ...(role === 'leadly_employee' ? {company_leadly_id: `company-${Math.random().toString(36).substr(2, 9)}`} : {})
   };
 };
 

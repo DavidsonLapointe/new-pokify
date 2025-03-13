@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { User } from "@/types/organization-types"; // Import from organization-types
+import { OrgUser } from "@/types/organization-types"; // Import from organization-types
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
@@ -15,7 +14,7 @@ const OrganizationUsers = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<OrgUser | null>(null);
   
   const { 
     users, 
@@ -57,17 +56,17 @@ const OrganizationUsers = () => {
     setIsAddDialogOpen(false);
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: OrgUser) => {
     setSelectedUser(user);
     setIsEditDialogOpen(true);
   };
 
-  const handleEditPermissions = (user: User) => {
+  const handleEditPermissions = (user: OrgUser) => {
     setSelectedUser(user);
     setIsPermissionsDialogOpen(true);
   };
 
-  const handleUserUpdate = async (updatedUser: User) => {
+  const handleUserUpdate = async (updatedUser: OrgUser) => {
     const success = await updateUser(updatedUser);
     if (success) {
       setIsEditDialogOpen(false);

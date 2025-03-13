@@ -30,7 +30,7 @@ export interface Organization {
   nomeFantasia: string;
   plan: string | OrganizationPlan;
   planName?: string;
-  users: User[];
+  users: OrgUser[];
   status: OrganizationStatus;
   pendingReason: OrganizationPendingReason;
   contractStatus: "pending" | "completed";
@@ -49,7 +49,8 @@ export interface Organization {
   address?: OrganizationAddress;
 }
 
-export interface User {
+// Rename to OrgUser to avoid conflicts with User from user-types.ts
+export interface OrgUser {
   id: string;
   name: string;
   email: string;

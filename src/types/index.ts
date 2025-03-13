@@ -4,14 +4,19 @@
 // Organization types
 export * from "./organization-types";
 
-// User types
-export * from "./user-types";
+// User types - explicitly re-export to avoid ambiguity
+export { 
+  type UserRole, 
+  type UserStatus,
+  type User as UserType, 
+  type UserLog as UserLogType 
+} from "./user-types";
 
 // Admin types
 export * from "./admin";
 
-// Permission types
-export * from "./permissions";
+// Permission types - explicitly re-export to avoid ambiguity  
+export { type Permission } from "./permissions";
 export * from "./permissions-types";
 export * from "./admin-permissions";
 
