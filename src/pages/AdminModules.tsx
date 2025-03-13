@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 
 // Map of icon names to their Lucide components
 const iconMap = {
@@ -248,6 +250,34 @@ const Modules = () => {
   const handleSavePlan = async (data: Partial<Plan>) => {
     console.log("Salvando módulo:", data);
     try {
+      // Se estiver editando um módulo existente e mudando ele para inativo
+      if (editingPlan && editingPlan.active && data.active === false) {
+        // Verificar se existem organizações usando este módulo
+        const { data: orgsUsingModule, error } = await supabase
+          .from('subscriptions')
+          .select('organization_id, organizations!inner(name)')
+          .eq('status', 'active')
+          .filter('organizations.plan', 'eq', editingPlan.name);
+          
+        if (error) {
+          console.error("Erro ao verificar organizações:", error);
+          throw new Error("Erro ao verificar se o módulo está em uso");
+        }
+        
+        // Se existirem organizações usando o módulo, impedir a inativação
+        if (orgsUsingModule && orgsUsingModule.length > 0) {
+          const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
+          
+          toast.error(
+            `Não é possível inativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
+          );
+          
+          // Manter o módulo ativo
+          data.active = true;
+          return;
+        }
+      }
+      
       if (editingPlan) {
         console.log("Atualizando módulo existente:", editingPlan.id);
         const updatedPlans = plans.map(plan =>
@@ -277,6 +307,36 @@ const Modules = () => {
     try {
       // Convert id to string if it's a number
       const planId = id.toString();
+      
+      // Encontrar o plano que está sendo desativado
+      const planToDelete = plans.find(p => p.id.toString() === planId);
+      if (!planToDelete) {
+        toast.error("Módulo não encontrado");
+        return;
+      }
+      
+      // Verificar se existem organizações usando este módulo
+      const { data: orgsUsingModule, error } = await supabase
+        .from('subscriptions')
+        .select('organization_id, organizations!inner(name)')
+        .eq('status', 'active')
+        .filter('organizations.plan', 'eq', planToDelete.name);
+        
+      if (error) {
+        console.error("Erro ao verificar organizações:", error);
+        throw new Error("Erro ao verificar se o módulo está em uso");
+      }
+      
+      // Se existirem organizações usando o módulo, impedir a desativação
+      if (orgsUsingModule && orgsUsingModule.length > 0) {
+        const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
+        
+        toast.error(
+          `Não é possível desativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
+        );
+        return;
+      }
+      
       setDeletingPlanId(planId);
       const success = await deletePlan(planId);
 
