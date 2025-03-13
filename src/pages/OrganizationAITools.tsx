@@ -238,15 +238,15 @@ const AIToolsPage = () => {
     }
   };
 
-  // Função para retornar a cor do botão baseado no status
+  // Função atualizada para retornar a cor do botão baseado no status
   const getButtonClass = (status: ToolStatus) => {
     switch (status) {
       case "not_contracted": 
-        return "bg-blue-600 hover:bg-blue-700";
+        return "bg-red-600 hover:bg-red-700 text-white";
       case "contracted": 
-        return "bg-[#9b87f5] hover:bg-[#7E69AB]";
+        return "bg-yellow-500 hover:bg-yellow-600 text-white";
       case "configured": 
-        return "bg-green-600 hover:bg-green-700";
+        return "bg-green-600 hover:bg-green-700 text-white";
     }
   };
 
@@ -356,14 +356,14 @@ const AIToolsPage = () => {
               </div>
             </div>
 
-            {/* Botões de ação - apenas 2 botões por card */}
+            {/* Botões de ação - 2 botões por card */}
             <div className="flex gap-3">
               <Button 
                 className={`flex items-center justify-center gap-2 ${
                   tool.status === "not_contracted" 
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed" 
                     : "bg-[#9b87f5] hover:bg-[#8a76e5]"
-                } px-6`}
+                } px-4`}
                 onClick={() => handleToolExecution(tool.id)}
                 disabled={tool.status === "not_contracted"}
               >
@@ -372,7 +372,7 @@ const AIToolsPage = () => {
               </Button>
               
               <Button 
-                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-6`}
+                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4`}
                 onClick={() => handleToolAction(tool.id)}
               >
                 {tool.status === "not_contracted" ? (
