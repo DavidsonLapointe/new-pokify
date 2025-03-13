@@ -14,7 +14,7 @@ import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 
-const Plans = () => {
+const Modules = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -91,14 +91,14 @@ const Plans = () => {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-semibold">Planos</h1>
+          <h1 className="text-3xl font-semibold">Módulos</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie os planos disponíveis na plataforma
+            Gerencie os módulos de ferramentas de IA disponíveis na plataforma
           </p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Novo Plano
+          Novo Módulo
         </Button>
       </div>
 
@@ -218,4 +218,4 @@ const Plans = () => {
   );
 };
 
-export default Plans;
+export default Modules;
