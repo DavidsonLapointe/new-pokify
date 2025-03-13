@@ -350,14 +350,14 @@ const ModuleDetailedSection: React.FC<{
 
       {/* Conteúdo com descrição, benefícios e como funciona */}
       <div className="bg-[#F1F0FB] p-6">
-        <p className="text-muted-foreground mb-8 bg-white p-5 rounded-lg border border-gray-100">{selectedModule.description}</p>
+        <p className="text-muted-foreground mb-8 bg-white p-5 rounded-lg border border-gray-100 text-left">{selectedModule.description}</p>
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
             <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
               <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Benefícios
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 text-left">
               {selectedModule.benefits.map((benefit, index) => (
                 <li key={index} className="flex items-start">
                   <CheckCircle className="h-4 w-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
@@ -371,7 +371,7 @@ const ModuleDetailedSection: React.FC<{
             <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
               <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Como Funciona
             </h3>
-            <ol className="space-y-3">
+            <ol className="space-y-3 text-left">
               {selectedModule.howItWorks.map((step, index) => (
                 <li key={index} className="flex items-start">
                   <div className="flex-shrink-0 mr-2">
