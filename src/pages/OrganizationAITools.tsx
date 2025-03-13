@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -20,14 +21,15 @@ import {
   Settings,
   Edit,
   AlertTriangle,
-  Zap
+  Zap,
+  Clock
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Status da ferramenta
-type ToolStatus = "not_contracted" | "contracted" | "configured";
+type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
 
 // Interface para as ferramentas
 interface Tool {
@@ -134,11 +136,11 @@ const AIToolsPage = () => {
       title: "Nutrição de leads (MKT)",
       icon: MessageCircle,
       description: "Automação de campanhas de nutrição de leads com conteúdo personalizado.",
-      status: "not_contracted",
+      status: "coming_soon",
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
-      actionLabel: "Contratar ferramenta",
-      actionIcon: CreditCard,
-      badgeLabel: "Não contratada",
+      actionLabel: "Em breve",
+      actionIcon: Clock,
+      badgeLabel: "Em breve",
       executeLabel: "Criar campanha de nutrição",
       executeIcon: Mail,
       howItWorks: [
@@ -191,8 +193,8 @@ const AIToolsPage = () => {
     if (tool.status === "not_contracted") {
       // Lógica para contratação
       console.log("Iniciando contratação da ferramenta:", toolId);
-    } else {
-      // Abrir modal de configuração
+    } else if (tool.status !== "coming_soon") {
+      // Abrir modal de configuração apenas se não for "Em breve"
       setCurrentConfigTool(toolId);
       setIsConfigModalOpen(true);
     }
@@ -201,8 +203,8 @@ const AIToolsPage = () => {
   const handleToolExecution = (toolId: string) => {
     const tool = getToolById(toolId);
     
-    if (tool.status === "not_contracted") {
-      // Não permitir execução de ferramentas não contratadas
+    if (tool.status === "not_contracted" || tool.status === "coming_soon") {
+      // Não permitir execução de ferramentas não contratadas ou em breve
       return;
     }
     
@@ -222,6 +224,8 @@ const AIToolsPage = () => {
         return <AlertTriangle size={16} className="text-yellow-500" />;
       case "configured": 
         return <CheckCircle2 size={16} className="text-green-500" />;
+      case "coming_soon":
+        return <Clock size={16} className="text-gray-500" />;
     }
   };
 
@@ -234,6 +238,8 @@ const AIToolsPage = () => {
         return "bg-yellow-100 text-yellow-700";
       case "configured": 
         return "bg-green-100 text-green-700";
+      case "coming_soon":
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -246,6 +252,8 @@ const AIToolsPage = () => {
         return "bg-yellow-500 hover:bg-yellow-600 text-white";
       case "configured": 
         return "bg-green-600 hover:bg-green-700 text-white";
+      case "coming_soon":
+        return "bg-gray-500 hover:bg-gray-600 text-white";
     }
   };
 
@@ -353,7 +361,7 @@ const AIToolsPage = () => {
             </div>
 
             <div className="flex gap-3">
-              {tool.status !== "not_contracted" && (
+              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && (
                 <Button 
                   className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
                   onClick={() => handleToolExecution(tool.id)}
@@ -363,25 +371,27 @@ const AIToolsPage = () => {
                 </Button>
               )}
               
-              <Button 
-                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4 ${tool.status === "not_contracted" ? "w-full" : ""}`}
-                onClick={() => handleToolAction(tool.id)}
-              >
-                {tool.status === "not_contracted" ? (
-                  <CreditCard size={18} />
-                ) : tool.status === "configured" ? (
-                  <Edit size={18} />
-                ) : (
-                  <Settings size={18} />
-                )}
-                <span>
-                  {tool.status === "not_contracted" 
-                    ? "Contratar" 
-                    : tool.status === "configured" 
-                      ? "Editar configuração" 
-                      : "Configurar"}
-                </span>
-              </Button>
+              {tool.status !== "coming_soon" && (
+                <Button 
+                  className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4 ${tool.status === "not_contracted" ? "w-full" : ""}`}
+                  onClick={() => handleToolAction(tool.id)}
+                >
+                  {tool.status === "not_contracted" ? (
+                    <CreditCard size={18} />
+                  ) : tool.status === "configured" ? (
+                    <Edit size={18} />
+                  ) : (
+                    <Settings size={18} />
+                  )}
+                  <span>
+                    {tool.status === "not_contracted" 
+                      ? "Contratar" 
+                      : tool.status === "configured" 
+                        ? "Editar configuração" 
+                        : "Configurar"}
+                  </span>
+                </Button>
+              )}
             </div>
           </Card>
         )
