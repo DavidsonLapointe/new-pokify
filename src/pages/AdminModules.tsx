@@ -291,6 +291,67 @@ const LoadingState: React.FC = () => {
   );
 };
 
+// Detailed Module Section Component
+const ModuleDetailedSection: React.FC<{ selectedModule: Plan | null }> = ({ selectedModule }) => {
+  if (!selectedModule) return null;
+  
+  // Get the appropriate icon component
+  const IconComponent = selectedModule.icon && iconMap[selectedModule.icon as keyof typeof iconMap] 
+    ? iconMap[selectedModule.icon as keyof typeof iconMap] 
+    : MessageCircle;
+
+  return (
+    <div className="mt-8 bg-white rounded-lg border p-6">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary-lighter rounded-md">
+            <IconComponent className="h-8 w-8 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">{selectedModule.name}</h2>
+            <div className="text-primary font-medium">
+              R$ {selectedModule.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+            </div>
+          </div>
+        </div>
+        <Badge 
+          variant={selectedModule.active ? "default" : "destructive"}
+          className={selectedModule.active ? "bg-green-500 hover:bg-green-500" : ""}
+        >
+          {selectedModule.active ? "Ativo" : "Inativo"}
+        </Badge>
+      </div>
+
+      <Separator className="my-4" />
+
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-medium mb-2">Descrição</h3>
+          <p className="text-muted-foreground">{selectedModule.description}</p>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-medium mb-2">Benefícios</h3>
+          <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+            {selectedModule.benefits.map((benefit, index) => (
+              <li key={index}>{benefit}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-medium mb-2">Como Funciona</h3>
+          <ul className="list-decimal pl-5 space-y-1 text-muted-foreground">
+            {selectedModule.howItWorks.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Modules = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -470,24 +531,29 @@ const Modules = () => {
       {isLoading ? (
         <LoadingState />
       ) : (
-        <div className="relative">
-          <Carousel className="w-full">
-            <CarouselContent className="px-2">
-              {plans.map((plan) => (
-                <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
-                  <ModuleCard 
-                    plan={plan} 
-                    onClick={() => selectPlan(plan)}
-                    isActive={selectedPlan?.id === plan.id}
-                    onEditPlan={handleEditPlan}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
-          </Carousel>
-        </div>
+        <>
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent className="px-2">
+                {plans.map((plan) => (
+                  <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
+                    <ModuleCard 
+                      plan={plan} 
+                      onClick={() => selectPlan(plan)}
+                      isActive={selectedPlan?.id === plan.id}
+                      onEditPlan={handleEditPlan}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </div>
+
+          {/* Detailed Module Section */}
+          <ModuleDetailedSection selectedModule={selectedPlan} />
+        </>
       )}
 
       <EditPlanDialog
