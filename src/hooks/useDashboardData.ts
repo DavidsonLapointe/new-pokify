@@ -3,11 +3,15 @@ import { useState } from "react";
 import { mockDashboardData } from "@/mocks/dashboardMocks";
 import { DailyPerformanceData, MonthlyPerformanceData, PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 import { mockOrganizations } from "@/mocks/organizationMocks";
+import { addMonths, format } from "date-fns";
 
 export const useDashboardData = () => {
+  // Define current date (for initializing default date selections)
+  const currentDate = new Date();
+  
   // Estados para gerenciar as seleções de data e filtros
-  const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(new Date());
-  const [dailyLeadsDate, setDailyLeadsDate] = useState(new Date());
+  const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(currentDate);
+  const [dailyLeadsDate, setDailyLeadsDate] = useState(currentDate);
   const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(new Date());
   const [callsDate, setCallsDate] = useState(new Date());
   const [performanceDate] = useState(new Date());
@@ -50,6 +54,20 @@ export const useDashboardData = () => {
       joao: typeof item.joao === 'number' ? item.joao : 0,
       maria: typeof item.maria === 'number' ? item.maria : 0
     }));
+    
+  // Add February 2025 data to dailyLeadsData
+  const enhancedDailyLeadsData = [...mockDashboardData.dailyLeadsData];
+  
+  // Create mock data for February 2025
+  const feb2025 = addMonths(new Date(2025, 0, 1), 1); // February 2025
+  
+  // Add days for February 2025
+  for (let i = 1; i <= 28; i++) {
+    enhancedDailyLeadsData.push({
+      day: `${i.toString().padStart(2, '0')}/02`,
+      novos: Math.floor(Math.random() * 15) + 5
+    });
+  }
 
   // Retornamos os dados mockados e os estados de filtro
   return {
@@ -57,7 +75,7 @@ export const useDashboardData = () => {
     monthStats: mockDashboardData.monthStats,
     
     // Dados de leads
-    dailyLeadsData: mockDashboardData.dailyLeadsData,
+    dailyLeadsData: enhancedDailyLeadsData,
     monthlyLeadsData: mockDashboardData.monthlyLeadsData,
     
     // Dados de chamadas

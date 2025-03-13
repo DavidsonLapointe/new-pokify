@@ -84,8 +84,14 @@ export const DailyLeadsChart = ({
           return false;
         }
         
-        // Como não temos o ano no formato dd/MM, assumimos o ano atual
-        itemDate.setFullYear(selectedYear);
+        // Como não temos o ano no formato dd/MM, assumimos o ano atual 
+        // ou o ano específico para fevereiro de 2025
+        if (selectedMonth === 1 && selectedYear === 2025) {
+          // Fevereiro de 2025
+          itemDate.setFullYear(2025);
+        } else {
+          itemDate.setFullYear(selectedYear);
+        }
         
         return itemDate.getMonth() === selectedMonth;
       });
@@ -117,6 +123,7 @@ export const DailyLeadsChart = ({
               <MonthYearSelector
                 selectedDate={selectedDate}
                 onDateChange={onDateChange}
+                showAllOption={false}
               />
               <div className="w-48">
                 <SellerSelector 
@@ -144,6 +151,7 @@ export const DailyLeadsChart = ({
             <MonthYearSelector
               selectedDate={selectedDate}
               onDateChange={onDateChange}
+              showAllOption={false}
             />
             <div className="w-48">
               <SellerSelector 
