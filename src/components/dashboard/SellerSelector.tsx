@@ -19,7 +19,7 @@ interface SellerSelectorProps {
 export const SellerSelector = ({ selectedSeller, onSellerChange, sellers = [] }: SellerSelectorProps) => {
   return (
     <Select value={selectedSeller} onValueChange={onSellerChange}>
-      <SelectTrigger className="w-[320px]">
+      <SelectTrigger className="w-full min-w-[180px]">
         <SelectValue placeholder="Todos vendedores" />
       </SelectTrigger>
       <SelectContent>

@@ -36,7 +36,7 @@ export const MonthYearSelector = ({ selectedDate, onDateChange }: MonthYearSelec
         }
       }}
     >
-      <SelectTrigger>
+      <SelectTrigger className="w-[120px]">
         <SelectValue placeholder="Selecione o mês/ano" />
       </SelectTrigger>
       <SelectContent>

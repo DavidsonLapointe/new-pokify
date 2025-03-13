@@ -58,12 +58,14 @@ export const MonthlyLeadsChart = ({
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
-            <div className="flex items-center gap-4">
-              <SellerSelector 
-                selectedSeller={selectedSeller}
-                onSellerChange={onSellerChange}
-                sellers={sellers}
-              />
+            <div className="flex items-center gap-3">
+              <div className="w-48">
+                <SellerSelector 
+                  selectedSeller={selectedSeller}
+                  onSellerChange={onSellerChange}
+                  sellers={sellers}
+                />
+              </div>
             </div>
           </div>
           <div className="h-[400px] w-full flex items-center justify-center">
@@ -79,12 +81,14 @@ export const MonthlyLeadsChart = ({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Cadastro de novos leads por mês</h3>
-          <div className="flex items-center gap-4">
-            <SellerSelector 
-              selectedSeller={selectedSeller}
-              onSellerChange={onSellerChange}
-              sellers={sellers}
-            />
+          <div className="flex items-center gap-3">
+            <div className="w-48">
+              <SellerSelector 
+                selectedSeller={selectedSeller}
+                onSellerChange={onSellerChange}
+                sellers={sellers}
+              />
+            </div>
           </div>
         </div>
         <div className="h-[400px] w-full">
