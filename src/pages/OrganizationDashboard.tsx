@@ -1,12 +1,11 @@
+
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
 import { MonthlyPerformanceChart } from "@/components/sellers/MonthlyPerformanceChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
-import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabContent";
 import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
-import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useUser } from "@/contexts/UserContext";
 import { useEffect } from "react";
@@ -34,15 +33,10 @@ const OrganizationDashboard = () => {
     monthlyCallsData,
     dailyPerformanceData,
     monthlyPerformanceData,
-    objectionsData,
-    objectionTrendsData,
-    objectionExamples,
     monthlyLeadsDate,
     setMonthlyLeadsDate,
     dailyLeadsDate,
     setDailyLeadsDate,
-    monthlyObjectionsDate,
-    setMonthlyObjectionsDate,
     callsDate,
     setCallsDate,
     performanceDate,
@@ -54,19 +48,10 @@ const OrganizationDashboard = () => {
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
     setDailyLeadsSeller,
-    monthlyObjectionsSeller,
-    setMonthlyObjectionsSeller,
-    objectionTrendsSeller,
-    setObjectionTrendsSeller,
     dailyMetric,
     setDailyMetric,
     monthlyMetric,
     setMonthlyMetric,
-    suggestionsData,
-    monthlySuggestionsDate,
-    setMonthlySuggestionsDate,
-    monthlySuggestionsSeller,
-    setMonthlySuggestionsSeller,
     sellers
   } = useDashboardData();
 
@@ -89,8 +74,6 @@ const OrganizationDashboard = () => {
     { id: "leads", label: "Leads" },
     { id: "calls", label: "Uploads" },
     { id: "sellers", label: "Performance Vendedores" },
-    { id: "objections", label: "Objeções" },
-    { id: "suggestions", label: "Sugestões" },
     { id: "sellers-info", label: "Vendedores" }
   ];
 
@@ -172,32 +155,6 @@ const OrganizationDashboard = () => {
               onMetricChange={(metric) => setMonthlyMetric(metric as any)}
             />
           </div>
-        </TabsContent>
-
-        <TabsContent value="objections" className="space-y-6">
-          <ObjectionsTabContent
-            objectionsData={objectionsData}
-            objectionTrendsData={objectionTrendsData}
-            objectionExamples={objectionExamples as any}
-            monthlyObjectionsDate={monthlyObjectionsDate}
-            setMonthlyObjectionsDate={setMonthlyObjectionsDate}
-            monthlyObjectionsSeller={monthlyObjectionsSeller}
-            setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
-            objectionTrendsSeller={objectionTrendsSeller}
-            setObjectionTrendsSeller={setObjectionTrendsSeller}
-            sellers={sellers}
-          />
-        </TabsContent>
-
-        <TabsContent value="suggestions" className="space-y-6">
-          <SuggestionsTabContent
-            suggestions={suggestionsData as any}
-            monthlySuggestionsDate={monthlySuggestionsDate}
-            setMonthlySuggestionsDate={setMonthlySuggestionsDate}
-            monthlySuggestionsSeller={monthlySuggestionsSeller}
-            setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-            sellers={sellers}
-          />
         </TabsContent>
 
         <TabsContent value="sellers-info">

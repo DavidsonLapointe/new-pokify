@@ -4,6 +4,8 @@ import { mockDashboardData } from "@/mocks/dashboardMocks";
 import { DailyPerformanceData, MonthlyPerformanceData, PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 import { mockOrganizations } from "@/mocks/organizationMocks";
 import { addMonths, format } from "date-fns";
+import { useSuggestionsData } from "./dashboard/useSuggestionsData";
+import { useObjectionsData } from "./dashboard/useObjectionsData";
 
 export const useDashboardData = () => {
   // Define current date (for initializing default date selections)
@@ -12,33 +14,23 @@ export const useDashboardData = () => {
   // Estados para gerenciar as seleções de data e filtros
   const [monthlyLeadsDate, setMonthlyLeadsDate] = useState(currentDate);
   const [dailyLeadsDate, setDailyLeadsDate] = useState(currentDate);
-  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(new Date());
   const [callsDate, setCallsDate] = useState(new Date());
   const [performanceDate] = useState(new Date());
   const [monthlyCallsSeller, setMonthlyCallsSeller] = useState("all");
   const [dailyCallsSeller, setDailyCallsSeller] = useState("all");
   const [monthlyLeadsSeller, setMonthlyLeadsSeller] = useState("all");
   const [dailyLeadsSeller, setDailyLeadsSeller] = useState("all");
-  const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
-  const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
   const [dailyMetric, setDailyMetric] = useState<PerformanceMetric>('joao');
   const [monthlyMetric, setMonthlyMetric] = useState<PerformanceMetric>('joao');
-  const [monthlySuggestionsDate, setMonthlySuggestionsDate] = useState(new Date());
-  const [monthlySuggestionsSeller, setMonthlySuggestionsSeller] = useState("all");
+
+  // Get objections data
+  const objections = useObjectionsData();
+  
+  // Get suggestions data
+  const suggestions = useSuggestionsData();
 
   // Get ALL sellers from the first organization, regardless of status
   const sellers = mockOrganizations[0]?.users || [];
-
-  // Make sure objectionExamples has fallback values
-  const ensuredObjectionExamples = {
-    'Preço muito alto': ['O valor está acima do nosso orçamento neste momento.', 'Encontramos opções mais acessíveis.'],
-    'Concorrente melhor': ['Já estamos em negociação com outro fornecedor que oferece mais recursos.', 'O concorrente oferece condições melhores.'],
-    'Sem orçamento': ['Não temos verba disponível para este tipo de investimento agora.', 'Precisamos esperar o próximo ciclo orçamentário.'],
-    'Não tenho orçamento no momento': ['Não temos recurso financeiro no momento para este investimento.', 'Nosso orçamento já foi comprometido para este trimestre.'],
-    'Não é prioridade': ['No momento estamos focados em outros projetos mais urgentes.', 'Esta solução não está entre nossas prioridades atuais.'],
-    'Já tem solução': ['Já contratamos uma ferramenta semelhante recentemente.', 'Já temos uma solução implementada.'],
-    ...mockDashboardData.objectionExamples,
-  };
 
   // Ensure the performance data is correctly typed
   const typedDailyPerformanceData: DailyPerformanceData[] = 
@@ -87,12 +79,10 @@ export const useDashboardData = () => {
     monthlyPerformanceData: typedMonthlyPerformanceData,
     
     // Dados de objeções
-    objectionsData: mockDashboardData.objectionsData || [],
-    objectionTrendsData: mockDashboardData.objectionTrendsData || [],
-    objectionExamples: ensuredObjectionExamples,
+    ...objections,
     
     // Dados de sugestões
-    suggestionsData: mockDashboardData.suggestionsData,
+    ...suggestions,
     
     // Lista de vendedores
     sellers,
@@ -102,8 +92,6 @@ export const useDashboardData = () => {
     setMonthlyLeadsDate,
     dailyLeadsDate,
     setDailyLeadsDate,
-    monthlyObjectionsDate,
-    setMonthlyObjectionsDate,
     callsDate,
     setCallsDate,
     performanceDate,
@@ -117,21 +105,11 @@ export const useDashboardData = () => {
     setMonthlyLeadsSeller,
     dailyLeadsSeller,
     setDailyLeadsSeller,
-    monthlyObjectionsSeller,
-    setMonthlyObjectionsSeller,
-    objectionTrendsSeller,
-    setObjectionTrendsSeller,
     
     // Estados de seleção de métricas
     dailyMetric,
     setDailyMetric,
     monthlyMetric,
     setMonthlyMetric,
-    
-    // Estados para sugestões
-    monthlySuggestionsDate,
-    setMonthlySuggestionsDate,
-    monthlySuggestionsSeller,
-    setMonthlySuggestionsSeller,
   };
 };

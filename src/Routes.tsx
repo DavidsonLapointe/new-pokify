@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -38,6 +37,7 @@ import OrganizationSettings from "./pages/OrganizationSettings";
 import OrganizationModules from "./pages/OrganizationModules";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
+import OrganizationKnowledgeBase from "./pages/OrganizationKnowledgeBase";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -129,6 +129,7 @@ function AppRoutes() {
           <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="profile" element={<OrganizationProfile />} />
           <Route path="dashboard" element={<OrganizationDashboard />} />
+          <Route path="knowledge-base" element={<OrganizationKnowledgeBase />} />
           <Route path="calls" element={<OrganizationCalls />} />
           <Route path="leads" element={<OrganizationLeads />} />
           <Route path="ai-tools" element={<OrganizationAITools />} />

@@ -11,7 +11,8 @@ import {
   Building,
   List,
   Sparkles,
-  Layers
+  Layers,
+  Book
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -24,6 +25,12 @@ export const useMenuItems = (user: User) => {
       label: "Dashboard",
       path: "/organization/dashboard",
       permissionId: "dashboard"
+    },
+    {
+      icon: Book,
+      label: "Base de Conhecimento",
+      path: "/organization/knowledge-base",
+      permissionId: "knowledge-base"
     },
     { 
       icon: List, 
