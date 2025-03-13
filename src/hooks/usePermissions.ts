@@ -16,6 +16,7 @@ export const usePermissions = (user: User) => {
         'profile',
         'dashboard',
         'leads',
+        'ai-tools',
         'users',
         'integrations',
         'settings',

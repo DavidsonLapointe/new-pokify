@@ -31,6 +31,7 @@ import OrganizationProfile from "./pages/OrganizationProfile";
 import OrganizationDashboard from "./pages/OrganizationDashboard";
 import OrganizationCalls from "./pages/OrganizationCalls";
 import OrganizationLeads from "./pages/OrganizationLeads";
+import OrganizationAITools from "./pages/OrganizationAITools";
 import OrganizationUsers from "./pages/OrganizationUsers";
 import OrganizationIntegrations from "./pages/OrganizationIntegrations";
 import OrganizationSettings from "./pages/OrganizationSettings";
@@ -130,6 +131,7 @@ function AppRoutes() {
           <Route path="dashboard" element={<OrganizationDashboard />} />
           <Route path="calls" element={<OrganizationCalls />} />
           <Route path="leads" element={<OrganizationLeads />} />
+          <Route path="ai-tools" element={<OrganizationAITools />} />
           <Route path="users" element={<OrganizationUsers />} />
           <Route path="integrations" element={<OrganizationIntegrations />} />
           <Route path="settings" element={<OrganizationSettings />} />

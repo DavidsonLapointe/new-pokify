@@ -19,6 +19,11 @@ export const organizationRoutes = [
     icon: List
   },
   {
+    id: "ai-tools",
+    label: "Ferramentas de IA",
+    icon: Network
+  },
+  {
     id: "users",
     label: "Usuários",
     icon: Users

@@ -9,6 +9,8 @@ import {
   UserCircle,
   CreditCard,
   Building,
+  List,
+  Sparkles
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -23,10 +25,16 @@ export const useMenuItems = (user: User) => {
       permissionId: "dashboard"
     },
     { 
-      icon: Headphones, 
+      icon: List, 
       label: "Análise de Leads", 
       path: "/organization/leads",
       permissionId: "leads"
+    },
+    { 
+      icon: Sparkles, 
+      label: "Ferramentas de IA", 
+      path: "/organization/ai-tools",
+      permissionId: "ai-tools"
     },
     { 
       icon: Users, 
