@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
@@ -79,7 +80,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </header>
 
         <div className="flex pt-16">
-          <aside className="w-64 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+          <aside className="w-48 bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
             <nav className="flex flex-col h-full py-6 px-3">
               <div className="space-y-0.5">
                 {filteredMenuItems.map((item) => (
@@ -107,8 +108,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </nav>
           </aside>
 
-          <main className="flex-1 ml-64">
-            <div className="p-8 animate-fadeIn">
+          <main className="flex-1 ml-48">
+            <div className="p-6 animate-fadeIn">
               {children ?? <Outlet />}
             </div>
           </main>
