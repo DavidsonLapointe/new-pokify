@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import {
   MessageCircle,
   ShieldCheck,
   ChevronDown,
+  ChevronUp,
   HelpCircle
 } from "lucide-react";
 import {
@@ -382,7 +384,7 @@ const OrganizationModules = () => {
                           ) : (
                             <Link 
                               href="#" 
-                              className="text-xs text-[#9b87f5] hover:text-[#8a76e5] flex items-center justify-center w-full"
+                              className="text-xs text-[#9b87f5] hover:text-[#8a76e5] hover:underline flex items-center justify-center w-full"
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -390,7 +392,7 @@ const OrganizationModules = () => {
                               }}
                             >
                               Ver Detalhes
-                              <ChevronDown className="h-3 w-3 ml-1" />
+                              {isSelected ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
                             </Link>
                           )}
                         </div>
