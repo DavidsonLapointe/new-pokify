@@ -316,7 +316,6 @@ const OrganizationModules = () => {
               {tools.map((tool) => {
                 const statusInfo = getStatusInfo(tool.status);
                 const isSelected = selectedToolDetails?.id === tool.id;
-                const IconComponent = tool.icon;
                 
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-0 pr-4">
@@ -339,10 +338,10 @@ const OrganizationModules = () => {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-1 rounded-full p-0">
-                                  <MoreVertical className="h-4 w-4 text-gray-500" />
+                                  <MoreVertical size={16} className="text-gray-500" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
+                              <DropdownMenuContent align="end" className="z-50 bg-white">
                                 <DropdownMenuItem 
                                   className="text-red-600 flex items-center gap-2"
                                   onClick={(e) => {
@@ -350,7 +349,7 @@ const OrganizationModules = () => {
                                     handleCancelTool(tool.id);
                                   }}
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 size={14} />
                                   <span>Cancelar módulo</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -359,7 +358,9 @@ const OrganizationModules = () => {
                         </div>
                         
                         <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                          <IconComponent size={24} />
+                          {tool.icon && (
+                            <tool.icon size={24} />
+                          )}
                         </div>
                         
                         <div className="text-center w-full mt-2">
