@@ -358,67 +358,124 @@ const OrganizationModules = () => {
         </div>
 
         {selectedToolDetails && (
-          <div className="mt-6 bg-white rounded-lg border shadow-sm animate-fade-in">
-            <div className="flex justify-between items-center p-4 border-b">
+          <div className="mt-6 bg-white rounded-lg border shadow-md animate-fadeIn overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b bg-gradient-to-r from-[#F1F0FB] to-white">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
+                <div className="p-3 bg-[#9b87f5] rounded-full text-white">
                   <selectedToolDetails.icon size={24} />
                 </div>
-                <h3 className="text-xl font-semibold">{selectedToolDetails.title}</h3>
+                <div>
+                  <h3 className="text-xl font-semibold text-[#1A1F2C]">{selectedToolDetails.title}</h3>
+                  <div className="flex items-center mt-1">
+                    <span className="text-[#6E59A5] font-semibold">
+                      {formatPrice(selectedToolDetails.price)}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-1">/mês</span>
+                    {selectedToolDetails.status !== "not_contracted" && (
+                      <span className="ml-3 text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
+                        {selectedToolDetails.badgeLabel}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setSelectedToolDetails(null)}
-                className="h-8 w-8"
+                className="h-9 w-9 rounded-full hover:bg-gray-100"
               >
                 <X size={18} />
               </Button>
             </div>
+            
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="text-lg font-medium mb-4">Descrição Detalhada</h4>
-                  <p className="text-gray-600 mb-6">{selectedToolDetails.detailedDescription}</p>
+                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
+                    <h4 className="text-lg font-medium mb-3 flex items-center text-[#403E43]">
+                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                      Descrição Detalhada
+                    </h4>
+                    <p className="text-gray-600 leading-relaxed">{selectedToolDetails.detailedDescription}</p>
+                  </div>
                   
-                  <h4 className="text-lg font-medium mb-3">Benefícios</h4>
-                  <ul className="space-y-3 mb-6">
-                    {selectedToolDetails.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <CheckCircle2 size={16} className="text-green-500 mr-3 mt-1 flex-shrink-0" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
+                    <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
+                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                      Benefícios
+                    </h4>
+                    <ul className="space-y-3">
+                      {selectedToolDetails.benefits.map((benefit, idx) => (
+                        <li key={idx} className="flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm transition-transform hover:translate-x-1">
+                          <CheckCircle2 size={18} className="text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
                 
                 <div>
-                  <h4 className="text-lg font-medium mb-4">Como Funciona</h4>
-                  <ul className="space-y-4">
-                    {selectedToolDetails.howItWorks.map((step, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <div className="bg-[#9b87f5] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5 flex-shrink-0">{idx + 1}</div>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mb-6 p-5 bg-[#F8F9FB] rounded-lg border border-gray-100">
+                    <h4 className="text-lg font-medium mb-4 flex items-center text-[#403E43]">
+                      <span className="bg-[#9b87f5] w-1 h-5 rounded mr-2 inline-block"></span>
+                      Como Funciona
+                    </h4>
+                    <ul className="space-y-4">
+                      {selectedToolDetails.howItWorks.map((step, idx) => (
+                        <li key={idx} className="relative pl-10 pb-5 border-l-2 border-[#E5DEFF] last:border-0 last:pb-0">
+                          <div className="absolute left-[-13px] top-0 bg-[#9b87f5] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm shadow-md">
+                            {idx + 1}
+                          </div>
+                          <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                            <span className="text-gray-700">{step}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                   
-                  <div className="mt-8 bg-[#F8F7FE] p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-600">Valor mensal:</span>
+                  <div className="bg-gradient-to-br from-[#F1F0FB] to-[#FFFFFF] p-5 rounded-lg border border-[#E5DEFF] shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-gray-600 font-medium">Valor mensal:</span>
                       <span className="font-bold text-xl text-[#6E59A5]">
                         {formatPrice(selectedToolDetails.price)}
                       </span>
                     </div>
                     
-                    {selectedToolDetails.status === "not_contracted" && (
+                    {selectedToolDetails.status === "not_contracted" ? (
                       <Button 
-                        className="w-full mt-4 bg-[#9b87f5] hover:bg-[#8a76e5]"
+                        className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] text-white shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
                         onClick={() => handleContractTool(selectedToolDetails.id)}
                       >
                         <CreditCard className="mr-2" size={16} />
                         Contratar Módulo
                       </Button>
+                    ) : (
+                      <div className="bg-white p-3 rounded-lg border border-gray-200">
+                        <div className="flex items-center">
+                          <div className="mr-3 text-[#9b87f5]">
+                            {selectedToolDetails.status === "configured" ? (
+                              <CheckCircle2 size={24} className="text-green-500" />
+                            ) : (
+                              <AlertTriangle size={24} className="text-yellow-500" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-800">
+                              {selectedToolDetails.status === "configured" 
+                                ? "Módulo configurado e ativo" 
+                                : "Módulo contratado, pendente configuração"}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {selectedToolDetails.status === "configured" 
+                                ? "Você já pode utilizar todas as funcionalidades" 
+                                : "Entre em contato com o suporte para configuração"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
