@@ -20,7 +20,7 @@ import {
   MessageCircle, Video, Headphones, 
   UserRound, ShieldCheck, Check, Search,
   Bell, Brain, BookOpen, CreditCard, FileText, LineChart,
-  Mail, Share2, Smartphone, Star, Zap, Briefcase
+  Mail, Share2, Smartphone, Star, Zap, Briefcase, Clock
 } from "lucide-react";
 import {
   Select,
@@ -62,6 +62,7 @@ const moduleIcons = [
   { value: "Star", label: "Destaque", icon: Star },
   { value: "Zap", label: "Automação", icon: Zap },
   { value: "Briefcase", label: "Negócios", icon: Briefcase },
+  { value: "Clock", label: "Em Breve", icon: Clock },
 ];
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
@@ -83,7 +84,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -120,7 +121,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-base flex items-center gap-2">
                     Módulo "Em Breve" 
-                    <Star className="h-4 w-4 text-amber-500" />
+                    <Clock className="h-4 w-4 text-amber-500" />
                   </FormLabel>
                   <div className="text-sm text-muted-foreground">
                     Marque esta opção para exibir o módulo com status "Em Breve"
