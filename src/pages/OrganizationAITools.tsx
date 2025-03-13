@@ -102,12 +102,12 @@ const AIToolsPage = () => {
             {tools.map((tool) => (
               <Card 
                 key={tool.id}
-                className={`w-[180px] cursor-pointer transition-all ${
+                className={`w-[180px] h-[120px] flex-shrink-0 cursor-pointer transition-all ${
                   selectedTool === tool.id ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white'
                 }`}
                 onClick={() => setSelectedTool(tool.id)}
               >
-                <CardContent className="p-4 flex flex-col items-center justify-center space-y-2">
+                <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2">
                   <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-500'}`}>
                     {tool.locked && (
                       <div className="absolute top-2 right-2">
