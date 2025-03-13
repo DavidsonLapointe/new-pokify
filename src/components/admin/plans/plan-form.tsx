@@ -28,13 +28,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PlanFormProps {
   form: UseFormReturn<PlanFormValues>;
@@ -43,7 +42,7 @@ interface PlanFormProps {
   onCancel: () => void;
 }
 
-// Expanded module icons list for more options
+// Simplified icon map with consistent typing
 const moduleIcons = [
   { value: "MessageCircle", label: "Mensagem", icon: MessageCircle },
   { value: "Video", label: "Vídeo", icon: Video },
@@ -69,6 +68,15 @@ const moduleIcons = [
 ];
 
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
+  // Find icon function to safely render icon
+  const getIconComponent = (iconName: string | undefined) => {
+    if (!iconName) return null;
+    const found = moduleIcons.find(item => item.value === iconName);
+    if (!found) return null;
+    const IconComponent = found.icon;
+    return <IconComponent className="h-4 w-4" />;
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -124,56 +132,33 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ícone do Módulo</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full justify-between"
-                    >
-                      {field.value ? (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um ícone">
+                        {field.value && (
+                          <div className="flex items-center gap-2">
+                            {getIconComponent(field.value)}
+                            <span>{moduleIcons.find(i => i.value === field.value)?.label}</span>
+                          </div>
+                        )}
+                      </SelectValue>
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {moduleIcons.map(({ value, label, icon: Icon }) => (
+                      <SelectItem key={value} value={value} className="flex items-center gap-2">
                         <div className="flex items-center gap-2">
-                          {moduleIcons.find(i => i.value === field.value)?.icon && 
-                            React.createElement(
-                              moduleIcons.find(i => i.value === field.value)!.icon, 
-                              { className: "h-4 w-4" }
-                            )
-                          }
-                          <span>{moduleIcons.find(i => i.value === field.value)?.label}</span>
+                          <Icon className="h-4 w-4" />
+                          <span>{label}</span>
                         </div>
-                      ) : (
-                        "Selecione um ícone"
-                      )}
-                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Buscar ícone..." />
-                      <CommandEmpty>Nenhum ícone encontrado.</CommandEmpty>
-                      <CommandGroup>
-                        <div className="grid grid-cols-3 gap-1 p-2">
-                          {moduleIcons.map(({ value, label, icon: Icon }) => (
-                            <CommandItem
-                              key={value}
-                              value={label}
-                              onSelect={() => {
-                                field.onChange(value);
-                              }}
-                              className="flex flex-col items-center justify-center px-1 py-2 gap-1 cursor-pointer"
-                            >
-                              <Icon className="h-5 w-5" />
-                              <span className="text-xs truncate w-full text-center">{label}</span>
-                              {value === field.value && (
-                                <Check className="h-3 w-3 absolute right-1 top-1 text-primary" />
-                              )}
-                            </CommandItem>
-                          ))}
-                        </div>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
