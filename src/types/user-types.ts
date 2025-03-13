@@ -1,5 +1,4 @@
 
-
 export type UserRole = "admin" | "seller" | "leadly_employee";
 export type UserStatus = "active" | "inactive" | "pending";
 

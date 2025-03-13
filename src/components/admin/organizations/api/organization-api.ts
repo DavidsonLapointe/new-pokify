@@ -39,7 +39,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         plan: values.plan,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        status: values.status as string // Cast to string for database
+        status: values.status // Keep status as is - The RLS policy will handle conversion
       })
       .select('*')
       .single();

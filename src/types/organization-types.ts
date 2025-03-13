@@ -2,7 +2,7 @@
 // Organization status types
 export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled" | "inactive";
 
-// Organization pending reason types (add pro_rata_payment)
+// Organization pending reason types
 export type OrganizationPendingReason = "contract_signature" | "user_validation" | "mensalidade_payment" | "pro_rata_payment" | null;
 
 export interface OrganizationAddress {
