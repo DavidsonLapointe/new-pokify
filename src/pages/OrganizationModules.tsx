@@ -3,7 +3,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { 
   Sparkles, 
@@ -21,6 +20,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -43,7 +48,6 @@ const OrganizationModules = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
-  const [showDetails, setShowDetails] = useState<string | null>(null);
 
   const tools: Tool[] = [
     {
@@ -187,35 +191,29 @@ const OrganizationModules = () => {
     setAction(null);
   };
 
-  const toggleDetails = (toolId: string) => {
-    setShowDetails(showDetails === toolId ? null : toolId);
-  };
-
-  // Função para retornar o ícone de status apropriado
-  const getStatusIcon = (status: ToolStatus) => {
+  // Função para retornar o ícone de status apropriado e seu tooltip
+  const getStatusInfo = (status: ToolStatus) => {
     switch (status) {
       case "not_contracted": 
-        return <Lock size={16} className="text-red-500" />;
+        return { 
+          icon: <Lock size={18} className="text-red-500" />,
+          tooltip: "Módulo não contratado"
+        };
       case "contracted": 
-        return <AlertTriangle size={16} className="text-yellow-500" />;
+        return { 
+          icon: <AlertTriangle size={18} className="text-yellow-500" />,
+          tooltip: "Módulo contratado, mas ainda não configurado"
+        };
       case "configured": 
-        return <CheckCircle2 size={16} className="text-green-500" />;
+        return { 
+          icon: <CheckCircle2 size={18} className="text-green-500" />,
+          tooltip: "Módulo contratado e configurado"
+        };
       case "coming_soon":
-        return <Clock size={16} className="text-gray-500" />;
-    }
-  };
-
-  // Função para retornar a cor de fundo do badge baseado no status
-  const getBadgeClass = (status: ToolStatus) => {
-    switch (status) {
-      case "not_contracted": 
-        return "bg-red-100 text-red-700";
-      case "contracted": 
-        return "bg-yellow-100 text-yellow-700";
-      case "configured": 
-        return "bg-green-100 text-green-700";
-      case "coming_soon":
-        return "bg-gray-100 text-gray-700";
+        return { 
+          icon: <Clock size={18} className="text-gray-500" />,
+          tooltip: "Em breve disponível"
+        };
     }
   };
 
@@ -228,150 +226,140 @@ const OrganizationModules = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mb-2">
-        <h1 className="text-2xl font-bold">Módulos do Sistema</h1>
-        <p className="text-muted-foreground text-sm">
-          Gerencie os módulos de IA disponíveis para sua empresa
-        </p>
-      </div>
+    <TooltipProvider>
+      <div className="space-y-6">
+        <div className="mb-2">
+          <h1 className="text-2xl font-bold">Módulos do Sistema</h1>
+          <p className="text-muted-foreground text-sm">
+            Gerencie os módulos de IA disponíveis para sua empresa
+          </p>
+        </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool) => (
-          <Card key={tool.id} className="overflow-hidden border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
-                    <tool.icon size={22} />
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool) => {
+            const statusInfo = getStatusInfo(tool.status);
+            
+            return (
+              <Card key={tool.id} className="overflow-hidden border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
+                        <tool.icon size={22} />
+                      </div>
+                      <h3 className="text-lg font-semibold">{tool.title}</h3>
+                    </div>
+
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {statusInfo.icon}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{statusInfo.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    {(tool.status === "contracted" || tool.status === "configured") && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                            <MoreVertical size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem 
+                            className="text-red-600 flex items-center gap-2"
+                            onClick={() => handleCancelTool(tool.id)}
+                          >
+                            <Trash2 size={14} />
+                            <span>Cancelar módulo</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
-                  <h3 className="text-lg font-semibold">{tool.title}</h3>
-                </div>
+                  
+                  <p className="text-gray-600 mb-4 text-sm line-clamp-2 h-10">
+                    {tool.description}
+                  </p>
 
-                {(tool.status === "contracted" || tool.status === "configured") && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem 
-                        className="text-red-600 flex items-center gap-2"
-                        onClick={() => handleCancelTool(tool.id)}
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="font-bold text-xl text-[#6E59A5]">
+                      {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
+                    </span>
+                  </div>
+
+                  <div className="mt-4 mb-4 bg-gray-50 p-3 rounded-md text-sm">
+                    <h4 className="font-medium mb-2">Benefícios principais:</h4>
+                    <ul className="space-y-2">
+                      {tool.benefits.map((benefit, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <CheckCircle2 size={14} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="space-y-3">
+                    {tool.status === "not_contracted" && (
+                      <Button 
+                        className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
+                        onClick={() => handleContractTool(tool.id)}
                       >
-                        <Trash2 size={14} />
-                        <span>Cancelar módulo</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                        <CreditCard size={16} />
+                        Contratar Módulo
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {action === "contract" ? "Contratar Módulo" : "Cancelar Módulo"}
+              </DialogTitle>
+            </DialogHeader>
+            
+            {selectedTool && (
+              <div className="py-4">
+                <p className="mb-6">
+                  {action === "contract" 
+                    ? `Você está prestes a contratar o módulo "${tools.find(t => t.id === selectedTool)?.title}". O valor de ${formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será adicionado à sua fatura mensal.`
+                    : `Você está prestes a cancelar o módulo "${tools.find(t => t.id === selectedTool)?.title}". Este módulo ficará indisponível no final do período de faturamento atual.`
+                  }
+                </p>
+                
+                <p className="text-sm text-gray-500">
+                  {action === "contract"
+                    ? "Ao confirmar, você concorda com os termos de uso deste módulo."
+                    : "Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo."
+                  }
+                </p>
               </div>
-              
-              <Badge variant="outline" className={`${getBadgeClass(tool.status)} mb-3`}>
-                {getStatusIcon(tool.status)}
-                <span className="ml-1">{tool.badgeLabel}</span>
-              </Badge>
-              
-              <p className="text-gray-600 mb-4 text-sm line-clamp-2 h-10">
-                {tool.description}
-              </p>
-
-              <div className="flex items-center justify-between mb-5">
-                <span className="font-bold text-xl text-[#6E59A5]">
-                  {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
-                </span>
-              </div>
-
-              {showDetails === tool.id && (
-                <div className="mt-4 mb-4 bg-gray-50 p-3 rounded-md text-sm">
-                  <h4 className="font-medium mb-2">Benefícios principais:</h4>
-                  <ul className="space-y-2">
-                    {tool.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <CheckCircle2 size={14} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {tool.status === "not_contracted" && (
-                  <Button 
-                    className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
-                    onClick={() => handleContractTool(tool.id)}
-                  >
-                    <CreditCard size={16} />
-                    Contratar Módulo
-                  </Button>
-                )}
-
-                {tool.status === "coming_soon" && (
-                  <Button 
-                    className="w-full bg-gray-400 hover:bg-gray-500 cursor-not-allowed"
-                    disabled
-                  >
-                    Em breve
-                  </Button>
-                )}
-
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-[#6E59A5] border-[#9b87f5] hover:bg-[#F1F0FB] mt-2"
-                  onClick={() => toggleDetails(tool.id)}
-                >
-                  {showDetails === tool.id ? "Ocultar detalhes" : "Ver detalhes"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={confirmAction}
+                className={action === "contract" ? "bg-[#9b87f5] hover:bg-[#8a76e5]" : ""}
+                variant={action === "cancel" ? "destructive" : "default"}
+              >
+                {action === "contract" ? "Confirmar Contratação" : "Confirmar Cancelamento"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {action === "contract" ? "Contratar Módulo" : "Cancelar Módulo"}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {selectedTool && (
-            <div className="py-4">
-              <p className="mb-6">
-                {action === "contract" 
-                  ? `Você está prestes a contratar o módulo "${tools.find(t => t.id === selectedTool)?.title}". O valor de ${formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será adicionado à sua fatura mensal.`
-                  : `Você está prestes a cancelar o módulo "${tools.find(t => t.id === selectedTool)?.title}". Este módulo ficará indisponível no final do período de faturamento atual.`
-                }
-              </p>
-              
-              <p className="text-sm text-gray-500">
-                {action === "contract"
-                  ? "Ao confirmar, você concorda com os termos de uso deste módulo."
-                  : "Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo."
-                }
-              </p>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={confirmAction}
-              className={action === "contract" ? "bg-[#9b87f5] hover:bg-[#8a76e5]" : ""}
-              variant={action === "cancel" ? "destructive" : "default"}
-            >
-              {action === "contract" ? "Confirmar Contratação" : "Confirmar Cancelamento"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </TooltipProvider>
   );
 };
 
