@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -304,13 +305,13 @@ const OrganizationModules = () => {
           </p>
         </div>
 
-        <div className="relative">
+        <div className="relative px-12">
           <Carousel
             opts={{
               align: "start",
               loop: false // Parar no primeiro e último registro
             }}
-            className="w-full px-10" // Adicionando padding para evitar sobreposição das setas
+            className="w-full" // Removido o padding para não sobrepor as setas
           >
             <CarouselContent>
               {tools.map((tool) => {
@@ -320,7 +321,7 @@ const OrganizationModules = () => {
                 return (
                   <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card 
-                      className={`border-t-4 ${isSelected ? 'border-[#9b87f5] bg-[#F1F0FB]' : 'border-[#9b87f5]'} hover:shadow-md transition-shadow h-full cursor-pointer ${isSelected ? 'ring-2 ring-[#9b87f5]' : ''}`}
+                      className={`border ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'border-gray-200'} hover:shadow-md transition-shadow h-full cursor-pointer`}
                       onClick={() => showToolDetails(tool)}
                     >
                       <CardContent className="p-4">
@@ -465,6 +466,7 @@ const OrganizationModules = () => {
           </div>
         )}
 
+        {/* Diálogo de confirmação para contratar/cancelar módulo */}
         <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
