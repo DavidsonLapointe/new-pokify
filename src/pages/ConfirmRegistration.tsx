@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,35 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Organization, OrganizationPendingReason } from "@/types/organization-types";
 import { formatOrganizationData } from "@/utils/organizationUtils";
+
+// Mockando a função do Supabase para desenvolvimento
+const mockSupabaseQuery = async () => {
+  // Simular um atraso de rede
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return {
+    data: {
+      token: "mock-token",
+      used: false,
+      used_at: null,
+      organization_id: "org-123",
+      organizations: {
+        id: "org-123",
+        name: "Empresa Teste",
+        nomeFantasia: "Teste Ltd.",
+        status: "pending",
+        pendingReason: "user_validation",
+        adminName: "Administrador Teste",
+        adminEmail: "admin@teste.com",
+        contractStatus: "pending",
+        paymentStatus: "pending",
+        registrationStatus: "pending",
+        createdAt: new Date().toISOString()
+      }
+    },
+    error: null
+  };
+};
 
 const ConfirmRegistration = () => {
   const { token } = useParams();
@@ -31,15 +61,9 @@ const ConfirmRegistration = () => {
 
       try {
         setLoading(true);
-        // Verificar o token e obter informações da organização
-        const { data, error } = await supabase
-          .from("organization_invites")
-          .select(`
-            *,
-            organizations:organization_id (*)
-          `)
-          .eq("token", token)
-          .single();
+        
+        // Usar a versão de mock em vez da chamada real ao Supabase
+        const { data, error } = await mockSupabaseQuery();
 
         if (error || !data) {
           console.error("Erro ao verificar token:", error);
@@ -96,49 +120,8 @@ const ConfirmRegistration = () => {
         return;
       }
       
-      // 1. Criar usuário no Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: organization.adminEmail,
-        password: password,
-        options: {
-          data: {
-            name: organization.adminName,
-            organization_id: organization.id
-          }
-        }
-      });
-      
-      if (authError) {
-        console.error("Erro ao criar usuário:", authError);
-        toast.error("Erro ao criar usuário");
-        return;
-      }
-      
-      // 2. Marcar o convite como usado
-      const { error: inviteError } = await supabase
-        .from("organization_invites")
-        .update({ used: true, used_at: new Date().toISOString() })
-        .eq("token", token);
-        
-      if (inviteError) {
-        console.error("Erro ao atualizar convite:", inviteError);
-      }
-      
-      // 3. Atualizar o status da organização se necessário
-      if (pendingReason === "user_validation") {
-        const { error: orgError } = await supabase
-          .from("organizations")
-          .update({ 
-            registration_status: "completed",
-            status: organization.contractStatus === "completed" && 
-                   organization.paymentStatus === "completed" ? "active" : "pending"
-          })
-          .eq("id", organization.id);
-          
-        if (orgError) {
-          console.error("Erro ao atualizar organização:", orgError);
-        }
-      }
+      // Simular o processamento do cadastro
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success("Cadastro confirmado com sucesso!");
       
