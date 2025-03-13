@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -257,7 +256,6 @@ const OrganizationModules = () => {
                 <Button 
                   className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
                   onClick={() => handleContractTool(tool.id)}
-                  disabled={tool.status === "coming_soon"}
                 >
                   <CreditCard size={16} />
                   Contratar Módulo
