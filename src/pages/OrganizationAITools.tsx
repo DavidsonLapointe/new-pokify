@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -356,23 +355,20 @@ const AIToolsPage = () => {
               </div>
             </div>
 
-            {/* Botões de ação - 2 botões por card */}
+            {/* Botões de ação - modificados para mostrar apenas o botão contratar para ferramentas não contratadas */}
             <div className="flex gap-3">
-              <Button 
-                className={`flex items-center justify-center gap-2 ${
-                  tool.status === "not_contracted" 
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed" 
-                    : "bg-[#9b87f5] hover:bg-[#8a76e5]"
-                } px-4`}
-                onClick={() => handleToolExecution(tool.id)}
-                disabled={tool.status === "not_contracted"}
-              >
-                <tool.executeIcon size={18} />
-                <span>{tool.executeLabel}</span>
-              </Button>
+              {tool.status !== "not_contracted" && (
+                <Button 
+                  className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
+                  onClick={() => handleToolExecution(tool.id)}
+                >
+                  <tool.executeIcon size={18} />
+                  <span>{tool.executeLabel}</span>
+                </Button>
+              )}
               
               <Button 
-                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4`}
+                className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4 ${tool.status === "not_contracted" ? "w-full" : ""}`}
                 onClick={() => handleToolAction(tool.id)}
               >
                 {tool.status === "not_contracted" ? (
