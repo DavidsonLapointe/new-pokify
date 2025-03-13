@@ -8,7 +8,7 @@ export function mapDbPlanToPlan(dbPlan: any): Plan {
     price: parseFloat(dbPlan.price),
     shortDescription: dbPlan.short_description || "",
     description: dbPlan.description,
-    benefits: dbPlan.benefits || [], 
+    benefits: dbPlan.features || [],  // Map features from DB to benefits in our app
     howItWorks: dbPlan.how_it_works || [],
     active: dbPlan.active,
     comingSoon: dbPlan.coming_soon || false,
@@ -16,8 +16,8 @@ export function mapDbPlanToPlan(dbPlan: any): Plan {
     stripeProductId: dbPlan.stripe_product_id,
     stripePriceId: dbPlan.stripe_price_id,
     credits: dbPlan.credits,
-    // Map benefits to features as well to maintain compatibility
-    features: dbPlan.benefits || [],
+    // Map features (database field) to features in our app model
+    features: dbPlan.features || [],
   };
 }
 

@@ -27,25 +27,20 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       
       // Process benefits as features
       const benefits = processFeaturesInput(plan.benefits);
-      const howItWorks = processFeaturesInput(plan.howItWorks);
       
       // 2. Criar o plano no Supabase com os IDs do Stripe
       const { data, error } = await supabase
         .from('plans')
-        .insert([{
+        .insert({
           name: plan.name,
           price: plan.price,
-          short_description: plan.shortDescription,
           description: plan.description,
-          benefits: benefits,
-          how_it_works: howItWorks,
+          features: benefits, // Use benefits as features in the database
           active: plan.active,
-          coming_soon: plan.comingSoon,
-          action_button_text: plan.actionButtonText,
           stripe_product_id: stripeData.product.id,
           stripe_price_id: stripeData.price.id,
           credits: plan.credits
-        }])
+        })
         .select()
         .single();
       
