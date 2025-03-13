@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface PlanFormProps {
   form: UseFormReturn<PlanFormValues>;
@@ -88,8 +88,18 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Status do Módulo</FormLabel>
-                  <div className="text-sm text-muted-foreground">
-                    {field.value ? "Módulo ativo" : "Módulo inativo"}
+                  <div className="text-sm text-muted-foreground flex items-center space-x-2">
+                    <span>{field.value ? "Módulo ativo" : "Módulo inativo"}</span>
+                    <Badge 
+                      variant="secondary"
+                      className={`
+                        ${field.value 
+                          ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                          : "bg-red-100 text-red-800 hover:bg-red-100"}
+                      `}
+                    >
+                      {field.value ? "Ativo" : "Inativo"}
+                    </Badge>
                   </div>
                 </div>
                 <FormControl>
