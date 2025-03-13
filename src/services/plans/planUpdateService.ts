@@ -41,10 +41,16 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
         throw new Error('Dados inválidos retornados pelo Stripe');
       }
       
-      // Process features safely based on type
-      let features = undefined;
-      if (plan.features !== undefined) {
-        features = processFeaturesInput(plan.features);
+      // Process benefits safely
+      let benefits = undefined;
+      if (plan.benefits !== undefined) {
+        benefits = processFeaturesInput(plan.benefits);
+      }
+      
+      // Process howItWorks safely
+      let howItWorks = undefined;
+      if (plan.howItWorks !== undefined) {
+        howItWorks = processFeaturesInput(plan.howItWorks);
       }
       
       const updateData: Record<string, any> = {};
@@ -52,9 +58,13 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       // Only include defined fields in the update
       if (plan.name !== undefined) updateData.name = plan.name;
       if (plan.price !== undefined) updateData.price = plan.price;
+      if (plan.shortDescription !== undefined) updateData.short_description = plan.shortDescription;
       if (plan.description !== undefined) updateData.description = plan.description;
       if (plan.active !== undefined) updateData.active = plan.active;
-      if (features !== undefined) updateData.features = features;
+      if (plan.comingSoon !== undefined) updateData.coming_soon = plan.comingSoon;
+      if (plan.actionButtonText !== undefined) updateData.action_button_text = plan.actionButtonText;
+      if (benefits !== undefined) updateData.benefits = benefits;
+      if (howItWorks !== undefined) updateData.how_it_works = howItWorks;
       
       // Adicionar os IDs do Stripe
       updateData.stripe_product_id = stripeData.product.id;

@@ -15,6 +15,9 @@ export function mapDbPlanToPlan(dbPlan: any): Plan {
     actionButtonText: dbPlan.action_button_text || "Contratar",
     stripeProductId: dbPlan.stripe_product_id,
     stripePriceId: dbPlan.stripe_price_id,
+    credits: dbPlan.credits,
+    // Map benefits to features as well to maintain compatibility
+    features: dbPlan.benefits || [],
   };
 }
 

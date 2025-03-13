@@ -99,7 +99,7 @@ export function ChangePlanDialog({
                   )}
 
                   <ul className="space-y-2">
-                    {plan.features.map((feature, index) => (
+                    {(plan.features || plan.benefits)?.map((feature, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm">
                         <BadgeCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                         <span className="leading-tight">{feature}</span>

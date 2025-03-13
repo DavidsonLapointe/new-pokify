@@ -13,6 +13,7 @@ export const planFormSchema = z.object({
   actionButtonText: z.string().min(2, "O texto do botão de ação deve ter pelo menos 2 caracteres"),
   stripeProductId: z.string().optional(),
   stripePriceId: z.string().optional(),
+  credits: z.number().optional(),
 });
 
 export type PlanFormValues = z.infer<typeof planFormSchema>;
@@ -30,4 +31,7 @@ export interface Plan {
   actionButtonText: string;
   stripeProductId?: string;
   stripePriceId?: string;
+  // Add the missing properties
+  credits?: number;
+  features?: string[]; // An alias for benefits used in some components
 }

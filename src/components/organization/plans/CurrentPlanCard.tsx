@@ -13,6 +13,9 @@ interface CurrentPlanCardProps {
 }
 
 export function CurrentPlanCard({ plan, onChangePlan, nextBillingDate }: CurrentPlanCardProps) {
+  // Use the features or benefits array - prefer features if it exists
+  const displayFeatures = plan.features || plan.benefits;
+
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3">
@@ -56,7 +59,7 @@ export function CurrentPlanCard({ plan, onChangePlan, nextBillingDate }: Current
         <div className="mt-6">
           <h4 className="text-sm font-medium mb-3">Recursos inclusos:</h4>
           <ul className="space-y-0.5">
-            {plan.features?.map((feature, i) => (
+            {displayFeatures?.map((feature, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <span className="leading-tight" style={{ lineHeight: 1.2 }}>{feature}</span>

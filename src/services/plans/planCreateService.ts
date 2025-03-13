@@ -18,15 +18,16 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         description: plan.description,
         price: plan.price,
         active: plan.active !== undefined ? plan.active : true,
-        credits: plan.credits
+        credits: plan.credits // Now this property exists in the Plan type
       });
       
       if (!stripeData || !stripeData.product || !stripeData.price) {
         throw new Error('Dados inválidos retornados pelo Stripe');
       }
       
-      // Process features safely
-      const features = processFeaturesInput(plan.features);
+      // Process benefits as features
+      const benefits = processFeaturesInput(plan.benefits);
+      const howItWorks = processFeaturesInput(plan.howItWorks);
       
       // 2. Criar o plano no Supabase com os IDs do Stripe
       const { data, error } = await supabase
@@ -34,9 +35,13 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         .insert([{
           name: plan.name,
           price: plan.price,
+          short_description: plan.shortDescription,
           description: plan.description,
-          features: features,
+          benefits: benefits,
+          how_it_works: howItWorks,
           active: plan.active,
+          coming_soon: plan.comingSoon,
+          action_button_text: plan.actionButtonText,
           stripe_product_id: stripeData.product.id,
           stripe_price_id: stripeData.price.id,
           credits: plan.credits
