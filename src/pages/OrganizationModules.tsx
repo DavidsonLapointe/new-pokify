@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,11 +33,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   Carousel,
   CarouselContent,
@@ -181,6 +176,11 @@ const OrganizationModules = () => {
       ]
     }
   ];
+  
+  // Inicializa com o primeiro módulo selecionado ao carregar a página
+  useEffect(() => {
+    setSelectedToolDetails(tools[0]);
+  }, []);
 
   const handleContractTool = (toolId: string) => {
     setSelectedTool(toolId);
@@ -274,15 +274,15 @@ const OrganizationModules = () => {
                 const isSelected = selectedToolDetails?.id === tool.id;
                 
                 return (
-                  <CarouselItem key={tool.id} className="basis-full md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Card className="border-t-4 border-[#9b87f5] hover:shadow-md transition-shadow h-full">
-                      <CardContent className="p-5">
+                      <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
-                              <tool.icon size={22} />
+                              <tool.icon size={20} />
                             </div>
-                            <h3 className="text-lg font-semibold">{tool.title}</h3>
+                            <h3 className="text-base font-semibold">{tool.title}</h3>
                           </div>
 
                           <Tooltip>
@@ -297,8 +297,8 @@ const OrganizationModules = () => {
                           {(tool.status === "contracted" || tool.status === "configured") && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
-                                  <MoreVertical size={16} />
+                                <Button variant="ghost" size="icon" className="h-7 w-7 ml-1">
+                                  <MoreVertical size={14} />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -314,33 +314,34 @@ const OrganizationModules = () => {
                           )}
                         </div>
                         
-                        <p className="text-gray-600 mb-4 text-sm">
+                        <p className="text-gray-600 mb-4 text-xs">
                           {tool.description}
                         </p>
 
-                        <div className="flex items-center justify-between mb-5">
-                          <span className="font-bold text-xl text-[#6E59A5]">
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="font-bold text-lg text-[#6E59A5]">
                             {formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span>
                           </span>
                         </div>
 
-                        <div className="space-y-3 mt-auto">
+                        <div className="space-y-2">
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className={`w-full justify-between ${isSelected ? "bg-primary-lighter text-primary" : ""}`}
+                            className={`w-full justify-between text-xs ${isSelected ? "bg-primary-lighter text-primary" : ""}`}
                             onClick={() => showToolDetails(tool)}
                           >
                             Benefícios
-                            {isSelected ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            {isSelected ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                           </Button>
 
                           {tool.status === "not_contracted" && (
                             <Button 
-                              className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2"
+                              className="w-full bg-[#9b87f5] hover:bg-[#8a76e5] flex items-center justify-center gap-2 text-xs"
+                              size="sm"
                               onClick={() => handleContractTool(tool.id)}
                             >
-                              <CreditCard size={16} />
+                              <CreditCard size={14} />
                               Contratar Módulo
                             </Button>
                           )}
@@ -357,7 +358,7 @@ const OrganizationModules = () => {
         </div>
 
         {selectedToolDetails && (
-          <div className="mt-8 bg-white rounded-lg border shadow-sm animate-fade-in">
+          <div className="mt-6 bg-white rounded-lg border shadow-sm animate-fade-in">
             <div className="flex justify-between items-center p-4 border-b">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
