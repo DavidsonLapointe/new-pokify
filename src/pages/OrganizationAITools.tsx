@@ -271,13 +271,13 @@ const AIToolsPage = () => {
                 }`}
                 onClick={() => setSelectedTool(tool.id)}
               >
-                <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2">
+                <CardContent className="p-4 flex flex-col items-center justify-center h-full space-y-2 relative">
+                  {tool.status === "not_contracted" && (
+                    <div className="absolute top-2 right-2">
+                      <Lock size={16} className="text-red-500" />
+                    </div>
+                  )}
                   <div className={`p-2 rounded-md ${selectedTool === tool.id ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-                    {tool.status === "not_contracted" && (
-                      <div className="absolute top-2 right-2">
-                        <Lock size={14} className="text-red-500" />
-                      </div>
-                    )}
                     <tool.icon size={28} />
                   </div>
                   <div className="text-center">
