@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -877,3 +878,143 @@ const Modules = () => {
     try {
       // Se estiver editando um módulo existente e mudando ele para inativo
       if (editingPlan && editingPlan.active && data.active) {
+        // Atualiza o plano existente
+        const updatedPlan = {
+          ...editingPlan,
+          ...data
+        };
+        
+        // Atualiza a lista de planos
+        setPlans(prevPlans => 
+          prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
+        );
+        
+        // Atualiza o plano selecionado se for o mesmo
+        if (selectedPlan && selectedPlan.id === editingPlan.id) {
+          setSelectedPlan(updatedPlan);
+        }
+        
+        toast.success("Módulo atualizado com sucesso!");
+      } else if (editingPlan) {
+        // Edição normal de um módulo existente
+        const updatedPlan = {
+          ...editingPlan,
+          ...data
+        };
+        
+        setPlans(prevPlans => 
+          prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
+        );
+        
+        if (selectedPlan && selectedPlan.id === editingPlan.id) {
+          setSelectedPlan(updatedPlan);
+        }
+        
+        toast.success("Módulo atualizado com sucesso!");
+      } else {
+        // Criação de um novo módulo
+        const newPlan: Plan = {
+          id: Date.now(), // Usado como ID temporário
+          name: data.name || "Novo Módulo",
+          price: data.price || 0,
+          description: data.description || "",
+          shortDescription: data.shortDescription || "",
+          benefits: data.benefits || [],
+          active: data.active !== undefined ? data.active : true,
+          howItWorks: data.howItWorks || [],
+          comingSoon: data.comingSoon || false,
+          actionButtonText: data.actionButtonText || "Contratar",
+          icon: data.icon || "MessageCircle",
+          credits: data.credits || null
+        };
+        
+        setPlans(prevPlans => [...prevPlans, newPlan]);
+        toast.success("Novo módulo criado com sucesso!");
+      }
+      
+      // Limpa o estado de edição
+      setEditingPlan(null);
+      setIsCreateDialogOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar módulo:", error);
+      toast.error("Ocorreu um erro ao salvar o módulo.");
+    }
+  };
+
+  const handleEditPlan = (plan: Plan) => {
+    setEditingPlan(plan);
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleDeletePlan = async (id: string | number) => {
+    try {
+      setDeletingPlanId(id.toString());
+      
+      // Em um ambiente real, chamaríamos a API para desativar o módulo
+      // await deletePlan(id);
+      
+      // Simulamos a desativação do módulo (não removemos, apenas desativamos)
+      setPlans(prevPlans => 
+        prevPlans.map(p => p.id === id ? { ...p, active: false } : p)
+      );
+      
+      // Atualiza o plano selecionado se for o mesmo
+      if (selectedPlan && selectedPlan.id === id) {
+        setSelectedPlan(prev => prev ? { ...prev, active: false } : null);
+      }
+      
+      toast.success("Módulo desativado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao desativar módulo:", error);
+      toast.error("Ocorreu um erro ao desativar o módulo.");
+    } finally {
+      setDeletingPlanId(null);
+    }
+  };
+
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(prev => prev?.id === plan.id ? null : plan);
+  };
+
+  return (
+    <div className="space-y-8">
+      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
+      
+      {isLoading ? (
+        <LoadingState />
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plans.map((plan) => (
+              <ModuleCard 
+                key={plan.id}
+                plan={plan}
+                onClick={() => handleSelectPlan(plan)}
+                isActive={selectedPlan?.id === plan.id}
+                onEditPlan={handleEditPlan}
+              />
+            ))}
+          </div>
+          
+          {selectedPlan && (
+            <ModuleDetails 
+              plan={selectedPlan}
+              onEdit={handleEditPlan}
+              onDelete={handleDeletePlan}
+              isDeleting={deletingPlanId === selectedPlan.id.toString()}
+            />
+          )}
+        </>
+      )}
+      
+      <ModuleDialog 
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        plan={editingPlan}
+        onSave={handleSavePlan}
+      />
+    </div>
+  );
+};
+
+export default Modules;
