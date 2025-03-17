@@ -75,21 +75,15 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
           <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
             {module.name}
           </CardTitle>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-col">
             <div className="text-primary font-semibold">
               R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal"> (setup)</span>
             </div>
             {module.credits && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="bg-amber-50 text-amber-800 p-1 rounded-full">
-                    <Zap className="h-3 w-3" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{module.credits} créditos por execução</p>
-                </TooltipContent>
-              </Tooltip>
+              <div className="text-xs text-amber-700 flex items-center">
+                <Zap className="h-3 w-3 mr-1 text-amber-500" />
+                <span>{module.credits} créditos por execução</span>
+              </div>
             )}
           </div>
         </CardHeader>

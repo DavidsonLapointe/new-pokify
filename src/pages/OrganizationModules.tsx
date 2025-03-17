@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -372,22 +371,16 @@ const OrganizationModules = () => {
                           
                           <div className="text-center w-full mt-2">
                             <p className="font-medium text-sm mb-1">{tool.title}</p>
-                            <div className="flex items-center justify-center gap-1">
+                            <div className="flex flex-col items-center">
                               <p className="text-sm text-[#6E59A5] font-bold">
                                 {formatPrice(tool.price)}<span className="text-xs text-gray-500">/setup</span>
                               </p>
                               
                               {tool.credits && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="bg-amber-50 text-amber-700 p-1 rounded-full inline-flex">
-                                      <Zap size={12} />
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>{tool.credits} créditos por execução</p>
-                                  </TooltipContent>
-                                </Tooltip>
+                                <p className="text-xs text-amber-700 flex items-center mt-1">
+                                  <Zap size={10} className="mr-1 text-amber-500" />
+                                  {tool.credits} créditos por execução
+                                </p>
                               )}
                             </div>
                           </div>
