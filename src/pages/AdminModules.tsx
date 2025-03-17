@@ -578,18 +578,18 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     : MessageCircle; // Default to MessageCircle if not found
 
   return (
-    <Card 
-      className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'bg-[#F1F0FB]' : ''}`}
-      onClick={onClick}
-    >
-      <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start">
-          <div className="p-2 bg-primary-lighter rounded-md">
-            <IconComponent className="h-6 w-6 text-primary" />
-          </div>
-          <div className="flex items-center gap-1">
-            {plan.comingSoon && (
-              <TooltipProvider>
+    <TooltipProvider>
+      <Card 
+        className={`h-[230px] cursor-pointer hover:shadow-md transition-all duration-300 ${isActive ? 'bg-[#F1F0FB]' : ''}`}
+        onClick={onClick}
+      >
+        <CardHeader className="p-4 pb-2">
+          <div className="flex justify-between items-start">
+            <div className="p-2 bg-primary-lighter rounded-md">
+              <IconComponent className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex items-center gap-1">
+              {plan.comingSoon && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="bg-blue-100 text-blue-800 p-1 rounded-full">
@@ -600,44 +600,44 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                     <p>Em breve disponível</p>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            )}
-            <Badge 
-              variant="secondary"
-              className={`
-                ${plan.active 
-                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                  : "bg-red-100 text-red-800 hover:bg-red-100"}
-              `}
-            >
-              {plan.active ? "Ativo" : "Inativo"}
-            </Badge>
+              )}
+              <Badge 
+                variant="secondary"
+                className={`
+                  ${plan.active 
+                    ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                    : "bg-red-100 text-red-800 hover:bg-red-100"}
+                `}
+              >
+                {plan.active ? "Ativo" : "Inativo"}
+              </Badge>
+            </div>
           </div>
-        </div>
-        <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
-          {plan.name}
-        </CardTitle>
-        <div className="text-primary font-semibold">
-          R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {plan.shortDescription}
-        </p>
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <div 
-          className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick(); // Use the onClick prop to select this plan, not open the edit dialog
-          }}
-        >
-          Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
-        </div>
-      </CardFooter>
-    </Card>
+          <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
+            {plan.name}
+          </CardTitle>
+          <div className="text-primary font-semibold">
+            R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {plan.shortDescription}
+          </p>
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <div 
+            className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick(); // Use the onClick prop to select this plan, not open the edit dialog
+            }}
+          >
+            Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
+          </div>
+        </CardFooter>
+      </Card>
+    </TooltipProvider>
   );
 };
 
@@ -693,6 +693,148 @@ const LoadingState: React.FC = () => {
   );
 };
 
+// Module details component to display when a module is selected
+const ModuleDetails: React.FC<{ 
+  plan: Plan | null, 
+  onEdit: (plan: Plan) => void, 
+  onDelete: (id: string | number) => void,
+  isDeleting: boolean
+}> = ({ plan, onEdit, onDelete, isDeleting }) => {
+  if (!plan) return null;
+  
+  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
+    ? iconMap[plan.icon as keyof typeof iconMap] 
+    : MessageCircle;
+    
+  return (
+    <Card className="mt-8">
+      <CardHeader className="p-6">
+        <div className="flex justify-between items-start">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-primary-lighter rounded-md">
+              <IconComponent className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <CardTitle className="text-xl">{plan.name}</CardTitle>
+                {plan.comingSoon && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="bg-blue-100 text-blue-800 p-1 rounded-full">
+                          <Clock className="h-4 w-4" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Em breve disponível</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                <Badge 
+                  variant="secondary"
+                  className={`
+                    ${plan.active 
+                      ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                      : "bg-red-100 text-red-800 hover:bg-red-100"}
+                  `}
+                >
+                  {plan.active ? "Ativo" : "Inativo"}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-lg text-primary font-semibold">
+                  R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+                </div>
+                {plan.credits && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1 text-sm text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                          <Zap className="h-3 w-3" />
+                          <span>{plan.credits} créditos</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Créditos consumidos por execução</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => onEdit(plan)}>
+              <Pencil className="h-4 w-4 mr-1" /> Editar
+            </Button>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => onDelete(plan.id)}
+              disabled={isDeleting || !plan.active}
+            >
+              {isDeleting ? 
+                <div className="flex items-center">
+                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-1"></div>
+                  Processando...
+                </div> : 
+                <>
+                  <Trash2 className="h-4 w-4 mr-1" /> Desativar
+                </>
+              }
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="px-6 pb-6 pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
+            <p className="text-muted-foreground">{plan.description}</p>
+            
+            <h3 className="text-lg font-semibold mt-6 mb-3">Como funciona</h3>
+            <div className="space-y-2">
+              {plan.howItWorks?.map((step, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="bg-primary-lighter text-primary font-semibold rounded-full h-6 w-6 flex items-center justify-center text-sm mt-0.5">
+                    {i+1}
+                  </div>
+                  <p>{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Benefícios</h3>
+            <div className="space-y-2">
+              {plan.benefits?.map((benefit, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                  <p>{benefit}</p>
+                </div>
+              ))}
+            </div>
+            
+            <h3 className="text-lg font-semibold mt-6 mb-3">Informações adicionais</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Texto do botão de ação</h4>
+                <p>{plan.actionButtonText || "Contratar"}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Créditos por execução</h4>
+                <p>{plan.credits ? `${plan.credits} créditos` : "Não consome créditos"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const Modules = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -734,157 +876,4 @@ const Modules = () => {
     console.log("Salvando módulo:", data);
     try {
       // Se estiver editando um módulo existente e mudando ele para inativo
-      if (editingPlan && editingPlan.active && data.active === false) {
-        // Verificar se existem organizações usando este módulo
-        const { data: orgsUsingModule, error } = await supabase
-          .from('subscriptions')
-          .select('organization_id, organizations!inner(name)')
-          .eq('status', 'active')
-          .filter('organizations.plan', 'eq', editingPlan.name);
-          
-        if (error) {
-          console.error("Erro ao verificar organizações:", error);
-          throw new Error("Erro ao verificar se o módulo está em uso");
-        }
-        
-        // Se existirem organizações usando o módulo, impedir a inativação
-        if (orgsUsingModule && orgsUsingModule.length > 0) {
-          const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
-          
-          toast.error(
-            `Não é possível inativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
-          );
-          
-          // Manter o módulo ativo
-          data.active = true;
-          return;
-        }
-      }
-      
-      if (editingPlan) {
-        console.log("Atualizando módulo existente:", editingPlan.id);
-        const updatedPlans = plans.map(plan =>
-          plan.id === editingPlan.id
-            ? { ...plan, ...data, id: plan.id }
-            : plan
-        );
-        setPlans(updatedPlans);
-        setEditingPlan(null);
-        
-        // Se o plano selecionado for o mesmo que estamos editando, atualize-o
-        if (selectedPlan && selectedPlan.id === editingPlan.id) {
-          const updatedPlan = updatedPlans.find(p => p.id === editingPlan.id);
-          if (updatedPlan) {
-            setSelectedPlan(updatedPlan);
-          }
-        }
-      } else {
-        console.log("Adicionando novo módulo");
-        const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
-        setPlans([...plans, newPlan]);
-      }
-
-      // Em um ambiente real, nós chamaríamos o loadPlans() novamente para atualizar
-      toast.success(editingPlan ? "Módulo atualizado com sucesso!" : "Módulo criado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar módulo:", error);
-      toast.error("Ocorreu um erro ao salvar o módulo.");
-    }
-  };
-
-  const handleDeletePlan = async (id: string | number) => {
-    if (!id) return;
-
-    try {
-      // Convert id to string if it's a number
-      const planId = id.toString();
-      
-      // Encontrar o plano que está sendo desativado
-      const planToDelete = plans.find(p => p.id.toString() === planId);
-      if (!planToDelete) {
-        toast.error("Módulo não encontrado");
-        return;
-      }
-      
-      // Verificar se existem organizações usando este módulo
-      const { data: orgsUsingModule, error } = await supabase
-        .from('subscriptions')
-        .select('organization_id, organizations!inner(name)')
-        .eq('status', 'active')
-        .filter('organizations.plan', 'eq', planToDelete.name);
-        
-      if (error) {
-        console.error("Erro ao verificar organizações:", error);
-        throw new Error("Erro ao verificar se o módulo está em uso");
-      }
-      
-      // Se existirem organizações usando o módulo, impedir a desativação
-      if (orgsUsingModule && orgsUsingModule.length > 0) {
-        const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
-        
-        toast.error(
-          `Não é possível desativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
-        );
-        return;
-      }
-      
-      setDeletingPlanId(planId);
-      // Em um ambiente real, chamaríamos deletePlan(planId)
-      // Simulando a exclusão localmente
-      setTimeout(() => {
-        const updatedPlans = plans.map(plan => 
-          plan.id.toString() === planId 
-            ? { ...plan, active: false }
-            : plan
-        );
-        setPlans(updatedPlans);
-        setDeletingPlanId(null);
-        
-        // Se o plano selecionado for o mesmo que estamos desativando, atualize-o
-        if (selectedPlan && selectedPlan.id.toString() === planId) {
-          const updatedPlan = updatedPlans.find(p => p.id.toString() === planId);
-          if (updatedPlan) {
-            setSelectedPlan(updatedPlan);
-          }
-        }
-        
-        toast.success("Módulo desativado com sucesso!");
-      }, 1000);
-    } catch (error) {
-      console.error("Erro ao desativar módulo:", error);
-      toast.error("Ocorreu um erro ao desativar o módulo.");
-      setDeletingPlanId(null);
-    }
-  };
-
-  const selectPlan = (plan: Plan) => {
-    setSelectedPlan(plan);
-  };
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(plan);
-  };
-
-  return (
-    <div className="space-y-8">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <>
-          <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent className="px-2">
-                {plans.map((plan) => (
-                  <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
-                    <ModuleCard 
-                      plan={plan} 
-                      onClick={() => selectPlan(plan)}
-                      isActive={selectedPlan?.id === plan.id}
-                      onEditPlan={handleEditPlan}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-0
+      if (editingPlan && editingPlan.active && data.active
