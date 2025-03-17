@@ -880,4 +880,4 @@ const AdminModules = () => {
         } as Plan;
         
         // Adicionar à lista de módulos
-        setModules(
+        setModules(prevModules =>
