@@ -698,7 +698,11 @@ const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) =
           {plan.active ? "Ativo" : "Inativo"}
         </Badge>
         
-        {plan.comingSoon && (\n          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">\n            Em breve\n          </Badge>\n        )}
+        {plan.comingSoon && (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+            Em breve
+          </Badge>
+        )}
       </div>
       
       <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -870,4 +874,4 @@ const Modules = () => {
       };
       
       setPlans((prevPlans) => [...prevPlans, newPlan]);
-      toast.success("Módulo
+      toast.success("Módulo criado
