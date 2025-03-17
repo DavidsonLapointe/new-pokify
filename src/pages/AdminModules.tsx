@@ -107,7 +107,8 @@ const mockModules: Plan[] = [
     active: true,
     comingSoon: false,
     actionButtonText: "Contratar Assistente",
-    icon: "MessageCircle"
+    icon: "MessageCircle",
+    credits: 5
   },
   {
     id: 2,
@@ -130,7 +131,8 @@ const mockModules: Plan[] = [
     active: true,
     comingSoon: true,
     actionButtonText: "Criar Vídeos",
-    icon: "Video"
+    icon: "Video",
+    credits: 20
   },
   {
     id: 3,
@@ -153,7 +155,8 @@ const mockModules: Plan[] = [
     active: true,
     comingSoon: false,
     actionButtonText: "Transcrever Áudios",
-    icon: "Headphones"
+    icon: "Headphones",
+    credits: 8
   },
   {
     id: 4,
@@ -176,7 +179,8 @@ const mockModules: Plan[] = [
     active: true,
     comingSoon: false,
     actionButtonText: "Adquirir CRM",
-    icon: "UserRound"
+    icon: "UserRound",
+    credits: 15
   },
   {
     id: 5,
@@ -199,7 +203,8 @@ const mockModules: Plan[] = [
     active: false,
     comingSoon: true,
     actionButtonText: "Analisar Tendências",
-    icon: "LineChart"
+    icon: "LineChart",
+    credits: 25
   }
 ];
 
