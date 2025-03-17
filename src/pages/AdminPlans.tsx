@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 const AdminPlans = () => {
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
@@ -187,11 +189,12 @@ const AdminPlans = () => {
                 )}
                 
                 <div className="mb-4">
-                  <h4 className="font-medium text-sm mb-3">Recursos inclusos:</h4>
-                  <ul className="space-y-2">
+                  <h4 className="font-medium text-sm text-gray-600">Recursos inclusos:</h4>
+                  <Separator className="my-2" />
+                  <ul className="space-y-2 mt-3">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
                       <li key={index} className="flex items-start text-sm text-gray-600">
-                        <div className="h-5 w-5 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2 mt-0.5">
+                        <div className="h-5 w-5 bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2">
                           <FileText className="h-3 w-3 text-purple-500" />
                         </div>
                         <span>{benefit}</span>
