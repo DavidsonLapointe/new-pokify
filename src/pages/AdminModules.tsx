@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +28,6 @@ import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { 
   Carousel,
   CarouselContent,
@@ -876,103 +874,4 @@ const Modules = () => {
       };
       
       setPlans((prevPlans) => [...prevPlans, newPlan]);
-      toast.success("Módulo criado com sucesso!");
-      
-      // Selecionar o novo plano após criação
-      setSelectedPlan(newPlan);
-    } catch (error) {
-      console.error("Erro ao criar módulo:", error);
-      toast.error("Erro ao criar módulo");
-    }
-  };
-
-  const handleUpdatePlan = async (planData: Partial<Plan>) => {
-    try {
-      if (!editingPlan) return;
-      
-      // Atualizar o plano no estado
-      const updatedPlans = plans.map((plan) => 
-        plan.id === editingPlan.id ? { ...plan, ...planData } : plan
-      );
-      
-      setPlans(updatedPlans);
-      
-      // Atualizar o plano selecionado se ele foi o editado
-      if (selectedPlan && selectedPlan.id === editingPlan.id) {
-        setSelectedPlan({ ...selectedPlan, ...planData });
-      }
-      
-      toast.success("Módulo atualizado com sucesso!");
-      setEditingPlan(null);
-    } catch (error) {
-      console.error("Erro ao atualizar módulo:", error);
-      toast.error("Erro ao atualizar módulo");
-    }
-  };
-
-  const handleDeletePlan = async (planId: number) => {
-    try {
-      // Remover o plano do estado
-      setPlans((prevPlans) => prevPlans.filter((plan) => plan.id !== planId));
-      
-      // Se o plano excluído estava selecionado, selecione outro
-      if (selectedPlan && selectedPlan.id === planId) {
-        setSelectedPlan(plans.find((plan) => plan.id !== planId) || null);
-      }
-      
-      toast.success("Módulo excluído com sucesso!");
-      setDeletingPlanId(null);
-    } catch (error) {
-      console.error("Erro ao excluir módulo:", error);
-      toast.error("Erro ao excluir módulo");
-    }
-  };
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(plan);
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleSelectPlan = (plan: Plan) => {
-    setSelectedPlan(plan.id === selectedPlan?.id ? null : plan);
-  };
-
-  return (
-    <div className="container py-6 space-y-8">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-      
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <ModuleCard
-                key={plan.id}
-                plan={plan}
-                onClick={() => handleSelectPlan(plan)}
-                isActive={selectedPlan?.id === plan.id}
-                onEditPlan={handleEditPlan}
-              />
-            ))}
-          </div>
-          
-          {selectedPlan && (
-            <ModuleDetailedSection plan={selectedPlan} />
-          )}
-        </div>
-      )}
-      
-      <ModuleDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        plan={editingPlan}
-        onSave={editingPlan ? handleUpdatePlan : handleCreatePlan}
-      />
-
-      {/* Dialog for confirming deletion would go here, but we're using the Modules component as is without adding all the functionality */}
-    </div>
-  );
-};
-
-export default Modules;
+      toast.success("Módulo criado
