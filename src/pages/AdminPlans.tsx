@@ -182,18 +182,18 @@ const AdminPlans = () => {
                 </p>
                 
                 {plan.credits && (
-                  <div className="bg-gray-100 rounded-md p-3 flex items-center mb-4">
+                  <div className="bg-gray-100 rounded-md p-3 flex items-center justify-center mb-4">
                     <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
                     <span className="text-sm">{plan.credits} créditos mensais</span>
                   </div>
                 )}
                 
                 <div className="mb-4">
-                  <h4 className="font-medium text-sm text-gray-600">Recursos inclusos:</h4>
-                  <Separator className="my-2" />
-                  <ul className="space-y-2 mt-3">
+                  <h4 className="font-medium text-sm text-gray-600 mb-1">Recursos inclusos:</h4>
+                  <Separator className="mb-3" />
+                  <ul className="space-y-2">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-start text-sm text-gray-600">
+                      <li key={index} className="flex items-center text-sm text-gray-600">
                         <div className="h-5 w-5 bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2">
                           <FileText className="h-3 w-3 text-purple-500" />
                         </div>
@@ -203,7 +203,7 @@ const AdminPlans = () => {
                   </ul>
                 </div>
                 
-                <div className="mt-auto">
+                <div className="mt-auto pt-4">
                   <Button 
                     onClick={() => handleEditPlan(plan)} 
                     className="w-full bg-purple-500 hover:bg-purple-600"
