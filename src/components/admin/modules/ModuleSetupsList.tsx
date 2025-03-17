@@ -254,7 +254,7 @@ export const ModuleSetupsList = () => {
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <span className="sr-only">Abrir menu</span>
-                          <MoreVertical className="h-4 w-4" />
+                          <MoreVertical className="h-4 w-4 text-primary" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
