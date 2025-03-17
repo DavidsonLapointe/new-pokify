@@ -173,6 +173,19 @@ const AdminModules = () => {
     setSelectedModule(selectedModule && selectedModule.id === module.id ? null : module);
   };
 
+  // Dividir os módulos em grupos de 4 para o carrossel no formato da grade
+  // Esta abordagem preserva o layout original da grade enquanto adiciona funcionalidade do carrossel
+  const moduleGroups = () => {
+    const groups = [];
+    const groupSize = 4; // 4 cards por slide (mesma quantidade da grid original)
+    
+    for (let i = 0; i < modules.length; i += groupSize) {
+      groups.push(modules.slice(i, i + groupSize));
+    }
+    
+    return groups;
+  };
+
   return (
     <div className="container py-6 space-y-8">
       <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
@@ -181,16 +194,32 @@ const AdminModules = () => {
         <LoadingState />
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {modules.map((module) => (
-              <ModuleCard
-                key={module.id}
-                module={module}
-                onClick={() => handleSelectModule(module)}
-                isActive={selectedModule?.id === module.id}
-                onEditModule={handleEditModule}
-              />
-            ))}
+          {/* Carrossel de módulos */}
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {moduleGroups().map((group, groupIndex) => (
+                  <CarouselItem key={groupIndex}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
+                      {group.map((module) => (
+                        <ModuleCard
+                          key={module.id}
+                          module={module}
+                          onClick={() => handleSelectModule(module)}
+                          isActive={selectedModule?.id === module.id}
+                          onEditModule={handleEditModule}
+                        />
+                      ))}
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              
+              <div className="flex justify-center gap-2 mt-4">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+            </Carousel>
           </div>
           
           {selectedModule && (
