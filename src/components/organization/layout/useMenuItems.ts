@@ -12,7 +12,8 @@ import {
   List,
   Sparkles,
   Layers,
-  Book
+  Book,
+  ClipboardCheck
 } from "lucide-react";
 import { User } from "@/types";
 

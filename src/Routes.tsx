@@ -20,6 +20,7 @@ import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminUsers from "./pages/AdminUsers";
 import AdminIntegrations from "./pages/AdminIntegrations";
 import AdminModules from "./pages/AdminModules";
+import AdminModuleSetups from "./pages/AdminModuleSetups";
 import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
@@ -110,6 +111,7 @@ function AppRoutes() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="modules" element={<AdminModules />} />
+          <Route path="module-setups" element={<AdminModuleSetups />} />
           <Route path="plans" element={<AdminPlans />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
