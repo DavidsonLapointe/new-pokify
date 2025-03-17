@@ -8,6 +8,8 @@ import { getStatusBadge } from "./table/TitleStatusBadge";
 import { TitlePaymentButton } from "./table/TitlePaymentButton";
 import { EmptyTitlesState } from "./table/EmptyTitlesState";
 import { Organization } from "@/types";
+import { Zap } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface FinancialTitlesTableProps {
   titles: FinancialTitle[];
@@ -68,8 +70,32 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
             <TableRow key={title.id}>
               <TableCell>{title.organization?.name}</TableCell>
               <TableCell>
-                {title.type === "pro_rata" ? "Pro Rata" : "Mensalidade"}
-                {title.referenceMonth && ` - ${format(new Date(title.referenceMonth), 'MMMM/yyyy', { locale: ptBR })}`}
+                {title.type === "pro_rata" && "Pro Rata"}
+                {title.type === "mensalidade" && (
+                  <>
+                    Mensalidade
+                    {title.referenceMonth && ` - ${format(new Date(title.referenceMonth), 'MMMM/yyyy', { locale: ptBR })}`}
+                  </>
+                )}
+                {title.type === "setup" && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1.5">
+                          <span>Setup</span>
+                          {title.moduleName && (
+                            <span className="bg-primary-lighter text-primary text-xs px-2 py-0.5 rounded-full">
+                              {title.moduleName}
+                            </span>
+                          )}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Cobrança de setup pela contratação de módulo</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </TableCell>
               <TableCell>
                 {new Intl.NumberFormat('pt-BR', {

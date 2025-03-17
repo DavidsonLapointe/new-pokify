@@ -52,6 +52,7 @@ export const FilterFields = ({
             <SelectItem value="all">Todos os Tipos</SelectItem>
             <SelectItem value="pro_rata">Pro Rata</SelectItem>
             <SelectItem value="mensalidade">Mensalidade</SelectItem>
+            <SelectItem value="setup">Setup</SelectItem>
           </SelectContent>
         </Select>
       </div>

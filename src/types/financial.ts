@@ -1,5 +1,5 @@
 
-export type TitleType = "pro_rata" | "mensalidade";
+export type TitleType = "pro_rata" | "mensalidade" | "setup";
 export type TitleStatus = "pending" | "paid" | "overdue";
 export type PaymentMethod = "pix" | "boleto" | "credit_card";
 
@@ -15,6 +15,8 @@ export interface FinancialTitle {
   paymentMethod?: PaymentMethod;
   createdAt: string;
   paymentStatusDetails?: string;
+  moduleId?: string | number;
+  moduleName?: string;
   organization?: {
     name: string;
     nome_fantasia: string | null;
@@ -28,6 +30,7 @@ export interface CreateFinancialTitleDTO {
   value: number;
   dueDate: string;
   referenceMonth?: string;
+  moduleId?: string | number;
 }
 
 export interface PaymentOptions {
