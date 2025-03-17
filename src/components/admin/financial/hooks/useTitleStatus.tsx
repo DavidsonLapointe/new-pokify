@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { FinancialTitle, TitleStatus } from "@/types/financial";
-import { isBefore } from "date-fns";
+import { isBefore, isSameDay } from "date-fns";
 
 export const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
   if (title.status === "paid") return "paid";
@@ -9,10 +9,13 @@ export const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
   const today = new Date();
   const dueDate = new Date(title.dueDate);
   
-  if (isBefore(dueDate, today)) {
+  // Verifica se a data de vencimento é anterior a hoje (e não são o mesmo dia)
+  // Um título só é considerado vencido se sua data de vencimento for ANTERIOR à data atual
+  if (isBefore(dueDate, today) && !isSameDay(dueDate, today)) {
     return "overdue";
   }
   
+  // Se não é pago nem vencido, então está pendente
   return "pending";
 };
 
