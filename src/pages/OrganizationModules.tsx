@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -827,4 +828,62 @@ const OrganizationModules = () => {
 
         {/* Diálogo de cancelamento com coleta de motivo */}
         <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-          <DialogContent className="sm:max-w-
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <Trash2 className="h-5 w-5" />
+                Cancelar Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <p className="mb-4">
+                Você está prestes a cancelar um módulo contratado. Esta ação não pode ser desfeita.
+              </p>
+              
+              <div className="space-y-3">
+                <Label htmlFor="cancelReason">Por que você deseja cancelar este módulo?</Label>
+                <Textarea 
+                  id="cancelReason" 
+                  placeholder="Descreva o motivo do cancelamento..."
+                  className="min-h-[100px] resize-none"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                />
+              </div>
+              
+              <div className="bg-amber-50 p-3 rounded-md my-4 text-amber-800 text-sm">
+                <p className="flex items-start">
+                  <AlertTriangle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                  O cancelamento será efetivado imediatamente após a confirmação.
+                </p>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Desistir
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de termos de uso */}
+        <TermsDialog
+          open={isTermsDialogOpen}
+          onOpenChange={setIsTermsDialogOpen}
+          moduleId={selectedTool}
+          moduleName={tools.find(t => t.id === selectedTool)?.title}
+        />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
