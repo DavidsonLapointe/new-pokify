@@ -85,7 +85,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-1 text-sm text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                           <Zap className="h-3 w-3" />
-                          <span>{module.credits} créditos</span>
+                          <span className="font-medium">{module.credits} créditos</span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -109,6 +109,18 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
           <p className="text-muted-foreground text-left">{module.description}</p>
+          
+          {/* Adicionando a informação de créditos de forma mais clara */}
+          {module.credits && (
+            <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded-md">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-amber-600" />
+                <p className="text-amber-800">
+                  <span className="font-semibold">Consumo de créditos:</span> Este módulo consome <span className="font-semibold">{module.credits} créditos</span> por cada execução
+                </p>
+              </div>
+            </div>
+          )}
         </div>
           
         {/* Benefícios e Como funciona lado a lado em containers brancos */}
