@@ -874,4 +874,4 @@ const Modules = () => {
       };
       
       setPlans((prevPlans) => [...prevPlans, newPlan]);
-      toast.success("Módulo criado com sucesso!");
+      toast.success("Módulo criado
