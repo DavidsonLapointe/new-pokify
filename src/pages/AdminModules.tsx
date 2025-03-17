@@ -675,7 +675,7 @@ const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) =
       <p className="text-gray-600 mb-6">{plan.description}</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
+        <div className="space-y-4">\
           <div className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-primary" />
             <span className="font-medium">Preço:</span>
