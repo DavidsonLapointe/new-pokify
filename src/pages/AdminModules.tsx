@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -867,8 +868,8 @@ const Modules = () => {
   const handleSavePlan = async (data: Partial<Plan>) => {
     console.log("Salvando módulo:", data);
     try {
-      // Se estiver editando um módulo existente e mudando ele para inativo
-      if (editingPlan && editingPlan.active && data.active) {
+      // Se estiver editando um módulo existente
+      if (editingPlan) {
         // Atualiza o plano existente
         const updatedPlan = {
           ...editingPlan,
@@ -880,4 +881,125 @@ const Modules = () => {
           prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
         );
         
-        // Atualiza
+        // Atualiza o plano selecionado se for o mesmo que está sendo editado
+        if (selectedPlan && selectedPlan.id === editingPlan.id) {
+          setSelectedPlan(updatedPlan);
+        }
+        
+        toast.success("Módulo atualizado com sucesso!");
+      } else {
+        // Criando um novo módulo
+        const newPlan: Plan = {
+          id: Date.now(), // ID temporário até salvar no banco
+          name: data.name || "Novo Módulo",
+          price: data.price ? parseFloat(data.price.toString()) : 0,
+          shortDescription: data.shortDescription || "",
+          description: data.description || "",
+          benefits: data.benefits || [],
+          howItWorks: data.howItWorks || [],
+          active: data.active !== undefined ? data.active : true,
+          comingSoon: data.comingSoon || false,
+          actionButtonText: data.actionButtonText || "Contratar",
+          icon: data.icon || "MessageCircle",
+          credits: data.credits || null
+        };
+        
+        // Adiciona o novo plano à lista
+        setPlans(prevPlans => [...prevPlans, newPlan]);
+        
+        // Seleciona o novo plano
+        setSelectedPlan(newPlan);
+        
+        toast.success("Novo módulo criado com sucesso!");
+      }
+      
+      // Reset do estado de edição
+      setEditingPlan(null);
+    } catch (error) {
+      console.error("Erro ao salvar módulo:", error);
+      toast.error("Não foi possível salvar o módulo. Tente novamente.");
+    }
+  };
+  
+  const handleDeletePlan = async (id: number | string) => {
+    if (window.confirm("Tem certeza que deseja desativar este módulo? Esta ação não pode ser desfeita.")) {
+      setDeletingPlanId(id.toString());
+      try {
+        // Em um ambiente real, usaríamos deletePlan(id)
+        setTimeout(() => {
+          // Apenas marca como inativo, não remove
+          setPlans(prevPlans => 
+            prevPlans.map(p => p.id === id ? { ...p, active: false } : p)
+          );
+          
+          // Atualiza o plano selecionado se for o mesmo que está sendo desativado
+          if (selectedPlan && selectedPlan.id === id) {
+            setSelectedPlan(prev => prev ? { ...prev, active: false } : null);
+          }
+          
+          setDeletingPlanId(null);
+          toast.success("Módulo desativado com sucesso!");
+        }, 1000);
+      } catch (error) {
+        console.error("Erro ao desativar módulo:", error);
+        toast.error("Não foi possível desativar o módulo. Tente novamente.");
+        setDeletingPlanId(null);
+      }
+    }
+  };
+
+  return (
+    <div className="container mx-auto py-8 max-w-[1200px]">
+      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
+      
+      {isLoading ? (
+        <LoadingState />
+      ) : (
+        <>
+          <div className="my-8">
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-4">
+                {plans.map((plan) => (
+                  <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                    <ModuleCard
+                      plan={plan}
+                      onClick={() => setSelectedPlan(plan)}
+                      isActive={selectedPlan?.id === plan.id}
+                      onEditPlan={setEditingPlan}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </div>
+
+          {selectedPlan && (
+            <ModuleDetails
+              plan={selectedPlan}
+              onEdit={setEditingPlan}
+              onDelete={handleDeletePlan}
+              isDeleting={deletingPlanId === selectedPlan.id.toString()}
+            />
+          )}
+        </>
+      )}
+      
+      {/* Modal para criar/editar módulo */}
+      <ModuleDialog
+        open={isCreateDialogOpen || !!editingPlan}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsCreateDialogOpen(false);
+            setEditingPlan(null);
+          }
+        }}
+        plan={editingPlan || undefined}
+        onSave={handleSavePlan}
+      />
+    </div>
+  );
+};
+
+export default Modules;
