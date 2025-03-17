@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,6 +47,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { FinancialTitle } from "@/types/financial";
+import { TermsDialog } from "@/components/admin/organizations/LegalDocumentsDialogs";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -84,6 +84,7 @@ const OrganizationModules = () => {
   const [isPaymentProcessingDialogOpen, setIsPaymentProcessingDialogOpen] = useState(false);
   const [isPaymentSuccessDialogOpen, setIsPaymentSuccessDialogOpen] = useState(false);
   const [isPaymentFailedDialogOpen, setIsPaymentFailedDialogOpen] = useState(false);
+  const [isTermsDialogOpen, setIsTermsDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
   const [selectedToolDetails, setSelectedToolDetails] = useState<Tool | null>(null);
@@ -435,6 +436,12 @@ const OrganizationModules = () => {
     ).length;
   };
 
+  // Função para abrir os termos de uso
+  const handleOpenTerms = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsTermsDialogOpen(true);
+  };
+
   return (
     <TooltipProvider>
       <div className="space-y-6">
@@ -663,7 +670,15 @@ const OrganizationModules = () => {
                 </div>
                 
                 <p className="text-sm text-gray-500">
-                  Ao confirmar, você concorda com os <Link href="#" className="text-primary underline hover:text-primary/90" target="_blank">termos de uso</Link> deste módulo.
+                  Ao confirmar, você concorda com os{" "}
+                  <Link 
+                    href="#"
+                    className="text-primary underline hover:text-primary/90"
+                    onClick={handleOpenTerms}
+                  >
+                    termos de uso
+                  </Link>{" "}
+                  deste módulo.
                 </p>
               </div>
             )}
@@ -812,55 +827,4 @@ const OrganizationModules = () => {
 
         {/* Diálogo de cancelamento com coleta de motivo */}
         <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>
-                Cancelamento de Módulo
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <div className="mb-4">
-                <p className="text-sm font-medium mb-1">Módulo selecionado para cancelamento:</p>
-                {cancelModuleId && (
-                  <div className="p-3 bg-gray-50 rounded-md">
-                    <p className="font-medium">
-                      {tools.find(t => t.id === cancelModuleId)?.title}
-                    </p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mb-4">
-                <Label htmlFor="cancelReason" className="block mb-2">
-                  Motivo do cancelamento
-                </Label>
-                <Textarea 
-                  id="cancelReason"
-                  placeholder="Por favor, informe o motivo do cancelamento"
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
-                  className="h-24"
-                />
-              </div>
-            </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button 
-                onClick={confirmCancelation}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Confirmar Cancelamento
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </TooltipProvider>
-  );
-};
-
-export default OrganizationModules;
+          <DialogContent className="sm:max
