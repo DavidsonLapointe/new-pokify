@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -249,7 +250,7 @@ const ModuleDialog = ({
       comingSoon: plan?.comingSoon !== undefined ? plan.comingSoon : false,
       icon: plan?.icon || "MessageCircle",
       actionButtonText: plan?.actionButtonText || "Contratar",
-      credits: plan?.credits || 0,
+      credits: plan?.credits || null,
     }
   });
 
@@ -267,7 +268,7 @@ const ModuleDialog = ({
         comingSoon: plan.comingSoon || false,
         icon: plan.icon || "MessageCircle",
         actionButtonText: plan.actionButtonText || "Contratar",
-        credits: plan.credits || 0,
+        credits: plan.credits || null,
       });
     } else {
       form.reset({
@@ -281,7 +282,7 @@ const ModuleDialog = ({
         comingSoon: false,
         icon: "MessageCircle",
         actionButtonText: "Contratar",
-        credits: 0,
+        credits: null,
       });
     }
   }, [plan, form]);
@@ -636,6 +637,98 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   );
 };
 
+// Module Detailed Section component
+interface ModuleDetailedSectionProps {
+  plan: Plan;
+}
+
+const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) => {
+  // Get the appropriate icon component
+  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
+    ? iconMap[plan.icon as keyof typeof iconMap] 
+    : MessageCircle;
+
+  return (
+    <Card className="p-5 bg-[#F8F8FB]">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 bg-primary-lighter rounded-md text-primary">
+          <IconComponent size={24} />
+        </div>
+        <h3 className="text-xl font-semibold">{plan.name}</h3>
+        <Badge 
+          variant="secondary"
+          className={`
+            ${plan.active 
+              ? "bg-green-100 text-green-800 hover:bg-green-100" 
+              : "bg-red-100 text-red-800 hover:bg-red-100"}
+          `}
+        >
+          {plan.active ? "Ativo" : "Inativo"}
+        </Badge>
+        
+        {plan.comingSoon && (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+            Em breve
+          </Badge>
+        )}
+      </div>
+      
+      <p className="text-gray-600 mb-6">{plan.description}</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-primary" />
+            <span className="font-medium">Preço:</span>
+            <span>R$ {plan.price.toFixed(2)}/mês</span>
+          </div>
+          
+          {plan.credits !== null && plan.credits !== undefined && (
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              <span className="font-medium">Créditos por execução:</span>
+              <span>{plan.credits}</span>
+            </div>
+          )}
+          
+          <div>
+            <h4 className="font-medium mb-2 flex items-center">
+              <CheckCircle className="h-5 w-5 text-primary mr-2" />
+              Benefícios
+            </h4>
+            <ul className="space-y-1 pl-7 list-disc">
+              {plan.benefits && plan.benefits.map((benefit, idx) => (
+                <li key={idx} className="text-sm">{benefit}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-medium mb-2 flex items-center">
+              <Blocks className="h-5 w-5 text-primary mr-2" />
+              Como funciona
+            </h4>
+            <ul className="space-y-1 pl-7 list-decimal">
+              {plan.howItWorks && plan.howItWorks.map((step, idx) => (
+                <li key={idx} className="text-sm">{step}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" className="gap-2">
+          <Pencil className="h-4 w-4" />
+          Editar Módulo
+        </Button>
+      </div>
+    </Card>
+  );
+};
+
 interface PageHeaderProps {
   setIsCreateDialogOpen: (open: boolean) => void;
 }
@@ -775,7 +868,7 @@ const Modules = () => {
         }
       } else {
         console.log("Adicionando novo módulo");
-        const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
+        const newPlan = { ...data, id: data.id || Date.now() } as Plan;
         setPlans([...plans, newPlan]);
       }
 
@@ -883,4 +976,29 @@ const Modules = () => {
                 ))}
               </CarouselContent>
               <CarouselPrevious className="left-0" />
-              <
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </div>
+
+          {/* Detailed Module Section */}
+          {selectedPlan && <ModuleDetailedSection plan={selectedPlan} />}
+        </>
+      )}
+
+      {/* Dialog for creating/editing plans */}
+      <ModuleDialog
+        open={isCreateDialogOpen || !!editingPlan}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsCreateDialogOpen(false);
+            setEditingPlan(null);
+          }
+        }}
+        plan={editingPlan || undefined}
+        onSave={handleSavePlan}
+      />
+    </div>
+  );
+};
+
+export default Modules;
