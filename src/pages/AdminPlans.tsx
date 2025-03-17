@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, Pencil, Plus } from "lucide-react";
+import { Check, Pencil, Plus, CreditCard, Mail, Users, Database } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlans } from "@/services/plans/planFetchService";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
@@ -31,6 +31,20 @@ const AdminPlans = () => {
   const handleSavePlan = async () => {
     await refetch();
     setEditPlanDialogOpen(false);
+  };
+
+  // Função para obter o ícone correto baseado no texto do benefício
+  const getBenefitIcon = (benefit: string) => {
+    if (benefit.toLowerCase().includes('usuário') || benefit.toLowerCase().includes('usuários')) {
+      return <Users className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
+    } else if (benefit.toLowerCase().includes('crédito') || benefit.toLowerCase().includes('créditos')) {
+      return <CreditCard className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
+    } else if (benefit.toLowerCase().includes('integração') || benefit.toLowerCase().includes('crm')) {
+      return <Database className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
+    } else if (benefit.toLowerCase().includes('suporte') || benefit.toLowerCase().includes('email')) {
+      return <Mail className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
+    }
+    return <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
   };
 
   if (isLoading) {
@@ -66,47 +80,47 @@ const AdminPlans = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans?.map((plan) => (
-          <Card key={plan.id} className="border">
-            <CardContent className="p-6 flex flex-col h-full">
-              <div className="mb-4">
-                <div className="flex justify-between items-start mb-1">
+          <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden">
+            <CardContent className="p-0">
+              <div className="p-4 bg-white">
+                <div className="flex justify-between items-start">
                   <h3 className="text-xl font-semibold">{plan.name}</h3>
-                  {plan.active ? (
-                    <Badge className="bg-green-500 hover:bg-green-600">Ativo</Badge>
-                  ) : (
-                    <Badge variant="destructive">Inativo</Badge>
-                  )}
+                  <div className="text-purple-500 font-medium">
+                    R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
+                  </div>
                 </div>
-                <div className="flex items-baseline mb-4">
-                  <span className="text-3xl font-bold">
-                    R$ {plan.price.toFixed(2)}
-                  </span>
-                  <span className="text-sm text-muted-foreground ml-2">/mês</span>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-gray-500 mt-1">
                   {plan.shortDescription}
                 </p>
+                
+                {plan.credits && (
+                  <div className="flex items-center mt-3 text-sm text-gray-600">
+                    <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
+                    {plan.credits} créditos mensais
+                  </div>
+                )}
               </div>
-
-              <div className="flex-grow mb-6">
-                <h4 className="font-medium mb-2">Funções incluídas:</h4>
+              
+              <div className="px-4 py-3 bg-gray-50">
+                <h4 className="font-medium text-sm mb-2">Recursos inclusos:</h4>
                 <ul className="space-y-2">
                   {plan.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-sm">{benefit}</span>
+                    <li key={index} className="flex items-center text-sm text-gray-600">
+                      {getBenefitIcon(benefit)}
+                      <span>{benefit}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <Button 
-                onClick={() => handleEditPlan(plan)} 
-                className="w-full bg-primary"
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Editar Plano
-              </Button>
+              
+              <div className="p-4 bg-white">
+                <Button 
+                  onClick={() => handleEditPlan(plan)} 
+                  className="w-full bg-purple-500 hover:bg-purple-600"
+                >
+                  Editar Plano
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -17,20 +17,15 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
   const { toast } = useToast();
   const isEditing = !!plan;
 
-  console.log("usePlanForm iniciado com módulo:", plan);
-
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planFormSchema),
     defaultValues: {
       name: "",
       price: "",
       shortDescription: "",
-      description: "",
       benefits: "",
-      howItWorks: "",
       active: true,
-      comingSoon: false,
-      actionButtonText: "Contratar",
+      credits: null,
       stripeProductId: "",
       stripePriceId: "",
     },
@@ -38,8 +33,6 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   useEffect(() => {
     if (plan) {
-      console.log("Carregando dados do módulo no formulário:", plan);
-      
       // Prepare benefits for form
       let benefitsString = "";
       if (Array.isArray(plan.benefits)) {
@@ -48,24 +41,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         benefitsString = plan.benefits;
       }
       
-      // Prepare howItWorks for form
-      let howItWorksString = "";
-      if (Array.isArray(plan.howItWorks)) {
-        howItWorksString = plan.howItWorks.join("\n");
-      } else if (typeof plan.howItWorks === 'string') {
-        howItWorksString = plan.howItWorks;
-      }
-
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
         shortDescription: plan.shortDescription || "",
-        description: plan.description,
         benefits: benefitsString,
-        howItWorks: howItWorksString,
         active: plan.active,
-        comingSoon: plan.comingSoon || false,
-        actionButtonText: plan.actionButtonText || "Contratar",
+        credits: plan.credits || null,
         stripeProductId: plan.stripeProductId || "",
         stripePriceId: plan.stripePriceId || "",
       });
@@ -74,12 +56,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         name: "",
         price: "",
         shortDescription: "",
-        description: "",
         benefits: "",
-        howItWorks: "",
         active: true,
-        comingSoon: false,
-        actionButtonText: "Contratar",
+        credits: null,
         stripeProductId: "",
         stripePriceId: "",
       });
@@ -88,19 +67,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   const onSubmit = async (values: PlanFormValues) => {
     try {
-      console.log("Dados do formulário para salvar:", values);
-      
       // Ensure price is a number and parse string lists to arrays
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
         benefits: values.benefits.split("\n").filter(f => f.trim()),
-        howItWorks: values.howItWorks.split("\n").filter(f => f.trim()),
         active: values.active,
-        comingSoon: values.comingSoon
       };
-      
-      console.log("Valores formatados para salvar:", formattedValues);
       
       let savedPlan: Plan | null = null;
       let stripeResult;
@@ -108,17 +81,15 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
       if (isEditing && formattedValues.stripeProductId) {
         try {
-          console.log("Atualizando produto no Stripe");
           stripeResult = await updateStripeProduct({
             stripeProductId: formattedValues.stripeProductId,
             stripePriceId: formattedValues.stripePriceId || '',
             name: formattedValues.name,
-            description: formattedValues.description,
+            description: formattedValues.shortDescription,
             price: formattedValues.price,
             active: formattedValues.active,
+            credits: formattedValues.credits
           });
-          
-          console.log("Produto atualizado no Stripe com sucesso:", stripeResult);
           
           // Atualizar o stripePriceId com o novo preço se ele foi atualizado
           if (stripeResult.priceUpdated && stripeResult.price?.id !== formattedValues.stripePriceId) {
@@ -134,7 +105,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
           console.error("Erro ao atualizar no Stripe:", stripeError);
           toast({
             title: "Erro ao atualizar no Stripe",
-            description: "O módulo será atualizado apenas no banco de dados local.",
+            description: "O plano será atualizado apenas no banco de dados local.",
             variant: "destructive",
           });
         }
@@ -142,49 +113,40 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       
       // Salvar no banco de dados
       if (isEditing && plan) {
-        console.log('Atualizando módulo', plan.id, formattedValues);
         savedPlan = await updatePlan(plan.id, formattedValues);
-        console.log('Módulo atualizado:', savedPlan);
       } else {
         // Ensure active is explicitly included for new plans
         const newPlanData: Omit<Plan, "id"> = {
           name: formattedValues.name,
           price: formattedValues.price,
           shortDescription: formattedValues.shortDescription,
-          description: formattedValues.description,
           benefits: formattedValues.benefits,
-          howItWorks: formattedValues.howItWorks,
           active: formattedValues.active,
-          comingSoon: formattedValues.comingSoon,
-          actionButtonText: formattedValues.actionButtonText,
           stripeProductId: formattedValues.stripeProductId,
           stripePriceId: formattedValues.stripePriceId,
+          credits: formattedValues.credits,
         };
         
-        console.log('Criando novo módulo:', newPlanData);
         savedPlan = await createPlan(newPlanData);
-        console.log('Novo módulo criado:', savedPlan);
       }
       
       if (savedPlan) {
-        console.log('Módulo salvo com sucesso:', savedPlan);
         await onSave(savedPlan);
         
         toast({
-          title: `Módulo ${isEditing ? "atualizado" : "criado"} com sucesso!`,
-          description: `O módulo ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
+          title: `Plano ${isEditing ? "atualizado" : "criado"} com sucesso!`,
+          description: `O plano ${values.name} foi ${isEditing ? "atualizado" : "criado"} com sucesso.`,
         });
         
         onOpenChange(false);
       } else {
-        console.error('Não foi possível salvar o módulo, resposta vazia');
-        throw new Error('Não foi possível salvar o módulo');
+        throw new Error('Não foi possível salvar o plano');
       }
     } catch (error) {
-      console.error('Erro ao salvar módulo:', error);
+      console.error('Erro ao salvar plano:', error);
       toast({
-        title: "Erro ao salvar módulo",
-        description: error.message || "Ocorreu um erro ao salvar o módulo. Tente novamente.",
+        title: "Erro ao salvar plano",
+        description: error.message || "Ocorreu um erro ao salvar o plano. Tente novamente.",
         variant: "destructive",
       });
     }
