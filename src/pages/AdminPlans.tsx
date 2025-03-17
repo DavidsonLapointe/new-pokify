@@ -8,11 +8,13 @@ import { fetchPlans } from "@/services/plans/planFetchService";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminPlans = () => {
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
   const [localPlans, setLocalPlans] = useState<Plan[]>([]);
+  const { toast } = useToast();
 
   const { data: fetchedPlans, isLoading, error } = useQuery({
     queryKey: ['plans'],
@@ -52,21 +54,48 @@ const AdminPlans = () => {
   };
 
   const handleSavePlan = async (updatedPlan: Partial<Plan>) => {
-    // Se estamos editando um plano existente
-    if (updatedPlan.id) {
-      setLocalPlans(prevPlans => 
-        prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
-      );
-      console.log("Plano atualizado:", updatedPlan);
-    } 
-    // Se estamos criando um novo plano
-    else {
-      const newPlan = updatedPlan as Plan;
-      setLocalPlans(prevPlans => [...prevPlans, newPlan]);
-      console.log("Plano adicionado:", newPlan, "Lista atualizada:", [...localPlans, newPlan]);
+    try {
+      // Se estamos editando um plano existente
+      if (updatedPlan.id) {
+        setLocalPlans(prevPlans => 
+          prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
+        );
+        console.log("Plano atualizado:", updatedPlan);
+        toast({
+          title: "Plano atualizado com sucesso",
+          description: `O plano ${updatedPlan.name} foi atualizado.`
+        });
+      } 
+      // Se estamos criando um novo plano
+      else {
+        const newPlan = { 
+          ...(updatedPlan as Plan),
+          id: Date.now() // Garantir um ID único baseado no timestamp
+        };
+        
+        console.log("Novo plano sendo adicionado:", newPlan);
+        
+        setLocalPlans(prevPlans => {
+          const updatedPlans = [...prevPlans, newPlan];
+          console.log("Lista de planos atualizada:", updatedPlans);
+          return updatedPlans;
+        });
+        
+        toast({
+          title: "Plano criado com sucesso",
+          description: `O plano ${newPlan.name} foi criado.`
+        });
+      }
+      
+      setEditPlanDialogOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar plano:", error);
+      toast({
+        title: "Erro ao salvar plano",
+        description: "Ocorreu um erro ao salvar o plano. Tente novamente.",
+        variant: "destructive"
+      });
     }
-    
-    setEditPlanDialogOpen(false);
   };
 
   // Função para obter o ícone correto baseado no texto do benefício
@@ -82,6 +111,11 @@ const AdminPlans = () => {
     }
     return <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
   };
+
+  // Debug: mostrar planos locais sempre que mudam
+  useEffect(() => {
+    console.log("Estado atual dos planos:", localPlans);
+  }, [localPlans]);
 
   if (isLoading && localPlans.length === 0) {
     return (
@@ -153,7 +187,7 @@ const AdminPlans = () => {
                 <div className="px-4 py-3 bg-gray-50">
                   <h4 className="font-medium text-sm mb-2">Recursos inclusos:</h4>
                   <ul className="space-y-2">
-                    {plan.benefits && plan.benefits.map((benefit, index) => (
+                    {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
                       <li key={index} className="flex items-center text-sm text-gray-600">
                         {getBenefitIcon(benefit)}
                         <span>{benefit}</span>
