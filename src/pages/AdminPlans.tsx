@@ -166,40 +166,41 @@ const AdminPlans = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {localPlans.map((plan) => (
-            <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden">
-              <CardContent className="p-0">
-                <div className="p-4 bg-white">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-semibold">{plan.name}</h3>
-                    <div className="text-purple-500 font-medium">
-                      R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
-                    </div>
+            <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden flex flex-col">
+              <CardContent className="p-4 pt-6 flex-grow flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-semibold">{plan.name}</h3>
+                  <div className="text-purple-500 font-medium">
+                    R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {plan.shortDescription}
-                  </p>
-                  
-                  {plan.credits && (
-                    <div className="flex items-center mt-3 text-sm text-gray-600">
-                      <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
-                      {plan.credits} créditos mensais
-                    </div>
-                  )}
                 </div>
                 
-                <div className="px-4 py-3 bg-gray-50">
-                  <h4 className="font-medium text-sm mb-2">Recursos inclusos:</h4>
+                <p className="text-sm text-gray-500 mb-4">
+                  {plan.shortDescription}
+                </p>
+                
+                {plan.credits && (
+                  <div className="bg-gray-100 rounded-md p-3 flex items-center mb-4">
+                    <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
+                    <span className="text-sm">{plan.credits} créditos mensais</span>
+                  </div>
+                )}
+                
+                <div className="mb-4">
+                  <h4 className="font-medium text-sm mb-3">Recursos inclusos:</h4>
                   <ul className="space-y-2">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-center text-sm text-gray-600">
-                        <FileText className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />
+                      <li key={index} className="flex items-start text-sm text-gray-600">
+                        <div className="h-5 w-5 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2 mt-0.5">
+                          <FileText className="h-3 w-3 text-purple-500" />
+                        </div>
                         <span>{benefit}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 
-                <div className="p-4 bg-white">
+                <div className="mt-auto">
                   <Button 
                     onClick={() => handleEditPlan(plan)} 
                     className="w-full bg-purple-500 hover:bg-purple-600"
