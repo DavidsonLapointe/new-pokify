@@ -69,8 +69,8 @@ const AdminPlans = () => {
           id: Date.now(), // Garantir um ID único baseado no timestamp
           benefits: Array.isArray(updatedPlan.benefits) 
             ? updatedPlan.benefits 
-            : typeof updatedPlan.benefits === 'string' 
-              ? updatedPlan.benefits.split('\n').filter(b => b.trim()) 
+            : updatedPlan.benefits 
+              ? (updatedPlan.benefits as string).split('\n').filter(b => b.trim()) 
               : []
         };
         
