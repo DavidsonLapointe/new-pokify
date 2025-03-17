@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -708,100 +707,78 @@ const ModuleDetails: React.FC<{
     : MessageCircle;
     
   return (
-    <Card className="mt-8">
-      <CardHeader className="p-6">
-        <div className="flex justify-between items-start">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-primary-lighter rounded-md">
-              <IconComponent className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                {plan.comingSoon && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="bg-blue-100 text-blue-800 p-1 rounded-full">
-                          <Clock className="h-4 w-4" />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Em breve disponível</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                <Badge 
-                  variant="secondary"
-                  className={`
-                    ${plan.active 
-                      ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                      : "bg-red-100 text-red-800 hover:bg-red-100"}
-                  `}
-                >
-                  {plan.active ? "Ativo" : "Inativo"}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-lg text-primary font-semibold">
-                  R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
-                </div>
-                {plan.credits && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center gap-1 text-sm text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
-                          <Zap className="h-3 w-3" />
-                          <span>{plan.credits} créditos</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Créditos consumidos por execução</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-            </div>
+    <Card className="mt-8 overflow-hidden">
+      <div className="p-6 pb-3 flex items-start justify-between border-b">
+        <div className="flex items-center gap-3">
+          <div className="bg-[#F2F1FD] rounded-full p-2 text-[#9b87f5]">
+            <IconComponent className="h-8 w-8" />
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => onEdit(plan)}>
-              <Pencil className="h-4 w-4 mr-1" /> Editar
-            </Button>
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={() => onDelete(plan.id)}
-              disabled={isDeleting || !plan.active}
-            >
-              {isDeleting ? 
-                <div className="flex items-center">
-                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-1"></div>
-                  Processando...
-                </div> : 
-                <>
-                  <Trash2 className="h-4 w-4 mr-1" /> Desativar
-                </>
-              }
-            </Button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-semibold">{plan.name}</h3>
+              <Badge 
+                variant="outline"
+                className="bg-green-100 text-green-800 border-0 text-xs"
+              >
+                {plan.active ? "Ativo" : "Inativo"}
+              </Badge>
+            </div>
+            <div className="flex items-center mt-1">
+              <span className="text-[#9b87f5] font-semibold">
+                R$ {plan.price.toFixed(2)}
+              </span>
+              <span className="text-sm text-gray-500">/mês</span>
+              {plan.credits && (
+                <div className="ml-2 text-sm flex items-center text-amber-700">
+                  <Zap className="h-3 w-3 mr-1" />
+                  <span>{plan.credits} créditos</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="px-6 pb-6 pt-0">
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => onEdit(plan)}
+            className="bg-white"
+          >
+            <Pencil className="h-4 w-4 mr-1" /> Editar
+          </Button>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={() => onDelete(plan.id)}
+            disabled={isDeleting || !plan.active}
+          >
+            {isDeleting ? 
+              <div className="flex items-center">
+                <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-1"></div>
+                Processando...
+              </div> : 
+              <>
+                <Trash2 className="h-4 w-4 mr-1" /> Desativar
+              </>
+            }
+          </Button>
+        </div>
+      </div>
+
+      <CardContent className="px-6 py-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
-            <p className="text-muted-foreground">{plan.description}</p>
+            <p className="text-gray-600">{plan.description}</p>
             
             <h3 className="text-lg font-semibold mt-6 mb-3">Como funciona</h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {plan.howItWorks?.map((step, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <div className="bg-primary-lighter text-primary font-semibold rounded-full h-6 w-6 flex items-center justify-center text-sm mt-0.5">
+                <div key={i} className="flex items-start gap-3">
+                  <div className="bg-[#F2F1FD] text-[#9b87f5] font-medium rounded-full h-6 w-6 flex items-center justify-center text-sm flex-shrink-0">
                     {i+1}
                   </div>
-                  <p>{step}</p>
+                  <p className="text-gray-700">{step}</p>
                 </div>
               ))}
             </div>
@@ -809,11 +786,11 @@ const ModuleDetails: React.FC<{
           
           <div>
             <h3 className="text-lg font-semibold mb-3">Benefícios</h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {plan.benefits?.map((benefit, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                  <p>{benefit}</p>
+                <div key={i} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <p className="text-gray-700">{benefit}</p>
                 </div>
               ))}
             </div>
@@ -821,12 +798,12 @@ const ModuleDetails: React.FC<{
             <h3 className="text-lg font-semibold mt-6 mb-3">Informações adicionais</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground">Texto do botão de ação</h4>
-                <p>{plan.actionButtonText || "Contratar"}</p>
+                <h4 className="text-sm font-medium text-gray-500">Texto do botão de ação</h4>
+                <p className="text-gray-900">{plan.actionButtonText || "Contratar"}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground">Créditos por execução</h4>
-                <p>{plan.credits ? `${plan.credits} créditos` : "Não consome créditos"}</p>
+                <h4 className="text-sm font-medium text-gray-500">Créditos por execução</h4>
+                <p className="text-gray-900">{plan.credits ? `${plan.credits} créditos` : "Não consome créditos"}</p>
               </div>
             </div>
           </div>
@@ -899,130 +876,3 @@ const Modules = () => {
         // Edição normal de um módulo existente
         const updatedPlan = {
           ...editingPlan,
-          ...data
-        };
-        
-        setPlans(prevPlans => 
-          prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
-        );
-        
-        if (selectedPlan && selectedPlan.id === editingPlan.id) {
-          setSelectedPlan(updatedPlan);
-        }
-        
-        toast.success("Módulo atualizado com sucesso!");
-      } else {
-        // Criação de um novo módulo
-        const newPlan: Plan = {
-          id: Date.now(), // Usado como ID temporário
-          name: data.name || "Novo Módulo",
-          price: data.price || 0,
-          description: data.description || "",
-          shortDescription: data.shortDescription || "",
-          benefits: data.benefits || [],
-          active: data.active !== undefined ? data.active : true,
-          howItWorks: data.howItWorks || [],
-          comingSoon: data.comingSoon || false,
-          actionButtonText: data.actionButtonText || "Contratar",
-          icon: data.icon || "MessageCircle",
-          credits: data.credits || null
-        };
-        
-        setPlans(prevPlans => [...prevPlans, newPlan]);
-        toast.success("Novo módulo criado com sucesso!");
-      }
-      
-      // Limpa o estado de edição
-      setEditingPlan(null);
-      setIsCreateDialogOpen(false);
-    } catch (error) {
-      console.error("Erro ao salvar módulo:", error);
-      toast.error("Ocorreu um erro ao salvar o módulo.");
-    }
-  };
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(plan);
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleDeletePlan = async (id: string | number) => {
-    try {
-      setDeletingPlanId(id.toString());
-      
-      // Em um ambiente real, chamaríamos a API para desativar o módulo
-      // await deletePlan(id);
-      
-      // Simulamos a desativação do módulo (não removemos, apenas desativamos)
-      setPlans(prevPlans => 
-        prevPlans.map(p => p.id === id ? { ...p, active: false } : p)
-      );
-      
-      // Atualiza o plano selecionado se for o mesmo
-      if (selectedPlan && selectedPlan.id === id) {
-        setSelectedPlan(prev => prev ? { ...prev, active: false } : null);
-      }
-      
-      toast.success("Módulo desativado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao desativar módulo:", error);
-      toast.error("Ocorreu um erro ao desativar o módulo.");
-    } finally {
-      setDeletingPlanId(null);
-    }
-  };
-
-  const handleSelectPlan = (plan: Plan) => {
-    setSelectedPlan(prev => prev?.id === plan.id ? null : plan);
-  };
-
-  return (
-    <div className="space-y-8">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-      
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <>
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {plans.map((plan) => (
-                <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                  <ModuleCard 
-                    plan={plan}
-                    onClick={() => handleSelectPlan(plan)}
-                    isActive={selectedPlan?.id === plan.id}
-                    onEditPlan={handleEditPlan}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-end gap-2 mt-4">
-              <CarouselPrevious className="static transform-none" />
-              <CarouselNext className="static transform-none" />
-            </div>
-          </Carousel>
-          
-          {selectedPlan && (
-            <ModuleDetails 
-              plan={selectedPlan}
-              onEdit={handleEditPlan}
-              onDelete={handleDeletePlan}
-              isDeleting={deletingPlanId === selectedPlan.id.toString()}
-            />
-          )}
-        </>
-      )}
-      
-      <ModuleDialog 
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        plan={editingPlan}
-        onSave={handleSavePlan}
-      />
-    </div>
-  );
-};
-
-export default Modules;
-
