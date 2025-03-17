@@ -9,16 +9,24 @@ interface StatusBadgeProps {
 }
 
 export const getStatusBadge = ({ status, paymentStatusDetails }: StatusBadgeProps) => {
-  const variants: Record<TitleStatus, "default" | "secondary" | "destructive"> = {
-    pending: "default",
-    paid: "secondary",
-    overdue: "destructive",
+  // Atualizando as variantes para cada status
+  const variants: Record<TitleStatus, "default" | "secondary" | "destructive" | "outline"> = {
+    pending: "outline", // Amarelo para Pendente
+    paid: "default",    // Verde para Pago
+    overdue: "destructive", // Vermelho para Vencido
   };
 
   const labels: Record<TitleStatus, string> = {
     pending: "Pendente",
     paid: "Pago",
     overdue: "Vencido",
+  };
+
+  // Classes personalizadas para cada status
+  const customClasses: Record<TitleStatus, string> = {
+    pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200",
+    paid: "bg-green-100 text-green-800 hover:bg-green-200 border-green-200",
+    overdue: "bg-red-100 text-red-800 hover:bg-red-200 border-red-200",
   };
 
   // Se tiver detalhes de status e estiver vencido, exibir tooltip
@@ -28,7 +36,7 @@ export const getStatusBadge = ({ status, paymentStatusDetails }: StatusBadgeProp
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-              <Badge variant={variants[status]}>
+              <Badge variant={variants[status]} className={customClasses[status]}>
                 {labels[status]}
               </Badge>
             </div>
@@ -43,7 +51,7 @@ export const getStatusBadge = ({ status, paymentStatusDetails }: StatusBadgeProp
 
   // Caso contrário, apenas retornar o badge
   return (
-    <Badge variant={variants[status]}>
+    <Badge variant={variants[status]} className={customClasses[status]}>
       {labels[status]}
     </Badge>
   );
