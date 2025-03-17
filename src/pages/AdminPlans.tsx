@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Pencil, Plus, CreditCard, Mail, Users, Database } from "lucide-react";
@@ -16,14 +16,15 @@ const AdminPlans = () => {
 
   const { data: fetchedPlans, isLoading, error } = useQuery({
     queryKey: ['plans'],
-    queryFn: fetchPlans,
-    onSuccess: (data) => {
-      // Se não temos planos locais ainda, use os do fetchPlans
-      if (localPlans.length === 0) {
-        setLocalPlans(data);
-      }
-    }
+    queryFn: fetchPlans
   });
+
+  // Inicialize os planos locais quando os dados forem carregados
+  useEffect(() => {
+    if (fetchedPlans && localPlans.length === 0) {
+      setLocalPlans(fetchedPlans);
+    }
+  }, [fetchedPlans, localPlans.length]);
 
   // Use os planos locais para renderização, em vez dos fetchedPlans
   const plans = localPlans.length > 0 ? localPlans : fetchedPlans || [];
