@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, Pencil, Plus, CreditCard, Mail, Users, Database } from "lucide-react";
+import { FileText, Pencil, Plus, CreditCard, Mail, Users, Database, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlans } from "@/services/plans/planFetchService";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
@@ -193,7 +192,7 @@ const AdminPlans = () => {
                   <ul className="space-y-2">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
                       <li key={index} className="flex items-center text-sm text-gray-600">
-                        {getBenefitIcon(benefit)}
+                        <FileText className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />
                         <span>{benefit}</span>
                       </li>
                     ))}
