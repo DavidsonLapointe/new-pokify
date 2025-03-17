@@ -8,13 +8,15 @@ import { getAllTitles } from "@/services/financial";
 import { useQuery } from "@tanstack/react-query";
 
 const AdminFinancial = () => {
-  // Use React Query to fetch titles
-  const { data: fetchedTitles, isLoading } = useQuery({
+  // Use React Query para buscar títulos com refetch ativado
+  const { data: fetchedTitles, isLoading, refetch } = useQuery({
     queryKey: ['financial-titles'],
-    queryFn: getAllTitles
+    queryFn: getAllTitles,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000 // 5 minutos
   });
 
-  // Use our custom hook for filtering
+  // Use nosso hook personalizado para filtragem
   const { filteredTitles, filters, applyFilters, clearFilters } = useFinancialFilters(fetchedTitles || []);
 
   // Garantir que os títulos sejam exibidos no carregamento inicial
@@ -32,6 +34,12 @@ const AdminFinancial = () => {
   }) => {
     applyFilters(filters);
   };
+
+  useEffect(() => {
+    // Log para debugging
+    console.log("Títulos carregados:", fetchedTitles?.length || 0);
+    console.log("Títulos filtrados:", filteredTitles?.length || 0);
+  }, [fetchedTitles, filteredTitles]);
 
   if (isLoading) {
     return (

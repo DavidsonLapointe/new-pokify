@@ -1,4 +1,5 @@
 
 export * from './financialTitleService';
 export * from './paymentService';
-export * from './organizationTitleService';
+export { getAllTitles } from './organizationTitleService';
+
