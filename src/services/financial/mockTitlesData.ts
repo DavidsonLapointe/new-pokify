@@ -1,4 +1,3 @@
-
 import { FinancialTitle } from "@/types/financial";
 
 export const mockTitles: FinancialTitle[] = [
@@ -160,6 +159,21 @@ export const mockTitles: FinancialTitle[] = [
       name: "Empresa E Distribuidora Ltda",
       nome_fantasia: "Empresa E",
       cnpj: "67.890.123/0001-45"
+    }
+  },
+  {
+    id: "11",
+    organizationId: "6",
+    type: "mensalidade",
+    value: 1500,
+    dueDate: "2025-03-20",
+    status: "pending",
+    referenceMonth: "2025-03-01",
+    createdAt: "2025-02-15",
+    organization: {
+      name: "Empresa F Consultoria Ltda",
+      nome_fantasia: "Empresa F",
+      cnpj: "78.901.234/0001-56"
     }
   }
 ];
