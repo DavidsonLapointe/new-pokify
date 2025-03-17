@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -94,8 +93,8 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Tipo</TableHead>
+              <TableHead className="text-left">Empresa</TableHead>
+              <TableHead className="text-left">Tipo</TableHead>
               <TableHead>Valor</TableHead>
               <TableHead>Vencimento</TableHead>
               <TableHead>Status</TableHead>
@@ -105,8 +104,8 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
           <TableBody>
             {currentTitles.map((title) => (
               <TableRow key={title.id}>
-                <TableCell>{title.organization?.name}</TableCell>
-                <TableCell>
+                <TableCell className="text-left">{title.organization?.name}</TableCell>
+                <TableCell className="text-left">
                   {title.type === "pro_rata" && "Pro Rata"}
                   {title.type === "mensalidade" && (
                     <>
@@ -160,7 +159,6 @@ export const FinancialTitlesTable = ({ titles }: FinancialTitlesTableProps) => {
         </Table>
       </div>
       
-      {/* Componente de paginação */}
       {totalPages > 1 && (
         <Pagination className="mt-4">
           <PaginationContent>
