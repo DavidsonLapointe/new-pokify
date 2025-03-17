@@ -139,14 +139,14 @@ const AdminPlans = () => {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Planos</h1>
-        <p className="text-muted-foreground">
-          Gerencie os planos disponíveis na plataforma
-        </p>
-      </div>
-      
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">Planos</h1>
+          <p className="text-muted-foreground">
+            Gerencie os planos disponíveis na plataforma
+          </p>
+        </div>
+        
         <Button onClick={handleCreatePlan} className="bg-primary">
           <Plus className="mr-2 h-4 w-4" />
           Novo Plano
