@@ -12,11 +12,21 @@ import { Badge } from "@/components/ui/badge";
 const AdminPlans = () => {
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
+  const [localPlans, setLocalPlans] = useState<Plan[]>([]);
 
-  const { data: plans, isLoading, error, refetch } = useQuery({
+  const { data: fetchedPlans, isLoading, error } = useQuery({
     queryKey: ['plans'],
-    queryFn: fetchPlans
+    queryFn: fetchPlans,
+    onSuccess: (data) => {
+      // Se não temos planos locais ainda, use os do fetchPlans
+      if (localPlans.length === 0) {
+        setLocalPlans(data);
+      }
+    }
   });
+
+  // Use os planos locais para renderização, em vez dos fetchedPlans
+  const plans = localPlans.length > 0 ? localPlans : fetchedPlans || [];
 
   const handleEditPlan = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -28,8 +38,18 @@ const AdminPlans = () => {
     setEditPlanDialogOpen(true);
   };
 
-  const handleSavePlan = async () => {
-    await refetch();
+  const handleSavePlan = async (updatedPlan: Partial<Plan>) => {
+    // Se estamos editando um plano existente
+    if (updatedPlan.id) {
+      setLocalPlans(prevPlans => 
+        prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
+      );
+    } 
+    // Se estamos criando um novo plano
+    else if ('id' in updatedPlan) {
+      setLocalPlans(prevPlans => [...prevPlans, updatedPlan as Plan]);
+    }
+    
     setEditPlanDialogOpen(false);
   };
 
@@ -47,7 +67,7 @@ const AdminPlans = () => {
     return <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
   };
 
-  if (isLoading) {
+  if (isLoading && localPlans.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -55,7 +75,7 @@ const AdminPlans = () => {
     );
   }
 
-  if (error) {
+  if (error && localPlans.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[500px]">
         <p className="text-red-500">Erro ao carregar planos. Por favor, tente novamente.</p>

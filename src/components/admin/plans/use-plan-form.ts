@@ -4,14 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { planFormSchema, type PlanFormValues, type Plan } from "./plan-form-schema";
 import { useToast } from "@/hooks/use-toast";
-import { updateStripeProduct } from "@/services/stripeService";
-import { createPlan, updatePlan } from "@/services/plans";
 
 interface UsePlanFormProps {
   plan?: Plan;
   onSave: (data: Partial<Plan>) => void;
   onOpenChange: (open: boolean) => void;
 }
+
+let nextId = 100; // ID inicial para novos planos mockados
 
 export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
   const { toast } = useToast();
@@ -76,58 +76,33 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       };
       
       let savedPlan: Plan | null = null;
-      let stripeResult;
       
-      // Se estiver editando e tiver ID do Stripe, atualiza no Stripe primeiro
-      if (isEditing && formattedValues.stripeProductId) {
-        try {
-          stripeResult = await updateStripeProduct({
-            stripeProductId: formattedValues.stripeProductId,
-            stripePriceId: formattedValues.stripePriceId || '',
-            name: formattedValues.name,
-            description: formattedValues.shortDescription,
-            price: formattedValues.price,
-            active: formattedValues.active,
-            credits: formattedValues.credits
-          });
-          
-          // Atualizar o stripePriceId com o novo preço se ele foi atualizado
-          if (stripeResult.priceUpdated && stripeResult.price?.id !== formattedValues.stripePriceId) {
-            formattedValues.stripePriceId = stripeResult.price.id;
-            
-            toast({
-              title: "Preço atualizado no Stripe",
-              description: "Um novo preço foi criado no Stripe e o anterior foi arquivado.",
-              variant: "default",
-            });
-          }
-        } catch (stripeError) {
-          console.error("Erro ao atualizar no Stripe:", stripeError);
-          toast({
-            title: "Erro ao atualizar no Stripe",
-            description: "O plano será atualizado apenas no banco de dados local.",
-            variant: "destructive",
-          });
-        }
-      }
-      
-      // Salvar no banco de dados
+      // Modo mockado: apenas criar ou atualizar o plano em memória
       if (isEditing && plan) {
-        savedPlan = await updatePlan(plan.id, formattedValues);
-      } else {
-        // Ensure active is explicitly included for new plans
-        const newPlanData: Omit<Plan, "id"> = {
+        // Atualiza o plano existente
+        savedPlan = {
+          ...plan,
           name: formattedValues.name,
           price: formattedValues.price,
           shortDescription: formattedValues.shortDescription,
           benefits: formattedValues.benefits,
           active: formattedValues.active,
-          stripeProductId: formattedValues.stripeProductId,
-          stripePriceId: formattedValues.stripePriceId,
           credits: formattedValues.credits,
+          // Mantém os outros campos do plano original
         };
-        
-        savedPlan = await createPlan(newPlanData);
+      } else {
+        // Cria um novo plano
+        savedPlan = {
+          id: nextId++,
+          name: formattedValues.name,
+          price: formattedValues.price,
+          shortDescription: formattedValues.shortDescription,
+          benefits: formattedValues.benefits,
+          active: formattedValues.active,
+          credits: formattedValues.credits,
+          stripeProductId: `mock_product_${Date.now()}`,
+          stripePriceId: `mock_price_${Date.now()}`
+        };
       }
       
       if (savedPlan) {
