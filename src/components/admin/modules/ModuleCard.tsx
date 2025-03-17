@@ -76,7 +76,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
             {module.name}
           </CardTitle>
           <div className="text-primary font-semibold">
-            R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+            R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal"> (setup)</span>
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-0">

@@ -204,7 +204,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor por mês (R$)</FormLabel>
+                    <FormLabel>Valor do Setup (R$)</FormLabel>
                     <FormControl>
                       <Input {...field} type="number" step="0.01" min="0" />
                     </FormControl>

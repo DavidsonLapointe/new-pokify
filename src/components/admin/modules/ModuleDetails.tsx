@@ -77,7 +77,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-lg text-primary font-semibold">
-                  R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+                  R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal"> (valor único de setup)</span>
                 </div>
                 {module.credits && (
                   <TooltipProvider>
