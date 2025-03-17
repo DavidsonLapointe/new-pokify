@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -822,4 +823,44 @@ const OrganizationModules = () => {
               <div className="mb-4">
                 <p className="text-sm font-medium mb-1">Módulo selecionado para cancelamento:</p>
                 {cancelModuleId && (
-                  <div className="p-3 bg-gray
+                  <div className="p-3 bg-gray-50 rounded-md">
+                    <p className="font-medium">
+                      {tools.find(t => t.id === cancelModuleId)?.title}
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mb-4">
+                <Label htmlFor="cancelReason" className="block mb-2">
+                  Motivo do cancelamento
+                </Label>
+                <Textarea 
+                  id="cancelReason"
+                  placeholder="Por favor, informe o motivo do cancelamento"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="h-24"
+                />
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
