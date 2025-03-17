@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -202,7 +203,7 @@ const mockModules: Plan[] = [
   }
 ];
 
-// Atualizando o schema para tornar todos os campos obrigatórios
+// Definimos um schema para validação do formulário de módulo
 const moduleFormSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   price: z.string().regex(/^\d+(\.\d{0,2})?$/, "Preço inválido"),
@@ -211,10 +212,10 @@ const moduleFormSchema = z.object({
   benefits: z.string().min(1, "Adicione pelo menos um benefício"),
   howItWorks: z.string().min(1, "Adicione pelo menos uma etapa de como funciona"),
   active: z.boolean(),
-  comingSoon: z.boolean(),
-  icon: z.string().min(1, "Selecione um ícone"),
-  actionButtonText: z.string().min(1, "Adicione um texto para o botão de ação"),
-  credits: z.number().nullable(),
+  comingSoon: z.boolean().optional(),
+  icon: z.string().optional(),
+  actionButtonText: z.string().optional(),
+  credits: z.number().nullable().optional(),
 });
 
 type ModuleFormValues = z.infer<typeof moduleFormSchema>;
@@ -246,10 +247,10 @@ const ModuleDialog = ({
       benefits: Array.isArray(plan?.benefits) ? plan.benefits.join("\n") : "",
       howItWorks: Array.isArray(plan?.howItWorks) ? plan.howItWorks.join("\n") : "",
       active: plan?.active !== undefined ? plan.active : true,
-      comingSoon: plan?.comingSoon !== undefined ? plan.comingSoon : false,
+      comingSoon: plan?.comingSoon || false,
       icon: plan?.icon || "MessageCircle",
       actionButtonText: plan?.actionButtonText || "Contratar",
-      credits: plan?.credits || 0,
+      credits: plan?.credits || null,
     }
   });
 
@@ -267,7 +268,7 @@ const ModuleDialog = ({
         comingSoon: plan.comingSoon || false,
         icon: plan.icon || "MessageCircle",
         actionButtonText: plan.actionButtonText || "Contratar",
-        credits: plan.credits || 0,
+        credits: plan.credits || null,
       });
     } else {
       form.reset({
@@ -281,7 +282,7 @@ const ModuleDialog = ({
         comingSoon: false,
         icon: "MessageCircle",
         actionButtonText: "Contratar",
-        credits: 0,
+        credits: null,
       });
     }
   }, [plan, form]);
@@ -636,113 +637,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   );
 };
 
-// Module Detailed Section component
-interface ModuleDetailedSectionProps {
-  plan: Plan;
-}
-
-const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) => {
-  // Get the appropriate icon component
-  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
-    ? iconMap[plan.icon as keyof typeof iconMap] 
-    : MessageCircle;
-
-  return (
-    <Card className="p-5 bg-[#F8F8FB]">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-primary-lighter rounded-md text-primary">
-          <IconComponent size={24} />
-        </div>
-        <h3 className="text-xl font-semibold">{plan.name}</h3>
-        <Badge 
-          variant="secondary"
-          className={`
-            ${plan.active 
-              ? "bg-green-100 text-green-800 hover:bg-green-100" 
-              : "bg-red-100 text-red-800 hover:bg-red-100"}
-          `}
-        >
-          {plan.active ? "Ativo" : "Inativo"}
-        </Badge>
-        
-        {plan.comingSoon && (
-          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
-            Em breve
-          </Badge>
-        )}
-      </div>
-      
-      <p className="text-gray-600 mb-6">{plan.description}</p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-primary" />
-            <span className="font-medium">Preço:</span>
-            <span>R$ {plan.price.toFixed(2)}/mês</span>
-          </div>
-          
-          {plan.credits !== null && plan.credits !== undefined && (
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-primary" />
-              <span className="font-medium">Créditos por execução:</span>
-              <span>{plan.credits}</span>
-              <div className="ml-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="bg-blue-100 text-blue-800 p-1 rounded-full cursor-help">
-                      <AlertCircle className="h-4 w-4" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-[250px] text-xs">
-                      Alterações no valor de créditos são aplicadas imediatamente 
-                      nas próximas execuções para todas as organizações contratantes.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-          )}
-          
-          <div>
-            <h4 className="font-medium mb-2 flex items-center">
-              <CheckCircle className="h-5 w-5 text-primary mr-2" />
-              Benefícios
-            </h4>
-            <ul className="space-y-1 pl-7 list-disc">
-              {plan.benefits && plan.benefits.map((benefit, idx) => (
-                <li key={idx} className="text-sm">{benefit}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-medium mb-2 flex items-center">
-              <Blocks className="h-5 w-5 text-primary mr-2" />
-              Como funciona
-            </h4>
-            <ul className="space-y-1 pl-7 list-decimal">
-              {plan.howItWorks && plan.howItWorks.map((step, idx) => (
-                <li key={idx} className="text-sm">{step}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" className="gap-2">
-          <Pencil className="h-4 w-4" />
-          Editar Módulo
-        </Button>
-      </div>
-    </Card>
-  );
-};
-
 interface PageHeaderProps {
   setIsCreateDialogOpen: (open: boolean) => void;
 }
@@ -876,3 +770,245 @@ const Modules = () => {
         // Se o plano selecionado for o mesmo que estamos editando, atualize-o
         if (selectedPlan && selectedPlan.id === editingPlan.id) {
           const updatedPlan = updatedPlans.find(p => p.id === editingPlan.id);
+          if (updatedPlan) {
+            setSelectedPlan(updatedPlan);
+          }
+        }
+      } else {
+        console.log("Adicionando novo módulo");
+        const newPlan = { ...data, id: data.id || `temp-${Date.now()}` } as Plan;
+        setPlans([...plans, newPlan]);
+      }
+
+      // Em um ambiente real, nós chamaríamos o loadPlans() novamente para atualizar
+      toast.success(editingPlan ? "Módulo atualizado com sucesso!" : "Módulo criado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar módulo:", error);
+      toast.error("Ocorreu um erro ao salvar o módulo.");
+    }
+  };
+
+  const handleDeletePlan = async (id: string | number) => {
+    if (!id) return;
+
+    try {
+      // Convert id to string if it's a number
+      const planId = id.toString();
+      
+      // Encontrar o plano que está sendo desativado
+      const planToDelete = plans.find(p => p.id.toString() === planId);
+      if (!planToDelete) {
+        toast.error("Módulo não encontrado");
+        return;
+      }
+      
+      // Verificar se existem organizações usando este módulo
+      const { data: orgsUsingModule, error } = await supabase
+        .from('subscriptions')
+        .select('organization_id, organizations!inner(name)')
+        .eq('status', 'active')
+        .filter('organizations.plan', 'eq', planToDelete.name);
+        
+      if (error) {
+        console.error("Erro ao verificar organizações:", error);
+        throw new Error("Erro ao verificar se o módulo está em uso");
+      }
+      
+      // Se existirem organizações usando o módulo, impedir a desativação
+      if (orgsUsingModule && orgsUsingModule.length > 0) {
+        const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
+        
+        toast.error(
+          `Não é possível desativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
+        );
+        return;
+      }
+      
+      setDeletingPlanId(planId);
+      // Em um ambiente real, chamaríamos deletePlan(planId)
+      // Simulando a exclusão localmente
+      setTimeout(() => {
+        const updatedPlans = plans.map(plan => 
+          plan.id.toString() === planId 
+            ? { ...plan, active: false }
+            : plan
+        );
+        setPlans(updatedPlans);
+        setDeletingPlanId(null);
+        
+        // Se o plano selecionado for o mesmo que estamos desativando, atualize-o
+        if (selectedPlan && selectedPlan.id.toString() === planId) {
+          const updatedPlan = updatedPlans.find(p => p.id.toString() === planId);
+          if (updatedPlan) {
+            setSelectedPlan(updatedPlan);
+          }
+        }
+        
+        toast.success("Módulo desativado com sucesso!");
+      }, 1000);
+    } catch (error) {
+      console.error("Erro ao desativar módulo:", error);
+      toast.error("Ocorreu um erro ao desativar o módulo.");
+      setDeletingPlanId(null);
+    }
+  };
+
+  const selectPlan = (plan: Plan) => {
+    setSelectedPlan(plan);
+  };
+
+  const handleEditPlan = (plan: Plan) => {
+    setEditingPlan(plan);
+  };
+
+  return (
+    <div className="space-y-8">
+      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
+
+      {isLoading ? (
+        <LoadingState />
+      ) : (
+        <>
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent className="px-2">
+                {plans.map((plan) => (
+                  <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
+                    <ModuleCard 
+                      plan={plan} 
+                      onClick={() => selectPlan(plan)}
+                      isActive={selectedPlan?.id === plan.id}
+                      onEditPlan={handleEditPlan}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </div>
+
+          {/* Detailed Module Section */}
+          <ModuleDetailedSection 
+            selectedModule={selectedPlan} 
+            onEditModule={handleEditPlan}
+          />
+        </>
+      )}
+
+      <ModuleDialog
+        open={!!editingPlan}
+        onOpenChange={(open) => !open && setEditingPlan(null)}
+        plan={editingPlan}
+        onSave={handleSavePlan}
+      />
+
+      <ModuleDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onSave={handleSavePlan}
+      />
+    </div>
+  );
+};
+
+// Detailed Module Section Component
+const ModuleDetailedSection: React.FC<{ 
+  selectedModule: Plan | null;
+  onEditModule: (plan: Plan) => void; 
+}> = ({ selectedModule, onEditModule }) => {
+  if (!selectedModule) return null;
+  
+  // Get the appropriate icon component
+  const IconComponent = selectedModule.icon && iconMap[selectedModule.icon as keyof typeof iconMap] 
+    ? iconMap[selectedModule.icon as keyof typeof iconMap] 
+    : MessageCircle;
+
+  return (
+    <div className="mt-8 rounded-lg overflow-hidden">
+      <div className="bg-white p-6 pb-0 border border-gray-200 border-b-0">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary-lighter rounded-md">
+              <IconComponent className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">{selectedModule.name}</h2>
+              <div className="text-primary font-medium">
+                R$ {selectedModule.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedModule.comingSoon && (
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 flex items-center gap-1">
+                <Clock className="h-3 w-3 mr-1" />
+                Em breve
+              </Badge>
+            )}
+            <Badge 
+              variant="secondary"
+              className={`
+                ${selectedModule.active 
+                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
+                  : "bg-red-100 text-red-800 hover:bg-red-100"}
+              `}
+            >
+              {selectedModule.active ? "Ativo" : "Inativo"}
+            </Badge>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={() => onEditModule(selectedModule)}
+            >
+              <Pencil className="h-4 w-4" />
+              Editar
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Separator className="mb-0" />
+
+      {/* Conteúdo com descrição, benefícios e como funciona */}
+      <div className="bg-[#F1F0FB] p-6">
+        <p className="text-muted-foreground mb-8 bg-white p-5 rounded-lg border border-gray-100 text-left">{selectedModule.description}</p>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Benefícios
+            </h3>
+            <ul className="space-y-3 text-left">
+              {selectedModule.benefits.map((benefit, index) => (
+                <li key={index} className="flex items-start">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <span className="text-muted-foreground">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Como Funciona
+            </h3>
+            <ol className="space-y-3 text-left">
+              {selectedModule.howItWorks.map((step, index) => (
+                <li key={index} className="flex items-start">
+                  <div className="flex-shrink-0 mr-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-muted-foreground">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Modules;
