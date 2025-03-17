@@ -876,4 +876,3 @@ const Modules = () => {
         // Se o plano selecionado for o mesmo que estamos editando, atualize-o
         if (selectedPlan && selectedPlan.id === editingPlan.id) {
           const updatedPlan = updatedPlans.find(p => p.id === editingPlan.id);
-          if (updated
