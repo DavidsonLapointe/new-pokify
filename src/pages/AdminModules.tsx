@@ -713,7 +713,7 @@ const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) =
             <ul className="space-y-1 pl-7 list-disc">
               {plan.benefits && plan.benefits.map((benefit, idx) => (
                 <li key={idx} className="text-sm">{benefit}</li>
-              ))}\
+              ))}
             </ul>
           </div>
         </div>
@@ -876,4 +876,3 @@ const Modules = () => {
         // Se o plano selecionado for o mesmo que estamos editando, atualize-o
         if (selectedPlan && selectedPlan.id === editingPlan.id) {
           const updatedPlan = updatedPlans.find(p => p.id === editingPlan.id);
-          if (
