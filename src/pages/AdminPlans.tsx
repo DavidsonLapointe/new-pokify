@@ -19,15 +19,18 @@ const AdminPlans = () => {
     queryFn: fetchPlans
   });
 
-  // Inicialize os planos locais quando os dados forem carregados
+  // Inicializa os planos locais quando os dados forem carregados
   useEffect(() => {
-    if (fetchedPlans && localPlans.length === 0) {
-      setLocalPlans(fetchedPlans);
+    if (fetchedPlans) {
+      setLocalPlans(prevPlans => {
+        if (prevPlans.length === 0) {
+          console.log("Carregando planos iniciais:", fetchedPlans);
+          return fetchedPlans;
+        }
+        return prevPlans;
+      });
     }
-  }, [fetchedPlans, localPlans.length]);
-
-  // Use os planos locais para renderização
-  const plans = localPlans;
+  }, [fetchedPlans]);
 
   const handleEditPlan = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -39,12 +42,22 @@ const AdminPlans = () => {
     setEditPlanDialogOpen(true);
   };
 
+  // Função que será chamada quando o modal for fechado ou cancelado
+  const handleDialogOpenChange = (open: boolean) => {
+    setEditPlanDialogOpen(open);
+    if (!open) {
+      // Resetando o plano selecionado quando o modal é fechado
+      setSelectedPlan(undefined);
+    }
+  };
+
   const handleSavePlan = async (updatedPlan: Partial<Plan>) => {
     // Se estamos editando um plano existente
     if (updatedPlan.id) {
       setLocalPlans(prevPlans => 
         prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
       );
+      console.log("Plano atualizado:", updatedPlan);
     } 
     // Se estamos criando um novo plano
     else {
@@ -88,20 +101,21 @@ const AdminPlans = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Planos</h1>
-        <div className="flex items-center space-x-4">
-          <p className="text-sm text-muted-foreground">
-            Gerencie os planos disponíveis para suas organizações
-          </p>
-          <Button onClick={handleCreatePlan} className="bg-primary" size="sm">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">Planos</h1>
+        <p className="text-sm text-muted-foreground">
+          Gerencie os planos disponíveis na plataforma
+        </p>
+        <div className="flex items-center justify-between">
+          <div className="flex-1"></div>
+          <Button onClick={handleCreatePlan} className="bg-primary">
             <Plus className="mr-2 h-4 w-4" />
             Novo Plano
           </Button>
         </div>
       </div>
 
-      {plans.length === 0 ? (
+      {localPlans.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg border border-dashed border-gray-300 p-8">
           <h3 className="text-lg font-medium text-gray-600 mb-2">Nenhum plano cadastrado</h3>
           <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
@@ -114,7 +128,7 @@ const AdminPlans = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
+          {localPlans.map((plan) => (
             <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 <div className="p-4 bg-white">
@@ -164,7 +178,7 @@ const AdminPlans = () => {
 
       <EditPlanDialog
         open={editPlanDialogOpen}
-        onOpenChange={setEditPlanDialogOpen}
+        onOpenChange={handleDialogOpenChange}
         plan={selectedPlan}
         onSave={handleSavePlan}
       />
