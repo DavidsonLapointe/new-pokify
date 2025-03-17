@@ -7,7 +7,7 @@ export const planFormSchema = z.object({
   shortDescription: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
   benefits: z.string().min(1, "Adicione pelo menos um recurso"),
   active: z.boolean(),
-  credits: z.number().nullable().optional(),
+  credits: z.number().nullable(),
   stripeProductId: z.string().optional(),
   stripePriceId: z.string().optional(),
 });

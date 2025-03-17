@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -203,7 +202,7 @@ const mockModules: Plan[] = [
   }
 ];
 
-// Definimos um schema para validação do formulário de módulo
+// Atualizando o schema para tornar todos os campos obrigatórios
 const moduleFormSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   price: z.string().regex(/^\d+(\.\d{0,2})?$/, "Preço inválido"),
@@ -212,10 +211,10 @@ const moduleFormSchema = z.object({
   benefits: z.string().min(1, "Adicione pelo menos um benefício"),
   howItWorks: z.string().min(1, "Adicione pelo menos uma etapa de como funciona"),
   active: z.boolean(),
-  comingSoon: z.boolean().optional(),
-  icon: z.string().optional(),
-  actionButtonText: z.string().optional(),
-  credits: z.number().nullable().optional(),
+  comingSoon: z.boolean(),
+  icon: z.string().min(1, "Selecione um ícone"),
+  actionButtonText: z.string().min(1, "Adicione um texto para o botão de ação"),
+  credits: z.number().nullable(),
 });
 
 type ModuleFormValues = z.infer<typeof moduleFormSchema>;
@@ -247,10 +246,10 @@ const ModuleDialog = ({
       benefits: Array.isArray(plan?.benefits) ? plan.benefits.join("\n") : "",
       howItWorks: Array.isArray(plan?.howItWorks) ? plan.howItWorks.join("\n") : "",
       active: plan?.active !== undefined ? plan.active : true,
-      comingSoon: plan?.comingSoon || false,
+      comingSoon: plan?.comingSoon !== undefined ? plan.comingSoon : false,
       icon: plan?.icon || "MessageCircle",
       actionButtonText: plan?.actionButtonText || "Contratar",
-      credits: plan?.credits || null,
+      credits: plan?.credits || 0,
     }
   });
 
@@ -268,7 +267,7 @@ const ModuleDialog = ({
         comingSoon: plan.comingSoon || false,
         icon: plan.icon || "MessageCircle",
         actionButtonText: plan.actionButtonText || "Contratar",
-        credits: plan.credits || null,
+        credits: plan.credits || 0,
       });
     } else {
       form.reset({
@@ -282,7 +281,7 @@ const ModuleDialog = ({
         comingSoon: false,
         icon: "MessageCircle",
         actionButtonText: "Contratar",
-        credits: null,
+        credits: 0,
       });
     }
   }, [plan, form]);
@@ -884,137 +883,4 @@ const Modules = () => {
                 ))}
               </CarouselContent>
               <CarouselPrevious className="left-0" />
-              <CarouselNext className="right-0" />
-            </Carousel>
-          </div>
-
-          {/* Detailed Module Section */}
-          <ModuleDetailedSection 
-            selectedModule={selectedPlan} 
-            onEditModule={handleEditPlan}
-          />
-        </>
-      )}
-
-      <ModuleDialog
-        open={!!editingPlan}
-        onOpenChange={(open) => !open && setEditingPlan(null)}
-        plan={editingPlan}
-        onSave={handleSavePlan}
-      />
-
-      <ModuleDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onSave={handleSavePlan}
-      />
-    </div>
-  );
-};
-
-// Detailed Module Section Component
-const ModuleDetailedSection: React.FC<{ 
-  selectedModule: Plan | null;
-  onEditModule: (plan: Plan) => void; 
-}> = ({ selectedModule, onEditModule }) => {
-  if (!selectedModule) return null;
-  
-  // Get the appropriate icon component
-  const IconComponent = selectedModule.icon && iconMap[selectedModule.icon as keyof typeof iconMap] 
-    ? iconMap[selectedModule.icon as keyof typeof iconMap] 
-    : MessageCircle;
-
-  return (
-    <div className="mt-8 rounded-lg overflow-hidden">
-      <div className="bg-white p-6 pb-0 border border-gray-200 border-b-0">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-lighter rounded-md">
-              <IconComponent className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">{selectedModule.name}</h2>
-              <div className="text-primary font-medium">
-                {selectedModule.credits ? (
-                  <span>{selectedModule.credits} créditos por execução</span>
-                ) : (
-                  <>
-                    R$ {selectedModule.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {selectedModule.comingSoon && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 flex items-center gap-1">
-                <Clock className="h-3 w-3 mr-1" />
-                Em breve
-              </Badge>
-            )}
-            <Badge 
-              variant="secondary"
-              className={`
-                ${selectedModule.active 
-                  ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                  : "bg-red-100 text-red-800 hover:bg-red-100"}
-              `}
-            >
-              {selectedModule.active ? "Ativo" : "Inativo"}
-            </Badge>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex items-center gap-1"
-              onClick={() => onEditModule(selectedModule)}
-            >
-              <Pencil className="h-4 w-4" />
-              Editar
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <Separator className="mb-0" />
-
-      {/* Conteúdo com descrição, benefícios e como funciona */}
-      <div className="bg-[#F1F0FB] p-6">
-        <p className="text-muted-foreground mb-8 bg-white p-5 rounded-lg border border-gray-100 text-left">{selectedModule.description}</p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
-            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Benefícios
-            </h3>
-            <ul className="space-y-3 text-left">
-              {selectedModule.benefits.map((benefit, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="h-4 w-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
-                  <span className="text-muted-foreground">{benefit}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
-            <h3 className="text-lg font-medium mb-4 text-primary flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2 text-primary" /> Como Funciona
-            </h3>
-            <ol className="space-y-3 text-left">
-              {selectedModule.howItWorks.map((step, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="flex-shrink-0 mr-2">
-                    <FileText className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-muted-foreground">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Modules;
+              <
