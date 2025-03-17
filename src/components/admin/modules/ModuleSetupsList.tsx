@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, X, CheckCircle2, AlertTriangle, CalendarIcon, UserRound, PhoneCall } from "lucide-react";
+import { Search, X, CheckCircle2, AlertTriangle, CalendarIcon, UserRound, PhoneCall, MoreVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,8 +25,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
 
 // Interface para os dados de setup
 interface ModuleSetup {
@@ -48,9 +55,7 @@ interface ModuleSetup {
 export const ModuleSetupsList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  
-  // Dados de exemplo para implantações de setup
-  const moduleSetups: ModuleSetup[] = [
+  const [moduleSetups, setModuleSetups] = useState<ModuleSetup[]>([
     {
       id: "1",
       organization: {
@@ -64,7 +69,7 @@ export const ModuleSetupsList = () => {
       contactName: "João Silva",
       contactPhone: "(11) 99999-8888",
       contractedAt: new Date(2023, 5, 15),
-      status: "completed"
+      status: "pending"
     },
     {
       id: "2",
@@ -96,7 +101,18 @@ export const ModuleSetupsList = () => {
       contractedAt: new Date(),
       status: "pending"
     }
-  ];
+  ]);
+  
+  // Função para atualizar o status de um setup
+  const updateStatus = (id: string, newStatus: "pending" | "in_progress" | "completed") => {
+    setModuleSetups(prevSetups => 
+      prevSetups.map(setup => 
+        setup.id === id ? { ...setup, status: newStatus } : setup
+      )
+    );
+    
+    toast.success(`Status atualizado com sucesso para ${getStatusText(newStatus)}`);
+  };
   
   // Filtrar setups com base na busca e no filtro de status
   const filteredSetups = moduleSetups.filter(setup => {
@@ -163,7 +179,7 @@ export const ModuleSetupsList = () => {
         <div className="flex items-center gap-2">
           <Select
             value={statusFilter || ""}
-            onValueChange={(value) => setStatusFilter(value || null)}
+            onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Filtrar por status" />
@@ -188,6 +204,7 @@ export const ModuleSetupsList = () => {
               <TableHead className="font-medium">Telefone</TableHead>
               <TableHead className="font-medium">Data de Contratação</TableHead>
               <TableHead className="font-medium">Status</TableHead>
+              <TableHead className="font-medium text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -207,6 +224,10 @@ export const ModuleSetupsList = () => {
                           variant="ghost"
                           size="sm"
                           className="h-8 gap-1 text-blue-600"
+                          onClick={() => {
+                            navigator.clipboard.writeText(setup.contactPhone);
+                            toast.success("Telefone copiado para a área de transferência");
+                          }}
                         >
                           <PhoneCall className="h-3.5 w-3.5" />
                           {setup.contactPhone}
@@ -228,11 +249,41 @@ export const ModuleSetupsList = () => {
                       {getStatusText(setup.status)}
                     </Badge>
                   </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menu</span>
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => updateStatus(setup.id, "pending")}
+                          disabled={setup.status === "pending"}
+                        >
+                          Marcar como Pendente
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateStatus(setup.id, "in_progress")}
+                          disabled={setup.status === "in_progress"}
+                        >
+                          Marcar como Em Andamento
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateStatus(setup.id, "completed")}
+                          disabled={setup.status === "completed"}
+                        >
+                          Marcar como Concluído
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   Nenhuma implantação encontrada.
                 </TableCell>
               </TableRow>
