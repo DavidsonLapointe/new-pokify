@@ -24,6 +24,7 @@ import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminPlans from "./pages/AdminPlans";
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -109,6 +110,7 @@ function AppRoutes() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="modules" element={<AdminModules />} />
+          <Route path="plans" element={<AdminPlans />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="profile" element={<AdminProfile />} />
