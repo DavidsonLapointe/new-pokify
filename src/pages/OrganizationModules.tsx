@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +21,8 @@ import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
-  Zap
+  Zap,
+  Mail
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -42,6 +44,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { FinancialTitle } from "@/types/financial";
+import { updateStripeProduct } from "@/services/stripeService";
+import { stripeService } from "@/services/stripeService";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -66,14 +74,28 @@ interface CancelModuleFormValues {
   reason: string;
 }
 
+interface SetupContactInfo {
+  name: string;
+  phone: string;
+}
+
 const OrganizationModules = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isSetupContactDialogOpen, setIsSetupContactDialogOpen] = useState(false);
+  const [isPaymentProcessingDialogOpen, setIsPaymentProcessingDialogOpen] = useState(false);
+  const [isPaymentSuccessDialogOpen, setIsPaymentSuccessDialogOpen] = useState(false);
+  const [isPaymentFailedDialogOpen, setIsPaymentFailedDialogOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [action, setAction] = useState<"contract" | "cancel" | null>(null);
   const [selectedToolDetails, setSelectedToolDetails] = useState<Tool | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelModuleId, setCancelModuleId] = useState<string | null>(null);
+  const [setupContactInfo, setSetupContactInfo] = useState<SetupContactInfo>({
+    name: "",
+    phone: ""
+  });
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const tools: Tool[] = [
     {
@@ -216,14 +238,129 @@ const OrganizationModules = () => {
     if (!tool) return;
 
     if (action === "contract") {
-      toast.success(`Módulo "${tool.title}" contratado com sucesso!`);
+      // Inicia processamento do pagamento
+      setIsConfirmDialogOpen(false);
+      processPayment(tool);
     } else {
       toast.success(`Módulo "${tool.title}" cancelado com sucesso!`);
+      setIsConfirmDialogOpen(false);
+      setSelectedTool(null);
+      setAction(null);
     }
+  };
 
-    setIsConfirmDialogOpen(false);
-    setSelectedTool(null);
-    setAction(null);
+  const processPayment = async (tool: Tool) => {
+    setProcessingPayment(true);
+    setIsPaymentProcessingDialogOpen(true);
+    
+    try {
+      // Simular processamento de pagamento
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Simular resultado do pagamento (sucesso ou falha)
+      const paymentSuccessful = Math.random() > 0.2; // 80% de chance de sucesso
+      
+      setIsPaymentProcessingDialogOpen(false);
+      
+      if (paymentSuccessful) {
+        // Se o pagamento foi bem-sucedido, abre o diálogo para coletar informações de contato
+        setIsPaymentSuccessDialogOpen(true);
+        
+        // Criar título financeiro automaticamente
+        await createFinancialTitle(tool);
+      } else {
+        // Se o pagamento falhou, mostra o diálogo de falha
+        setIsPaymentFailedDialogOpen(true);
+        
+        // Enviar e-mail para o suporte (simulado)
+        sendSupportEmail(tool);
+      }
+    } catch (error) {
+      console.error("Erro ao processar pagamento:", error);
+      toast.error("Erro ao processar pagamento. Tente novamente.");
+      setIsPaymentProcessingDialogOpen(false);
+      setIsPaymentFailedDialogOpen(true);
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  const createFinancialTitle = async (tool: Tool) => {
+    try {
+      // Simulação de criação de título financeiro
+      console.log(`Criando título financeiro para o módulo ${tool.title} no valor de ${tool.price}`);
+      
+      // Em um ambiente real, isso seria feito em uma chamada à API ou ao Supabase
+      // const { data, error } = await supabase.from('financial_titles').insert({
+      //   organization_id: 'id_da_organização',
+      //   type: 'setup',
+      //   value: tool.price,
+      //   due_date: new Date().toISOString(),
+      //   status: 'paid',
+      //   payment_date: new Date().toISOString(),
+      //   payment_method: 'credit_card',
+      //   moduleId: tool.id,
+      //   moduleName: tool.title
+      // });
+      
+      // if (error) throw error;
+    } catch (error) {
+      console.error("Erro ao criar título financeiro:", error);
+    }
+  };
+
+  const sendSupportEmail = async (tool: Tool) => {
+    try {
+      // Simulação de envio de e-mail para o suporte
+      console.log(`Enviando e-mail para o suporte sobre falha na contratação do módulo ${tool.title}`);
+      
+      // Em um ambiente real, isso seria feito em uma chamada à API de e-mail
+    } catch (error) {
+      console.error("Erro ao enviar e-mail para o suporte:", error);
+    }
+  };
+
+  const handleSubmitSetupContact = async () => {
+    if (!setupContactInfo.name || !setupContactInfo.phone) {
+      toast.error("Por favor, preencha todos os campos de contato.");
+      return;
+    }
+    
+    try {
+      // Simulação de envio das informações de contato
+      console.log("Informações de contato para setup:", setupContactInfo);
+      
+      // Em um ambiente real, isso seria feito em uma chamada à API ou ao Supabase
+      // const { data, error } = await supabase.from('module_setup_contacts').insert({
+      //   organization_id: 'id_da_organização',
+      //   module_id: selectedTool,
+      //   contact_name: setupContactInfo.name,
+      //   contact_phone: setupContactInfo.phone,
+      //   contracted_at: new Date().toISOString()
+      // });
+      
+      // if (error) throw error;
+      
+      toast.success("Módulo contratado com sucesso! Nossa equipe entrará em contato em breve para iniciar o setup.");
+      
+      setIsPaymentSuccessDialogOpen(false);
+      setSetupContactInfo({ name: "", phone: "" });
+      
+      // Atualizar o status do módulo para "contracted"
+      const updatedTools = tools.map(tool => {
+        if (tool.id === selectedTool) {
+          return { ...tool, status: "contracted" as ToolStatus, badgeLabel: "Contratada" };
+        }
+        return tool;
+      });
+      
+      // Limpar estados
+      setSelectedTool(null);
+      setAction(null);
+    } catch (error) {
+      console.error("Erro ao enviar informações de contato:", error);
+      toast.error("Erro ao enviar informações de contato. Tente novamente.");
+    }
   };
 
   const confirmCancelation = () => {
@@ -495,29 +632,31 @@ const OrganizationModules = () => {
           </Card>
         )}
 
-        {/* Diálogo de confirmação para contratar/cancelar módulo */}
+        {/* Diálogo de confirmação para contratar módulo */}
         <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>
-                {action === "contract" ? "Contratar Módulo" : "Cancelar Módulo"}
+                Contratar Módulo
               </DialogTitle>
             </DialogHeader>
             
             {selectedTool && (
               <div className="py-4">
-                <p className="mb-6">
-                  {action === "contract" 
-                    ? `Você está prestes a contratar o módulo "${tools.find(t => t.id === selectedTool)?.title}". O valor de ${formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será cobrado como setup.`
-                    : `Você está prestes a cancelar o módulo "${tools.find(t => t.id === selectedTool)?.title}". Este módulo ficará indisponível no final do período de faturamento atual.`
-                  }
+                <p className="mb-4">
+                  Você está prestes a contratar o módulo "{tools.find(t => t.id === selectedTool)?.title}". 
+                  O valor de {formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será cobrado como setup.
                 </p>
                 
-                <p className="text-sm text-gray-500">
-                  {action === "contract"
-                    ? "Ao confirmar, você concorda com os termos de uso deste módulo."
-                    : "Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo."
-                  }
+                <div className="bg-amber-50 p-3 rounded-md mb-6 flex items-start text-sm">
+                  <CreditCard className="h-4 w-4 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <p className="text-amber-800">
+                    A cobrança será realizada no cartão de crédito já cadastrado no sistema.
+                  </p>
+                </div>
+                
+                <p className="text-sm text-gray-500 flex items-center gap-2">
+                  Ao confirmar, você concorda com os <Link href="#" className="text-primary hover:underline" target="_blank">termos de uso</Link> deste módulo.
                 </p>
               </div>
             )}
@@ -528,10 +667,137 @@ const OrganizationModules = () => {
               </Button>
               <Button 
                 onClick={confirmAction}
-                className={action === "contract" ? "bg-red-600 hover:bg-red-700" : ""}
-                variant={action === "cancel" ? "destructive" : "default"}
+                className="bg-red-600 hover:bg-red-700"
               >
-                {action === "contract" ? "Confirmar Contratação" : "Confirmar Cancelamento"}
+                Confirmar Contratação
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de processamento de pagamento */}
+        <Dialog open={isPaymentProcessingDialogOpen} onOpenChange={() => {}}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                Processando Pagamento
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-8 flex flex-col items-center">
+              <div className="animate-pulse flex flex-col items-center justify-center">
+                <CreditCard className="h-16 w-16 text-primary mb-4" />
+                <p className="text-center text-lg">Processando seu pagamento...</p>
+                <p className="text-center text-sm text-muted-foreground mt-2">
+                  Não feche esta janela. O processo pode levar alguns segundos.
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de pagamento bem-sucedido e coleta de informações de contato */}
+        <Dialog open={isPaymentSuccessDialogOpen} onOpenChange={setIsPaymentSuccessDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-green-700">
+                <CheckCircle2 className="h-5 w-5" />
+                Pagamento Confirmado
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4 space-y-4">
+              <p>
+                O pagamento foi processado com sucesso! Nossa equipe de operações entrará em contato 
+                para realizar o setup do módulo contratado.
+              </p>
+              
+              <div className="bg-green-50 p-3 rounded-md mb-4 text-green-800 text-sm">
+                <p className="font-medium mb-1">Próximos passos:</p>
+                <p>
+                  Por favor, informe os dados da pessoa responsável pelo setup do módulo em sua empresa:
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label htmlFor="contactName">Nome do responsável</Label>
+                  <Input 
+                    id="contactName" 
+                    placeholder="Nome completo"
+                    value={setupContactInfo.name}
+                    onChange={(e) => setSetupContactInfo({...setupContactInfo, name: e.target.value})}
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <Label htmlFor="contactPhone">Telefone para contato</Label>
+                  <Input 
+                    id="contactPhone" 
+                    placeholder="(XX) XXXXX-XXXX"
+                    value={setupContactInfo.phone}
+                    onChange={(e) => setSetupContactInfo({...setupContactInfo, phone: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                onClick={handleSubmitSetupContact}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Confirmar Informações
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de falha no pagamento */}
+        <Dialog open={isPaymentFailedDialogOpen} onOpenChange={setIsPaymentFailedDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <AlertTriangle className="h-5 w-5" />
+                Pagamento Recusado
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <p className="mb-4">
+                Infelizmente, o pagamento foi recusado pela operadora do cartão de crédito.
+              </p>
+              
+              <div className="bg-red-50 p-3 rounded-md mb-4 text-red-800 flex items-start">
+                <AlertTriangle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium">Possíveis motivos:</p>
+                  <ul className="list-disc list-inside mt-1 ml-1">
+                    <li>Limite insuficiente no cartão</li>
+                    <li>Cartão expirado ou bloqueado</li>
+                    <li>Problemas de conexão com a operadora</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600">
+                Um e-mail foi enviado para nossa equipe de suporte. Você pode tentar novamente 
+                ou entrar em contato com nosso suporte para obter ajuda.
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPaymentFailedDialogOpen(false)}>
+                Fechar
+              </Button>
+              <Button 
+                onClick={() => {
+                  setIsPaymentFailedDialogOpen(false);
+                  setIsConfirmDialogOpen(true);
+                }}
+                className="bg-primary hover:bg-primary/90"
+              >
+                Tentar Novamente
               </Button>
             </DialogFooter>
           </DialogContent>
