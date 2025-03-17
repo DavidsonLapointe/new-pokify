@@ -1,4 +1,3 @@
-
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +22,6 @@ export const handleTitlePayment = async (
     throw new Error('Erro ao processar pagamento');
   }
 
-  // Se for um título pro-rata, apenas atualiza o payment_status da organização
   if (title.type === 'pro_rata') {
     const { error: orgError } = await supabase
       .from('organizations')
@@ -34,13 +32,10 @@ export const handleTitlePayment = async (
 
     if (orgError) throw orgError;
     
-    // Verificamos se existe alguma assinatura inactive para esta organização
     const subscription = await getOrganizationSubscription(organization.id.toString());
     
-    // Se existir uma assinatura e ela estiver inativa, vamos acionar a função para criar no Stripe
     if (subscription && subscription.status === 'inactive') {
       try {
-        // Chamar a função Edge Function para criar a assinatura no Stripe
         const { data: stripeData, error: stripeError } = await supabase.functions.invoke('create-stripe-subscription', {
           body: {
             organizationId: organization.id.toString(),
@@ -55,8 +50,6 @@ export const handleTitlePayment = async (
         }
       } catch (stripeCreateError) {
         console.error('Exceção ao criar assinatura no Stripe:', stripeCreateError);
-        // Não vamos interromper o fluxo se falhar a criação no Stripe
-        // Apenas registramos o erro para investigação posterior
       }
     }
   }
