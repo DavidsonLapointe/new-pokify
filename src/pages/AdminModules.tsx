@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -708,7 +707,7 @@ const ModuleDetails: React.FC<{
     : MessageCircle;
     
   return (
-    <Card className="mt-8">
+    <Card className="mt-8 bg-[#F1F0FB]">
       <CardHeader className="p-6">
         <div className="flex justify-between items-start">
           <div className="flex items-start gap-4">
@@ -789,25 +788,15 @@ const ModuleDetails: React.FC<{
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6 pt-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
-            <p className="text-muted-foreground">{plan.description}</p>
-            
-            <h3 className="text-lg font-semibold mt-6 mb-3">Como funciona</h3>
-            <div className="space-y-2">
-              {plan.howItWorks?.map((step, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <div className="bg-primary-lighter text-primary font-semibold rounded-full h-6 w-6 flex items-center justify-center text-sm mt-0.5">
-                    {i+1}
-                  </div>
-                  <p>{step}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Sobre o módulo ocupa quase toda a largura */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
+          <p className="text-muted-foreground">{plan.description}</p>
+        </div>
           
-          <div>
+        {/* Benefícios e Como funciona lado a lado em containers brancos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-5 rounded-lg">
             <h3 className="text-lg font-semibold mb-3">Benefícios</h3>
             <div className="space-y-2">
               {plan.benefits?.map((benefit, i) => (
@@ -817,17 +806,19 @@ const ModuleDetails: React.FC<{
                 </div>
               ))}
             </div>
+          </div>
             
-            <h3 className="text-lg font-semibold mt-6 mb-3">Informações adicionais</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground">Texto do botão de ação</h4>
-                <p>{plan.actionButtonText || "Contratar"}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground">Créditos por execução</h4>
-                <p>{plan.credits ? `${plan.credits} créditos` : "Não consome créditos"}</p>
-              </div>
+          <div className="bg-white p-5 rounded-lg">
+            <h3 className="text-lg font-semibold mb-3">Como funciona</h3>
+            <div className="space-y-2">
+              {plan.howItWorks?.map((step, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="bg-primary-lighter text-primary font-semibold rounded-full h-6 w-6 flex items-center justify-center text-sm mt-0.5">
+                    {i+1}
+                  </div>
+                  <p>{step}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -889,140 +880,4 @@ const Modules = () => {
           prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
         );
         
-        // Atualiza o plano selecionado se for o mesmo
-        if (selectedPlan && selectedPlan.id === editingPlan.id) {
-          setSelectedPlan(updatedPlan);
-        }
-        
-        toast.success("Módulo atualizado com sucesso!");
-      } else if (editingPlan) {
-        // Edição normal de um módulo existente
-        const updatedPlan = {
-          ...editingPlan,
-          ...data
-        };
-        
-        setPlans(prevPlans => 
-          prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
-        );
-        
-        if (selectedPlan && selectedPlan.id === editingPlan.id) {
-          setSelectedPlan(updatedPlan);
-        }
-        
-        toast.success("Módulo atualizado com sucesso!");
-      } else {
-        // Criação de um novo módulo
-        const newPlan: Plan = {
-          id: Date.now(), // Usado como ID temporário
-          name: data.name || "Novo Módulo",
-          price: data.price || 0,
-          description: data.description || "",
-          shortDescription: data.shortDescription || "",
-          benefits: data.benefits || [],
-          active: data.active !== undefined ? data.active : true,
-          howItWorks: data.howItWorks || [],
-          comingSoon: data.comingSoon || false,
-          actionButtonText: data.actionButtonText || "Contratar",
-          icon: data.icon || "MessageCircle",
-          credits: data.credits || null
-        };
-        
-        setPlans(prevPlans => [...prevPlans, newPlan]);
-        toast.success("Novo módulo criado com sucesso!");
-      }
-      
-      // Limpa o estado de edição
-      setEditingPlan(null);
-      setIsCreateDialogOpen(false);
-    } catch (error) {
-      console.error("Erro ao salvar módulo:", error);
-      toast.error("Ocorreu um erro ao salvar o módulo.");
-    }
-  };
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(plan);
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleDeletePlan = async (id: string | number) => {
-    try {
-      setDeletingPlanId(id.toString());
-      
-      // Em um ambiente real, chamaríamos a API para desativar o módulo
-      // await deletePlan(id);
-      
-      // Simulamos a desativação do módulo (não removemos, apenas desativamos)
-      setPlans(prevPlans => 
-        prevPlans.map(p => p.id === id ? { ...p, active: false } : p)
-      );
-      
-      // Atualiza o plano selecionado se for o mesmo
-      if (selectedPlan && selectedPlan.id === id) {
-        setSelectedPlan(prev => prev ? { ...prev, active: false } : null);
-      }
-      
-      toast.success("Módulo desativado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao desativar módulo:", error);
-      toast.error("Ocorreu um erro ao desativar o módulo.");
-    } finally {
-      setDeletingPlanId(null);
-    }
-  };
-
-  const handleSelectPlan = (plan: Plan) => {
-    setSelectedPlan(prev => prev?.id === plan.id ? null : plan);
-  };
-
-  return (
-    <div className="space-y-8">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-      
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <>
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {plans.map((plan) => (
-                <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                  <ModuleCard 
-                    plan={plan}
-                    onClick={() => handleSelectPlan(plan)}
-                    isActive={selectedPlan?.id === plan.id}
-                    onEditPlan={handleEditPlan}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-end gap-2 mt-4">
-              <CarouselPrevious className="static transform-none" />
-              <CarouselNext className="static transform-none" />
-            </div>
-          </Carousel>
-          
-          {selectedPlan && (
-            <ModuleDetails 
-              plan={selectedPlan}
-              onEdit={handleEditPlan}
-              onDelete={handleDeletePlan}
-              isDeleting={deletingPlanId === selectedPlan.id.toString()}
-            />
-          )}
-        </>
-      )}
-      
-      <ModuleDialog 
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        plan={editingPlan}
-        onSave={handleSavePlan}
-      />
-    </div>
-  );
-};
-
-export default Modules;
-
+        // Atualiza
