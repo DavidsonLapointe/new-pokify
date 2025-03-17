@@ -31,8 +31,8 @@ export const EditPlanDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto py-4">
+        <DialogHeader className="py-1">
           <DialogTitle>{isEditing ? "Editar Plano" : "Novo Plano"}</DialogTitle>
           <DialogDescription>
             {isEditing 

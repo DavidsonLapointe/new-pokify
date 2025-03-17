@@ -26,13 +26,13 @@ interface PlanFormProps {
 export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-3">
           <FormField
             control={form.control}
             name="active"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Status do Plano</FormLabel>
                   <div className="text-sm text-muted-foreground">
@@ -50,9 +50,9 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           />
         </div>
 
-        <Separator />
+        <Separator className="my-2" />
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <FormField
             control={form.control}
             name="name"
@@ -101,9 +101,9 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           />
         </div>
 
-        <Separator />
+        <Separator className="my-2" />
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <FormField
             control={form.control}
             name="shortDescription"
@@ -131,7 +131,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                 <FormControl>
                   <Textarea 
                     {...field} 
-                    rows={5} 
+                    rows={4} 
                     placeholder="Ex: Até 4 usuários&#10;100 créditos&#10;Integração com 1 CRM&#10;Suporte por email"
                   />
                 </FormControl>
@@ -141,7 +141,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
           />
         </div>
 
-        <div className="flex justify-end gap-4 pt-4">
+        <div className="flex justify-end gap-4 pt-2">
           <Button type="button" variant="cancel" onClick={onCancel}>
             Cancelar
           </Button>
