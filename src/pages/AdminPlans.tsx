@@ -26,8 +26,8 @@ const AdminPlans = () => {
     }
   }, [fetchedPlans, localPlans.length]);
 
-  // Use os planos locais para renderização, em vez dos fetchedPlans
-  const plans = localPlans.length > 0 ? localPlans : fetchedPlans || [];
+  // Use os planos locais para renderização
+  const plans = localPlans;
 
   const handleEditPlan = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -47,8 +47,10 @@ const AdminPlans = () => {
       );
     } 
     // Se estamos criando um novo plano
-    else if ('id' in updatedPlan) {
-      setLocalPlans(prevPlans => [...prevPlans, updatedPlan as Plan]);
+    else {
+      const newPlan = updatedPlan as Plan;
+      setLocalPlans(prevPlans => [...prevPlans, newPlan]);
+      console.log("Plano adicionado:", newPlan, "Lista atualizada:", [...localPlans, newPlan]);
     }
     
     setEditPlanDialogOpen(false);
@@ -99,53 +101,66 @@ const AdminPlans = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {plans?.map((plan) => (
-          <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden">
-            <CardContent className="p-0">
-              <div className="p-4 bg-white">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-semibold">{plan.name}</h3>
-                  <div className="text-purple-500 font-medium">
-                    R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
+      {plans.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg border border-dashed border-gray-300 p-8">
+          <h3 className="text-lg font-medium text-gray-600 mb-2">Nenhum plano cadastrado</h3>
+          <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
+            Crie seu primeiro plano para disponibilizar às organizações.
+          </p>
+          <Button onClick={handleCreatePlan} className="bg-purple-500 hover:bg-purple-600">
+            <Plus className="mr-2 h-4 w-4" />
+            Criar Primeiro Plano
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden">
+              <CardContent className="p-0">
+                <div className="p-4 bg-white">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-semibold">{plan.name}</h3>
+                    <div className="text-purple-500 font-medium">
+                      R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
+                    </div>
                   </div>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {plan.shortDescription}
+                  </p>
+                  
+                  {plan.credits && (
+                    <div className="flex items-center mt-3 text-sm text-gray-600">
+                      <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
+                      {plan.credits} créditos mensais
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  {plan.shortDescription}
-                </p>
                 
-                {plan.credits && (
-                  <div className="flex items-center mt-3 text-sm text-gray-600">
-                    <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
-                    {plan.credits} créditos mensais
-                  </div>
-                )}
-              </div>
-              
-              <div className="px-4 py-3 bg-gray-50">
-                <h4 className="font-medium text-sm mb-2">Recursos inclusos:</h4>
-                <ul className="space-y-2">
-                  {plan.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-center text-sm text-gray-600">
-                      {getBenefitIcon(benefit)}
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="p-4 bg-white">
-                <Button 
-                  onClick={() => handleEditPlan(plan)} 
-                  className="w-full bg-purple-500 hover:bg-purple-600"
-                >
-                  Editar Plano
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="px-4 py-3 bg-gray-50">
+                  <h4 className="font-medium text-sm mb-2">Recursos inclusos:</h4>
+                  <ul className="space-y-2">
+                    {plan.benefits && plan.benefits.map((benefit, index) => (
+                      <li key={index} className="flex items-center text-sm text-gray-600">
+                        {getBenefitIcon(benefit)}
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="p-4 bg-white">
+                  <Button 
+                    onClick={() => handleEditPlan(plan)} 
+                    className="w-full bg-purple-500 hover:bg-purple-600"
+                  >
+                    Editar Plano
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <EditPlanDialog
         open={editPlanDialogOpen}
