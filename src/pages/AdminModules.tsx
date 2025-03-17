@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -769,22 +768,6 @@ const ModuleDetails: React.FC<{
             <Button variant="outline" size="sm" onClick={() => onEdit(module)}>
               <Pencil className="h-4 w-4 mr-1" /> Editar
             </Button>
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={() => onDelete(module.id)}
-              disabled={isDeleting || !module.active}
-            >
-              {isDeleting ? 
-                <div className="flex items-center">
-                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-1"></div>
-                  Processando...
-                </div> : 
-                <>
-                  <Trash2 className="h-4 w-4 mr-1" /> Desativar
-                </>
-              }
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -897,112 +880,4 @@ const AdminModules = () => {
         } as Plan;
         
         // Adicionar à lista de módulos
-        setModules(prevModules => [newModule, ...prevModules]);
-        
-        // Selecionar o novo módulo
-        setSelectedModule(newModule);
-        
-        toast.success("Módulo criado com sucesso!");
-      }
-      
-      // Fechar o modal e resetar o estado de edição
-      setIsCreateDialogOpen(false);
-      setEditingModule(null);
-      
-    } catch (error) {
-      console.error("Erro ao salvar módulo:", error);
-      toast.error("Ocorreu um erro ao salvar o módulo. Tente novamente.");
-    }
-  };
-
-  const handleOpenEdit = (module: Plan) => {
-    setEditingModule(module);
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleDelete = async (id: string | number) => {
-    try {
-      setDeletingModuleId(id);
-      
-      // Em um ambiente real, chamaríamos deletePlan(id)
-      // Simular uma chamada assíncrona
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Atualizar o estado para mostrar o módulo como inativo
-      setModules(prevModules => 
-        prevModules.map(m => 
-          m.id === id ? { ...m, active: false } : m
-        )
-      );
-      
-      // Se o módulo desativado for o selecionado, atualizar
-      if (selectedModule && selectedModule.id === id) {
-        setSelectedModule(prev => prev ? { ...prev, active: false } : null);
-      }
-      
-      toast.success("Módulo desativado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao desativar módulo:", error);
-      toast.error("Ocorreu um erro ao desativar o módulo. Tente novamente.");
-    } finally {
-      setDeletingModuleId(null);
-    }
-  };
-
-  const handleSelectModule = (module: Plan) => {
-    if (selectedModule && selectedModule.id === module.id) {
-      setSelectedModule(null);
-    } else {
-      setSelectedModule(module);
-    }
-  };
-
-  return (
-    <div className="container py-6 space-y-6">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-      
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <>
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
-              {modules.map((module) => (
-                <CarouselItem key={module.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                  <ModuleCard
-                    module={module}
-                    onClick={() => handleSelectModule(module)}
-                    isActive={selectedModule?.id === module.id}
-                    onEditModule={handleOpenEdit}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
-          </Carousel>
-
-          {/* Detalhes do módulo selecionado */}
-          {selectedModule && (
-            <ModuleDetails
-              module={selectedModule}
-              onEdit={handleOpenEdit}
-              onDelete={handleDelete}
-              isDeleting={deletingModuleId === selectedModule.id}
-            />
-          )}
-        </>
-      )}
-      
-      {/* Modal de criação/edição de módulo */}
-      <ModuleDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        module={editingModule}
-        onSave={handleSaveModule}
-      />
-    </div>
-  );
-};
-
-export default AdminModules;
+        setModules(prevModules =>
