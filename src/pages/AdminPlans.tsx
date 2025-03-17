@@ -35,8 +35,10 @@ const AdminPlans = () => {
   };
 
   const handleCreatePlan = () => {
+    // Garantir que o plano selecionado é definido como undefined para limpar o formulário
     setSelectedPlan(undefined);
     setEditPlanDialogOpen(true);
+    console.log("Abrindo modal para criar novo plano");
   };
 
   // Função que será chamada quando o modal for fechado ou cancelado
@@ -45,6 +47,7 @@ const AdminPlans = () => {
     if (!open) {
       // Resetando o plano selecionado quando o modal é fechado
       setSelectedPlan(undefined);
+      console.log("Modal fechado, seleção de plano resetada");
     }
   };
 

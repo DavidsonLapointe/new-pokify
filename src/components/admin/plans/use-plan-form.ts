@@ -31,7 +31,11 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     },
   });
 
+  // Reseta o formulário quando o plano muda ou quando o componente é montado
   useEffect(() => {
+    console.log("usePlanForm - plan mudou:", plan);
+    
+    // Se temos um plano (modo edição)
     if (plan) {
       // Prepare benefits for form
       let benefitsString = "";
@@ -41,6 +45,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         benefitsString = plan.benefits;
       }
       
+      // Preenche o formulário com os dados do plano
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
@@ -52,6 +57,8 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
         stripePriceId: plan.stripePriceId || "",
       });
     } else {
+      // Caso contrário, reseta para os valores padrão (modo criação)
+      console.log("Resetando formulário para valores padrão");
       form.reset({
         name: "",
         price: "",
