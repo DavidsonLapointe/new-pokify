@@ -177,27 +177,27 @@ const AdminPlans = () => {
                   </div>
                 </div>
                 
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-gray-500 mb-6">
                   {plan.shortDescription}
                 </p>
                 
-                {/* Container para creditos com altura fixa para alinhamento */}
-                <div className="h-[60px]">
+                {/* Container para créditos com largura fixa e centralizado */}
+                <div className="h-16 flex items-center justify-center mb-6">
                   {plan.credits && (
-                    <div className="bg-gray-100 rounded-md p-3 flex items-center">
+                    <div className="bg-gray-100 rounded-md p-3 w-full flex items-center justify-center">
                       <CreditCard className="h-4 w-4 text-purple-500 mr-2" />
                       <span className="text-sm">{plan.credits} créditos mensais</span>
                     </div>
                   )}
                 </div>
                 
-                {/* Container para recursos inclusos com altura para garantir alinhamento */}
-                <div className="mb-6 mt-2">
-                  <div className="mb-2">
+                {/* Container para recursos inclusos com alinhamento consistente */}
+                <div className="mb-6">
+                  <div className="mb-4">
                     <h4 className="font-medium text-sm text-gray-600">Recursos inclusos:</h4>
                     <Separator className="mt-2" />
                   </div>
-                  <ul className="space-y-2 mt-3">
+                  <ul className="space-y-2">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
                       <li key={index} className="flex items-start text-sm text-gray-600">
                         <div className="h-5 w-5 bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2 rounded-full">
@@ -209,10 +209,11 @@ const AdminPlans = () => {
                   </ul>
                 </div>
                 
-                {/* Spacer que empurra o botão para o final do card, garantindo alinhamento */}
+                {/* Spacer flexível para empurrar o botão para o final do card */}
                 <div className="flex-grow"></div>
                 
-                <div className="mt-auto">
+                {/* Container do botão com altura fixa para garantir alinhamento entre os cards */}
+                <div className="h-12 flex items-center">
                   <Button 
                     onClick={() => handleEditPlan(plan)} 
                     className="w-full bg-purple-500 hover:bg-purple-600"
