@@ -27,7 +27,7 @@ const AdminFinancial = () => {
 
   const handleSearch = (filters: { 
     status: "pending" | "paid" | "overdue" | "all", 
-    type: "pro_rata" | "mensalidade" | "all", 
+    type: "pro_rata" | "mensalidade" | "setup" | "all", 
     search: string 
   }) => {
     applyFilters(filters);

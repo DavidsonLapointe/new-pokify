@@ -120,8 +120,8 @@ export const createSetupTitle = async (
   }
 };
 
-// Add this to mock fetching all titles
-export const getAllTitles = async (): Promise<FinancialTitle[]> => {
+// Rename this function to avoid conflict with the one in organizationTitleService.ts
+export const getMockTitles = async (): Promise<FinancialTitle[]> => {
   // For frontend development, return the mockTitles
   return mockTitles;
 };
