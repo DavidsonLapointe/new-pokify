@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -887,4 +888,139 @@ const Modules = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-0
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </div>
+
+          {selectedPlan && (
+            <Card className="p-5 bg-[#F8F8FB]">
+              <div className="flex justify-between items-start">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-primary-lighter rounded-md">
+                    {selectedPlan.icon && iconMap[selectedPlan.icon as keyof typeof iconMap] && 
+                      React.createElement(iconMap[selectedPlan.icon as keyof typeof iconMap], { 
+                        className: "h-6 w-6 text-primary" 
+                      })}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold flex items-center gap-2">
+                      {selectedPlan.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{selectedPlan.shortDescription}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-start gap-1">
+                    <Badge 
+                      variant="secondary"
+                      className={`${selectedPlan.active 
+                          ? "bg-green-100 text-green-800" 
+                          : "bg-red-100 text-red-800"}`}
+                    >
+                      {selectedPlan.active ? "Ativo" : "Inativo"}
+                    </Badge>
+                    
+                    {selectedPlan.comingSoon && (
+                      <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        Em breve
+                      </Badge>
+                    )}
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1 bg-[#f0f0fc] text-primary px-2 py-0.5 rounded-full text-xs">
+                          <Zap className="h-3 w-3" />
+                          <span>{selectedPlan.credits || 0} créditos</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-[200px]">
+                        <p>Créditos consumidos a cada execução do módulo</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                    
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="ml-2"
+                    onClick={() => handleEditPlan(selectedPlan)}
+                  >
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Editar
+                  </Button>
+                </div>
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div className="space-y-1 mt-2 mb-4">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <CreditCard className="h-4 w-4 inline" />
+                  <strong className="text-foreground font-medium">Valor:</strong> 
+                  <span>R$ {selectedPlan.price.toFixed(2)}/mês</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-muted-foreground mb-4">
+                  {selectedPlan.description}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-white p-4 rounded-lg border border-gray-100">
+                  <h4 className="font-medium mb-3 flex items-center text-primary">
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Benefícios
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedPlan.benefits?.map((benefit, index) => (
+                      <li key={index} className="flex items-start text-sm">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border border-gray-100">
+                  <h4 className="font-medium mb-3 flex items-center text-primary">
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Como funciona
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedPlan.howItWorks?.map((step, index) => (
+                      <li key={index} className="flex items-start text-sm">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          <ModuleDialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+            onSave={handleSavePlan}
+          />
+
+          <ModuleDialog
+            open={!!editingPlan}
+            onOpenChange={(open) => {
+              if (!open) setEditingPlan(null);
+            }}
+            plan={editingPlan || undefined}
+            onSave={handleSavePlan}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Modules;
