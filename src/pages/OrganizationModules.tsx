@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -297,7 +296,7 @@ const OrganizationModules = () => {
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        <div className="mb-2">
+        <div className="space-y-2">
           <h1 className="text-2xl font-bold">Módulos do Sistema</h1>
           <p className="text-muted-foreground text-sm">
             Gerencie as ferramentas de IA disponíveis para sua empresa
@@ -319,7 +318,7 @@ const OrganizationModules = () => {
                 const Icon = tool.icon;
                 
                 return (
-                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-1">
+                  <CarouselItem key={tool.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-4">
                     <Card 
                       className={`w-[220px] h-[190px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
                       onClick={() => showToolDetails(tool)}

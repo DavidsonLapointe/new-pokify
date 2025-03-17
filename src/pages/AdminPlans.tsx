@@ -141,16 +141,16 @@ const AdminPlans = () => {
     <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Planos</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground">
           Gerencie os planos disponíveis na plataforma
         </p>
-        <div className="flex items-center justify-between">
-          <div className="flex-1"></div>
-          <Button onClick={handleCreatePlan} className="bg-primary">
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Plano
-          </Button>
-        </div>
+      </div>
+      
+      <div className="flex justify-end">
+        <Button onClick={handleCreatePlan} className="bg-primary">
+          <Plus className="mr-2 h-4 w-4" />
+          Novo Plano
+        </Button>
       </div>
 
       {localPlans.length === 0 ? (
@@ -205,6 +205,7 @@ const AdminPlans = () => {
                     onClick={() => handleEditPlan(plan)} 
                     className="w-full bg-purple-500 hover:bg-purple-600"
                   >
+                    <Pencil className="h-4 w-4 mr-2" />
                     Editar Plano
                   </Button>
                 </div>
