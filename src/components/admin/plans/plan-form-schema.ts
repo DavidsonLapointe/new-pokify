@@ -25,4 +25,10 @@ export interface Plan {
   stripeProductId?: string;
   stripePriceId?: string;
   credits?: number | null;
+  // Propriedades adicionais utilizadas no módulo AdminModules
+  features?: string[];
+  howItWorks?: string[];
+  comingSoon?: boolean;
+  actionButtonText?: string;
+  icon?: string;
 }
