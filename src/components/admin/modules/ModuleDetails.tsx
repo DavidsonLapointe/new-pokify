@@ -3,7 +3,7 @@ import React from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { iconMap } from "./module-constants";
 import { 
-  MessageCircle, Clock, Pencil, CheckCircle, Zap 
+  MessageCircle, Clock, Pencil, CheckCircle, Zap, Trash2
 } from "lucide-react";
 import {
   Card,
@@ -100,6 +100,14 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => onEdit(module)}>
               <Pencil className="h-4 w-4 mr-1" /> Editar
+            </Button>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => onDelete(module.id)}
+              disabled={isDeleting}
+            >
+              <Trash2 className="h-4 w-4 mr-1" /> Excluir
             </Button>
           </div>
         </div>
