@@ -177,11 +177,14 @@ const AdminPlans = () => {
                   </div>
                 </div>
                 
-                <p className="text-sm text-gray-500 mb-6">
-                  {plan.shortDescription}
-                </p>
+                {/* Descrição com altura fixa para garantir alinhamento entre os cards */}
+                <div className="h-12 mb-6">
+                  <p className="text-sm text-gray-500">
+                    {plan.shortDescription}
+                  </p>
+                </div>
                 
-                {/* Container para créditos com largura fixa e centralizado */}
+                {/* Container para créditos com altura fixa e centralizado */}
                 <div className="h-16 flex items-center justify-center mb-6">
                   {plan.credits && (
                     <div className="bg-gray-100 rounded-md p-3 w-full flex items-center justify-center">
@@ -191,12 +194,12 @@ const AdminPlans = () => {
                   )}
                 </div>
                 
-                {/* Container para recursos inclusos com alinhamento consistente */}
-                <div className="mb-6">
-                  <div className="mb-4">
+                {/* Container para recursos inclusos com altura fixa para garantir alinhamento */}
+                <div className="mb-4">
+                  <div className="h-10 flex items-center">
                     <h4 className="font-medium text-sm text-gray-600">Recursos inclusos:</h4>
-                    <Separator className="mt-2" />
                   </div>
+                  <Separator className="mb-4" />
                   <ul className="space-y-2">
                     {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
                       <li key={index} className="flex items-start text-sm text-gray-600">
@@ -210,10 +213,10 @@ const AdminPlans = () => {
                 </div>
                 
                 {/* Spacer flexível para empurrar o botão para o final do card */}
-                <div className="flex-grow"></div>
+                <div className="flex-grow min-h-[20px]"></div>
                 
                 {/* Container do botão com altura fixa para garantir alinhamento entre os cards */}
-                <div className="h-12 flex items-center">
+                <div className="h-12 flex items-center mt-4">
                   <Button 
                     onClick={() => handleEditPlan(plan)} 
                     className="w-full bg-purple-500 hover:bg-purple-600"
