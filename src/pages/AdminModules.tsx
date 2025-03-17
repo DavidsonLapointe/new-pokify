@@ -984,17 +984,24 @@ const Modules = () => {
         <LoadingState />
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <ModuleCard 
-                key={plan.id}
-                plan={plan}
-                onClick={() => handleSelectPlan(plan)}
-                isActive={selectedPlan?.id === plan.id}
-                onEditPlan={handleEditPlan}
-              />
-            ))}
-          </div>
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-4">
+              {plans.map((plan) => (
+                <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                  <ModuleCard 
+                    plan={plan}
+                    onClick={() => handleSelectPlan(plan)}
+                    isActive={selectedPlan?.id === plan.id}
+                    onEditPlan={handleEditPlan}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-end gap-2 mt-4">
+              <CarouselPrevious className="static transform-none" />
+              <CarouselNext className="static transform-none" />
+            </div>
+          </Carousel>
           
           {selectedPlan && (
             <ModuleDetails 
@@ -1018,3 +1025,4 @@ const Modules = () => {
 };
 
 export default Modules;
+
