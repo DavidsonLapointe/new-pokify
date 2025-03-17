@@ -8,12 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Search, X, CheckCircle2, AlertTriangle, CalendarIcon, UserRound, PhoneCall } from "lucide-react";
@@ -146,116 +140,106 @@ export const ModuleSetupsList = () => {
   };
   
   return (
-    <TooltipProvider>
-      <div className="space-y-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-2xl">Implantação de Setup</CardTitle>
-          </CardHeader>
-          
-          <CardContent>
-            <div className="flex items-center justify-between mb-4">
-              <div className="relative w-72">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por empresa, módulo ou contato..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Select
-                  value={statusFilter || ""}
-                  onValueChange={(value) => setStatusFilter(value || null)}
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Filtrar por status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos os status</SelectItem>
-                    <SelectItem value="pending">Pendente</SelectItem>
-                    <SelectItem value="in_progress">Em Andamento</SelectItem>
-                    <SelectItem value="completed">Concluído</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="font-medium">Empresa</TableHead>
-                    <TableHead className="font-medium">Módulo</TableHead>
-                    <TableHead className="font-medium">Nome do Implantador</TableHead>
-                    <TableHead className="font-medium">Telefone</TableHead>
-                    <TableHead className="font-medium">Data de Contratação</TableHead>
-                    <TableHead className="font-medium">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredSetups.length > 0 ? (
-                    filteredSetups.map((setup) => (
-                      <TableRow key={setup.id}>
-                        <TableCell>{setup.organization.name}</TableCell>
-                        <TableCell>{setup.module.name}</TableCell>
-                        <TableCell className="flex items-center gap-2">
-                          <UserRound className="h-4 w-4 text-muted-foreground" />
-                          {setup.contactName}
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 gap-1 text-blue-600"
-                              >
-                                <PhoneCall className="h-3.5 w-3.5" />
-                                {setup.contactPhone}
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Clique para copiar</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                            {format(setup.contractedAt, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(setup.status)}>
-                            {getStatusText(setup.status)}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
-                        Nenhuma implantação encontrada.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="relative w-72">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por empresa, módulo ou contato..."
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Select
+            value={statusFilter || ""}
+            onValueChange={(value) => setStatusFilter(value || null)}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Filtrar por status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os status</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="in_progress">Em Andamento</SelectItem>
+              <SelectItem value="completed">Concluído</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-    </TooltipProvider>
+      
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-medium">Empresa</TableHead>
+              <TableHead className="font-medium">Módulo</TableHead>
+              <TableHead className="font-medium">Nome do Implantador</TableHead>
+              <TableHead className="font-medium">Telefone</TableHead>
+              <TableHead className="font-medium">Data de Contratação</TableHead>
+              <TableHead className="font-medium">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredSetups.length > 0 ? (
+              filteredSetups.map((setup) => (
+                <TableRow key={setup.id}>
+                  <TableCell>{setup.organization.name}</TableCell>
+                  <TableCell>{setup.module.name}</TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <UserRound className="h-4 w-4 text-muted-foreground" />
+                    {setup.contactName}
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 gap-1 text-blue-600"
+                        >
+                          <PhoneCall className="h-3.5 w-3.5" />
+                          {setup.contactPhone}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Clique para copiar</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                      {format(setup.contractedAt, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(setup.status)}>
+                      {getStatusText(setup.status)}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  Nenhuma implantação encontrada.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 };
