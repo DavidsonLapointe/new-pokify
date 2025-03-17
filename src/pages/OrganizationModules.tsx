@@ -827,4 +827,4 @@ const OrganizationModules = () => {
 
         {/* Diálogo de cancelamento com coleta de motivo */}
         <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-          <DialogContent className="sm:max
+          <DialogContent className="sm:max-w-
