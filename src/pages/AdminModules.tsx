@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -254,7 +253,6 @@ const ModuleDialog = ({
     }
   });
 
-  // Efeito para atualizar o formulário quando o plano muda
   useEffect(() => {
     if (plan) {
       form.reset({
@@ -298,6 +296,49 @@ const ModuleDialog = ({
         howItWorks: values.howItWorks.split("\n").filter(hw => hw.trim()),
       };
       
+      // Se estamos editando e os créditos foram alterados, atualizar no banco de dados
+      if (isEditing && plan && values.credits !== plan.credits) {
+        console.log("Créditos alterados de", plan.credits, "para", values.credits);
+        
+        try {
+          // Atualizar o módulo na tabela de módulos
+          const { error: moduleError } = await supabase
+            .from('modules')
+            .update({ 
+              credits: values.credits,
+              updated_at: new Date().toISOString() 
+            })
+            .eq('name', plan.name);
+          
+          if (moduleError) {
+            console.error("Erro ao atualizar créditos do módulo:", moduleError);
+            throw new Error(`Erro ao atualizar créditos: ${moduleError.message}`);
+          }
+          
+          // Adicionar um registro de histórico de alteração de créditos
+          const { error: historyError } = await supabase
+            .from('credit_changes_history')
+            .insert({
+              module_name: plan.name,
+              previous_value: plan.credits,
+              new_value: values.credits,
+              changed_by: "admin", // Idealmente seria o ID do administrador atual
+              changed_at: new Date().toISOString()
+            });
+            
+          if (historyError) {
+            console.error("Erro ao registrar histórico de alteração:", historyError);
+            // Não bloqueamos o fluxo por erro no histórico
+          }
+          
+          toast.success("Valor de créditos atualizado com sucesso! O novo valor será aplicado nas próximas execuções.");
+        } catch (dbError) {
+          console.error("Erro no banco de dados:", dbError);
+          toast.error("Ocorreu um erro ao atualizar os créditos no banco de dados.");
+          // Continuamos com a atualização do estado local mesmo se houver falha no BD
+        }
+      }
+      
       await onSave(formattedValues);
       onOpenChange(false);
     } catch (error) {
@@ -329,6 +370,14 @@ const ModuleDialog = ({
               : "Preencha as informações do novo módulo."
             }
           </DialogDescription>
+          {isEditing && plan?.credits !== null && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <p className="text-sm text-amber-800">
+                <AlertCircle className="h-4 w-4 inline-block mr-1" />
+                Atenção: Alterações nos créditos de execução serão aplicadas imediatamente para todas as empresas contratantes a partir da próxima execução.
+              </p>
+            </div>
+          )}
         </DialogHeader>
 
         <Form {...form}>
@@ -688,6 +737,21 @@ const ModuleDetailedSection: React.FC<ModuleDetailedSectionProps> = ({ plan }) =
               <Zap className="h-5 w-5 text-primary" />
               <span className="font-medium">Créditos por execução:</span>
               <span>{plan.credits}</span>
+              <div className="ml-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-blue-100 text-blue-800 p-1 rounded-full cursor-help">
+                      <AlertCircle className="h-4 w-4" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-[250px] text-xs">
+                      Alterações no valor de créditos são aplicadas imediatamente 
+                      nas próximas execuções para todas as organizações contratantes.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           )}
           
@@ -810,195 +874,3 @@ const Modules = () => {
         console.log("Módulos carregados com mock data:", mockModules);
         setPlans(mockModules);
         setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error("Erro ao carregar módulos:", error);
-      toast.error("Não foi possível carregar os módulos. Tente novamente.");
-      setIsLoading(false);
-    }
-  };
-
-  const handleSavePlan = async (data: Partial<Plan>) => {
-    console.log("Salvando módulo:", data);
-    try {
-      // Se estiver editando um módulo existente e mudando ele para inativo
-      if (editingPlan && editingPlan.active && data.active === false) {
-        // Verificar se existem organizações usando este módulo
-        const { data: orgsUsingModule, error } = await supabase
-          .from('subscriptions')
-          .select('organization_id, organizations!inner(name)')
-          .eq('status', 'active')
-          .filter('organizations.plan', 'eq', editingPlan.name);
-          
-        if (error) {
-          console.error("Erro ao verificar organizações:", error);
-          throw new Error("Erro ao verificar se o módulo está em uso");
-        }
-        
-        // Se existirem organizações usando o módulo, impedir a inativação
-        if (orgsUsingModule && orgsUsingModule.length > 0) {
-          const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
-          
-          toast.error(
-            `Não é possível inativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
-          );
-          
-          // Manter o módulo ativo
-          data.active = true;
-          return;
-        }
-      }
-      
-      if (editingPlan) {
-        console.log("Atualizando módulo existente:", editingPlan.id);
-        const updatedPlans = plans.map(plan =>
-          plan.id === editingPlan.id
-            ? { ...plan, ...data, id: plan.id }
-            : plan
-        );
-        setPlans(updatedPlans);
-        setEditingPlan(null);
-        
-        // Se o plano selecionado for o mesmo que estamos editando, atualize-o
-        if (selectedPlan && selectedPlan.id === editingPlan.id) {
-          const updatedPlan = updatedPlans.find(p => p.id === editingPlan.id);
-          if (updatedPlan) {
-            setSelectedPlan(updatedPlan);
-          }
-        }
-      } else {
-        console.log("Adicionando novo módulo");
-        const newPlan = { ...data, id: data.id || Date.now() } as Plan;
-        setPlans([...plans, newPlan]);
-      }
-
-      // Em um ambiente real, nós chamaríamos o loadPlans() novamente para atualizar
-      toast.success(editingPlan ? "Módulo atualizado com sucesso!" : "Módulo criado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar módulo:", error);
-      toast.error("Ocorreu um erro ao salvar o módulo.");
-    }
-  };
-
-  const handleDeletePlan = async (id: string | number) => {
-    if (!id) return;
-
-    try {
-      // Convert id to string if it's a number
-      const planId = id.toString();
-      
-      // Encontrar o plano que está sendo desativado
-      const planToDelete = plans.find(p => p.id.toString() === planId);
-      if (!planToDelete) {
-        toast.error("Módulo não encontrado");
-        return;
-      }
-      
-      // Verificar se existem organizações usando este módulo
-      const { data: orgsUsingModule, error } = await supabase
-        .from('subscriptions')
-        .select('organization_id, organizations!inner(name)')
-        .eq('status', 'active')
-        .filter('organizations.plan', 'eq', planToDelete.name);
-        
-      if (error) {
-        console.error("Erro ao verificar organizações:", error);
-        throw new Error("Erro ao verificar se o módulo está em uso");
-      }
-      
-      // Se existirem organizações usando o módulo, impedir a desativação
-      if (orgsUsingModule && orgsUsingModule.length > 0) {
-        const orgNames = orgsUsingModule.map((sub: any) => sub.organizations.name).join(", ");
-        
-        toast.error(
-          `Não é possível desativar este módulo pois está sendo utilizado por ${orgsUsingModule.length} organização(ões): ${orgNames}`
-        );
-        return;
-      }
-      
-      setDeletingPlanId(planId);
-      // Em um ambiente real, chamaríamos deletePlan(planId)
-      // Simulando a exclusão localmente
-      setTimeout(() => {
-        const updatedPlans = plans.map(plan => 
-          plan.id.toString() === planId 
-            ? { ...plan, active: false }
-            : plan
-        );
-        setPlans(updatedPlans);
-        setDeletingPlanId(null);
-        
-        // Se o plano selecionado for o mesmo que estamos desativando, atualize-o
-        if (selectedPlan && selectedPlan.id.toString() === planId) {
-          const updatedPlan = updatedPlans.find(p => p.id.toString() === planId);
-          if (updatedPlan) {
-            setSelectedPlan(updatedPlan);
-          }
-        }
-        
-        toast.success("Módulo desativado com sucesso!");
-      }, 1000);
-    } catch (error) {
-      console.error("Erro ao desativar módulo:", error);
-      toast.error("Ocorreu um erro ao desativar o módulo.");
-      setDeletingPlanId(null);
-    }
-  };
-
-  const selectPlan = (plan: Plan) => {
-    setSelectedPlan(plan);
-  };
-
-  const handleEditPlan = (plan: Plan) => {
-    setEditingPlan(plan);
-  };
-
-  return (
-    <div className="space-y-8">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
-
-      {isLoading ? (
-        <LoadingState />
-      ) : (
-        <>
-          <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent className="px-2">
-                {plans.map((plan) => (
-                  <CarouselItem key={plan.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 pr-2">
-                    <ModuleCard 
-                      plan={plan} 
-                      onClick={() => selectPlan(plan)}
-                      isActive={selectedPlan?.id === plan.id}
-                      onEditPlan={handleEditPlan}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-0" />
-              <CarouselNext className="right-0" />
-            </Carousel>
-          </div>
-
-          {/* Detailed Module Section */}
-          {selectedPlan && <ModuleDetailedSection plan={selectedPlan} />}
-        </>
-      )}
-
-      {/* Dialog for creating/editing plans */}
-      <ModuleDialog
-        open={isCreateDialogOpen || !!editingPlan}
-        onOpenChange={(open) => {
-          if (!open) {
-            setIsCreateDialogOpen(false);
-            setEditingPlan(null);
-          }
-        }}
-        plan={editingPlan || undefined}
-        onSave={handleSavePlan}
-      />
-    </div>
-  );
-};
-
-export default Modules;
