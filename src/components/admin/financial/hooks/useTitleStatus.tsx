@@ -20,10 +20,19 @@ export const checkTitleStatus = (title: FinancialTitle): TitleStatus => {
 };
 
 export const useTitleStatus = (initialTitles: FinancialTitle[]) => {
-  const [titles, setTitles] = useState<FinancialTitle[]>(initialTitles);
+  const [titles, setTitles] = useState<FinancialTitle[]>([]);
 
   useEffect(() => {
-    setTitles(initialTitles);
+    // Processar os títulos ao receber novos dados
+    if (initialTitles && initialTitles.length > 0) {
+      const processedTitles = initialTitles.map(title => ({
+        ...title,
+        status: checkTitleStatus(title)
+      }));
+      setTitles(processedTitles);
+    } else {
+      setTitles([]);
+    }
   }, [initialTitles]);
 
   useEffect(() => {
@@ -36,7 +45,7 @@ export const useTitleStatus = (initialTitles: FinancialTitle[]) => {
       );
     };
 
-    updateTitlesStatus();
+    // Atualizar a cada minuto
     const interval = setInterval(updateTitlesStatus, 60000);
     return () => clearInterval(interval);
   }, []);
