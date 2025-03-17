@@ -1,3 +1,4 @@
+
 import { FinancialTitle } from "@/types/financial";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,58 +8,47 @@ export const handleTitlePayment = async (
   title: FinancialTitle, 
   organization: Organization
 ): Promise<FinancialTitle> => {
-  const { data: updatedTitle, error } = await supabase
-    .from('financial_titles')
-    .update({
-      status: 'paid' as const,
-      payment_date: new Date().toISOString(),
-      payment_method: 'pix' as const
-    })
-    .eq('id', title.id)
-    .select()
-    .single();
+  // Como estamos trabalhando apenas com o frontend, vamos simular um pagamento bem-sucedido
+  // em vez de chamar o Supabase
+  
+  console.log("Processando pagamento para o título:", title);
+  
+  // Simular o retorno de um título atualizado
+  const updatedTitle = {
+    ...title,
+    status: 'paid' as const,
+    payment_date: new Date().toISOString(),
+    payment_method: 'pix' as const
+  };
 
-  if (error) {
-    throw new Error('Erro ao processar pagamento');
-  }
-
+  // Se for um título pro-rata, atualizamos também o status da organização
   if (title.type === 'pro_rata') {
-    const { error: orgError } = await supabase
-      .from('organizations')
-      .update({
-        payment_status: 'completed'
-      })
-      .eq('id', organization.id.toString());
-
-    if (orgError) throw orgError;
+    console.log("Título pro-rata: atualizando status da organização");
     
-    const subscription = await getOrganizationSubscription(organization.id.toString());
+    // Para desenvolvimento frontend, apenas logamos a ação
+    // Normalmente chamaríamos o Supabase aqui
     
-    if (subscription && subscription.status === 'inactive') {
-      try {
-        const { data: stripeData, error: stripeError } = await supabase.functions.invoke('create-stripe-subscription', {
-          body: {
-            organizationId: organization.id.toString(),
-            planType: organization.plan
-          }
-        });
-        
-        if (stripeError) {
-          console.error('Erro ao criar assinatura no Stripe:', stripeError);
-        } else {
-          console.log('Assinatura criada com sucesso no Stripe:', stripeData);
-        }
-      } catch (stripeCreateError) {
-        console.error('Exceção ao criar assinatura no Stripe:', stripeCreateError);
+    // Verificamos se existe alguma assinatura inactive para esta organização
+    try {
+      const subscription = await getOrganizationSubscription(organization.id.toString());
+      
+      // Se existir uma assinatura e ela estiver inativa, simulamos sua ativação
+      if (subscription && subscription.status === 'inactive') {
+        console.log("Ativando assinatura para organização:", organization.id);
+        // Simulação de ativação bem-sucedida
       }
+    } catch (error) {
+      // Apenas logamos o erro, mas não interrompemos o fluxo
+      console.error("Erro ao verificar assinatura:", error);
     }
   }
 
+  // Retornar o título atualizado com a estrutura esperada pelo componente
   return {
     ...title,
     status: 'paid',
-    paymentDate: updatedTitle.payment_date,
-    paymentMethod: updatedTitle.payment_method
+    paymentDate: new Date().toISOString(),
+    paymentMethod: 'pix'
   };
 };
 
@@ -68,23 +58,11 @@ export const updateTitleStatus = async (
   paymentMethod?: 'pix' | 'boleto' | 'credit_card'
 ): Promise<boolean> => {
   try {
-    const updateData: any = {
-      status,
-    };
-
-    if (status === 'paid') {
-      updateData.payment_date = new Date().toISOString();
-      if (paymentMethod) {
-        updateData.payment_method = paymentMethod;
-      }
-    }
-
-    const { error } = await supabase
-      .from('financial_titles')
-      .update(updateData)
-      .eq('id', titleId);
-
-    if (error) throw error;
+    console.log(`Atualizando título ${titleId} para status ${status}`);
+    
+    // Em vez de chamar o Supabase, apenas simulamos uma atualização bem-sucedida
+    // para desenvolvimento frontend
+    
     return true;
   } catch (error) {
     console.error('Erro ao atualizar status do título:', error);

@@ -33,7 +33,11 @@ export const TitlePaymentButton = ({
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
+      console.log("Iniciando processamento de pagamento para título:", title);
+      
       const updatedTitle = await handleTitlePayment(title, organization);
+      
+      console.log("Título atualizado com sucesso:", updatedTitle);
       
       onPaymentSuccess(updatedTitle);
 
@@ -46,6 +50,8 @@ export const TitlePaymentButton = ({
       
       setIsOpen(false);
     } catch (error) {
+      console.error("Erro ao processar pagamento:", error);
+      
       toast({
         title: "Erro ao processar pagamento",
         description: "Ocorreu um erro ao tentar baixar o título.",
@@ -56,7 +62,7 @@ export const TitlePaymentButton = ({
     }
   };
 
-  // Apenas exibe o botão se o título estiver pendente ou vencido
+  // Exibe o botão se o título estiver pendente ou vencido
   if (title.status === "pending" || title.status === "overdue") {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -77,6 +83,9 @@ export const TitlePaymentButton = ({
                 style: 'currency',
                 currency: 'BRL'
               }).format(title.value)} para {title.organization?.name}.
+              {title.status === "overdue" && (
+                " Este título está vencido, mas ainda pode ser baixado."
+              )}
               {title.type === "pro_rata" && (
                 " Este pagamento também ativará a assinatura da organização."
               )}
