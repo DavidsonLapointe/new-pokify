@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -83,7 +84,7 @@ const iconMap = {
   AppWindow
 };
 
-// Mock data para os módulos baseado nos módulos do ambiente da organização
+// Dados de exemplo para os módulos
 const mockModules: Plan[] = [
   {
     id: 1,
@@ -207,7 +208,7 @@ const mockModules: Plan[] = [
   }
 ];
 
-// Definimos um schema para validação do formulário de módulo
+// Schema para validação do formulário de módulo
 const moduleFormSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   price: z.string().regex(/^\d+(\.\d{0,2})?$/, "Preço inválido"),
@@ -228,51 +229,51 @@ type ModuleFormValues = z.infer<typeof moduleFormSchema>;
 interface ModuleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  plan?: Plan;
+  module?: Plan;
   onSave: (data: Partial<Plan>) => void;
 }
 
 const ModuleDialog = ({
   open,
   onOpenChange,
-  plan,
+  module,
   onSave
 }: ModuleDialogProps) => {
-  const isEditing = !!plan;
+  const isEditing = !!module;
   
   // Inicializar o formulário com react-hook-form
   const form = useForm<ModuleFormValues>({
     resolver: zodResolver(moduleFormSchema),
     defaultValues: {
-      name: plan?.name || "",
-      price: plan?.price ? plan.price.toString() : "",
-      shortDescription: plan?.shortDescription || "",
-      description: plan?.description || "",
-      benefits: Array.isArray(plan?.benefits) ? plan.benefits.join("\n") : "",
-      howItWorks: Array.isArray(plan?.howItWorks) ? plan.howItWorks.join("\n") : "",
-      active: plan?.active !== undefined ? plan.active : true,
-      comingSoon: plan?.comingSoon || false,
-      icon: plan?.icon || "MessageCircle",
-      actionButtonText: plan?.actionButtonText || "Contratar",
-      credits: plan?.credits || null,
+      name: module?.name || "",
+      price: module?.price ? module.price.toString() : "",
+      shortDescription: module?.shortDescription || "",
+      description: module?.description || "",
+      benefits: Array.isArray(module?.benefits) ? module.benefits.join("\n") : "",
+      howItWorks: Array.isArray(module?.howItWorks) ? module.howItWorks.join("\n") : "",
+      active: module?.active !== undefined ? module.active : true,
+      comingSoon: module?.comingSoon || false,
+      icon: module?.icon || "MessageCircle",
+      actionButtonText: module?.actionButtonText || "Contratar",
+      credits: module?.credits || null,
     }
   });
 
-  // Efeito para atualizar o formulário quando o plano muda
+  // Efeito para atualizar o formulário quando o módulo muda
   useEffect(() => {
-    if (plan) {
+    if (module) {
       form.reset({
-        name: plan.name,
-        price: plan.price.toString(),
-        shortDescription: plan.shortDescription || "",
-        description: plan.description || "",
-        benefits: Array.isArray(plan.benefits) ? plan.benefits.join("\n") : "",
-        howItWorks: Array.isArray(plan.howItWorks) ? plan.howItWorks.join("\n") : "",
-        active: plan.active,
-        comingSoon: plan.comingSoon || false,
-        icon: plan.icon || "MessageCircle",
-        actionButtonText: plan.actionButtonText || "Contratar",
-        credits: plan.credits || null,
+        name: module.name,
+        price: module.price.toString(),
+        shortDescription: module.shortDescription || "",
+        description: module.description || "",
+        benefits: Array.isArray(module.benefits) ? module.benefits.join("\n") : "",
+        howItWorks: Array.isArray(module.howItWorks) ? module.howItWorks.join("\n") : "",
+        active: module.active,
+        comingSoon: module.comingSoon || false,
+        icon: module.icon || "MessageCircle",
+        actionButtonText: module.actionButtonText || "Contratar",
+        credits: module.credits || null,
       });
     } else {
       form.reset({
@@ -289,7 +290,7 @@ const ModuleDialog = ({
         credits: null,
       });
     }
-  }, [plan, form]);
+  }, [module, form]);
 
   // Função submit que processa o formulário
   const onSubmit = async (values: ModuleFormValues) => {
@@ -560,21 +561,21 @@ const ModuleDialog = ({
 };
 
 interface ModuleCardProps {
-  plan: Plan;
+  module: Plan;
   onClick: () => void;
   isActive: boolean;
-  onEditPlan: (plan: Plan) => void;
+  onEditModule: (module: Plan) => void;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
-  plan,
+  module,
   onClick,
   isActive,
-  onEditPlan
+  onEditModule
 }) => {
   // Get the appropriate icon component
-  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
-    ? iconMap[plan.icon as keyof typeof iconMap] 
+  const IconComponent = module.icon && iconMap[module.icon as keyof typeof iconMap] 
+    ? iconMap[module.icon as keyof typeof iconMap] 
     : MessageCircle; // Default to MessageCircle if not found
 
   return (
@@ -589,7 +590,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               <IconComponent className="h-6 w-6 text-primary" />
             </div>
             <div className="flex items-center gap-1">
-              {plan.comingSoon && (
+              {module.comingSoon && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="bg-blue-100 text-blue-800 p-1 rounded-full">
@@ -604,25 +605,25 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               <Badge 
                 variant="secondary"
                 className={`
-                  ${plan.active 
+                  ${module.active 
                     ? "bg-green-100 text-green-800 hover:bg-green-100" 
                     : "bg-red-100 text-red-800 hover:bg-red-100"}
                 `}
               >
-                {plan.active ? "Ativo" : "Inativo"}
+                {module.active ? "Ativo" : "Inativo"}
               </Badge>
             </div>
           </div>
           <CardTitle className="text-base font-semibold mt-2 line-clamp-1">
-            {plan.name}
+            {module.name}
           </CardTitle>
           <div className="text-primary font-semibold">
-            R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+            R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-0">
           <p className="text-sm text-muted-foreground line-clamp-2">
-            {plan.shortDescription}
+            {module.shortDescription}
           </p>
         </CardContent>
         <CardFooter className="p-4 pt-0">
@@ -630,7 +631,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             className="w-full text-xs text-primary flex items-center justify-center cursor-pointer hover:underline"
             onClick={(e) => {
               e.stopPropagation();
-              onClick(); // Use the onClick prop to select this plan, not open the edit dialog
+              onClick(); // Use the onClick prop to select this module
             }}
           >
             Ver Detalhes {isActive ? <ChevronDown className="h-3 w-3 ml-1" /> : <ChevronUp className="h-3 w-3 ml-1" />}
@@ -695,15 +696,15 @@ const LoadingState: React.FC = () => {
 
 // Module details component to display when a module is selected
 const ModuleDetails: React.FC<{ 
-  plan: Plan | null, 
-  onEdit: (plan: Plan) => void, 
+  module: Plan | null, 
+  onEdit: (module: Plan) => void, 
   onDelete: (id: string | number) => void,
   isDeleting: boolean
-}> = ({ plan, onEdit, onDelete, isDeleting }) => {
-  if (!plan) return null;
+}> = ({ module, onEdit, onDelete, isDeleting }) => {
+  if (!module) return null;
   
-  const IconComponent = plan.icon && iconMap[plan.icon as keyof typeof iconMap] 
-    ? iconMap[plan.icon as keyof typeof iconMap] 
+  const IconComponent = module.icon && iconMap[module.icon as keyof typeof iconMap] 
+    ? iconMap[module.icon as keyof typeof iconMap] 
     : MessageCircle;
     
   return (
@@ -716,8 +717,8 @@ const ModuleDetails: React.FC<{
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                {plan.comingSoon && (
+                <CardTitle className="text-xl">{module.name}</CardTitle>
+                {module.comingSoon && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -734,25 +735,25 @@ const ModuleDetails: React.FC<{
                 <Badge 
                   variant="secondary"
                   className={`
-                    ${plan.active 
+                    ${module.active 
                       ? "bg-green-100 text-green-800 hover:bg-green-100" 
                       : "bg-red-100 text-red-800 hover:bg-red-100"}
                   `}
                 >
-                  {plan.active ? "Ativo" : "Inativo"}
+                  {module.active ? "Ativo" : "Inativo"}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-lg text-primary font-semibold">
-                  R$ {plan.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
+                  R$ {module.price.toFixed(2)}<span className="text-sm text-muted-foreground font-normal">/mês</span>
                 </div>
-                {plan.credits && (
+                {module.credits && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-1 text-sm text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                           <Zap className="h-3 w-3" />
-                          <span>{plan.credits} créditos</span>
+                          <span>{module.credits} créditos</span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -765,14 +766,14 @@ const ModuleDetails: React.FC<{
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => onEdit(plan)}>
+            <Button variant="outline" size="sm" onClick={() => onEdit(module)}>
               <Pencil className="h-4 w-4 mr-1" /> Editar
             </Button>
             <Button 
               variant="destructive" 
               size="sm" 
-              onClick={() => onDelete(plan.id)}
-              disabled={isDeleting || !plan.active}
+              onClick={() => onDelete(module.id)}
+              disabled={isDeleting || !module.active}
             >
               {isDeleting ? 
                 <div className="flex items-center">
@@ -791,7 +792,7 @@ const ModuleDetails: React.FC<{
         {/* Sobre o módulo ocupa quase toda a largura */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
-          <p className="text-muted-foreground text-left">{plan.description}</p>
+          <p className="text-muted-foreground text-left">{module.description}</p>
         </div>
           
         {/* Benefícios e Como funciona lado a lado em containers brancos */}
@@ -799,7 +800,7 @@ const ModuleDetails: React.FC<{
           <div className="bg-white p-5 rounded-lg">
             <h3 className="text-lg font-semibold mb-3">Benefícios</h3>
             <div className="space-y-2">
-              {plan.benefits?.map((benefit, i) => (
+              {module.benefits?.map((benefit, i) => (
                 <div key={i} className="flex items-start gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <p className="text-left">{benefit}</p>
@@ -811,7 +812,7 @@ const ModuleDetails: React.FC<{
           <div className="bg-white p-5 rounded-lg">
             <h3 className="text-lg font-semibold mb-3">Como funciona</h3>
             <div className="space-y-2">
-              {plan.howItWorks?.map((step, i) => (
+              {module.howItWorks?.map((step, i) => (
                 <div key={i} className="flex items-start gap-2">
                   <div className="bg-primary-lighter text-primary font-semibold rounded-full h-6 w-6 flex items-center justify-center text-sm mt-0.5">
                     {i+1}
@@ -827,34 +828,34 @@ const ModuleDetails: React.FC<{
   );
 };
 
-const Modules = () => {
-  const [plans, setPlans] = useState<Plan[]>([]);
+const AdminModules = () => {
+  const [modules, setModules] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
-  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [editingModule, setEditingModule] = useState<Plan | null>(null);
+  const [deletingModuleId, setDeletingModuleId] = useState<string | number | null>(null);
+  const [selectedModule, setSelectedModule] = useState<Plan | null>(null);
 
   useEffect(() => {
-    loadPlans();
+    loadModules();
   }, []);
 
   useEffect(() => {
-    // Selecionar o primeiro plano ao carregar os planos
-    if (plans.length > 0) {
-      setSelectedPlan(plans[0]);
+    // Selecionar o primeiro módulo ao carregar os módulos
+    if (modules.length > 0 && !selectedModule) {
+      setSelectedModule(modules[0]);
     }
-  }, [plans]);
+  }, [modules, selectedModule]);
 
-  const loadPlans = async () => {
+  const loadModules = async () => {
     setIsLoading(true);
     try {
       console.log("Carregando módulos...");
       // Simulamos a busca no banco de dados usando dados mockados
-      // Em um ambiente real, nós usaríamos fetchPlans()
+      // Em um ambiente real, nós usaríamos fetchPlans() e adaptaríamos para módulos
       setTimeout(() => {
         console.log("Módulos carregados com mock data:", mockModules);
-        setPlans(mockModules);
+        setModules(mockModules);
         setIsLoading(false);
       }, 1000);
     } catch (error) {
@@ -864,20 +865,144 @@ const Modules = () => {
     }
   };
 
-  const handleSavePlan = async (data: Partial<Plan>) => {
+  const handleSaveModule = async (data: Partial<Plan>) => {
     console.log("Salvando módulo:", data);
     try {
       // Se estiver editando um módulo existente
-      if (editingPlan) {
-        // Atualiza o plano existente
-        const updatedPlan = {
-          ...editingPlan,
+      if (editingModule) {
+        // Atualiza o módulo existente
+        const updatedModule = {
+          ...editingModule,
           ...data
         };
         
-        // Atualiza a lista de planos
-        setPlans(prevPlans => 
-          prevPlans.map(p => p.id === editingPlan.id ? updatedPlan : p)
+        // Atualiza a lista de módulos
+        setModules(prevModules => 
+          prevModules.map(m => m.id === editingModule.id ? updatedModule : m)
         );
         
-        // Atualiza
+        // Atualiza o módulo selecionado se for o que está sendo editado
+        if (selectedModule && selectedModule.id === editingModule.id) {
+          setSelectedModule(updatedModule);
+        }
+        
+        toast.success("Módulo atualizado com sucesso!");
+      } else {
+        // Criar um novo módulo
+        const newModule = {
+          id: Date.now(), // ID temporário
+          ...data,
+          active: data.active !== undefined ? data.active : true,
+          comingSoon: data.comingSoon || false,
+        } as Plan;
+        
+        // Adicionar à lista de módulos
+        setModules(prevModules => [newModule, ...prevModules]);
+        
+        // Selecionar o novo módulo
+        setSelectedModule(newModule);
+        
+        toast.success("Módulo criado com sucesso!");
+      }
+      
+      // Fechar o modal e resetar o estado de edição
+      setIsCreateDialogOpen(false);
+      setEditingModule(null);
+      
+    } catch (error) {
+      console.error("Erro ao salvar módulo:", error);
+      toast.error("Ocorreu um erro ao salvar o módulo. Tente novamente.");
+    }
+  };
+
+  const handleOpenEdit = (module: Plan) => {
+    setEditingModule(module);
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleDelete = async (id: string | number) => {
+    try {
+      setDeletingModuleId(id);
+      
+      // Em um ambiente real, chamaríamos deletePlan(id)
+      // Simular uma chamada assíncrona
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Atualizar o estado para mostrar o módulo como inativo
+      setModules(prevModules => 
+        prevModules.map(m => 
+          m.id === id ? { ...m, active: false } : m
+        )
+      );
+      
+      // Se o módulo desativado for o selecionado, atualizar
+      if (selectedModule && selectedModule.id === id) {
+        setSelectedModule(prev => prev ? { ...prev, active: false } : null);
+      }
+      
+      toast.success("Módulo desativado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao desativar módulo:", error);
+      toast.error("Ocorreu um erro ao desativar o módulo. Tente novamente.");
+    } finally {
+      setDeletingModuleId(null);
+    }
+  };
+
+  const handleSelectModule = (module: Plan) => {
+    if (selectedModule && selectedModule.id === module.id) {
+      setSelectedModule(null);
+    } else {
+      setSelectedModule(module);
+    }
+  };
+
+  return (
+    <div className="container py-6 space-y-6">
+      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
+      
+      {isLoading ? (
+        <LoadingState />
+      ) : (
+        <>
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-4">
+              {modules.map((module) => (
+                <CarouselItem key={module.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                  <ModuleCard
+                    module={module}
+                    onClick={() => handleSelectModule(module)}
+                    isActive={selectedModule?.id === module.id}
+                    onEditModule={handleOpenEdit}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
+
+          {/* Detalhes do módulo selecionado */}
+          {selectedModule && (
+            <ModuleDetails
+              module={selectedModule}
+              onEdit={handleOpenEdit}
+              onDelete={handleDelete}
+              isDeleting={deletingModuleId === selectedModule.id}
+            />
+          )}
+        </>
+      )}
+      
+      {/* Modal de criação/edição de módulo */}
+      <ModuleDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        module={editingModule}
+        onSave={handleSaveModule}
+      />
+    </div>
+  );
+};
+
+export default AdminModules;
