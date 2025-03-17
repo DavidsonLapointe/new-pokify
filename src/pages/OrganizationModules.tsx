@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,7 +48,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { FinancialTitle } from "@/types/financial";
-import { updateStripeProduct } from "@/services/stripeService";
 
 // Status da ferramenta
 type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
@@ -819,4 +819,60 @@ const OrganizationModules = () => {
                       {tools.find(t => t.id === cancelModuleId)?.icon && 
                         React.createElement(tools.find(t => t.id === cancelModuleId)?.icon as React.ElementType, { size: 16 })}
                     </div>
-                    <span className="font-medium">{tools.find(t => t.id === cancelModuleId)?.title
+                    <span className="font-medium">{tools.find(t => t.id === cancelModuleId)?.title}</span>
+                    <span className="text-xs text-gray-500">
+                      ({formatPrice(tools.find(t => t.id === cancelModuleId)?.price || 0)} setup)
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="cancelReason" className="block text-sm font-medium mb-2 flex items-center">
+                  <HelpCircle size={16} className="mr-1 text-[#9b87f5]" />
+                  Por que você está cancelando este módulo?
+                </label>
+                <Textarea
+                  id="cancelReason"
+                  placeholder="Informe o motivo do cancelamento..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="w-full"
+                  rows={4}
+                />
+                {cancelReason.trim() === "" && (
+                  <p className="text-xs text-red-500 mt-1">
+                    O motivo do cancelamento é obrigatório
+                  </p>
+                )}
+              </div>
+              
+              <p className="text-sm text-gray-500 flex items-start gap-2">
+                <AlertTriangle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                <span>
+                  Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo ao final do período de faturamento atual. 
+                  Esta ação não pode ser desfeita.
+                </span>
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Voltar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                variant="destructive"
+                disabled={cancelReason.trim() === ""}
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
