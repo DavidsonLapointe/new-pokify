@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -643,8 +642,17 @@ const OrganizationModules = () => {
               <div className="py-4">
                 <p className="mb-4">
                   Você está prestes a contratar o módulo "{tools.find(t => t.id === selectedTool)?.title}". 
-                  O valor de {formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será cobrado como setup.
+                  O valor de {formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será cobrado como setup (pagamento único).
                 </p>
+                
+                {tools.find(t => t.id === selectedTool)?.credits && (
+                  <div className="bg-amber-50 p-3 rounded-md mb-4 flex items-start text-sm">
+                    <Zap className="h-4 w-4 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                    <p className="text-amber-800">
+                      Este módulo consome <strong>{tools.find(t => t.id === selectedTool)?.credits}</strong> créditos por execução.
+                    </p>
+                  </div>
+                )}
                 
                 <div className="bg-amber-50 p-3 rounded-md mb-6 flex items-start text-sm">
                   <CreditCard className="h-4 w-4 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
@@ -653,8 +661,8 @@ const OrganizationModules = () => {
                   </p>
                 </div>
                 
-                <p className="text-sm text-gray-500 flex items-center gap-2">
-                  Ao confirmar, você concorda com os <Link href="#" className="text-primary hover:underline" target="_blank">termos de uso</Link> deste módulo.
+                <p className="text-sm text-gray-500">
+                  Ao confirmar, você concorda com os <Link href="#" className="text-primary underline hover:text-primary/90" target="_blank">termos de uso</Link> deste módulo.
                 </p>
               </div>
             )}
@@ -814,65 +822,4 @@ const OrganizationModules = () => {
               <div className="mb-4">
                 <p className="text-sm font-medium mb-1">Módulo selecionado para cancelamento:</p>
                 {cancelModuleId && (
-                  <div className="p-3 bg-gray-50 rounded-md flex items-center gap-2">
-                    <div className="p-1.5 bg-[#F1F0FB] rounded-md text-[#9b87f5]">
-                      {tools.find(t => t.id === cancelModuleId)?.icon && 
-                        React.createElement(tools.find(t => t.id === cancelModuleId)?.icon as React.ElementType, { size: 16 })}
-                    </div>
-                    <span className="font-medium">{tools.find(t => t.id === cancelModuleId)?.title}</span>
-                    <span className="text-xs text-gray-500">
-                      ({formatPrice(tools.find(t => t.id === cancelModuleId)?.price || 0)} setup)
-                    </span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mb-4">
-                <label htmlFor="cancelReason" className="block text-sm font-medium mb-2 flex items-center">
-                  <HelpCircle size={16} className="mr-1 text-[#9b87f5]" />
-                  Por que você está cancelando este módulo?
-                </label>
-                <Textarea
-                  id="cancelReason"
-                  placeholder="Informe o motivo do cancelamento..."
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
-                  className="w-full"
-                  rows={4}
-                />
-                {cancelReason.trim() === "" && (
-                  <p className="text-xs text-red-500 mt-1">
-                    O motivo do cancelamento é obrigatório
-                  </p>
-                )}
-              </div>
-              
-              <p className="text-sm text-gray-500 flex items-start gap-2">
-                <AlertTriangle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-                <span>
-                  Ao cancelar, você perderá acesso a todas as funcionalidades deste módulo ao final do período de faturamento atual. 
-                  Esta ação não pode ser desfeita.
-                </span>
-              </p>
-            </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-                Voltar
-              </Button>
-              <Button 
-                onClick={confirmCancelation}
-                variant="destructive"
-                disabled={cancelReason.trim() === ""}
-              >
-                Confirmar Cancelamento
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </TooltipProvider>
-  );
-};
-
-export default OrganizationModules;
+                  <div className="p-3 bg-gray
