@@ -876,4 +876,4 @@ const Modules = () => {
     console.log("Salvando módulo:", data);
     try {
       // Se estiver editando um módulo existente e mudando ele para inativo
-      if (editingPlan && editingPlan.active && data.active
+      if (editingPlan && editingPlan.active && data.active) {
