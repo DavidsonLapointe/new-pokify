@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,15 @@ import {
   CheckCircle, AlertCircle, Pencil, ChevronDown, 
   ChevronUp
 } from "lucide-react";
-import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { PlanForm } from "@/components/admin/plans/plan-form";
+import { usePlanForm } from "@/components/admin/plans/use-plan-form";
 import { fetchPlans, deletePlan } from "@/services/plans";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -181,6 +190,50 @@ const mockModules: Plan[] = [
     icon: "LineChart"
   }
 ];
+
+// Componente de Modal para edição de módulo
+interface ModuleDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  plan?: Plan;
+  onSave: (data: Partial<Plan>) => void;
+}
+
+const ModuleDialog = ({
+  open,
+  onOpenChange,
+  plan,
+  onSave
+}: ModuleDialogProps) => {
+  const { form, isEditing, onSubmit } = usePlanForm({
+    plan,
+    onSave,
+    onOpenChange,
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "Editar Módulo" : "Novo Módulo"}</DialogTitle>
+          <DialogDescription>
+            {isEditing 
+              ? "Atualize as informações do módulo conforme necessário."
+              : "Preencha as informações do novo módulo."
+            }
+          </DialogDescription>
+        </DialogHeader>
+
+        <PlanForm
+          form={form}
+          isEditing={isEditing}
+          onSubmit={onSubmit}
+          onCancel={() => onOpenChange(false)}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 interface ModuleCardProps {
   plan: Plan;
@@ -523,14 +576,14 @@ const Modules = () => {
         </>
       )}
 
-      <EditPlanDialog
+      <ModuleDialog
         open={!!editingPlan}
         onOpenChange={(open) => !open && setEditingPlan(null)}
         plan={editingPlan}
         onSave={handleSavePlan}
       />
 
-      <EditPlanDialog
+      <ModuleDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onSave={handleSavePlan}
