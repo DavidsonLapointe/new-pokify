@@ -413,7 +413,7 @@ const ModuleDialog = ({
                 name="credits"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Créditos mensais</FormLabel>
+                    <FormLabel>Créditos por execução</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
