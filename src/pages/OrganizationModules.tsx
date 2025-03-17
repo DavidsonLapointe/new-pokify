@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +20,8 @@ import {
   ShieldCheck,
   ChevronDown,
   ChevronUp,
-  HelpCircle
+  HelpCircle,
+  Zap
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -54,6 +56,7 @@ interface Tool {
   status: ToolStatus;
   detailedDescription: string;
   price: number;
+  credits?: number;
   badgeLabel: string;
   howItWorks: string[];
   benefits: string[];
@@ -82,6 +85,7 @@ const OrganizationModules = () => {
       status: "contracted",
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
       price: 199.90,
+      credits: 5,
       badgeLabel: "Contratada",
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
@@ -104,6 +108,7 @@ const OrganizationModules = () => {
       status: "not_contracted",
       detailedDescription: "Configure um assistente virtual para atender os contatos recebidos através do seu site. A IA pode qualificar leads, responder perguntas comuns e agendar demonstrações.",
       price: 149.90,
+      credits: 3,
       badgeLabel: "Não contratada",
       howItWorks: [
         "Instalação de widget de chat no seu website",
@@ -126,6 +131,7 @@ const OrganizationModules = () => {
       status: "configured",
       detailedDescription: "Carregue gravações de chamadas de vendas e obtenha análises detalhadas sobre objeções, sentimento do cliente, oportunidades perdidas e sugestões para melhorar a conversão.",
       price: 249.90,
+      credits: 10,
       badgeLabel: "Configurada",
       howItWorks: [
         "Upload da gravação da chamada na plataforma",
@@ -148,6 +154,7 @@ const OrganizationModules = () => {
       status: "coming_soon",
       detailedDescription: "Configure sequências de emails personalizados que serão enviados automaticamente aos seus leads com base no seu perfil e comportamento, aumentando o engajamento.",
       price: 129.90,
+      credits: 2,
       badgeLabel: "Em breve",
       howItWorks: [
         "Segmentação dos leads por perfil e comportamento",
@@ -170,6 +177,7 @@ const OrganizationModules = () => {
       status: "contracted",
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
       price: 179.90,
+      credits: 7,
       badgeLabel: "Contratada",
       howItWorks: [
         "Pesquisa automática de informações sobre empresas-alvo",
@@ -364,7 +372,24 @@ const OrganizationModules = () => {
                           
                           <div className="text-center w-full mt-2">
                             <p className="font-medium text-sm mb-1">{tool.title}</p>
-                            <p className="text-sm text-[#6E59A5] font-bold">{formatPrice(tool.price)}<span className="text-xs text-gray-500">/mês</span></p>
+                            <div className="flex items-center justify-center gap-1">
+                              <p className="text-sm text-[#6E59A5] font-bold">
+                                {formatPrice(tool.price)}<span className="text-xs text-gray-500">/setup</span>
+                              </p>
+                              
+                              {tool.credits && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="bg-amber-50 text-amber-700 p-1 rounded-full inline-flex">
+                                      <Zap size={12} />
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{tool.credits} créditos por execução</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
                           </div>
                         </div>
                         
@@ -426,6 +451,21 @@ const OrganizationModules = () => {
             
             <p className="text-gray-600 mb-6 text-sm text-left">{selectedToolDetails.detailedDescription}</p>
             
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-primary-lighter text-primary px-3 py-1 rounded-md">
+                <span className="text-sm font-semibold">{formatPrice(selectedToolDetails.price)}</span>
+                <span className="text-xs"> (valor de setup)</span>
+              </div>
+              
+              {selectedToolDetails.credits && (
+                <div className="bg-amber-50 text-amber-800 px-3 py-1 rounded-md flex items-center gap-1">
+                  <Zap size={14} />
+                  <span className="text-sm font-semibold">{selectedToolDetails.credits} créditos</span>
+                  <span className="text-xs"> por execução</span>
+                </div>
+              )}
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
                 <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
@@ -475,7 +515,7 @@ const OrganizationModules = () => {
               <div className="py-4">
                 <p className="mb-6">
                   {action === "contract" 
-                    ? `Você está prestes a contratar o módulo "${tools.find(t => t.id === selectedTool)?.title}". O valor de ${formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será adicionado à sua fatura mensal.`
+                    ? `Você está prestes a contratar o módulo "${tools.find(t => t.id === selectedTool)?.title}". O valor de ${formatPrice((tools.find(t => t.id === selectedTool)?.price || 0))} será cobrado como setup.`
                     : `Você está prestes a cancelar o módulo "${tools.find(t => t.id === selectedTool)?.title}". Este módulo ficará indisponível no final do período de faturamento atual.`
                   }
                 </p>
@@ -524,7 +564,7 @@ const OrganizationModules = () => {
                     </div>
                     <span className="font-medium">{tools.find(t => t.id === cancelModuleId)?.title}</span>
                     <span className="text-xs text-gray-500">
-                      ({formatPrice(tools.find(t => t.id === cancelModuleId)?.price || 0)}/mês)
+                      ({formatPrice(tools.find(t => t.id === cancelModuleId)?.price || 0)} setup)
                     </span>
                   </div>
                 )}
