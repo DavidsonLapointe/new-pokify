@@ -24,13 +24,8 @@ const AdminPlans = () => {
   // Inicializa os planos locais quando os dados forem carregados
   useEffect(() => {
     if (fetchedPlans) {
-      setLocalPlans(prevPlans => {
-        if (prevPlans.length === 0) {
-          console.log("Carregando planos iniciais:", fetchedPlans);
-          return fetchedPlans;
-        }
-        return prevPlans;
-      });
+      setLocalPlans(fetchedPlans);
+      console.log("Planos iniciais carregados:", fetchedPlans);
     }
   }, [fetchedPlans]);
 
@@ -68,26 +63,32 @@ const AdminPlans = () => {
       } 
       // Se estamos criando um novo plano
       else {
-        const newPlan = { 
-          ...(updatedPlan as Plan),
-          id: Date.now() // Garantir um ID único baseado no timestamp
+        // Criar um novo plano completo com ID
+        const newPlan: Plan = { 
+          ...updatedPlan as Plan,
+          id: Date.now(), // Garantir um ID único baseado no timestamp
+          benefits: Array.isArray(updatedPlan.benefits) 
+            ? updatedPlan.benefits 
+            : typeof updatedPlan.benefits === 'string' 
+              ? updatedPlan.benefits.split('\n').filter(b => b.trim()) 
+              : []
         };
         
-        console.log("Novo plano sendo adicionado:", newPlan);
+        console.log("Novo plano criado:", newPlan);
         
-        setLocalPlans(prevPlans => {
-          const updatedPlans = [...prevPlans, newPlan];
-          console.log("Lista de planos atualizada:", updatedPlans);
-          return updatedPlans;
-        });
+        // Atualizar o estado com o novo plano
+        setLocalPlans(prevPlans => [...prevPlans, newPlan]);
         
+        // Exibir toast de sucesso
         toast({
           title: "Plano criado com sucesso",
           description: `O plano ${newPlan.name} foi criado.`
         });
       }
       
+      // Fechar o modal depois de salvar
       setEditPlanDialogOpen(false);
+      
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
       toast({
