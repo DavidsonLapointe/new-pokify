@@ -993,6 +993,33 @@ const ModuleDetailedSection: React.FC<{
                 </li>
               ))}
             </ul>
+
+            {/* Informações de preço e créditos */}
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <div className="flex items-center space-x-2 mb-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">R$ {selectedModule.price.toFixed(2)}</span>
+                <span className="text-xs text-muted-foreground">/mês</span>
+              </div>
+              
+              {selectedModule.credits !== undefined && (
+                <div className="flex items-center space-x-2">
+                  <Zap className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-semibold">{selectedModule.credits}</span>
+                  <span className="text-xs text-muted-foreground">créditos por execução</span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertCircle className="h-3.5 w-3.5 text-blue-500 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-[200px] text-xs">
+                        Os créditos são consumidos a cada execução deste módulo
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
