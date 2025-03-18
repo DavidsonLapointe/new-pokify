@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
@@ -232,6 +231,7 @@ const AdminPrompt = () => {
     setIsViewModalOpen(true);
   };
 
+  // Fix the type mismatch by properly handling the prompt change
   const handlePromptChange = (updatedPrompt: PromptFormData) => {
     setNewPrompt(updatedPrompt);
   };
