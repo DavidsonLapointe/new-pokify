@@ -5,6 +5,6 @@ export interface Prompt {
   content: string;
   description: string;
   type: string;
-  module?: string;
+  module: string; // Changed to required
   company_id?: string;
 }
