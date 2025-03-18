@@ -80,6 +80,24 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
     return org.planName || "Plano não especificado";
   };
 
+  // Helper function to generate status text
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "active":
+        return "Ativo";
+      case "pending":
+        return "Pendente";
+      case "inactive":
+        return "Inativo";
+      case "suspended":
+        return "Suspenso";
+      case "canceled":
+        return "Cancelado";
+      default:
+        return status;
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className="rounded-md border">
@@ -120,11 +138,7 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                       <TooltipTrigger asChild>
                         <div className="flex items-center justify-center gap-1">
                           <Badge className={getStatusColor(org.status)}>
-                            {org.status === "active" ? "Ativo" :
-                             org.status === "pending" ? "Pendente" :
-                             org.status === "inactive" ? "Inativo" :
-                             org.status === "suspended" ? "Suspenso" :
-                             org.status === "canceled" ? "Cancelado" : org.status}
+                            {getStatusText(org.status)}
                           </Badge>
                           <AlertCircle className="h-4 w-4 text-yellow-500" />
                         </div>
