@@ -31,4 +31,6 @@ export interface Plan {
   comingSoon?: boolean;
   actionButtonText?: string;
   icon?: string;
+  // Adicionando a propriedade status para o módulo
+  status?: "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
 }
