@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createOrganizationSchema, type CreateOrganizationFormData } from "../schema";
+import { organizationSchema, type CreateOrganizationFormData } from "../schema";
 import { usePlans } from "./use-plans";
 
 /**
@@ -12,7 +12,7 @@ export const useOrganizationFormInit = () => {
   const { plans } = usePlans();
   
   const form = useForm<CreateOrganizationFormData>({
-    resolver: zodResolver(createOrganizationSchema),
+    resolver: zodResolver(organizationSchema),
     defaultValues: {
       razaoSocial: "",
       nomeFantasia: "",
@@ -23,6 +23,7 @@ export const useOrganizationFormInit = () => {
       adminName: "",
       adminEmail: "",
       status: "pending",
+      modules: [] // Default empty array for modules
     },
   });
 

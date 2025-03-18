@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { Organization, OrganizationStatus } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
-import { createOrganizationSchema, type CreateOrganizationFormData } from "../schema";
+import { organizationSchema, type CreateOrganizationFormData } from "../schema";
 
 export const useEditOrganizationForm = (
   organization: Organization,
@@ -14,8 +14,15 @@ export const useEditOrganizationForm = (
 ) => {
   const { toast } = useToast();
   
+  // Parse modules string from database to array if present
+  const modulesArray = organization.modules ? 
+    (typeof organization.modules === 'string' ? 
+      organization.modules.split(',') : 
+      organization.modules) : 
+    [];
+  
   const form = useForm<CreateOrganizationFormData>({
-    resolver: zodResolver(createOrganizationSchema),
+    resolver: zodResolver(organizationSchema),
     defaultValues: {
       razaoSocial: organization.name,
       nomeFantasia: organization.nomeFantasia || "",
@@ -26,6 +33,7 @@ export const useEditOrganizationForm = (
       adminName: organization.adminName || "",
       adminEmail: organization.adminEmail || "",
       status: organization.status,
+      modules: modulesArray
     },
   });
 
@@ -35,6 +43,11 @@ export const useEditOrganizationForm = (
       
       // Map statuses that aren't directly supported in the database to a supported value
       const dbStatus = values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status;
+      
+      // Convert modules array to comma-separated string for storage
+      const modulesString = values.modules && values.modules.length > 0 ? 
+        values.modules.join(',') : 
+        null;
       
       const { data, error } = await supabase
         .from('organizations')
@@ -47,7 +60,8 @@ export const useEditOrganizationForm = (
           plan: values.plan,
           admin_name: values.adminName,
           admin_email: values.adminEmail,
-          status: dbStatus // Use mapped status for database
+          status: dbStatus, // Use mapped status for database
+          modules: modulesString // Store as comma-separated string
         })
         .eq('id', organization.id)
         .select();
@@ -85,6 +99,7 @@ export const useEditOrganizationForm = (
         adminName: values.adminName,
         adminEmail: values.adminEmail,
         status: values.status as OrganizationStatus, // Cast to OrganizationStatus
+        modules: values.modules // Add modules to updated organization
       };
 
       onSave(updatedOrganization);

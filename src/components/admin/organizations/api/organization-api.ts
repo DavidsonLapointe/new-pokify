@@ -25,6 +25,11 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       return { data: null, error: planError, planName: null };
     }
     
+    // Convert modules array to comma-separated string for storage
+    const modulesString = values.modules && values.modules.length > 0 
+      ? values.modules.join(',') 
+      : null;
+    
     // Insert the new organization
     // Note: Field names must match the database column names
     const { data, error } = await supabase
@@ -40,7 +45,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         admin_email: values.adminEmail,
         status: values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status,
         // Store selected modules as comma-separated list if provided
-        modules: values.modules && values.modules.length > 0 ? values.modules.join(',') : null
+        modules: modulesString
       })
       .select('*')
       .single();
@@ -181,18 +186,17 @@ export const sendOnboardingEmail = async (
 ) => {
   try {
     console.log(`Enviando email de onboarding para a organização: ${organizationId}`);
-
+    
     // Get module names if modules were selected
     let moduleNames: string[] = [];
+    
     if (selectedModules && selectedModules.length > 0) {
-      const { data: modulesData, error: modulesError } = await supabase
-        .from('modules')
-        .select('name')
-        .in('id', selectedModules);
-        
-      if (!modulesError && modulesData) {
-        moduleNames = modulesData.map(module => module.name);
-      }
+      // Handle module lookup differently since "modules" is not a direct table
+      // Instead, we'll use hardcoded module names or fetch from a different source
+      // For now, we'll just pass the raw module IDs as names
+      moduleNames = selectedModules;
+      
+      console.log(`Módulos selecionados para o email: ${moduleNames.join(', ')}`);
     }
 
     const { error } = await supabase.functions.invoke('send-organization-emails', {
@@ -241,6 +245,14 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     planValue = dbOrg.plan || '';
   }
 
+  // Convert modules from string to array if it exists
+  let modulesValue: string[] | undefined;
+  if (dbOrg.modules) {
+    modulesValue = typeof dbOrg.modules === 'string' ? 
+      dbOrg.modules.split(',') : 
+      dbOrg.modules;
+  }
+
   // Map database status to OrganizationStatus, ensuring it's valid
   let status: OrganizationStatus = dbOrg.status as OrganizationStatus;
   if (!["active", "pending", "suspended", "canceled", "inactive"].includes(status)) {
@@ -269,6 +281,7 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     contractSignedAt: dbOrg.contract_signed_at,
     createdAt: dbOrg.created_at,
     logo: dbOrg.logo,
+    modules: modulesValue, // Add modules to the returned organization
     address: dbOrg.logradouro ? {
       logradouro: dbOrg.logradouro,
       numero: dbOrg.numero,

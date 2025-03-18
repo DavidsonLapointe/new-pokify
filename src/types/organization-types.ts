@@ -1,4 +1,3 @@
-
 // Organization status types
 export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled" | "inactive";
 
@@ -47,6 +46,7 @@ export interface Organization {
   createdAt: string;
   logo?: string;
   address?: OrganizationAddress;
+  modules?: string[] | string; // Add modules field that can be array or comma-separated string
 }
 
 // Rename to OrgUser to avoid conflicts with User from user-types.ts
