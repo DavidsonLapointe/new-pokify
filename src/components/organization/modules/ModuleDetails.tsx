@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tool } from "./types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, Clock, CreditCard, Pencil, Settings, Zap, AlertTriangle, RefreshCw, Info } from "lucide-react";
+import { CheckCircle2, Clock, CreditCard, Pencil, Settings, Zap, AlertTriangle, Info } from "lucide-react";
 
 interface ModuleDetailsProps {
   selectedTool: Tool;
@@ -109,18 +109,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         )}
       </div>
       
-      {selectedTool.status === "setup" && (
-        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-md p-3 flex items-start">
-          <RefreshCw className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0 animate-spin" />
-          <div>
-            <p className="text-sm text-blue-800 font-medium">Configuração em andamento</p>
-            <p className="text-xs text-blue-600">
-              Nossa equipe de especialistas está configurando este módulo especificamente para as necessidades da sua organização. 
-              Este processo geralmente leva de 1 a 3 dias úteis e você será notificado quando estiver pronto para uso.
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Removida a caixa de alerta destacada em vermelho */}
       
       <p className="text-gray-600 mb-6 text-sm text-left">{selectedTool.detailedDescription}</p>
       
