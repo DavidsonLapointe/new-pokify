@@ -1,15 +1,14 @@
 
 import React from "react";
 import { ToolStatus } from "@/components/organization/modules/types";
-import { Lock, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { Lock, AlertTriangle, CheckCircle2, Clock, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AIToolCardStatusProps {
   status: ToolStatus;
-  icon?: React.ElementType;
 }
 
-export const AIToolCardStatus: React.FC<AIToolCardStatusProps> = ({ status, icon }) => {
+export const AIToolCardStatus: React.FC<AIToolCardStatusProps> = ({ status }) => {
   const getStatusInfo = () => {
     switch (status) {
       case "not_contracted": 
@@ -34,9 +33,7 @@ export const AIToolCardStatus: React.FC<AIToolCardStatusProps> = ({ status, icon
         };
       case "setup":
         return { 
-          // Use the tool's own icon if provided, with blue color and subtle animation
-          icon: icon ? React.createElement(icon, { size: 16, className: "text-blue-500 animate-pulse" }) : 
-                 <div className="w-4 h-4 rounded-full bg-blue-500 animate-pulse"></div>,
+          icon: <RefreshCw size={16} className="text-blue-500 animate-spin" />,
           label: "Nossa equipe está configurando esta ferramenta para sua organização"
         };
     }
