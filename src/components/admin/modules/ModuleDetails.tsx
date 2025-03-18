@@ -152,17 +152,33 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           </div>
         </div>
 
-        {/* Botões de ação baseados no status do módulo */}
+        {/* Botões de ação sempre visíveis, mas condicionais baseados no status */}
         <div className="mt-6 flex justify-start">
+          {/* Mostrar botão de editar configuração para módulos configurados */}
           {module.status === "configured" && (
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Pencil className="h-4 w-4 mr-2" /> Editar configuração
             </Button>
           )}
           
+          {/* Mostrar botão de configurar para módulos contratados */}
           {module.status === "contracted" && (
             <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
               <Settings className="h-4 w-4 mr-2" /> Configurar
+            </Button>
+          )}
+
+          {/* Mostrar botão de contratar para módulos não contratados */}
+          {(!module.status || module.status === "not_contracted") && (
+            <Button className="bg-primary hover:bg-primary/90 text-white">
+              <Plus className="h-4 w-4 mr-2" /> Contratar módulo
+            </Button>
+          )}
+          
+          {/* Botão para módulos em breve */}
+          {module.status === "coming_soon" && (
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white" disabled>
+              <Clock className="h-4 w-4 mr-2" /> Em breve disponível
             </Button>
           )}
         </div>
