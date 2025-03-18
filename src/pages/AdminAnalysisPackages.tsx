@@ -28,9 +28,40 @@ import {
   togglePackageActive 
 } from "@/services/analysisPackageService";
 
+// Mocked packages data
+const mockedPackages: AnalysisPackage[] = [
+  {
+    id: "pkg-001",
+    name: "Pacote Básico",
+    credits: 50,
+    price: 99.90,
+    active: true,
+    stripeProductId: "prod_mock_001",
+    stripePriceId: "price_mock_001"
+  },
+  {
+    id: "pkg-002",
+    name: "Pacote Profissional",
+    credits: 150,
+    price: 249.90,
+    active: true,
+    stripeProductId: "prod_mock_002",
+    stripePriceId: "price_mock_002"
+  },
+  {
+    id: "pkg-003",
+    name: "Pacote Empresarial",
+    credits: 500,
+    price: 699.90,
+    active: true,
+    stripeProductId: "prod_mock_003",
+    stripePriceId: "price_mock_003"
+  }
+];
+
 const AdminAnalysisPackages = () => {
-  const [packages, setPackages] = useState<AnalysisPackage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [packages, setPackages] = useState<AnalysisPackage[]>(mockedPackages);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -42,14 +73,26 @@ const AdminAnalysisPackages = () => {
   });
 
   useEffect(() => {
-    loadPackages();
+    // Just for visual demonstration, we'll not actually fetch from API
+    // but set a brief loading state
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   }, []);
 
   const loadPackages = async () => {
     setIsLoading(true);
     try {
-      const fetchedPackages = await fetchAnalysisPackages();
-      setPackages(fetchedPackages);
+      // In a real app, you would fetch from API
+      // const fetchedPackages = await fetchAnalysisPackages();
+      // setPackages(fetchedPackages);
+      
+      // For demo purposes, just use mock data
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
     } catch (error) {
       console.error("Erro ao carregar pacotes:", error);
     } finally {
@@ -95,8 +138,22 @@ const AdminAnalysisPackages = () => {
     toast.loading("Criando pacote e cadastrando no Stripe...");
     
     try {
-      await createAnalysisPackage(newPackage);
-      await loadPackages();
+      // In a real app, this would call an API
+      // await createAnalysisPackage(newPackage);
+      
+      // For demo, just add to local state
+      const newId = `pkg-${Date.now().toString().slice(-3)}`;
+      const newPkg: AnalysisPackage = {
+        id: newId,
+        name: newPackage.name,
+        credits: credits,
+        price: price,
+        active: true,
+        stripeProductId: `prod_mock_${newId}`,
+        stripePriceId: `price_mock_${newId}`
+      };
+      
+      setPackages([...packages, newPkg]);
       setNewPackage({ name: "", credits: "", price: "" });
       setIsCreateDialogOpen(false);
       toast.dismiss();
@@ -116,8 +173,14 @@ const AdminAnalysisPackages = () => {
     toast.loading("Atualizando pacote e sincronizando com o Stripe...");
     
     try {
-      await updateAnalysisPackage(editingPackage.id, editingPackage);
-      await loadPackages();
+      // In a real app, this would call an API
+      // await updateAnalysisPackage(editingPackage.id, editingPackage);
+      
+      // For demo, just update local state
+      const updatedPackages = packages.map(pkg => 
+        pkg.id === editingPackage.id ? editingPackage : pkg
+      );
+      setPackages(updatedPackages);
       setEditingPackage(null);
       setIsEditDialogOpen(false);
       toast.dismiss();
@@ -133,8 +196,14 @@ const AdminAnalysisPackages = () => {
     toast.loading(`${active ? 'Ativando' : 'Desativando'} pacote e atualizando no Stripe...`);
     
     try {
-      await togglePackageActive(pkg.id, active);
-      await loadPackages();
+      // In a real app, this would call an API
+      // await togglePackageActive(pkg.id, active);
+      
+      // For demo, just update local state
+      const updatedPackages = packages.map(p => 
+        p.id === pkg.id ? { ...p, active } : p
+      );
+      setPackages(updatedPackages);
       toast.dismiss();
       toast.success(`Pacote ${active ? 'ativado' : 'desativado'} com sucesso`);
     } catch (error) {
