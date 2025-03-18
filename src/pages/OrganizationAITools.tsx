@@ -47,6 +47,8 @@ interface Tool {
   benefits: string[];
   executeLabel: string;
   executeIcon: React.ElementType;
+  price: number;
+  credits?: number;
 }
 
 const AIToolsPage = () => {
@@ -69,6 +71,8 @@ const AIToolsPage = () => {
       badgeLabel: "Em Setup",
       executeLabel: "Criar vídeo personalizado",
       executeIcon: Zap,
+      price: 150,
+      credits: 3,
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
         "Geração de roteiro personalizado com base no perfil",
@@ -94,6 +98,8 @@ const AIToolsPage = () => {
       badgeLabel: "Não contratada",
       executeLabel: "Configurar atendente virtual",
       executeIcon: Headphones,
+      price: 100,
+      credits: 2,
       howItWorks: [
         "Instalação de widget de chat no seu website",
         "Configuração de respostas para perguntas frequentes",
@@ -119,6 +125,8 @@ const AIToolsPage = () => {
       badgeLabel: "Configurada",
       executeLabel: "Analisar chamada",
       executeIcon: PlayCircle,
+      price: 75,
+      credits: 1,
       howItWorks: [
         "Upload da gravação da chamada na plataforma",
         "Processamento e transcrição automática do áudio",
@@ -144,6 +152,8 @@ const AIToolsPage = () => {
       badgeLabel: "Em breve",
       executeLabel: "Criar campanha de nutrição",
       executeIcon: Mail,
+      price: 200,
+      credits: 4,
       howItWorks: [
         "Segmentação dos leads por perfil e comportamento",
         "Criação de sequências de conteúdo personalizado",
@@ -162,13 +172,15 @@ const AIToolsPage = () => {
       title: "Assistente de Prospecção",
       icon: ShieldCheck,
       description: "Assistente virtual para auxiliar na prospecção de novos clientes.",
-      status: "contracted",
+      status: "configured",
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
       actionLabel: "Configurar ferramenta",
       actionIcon: Settings,
       badgeLabel: "Contratada",
       executeLabel: "Buscar leads potenciais",
       executeIcon: Brain,
+      price: 125,
+      credits: 2,
       howItWorks: [
         "Pesquisa automática de informações sobre empresas-alvo",
         "Elaboração de abordagens personalizadas para cada lead",
@@ -183,6 +195,9 @@ const AIToolsPage = () => {
       ]
     }
   ];
+
+  // Filtrar apenas as ferramentas com status "configured"
+  const configuredTools = tools.filter(tool => tool.status === "configured");
 
   const getToolById = (id: string) => {
     return tools.find(tool => tool.id === id) || tools[0];
@@ -272,7 +287,7 @@ const AIToolsPage = () => {
       </div>
 
       <div>
-        <p className="text-gray-600 mb-4">Escolha uma das ferramentas abaixo para otimizar seu processo de vendas:</p>
+        <p className="text-gray-600 mb-4">Ferramentas configuradas disponíveis para uso:</p>
         
         <div className="relative">
           <div className="flex items-center space-x-4 overflow-x-auto py-4 px-1">
@@ -283,7 +298,7 @@ const AIToolsPage = () => {
               <ChevronLeft size={20} />
             </button>
             
-            {tools.map((tool) => (
+            {configuredTools.map((tool) => (
               <Card 
                 key={tool.id}
                 className={`w-[180px] h-[120px] flex-shrink-0 cursor-pointer transition-all ${
@@ -315,7 +330,7 @@ const AIToolsPage = () => {
         </div>
       </div>
 
-      {tools.map((tool) => (
+      {configuredTools.map((tool) => (
         selectedTool === tool.id && (
           <Card key={`details-${tool.id}`} className="p-5 bg-[#F8F8FB]">
             <div className="flex items-center gap-2 mb-4">
@@ -324,21 +339,17 @@ const AIToolsPage = () => {
               <Badge variant="outline" className={getBadgeClass(tool.status)}>
                 {tool.badgeLabel}
               </Badge>
-              {tool.status === "contracted" && (
-                <span className="text-yellow-600 text-xs font-medium flex items-center ml-2">
-                  <AlertTriangle size={14} className="mr-1" /> Necessita configuração
-                </span>
-              )}
-              {tool.status === "setup" && (
-                <span className="text-blue-600 text-xs font-medium flex items-center ml-2">
-                  <RotateCw size={14} className="mr-1" /> Setup em andamento
-                </span>
-              )}
             </div>
             
-            <p className="text-gray-600 mb-5 text-sm text-left">
+            <p className="text-gray-600 mb-3 text-sm text-left">
               {tool.detailedDescription}
             </p>
+            
+            {/* Informação de custo de execução */}
+            <div className="mb-4 flex items-center text-sm font-medium">
+              <span className="mr-2 text-[#9b87f5]">Custo de execução:</span>
+              <span className="text-gray-700">{tool.credits} créditos (R$ {tool.price.toFixed(2)})</span>
+            </div>
 
             {/* Seções "Benefícios" e "Como Funciona" com a ordem invertida */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -376,47 +387,13 @@ const AIToolsPage = () => {
             </div>
 
             <div className="flex gap-3">
-              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && tool.status !== "setup" && (
-                <Button 
-                  className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
-                  onClick={() => handleToolExecution(tool.id)}
-                >
-                  <tool.executeIcon size={18} />
-                  <span>{tool.executeLabel}</span>
-                </Button>
-              )}
-              
-              {tool.status !== "coming_soon" && tool.status !== "setup" && (
-                <Button 
-                  className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4 ${tool.status === "not_contracted" ? "w-full" : ""}`}
-                  onClick={() => handleToolAction(tool.id)}
-                >
-                  {tool.status === "not_contracted" ? (
-                    <CreditCard size={18} />
-                  ) : tool.status === "configured" ? (
-                    <Edit size={18} />
-                  ) : (
-                    <Settings size={18} />
-                  )}
-                  <span>
-                    {tool.status === "not_contracted" 
-                      ? "Contratar" 
-                      : tool.status === "configured" 
-                        ? "Editar configuração" 
-                        : "Configurar"}
-                  </span>
-                </Button>
-              )}
-              
-              {tool.status === "setup" && (
-                <Button 
-                  className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 opacity-75 cursor-not-allowed"
-                  disabled
-                >
-                  <RotateCw size={18} />
-                  <span>Aguardando setup</span>
-                </Button>
-              )}
+              <Button 
+                className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
+                onClick={() => handleToolExecution(tool.id)}
+              >
+                <tool.executeIcon size={18} />
+                <span>{tool.executeLabel}</span>
+              </Button>
             </div>
           </Card>
         )
