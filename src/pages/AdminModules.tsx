@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -125,7 +126,7 @@ const AdminModules = () => {
           comingSoon: data.comingSoon || false,
         } as Plan;
         
-        // Adicionar à lista de módulos - AQUI ESTÁ A CORREÇÃO
+        // Adicionar à lista de módulos
         setModules(prevModules => [...prevModules, newModule]);
         
         // Selecionar o novo módulo
@@ -199,7 +200,7 @@ const AdminModules = () => {
       {isLoading ? (
         <LoadingState />
       ) : (
-        <ScrollArea className="w-full overflow-hidden">
+        <ScrollArea className="w-full">
           {/* Carrossel de módulos */}
           <div className="relative">
             <Carousel className="w-full">
