@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { useUser } from "@/contexts/UserContext";
@@ -125,14 +124,13 @@ export default function OrganizationCredits() {
         <title>Meus Créditos | Leadly</title>
       </Helmet>
       
-      <div className="flex flex-col gap-6">
-        <div>
+      <div className="flex flex-col items-center justify-center w-full">
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold tracking-tight">Meus Créditos</h1>
           <p className="text-muted-foreground">Gerencie os créditos da sua organização</p>
         </div>
 
-        {/* Added max-w-md to limit the width of the card */}
-        <div className="max-w-md">
+        <div className="max-w-md w-full">
           <CreditsBalanceCard 
             monthlyQuota={monthlyQuota}
             used={usedCredits}
