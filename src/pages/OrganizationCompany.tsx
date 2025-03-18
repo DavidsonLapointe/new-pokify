@@ -6,7 +6,8 @@ import { Organization } from "@/types/organization-types";
 import { CompanyForm } from "@/components/organization/company/CompanyForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PaymentMethodCard } from "@/components/organization/plans/PaymentMethodCard";
-import { Building2, CreditCard } from "lucide-react";
+import { PlanTabContent } from "@/components/organization/plans/PlanTabContent";
+import { Building2, CreditCard, Package } from "lucide-react";
 
 export default function OrganizationCompany() {
   const { user, updateUser } = useUser();
@@ -107,7 +108,7 @@ export default function OrganizationCompany() {
       <div className="mb-8">
         <h1 className="text-2xl font-medium mb-2">Minha Empresa</h1>
         <p className="text-muted-foreground">
-          Gerencie as informações da sua empresa e método de pagamento
+          Gerencie as informações da sua empresa, plano e método de pagamento
         </p>
       </div>
 
@@ -116,6 +117,10 @@ export default function OrganizationCompany() {
           <TabsTrigger value="company-data" className="flex items-center gap-2">
             <Building2 size={16} />
             Dados da Empresa
+          </TabsTrigger>
+          <TabsTrigger value="my-plan" className="flex items-center gap-2">
+            <Package size={16} />
+            Meu Plano
           </TabsTrigger>
           <TabsTrigger value="payment-method" className="flex items-center gap-2">
             <CreditCard size={16} />
@@ -130,6 +135,10 @@ export default function OrganizationCompany() {
             onInputChange={handleInputChange}
             onSubmit={handleSubmit}
           />
+        </TabsContent>
+
+        <TabsContent value="my-plan" className="mt-4">
+          <PlanTabContent />
         </TabsContent>
 
         <TabsContent value="payment-method" className="mt-4">

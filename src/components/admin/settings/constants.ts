@@ -1,5 +1,5 @@
 
-import { User, BarChart3, List, Users, Network, Settings, CreditCard, Building2, Bell, Database, Shield } from "lucide-react";
+import { User, BarChart3, List, Users, Network, Settings, CreditCard, Building2, Bell, Database, Shield, Package } from "lucide-react";
 
 export const organizationRoutes = [
   {
@@ -41,7 +41,7 @@ export const organizationRoutes = [
   {
     id: "plan",
     label: "Meu Plano",
-    icon: CreditCard
+    icon: Package
   },
   {
     id: "company",

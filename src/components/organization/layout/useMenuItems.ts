@@ -13,7 +13,8 @@ import {
   Sparkles,
   Layers,
   Book,
-  ClipboardCheck
+  ClipboardCheck,
+  Package
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -64,8 +65,8 @@ export const useMenuItems = (user: User) => {
       permissionId: "settings"
     },
     {
-      icon: Layers,
-      label: "Módulos do Sistema",
+      icon: Package,
+      label: "Meu Plano",
       path: "/organization/modules",
       permissionId: "plan"
     },
