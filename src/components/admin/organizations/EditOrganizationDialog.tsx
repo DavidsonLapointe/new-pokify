@@ -14,6 +14,9 @@ import {
 import { useEditOrganizationForm } from "./hooks/useEditOrganizationForm";
 import { StatusSection } from "./dialog-sections/StatusSection";
 import { PendingReasonCard } from "./dialog-sections/PendingReasonCard";
+import { Badge } from "@/components/ui/badge";
+import { mockModules } from "@/components/admin/modules/module-constants";
+import { iconMap } from "@/components/admin/modules/module-constants";
 
 interface EditOrganizationDialogProps {
   open: boolean;
@@ -34,6 +37,29 @@ export const EditOrganizationDialog = ({
     () => onOpenChange(false)
   );
 
+  // Parse modules string to array if needed
+  const organizationModules = organization.modules ? 
+    (typeof organization.modules === 'string' ? 
+      organization.modules.split(',') : 
+      organization.modules) : 
+    [];
+
+  // Map module IDs to their names using the mockModules data
+  const getModuleName = (moduleId: string) => {
+    const module = mockModules.find(m => m.id.toString() === moduleId);
+    return module ? module.name : moduleId;
+  };
+
+  // Get icon component for a module
+  const getModuleIcon = (moduleId: string) => {
+    const module = mockModules.find(m => m.id.toString() === moduleId);
+    if (module && module.icon && iconMap[module.icon as keyof typeof iconMap]) {
+      const IconComponent = iconMap[module.icon as keyof typeof iconMap];
+      return <IconComponent className="h-4 w-4" />;
+    }
+    return null;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
@@ -51,6 +77,32 @@ export const EditOrganizationDialog = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <OrganizationFormFields form={form} />
+
+            {/* Contracted Modules Section - Read Only */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Módulos Contratados</h3>
+              {organizationModules.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {organizationModules.map((moduleId) => (
+                    <Badge 
+                      key={moduleId}
+                      variant="outline" 
+                      className="flex items-center gap-1 bg-primary-lighter"
+                    >
+                      {getModuleIcon(moduleId)}
+                      {getModuleName(moduleId)}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Nenhum módulo contratado.
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground italic mt-1">
+                A contratação e cancelamento de módulos é realizada pelo usuário administrador da empresa.
+              </p>
+            </div>
 
             <StatusSection 
               form={form} 
