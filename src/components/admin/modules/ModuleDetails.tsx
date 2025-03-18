@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { iconMap } from "./module-constants";
 import { 
-  MessageCircle, Clock, Pencil, CheckCircle, Zap, Settings
+  MessageCircle, Clock, Pencil, CheckCircle, Zap, Settings, Plus
 } from "lucide-react";
 import {
   Card,
