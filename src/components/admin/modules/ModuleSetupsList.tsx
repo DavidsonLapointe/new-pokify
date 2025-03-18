@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, X, CheckCircle2, AlertTriangle, CalendarIcon, UserRound, PhoneCall, MoreVertical } from "lucide-react";
+import { Search, X, MoreVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -32,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { ModuleSetup, SetupStatus } from "@/components/organization/modules/types";
 
@@ -192,10 +191,7 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                 <TableRow key={setup.id}>
                   <TableCell>{setup.organizationId}</TableCell>
                   <TableCell>{setup.moduleId}</TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <UserRound className="h-4 w-4 text-muted-foreground" />
-                    {setup.contactName}
-                  </TableCell>
+                  <TableCell>{setup.contactName}</TableCell>
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -208,7 +204,6 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                             toast.success("Telefone copiado para a área de transferência");
                           }}
                         >
-                          <PhoneCall className="h-3.5 w-3.5" />
                           {setup.contactPhone}
                         </Button>
                       </TooltipTrigger>
@@ -218,10 +213,7 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                     </Tooltip>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                      {format(setup.contractedAt, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                    </div>
+                    {format(setup.contractedAt, "dd/MM/yyyy")}
                   </TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(setup.status)}>
