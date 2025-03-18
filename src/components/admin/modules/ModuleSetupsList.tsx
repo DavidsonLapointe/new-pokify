@@ -176,12 +176,12 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-medium">Empresa</TableHead>
+              <TableHead className="font-medium text-left">Empresa</TableHead>
               <TableHead className="font-medium">Módulo</TableHead>
-              <TableHead className="font-medium">Nome do Implantador</TableHead>
+              <TableHead className="font-medium text-left">Nome do Implantador</TableHead>
               <TableHead className="font-medium">Telefone</TableHead>
-              <TableHead className="font-medium">Data de Contratação</TableHead>
-              <TableHead className="font-medium">Status</TableHead>
+              <TableHead className="font-medium text-center">Data de Contratação</TableHead>
+              <TableHead className="font-medium text-center">Status</TableHead>
               <TableHead className="font-medium text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -189,9 +189,9 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
             {filteredSetups.length > 0 ? (
               filteredSetups.map((setup) => (
                 <TableRow key={setup.id}>
-                  <TableCell>{setup.organizationId}</TableCell>
+                  <TableCell className="text-left">{setup.organizationId}</TableCell>
                   <TableCell>{setup.moduleId}</TableCell>
-                  <TableCell>{setup.contactName}</TableCell>
+                  <TableCell className="text-left">{setup.contactName}</TableCell>
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -212,10 +212,10 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                       </TooltipContent>
                     </Tooltip>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {format(setup.contractedAt, "dd/MM/yyyy")}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     <Badge className={getStatusColor(setup.status)}>
                       {getStatusText(setup.status)}
                     </Badge>
