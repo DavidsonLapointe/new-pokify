@@ -1,10 +1,22 @@
 
 import { useState, useEffect } from "react";
-import { Tool, ToolStatus } from "@/components/organization/modules/types";
+import { Tool, ToolStatus, SetupStatus } from "@/components/organization/modules/types";
 import { toolsData } from "../data/toolsData";
 
+// Define a proper type for module setup
+interface ModuleSetup {
+  id: string;
+  organizationId: string;
+  moduleId: string;
+  contactName: string;
+  contactPhone: string;
+  contractedAt: Date;
+  status: SetupStatus;
+  notes: any[];
+}
+
 // Simulate module setup data
-const mockSetups = [
+const mockSetups: ModuleSetup[] = [
   {
     id: "setup1",
     organizationId: "currentOrg",
@@ -12,7 +24,7 @@ const mockSetups = [
     contactName: "João Silva",
     contactPhone: "(11) 99999-8888",
     contractedAt: new Date(2023, 5, 15),
-    status: "pending" as const,
+    status: "pending",
     notes: []
   },
   {
@@ -22,7 +34,7 @@ const mockSetups = [
     contactName: "Maria Oliveira",
     contactPhone: "(21) 98888-7777",
     contractedAt: new Date(2023, 6, 10),
-    status: "in_progress" as const,
+    status: "in_progress",
     notes: []
   }
 ];
@@ -69,7 +81,7 @@ export const useToolsData = () => {
   };
 
   // Function to update setup status
-  const updateSetupStatus = (moduleId: string, newStatus: "pending" | "in_progress" | "completed") => {
+  const updateSetupStatus = (moduleId: string, newStatus: SetupStatus) => {
     const updatedSetups = mockSetups.map(setup => {
       if (setup.moduleId === moduleId) {
         return { ...setup, status: newStatus };
