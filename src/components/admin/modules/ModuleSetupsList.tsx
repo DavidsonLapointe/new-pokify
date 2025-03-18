@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Table,
@@ -10,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, X, MoreVertical } from "lucide-react";
+import { Search, X, MoreVertical, FilterX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -127,10 +126,15 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
     }
   };
   
+  const clearFilters = () => {
+    setSearchTerm("");
+    setStatusFilter(null);
+  };
+  
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <div className="relative w-72">
+        <div className="relative w-full max-w-xl">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por empresa, módulo ou contato..."
@@ -163,6 +167,15 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
               <SelectItem value="completed">Concluído</SelectItem>
             </SelectContent>
           </Select>
+          
+          <Button 
+            variant="cancel"
+            className="flex items-center gap-2"
+            onClick={clearFilters}
+          >
+            <FilterX className="h-4 w-4" />
+            Limpar Filtros
+          </Button>
         </div>
       </div>
       
