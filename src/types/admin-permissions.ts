@@ -6,6 +6,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     users: true,
     modules: true,
     plans: true,
+    "credit-packages": true,
     financial: true,
     integrations: true,
     prompt: true,
@@ -59,6 +60,11 @@ export const availableAdminRoutePermissions = [
     id: "plans",
     label: "Planos",
     path: "/admin/plans"
+  },
+  {
+    id: "credit-packages",
+    label: "Pacotes de Créditos",
+    path: "/admin/credit-packages"
   },
   {
     id: "financial",

@@ -1,3 +1,4 @@
+
 import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
@@ -146,7 +147,7 @@ const AdminAnalysisPackages = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Pacotes de Análise</h1>
+        <h1 className="text-3xl font-semibold">Pacotes de Créditos</h1>
         <p className="text-muted-foreground mt-1">
           Gerencie os pacotes de créditos adicionais para análises
         </p>
@@ -176,7 +177,7 @@ const AdminAnalysisPackages = () => {
 
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Novo Pacote de Análise</DialogTitle>
+              <DialogTitle>Novo Pacote de Créditos</DialogTitle>
               <DialogDescription>
                 Preencha as informações do novo pacote de créditos
               </DialogDescription>

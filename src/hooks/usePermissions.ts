@@ -25,7 +25,7 @@ export const usePermissions = (user: User) => {
         'organizations',
         'financial',
         'plans',
-        'analysis-packages',
+        'credit-packages',
         'prompt'
       ] 
     };

@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     { icon: ClipboardCheck, label: "Setups", path: "/admin/module-setups", permissionId: "module-setups" },
     { icon: CreditCard, label: "Planos", path: "/admin/plans", permissionId: "plans" },
+    { icon: Package, label: "Pacotes de Créditos", path: "/admin/credit-packages", permissionId: "credit-packages" },
     { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionId: "financial" },
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
