@@ -19,9 +19,8 @@ type ModuleGroup = {
   prompts: Prompt[];
 };
 
-// Define type for our newPrompt state to ensure consistent type usage
+// Updated type definition to ensure company_id is optional, matching the Prompt type
 type PromptFormData = Omit<Prompt, "id"> & { 
-  module: string; 
   company_id?: string;
 };
 
