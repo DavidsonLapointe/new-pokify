@@ -10,15 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Prompt } from "@/types/prompt";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface PromptFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  prompt: Omit<Prompt, "id">;
-  onPromptChange: (prompt: Omit<Prompt, "id">) => void;
+  prompt: Omit<Prompt, "id"> & { module: string };
+  onPromptChange: (prompt: Omit<Prompt, "id"> & { module: string }) => void;
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
+  modules: { id: string; name: string; icon: string }[];
 }
 
 export const PromptFormDialog = ({
@@ -29,6 +33,7 @@ export const PromptFormDialog = ({
   onSave,
   onCancel,
   isEditing,
+  modules,
 }: PromptFormDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -50,6 +55,48 @@ export const PromptFormDialog = ({
               placeholder="Ex: Análise de Sentimento"
             />
           </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Tipo de Prompt
+            </label>
+            <RadioGroup 
+              value={prompt.type} 
+              onValueChange={(value) => onPromptChange({ ...prompt, type: value })}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="global" id="global" />
+                <Label htmlFor="global">Global</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="custom" id="custom" />
+                <Label htmlFor="custom">Customizado</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Módulo
+            </label>
+            <Select 
+              value={prompt.module}
+              onValueChange={(value) => onPromptChange({ ...prompt, module: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione um módulo" />
+              </SelectTrigger>
+              <SelectContent>
+                {modules.map((module) => (
+                  <SelectItem key={module.id} value={module.id}>
+                    {module.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           <div className="space-y-2">
             <label htmlFor="description" className="text-sm font-medium">
               Descrição da Finalidade

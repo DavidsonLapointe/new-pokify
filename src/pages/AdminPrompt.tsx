@@ -9,6 +9,16 @@ import { PromptCard } from "@/components/admin/prompts/PromptCard";
 import { ViewPromptDialog } from "@/components/admin/prompts/ViewPromptDialog";
 import { PromptFormDialog } from "@/components/admin/prompts/PromptFormDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { iconMap } from "@/components/admin/modules/module-constants";
+
+// Define a type for module grouping
+type ModuleGroup = {
+  name: string;
+  icon: React.ElementType;
+  prompts: Prompt[];
+};
 
 const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,12 +28,24 @@ const AdminPrompt = () => {
     name: "", 
     content: "", 
     description: "",
-    type: "default" // Valor padrão para o tipo
+    type: "default", // Valor padrão para o tipo
+    module: "geral" // Valor padrão para o módulo
   });
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("global");
   const { toast } = useToast();
+
+  // Definir os módulos disponíveis no sistema
+  const availableModules: { id: string; name: string; icon: keyof typeof iconMap }[] = [
+    { id: "geral", name: "Geral", icon: "Blocks" },
+    { id: "chat", name: "Chat AI Assistente", icon: "MessageCircle" },
+    { id: "video", name: "Criador de Vídeos", icon: "Video" },
+    { id: "audio", name: "Transcrição de Áudio", icon: "Headphones" },
+    { id: "crm", name: "CRM Inteligente", icon: "UserRound" },
+    { id: "analise", name: "Análise de Tendências", icon: "LineChart" }
+  ];
 
   useEffect(() => {
     fetchPrompts();
@@ -43,7 +65,8 @@ const AdminPrompt = () => {
         name: prompt.name,
         content: prompt.content,
         description: prompt.description || '',
-        type: prompt.type
+        type: prompt.type,
+        module: prompt.metadata?.module || 'geral'
       })));
     } catch (error) {
       console.error('Erro ao buscar prompts:', error);
@@ -58,7 +81,7 @@ const AdminPrompt = () => {
   };
 
   const handleNewPrompt = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "default" });
+    setNewPrompt({ name: "", content: "", description: "", type: "default", module: "geral" });
     setIsEditing(false);
     setSelectedPrompt(null);
     setIsModalOpen(true);
@@ -75,6 +98,8 @@ const AdminPrompt = () => {
     }
 
     try {
+      const metadata = { module: newPrompt.module };
+      
       if (isEditing && selectedPrompt) {
         const { error } = await supabase
           .from('prompts')
@@ -82,7 +107,8 @@ const AdminPrompt = () => {
             name: newPrompt.name,
             content: newPrompt.content,
             description: newPrompt.description,
-            type: newPrompt.type
+            type: newPrompt.type,
+            metadata
           })
           .eq('id', selectedPrompt.id);
 
@@ -99,7 +125,8 @@ const AdminPrompt = () => {
             name: newPrompt.name,
             content: newPrompt.content,
             description: newPrompt.description,
-            type: newPrompt.type
+            type: newPrompt.type,
+            metadata
           });
 
         if (error) throw error;
@@ -123,7 +150,7 @@ const AdminPrompt = () => {
   };
 
   const handleCancel = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "default" });
+    setNewPrompt({ name: "", content: "", description: "", type: "default", module: "geral" });
     setIsModalOpen(false);
     setIsEditing(false);
     setSelectedPrompt(null);
@@ -135,7 +162,8 @@ const AdminPrompt = () => {
       name: prompt.name,
       content: prompt.content,
       description: prompt.description,
-      type: prompt.type
+      type: prompt.type,
+      module: prompt.module || 'geral'
     });
     setIsEditing(true);
     setIsModalOpen(true);
@@ -145,6 +173,20 @@ const AdminPrompt = () => {
     setSelectedPrompt(prompt);
     setIsViewModalOpen(true);
   };
+
+  // Agrupar os prompts por módulo e tipo
+  const groupPromptsByModule = (type: string): ModuleGroup[] => {
+    const filteredPrompts = prompts.filter(prompt => prompt.type === type);
+    
+    return availableModules.map(module => ({
+      name: module.name,
+      icon: iconMap[module.icon],
+      prompts: filteredPrompts.filter(prompt => prompt.module === module.id)
+    })).filter(group => group.prompts.length > 0);
+  };
+
+  const globalPromptGroups = groupPromptsByModule('global');
+  const customPromptGroups = groupPromptsByModule('custom');
 
   return (
     <div className="space-y-6">
@@ -161,18 +203,64 @@ const AdminPrompt = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {prompts.map((prompt) => (
-          <PromptCard
-            key={prompt.id}
-            prompt={prompt}
-            onEdit={handleEdit}
-            onView={handleView}
-          />
-        ))}
-      </div>
+      <Tabs defaultValue="global" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="global">Prompts Globais</TabsTrigger>
+          <TabsTrigger value="custom">Prompts Customizados</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="global" className="space-y-6">
+          {!isLoading && globalPromptGroups.length === 0 ? (
+            <EmptyPromptState />
+          ) : (
+            globalPromptGroups.map((group, index) => (
+              <div key={group.name} className="space-y-4">
+                <div className="flex items-center gap-2 mt-6">
+                  <group.icon className="w-5 h-5 text-primary" />
+                  <h2 className="text-xl font-medium">{group.name}</h2>
+                </div>
+                <Separator className="my-2" />
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {group.prompts.map((prompt) => (
+                    <PromptCard
+                      key={prompt.id}
+                      prompt={prompt}
+                      onEdit={handleEdit}
+                      onView={handleView}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </TabsContent>
 
-      {!isLoading && prompts.length === 0 && <EmptyPromptState />}
+        <TabsContent value="custom" className="space-y-6">
+          {!isLoading && customPromptGroups.length === 0 ? (
+            <EmptyPromptState />
+          ) : (
+            customPromptGroups.map((group, index) => (
+              <div key={group.name} className="space-y-4">
+                <div className="flex items-center gap-2 mt-6">
+                  <group.icon className="w-5 h-5 text-primary" />
+                  <h2 className="text-xl font-medium">{group.name}</h2>
+                </div>
+                <Separator className="my-2" />
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {group.prompts.map((prompt) => (
+                    <PromptCard
+                      key={prompt.id}
+                      prompt={prompt}
+                      onEdit={handleEdit}
+                      onView={handleView}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </TabsContent>
+      </Tabs>
 
       <ViewPromptDialog
         open={isViewModalOpen}
@@ -188,6 +276,7 @@ const AdminPrompt = () => {
         onSave={handleSavePrompt}
         onCancel={handleCancel}
         isEditing={isEditing}
+        modules={availableModules}
       />
     </div>
   );

@@ -5,4 +5,5 @@ export interface Prompt {
   content: string;
   description: string;
   type: string;
+  module?: string;
 }
