@@ -22,7 +22,7 @@ interface PromptFormDialogProps {
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
-  modules: { id: string; name: string; icon: string }[];
+  modules?: { id: string; name: string; icon: string }[];
 }
 
 export const PromptFormDialog = ({

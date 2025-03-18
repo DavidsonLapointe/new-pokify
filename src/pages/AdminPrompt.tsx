@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -86,6 +87,8 @@ const AdminPrompt = () => {
         onSave={handleSavePrompt}
         onCancel={handleCancel}
         isEditing={isEditing}
+        // We pass the modules as an optional prop, but the component will
+        // fetch from useModulesManagement if this is empty
         modules={availableModules}
       />
     </div>
