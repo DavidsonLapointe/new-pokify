@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AlertCircle, FileBarChart, Loader2, Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,11 +75,8 @@ export function CreditsBalanceCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileBarChart className="h-5 w-5 text-primary" />
-          Créditos para análise de arquivos
+          Saldo de Créditos
         </CardTitle>
-        <CardDescription>
-          Gerencie seus créditos para análise
-        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Créditos do Plano Mensal */}
@@ -127,7 +123,7 @@ export function CreditsBalanceCard({
             disabled={isLoading}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Comprar créditos para análises adicionais
+            Comprar créditos adicionais
           </Button>
         </div>
       </CardContent>
