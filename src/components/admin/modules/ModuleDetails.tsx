@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { iconMap } from "./module-constants";
@@ -151,33 +152,36 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           </div>
         </div>
 
-        {/* Botões de ação sempre visíveis, mas condicionais baseados no status */}
-        <div className="mt-6 flex justify-start">
-          {/* Mostrar botão de editar configuração para módulos configurados */}
-          {module.status === "configured" && (
+        {/* Botões de ação sempre visíveis, independente do status */}
+        <div className="mt-6 flex justify-start gap-3">
+          {/* Sempre mostre os botões de ação com base no status */}
+          {(module.status === "configured" || (!module.status && module.active)) && (
             <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Pencil className="h-4 w-4 mr-2" /> Editar configuração
             </Button>
           )}
           
-          {/* Mostrar botão de configurar para módulos contratados */}
-          {module.status === "contracted" && (
+          {(module.status === "contracted" || (!module.status && !module.active)) && (
             <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
               <Settings className="h-4 w-4 mr-2" /> Configurar
             </Button>
           )}
 
-          {/* Mostrar botão de contratar para módulos não contratados */}
-          {(!module.status || module.status === "not_contracted") && (
+          {((!module.status && !module.active) || module.status === "not_contracted") && (
             <Button className="bg-primary hover:bg-primary/90 text-white">
               <Plus className="h-4 w-4 mr-2" /> Contratar módulo
             </Button>
           )}
           
-          {/* Botão para módulos em breve */}
-          {module.status === "coming_soon" && (
+          {(module.status === "coming_soon" || module.comingSoon) && (
             <Button className="bg-blue-500 hover:bg-blue-600 text-white" disabled>
               <Clock className="h-4 w-4 mr-2" /> Em breve disponível
+            </Button>
+          )}
+          
+          {module.status === "setup" && (
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white" disabled>
+              <Clock className="h-4 w-4 mr-2" /> Aguardando setup
             </Button>
           )}
         </div>
