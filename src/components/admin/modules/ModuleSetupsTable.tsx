@@ -51,8 +51,8 @@ export const ModuleSetupsTable: React.FC<ModuleSetupsTableProps> = ({
           {setups.length > 0 ? (
             setups.map((setup) => (
               <TableRow key={setup.id}>
-                <TableCell className="text-left">{setup.organizationId}</TableCell>
-                <TableCell>{setup.moduleId}</TableCell>
+                <TableCell className="text-left">{setup.organizationName || setup.organizationId}</TableCell>
+                <TableCell>{setup.moduleName || setup.moduleId}</TableCell>
                 <TableCell className="text-left">{setup.contactName}</TableCell>
                 <TableCell className="text-left whitespace-nowrap">
                   {setup.contactPhone}
