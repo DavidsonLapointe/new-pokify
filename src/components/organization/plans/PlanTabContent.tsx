@@ -5,8 +5,6 @@ import { Loader2 } from "lucide-react";
 import { fetchPlanById } from "@/services/plans";
 import { ChangePlanDialog } from "./ChangePlanDialog";
 import { CurrentPlanCard } from "./CurrentPlanCard";
-import { CreditsBalanceCard } from "./CreditsBalanceCard";
-import { AnalysisPackagesDialog } from "./AnalysisPackagesDialog";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
@@ -28,7 +26,6 @@ export function PlanTabContent() {
 function PlanTabContentInner() {
   const { user } = useUser();
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
-  const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -133,30 +130,15 @@ function PlanTabContentInner() {
     );
   }
 
-  // Ensure monthly quota, used credits, and additional credits are numbers
-  const monthlyQuota = typeof currentPlan.credits === 'string' 
-    ? parseInt(currentPlan.credits, 10) 
-    : Number(currentPlan.credits || 0);
-    
-  const usedCredits = 45; // Example
-  const additionalCredits = 20; // Example
-
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6">
       <CurrentPlanCard 
         plan={currentPlan} 
         onChangePlan={() => setIsChangePlanDialogOpen(true)} 
         nextBillingDate={nextBillingDate}
       />
-      
-      <CreditsBalanceCard 
-        monthlyQuota={monthlyQuota}
-        used={usedCredits}
-        additionalCredits={additionalCredits}
-        onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
-      />
 
-      {/* Diálogos */}
+      {/* Plano Change Dialog */}
       <ChangePlanDialog 
         open={isChangePlanDialogOpen}
         onOpenChange={setIsChangePlanDialogOpen}
@@ -173,15 +155,6 @@ function PlanTabContentInner() {
           stripePriceId: plan.stripePriceId,
           credits: plan.credits
         }))}
-      />
-
-      <AnalysisPackagesDialog
-        open={isPackagesDialogOpen}
-        onOpenChange={setIsPackagesDialogOpen}
-        onPackagePurchased={() => {
-          // Refresh plan data or credits after purchase
-          // Could refetch query here
-        }}
       />
     </div>
   );
