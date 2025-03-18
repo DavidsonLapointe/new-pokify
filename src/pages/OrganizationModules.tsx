@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +21,8 @@ import {
   ChevronUp,
   HelpCircle,
   Zap,
-  Mail
+  Mail,
+  RotateCw
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -51,7 +51,7 @@ import { FinancialTitle } from "@/types/financial";
 import { TermsDialog } from "@/components/admin/organizations/LegalDocumentsDialogs";
 
 // Status da ferramenta
-type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
+type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
 
 // Interface para as ferramentas
 interface Tool {
@@ -103,11 +103,11 @@ const OrganizationModules = () => {
       title: "Prospecção com Vídeo",
       icon: Video,
       description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
-      status: "contracted",
+      status: "setup",
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
       price: 199.90,
       credits: 5,
-      badgeLabel: "Contratada",
+      badgeLabel: "Em Setup",
       howItWorks: [
         "Importação de dados do lead a partir do seu CRM",
         "Geração de roteiro personalizado com base no perfil",
@@ -401,6 +401,11 @@ const OrganizationModules = () => {
           icon: <Clock size={18} className="text-gray-500" />,
           tooltip: "Em breve disponível"
         };
+      case "setup":
+        return {
+          icon: <RotateCw size={18} className="text-blue-500 animate-spin" />,
+          tooltip: "Módulo em processo de setup"
+        };
     }
   };
 
@@ -428,6 +433,8 @@ const OrganizationModules = () => {
         return "bg-green-100 text-green-800";
       case "coming_soon":
         return "bg-gray-100 text-gray-800";
+      case "setup":
+        return "bg-blue-100 text-blue-800";
     }
   };
 
@@ -540,6 +547,14 @@ const OrganizationModules = () => {
                             >
                               <CreditCard className="h-3 w-3 mr-1" />
                               Contratar
+                            </Button>
+                          ) : tool.status === "setup" ? (
+                            <Button 
+                              className="w-full bg-blue-500 hover:bg-blue-600 h-9 text-xs px-1 shadow-sm opacity-75 cursor-not-allowed"
+                              disabled
+                            >
+                              <RotateCw className="h-3 w-3 mr-1 animate-spin" />
+                              Aguardando setup
                             </Button>
                           ) : (
                             <Link 
@@ -804,86 +819,4 @@ const OrganizationModules = () => {
               </div>
               
               <p className="text-sm text-gray-600">
-                Um e-mail foi enviado para nossa equipe de suporte. Você pode tentar novamente 
-                ou entrar em contato com nosso suporte para obter ajuda.
-              </p>
-            </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsPaymentFailedDialogOpen(false)}>
-                Fechar
-              </Button>
-              <Button 
-                onClick={() => {
-                  setIsPaymentFailedDialogOpen(false);
-                  setIsConfirmDialogOpen(true);
-                }}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Tentar Novamente
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo de cancelamento com coleta de motivo */}
-        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-red-700">
-                <Trash2 className="h-5 w-5" />
-                Cancelar Módulo
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <p className="mb-4">
-                Você está prestes a cancelar um módulo contratado. Esta ação não pode ser desfeita.
-              </p>
-              
-              <div className="space-y-3">
-                <Label htmlFor="cancelReason">Por que você deseja cancelar este módulo?</Label>
-                <Textarea 
-                  id="cancelReason" 
-                  placeholder="Descreva o motivo do cancelamento..."
-                  className="min-h-[100px] resize-none"
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
-                />
-              </div>
-              
-              <div className="bg-amber-50 p-3 rounded-md my-4 text-amber-800 text-sm">
-                <p className="flex items-start">
-                  <AlertTriangle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-                  O cancelamento será efetivado imediatamente após a confirmação.
-                </p>
-              </div>
-            </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-                Desistir
-              </Button>
-              <Button 
-                onClick={confirmCancelation}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Confirmar Cancelamento
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo de termos de uso */}
-        <TermsDialog
-          open={isTermsDialogOpen}
-          onOpenChange={setIsTermsDialogOpen}
-          moduleId={selectedTool}
-          moduleName={tools.find(t => t.id === selectedTool)?.title}
-        />
-      </div>
-    </TooltipProvider>
-  );
-};
-
-export default OrganizationModules;
+                Um e-mail foi enviado para nossa equipe de suporte
