@@ -39,6 +39,10 @@ export interface ModuleSetup {
   contractedAt: Date;
   status: SetupStatus;
   notes: SetupNote[];
+  activities?: {
+    total: number;
+    completed: number;
+  };
 }
 
 export interface Tool {
@@ -54,7 +58,7 @@ export interface Tool {
   setupDescription?: string;
   setupContactInfo?: SetupContactInfo;
   
-  // Propriedades que estavam causando erros
+  // Properties that were causing errors
   icon?: any;
   status?: ToolStatus;
   badgeLabel?: string;
@@ -66,7 +70,7 @@ export interface Tool {
   executeLabel?: string;
 }
 
-// Interface para o módulo (sem referência circular)
+// Interface for the module (without circular reference)
 export interface Module {
   id: string;
   name: string;
