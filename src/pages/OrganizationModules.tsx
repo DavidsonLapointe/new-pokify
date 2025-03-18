@@ -195,7 +195,7 @@ const OrganizationModules = () => {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Módulos do Sistema</h1>
           <p className="text-muted-foreground text-sm">
-            Gerencie as ferramentas de IA disponíveis para sua empresa
+            Gerencie a contratação das ferramentas de IA disponíveis no sistema
           </p>
         </div>
 

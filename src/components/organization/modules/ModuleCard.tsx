@@ -66,14 +66,16 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
     >
       <CardContent className="p-3 flex flex-col items-center justify-between h-full relative">
         <div className="absolute top-2 right-2 flex items-center">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span>{statusInfo.icon}</span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{statusInfo.tooltip}</p>
-            </TooltipContent>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>{statusInfo.icon}</span>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs">{statusInfo.tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           {(tool.status === "contracted" || tool.status === "configured") && onCancelModule && (
             <DropdownMenu>

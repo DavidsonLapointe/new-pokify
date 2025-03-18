@@ -47,7 +47,37 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
   const Icon = selectedTool.icon;
 
   return (
-    <Card className="p-5 bg-[#F8F8FB] max-w-4xl mx-auto">
+    <Card className="p-5 bg-[#F8F8FB] max-w-4xl mx-auto relative">
+      {/* Botões de ação movidos para o canto superior direito */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        {selectedTool.status === "not_contracted" && (
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white rounded-md px-3 h-9"
+            onClick={() => onContractModule(selectedTool.id)}
+          >
+            <CreditCard className="h-4 w-4 mr-2" /> Contratar
+          </Button>
+        )}
+        
+        {selectedTool.status === "configured" && (
+          <Button 
+            className="bg-green-600 hover:bg-green-700 text-white rounded-md px-3 h-9"
+            onClick={() => onEditConfiguration(selectedTool.id)}
+          >
+            <Pencil className="h-4 w-4 mr-2" /> Editar configuração
+          </Button>
+        )}
+        
+        {selectedTool.status === "contracted" && (
+          <Button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-md px-3 h-9"
+            onClick={() => onConfigureModule(selectedTool.id)}
+          >
+            <Settings className="h-4 w-4 mr-2" /> Configurar módulo
+          </Button>
+        )}
+      </div>
+
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 text-[#9b87f5]">
           {React.createElement(Icon, { size: 24 })}
@@ -113,38 +143,6 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
             ))}
           </ul>
         </div>
-      </div>
-
-      {/* Seção de botões da seção detalhada ajustada conforme regras */}
-      <div className="mt-4">
-        {selectedTool.status === "not_contracted" && (
-          <Button 
-            className="bg-red-600 hover:bg-red-700 text-white rounded-md px-3 h-9"
-            onClick={() => onContractModule(selectedTool.id)}
-          >
-            <CreditCard className="h-4 w-4 mr-2" /> Contratar
-          </Button>
-        )}
-        
-        {selectedTool.status === "configured" && (
-          <Button 
-            className="bg-green-600 hover:bg-green-700 text-white rounded-md px-3 h-9 mr-3"
-            onClick={() => onEditConfiguration(selectedTool.id)}
-          >
-            <Pencil className="h-4 w-4 mr-2" /> Editar configuração
-          </Button>
-        )}
-        
-        {selectedTool.status === "contracted" && (
-          <Button 
-            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-md px-3 h-9"
-            onClick={() => onConfigureModule(selectedTool.id)}
-          >
-            <Settings className="h-4 w-4 mr-2" /> Configurar módulo
-          </Button>
-        )}
-        
-        {/* Módulos em setup ou coming_soon não mostram botões */}
       </div>
     </Card>
   );
