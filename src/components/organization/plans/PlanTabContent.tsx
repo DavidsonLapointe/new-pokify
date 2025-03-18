@@ -32,9 +32,9 @@ export function PlanTabContent() {
   nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
   nextBillingDate.setDate(1);
 
-  // Credits data (example)
-  // Convert plan.credits to a number to fix the type error
-  const monthlyQuota = plan?.credits ? Number(plan.credits) : 0;
+  // Ensure credits is properly converted to a number
+  const credits = plan?.credits ? (typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : plan.credits) : 0;
+  const monthlyQuota = credits;
   const usedCredits = 45; // Example
   const additionalCredits = 20; // Example
 
