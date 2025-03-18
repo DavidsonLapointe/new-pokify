@@ -153,7 +153,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         </div>
 
         {/* Botões de ação baseados no status do módulo */}
-        {(module.status === "configured" || module.status === "contracted") && (
+        {module.status && (module.status === "configured" || module.status === "contracted") && (
           <div className="mt-6 flex justify-start">
             {module.status === "configured" && (
               <Button className="bg-green-600 hover:bg-green-700">
