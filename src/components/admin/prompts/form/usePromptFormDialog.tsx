@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PromptFormData } from "@/hooks/admin/prompts/usePromptForm";
 
 interface UsePromptFormDialogProps {
@@ -9,6 +9,11 @@ interface UsePromptFormDialogProps {
 }
 
 export const usePromptFormDialog = ({ prompt, onPromptChange, open }: UsePromptFormDialogProps) => {
+  // Reset form when dialog opens/closes
+  useEffect(() => {
+    // Any reset logic can go here if needed in the future
+  }, [open]);
+  
   // Update prompt type and handle company_id accordingly
   const handleTypeChange = (value: string) => {
     onPromptChange({ 
