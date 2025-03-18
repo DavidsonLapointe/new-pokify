@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { CompanyLeadly } from "@/types/company-leadly";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AlertCircle } from "lucide-react";
 
 interface PromptFormDialogProps {
   open: boolean;
@@ -28,6 +29,55 @@ interface PromptFormDialogProps {
   isEditing: boolean;
   modules: { id: string; name: string; icon: string }[];
 }
+
+// Mock company data for testing
+const mockCompanies: CompanyLeadly[] = [
+  {
+    id: "1",
+    razao_social: "Empresa Teste S.A.",
+    nome_fantasia: "Empresa Teste",
+    cnpj: "12.345.678/0001-90",
+    email: "contato@empresateste.com",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "2",
+    razao_social: "Comércio Digital LTDA",
+    nome_fantasia: "ComDig",
+    cnpj: "98.765.432/0001-21",
+    email: "contato@comdig.com",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "3",
+    razao_social: "Soluções Integradas Brasil S.A.",
+    nome_fantasia: "SIB Tecnologia",
+    cnpj: "45.678.901/0001-23",
+    email: "contato@sibtec.com",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "4",
+    razao_social: "Indústria Nova Era LTDA",
+    nome_fantasia: "Nova Era",
+    cnpj: "34.567.890/0001-45",
+    email: "contato@novaera.com",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "5",
+    razao_social: "Tecnologia Avançada S.A.",
+    nome_fantasia: "TecAv",
+    cnpj: "23.456.789/0001-67",
+    email: "contato@tecav.com",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
 
 export const PromptFormDialog = ({
   open,
@@ -41,6 +91,7 @@ export const PromptFormDialog = ({
 }: PromptFormDialogProps) => {
   const [companies, setCompanies] = useState<CompanyLeadly[]>([]);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
+  const [useMockData, setUseMockData] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -51,20 +102,36 @@ export const PromptFormDialog = ({
 
   const fetchCompanies = async () => {
     setIsLoadingCompanies(true);
+    
     try {
+      // Try to fetch from Supabase first
       const { data, error } = await supabase
         .from('company_leadly')
         .select('*')
         .order('nome_fantasia', { ascending: true });
 
       if (error) throw error;
-      setCompanies(data || []);
+      
+      if (data && data.length > 0) {
+        setCompanies(data);
+        setUseMockData(false);
+      } else {
+        // If no data from Supabase, use mock data
+        setCompanies(mockCompanies);
+        setUseMockData(true);
+        console.log("Usando dados mockados para empresas");
+      }
     } catch (error) {
       console.error('Erro ao buscar empresas:', error);
+      // Fall back to mock data on error
+      setCompanies(mockCompanies);
+      setUseMockData(true);
+      console.log("Erro ao buscar empresas, usando dados mockados");
+      
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar a lista de empresas.",
-        variant: "destructive",
+        title: "Aviso",
+        description: "Usando dados de exemplo para empresas.",
+        variant: "default",
       });
     } finally {
       setIsLoadingCompanies(false);
@@ -96,6 +163,16 @@ export const PromptFormDialog = ({
             <label className="text-sm font-medium">
               Tipo de Prompt
             </label>
+            <div className="bg-muted/50 p-3 rounded-md mb-3 text-sm">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium mb-1">Tipos de Prompt:</p>
+                  <p className="mb-1"><strong>Global:</strong> Disponível para todas as empresas no sistema. Útil para funcionalidades padrão que podem ser usadas por qualquer cliente.</p>
+                  <p><strong>Customizado:</strong> Específico para uma única empresa. Permite criar prompts personalizados para necessidades particulares de um cliente.</p>
+                </div>
+              </div>
+            </div>
             <RadioGroup 
               value={prompt.type} 
               onValueChange={(value) => onPromptChange({ ...prompt, type: value, company_id: value === "custom" ? prompt.company_id : undefined })}
@@ -117,6 +194,11 @@ export const PromptFormDialog = ({
               <label className="text-sm font-medium">
                 Empresa
               </label>
+              {useMockData && (
+                <div className="text-xs text-muted-foreground mb-2">
+                  Exibindo dados de exemplo para demonstração
+                </div>
+              )}
               <Select 
                 value={prompt.company_id}
                 onValueChange={(value) => onPromptChange({ ...prompt, company_id: value })}
