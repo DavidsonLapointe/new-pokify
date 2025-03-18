@@ -60,7 +60,10 @@ export const CreateOrganizationDialog = ({
   };
 
   // Handle form submission with selected modules
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async () => {
+    // Get current form values
+    const values = form.getValues();
+    
     // Add the selected modules to the form values
     const valuesWithModules = {
       ...values,
