@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
@@ -60,16 +59,26 @@ const AdminPrompt = () => {
 
       if (error) throw error;
 
-      setPrompts(data.map(prompt => ({
-        id: prompt.id,
-        name: prompt.name,
-        content: prompt.content,
-        description: prompt.description || '',
-        type: prompt.type,
-        // Fix the metadata.module access with proper type safety
-        module: prompt.metadata && typeof prompt.metadata === 'object' ? 
-                prompt.metadata.module as string || 'geral' : 'geral'
-      })));
+      setPrompts(data.map(prompt => {
+        // Safely extract module from metadata with proper type handling
+        let moduleValue = 'geral'; // default value
+        
+        if (prompt.metadata && 
+            typeof prompt.metadata === 'object' && 
+            !Array.isArray(prompt.metadata) && 
+            'module' in prompt.metadata) {
+          moduleValue = prompt.metadata.module as string;
+        }
+        
+        return {
+          id: prompt.id,
+          name: prompt.name,
+          content: prompt.content,
+          description: prompt.description || '',
+          type: prompt.type,
+          module: moduleValue
+        };
+      }));
     } catch (error) {
       console.error('Erro ao buscar prompts:', error);
       toast({
