@@ -131,7 +131,7 @@ function PlanTabContentInner() {
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="max-w-md mx-auto">
       <CurrentPlanCard 
         plan={currentPlan} 
         onChangePlan={() => setIsChangePlanDialogOpen(true)} 
