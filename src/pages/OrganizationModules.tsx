@@ -820,4 +820,4 @@ const OrganizationModules = () => {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-red-700">
-                <AlertTriangle className="h-5
+                <AlertTriangle className="h-5 w-5
