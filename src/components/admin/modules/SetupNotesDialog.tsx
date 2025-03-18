@@ -149,25 +149,6 @@ export const SetupNotesDialog = ({
 
                       return (
                         <div key={noteId} className="space-y-2 pb-3 border-b last:border-b-0">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => startEditingNote(noteId, note.content)}
-                            >
-                              <Pencil className="h-3.5 w-3.5 text-primary" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => confirmDeleteNote(noteId)}
-                            >
-                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                            </Button>
-                          </div>
-
                           {isEditing ? (
                             <div className="space-y-2">
                               <Textarea
@@ -192,9 +173,29 @@ export const SetupNotesDialog = ({
                               </div>
                             </div>
                           ) : (
-                            <p className="text-sm whitespace-pre-wrap">
-                              <span className="font-medium">({note.userName || "Usuário"})</span> {note.content}
-                            </p>
+                            <div className="flex items-start justify-between">
+                              <p className="text-sm whitespace-pre-wrap flex-1">
+                                <span className="font-medium">({note.userName || "Usuário"})</span> {note.content}
+                              </p>
+                              <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={() => startEditingNote(noteId, note.content)}
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-primary" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={() => confirmDeleteNote(noteId)}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                                </Button>
+                              </div>
+                            </div>
                           )}
 
                           <p className="text-xs text-gray-500">
