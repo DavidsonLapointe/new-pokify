@@ -131,12 +131,15 @@ export default function OrganizationCredits() {
           <p className="text-muted-foreground">Gerencie os créditos da sua organização</p>
         </div>
 
-        <CreditsBalanceCard 
-          monthlyQuota={monthlyQuota}
-          used={usedCredits}
-          additionalCredits={additionalCredits}
-          onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
-        />
+        {/* Added max-w-md to limit the width of the card */}
+        <div className="max-w-md">
+          <CreditsBalanceCard 
+            monthlyQuota={monthlyQuota}
+            used={usedCredits}
+            additionalCredits={additionalCredits}
+            onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
+          />
+        </div>
 
         <AnalysisPackagesDialog
           open={isPackagesDialogOpen}
