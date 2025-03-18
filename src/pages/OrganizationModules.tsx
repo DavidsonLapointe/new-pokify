@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -823,4 +824,79 @@ const OrganizationModules = () => {
                 <li>Problemas temporários no gateway de pagamento</li>
               </ul>
               
-              <div className="bg-blue-50 p
+              <div className="bg-blue-50 p-3 rounded-md flex items-start text-sm">
+                <Mail className="h-4 w-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+                <p className="text-blue-800">
+                  Nossa equipe foi notificada sobre o problema e entrará em contato se necessário.
+                  Você pode tentar novamente mais tarde.
+                </p>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                onClick={() => setIsPaymentFailedDialogOpen(false)}
+                variant="outline"
+              >
+                Fechar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <AlertTriangle className="h-5 w-5" />
+                Cancelar Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4 space-y-4">
+              <p>
+                Você está prestes a cancelar o módulo "{tools.find(t => t.id === cancelModuleId)?.title}".
+                Esta ação não pode ser desfeita.
+              </p>
+              
+              <div className="space-y-2">
+                <Label htmlFor="cancelReason">Motivo do cancelamento</Label>
+                <Textarea 
+                  id="cancelReason" 
+                  placeholder="Por favor, informe o motivo do cancelamento"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                onClick={() => setIsCancelDialogOpen(false)}
+                variant="outline"
+              >
+                Voltar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <TermsDialog 
+          open={isTermsDialogOpen} 
+          onOpenChange={setIsTermsDialogOpen}
+          moduleId={selectedTool || undefined}
+          moduleName={tools.find(t => t.id === selectedTool)?.title}
+        />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
