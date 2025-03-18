@@ -396,42 +396,67 @@ const AdminModules = () => {
             <p className="mb-4">
               Você está prestes a cancelar o módulo{" "}
               <strong>
-                {modules.find(t => t.id === cancelModuleId)?.title}
+                {modules.find(m => m.id === cancelModuleId)?.name}
               </strong>. 
               Esta ação não pode ser desfeita.
             </p>
-            
-            
           </div>
           
-          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+              Voltar
+            </Button>
+            <Button variant="destructive">
+              Confirmar Cancelamento
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Diálogo para setup de contato */}
-      
-        
+      <Dialog open={isSetupContactDialogOpen} onOpenChange={setIsSetupContactDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Setup de Contato</DialogTitle>
+            <DialogDescription>
+              Informe os dados para que nossa equipe entre em contato e configure o módulo.
+            </DialogDescription>
+          </DialogHeader>
           
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                Nome completo
+              </label>
+              <input
+                id="name"
+                value={setupContactInfo.name}
+                onChange={(e) => setSetupContactInfo(prev => ({ ...prev, name: e.target.value }))}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            </div>
             
+            <div className="grid gap-2">
+              <label htmlFor="phone" className="text-sm font-medium">
+                Telefone para contato
+              </label>
+              <input
+                id="phone"
+                value={setupContactInfo.phone}
+                onChange={(e) => setSetupContactInfo(prev => ({ ...prev, phone: e.target.value }))}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
           
-          
-            
-              
-              
-            
-            
-              
-              
-            
-          
-          
-            
-              
-              
-            
-          
-        
-      
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsSetupContactDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit">Enviar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
