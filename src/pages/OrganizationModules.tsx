@@ -819,4 +819,4 @@ const OrganizationModules = () => {
         </Dialog>
 
         {/* Diálogo de falha no pagamento */}
-        <Dialog open={isPaymentFailedDialogOpen} onOpenChange={setIs
+        <Dialog open={isPaymentFailedDialogOpen} onOpen
