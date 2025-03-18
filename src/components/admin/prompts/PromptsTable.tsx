@@ -27,9 +27,9 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[300px]">Nome</TableHead>
+            <TableHead className="w-[300px] text-left">Nome</TableHead>
             {prompts.some(prompt => prompt.type === "custom") && (
-              <TableHead className="hidden md:table-cell">Empresa</TableHead>
+              <TableHead className="hidden md:table-cell text-left">Empresa</TableHead>
             )}
             <TableHead className="w-[130px] text-right">Ações</TableHead>
           </TableRow>
@@ -37,9 +37,9 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
         <TableBody>
           {prompts.map((prompt) => (
             <TableRow key={prompt.id}>
-              <TableCell className="font-medium">{prompt.name}</TableCell>
+              <TableCell className="font-medium text-left">{prompt.name}</TableCell>
               {prompts.some(p => p.type === "custom") && (
-                <TableCell className="hidden md:table-cell">
+                <TableCell className="hidden md:table-cell text-left">
                   {prompt.type === "custom" && (
                     <span className="text-sm text-muted-foreground">
                       {isLoading ? "Carregando..." : getCompanyName(prompt.company_id)}
