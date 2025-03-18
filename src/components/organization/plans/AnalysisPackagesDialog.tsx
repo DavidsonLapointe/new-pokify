@@ -56,9 +56,6 @@ export function AnalysisPackagesDialog({
   };
 
   const handlePaymentSuccess = () => {
-    toast.success(`Pacote de ${selectedPackage?.credits} créditos adicionado com sucesso!`);
-    setShowPaymentDialog(false);
-    onOpenChange(false);
     if (onPackagePurchased) {
       onPackagePurchased();
     }
