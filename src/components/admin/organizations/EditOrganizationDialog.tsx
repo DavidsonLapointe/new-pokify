@@ -215,12 +215,7 @@ export const EditOrganizationDialog = ({
               </p>
             </div>
 
-            <StatusSection 
-              form={form} 
-              currentStatus={organization.status} 
-            />
-
-            {/* Admin Data Section - Moved to the end */}
+            {/* Admin Data Section */}
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="bg-[#F8F6FF] p-3 rounded-lg border border-[#E5DEFF] mb-3">
                 <div className="flex items-center gap-2">
@@ -266,6 +261,12 @@ export const EditOrganizationDialog = ({
                 />
               </div>
             </div>
+            
+            {/* Status Section - Moved to end */}
+            <StatusSection 
+              form={form} 
+              currentStatus={organization.status} 
+            />
 
             <div className="flex justify-end space-x-4 pt-4">
               <Button
