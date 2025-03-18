@@ -3,6 +3,7 @@ import { Prompt } from "@/types/prompt";
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Eye, Edit } from "lucide-react";
+import { useCompanies } from "@/hooks/admin/prompts/useCompanies";
 
 interface PromptsTableProps {
   prompts: Prompt[];
@@ -11,6 +12,16 @@ interface PromptsTableProps {
 }
 
 export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => {
+  // Get companies data for displaying company names with custom prompts
+  const { companies, isLoading } = useCompanies();
+  
+  // Function to get company name by ID
+  const getCompanyName = (companyId?: string) => {
+    if (!companyId) return "";
+    const company = companies.find(c => c.id === companyId);
+    return company ? (company.nome_fantasia || company.razao_social) : "";
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -18,6 +29,9 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
           <TableRow>
             <TableHead className="w-[300px]">Nome</TableHead>
             <TableHead className="hidden md:table-cell">Descrição</TableHead>
+            {prompts.some(prompt => prompt.type === "custom") && (
+              <TableHead className="hidden md:table-cell">Empresa</TableHead>
+            )}
             <TableHead className="w-[130px] text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -28,6 +42,15 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
               <TableCell className="hidden md:table-cell">
                 <span className="line-clamp-1">{prompt.description}</span>
               </TableCell>
+              {prompts.some(p => p.type === "custom") && (
+                <TableCell className="hidden md:table-cell">
+                  {prompt.type === "custom" && (
+                    <span className="text-sm text-muted-foreground">
+                      {isLoading ? "Carregando..." : getCompanyName(prompt.company_id)}
+                    </span>
+                  )}
+                </TableCell>
+              )}
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
