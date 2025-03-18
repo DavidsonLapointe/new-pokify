@@ -85,7 +85,7 @@ export const AdminIntegrationsList = () => {
                   size="icon"
                   onClick={() => setEditingIntegration(integration)}
                 >
-                  <Pencil className="h-4 w-4" />
+                  <Pencil className="h-4 w-4 text-primary" />
                 </Button>
               </TableCell>
             </TableRow>
