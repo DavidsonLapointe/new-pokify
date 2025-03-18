@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -819,4 +820,115 @@ const OrganizationModules = () => {
         </Dialog>
 
         {/* Diálogo de falha no pagamento */}
-        <Dialog open={isPaymentFailedDialogOpen} onOpen
+        <Dialog open={isPaymentFailedDialogOpen} onOpenChange={setIsPaymentFailedDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <AlertTriangle className="h-5 w-5" />
+                Falha no Pagamento
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4 space-y-4">
+              <p>
+                Ocorreu um erro durante o processamento do pagamento. Por favor, verifique as informações
+                do seu cartão de crédito e tente novamente.
+              </p>
+              
+              <div className="bg-red-50 p-3 rounded-md mb-4 text-red-800 text-sm">
+                <p className="font-medium mb-1">Possíveis motivos:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Cartão sem limite disponível</li>
+                  <li>Cartão expirado ou bloqueado</li>
+                  <li>Restrições de segurança do banco</li>
+                  <li>Problemas temporários com a operadora</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm text-gray-600">
+                Se o problema persistir, entre em contato com nosso suporte através do email{" "}
+                <a href="mailto:suporte@leadly.com.br" className="text-primary underline">
+                  suporte@leadly.com.br
+                </a>
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPaymentFailedDialogOpen(false)}>
+                Fechar
+              </Button>
+              <Button 
+                onClick={() => {
+                  setIsPaymentFailedDialogOpen(false);
+                  if (selectedTool) {
+                    handleContractTool(selectedTool);
+                  }
+                }}
+                className="bg-primary hover:bg-primary/90"
+              >
+                Tentar Novamente
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de cancelamento de módulo */}
+        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <Trash2 className="h-5 w-5" />
+                Cancelar Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4 space-y-4">
+              <p>
+                Tem certeza que deseja cancelar este módulo? Esta ação removerá o acesso da sua empresa a esta funcionalidade.
+              </p>
+              
+              <div className="space-y-2">
+                <Label htmlFor="cancelReason">Por favor, informe o motivo do cancelamento:</Label>
+                <Textarea 
+                  id="cancelReason" 
+                  placeholder="Descreva o motivo do cancelamento..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="resize-none h-24"
+                />
+              </div>
+              
+              <div className="bg-amber-50 p-3 rounded-md text-amber-800 text-sm">
+                <p className="flex items-start">
+                  <AlertTriangle className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0 text-amber-600" />
+                  Após o cancelamento, você perderá acesso a todas as configurações e dados associados a este módulo.
+                </p>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Voltar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de termos de uso */}
+        <TermsDialog 
+          isOpen={isTermsDialogOpen} 
+          onClose={() => setIsTermsDialogOpen(false)}
+          type="terms"
+        />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
