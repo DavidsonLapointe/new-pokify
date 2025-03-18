@@ -173,7 +173,7 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
               <TableHead className="font-medium text-left">Empresa</TableHead>
               <TableHead className="font-medium">Módulo</TableHead>
               <TableHead className="font-medium text-left">Nome do Implantador</TableHead>
-              <TableHead className="font-medium">Telefone</TableHead>
+              <TableHead className="font-medium text-left">Telefone</TableHead>
               <TableHead className="font-medium text-center">Data de Contratação</TableHead>
               <TableHead className="font-medium text-center">Status</TableHead>
               <TableHead className="font-medium text-right">Ações</TableHead>
@@ -186,7 +186,7 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                   <TableCell className="text-left">{setup.organizationId}</TableCell>
                   <TableCell>{setup.moduleId}</TableCell>
                   <TableCell className="text-left">{setup.contactName}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     {setup.contactPhone}
                   </TableCell>
                   <TableCell className="text-center">
