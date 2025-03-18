@@ -1,11 +1,10 @@
-
 import React from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Trash2, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, MoreVertical, Trash2, Zap, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "@/components/ui/link";
-import { Badge } from "@/components/ui/badge";
 import { Tool } from "./types";
 
 interface ModuleCardProps {
@@ -18,35 +17,34 @@ interface ModuleCardProps {
 export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: ModuleCardProps) => {
   const Icon = tool.icon;
   
-  // Função para determinar o estilo do badge de status
-  const getStatusBadgeStyle = (status: Tool["status"]) => {
+  // Função para determinar o ícone e tooltip de status
+  const getStatusInfo = (status: Tool["status"]) => {
     switch (status) {
       case "not_contracted": 
-        return "bg-red-100 text-red-800 border-red-200";
+        return { 
+          icon: <Lock size={18} className="text-red-500" />,
+          tooltip: "Módulo não contratado"
+        };
       case "contracted": 
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return { 
+          icon: <AlertTriangle size={18} className="text-yellow-500" />,
+          tooltip: "Módulo contratado, mas ainda não configurado"
+        };
       case "configured": 
-        return "bg-green-100 text-green-800 border-green-200";
+        return { 
+          icon: <CheckCircle2 size={18} className="text-green-500" />,
+          tooltip: "Módulo contratado e configurado"
+        };
       case "coming_soon":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return { 
+          icon: <Clock size={18} className="text-gray-500" />,
+          tooltip: "Em breve disponível"
+        };
       case "setup":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-    }
-  };
-
-  // Função para obter o texto do badge de status
-  const getStatusText = (status: Tool["status"]) => {
-    switch (status) {
-      case "not_contracted": 
-        return "Não contratado";
-      case "contracted": 
-        return "Pendente setup";
-      case "configured": 
-        return "Configurado";
-      case "coming_soon":
-        return "Em breve";
-      case "setup":
-        return "Em setup";
+        return {
+          icon: <RefreshCw size={18} className="text-blue-500" />,
+          tooltip: "Módulo em processo de setup"
+        };
     }
   };
 
@@ -58,8 +56,7 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
     });
   };
   
-  const statusBadgeStyle = getStatusBadgeStyle(tool.status);
-  const statusText = getStatusText(tool.status);
+  const statusInfo = getStatusInfo(tool.status);
   
   return (
     <Card 
@@ -68,12 +65,21 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
     >
       <CardContent className="p-3 flex flex-col items-center justify-between h-full relative">
         <div className="absolute top-2 right-2 flex items-center">
-          {/* Badge de status em vez de ícone com tooltip */}
-          <Badge 
-            className={`text-xs px-2 py-0.5 font-medium rounded-full ${statusBadgeStyle}`}
-          >
-            {statusText}
-          </Badge>
+          <TooltipProvider>
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">{statusInfo.icon}</span>
+              </TooltipTrigger>
+              <TooltipContent 
+                side="top" 
+                align="center" 
+                sideOffset={10} 
+                className="max-w-[250px] w-auto p-2 bg-white"
+              >
+                <p className="text-xs font-normal whitespace-normal">{statusInfo.tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           {(tool.status === "contracted" || tool.status === "configured") && onCancelModule && (
             <DropdownMenu>
@@ -138,3 +144,6 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
     </Card>
   );
 };
+
+// Importe os ícones que estavam faltando
+import { AlertTriangle, CheckCircle2, Lock, RefreshCw } from "lucide-react";
