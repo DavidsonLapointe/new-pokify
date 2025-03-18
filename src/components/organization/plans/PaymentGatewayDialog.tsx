@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -123,7 +124,7 @@ const SavedCardView = ({ cardInfo, amount, onUseNewCard, onProceed, isLoading }:
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onUseNewCard} className="text-sm text-primary">
-              Trocar cartão
+              Usar outro cartão
             </Button>
           </div>
         </div>
@@ -249,6 +250,9 @@ export function PaymentGatewayDialog({
     if (open) {
       checkStripeConfig();
       fetchSavedCard();
+    } else {
+      // Reset state when dialog closes
+      setUseNewCard(false);
     }
   }, [open]);
 
@@ -259,14 +263,19 @@ export function PaymentGatewayDialog({
       const organizationId = "current-org"; // Replace with actual way to get organization ID
       const paymentMethod = await getPaymentMethod(organizationId);
       
-      if (paymentMethod) {
+      console.log("Fetched payment method:", paymentMethod);
+      if (paymentMethod && paymentMethod.last4) {
         setSavedCard(paymentMethod);
       } else {
         setSavedCard(null);
+        setUseNewCard(true); // If no saved card, show new card form automatically
       }
     } catch (error) {
       console.error("Error fetching saved card:", error);
       setSavedCard(null);
+      setUseNewCard(true); // If error fetching card, show new card form
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -281,8 +290,6 @@ export function PaymentGatewayDialog({
         valid: false,
         message: "Erro ao verificar configuração do Stripe"
       });
-    } finally {
-      setLoading(false);
     }
   };
 
