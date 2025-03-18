@@ -12,7 +12,7 @@ import { useOrganizationForm } from "./use-organization-form";
 import { CnpjVerificationStep } from "./dialog-steps/CnpjVerificationStep";
 import { OrganizationFormStep } from "./dialog-steps/OrganizationFormStep";
 import { useCnpjVerification } from "./hooks/use-cnpj-verification";
-import { ModuleSelector } from "@/components/admin/prompts/form/ModuleSelector";
+import { ModuleSelector } from "@/components/admin/modules/ModuleSelector";
 
 interface CreateOrganizationDialogProps {
   open: boolean;
@@ -31,7 +31,7 @@ export const CreateOrganizationDialog = ({
   });
 
   const [step, setStep] = useState(1);
-  const [selectedModule, setSelectedModule] = useState<string>("");
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
 
   // Handle CNPJ verification with the custom hook
   const { 
@@ -50,15 +50,26 @@ export const CreateOrganizationDialog = ({
       form.reset();
       setStep(1);
       setCnpjValidated(false);
-      setSelectedModule("");
+      setSelectedModules([]);
     }
   }, [open, form, setCnpjValidated]);
 
-  // Handle module selection
-  const handleModuleChange = (value: string) => {
-    setSelectedModule(value);
+  // Handle module selection changes
+  const handleModuleChange = (moduleIds: string[]) => {
+    setSelectedModules(moduleIds);
     // You can also update the form data if needed
-    // form.setValue('selectedModule', value);
+    // form.setValue('selectedModules', moduleIds);
+  };
+
+  // Handle form submission with selected modules
+  const handleSubmit = async (values: any) => {
+    // Add the selected modules to the form values
+    const valuesWithModules = {
+      ...values,
+      modules: selectedModules
+    };
+    
+    await onSubmit(valuesWithModules);
   };
 
   return (
@@ -69,7 +80,7 @@ export const CreateOrganizationDialog = ({
           <DialogDescription className="text-sm text-gray-600">
             {step === 1 
               ? "Informe o CNPJ da empresa para verificação."
-              : "Preencha os dados da empresa e do administrador inicial."
+              : "Preencha os dados da empresa e selecione os módulos iniciais."
             }
           </DialogDescription>
         </DialogHeader>
@@ -85,22 +96,23 @@ export const CreateOrganizationDialog = ({
             <>
               {/* Module selection before organization form */}
               <div className="mb-4">
-                <h3 className="text-sm font-medium mb-2">Módulo Preferencial</h3>
+                <h3 className="text-sm font-medium mb-2">Módulos para a Empresa</h3>
                 <ModuleSelector 
-                  value={selectedModule}
-                  onChange={handleModuleChange}
+                  selectedModules={selectedModules}
+                  onModuleChange={handleModuleChange}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Selecione o módulo de interesse principal para esta empresa
+                  Selecione um ou mais módulos para associar a esta empresa
                 </p>
               </div>
               
               {/* Original organization form */}
               <OrganizationFormStep 
                 form={form} 
-                onSubmit={onSubmit} 
+                onSubmit={handleSubmit} 
                 onBack={() => setStep(1)} 
                 cnpjValidated={cnpjValidated} 
+                selectedModules={selectedModules}
               />
             </>
           )}

@@ -15,10 +15,14 @@ export const useOrganizationForm = (onSuccess: () => void) => {
   const onSubmit = async (values: CreateOrganizationFormData) => {
     // Reset form after submission is handled
     try {
+      // Log the modules being submitted
+      console.log("Creating organization with modules:", values.modules);
+      
       await handleSubmit(values);
       form.reset();
     } catch (error) {
       console.error("Error in form submission:", error);
+      toast.error("Erro ao criar empresa. Tente novamente.");
     }
   };
 

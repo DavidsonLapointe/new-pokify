@@ -22,6 +22,7 @@ export const createOrganizationSchema = z.object({
   adminName: z.string().min(2, "O nome do administrador deve ter pelo menos 2 caracteres"),
   adminEmail: z.string().email("Email do administrador inválido"),
   status: z.enum(["active", "pending", "suspended", "canceled", "inactive"] as const),
+  modules: z.array(z.string()).optional(),
 });
 
 export type CreateOrganizationFormData = z.infer<typeof createOrganizationSchema>;
