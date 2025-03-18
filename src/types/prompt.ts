@@ -6,5 +6,5 @@ export interface Prompt {
   description: string;
   type: string;
   module: string;
-  company_id?: string; // Changed to optional with the ? operator
+  company_id?: string; // Already marked as optional with the ? operator
 }
