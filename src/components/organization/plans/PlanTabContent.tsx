@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { fetchPlanById } from "@/services/plans";
 import { ChangePlanDialog } from "./ChangePlanDialog";
@@ -11,7 +11,20 @@ import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 
+// Create a client
+const queryClient = new QueryClient();
+
+// Wrap component with QueryClientProvider
 export function PlanTabContent() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PlanTabContentInner />
+    </QueryClientProvider>
+  );
+}
+
+// Inner component that uses queries
+function PlanTabContentInner() {
   const { user } = useUser();
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
