@@ -5,6 +5,6 @@ export interface Prompt {
   content: string;
   description: string;
   type: string;
-  module: string; // Changed to required
-  company_id?: string;
+  module: string;
+  company_id?: string; // Changed to optional with the ? operator
 }
