@@ -923,7 +923,8 @@ const OrganizationModules = () => {
         <TermsDialog 
           open={isTermsDialogOpen} 
           onOpenChange={setIsTermsDialogOpen} 
-          type="terms"
+          moduleId={selectedTool || undefined}
+          moduleName={tools.find(t => t.id === selectedTool)?.title}
         />
       </div>
     </TooltipProvider>
