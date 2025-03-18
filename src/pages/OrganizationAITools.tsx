@@ -218,18 +218,11 @@ const AIToolsPage = () => {
 
   // Função para retornar o ícone de status apropriado
   const getStatusIcon = (status: ToolStatus) => {
-    switch (status) {
-      case "not_contracted": 
-        return <Lock size={16} className="text-red-500" />;
-      case "contracted": 
-        return <AlertTriangle size={16} className="text-yellow-500" />;
-      case "configured": 
-        return <CheckCircle2 size={16} className="text-green-500" />;
-      case "coming_soon":
-        return <Clock size={16} className="text-gray-500" />;
-      case "setup":
-        return <RotateCw size={16} className="text-blue-500" />;
+    // Mostrar apenas o status "configurada"
+    if (status === "configured") {
+      return <CheckCircle2 size={16} className="text-green-500" />;
     }
+    return null;
   };
 
   // Função para retornar a cor de fundo do badge baseado no status
@@ -262,6 +255,14 @@ const AIToolsPage = () => {
       case "setup":
         return "bg-blue-500 hover:bg-blue-600 text-white";
     }
+  };
+
+  // Função para formatar o preço em formato brasileiro
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
   };
 
   return (
@@ -340,6 +341,26 @@ const AIToolsPage = () => {
               {tool.detailedDescription}
             </p>
 
+            {/* Informação sobre o valor de execução da ferramenta */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-primary-lighter text-primary px-3 py-1 rounded-md">
+                <span className="text-sm font-semibold">{formatPrice(199.90)}</span>
+                <span className="text-xs"> (valor de setup)</span>
+              </div>
+              
+              <div className="bg-amber-50 text-amber-800 px-3 py-1 rounded-md flex items-center gap-1">
+                <Zap size={14} />
+                <span className="text-sm font-semibold">
+                  {tool.id === "video" ? "5" : 
+                   tool.id === "inbound" ? "3" : 
+                   tool.id === "call" ? "10" : 
+                   tool.id === "nutrition" ? "2" : 
+                   tool.id === "assistant" ? "7" : "0"} créditos
+                </span>
+                <span className="text-xs"> por execução</span>
+              </div>
+            </div>
+
             {/* Seções "Benefícios" e "Como Funciona" com a ordem invertida */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {/* Seção Benefícios - Agora à esquerda */}
@@ -376,15 +397,7 @@ const AIToolsPage = () => {
             </div>
 
             <div className="flex gap-3">
-              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && tool.status !== "setup" && (
-                <Button 
-                  className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
-                  onClick={() => handleToolExecution(tool.id)}
-                >
-                  <tool.executeIcon size={18} />
-                  <span>{tool.executeLabel}</span>
-                </Button>
-              )}
+              {/* Removido o botão verde (botão de execução) */}
               
               {tool.status !== "coming_soon" && tool.status !== "setup" && (
                 <Button 
