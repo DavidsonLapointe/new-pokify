@@ -10,6 +10,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AdminIntegration } from "@/types/admin";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { EditIntegrationDialog } from "./EditIntegrationDialog";
 
 export const AdminIntegrationsList = () => {
   const [integrations] = useState<AdminIntegration[]>([
@@ -33,6 +36,8 @@ export const AdminIntegrationsList = () => {
     }
   ]);
 
+  const [editingIntegration, setEditingIntegration] = useState<AdminIntegration | null>(null);
+
   const getTypeLabel = (type: string) => {
     switch (type) {
       case "crm":
@@ -51,17 +56,18 @@ export const AdminIntegrationsList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-left">Nome</TableHead>
+            <TableHead className="text-left">Tipo</TableHead>
+            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {integrations.map((integration) => (
             <TableRow key={integration.id}>
-              <TableCell className="font-medium">{integration.name}</TableCell>
-              <TableCell>{getTypeLabel(integration.type)}</TableCell>
-              <TableCell>
+              <TableCell className="font-medium text-left">{integration.name}</TableCell>
+              <TableCell className="text-left">{getTypeLabel(integration.type)}</TableCell>
+              <TableCell className="text-center">
                 <Badge
                   variant={integration.isActive ? "secondary" : "destructive"}
                   className={`
@@ -73,10 +79,29 @@ export const AdminIntegrationsList = () => {
                   {integration.isActive ? "Ativo" : "Inativo"}
                 </Badge>
               </TableCell>
+              <TableCell className="text-right">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setEditingIntegration(integration)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      {editingIntegration && (
+        <EditIntegrationDialog
+          integration={editingIntegration}
+          open={!!editingIntegration}
+          onOpenChange={(open) => {
+            if (!open) setEditingIntegration(null);
+          }}
+        />
+      )}
     </div>
   );
 };
