@@ -149,7 +149,6 @@ export const usePromptForm = (fetchPrompts: () => Promise<void>) => {
     setIsViewModalOpen(true);
   };
 
-  // Fix the type mismatch by properly handling the prompt change
   const handlePromptChange = (updatedPrompt: PromptFormData) => {
     setNewPrompt(updatedPrompt);
   };

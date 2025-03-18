@@ -95,7 +95,7 @@ export const usePrompts = () => {
           type: prompt.type,
           module: moduleValue,
           company_id: companyId
-        };
+        } as Prompt;
       });
 
       // If no prompts found, add sample prompts
