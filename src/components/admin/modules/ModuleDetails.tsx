@@ -40,7 +40,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
     : MessageCircle;
     
   return (
-    <Card className="mt-8 bg-[#F1F0FB] min-h-[680px] flex flex-col">
+    <Card className="mt-8 bg-[#F1F0FB] flex flex-col min-h-[680px]">
       <CardHeader className="p-6">
         <div className="flex justify-between items-start">
           <div className="flex items-start gap-4">
@@ -108,7 +108,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
       <CardContent className="px-6 pt-0 flex-1 flex flex-col">
         {/* Sobre o módulo */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Sobre o módulo</h3>
+          <h3 className="text-lg font-semibold mb-3 text-purple-500">Sobre o módulo</h3>
           <p className="text-muted-foreground text-left">{module.description}</p>
           
           {/* Informação de créditos */}
@@ -125,7 +125,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         </div>
           
         {/* Benefícios e Como funciona */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-5 rounded-lg">
             <h3 className="text-lg font-semibold mb-3 text-purple-500">Benefícios</h3>
             <div className="space-y-2">
@@ -157,36 +157,27 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
       {/* Botões de ação em um footer claramente destacado */}
       <div className="mt-auto px-6 py-4 border-t border-gray-200 bg-white rounded-b-md">
         <div className="flex flex-wrap gap-3">
-          {/* Sempre mostre os botões de ação com base no status */}
-          {(module.status === "configured" || (!module.status && module.active)) && (
-            <Button className="h-12 bg-green-600 hover:bg-green-700 text-white rounded-md">
-              <Pencil className="h-5 w-5 mr-2" /> Editar configuração
-            </Button>
-          )}
+          {/* Os botões devem sempre ficar visíveis, independente do status */}
+          <Button 
+            className="h-12 bg-green-600 hover:bg-green-700 text-white rounded-md"
+            onClick={() => console.log("Edit config clicked", module.id)}
+          >
+            <Pencil className="h-5 w-5 mr-2" /> Editar configuração
+          </Button>
           
-          {(module.status === "contracted" || (!module.status && !module.active)) && (
-            <Button className="h-12 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md">
-              <Settings className="h-5 w-5 mr-2" /> Configurar
-            </Button>
-          )}
+          <Button 
+            className="h-12 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md"
+            onClick={() => console.log("Configure clicked", module.id)}
+          >
+            <Settings className="h-5 w-5 mr-2" /> Configurar
+          </Button>
 
-          {((!module.status && !module.active) || module.status === "not_contracted") && (
-            <Button className="h-12 bg-primary hover:bg-primary/90 text-white rounded-md">
-              <Plus className="h-5 w-5 mr-2" /> Contratar módulo
-            </Button>
-          )}
-          
-          {(module.status === "coming_soon" || module.comingSoon) && (
-            <Button className="h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md" disabled>
-              <Clock className="h-5 w-5 mr-2" /> Em breve disponível
-            </Button>
-          )}
-          
-          {module.status === "setup" && (
-            <Button className="h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md" disabled>
-              <Clock className="h-5 w-5 mr-2" /> Aguardando setup
-            </Button>
-          )}
+          <Button 
+            className="h-12 bg-primary hover:bg-primary/90 text-white rounded-md"
+            onClick={() => console.log("Contract clicked", module.id)}
+          >
+            <Plus className="h-5 w-5 mr-2" /> Contratar módulo
+          </Button>
         </div>
       </div>
     </Card>
