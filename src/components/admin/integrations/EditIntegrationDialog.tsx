@@ -40,12 +40,14 @@ interface EditIntegrationDialogProps {
   integration: AdminIntegration;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUpdateIntegration: (updatedIntegration: AdminIntegration) => void;
 }
 
 export const EditIntegrationDialog = ({
   integration,
   open,
   onOpenChange,
+  onUpdateIntegration,
 }: EditIntegrationDialogProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,7 +59,16 @@ export const EditIntegrationDialog = ({
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    // Combine form values with the integration ID to create the updated integration
+    const updatedIntegration: AdminIntegration = {
+      ...integration,
+      ...values,
+    };
+    
+    // Call the callback with the updated integration
+    onUpdateIntegration(updatedIntegration);
+    
+    // Show success message and close dialog
     toast.success("Integração atualizada com sucesso!");
     form.reset();
     onOpenChange(false);

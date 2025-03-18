@@ -15,7 +15,7 @@ import { Pencil } from "lucide-react";
 import { EditIntegrationDialog } from "./EditIntegrationDialog";
 
 export const AdminIntegrationsList = () => {
-  const [integrations] = useState<AdminIntegration[]>([
+  const [integrations, setIntegrations] = useState<AdminIntegration[]>([
     {
       id: "1",
       name: "HubSpot",
@@ -46,9 +46,19 @@ export const AdminIntegrationsList = () => {
         return "Modelo LLM";
       case "whatsapp":
         return "WhatsApp";
+      case "call":
+        return "Chamada";
       default:
         return type;
     }
+  };
+
+  const handleUpdateIntegration = (updatedIntegration: AdminIntegration) => {
+    setIntegrations(current => 
+      current.map(integration => 
+        integration.id === updatedIntegration.id ? updatedIntegration : integration
+      )
+    );
   };
 
   return (
@@ -100,6 +110,7 @@ export const AdminIntegrationsList = () => {
           onOpenChange={(open) => {
             if (!open) setEditingIntegration(null);
           }}
+          onUpdateIntegration={handleUpdateIntegration}
         />
       )}
     </div>
