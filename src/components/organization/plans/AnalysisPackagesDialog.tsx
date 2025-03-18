@@ -79,7 +79,7 @@ export function AnalysisPackagesDialog({
             {packages.map((pkg) => (
               <Card
                 key={pkg.id}
-                className={`border p-4 hover:border-primary hover:shadow-sm transition-all ${
+                className={`border p-4 hover:border-primary hover:shadow-sm transition-all relative ${
                   pkg.popular ? "border-primary shadow-sm" : ""
                 }`}
               >
