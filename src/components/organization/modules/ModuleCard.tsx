@@ -75,9 +75,9 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
                 side="bottom" 
                 align="center" 
                 sideOffset={15} 
-                className="bg-white w-auto p-3 max-w-[280px]"
+                className="bg-white w-auto p-3 max-w-[330px]"
               >
-                <p className="text-xs font-normal whitespace-normal break-words">{statusInfo.tooltip}</p>
+                <p className="text-xs font-normal whitespace-pre-wrap break-words">{statusInfo.tooltip}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
