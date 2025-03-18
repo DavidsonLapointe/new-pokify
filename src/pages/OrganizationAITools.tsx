@@ -77,8 +77,9 @@ const OrganizationAITools = () => {
         setIsConfigModalOpen={setIsConfigModalOpen}
         isExecuteModalOpen={isExecuteModalOpen}
         setIsExecuteModalOpen={setIsExecuteModalOpen}
-        currentConfigTool={getToolById(currentConfigTool)}
-        currentExecuteTool={getToolById(currentExecuteTool)}
+        currentConfigTool={currentConfigTool}
+        currentExecuteTool={currentExecuteTool}
+        getToolById={getToolById}
       />
 
       {/* Botão para simulação (apenas para teste) */}
