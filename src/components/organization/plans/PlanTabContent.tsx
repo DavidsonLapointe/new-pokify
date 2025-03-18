@@ -62,7 +62,7 @@ export function PlanTabContent() {
       />
       
       <CreditsBalanceCard 
-        monthlyQuota={monthlyQuota}
+        monthlyQuota={Number(monthlyQuota)}
         used={usedCredits}
         additionalCredits={additionalCredits}
         onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
