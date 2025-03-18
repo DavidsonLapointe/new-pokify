@@ -13,8 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { SetupNote } from "@/components/organization/modules/types";
 import { useUser } from "@/contexts/UserContext";
-import { Pencil, Trash2, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,13 +104,6 @@ export const SetupNotesDialog = ({
     }
   };
 
-  const getInitials = (name?: string) => {
-    if (!name) return "U";
-    const nameParts = name.trim().split(' ');
-    if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase();
-    return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
-  };
-
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -157,36 +149,23 @@ export const SetupNotesDialog = ({
 
                       return (
                         <div key={noteId} className="space-y-2 pb-3 border-b last:border-b-0">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-6 w-6">
-                                <AvatarImage src={note.userAvatar} alt={note.userName || "Usuário"} />
-                                <AvatarFallback className="text-xs">
-                                  {getInitials(note.userName)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-xs font-medium">
-                                {note.userName || "Usuário"}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7"
-                                onClick={() => startEditingNote(noteId, note.content)}
-                              >
-                                <Pencil className="h-3.5 w-3.5 text-primary" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7"
-                                onClick={() => confirmDeleteNote(noteId)}
-                              >
-                                <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                              </Button>
-                            </div>
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => startEditingNote(noteId, note.content)}
+                            >
+                              <Pencil className="h-3.5 w-3.5 text-primary" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => confirmDeleteNote(noteId)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                            </Button>
                           </div>
 
                           {isEditing ? (
