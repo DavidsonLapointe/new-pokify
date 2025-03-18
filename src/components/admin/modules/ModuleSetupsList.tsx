@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,12 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -193,24 +187,7 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
                   <TableCell>{setup.moduleId}</TableCell>
                   <TableCell className="text-left">{setup.contactName}</TableCell>
                   <TableCell>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 gap-1 text-blue-600"
-                          onClick={() => {
-                            navigator.clipboard.writeText(setup.contactPhone);
-                            toast.success("Telefone copiado para a área de transferência");
-                          }}
-                        >
-                          {setup.contactPhone}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Clique para copiar</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    {setup.contactPhone}
                   </TableCell>
                   <TableCell className="text-center">
                     {format(setup.contractedAt, "dd/MM/yyyy")}
