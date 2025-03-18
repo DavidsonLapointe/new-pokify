@@ -22,14 +22,15 @@ import {
   Edit,
   AlertTriangle,
   Zap,
-  Clock
+  Clock,
+  RotateCw
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Status da ferramenta
-type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon";
+type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
 
 // Interface para as ferramentas
 interface Tool {
@@ -61,11 +62,11 @@ const AIToolsPage = () => {
       title: "Prospecção com Vídeo",
       icon: Video,
       description: "Crie vídeos personalizados para prospecção, usando IA para personalizar a mensagem.",
-      status: "contracted",
+      status: "setup",
       detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
-      actionLabel: "Configurar ferramenta",
-      actionIcon: Settings,
-      badgeLabel: "Contratada",
+      actionLabel: "Aguardando setup",
+      actionIcon: RotateCw,
+      badgeLabel: "Em Setup",
       executeLabel: "Criar vídeo personalizado",
       executeIcon: Zap,
       howItWorks: [
@@ -161,11 +162,11 @@ const AIToolsPage = () => {
       title: "Assistente de Prospecção",
       icon: ShieldCheck,
       description: "Assistente virtual para auxiliar na prospecção de novos clientes.",
-      status: "contracted",
+      status: "setup",
       detailedDescription: "Um assistente inteligente que ajuda a encontrar e qualificar leads potenciais, automatiza a pesquisa e preparação para contatos iniciais, e sugere abordagens personalizadas.",
-      actionLabel: "Configurar ferramenta",
-      actionIcon: Settings,
-      badgeLabel: "Contratada",
+      actionLabel: "Aguardando setup",
+      actionIcon: RotateCw,
+      badgeLabel: "Em Setup",
       executeLabel: "Buscar leads potenciais",
       executeIcon: Brain,
       howItWorks: [
@@ -193,8 +194,8 @@ const AIToolsPage = () => {
     if (tool.status === "not_contracted") {
       // Lógica para contratação
       console.log("Iniciando contratação da ferramenta:", toolId);
-    } else if (tool.status !== "coming_soon") {
-      // Abrir modal de configuração apenas se não for "Em breve"
+    } else if (tool.status !== "coming_soon" && tool.status !== "setup") {
+      // Abrir modal de configuração apenas se não for "Em breve" ou "Em Setup"
       setCurrentConfigTool(toolId);
       setIsConfigModalOpen(true);
     }
@@ -203,8 +204,8 @@ const AIToolsPage = () => {
   const handleToolExecution = (toolId: string) => {
     const tool = getToolById(toolId);
     
-    if (tool.status === "not_contracted" || tool.status === "coming_soon") {
-      // Não permitir execução de ferramentas não contratadas ou em breve
+    if (tool.status === "not_contracted" || tool.status === "coming_soon" || tool.status === "setup") {
+      // Não permitir execução de ferramentas não contratadas, em breve ou em setup
       return;
     }
     
@@ -226,6 +227,8 @@ const AIToolsPage = () => {
         return <CheckCircle2 size={16} className="text-green-500" />;
       case "coming_soon":
         return <Clock size={16} className="text-gray-500" />;
+      case "setup":
+        return <RotateCw size={16} className="text-blue-500" />;
     }
   };
 
@@ -240,6 +243,8 @@ const AIToolsPage = () => {
         return "bg-green-100 text-green-700";
       case "coming_soon":
         return "bg-gray-100 text-gray-700";
+      case "setup":
+        return "bg-blue-100 text-blue-700";
     }
   };
 
@@ -254,6 +259,8 @@ const AIToolsPage = () => {
         return "bg-green-600 hover:bg-green-700 text-white";
       case "coming_soon":
         return "bg-gray-500 hover:bg-gray-600 text-white";
+      case "setup":
+        return "bg-blue-500 hover:bg-blue-600 text-white";
     }
   };
 
@@ -322,6 +329,11 @@ const AIToolsPage = () => {
                   <AlertTriangle size={14} className="mr-1" /> Necessita configuração
                 </span>
               )}
+              {tool.status === "setup" && (
+                <span className="text-blue-600 text-xs font-medium flex items-center ml-2">
+                  <RotateCw size={14} className="mr-1" /> Setup em andamento
+                </span>
+              )}
             </div>
             
             <p className="text-gray-600 mb-5 text-sm text-left">
@@ -364,7 +376,7 @@ const AIToolsPage = () => {
             </div>
 
             <div className="flex gap-3">
-              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && (
+              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && tool.status !== "setup" && (
                 <Button 
                   className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
                   onClick={() => handleToolExecution(tool.id)}
@@ -374,7 +386,7 @@ const AIToolsPage = () => {
                 </Button>
               )}
               
-              {tool.status !== "coming_soon" && (
+              {tool.status !== "coming_soon" && tool.status !== "setup" && (
                 <Button 
                   className={`flex items-center justify-center gap-2 ${getButtonClass(tool.status)} px-4 ${tool.status === "not_contracted" ? "w-full" : ""}`}
                   onClick={() => handleToolAction(tool.id)}
@@ -393,6 +405,16 @@ const AIToolsPage = () => {
                         ? "Editar configuração" 
                         : "Configurar"}
                   </span>
+                </Button>
+              )}
+              
+              {tool.status === "setup" && (
+                <Button 
+                  className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 opacity-75 cursor-not-allowed"
+                  disabled
+                >
+                  <RotateCw size={18} />
+                  <span>Aguardando setup</span>
                 </Button>
               )}
             </div>
