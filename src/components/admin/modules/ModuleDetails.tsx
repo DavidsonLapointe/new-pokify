@@ -3,7 +3,7 @@ import React from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { iconMap } from "./module-constants";
 import { 
-  MessageCircle, Clock, Pencil, CheckCircle, Zap, Settings, Plus
+  MessageCircle, Clock, Pencil, CheckCircle, Zap
 } from "lucide-react";
 import {
   Card,
@@ -153,33 +153,6 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           </div>
         </div>
       </CardContent>
-      
-      {/* Botões de ação em um footer claramente destacado */}
-      <div className="mt-auto px-6 py-4 border-t border-gray-200 bg-white rounded-b-md">
-        <div className="flex flex-wrap gap-3">
-          {/* Os botões devem sempre ficar visíveis, independente do status */}
-          <Button 
-            className="h-12 bg-green-600 hover:bg-green-700 text-white rounded-md"
-            onClick={() => console.log("Edit config clicked", module.id)}
-          >
-            <Pencil className="h-5 w-5 mr-2" /> Editar configuração
-          </Button>
-          
-          <Button 
-            className="h-12 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md"
-            onClick={() => console.log("Configure clicked", module.id)}
-          >
-            <Settings className="h-5 w-5 mr-2" /> Configurar
-          </Button>
-
-          <Button 
-            className="h-12 bg-primary hover:bg-primary/90 text-white rounded-md"
-            onClick={() => console.log("Contract clicked", module.id)}
-          >
-            <Plus className="h-5 w-5 mr-2" /> Contratar módulo
-          </Button>
-        </div>
-      </div>
     </Card>
   );
 };
