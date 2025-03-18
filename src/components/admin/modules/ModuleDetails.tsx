@@ -153,21 +153,19 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         </div>
 
         {/* Botões de ação baseados no status do módulo */}
-        {module.status && (module.status === "configured" || module.status === "contracted") && (
-          <div className="mt-6 flex justify-start">
-            {module.status === "configured" && (
-              <Button className="bg-green-600 hover:bg-green-700">
-                <Pencil className="h-4 w-4 mr-2" /> Editar configuração
-              </Button>
-            )}
-            
-            {module.status === "contracted" && (
-              <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
-                <Settings className="h-4 w-4 mr-2" /> Configurar
-              </Button>
-            )}
-          </div>
-        )}
+        <div className="mt-6 flex justify-start">
+          {module.status === "configured" && (
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Pencil className="h-4 w-4 mr-2" /> Editar configuração
+            </Button>
+          )}
+          
+          {module.status === "contracted" && (
+            <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+              <Settings className="h-4 w-4 mr-2" /> Configurar
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
