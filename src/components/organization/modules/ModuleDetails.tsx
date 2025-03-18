@@ -98,7 +98,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="text-blue-600 text-xs font-medium flex items-center cursor-help">
-                  <Info className="h-4 w-4 mr-1" /> Em configuração pela nossa equipe
+                  {React.createElement(Icon, { className: "h-4 w-4 mr-1 text-blue-600" })} Em configuração pela nossa equipe
                 </span>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
@@ -108,8 +108,6 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           </TooltipProvider>
         )}
       </div>
-      
-      {/* Removida a caixa de alerta destacada em vermelho */}
       
       <p className="text-gray-600 mb-6 text-sm text-left">{selectedTool.detailedDescription}</p>
       

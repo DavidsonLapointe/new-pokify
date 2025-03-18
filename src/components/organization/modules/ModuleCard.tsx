@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +43,7 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
         };
       case "setup":
         return {
-          icon: <RefreshCw size={18} className="text-blue-500" />,
+          icon: React.createElement(Icon, { size: 18, className: "text-blue-500" }),
           tooltip: "Nossa equipe está realizando a configuração inicial deste módulo para sua organização"
         };
     }
