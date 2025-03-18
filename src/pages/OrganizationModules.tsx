@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -653,10 +654,10 @@ const OrganizationModules = () => {
             </div>
 
             {(selectedToolDetails.status === "contracted" || selectedToolDetails.status === "configured") && (
-              <div className="flex gap-3 mt-4">
+              <div className="mt-4">
                 {selectedToolDetails.status === "configured" && (
                   <Button 
-                    className="h-10 bg-green-600 hover:bg-green-700 text-white rounded-md px-4"
+                    className="bg-green-600 hover:bg-green-700 text-white rounded-md px-3 h-9 mr-3"
                     onClick={() => console.log("Editar configuração do módulo", selectedToolDetails.id)}
                   >
                     <Pencil className="h-4 w-4 mr-2" /> Editar configuração
@@ -665,7 +666,7 @@ const OrganizationModules = () => {
                 
                 {selectedToolDetails.status === "contracted" && (
                   <Button 
-                    className="h-10 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md px-4"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-md px-3 h-9"
                     onClick={() => console.log("Configurar módulo", selectedToolDetails.id)}
                   >
                     <Settings className="h-4 w-4 mr-2" /> Configurar módulo
@@ -819,4 +820,165 @@ const OrganizationModules = () => {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-red-700">
-                <AlertTriangle className="h-
+                <AlertTriangle className="h-5 w-5" />
+                Falha no Pagamento
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <p className="mb-4">
+                Ocorreu um erro ao processar seu pagamento. Por favor, verifique se os dados do seu cartão 
+                estão corretos e tente novamente.
+              </p>
+              
+              <div className="bg-red-50 p-3 rounded-md mb-4 text-red-800 text-sm flex items-start">
+                <HelpCircle className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0" />
+                <p>
+                  Se o problema persistir, entre em contato com nosso suporte através do 
+                  e-mail <span className="font-medium">suporte@leadly.com.br</span>.
+                </p>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsPaymentFailedDialogOpen(false)}
+              >
+                Fechar
+              </Button>
+              <Button 
+                className="bg-primary"
+                onClick={() => {
+                  setIsPaymentFailedDialogOpen(false);
+                  setIsConfirmDialogOpen(true);
+                }}
+              >
+                Tentar Novamente
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo para cancelar módulo */}
+        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <Trash2 className="h-5 w-5" />
+                Cancelar Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <p className="mb-4">
+                Você está prestes a cancelar o módulo{" "}
+                <strong>
+                  {tools.find(t => t.id === cancelModuleId)?.title}
+                </strong>. 
+                Esta ação não pode ser desfeita.
+              </p>
+              
+              <div className="space-y-3">
+                <Label htmlFor="cancelReason">
+                  Por favor, informe o motivo do cancelamento:
+                </Label>
+                <Textarea 
+                  id="cancelReason"
+                  placeholder="Motivo do cancelamento..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="resize-none"
+                  rows={4}
+                />
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsCancelDialogOpen(false)}
+              >
+                Voltar
+              </Button>
+              <Button 
+                className="bg-red-600 hover:bg-red-700"
+                onClick={confirmCancelation}
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo para setup de contato */}
+        <Dialog open={isSetupContactDialogOpen} onOpenChange={setIsSetupContactDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                Configuração de Contato
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-4 space-y-4">
+              <p>
+                Para finalizar a configuração do módulo, precisamos das informações
+                de contato do responsável técnico.
+              </p>
+              
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label htmlFor="setupName">Nome do responsável técnico</Label>
+                  <Input 
+                    id="setupName" 
+                    placeholder="Nome completo"
+                    value={setupContactInfo.name}
+                    onChange={(e) => setSetupContactInfo({...setupContactInfo, name: e.target.value})}
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <Label htmlFor="setupPhone">Telefone para contato</Label>
+                  <Input 
+                    id="setupPhone" 
+                    placeholder="(XX) XXXXX-XXXX"
+                    value={setupContactInfo.phone}
+                    onChange={(e) => setSetupContactInfo({...setupContactInfo, phone: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsSetupContactDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                className="bg-primary"
+                onClick={() => {
+                  // Lógica para processar as informações de contato
+                  if (setupContactInfo.name && setupContactInfo.phone) {
+                    toast.success("Informações de contato enviadas com sucesso!");
+                    setIsSetupContactDialogOpen(false);
+                  } else {
+                    toast.error("Por favor, preencha todos os campos.");
+                  }
+                }}
+              >
+                Confirmar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de termos de uso */}
+        <TermsDialog open={isTermsDialogOpen} onOpenChange={setIsTermsDialogOpen} />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
