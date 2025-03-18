@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -342,10 +343,10 @@ const AIToolsPage = () => {
               {tool.detailedDescription}
             </p>
             
-            {/* Informação de custo de execução */}
+            {/* Informação de custo de execução - mostrar somente créditos */}
             <div className="mb-4 flex items-center text-sm font-medium">
               <span className="mr-2 text-[#9b87f5]">Custo de execução:</span>
-              <span className="text-gray-700">{tool.credits} créditos (R$ {tool.price.toFixed(2)})</span>
+              <span className="text-gray-700">{tool.credits} créditos</span>
             </div>
 
             {/* Seções "Benefícios" e "Como Funciona" com a ordem invertida */}
