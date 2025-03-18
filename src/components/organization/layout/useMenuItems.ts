@@ -66,7 +66,7 @@ export const useMenuItems = (user: User) => {
     },
     {
       icon: Package,
-      label: "Meu Plano",
+      label: "Módulos do Sistema",
       path: "/organization/modules",
       permissionId: "plan"
     },

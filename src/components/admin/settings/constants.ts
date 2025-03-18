@@ -40,7 +40,7 @@ export const organizationRoutes = [
   },
   {
     id: "plan",
-    label: "Meu Plano",
+    label: "Módulos do Sistema",
     icon: Package
   },
   {
