@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { StatusBadge } from "./dialog-sections/StatusBadge";
 
 interface OrganizationsTableProps {
   organizations: Organization[];
@@ -32,23 +33,6 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   onEditOrganization,
   onShowActiveUsers,
 }) => {
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Ativo";
-      case "pending":
-        return "Pendente";
-      case "inactive":
-        return "Inativo";
-      case "suspended":
-        return "Suspenso";
-      case "canceled":
-        return "Cancelado";
-      default:
-        return status;
-    }
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -102,10 +86,10 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[300px]">Empresa</TableHead>
-              <TableHead>Plano</TableHead>
+              <TableHead className="w-[300px] text-left">Empresa</TableHead>
+              <TableHead className="text-left">Plano</TableHead>
               <TableHead className="text-center">Usuários Ativos</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-center">Status</TableHead>
               <TableHead>Data de Cadastro</TableHead>
               <TableHead>Integrações</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -114,13 +98,13 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
           <TableBody>
             {organizations.map((org) => (
               <TableRow key={org.id}>
-                <TableCell>
+                <TableCell className="text-left">
                   <div>
                     <p className="font-medium">{org.name}</p>
                     <p className="text-sm text-muted-foreground">{org.nomeFantasia}</p>
                   </div>
                 </TableCell>
-                <TableCell>{renderPlanName(org)}</TableCell>
+                <TableCell className="text-left">{renderPlanName(org)}</TableCell>
                 <TableCell className="text-center">
                   <Button
                     variant="ghost"
@@ -130,13 +114,17 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                     {getActiveUsersCount(org)}
                   </Button>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   {org.status === "pending" ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center justify-center gap-1">
                           <Badge className={getStatusColor(org.status)}>
-                            {getStatusLabel(org.status)}
+                            {org.status === "active" ? "Ativo" :
+                             org.status === "pending" ? "Pendente" :
+                             org.status === "inactive" ? "Inativo" :
+                             org.status === "suspended" ? "Suspenso" :
+                             org.status === "canceled" ? "Cancelado" : org.status}
                           </Badge>
                           <AlertCircle className="h-4 w-4 text-yellow-500" />
                         </div>
@@ -153,9 +141,9 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
                       </TooltipContent>
                     </Tooltip>
                   ) : (
-                    <Badge className={getStatusColor(org.status)}>
-                      {getStatusLabel(org.status)}
-                    </Badge>
+                    <div className="flex justify-center">
+                      <StatusBadge status={org.status} />
+                    </div>
                   )}
                 </TableCell>
                 <TableCell>
