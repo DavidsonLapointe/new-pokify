@@ -9,11 +9,20 @@ import { AIToolDetailsBenefits } from "./AIToolDetailsBenefits";
 import { AIToolDetailsHowItWorks } from "./AIToolDetailsHowItWorks";
 
 interface AIToolDetailsProps {
-  tool: Tool;
+  tool: Tool | undefined;
   onExecute: () => void;
 }
 
 export const AIToolDetails: React.FC<AIToolDetailsProps> = ({ tool, onExecute }) => {
+  // Se a ferramenta não estiver definida, exibir uma mensagem ou retornar null
+  if (!tool) {
+    return (
+      <Card className="p-5 bg-[#F8F8FB] flex items-center justify-center min-h-[200px]">
+        <p className="text-gray-600">Selecione uma ferramenta para ver os detalhes</p>
+      </Card>
+    );
+  }
+
   const getBadgeClass = (status: Tool["status"]) => {
     switch (status) {
       case "not_contracted": 

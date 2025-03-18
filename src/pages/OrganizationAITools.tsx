@@ -29,6 +29,15 @@ const OrganizationAITools = () => {
   useEffect(() => {
     console.log("Verificando atualizações de status das ferramentas...");
     
+    // Certificar que uma ferramenta está selecionada
+    if (tools.length > 0 && !selectedTool) {
+      // Priorize ferramentas configuradas, senão use a primeira
+      const defaultTool = configuredTools.length > 0 
+        ? configuredTools[0].id 
+        : tools[0].id;
+      setSelectedTool(defaultTool);
+    }
+    
     // Em um ambiente real, isso seria uma chamada de API para verificar os status
     const checkForUpdates = async () => {
       try {
@@ -48,10 +57,10 @@ const OrganizationAITools = () => {
     
     // Comentei esta linha para evitar que a simulação aconteça automaticamente
     // checkForUpdates();
-  }, [tools, updateSetupStatus]);
+  }, [tools, updateSetupStatus, configuredTools, selectedTool, setSelectedTool]);
 
   // Determinar qual ferramenta mostrar nos detalhes
-  const selectedToolData = getToolById(selectedTool);
+  const selectedToolData = selectedTool ? getToolById(selectedTool) : undefined;
 
   return (
     <div className="space-y-6 px-4 py-6">
@@ -67,7 +76,7 @@ const OrganizationAITools = () => {
       {/* Detalhes da ferramenta selecionada */}
       <AIToolDetails 
         tool={selectedToolData} 
-        onExecute={() => handleToolExecution(selectedToolData.id)} 
+        onExecute={() => selectedToolData && handleToolExecution(selectedToolData.id)} 
       />
       
       {/* Modais */}

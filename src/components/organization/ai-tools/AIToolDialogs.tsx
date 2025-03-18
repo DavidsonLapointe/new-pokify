@@ -11,7 +11,7 @@ interface AIToolDialogsProps {
   setIsExecuteModalOpen: (open: boolean) => void;
   currentConfigTool: string;
   currentExecuteTool: string;
-  getToolById: (id: string) => Tool;
+  getToolById: (id: string) => Tool | undefined;
 }
 
 export const AIToolDialogs: React.FC<AIToolDialogsProps> = ({
@@ -23,20 +23,22 @@ export const AIToolDialogs: React.FC<AIToolDialogsProps> = ({
   currentExecuteTool,
   getToolById
 }) => {
+  // Obter a ferramenta de configuração, se existir
+  const configTool = currentConfigTool ? getToolById(currentConfigTool) : undefined;
+  
+  // Obter a ferramenta de execução, se existir
+  const executeTool = currentExecuteTool ? getToolById(currentExecuteTool) : undefined;
+
   return (
     <>
       <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {currentConfigTool && (
+              {configTool && (
                 <div className="flex items-center gap-2">
-                  {(() => {
-                    const tool = getToolById(currentConfigTool);
-                    const ToolIcon = tool.icon;
-                    return <ToolIcon className="text-[#9b87f5]" size={18} />;
-                  })()}
-                  Configurar {getToolById(currentConfigTool).title}
+                  {React.createElement(configTool.icon, { className: "text-[#9b87f5]", size: 18 })}
+                  Configurar {configTool.title}
                 </div>
               )}
             </DialogTitle>
@@ -61,14 +63,10 @@ export const AIToolDialogs: React.FC<AIToolDialogsProps> = ({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {currentExecuteTool && (
+              {executeTool && (
                 <div className="flex items-center gap-2">
-                  {(() => {
-                    const tool = getToolById(currentExecuteTool);
-                    const ToolIcon = tool.executeIcon || tool.icon;
-                    return <ToolIcon className="text-[#9b87f5]" size={18} />;
-                  })()}
-                  {getToolById(currentExecuteTool).executeLabel || "Executar"}
+                  {React.createElement(executeTool.executeIcon || executeTool.icon, { className: "text-[#9b87f5]", size: 18 })}
+                  {executeTool.executeLabel || "Executar"}
                 </div>
               )}
             </DialogTitle>

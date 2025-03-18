@@ -40,7 +40,7 @@ const mockSetups: ModuleSetup[] = [
 ];
 
 export const useToolsData = () => {
-  const [tools, setTools] = useState<Tool[]>([]);
+  const [tools, setTools] = useState<Tool[]>(toolsData);
 
   // Initialize tools data with setup status
   useEffect(() => {
@@ -77,7 +77,7 @@ export const useToolsData = () => {
 
   // Helper function to get a tool by ID
   const getToolById = (id: string) => {
-    return tools.find(tool => tool.id === id) || tools[0];
+    return tools.find(tool => tool.id === id);
   };
 
   // Function to update setup status

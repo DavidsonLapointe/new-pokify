@@ -12,6 +12,7 @@ export const useAITools = () => {
     updateSetupStatus 
   } = useToolsData();
   
+  // Use "call" como ferramenta inicial, que sabemos que existe
   const {
     selectedTool,
     setSelectedTool,
@@ -25,7 +26,7 @@ export const useAITools = () => {
     setCurrentExecuteTool,
     handleToolAction,
     handleToolExecution
-  } = useToolSelection();
+  } = useToolSelection(tools.length > 0 ? tools[0].id : "call");
   
   const {
     getStatusIcon,

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Tool } from "@/components/organization/modules/types";
 
-export const useToolSelection = (initialTool: string = "video") => {
+export const useToolSelection = (initialTool: string = "call") => {
   const [selectedTool, setSelectedTool] = useState<string>(initialTool);
   
   // For handling tool action (configure)
@@ -13,8 +13,10 @@ export const useToolSelection = (initialTool: string = "video") => {
   const [currentExecuteTool, setCurrentExecuteTool] = useState<string>("");
   const [isExecuteModalOpen, setIsExecuteModalOpen] = useState(false);
 
-  const handleToolAction = (toolId: string, getToolById: (id: string) => Tool) => {
+  const handleToolAction = (toolId: string, getToolById: (id: string) => Tool | undefined) => {
     const tool = getToolById(toolId);
+    
+    if (!tool) return;
     
     if (tool.status === "not_contracted") {
       // Lógica para contratação
@@ -26,8 +28,10 @@ export const useToolSelection = (initialTool: string = "video") => {
     }
   };
 
-  const handleToolExecution = (toolId: string, getToolById: (id: string) => Tool) => {
+  const handleToolExecution = (toolId: string, getToolById: (id: string) => Tool | undefined) => {
     const tool = getToolById(toolId);
+    
+    if (!tool) return;
     
     if (tool.status === "not_contracted" || tool.status === "coming_soon" || tool.status === "setup") {
       // Não permitir execução de ferramentas não contratadas, em breve ou em setup
