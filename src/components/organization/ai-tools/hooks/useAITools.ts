@@ -1,7 +1,29 @@
 
-import { useState } from "react";
-import { Tool, ToolStatus } from "@/components/organization/modules/types";
+import { useState, useEffect } from "react";
+import { Tool, ToolStatus, ModuleSetup } from "@/components/organization/modules/types";
 import { toolsData } from "../data/toolsData";
+
+// Simulação de dados de setup de módulos
+const mockSetups: ModuleSetup[] = [
+  {
+    id: "setup1",
+    organizationId: "currentOrg", // Simulando que este é o ID da organização atual
+    moduleId: "video",
+    contactName: "João Silva",
+    contactPhone: "(11) 99999-8888",
+    contractedAt: new Date(2023, 5, 15),
+    status: "pending" // Módulo em setup (pendente)
+  },
+  {
+    id: "setup2",
+    organizationId: "currentOrg",
+    moduleId: "inbound",
+    contactName: "Maria Oliveira",
+    contactPhone: "(21) 98888-7777",
+    contractedAt: new Date(2023, 6, 10),
+    status: "in_progress" // Módulo em setup (em andamento)
+  }
+];
 
 export const useAITools = () => {
   const [selectedTool, setSelectedTool] = useState<string>("video");
@@ -9,9 +31,42 @@ export const useAITools = () => {
   const [isExecuteModalOpen, setIsExecuteModalOpen] = useState(false);
   const [currentConfigTool, setCurrentConfigTool] = useState<string>("");
   const [currentExecuteTool, setCurrentExecuteTool] = useState<string>("");
+  const [tools, setTools] = useState<Tool[]>([]);
 
-  // Usar os dados das ferramentas
-  const tools: Tool[] = toolsData;
+  // Usar os dados das ferramentas e atualizar com base nos setups
+  useEffect(() => {
+    // Começamos com os dados iniciais das ferramentas
+    let updatedTools = [...toolsData];
+    
+    // Para cada setup em andamento, atualizamos o status da ferramenta correspondente
+    mockSetups.forEach(setup => {
+      if (setup.organizationId === "currentOrg") { // Simulando a organização atual
+        updatedTools = updatedTools.map(tool => {
+          if (tool.id === setup.moduleId) {
+            // Se o setup estiver pendente ou em andamento, o status é "setup"
+            if (setup.status === "pending" || setup.status === "in_progress") {
+              return {
+                ...tool,
+                status: "setup" as ToolStatus,
+                badgeLabel: "Em Setup"
+              };
+            }
+            // Se o setup estiver concluído, o status é "contracted"
+            else if (setup.status === "completed") {
+              return {
+                ...tool,
+                status: "contracted" as ToolStatus,
+                badgeLabel: "Contratada"
+              };
+            }
+          }
+          return tool;
+        });
+      }
+    });
+    
+    setTools(updatedTools);
+  }, []);
 
   // Filtrar apenas as ferramentas com status "configured"
   const configuredTools = tools.filter(tool => tool.status === "configured");
@@ -46,6 +101,44 @@ export const useAITools = () => {
     setIsExecuteModalOpen(true);
     
     console.log("Executando ferramenta:", toolId);
+  };
+
+  // Função para simular a atualização do status de um setup
+  const updateSetupStatus = (moduleId: string, newStatus: "pending" | "in_progress" | "completed") => {
+    // Atualizar o setup correspondente
+    const updatedSetups = mockSetups.map(setup => {
+      if (setup.moduleId === moduleId) {
+        return { ...setup, status: newStatus };
+      }
+      return setup;
+    });
+    
+    // Atualizar as ferramentas com base nos setups atualizados
+    let updatedTools = [...tools];
+    updatedSetups.forEach(setup => {
+      if (setup.organizationId === "currentOrg") {
+        updatedTools = updatedTools.map(tool => {
+          if (tool.id === setup.moduleId) {
+            if (setup.status === "pending" || setup.status === "in_progress") {
+              return {
+                ...tool,
+                status: "setup" as ToolStatus,
+                badgeLabel: "Em Setup"
+              };
+            } else if (setup.status === "completed") {
+              return {
+                ...tool,
+                status: "contracted" as ToolStatus,
+                badgeLabel: "Contratada"
+              };
+            }
+          }
+          return tool;
+        });
+      }
+    });
+    
+    setTools(updatedTools);
   };
 
   // Função para retornar o ícone de status apropriado
@@ -114,6 +207,7 @@ export const useAITools = () => {
     getToolById,
     getStatusIcon,
     getBadgeClass,
-    getButtonClass
+    getButtonClass,
+    updateSetupStatus // Nova função para atualizar o status
   };
 };

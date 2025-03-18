@@ -27,3 +27,17 @@ export interface SetupContactInfo {
   name: string;
   phone: string;
 }
+
+// Status do setup no ambiente administrativo
+export type SetupStatus = "pending" | "in_progress" | "completed";
+
+// Interface para os setups administrativos
+export interface ModuleSetup {
+  id: string;
+  organizationId: string;
+  moduleId: string;
+  contactName: string;
+  contactPhone: string;
+  contractedAt: Date;
+  status: SetupStatus;
+}

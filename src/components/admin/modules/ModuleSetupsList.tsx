@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -34,38 +34,21 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import { ModuleSetup, SetupStatus } from "@/components/organization/modules/types";
 
-// Interface para os dados de setup
-interface ModuleSetup {
-  id: string;
-  organization: {
-    id: string;
-    name: string;
-  };
-  module: {
-    id: string;
-    name: string;
-  };
-  contactName: string;
-  contactPhone: string;
-  contractedAt: Date;
-  status: "pending" | "in_progress" | "completed";
+// Interface para props
+interface ModuleSetupsListProps {
+  onStatusChange?: (setupId: string, moduleId: string, organizationId: string, newStatus: SetupStatus) => void;
 }
 
-export const ModuleSetupsList = () => {
+export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChange }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [moduleSetups, setModuleSetups] = useState<ModuleSetup[]>([
     {
       id: "1",
-      organization: {
-        id: "org1",
-        name: "Empresa ABC Ltda"
-      },
-      module: {
-        id: "video",
-        name: "Prospecção com Vídeo"
-      },
+      organizationId: "org1",
+      moduleId: "video",
       contactName: "João Silva",
       contactPhone: "(11) 99999-8888",
       contractedAt: new Date(2023, 5, 15),
@@ -73,14 +56,8 @@ export const ModuleSetupsList = () => {
     },
     {
       id: "2",
-      organization: {
-        id: "org2",
-        name: "XYZ Comércio S.A."
-      },
-      module: {
-        id: "inbound",
-        name: "Atendente Inbound"
-      },
+      organizationId: "org2",
+      moduleId: "inbound",
       contactName: "Maria Oliveira",
       contactPhone: "(21) 98888-7777",
       contractedAt: new Date(2023, 6, 10),
@@ -88,14 +65,8 @@ export const ModuleSetupsList = () => {
     },
     {
       id: "3",
-      organization: {
-        id: "org3",
-        name: "Tech Solutions"
-      },
-      module: {
-        id: "call",
-        name: "Análise de Call"
-      },
+      organizationId: "org3",
+      moduleId: "call",
       contactName: "Pedro Santos",
       contactPhone: "(31) 97777-6666",
       contractedAt: new Date(),
@@ -104,12 +75,20 @@ export const ModuleSetupsList = () => {
   ]);
   
   // Função para atualizar o status de um setup
-  const updateStatus = (id: string, newStatus: "pending" | "in_progress" | "completed") => {
+  const updateStatus = (id: string, newStatus: SetupStatus) => {
+    const setup = moduleSetups.find(setup => setup.id === id);
+    if (!setup) return;
+    
     setModuleSetups(prevSetups => 
       prevSetups.map(setup => 
         setup.id === id ? { ...setup, status: newStatus } : setup
       )
     );
+    
+    // Chamar função de callback para notificar sobre a mudança
+    if (onStatusChange) {
+      onStatusChange(id, setup.moduleId, setup.organizationId, newStatus);
+    }
     
     toast.success(`Status atualizado com sucesso para ${getStatusText(newStatus)}`);
   };
@@ -117,8 +96,8 @@ export const ModuleSetupsList = () => {
   // Filtrar setups com base na busca e no filtro de status
   const filteredSetups = moduleSetups.filter(setup => {
     const matchesSearch = 
-      setup.organization.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      setup.module.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      setup.organizationId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      setup.moduleId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       setup.contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       setup.contactPhone.includes(searchTerm);
       
@@ -211,8 +190,8 @@ export const ModuleSetupsList = () => {
             {filteredSetups.length > 0 ? (
               filteredSetups.map((setup) => (
                 <TableRow key={setup.id}>
-                  <TableCell>{setup.organization.name}</TableCell>
-                  <TableCell>{setup.module.name}</TableCell>
+                  <TableCell>{setup.organizationId}</TableCell>
+                  <TableCell>{setup.moduleId}</TableCell>
                   <TableCell className="flex items-center gap-2">
                     <UserRound className="h-4 w-4 text-muted-foreground" />
                     {setup.contactName}
