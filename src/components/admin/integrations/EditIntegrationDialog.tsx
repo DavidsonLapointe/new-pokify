@@ -31,7 +31,7 @@ import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
-  type: z.enum(["crm", "llm", "whatsapp"]),
+  type: z.enum(["crm", "llm", "whatsapp", "call"]),
   isActive: z.boolean(),
 });
 
@@ -103,6 +103,7 @@ export const EditIntegrationDialog = ({
                       <SelectItem value="crm">CRM</SelectItem>
                       <SelectItem value="llm">Modelo LLM</SelectItem>
                       <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                      <SelectItem value="call">Chamada</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
