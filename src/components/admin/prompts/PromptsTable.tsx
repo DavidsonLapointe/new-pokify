@@ -28,7 +28,6 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px]">Nome</TableHead>
-            <TableHead className="hidden md:table-cell">Descrição</TableHead>
             {prompts.some(prompt => prompt.type === "custom") && (
               <TableHead className="hidden md:table-cell">Empresa</TableHead>
             )}
@@ -39,9 +38,6 @@ export const PromptsTable = ({ prompts, onEdit, onView }: PromptsTableProps) => 
           {prompts.map((prompt) => (
             <TableRow key={prompt.id}>
               <TableCell className="font-medium">{prompt.name}</TableCell>
-              <TableCell className="hidden md:table-cell">
-                <span className="line-clamp-1">{prompt.description}</span>
-              </TableCell>
               {prompts.some(p => p.type === "custom") && (
                 <TableCell className="hidden md:table-cell">
                   {prompt.type === "custom" && (
