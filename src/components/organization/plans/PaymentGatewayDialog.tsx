@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -17,7 +16,7 @@ import {
   getInitialStripeStatus,
   type StripeConfigStatus
 } from "@/utils/stripeUtils";
-import { getPaymentMethod } from "@/services/subscriptionService";
+import { getPaymentMethod, PaymentMethodResponse } from "@/services/subscriptionService";
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -90,12 +89,7 @@ const PaymentFailureModal = ({ open, onClose, packageInfo }: PaymentResultModalP
 };
 
 interface SavedCardViewProps {
-  cardInfo: {
-    brand: string;
-    last4: string;
-    expMonth: number;
-    expYear: number;
-  };
+  cardInfo: PaymentMethodResponse;
   amount: number;
   onUseNewCard: () => void;
   onProceed: () => void;
@@ -125,7 +119,7 @@ const SavedCardView = ({ cardInfo, amount, onUseNewCard, onProceed, isLoading }:
                 Cartão {cardInfo.brand} •••• {cardInfo.last4}
               </p>
               <p className="text-xs text-muted-foreground">
-                Expira em {cardInfo.expMonth.toString().padStart(2, '0')}/{cardInfo.expYear}
+                Expira em {cardInfo.expMonth?.toString().padStart(2, '0') || 'MM'}/{cardInfo.expYear || 'YYYY'}
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onUseNewCard} className="text-sm text-primary">
@@ -245,12 +239,7 @@ export function PaymentGatewayDialog({
 }: PaymentGatewayDialogProps) {
   const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
   const [loading, setLoading] = useState(true);
-  const [savedCard, setSavedCard] = useState<{
-    brand: string;
-    last4: string;
-    expMonth: number;
-    expYear: number;
-  } | null>(null);
+  const [savedCard, setSavedCard] = useState<PaymentMethodResponse | null>(null);
   const [useNewCard, setUseNewCard] = useState(false);
   const [processingDirectPayment, setProcessingDirectPayment] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
