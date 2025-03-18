@@ -14,7 +14,8 @@ import {
   Layers,
   Book,
   ClipboardCheck,
-  Package
+  Package,
+  Wallet
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -75,6 +76,12 @@ export const useMenuItems = (user: User) => {
       label: "Minha Empresa",
       path: "/organization/company",
       permissionId: "company"
+    },
+    {
+      icon: Wallet,
+      label: "Meus Créditos",
+      path: "/organization/credits",
+      permissionId: "credits"
     },
     {
       icon: UserCircle,

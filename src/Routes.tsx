@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -40,6 +41,7 @@ import OrganizationModules from "./pages/OrganizationModules";
 import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
 import OrganizationKnowledgeBase from "./pages/OrganizationKnowledgeBase";
+import OrganizationCredits from "./pages/OrganizationCredits";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -142,6 +144,7 @@ function AppRoutes() {
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="modules" element={<OrganizationModules />} />
           <Route path="company" element={<OrganizationCompany />} />
+          <Route path="credits" element={<OrganizationCredits />} />
         </Route>
 
         {/* Not Found */}
