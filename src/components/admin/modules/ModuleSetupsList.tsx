@@ -1,9 +1,10 @@
 
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { ModuleSetup, SetupStatus } from "@/components/organization/modules/types";
+import { ModuleSetup, SetupNote, SetupStatus } from "@/components/organization/modules/types";
 import { ModuleSetupsFilters } from "./ModuleSetupsFilters";
 import { ModuleSetupsTable } from "./ModuleSetupsTable";
+import { SetupNotesDialog } from "./SetupNotesDialog";
 
 interface ModuleSetupsListProps {
   onStatusChange?: (setupId: string, moduleId: string, organizationId: string, newStatus: SetupStatus) => void;
@@ -12,6 +13,9 @@ interface ModuleSetupsListProps {
 export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChange }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [selectedSetupId, setSelectedSetupId] = useState<string | null>(null);
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
+  
   const [moduleSetups, setModuleSetups] = useState<ModuleSetup[]>([
     {
       id: "1",
@@ -20,7 +24,8 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
       contactName: "João Silva",
       contactPhone: "(11) 99999-8888",
       contractedAt: new Date(2023, 5, 15),
-      status: "pending"
+      status: "pending",
+      notes: []
     },
     {
       id: "2",
@@ -29,7 +34,8 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
       contactName: "Maria Oliveira",
       contactPhone: "(21) 98888-7777",
       contractedAt: new Date(2023, 6, 10),
-      status: "in_progress"
+      status: "in_progress",
+      notes: []
     },
     {
       id: "3",
@@ -38,7 +44,8 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
       contactName: "Pedro Santos",
       contactPhone: "(31) 97777-6666",
       contractedAt: new Date(),
-      status: "pending"
+      status: "pending",
+      notes: []
     }
   ]);
   
@@ -59,6 +66,37 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
     }
     
     toast.success(`Status atualizado com sucesso para ${newStatus === "pending" ? "Pendente" : newStatus === "in_progress" ? "Em Andamento" : "Concluído"}`);
+  };
+  
+  // Handle notes management
+  const handleOpenNotes = (setupId: string) => {
+    setSelectedSetupId(setupId);
+    setShowNotesDialog(true);
+  };
+  
+  const handleAddNote = (setupId: string, content: string) => {
+    const newNote: SetupNote = {
+      content,
+      createdAt: new Date()
+    };
+    
+    setModuleSetups(prevSetups => 
+      prevSetups.map(setup => 
+        setup.id === setupId 
+          ? { 
+              ...setup, 
+              notes: setup.notes ? [...setup.notes, newNote] : [newNote] 
+            } 
+          : setup
+      )
+    );
+  };
+  
+  // Get notes for the selected setup
+  const getNotesForSelectedSetup = () => {
+    if (!selectedSetupId) return [];
+    const setup = moduleSetups.find(setup => setup.id === selectedSetupId);
+    return setup?.notes || [];
   };
   
   // Clear all filters
@@ -98,7 +136,18 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
       <ModuleSetupsTable
         setups={filteredSetups}
         onStatusChange={handleStatusChange}
+        onOpenNotes={handleOpenNotes}
       />
+      
+      {selectedSetupId && (
+        <SetupNotesDialog
+          setupId={selectedSetupId}
+          notes={getNotesForSelectedSetup()}
+          open={showNotesDialog}
+          onOpenChange={setShowNotesDialog}
+          onAddNote={handleAddNote}
+        />
+      )}
     </div>
   );
 };
