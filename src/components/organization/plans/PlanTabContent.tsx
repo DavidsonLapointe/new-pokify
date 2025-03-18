@@ -33,8 +33,11 @@ export function PlanTabContent() {
   nextBillingDate.setDate(1);
 
   // Ensure credits is properly converted to a number
-  const credits = plan?.credits ? (typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : plan.credits) : 0;
-  const monthlyQuota = credits;
+  const credits = plan?.credits !== undefined ? 
+    (typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : Number(plan.credits)) : 0;
+  
+  // Ensure monthlyQuota is a number
+  const monthlyQuota = Number(credits);
   const usedCredits = 45; // Example
   const additionalCredits = 20; // Example
 
@@ -54,10 +57,18 @@ export function PlanTabContent() {
     );
   }
 
+  // Create a plan object with properly typed properties
+  const typedPlan: Plan = {
+    ...plan,
+    id: typeof plan.id === 'string' ? parseInt(plan.id, 10) : plan.id,
+    price: typeof plan.price === 'string' ? parseFloat(plan.price) : plan.price,
+    credits: typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : Number(plan.credits)
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <CurrentPlanCard 
-        plan={plan} 
+        plan={typedPlan} 
         onChangePlan={() => setIsChangePlanDialogOpen(true)} 
         nextBillingDate={nextBillingDate}
       />
@@ -73,7 +84,7 @@ export function PlanTabContent() {
       <ChangePlanDialog 
         open={isChangePlanDialogOpen}
         onOpenChange={setIsChangePlanDialogOpen}
-        currentPlan={plan}
+        currentPlan={typedPlan}
         availablePlans={[
           // Exemplos de planos disponíveis
           {
