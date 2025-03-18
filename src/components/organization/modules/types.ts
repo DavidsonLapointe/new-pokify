@@ -1,6 +1,6 @@
-import { Module } from "./types";
 
 export type ModuleStatus = "active" | "inactive" | "pending";
+export type ToolStatus = "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
 
 export interface ModuleData {
   id: string;
@@ -45,13 +45,30 @@ export interface Tool {
   id: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
   price: number;
-  setupPrice: number;
-  termPrice: number;
-  termLink: string;
-  cancelationDescription: string;
-  setupDescription: string;
-  setupContactInfo: SetupContactInfo;
-  module: Module;
+  setupPrice?: number;
+  termPrice?: number;
+  termLink?: string;
+  cancelationDescription?: string;
+  setupDescription?: string;
+  setupContactInfo?: SetupContactInfo;
+  
+  // Propriedades que estavam causando erros
+  icon?: any;
+  status?: ToolStatus;
+  badgeLabel?: string;
+  detailedDescription?: string;
+  credits?: number;
+  howItWorks?: string[];
+  benefits?: string[];
+  executeIcon?: any;
+  executeLabel?: string;
+}
+
+// Interface para o módulo (sem referência circular)
+export interface Module {
+  id: string;
+  name: string;
+  description: string;
 }

@@ -12,7 +12,8 @@ const mockSetups: ModuleSetup[] = [
     contactName: "João Silva",
     contactPhone: "(11) 99999-8888",
     contractedAt: new Date(2023, 5, 15),
-    status: "pending" // Módulo em setup (pendente)
+    status: "pending", // Módulo em setup (pendente)
+    notes: [] // Array vazio de notas
   },
   {
     id: "setup2",
@@ -21,7 +22,8 @@ const mockSetups: ModuleSetup[] = [
     contactName: "Maria Oliveira",
     contactPhone: "(21) 98888-7777",
     contractedAt: new Date(2023, 6, 10),
-    status: "in_progress" // Módulo em setup (em andamento)
+    status: "in_progress", // Módulo em setup (em andamento)
+    notes: [] // Array vazio de notas
   }
 ];
 
