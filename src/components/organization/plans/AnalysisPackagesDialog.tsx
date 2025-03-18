@@ -71,7 +71,7 @@ export function AnalysisPackagesDialog({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileBarChart2 className="h-5 w-5 text-primary" />
-              Pacotes de créditos para análises adicionais
+              Pacotes de créditos adicionais
             </DialogTitle>
           </DialogHeader>
 
