@@ -28,6 +28,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
       }
 
       console.log("Iniciando criação da organização:", values);
+      console.log("Módulos selecionados:", values.modules || []);
 
       // Check if email domain might have delivery issues
       const emailDomain = values.adminEmail.split('@')[1].toLowerCase();
@@ -119,7 +120,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         // Get pro-rata value from the title creation process
         const proRataValue = proRataTitle?.value || 0;
         
-        // Send single onboarding email with all links
+        // Send single onboarding email with all links and selected modules
         try {
           console.log("Enviando email único de onboarding...");
           const { error: emailError } = await sendOnboardingEmail(
@@ -127,7 +128,8 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
             `${window.location.origin}/contract/${organizationFormatted.id}`,
             `${window.location.origin}/confirm-registration/${organizationFormatted.id}`,
             `${window.location.origin}/payment/${organizationFormatted.id}`,
-            proRataValue
+            proRataValue,
+            values.modules // Pass selected modules to the email function
           );
 
           if (emailError) {

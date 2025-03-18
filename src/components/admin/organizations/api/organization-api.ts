@@ -38,8 +38,9 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         plan: values.plan,
         admin_name: values.adminName,
         admin_email: values.adminEmail,
-        status: values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status 
-        // Map to database-supported values
+        status: values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status,
+        // Store selected modules as comma-separated list if provided
+        modules: values.modules && values.modules.length > 0 ? values.modules.join(',') : null
       })
       .select('*')
       .single();
@@ -175,18 +176,36 @@ export const sendOnboardingEmail = async (
   contractLink: string,
   confirmRegistrationLink: string,
   paymentLink: string,
-  proRataValue: number
+  proRataValue: number,
+  selectedModules: string[] = []
 ) => {
   try {
     console.log(`Enviando email de onboarding para a organização: ${organizationId}`);
 
-    const { error } = await supabase.functions.invoke('send-onboarding-email', {
+    // Get module names if modules were selected
+    let moduleNames: string[] = [];
+    if (selectedModules && selectedModules.length > 0) {
+      const { data: modulesData, error: modulesError } = await supabase
+        .from('modules')
+        .select('name')
+        .in('id', selectedModules);
+        
+      if (!modulesError && modulesData) {
+        moduleNames = modulesData.map(module => module.name);
+      }
+    }
+
+    const { error } = await supabase.functions.invoke('send-organization-emails', {
       body: {
         organizationId: organizationId,
-        contractLink: contractLink,
-        confirmRegistrationLink: confirmRegistrationLink,
-        paymentLink: paymentLink,
-        proRataValue: proRataValue
+        type: "onboarding",
+        data: {
+          contractUrl: contractLink,
+          confirmationToken: confirmRegistrationLink,
+          paymentUrl: paymentLink,
+          proRataAmount: proRataValue,
+          selectedModules: moduleNames  // Pass module names to the email function
+        }
       },
     });
 

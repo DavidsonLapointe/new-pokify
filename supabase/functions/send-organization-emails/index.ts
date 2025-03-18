@@ -15,13 +15,14 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  organizationId: number;
+  organizationId: string;
   type: "onboarding" | "contract" | "confirmation" | "payment";
   data: {
     confirmationToken?: string;
     contractUrl?: string;
     paymentUrl?: string;
     proRataAmount?: number;
+    selectedModules?: string[];
   };
 }
 
@@ -34,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     console.log("Parsing request body...");
-    const { organizationId, type, data } = await req.json();
+    const { organizationId, type, data } = await req.json() as EmailRequest;
     console.log(`Request received for organization ${organizationId}, type: ${type}`);
     console.log("Email data:", data);
 
@@ -68,6 +69,19 @@ const handler = async (req: Request): Promise<Response> => {
       console.warn(`⚠️ Warning: Sending to potentially problematic email domain: ${emailDomain}`);
     }
 
+    // Format modules for display if present
+    let modulesHtml = '';
+    if (data.selectedModules && data.selectedModules.length > 0) {
+      modulesHtml = `
+        <div style="margin: 10px 0;">
+          <p><strong>Módulos selecionados:</strong></p>
+          <ul style="padding-left: 20px;">
+            ${data.selectedModules.map(module => `<li>${module}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
     let emailContent;
     switch (type) {
       case "onboarding":
@@ -86,8 +100,9 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="margin: 30px 0; padding: 20px; border: 1px solid #E5DEFF; border-radius: 8px; background-color: #F1F0FB;">
               <h2 style="color: #6E59A5; margin-top: 0;">2. Efetuar o Pagamento</h2>
-              <p>Você precisa efetuar o pagamento pro-rata para ativar sua conta:</p>
-              <p>Valor pro rata: <strong>R$ ${data.proRataAmount?.toFixed(2)}</strong></p>
+              <p>Você precisa efetuar o pagamento para ativar sua conta:</p>
+              <p>Valor pro rata mensal: <strong>R$ ${data.proRataAmount?.toFixed(2)}</strong></p>
+              ${modulesHtml}
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Realizar Pagamento</a></p>
             </div>
             
@@ -113,7 +128,7 @@ const handler = async (req: Request): Promise<Response> => {
         emailContent = {
           subject: type === "contract" ? "Contrato de Adesão - Leadly" : 
                    type === "confirmation" ? "Complete seu cadastro - Leadly" : 
-                   "Pagamento Pro Rata - Leadly",
+                   "Pagamento - Leadly",
           html: type === "contract" ? 
             `
               <h1>Olá ${organization.admin_name},</h1>
@@ -132,7 +147,8 @@ const handler = async (req: Request): Promise<Response> => {
             ` :
             `
               <h1>Olá ${organization.admin_name},</h1>
-              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento pro rata no valor de R$ ${data.proRataAmount?.toFixed(2)}.</p>
+              <p>Para ativar sua conta na Leadly, precisamos processar o pagamento no valor total de R$ ${data.proRataAmount?.toFixed(2)}.</p>
+              ${modulesHtml}
               <p>Acesse o link abaixo para efetuar o pagamento:</p>
               <p><a href="${data.paymentUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Realizar Pagamento</a></p>
               <p>Atenciosamente,<br>Equipe Leadly</p>
