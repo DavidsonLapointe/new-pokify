@@ -30,7 +30,7 @@ const AdminModuleSetups = () => {
         <h1 className="text-2xl font-bold">Setups</h1>
         <p className="text-sm text-muted-foreground">Lista de Implantações Pendentes e em Andamento</p>
       </div>
-      <Card className="border-t-0 rounded-t-none">
+      <Card className="border-t-0 rounded-t-none border-0 shadow-none">
         <CardContent className="pt-6">
           <TooltipProvider>
             <ModuleSetupsList onStatusChange={handleSetupStatusChange} />
