@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { CreditCard, Loader2, AlertCircle, CheckCircle, XCircle, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -17,6 +17,7 @@ import {
   getInitialStripeStatus,
   type StripeConfigStatus
 } from "@/utils/stripeUtils";
+import { getPaymentMethod } from "@/services/subscriptionService";
 
 interface PaymentGatewayDialogProps {
   open: boolean;
@@ -85,6 +86,73 @@ const PaymentFailureModal = ({ open, onClose, packageInfo }: PaymentResultModalP
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+interface SavedCardViewProps {
+  cardInfo: {
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  };
+  amount: number;
+  onUseNewCard: () => void;
+  onProceed: () => void;
+  isLoading: boolean;
+}
+
+const SavedCardView = ({ cardInfo, amount, onUseNewCard, onProceed, isLoading }: SavedCardViewProps) => {
+  return (
+    <div className="space-y-6">
+      <div className="border rounded-lg p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CreditCard className="h-5 w-5 text-gray-500" />
+            <div>
+              <p className="font-medium">Detalhes da cobrança</p>
+              <p className="text-sm text-muted-foreground">
+                R$ {amount.toFixed(2)} será debitado no seu cartão de crédito cadastrado
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="pt-2 border-t">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">
+                Cartão {cardInfo.brand} •••• {cardInfo.last4}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Expira em {cardInfo.expMonth.toString().padStart(2, '0')}/{cardInfo.expYear}
+              </p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onUseNewCard} className="text-sm text-primary">
+              Trocar cartão
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Button 
+        onClick={onProceed} 
+        disabled={isLoading} 
+        className="w-full"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processando
+          </>
+        ) : (
+          <>
+            <CreditCard className="mr-2 h-4 w-4" />
+            Confirmar pagamento
+          </>
+        )}
+      </Button>
+    </div>
   );
 };
 
@@ -177,14 +245,41 @@ export function PaymentGatewayDialog({
 }: PaymentGatewayDialogProps) {
   const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
   const [loading, setLoading] = useState(true);
+  const [savedCard, setSavedCard] = useState<{
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  } | null>(null);
+  const [useNewCard, setUseNewCard] = useState(false);
+  const [processingDirectPayment, setProcessingDirectPayment] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
   
   useEffect(() => {
     if (open) {
       checkStripeConfig();
+      fetchSavedCard();
     }
   }, [open]);
+
+  const fetchSavedCard = async () => {
+    try {
+      // Here we assume we can get the user's organization ID from some context or service
+      // For example, if you have a user context with organization info
+      const organizationId = "current-org"; // Replace with actual way to get organization ID
+      const paymentMethod = await getPaymentMethod(organizationId);
+      
+      if (paymentMethod) {
+        setSavedCard(paymentMethod);
+      } else {
+        setSavedCard(null);
+      }
+    } catch (error) {
+      console.error("Error fetching saved card:", error);
+      setSavedCard(null);
+    }
+  };
 
   const checkStripeConfig = async () => {
     setLoading(true);
@@ -234,6 +329,27 @@ export function PaymentGatewayDialog({
     setShowFailureModal(false);
   };
 
+  const handleConfirmWithSavedCard = async () => {
+    if (!selectedPackage || !savedCard) return;
+
+    setProcessingDirectPayment(true);
+    
+    try {
+      // This is a mock success for demonstration
+      // In a real implementation, you would call your payment processing API
+      // with the saved card details
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulate a successful payment
+      handlePaymentSuccess();
+    } catch (error) {
+      console.error("Error processing payment with saved card:", error);
+      handlePaymentFailure();
+    } finally {
+      setProcessingDirectPayment(false);
+    }
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -241,7 +357,7 @@ export function PaymentGatewayDialog({
           <DialogHeader>
             <DialogTitle>Finalizar compra</DialogTitle>
             <DialogDescription>
-              {selectedPackage.name} - {selectedPackage.credits}
+              {selectedPackage.name} - {selectedPackage.credits} créditos
               <br />
               Valor: R$ {selectedPackage.price.toFixed(2)}
             </DialogDescription>
@@ -265,12 +381,33 @@ export function PaymentGatewayDialog({
                 </div>
               </div>
             </div>
+          ) : savedCard && !useNewCard ? (
+            <SavedCardView 
+              cardInfo={savedCard}
+              amount={selectedPackage.price}
+              onUseNewCard={() => setUseNewCard(true)}
+              onProceed={handleConfirmWithSavedCard}
+              isLoading={processingDirectPayment}
+            />
           ) : (
             <Elements stripe={stripePromise} options={options}>
-              <PaymentForm 
-                onSuccess={handlePaymentSuccess} 
-                onFailure={handlePaymentFailure} 
-              />
+              <div className="space-y-4">
+                {savedCard && (
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start" 
+                    onClick={() => setUseNewCard(false)}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Voltar para cartão salvo</span>
+                    <ChevronRight className="ml-auto h-4 w-4" />
+                  </Button>
+                )}
+                <PaymentForm 
+                  onSuccess={handlePaymentSuccess} 
+                  onFailure={handlePaymentFailure} 
+                />
+              </div>
             </Elements>
           )}
         </DialogContent>
