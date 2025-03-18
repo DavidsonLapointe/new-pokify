@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -819,4 +820,92 @@ const OrganizationModules = () => {
               </div>
               
               <p className="text-sm text-gray-600">
-                Um e-mail foi enviado para nossa equipe de suporte
+                Um e-mail foi enviado para nossa equipe de suporte com os detalhes do problema.
+                Você pode tentar novamente mais tarde ou entrar em contato com nosso suporte.
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline"
+                onClick={() => setIsPaymentFailedDialogOpen(false)}
+              >
+                Fechar
+              </Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => {
+                  setIsPaymentFailedDialogOpen(false);
+                  setIsConfirmDialogOpen(true);
+                }}
+              >
+                Tentar Novamente
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de cancelamento do módulo */}
+        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-700">
+                <Trash2 className="h-5 w-5" />
+                Cancelar Módulo
+              </DialogTitle>
+            </DialogHeader>
+            
+            {cancelModuleId && (
+              <div className="py-4">
+                <p className="mb-4">
+                  Você está prestes a cancelar o módulo "{tools.find(t => t.id === cancelModuleId)?.title}". Esta ação não pode ser desfeita.
+                </p>
+                
+                <div className="bg-red-50 p-3 rounded-md mb-6 flex items-start text-sm">
+                  <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <p className="text-red-800">
+                    Após o cancelamento, os recursos exclusivos deste módulo não estarão mais disponíveis para sua empresa.
+                  </p>
+                </div>
+                
+                <div className="space-y-1">
+                  <Label htmlFor="cancelReason">Por favor, informe o motivo do cancelamento</Label>
+                  <Textarea 
+                    id="cancelReason" 
+                    placeholder="Descreva o motivo do cancelamento..."
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    rows={3}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                Voltar
+              </Button>
+              <Button 
+                onClick={confirmCancelation}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Confirmar Cancelamento
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo dos termos de uso */}
+        <TermsDialog
+          isOpen={isTermsDialogOpen}
+          onClose={() => setIsTermsDialogOpen(false)}
+          documentTitle="Termos de Uso dos Módulos"
+          documentType="terms"
+        />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default OrganizationModules;
