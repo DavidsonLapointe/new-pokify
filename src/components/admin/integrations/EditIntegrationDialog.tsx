@@ -22,7 +22,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
+import { CustomSwitch } from "@/components/ui/custom-switch";
+import { Badge } from "@/components/ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -61,6 +62,8 @@ export const EditIntegrationDialog = ({
     form.reset();
     onOpenChange(false);
   };
+
+  const watchIsActive = form.watch("isActive");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,11 +119,20 @@ export const EditIntegrationDialog = ({
               name="isActive"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel>Status</FormLabel>
+                  <div className="flex flex-row items-center space-x-2">
+                    <FormLabel className="m-0">Status</FormLabel>
+                    <Badge
+                      className={`${
+                        watchIsActive
+                          ? "bg-green-100 text-green-800 hover:bg-green-100"
+                          : "bg-red-100 text-red-800 hover:bg-red-100"
+                      }`}
+                    >
+                      {watchIsActive ? "Ativo" : "Inativo"}
+                    </Badge>
                   </div>
                   <FormControl>
-                    <Switch
+                    <CustomSwitch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
