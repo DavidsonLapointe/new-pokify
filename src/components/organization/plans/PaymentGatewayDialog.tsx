@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -117,10 +116,12 @@ const SavedCardView = ({ cardInfo, amount, onUseNewCard, onProceed, isLoading }:
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">
-                Cartão {cardInfo.brand} •••• {cardInfo.last4}
+                Cartão {cardInfo.brand || 'de crédito'} •••• {cardInfo.last4 || '****'}
               </p>
               <p className="text-xs text-muted-foreground">
-                Expira em {cardInfo.expMonth?.toString().padStart(2, '0') || 'MM'}/{cardInfo.expYear || 'YYYY'}
+                {cardInfo.expMonth && cardInfo.expYear ? 
+                  `Expira em ${cardInfo.expMonth.toString().padStart(2, '0')}/${cardInfo.expYear}` : 
+                  'Cartão cadastrado'}
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onUseNewCard} className="text-sm text-primary">
@@ -246,6 +247,7 @@ export function PaymentGatewayDialog({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
   
+  // Effect to check Stripe config and fetch saved card when dialog opens
   useEffect(() => {
     if (open) {
       checkStripeConfig();
@@ -257,15 +259,16 @@ export function PaymentGatewayDialog({
   }, [open]);
 
   const fetchSavedCard = async () => {
+    setLoading(true);
     try {
       // Here we assume we can get the user's organization ID from some context or service
-      // For example, if you have a user context with organization info
       const organizationId = "current-org"; // Replace with actual way to get organization ID
       const paymentMethod = await getPaymentMethod(organizationId);
       
       console.log("Fetched payment method:", paymentMethod);
       if (paymentMethod && paymentMethod.last4) {
         setSavedCard(paymentMethod);
+        setUseNewCard(false); // Explicitly set to use saved card
       } else {
         setSavedCard(null);
         setUseNewCard(true); // If no saved card, show new card form automatically
@@ -290,6 +293,8 @@ export function PaymentGatewayDialog({
         valid: false,
         message: "Erro ao verificar configuração do Stripe"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -346,6 +351,72 @@ export function PaymentGatewayDialog({
     }
   };
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center p-6">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      );
+    }
+
+    if (!stripeStatus.valid) {
+      return (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+          <div className="flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
+              <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
+              <p className="text-xs mt-2 text-red-700">
+                Para que o Stripe funcione corretamente, certifique-se de que a chave pública do Stripe 
+                está configurada corretamente nas variáveis de ambiente do Supabase.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // If we have a saved card and useNewCard is false, show saved card view
+    if (savedCard && !useNewCard) {
+      return (
+        <SavedCardView 
+          cardInfo={savedCard}
+          amount={selectedPackage.price}
+          onUseNewCard={() => setUseNewCard(true)}
+          onProceed={handleConfirmWithSavedCard}
+          isLoading={processingDirectPayment}
+        />
+      );
+    }
+
+    // Otherwise show Stripe payment form
+    return (
+      <Elements stripe={stripePromise} options={options}>
+        <div className="space-y-4">
+          {savedCard && (
+            <Button 
+              variant="outline" 
+              className="w-full justify-between" 
+              onClick={() => setUseNewCard(false)}
+            >
+              <div className="flex items-center">
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Usar cartão cadastrado</span>
+              </div>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          <PaymentForm 
+            onSuccess={handlePaymentSuccess} 
+            onFailure={handlePaymentFailure} 
+          />
+        </div>
+      </Elements>
+    );
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -359,53 +430,7 @@ export function PaymentGatewayDialog({
             </DialogDescription>
           </DialogHeader>
           
-          {loading ? (
-            <div className="flex justify-center p-6">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : !stripeStatus.valid ? (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-              <div className="flex items-start">
-                <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-medium text-red-800">Erro na configuração do Stripe</h3>
-                  <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
-                  <p className="text-xs mt-2 text-red-700">
-                    Para que o Stripe funcione corretamente, certifique-se de que a chave pública do Stripe 
-                    está configurada corretamente nas variáveis de ambiente do Supabase.
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : savedCard && !useNewCard ? (
-            <SavedCardView 
-              cardInfo={savedCard}
-              amount={selectedPackage.price}
-              onUseNewCard={() => setUseNewCard(true)}
-              onProceed={handleConfirmWithSavedCard}
-              isLoading={processingDirectPayment}
-            />
-          ) : (
-            <Elements stripe={stripePromise} options={options}>
-              <div className="space-y-4">
-                {savedCard && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start" 
-                    onClick={() => setUseNewCard(false)}
-                  >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    <span>Voltar para cartão salvo</span>
-                    <ChevronRight className="ml-auto h-4 w-4" />
-                  </Button>
-                )}
-                <PaymentForm 
-                  onSuccess={handlePaymentSuccess} 
-                  onFailure={handlePaymentFailure} 
-                />
-              </div>
-            </Elements>
-          )}
+          {renderContent()}
         </DialogContent>
       </Dialog>
 
