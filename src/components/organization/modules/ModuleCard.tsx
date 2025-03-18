@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Clock, MoreVertical, Trash2, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, MoreVertical, Trash2, Zap, ChevronDown, ChevronUp, Wrench } from "lucide-react";
 import { Link } from "@/components/ui/link";
 import { Tool } from "./types";
 
@@ -43,7 +42,7 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
         };
       case "setup":
         return {
-          icon: React.createElement(Icon, { size: 18, className: "text-blue-500" }),
+          icon: <Wrench size={18} className="text-blue-500" />,
           tooltip: "Nossa equipe está realizando a configuração inicial deste módulo para sua organização"
         };
     }
@@ -148,4 +147,4 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
 };
 
 // Importe os ícones que estavam faltando
-import { AlertTriangle, CheckCircle2, Lock, RefreshCw } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Lock } from "lucide-react";
