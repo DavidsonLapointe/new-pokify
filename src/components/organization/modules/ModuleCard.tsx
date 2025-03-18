@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
@@ -67,12 +66,17 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
       <CardContent className="p-3 flex flex-col items-center justify-between h-full relative">
         <div className="absolute top-2 right-2 flex items-center">
           <TooltipProvider>
-            <Tooltip delayDuration={300}>
+            <Tooltip delayDuration={500}>
               <TooltipTrigger asChild>
-                <span>{statusInfo.icon}</span>
+                <span className="cursor-help">{statusInfo.icon}</span>
               </TooltipTrigger>
-              <TooltipContent side="top" align="center" sideOffset={5} className="max-w-[200px] break-words text-xs">
-                <p className="text-xs whitespace-normal">{statusInfo.tooltip}</p>
+              <TooltipContent 
+                side="top" 
+                align="center" 
+                sideOffset={10} 
+                className="max-w-[250px] w-auto p-2 bg-white"
+              >
+                <p className="text-xs font-normal whitespace-normal">{statusInfo.tooltip}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
