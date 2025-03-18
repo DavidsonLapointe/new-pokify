@@ -2,7 +2,7 @@
 export interface Integration {
   id: string;
   name: string;
-  type: "crm" | "call" | "llm";
+  type: "crm" | "call" | "llm" | "whatsapp";
   description: string;
   isConnected: boolean;
   lastSync?: string;

@@ -28,7 +28,7 @@ import * as z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
-  type: z.enum(["crm", "llm"]),
+  type: z.enum(["crm", "llm", "whatsapp"]),
 });
 
 interface CreateIntegrationDialogProps {
@@ -90,6 +90,7 @@ export const CreateIntegrationDialog = ({
                     <SelectContent>
                       <SelectItem value="crm">CRM</SelectItem>
                       <SelectItem value="llm">Modelo LLM</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

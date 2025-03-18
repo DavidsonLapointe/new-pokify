@@ -25,6 +25,12 @@ export const AdminIntegrationsList = () => {
       type: "llm",
       isActive: false,
     },
+    {
+      id: "4",
+      name: "WhatsApp Oficial",
+      type: "whatsapp",
+      isActive: true,
+    }
   ]);
 
   const getTypeLabel = (type: string) => {
@@ -33,6 +39,8 @@ export const AdminIntegrationsList = () => {
         return "CRM";
       case "llm":
         return "Modelo LLM";
+      case "whatsapp":
+        return "WhatsApp";
       default:
         return type;
     }

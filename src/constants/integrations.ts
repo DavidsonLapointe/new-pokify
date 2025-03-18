@@ -18,6 +18,10 @@ export const mockAvailableIntegrations = {
     { id: "perplexity", name: "Perplexity AI" },
     { id: "claude", name: "Claude AI" },
   ],
+  whatsapp: [
+    { id: "whatsappofficial", name: "WhatsApp Oficial" },
+    { id: "whatsappbusiness", name: "WhatsApp Business" },
+  ],
 };
 
 export const getIntegrationDescription = (id: string): string => {
@@ -28,6 +32,8 @@ export const getIntegrationDescription = (id: string): string => {
     gpt4o: "Modelo LLM otimizado para extração de dados de chamadas",
     perplexity: "Modelo LLM especializado em análise de contexto",
     claude: "Assistente AI avançado para análise de conversas",
+    whatsappofficial: "Integração oficial com a API do WhatsApp",
+    whatsappbusiness: "Integração com a plataforma WhatsApp Business",
   };
   return descriptions[id] || "Descrição não disponível";
 };
