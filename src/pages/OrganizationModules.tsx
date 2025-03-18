@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,7 +22,9 @@ import {
   HelpCircle,
   Zap,
   Mail,
-  RotateCw
+  RotateCw,
+  Settings,
+  Pencil
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -651,6 +652,31 @@ const OrganizationModules = () => {
                 </ul>
               </div>
             </div>
+
+            {/* Botões de ação em um footer claramente destacado */}
+            {(selectedToolDetails.status === "contracted" || selectedToolDetails.status === "configured") && (
+              <div className="mt-auto px-6 py-4 border-t border-gray-200 bg-white rounded-md">
+                <div className="flex flex-wrap gap-3">
+                  {selectedToolDetails.status === "configured" && (
+                    <Button 
+                      className="h-12 bg-green-600 hover:bg-green-700 text-white rounded-md"
+                      onClick={() => console.log("Editar configuração do módulo", selectedToolDetails.id)}
+                    >
+                      <Pencil className="h-5 w-5 mr-2" /> Editar configuração
+                    </Button>
+                  )}
+                  
+                  {selectedToolDetails.status === "contracted" && (
+                    <Button 
+                      className="h-12 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md"
+                      onClick={() => console.log("Configurar módulo", selectedToolDetails.id)}
+                    >
+                      <Settings className="h-5 w-5 mr-2" /> Configurar módulo
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
           </Card>
         )}
 
@@ -793,119 +819,4 @@ const OrganizationModules = () => {
         </Dialog>
 
         {/* Diálogo de falha no pagamento */}
-        <Dialog open={isPaymentFailedDialogOpen} onOpenChange={setIsPaymentFailedDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-red-700">
-                <AlertTriangle className="h-5 w-5" />
-                Pagamento Recusado
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <p className="mb-4">
-                Infelizmente, o pagamento foi recusado pela operadora do cartão de crédito.
-              </p>
-              
-              <div className="bg-red-50 p-3 rounded-md mb-4 text-red-800 flex items-start">
-                <AlertTriangle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-                <div className="text-sm">
-                  <p className="font-medium">Possíveis motivos:</p>
-                  <ul className="list-disc list-inside mt-1 ml-1">
-                    <li>Limite insuficiente no cartão</li>
-                    <li>Cartão expirado ou bloqueado</li>
-                    <li>Problemas de conexão com a operadora</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <p className="text-sm text-gray-600">
-                Um e-mail foi enviado para nossa equipe de suporte com os detalhes do problema.
-                Você pode tentar novamente mais tarde ou entrar em contato com nosso suporte.
-              </p>
-            </div>
-            
-            <DialogFooter>
-              <Button 
-                variant="outline"
-                onClick={() => setIsPaymentFailedDialogOpen(false)}
-              >
-                Fechar
-              </Button>
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={() => {
-                  setIsPaymentFailedDialogOpen(false);
-                  setIsConfirmDialogOpen(true);
-                }}
-              >
-                Tentar Novamente
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo de cancelamento do módulo */}
-        <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-red-700">
-                <Trash2 className="h-5 w-5" />
-                Cancelar Módulo
-              </DialogTitle>
-            </DialogHeader>
-            
-            {cancelModuleId && (
-              <div className="py-4">
-                <p className="mb-4">
-                  Você está prestes a cancelar o módulo "{tools.find(t => t.id === cancelModuleId)?.title}". Esta ação não pode ser desfeita.
-                </p>
-                
-                <div className="bg-red-50 p-3 rounded-md mb-6 flex items-start text-sm">
-                  <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
-                  <p className="text-red-800">
-                    Após o cancelamento, os recursos exclusivos deste módulo não estarão mais disponíveis para sua empresa.
-                  </p>
-                </div>
-                
-                <div className="space-y-1">
-                  <Label htmlFor="cancelReason">Por favor, informe o motivo do cancelamento</Label>
-                  <Textarea 
-                    id="cancelReason" 
-                    placeholder="Descreva o motivo do cancelamento..."
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    rows={3}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-                Voltar
-              </Button>
-              <Button 
-                onClick={confirmCancelation}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Confirmar Cancelamento
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo dos termos de uso */}
-        <TermsDialog
-          open={isTermsDialogOpen}
-          onOpenChange={setIsTermsDialogOpen}
-          moduleId={selectedTool || ""}
-          moduleName={selectedTool ? tools.find(t => t.id === selectedTool)?.title || "" : ""}
-        />
-      </div>
-    </TooltipProvider>
-  );
-};
-
-export default OrganizationModules;
+        <Dialog open={isPaymentFailedDialogOpen} onOpenChange={setIs
