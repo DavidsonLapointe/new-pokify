@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { useEditOrganizationForm } from "./hooks/useEditOrganizationForm";
 import { StatusSection } from "./dialog-sections/StatusSection";
-import { PendingReasonCard } from "./dialog-sections/PendingReasonCard";
 import { Badge } from "@/components/ui/badge";
 import { mockModules } from "@/components/admin/modules/module-constants";
 import { iconMap } from "@/components/admin/modules/module-constants";
@@ -69,10 +68,6 @@ export const EditOrganizationDialog = ({
             Atualize os dados da empresa.
           </DialogDescription>
         </DialogHeader>
-
-        {organization.status === "pending" && organization.pendingReason && (
-          <PendingReasonCard pendingReason={organization.pendingReason} />
-        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
