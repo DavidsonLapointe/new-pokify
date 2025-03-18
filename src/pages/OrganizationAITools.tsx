@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -397,7 +396,15 @@ const AIToolsPage = () => {
             </div>
 
             <div className="flex gap-3">
-              {/* Removido o botão verde (botão de execução) */}
+              {tool.status !== "not_contracted" && tool.status !== "coming_soon" && tool.status !== "setup" && (
+                <Button 
+                  className="flex items-center justify-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e5] px-4"
+                  onClick={() => handleToolExecution(tool.id)}
+                >
+                  <tool.executeIcon size={18} />
+                  <span>{tool.executeLabel}</span>
+                </Button>
+              )}
               
               {tool.status !== "coming_soon" && tool.status !== "setup" && (
                 <Button 
