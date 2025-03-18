@@ -6,4 +6,5 @@ export interface Prompt {
   description: string;
   type: string;
   module?: string;
+  company_id?: string;
 }

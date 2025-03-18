@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
@@ -27,8 +28,9 @@ const AdminPrompt = () => {
     name: "", 
     content: "", 
     description: "",
-    type: "default", // Valor padrão para o tipo
-    module: "geral" // Valor padrão para o módulo
+    type: "global", // Valor padrão para o tipo
+    module: "geral", // Valor padrão para o módulo
+    company_id: undefined // Para prompts customizados
   });
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -60,14 +62,21 @@ const AdminPrompt = () => {
       if (error) throw error;
 
       setPrompts(data.map(prompt => {
-        // Safely extract module from metadata with proper type handling
+        // Safely extract metadata values with proper type handling
         let moduleValue = 'geral'; // default value
+        let companyId = undefined;
         
         if (prompt.metadata && 
             typeof prompt.metadata === 'object' && 
-            !Array.isArray(prompt.metadata) && 
-            'module' in prompt.metadata) {
-          moduleValue = prompt.metadata.module as string;
+            !Array.isArray(prompt.metadata)) {
+          
+          if ('module' in prompt.metadata) {
+            moduleValue = prompt.metadata.module as string;
+          }
+          
+          if ('company_id' in prompt.metadata) {
+            companyId = prompt.metadata.company_id as string;
+          }
         }
         
         return {
@@ -76,7 +85,8 @@ const AdminPrompt = () => {
           content: prompt.content,
           description: prompt.description || '',
           type: prompt.type,
-          module: moduleValue
+          module: moduleValue,
+          company_id: companyId
         };
       }));
     } catch (error) {
@@ -92,7 +102,7 @@ const AdminPrompt = () => {
   };
 
   const handleNewPrompt = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "default", module: "geral" });
+    setNewPrompt({ name: "", content: "", description: "", type: "global", module: "geral", company_id: undefined });
     setIsEditing(false);
     setSelectedPrompt(null);
     setIsModalOpen(true);
@@ -108,8 +118,24 @@ const AdminPrompt = () => {
       return;
     }
 
+    if (newPrompt.type === "custom" && !newPrompt.company_id) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione uma empresa para o prompt customizado.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      const metadata = { module: newPrompt.module };
+      const metadata: Record<string, any> = { 
+        module: newPrompt.module 
+      };
+      
+      // Adicionar company_id ao metadata apenas para prompts customizados
+      if (newPrompt.type === "custom" && newPrompt.company_id) {
+        metadata.company_id = newPrompt.company_id;
+      }
       
       if (isEditing && selectedPrompt) {
         const { error } = await supabase
@@ -161,7 +187,7 @@ const AdminPrompt = () => {
   };
 
   const handleCancel = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "default", module: "geral" });
+    setNewPrompt({ name: "", content: "", description: "", type: "global", module: "geral", company_id: undefined });
     setIsModalOpen(false);
     setIsEditing(false);
     setSelectedPrompt(null);
@@ -174,7 +200,8 @@ const AdminPrompt = () => {
       content: prompt.content,
       description: prompt.description,
       type: prompt.type,
-      module: prompt.module || 'geral'
+      module: prompt.module || 'geral',
+      company_id: prompt.company_id
     });
     setIsEditing(true);
     setIsModalOpen(true);

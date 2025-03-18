@@ -13,12 +13,16 @@ import { Prompt } from "@/types/prompt";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import { CompanyLeadly } from "@/types/company-leadly";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface PromptFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  prompt: Omit<Prompt, "id"> & { module: string };
-  onPromptChange: (prompt: Omit<Prompt, "id"> & { module: string }) => void;
+  prompt: Omit<Prompt, "id"> & { module: string; company_id?: string };
+  onPromptChange: (prompt: Omit<Prompt, "id"> & { module: string; company_id?: string }) => void;
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
@@ -35,6 +39,38 @@ export const PromptFormDialog = ({
   isEditing,
   modules,
 }: PromptFormDialogProps) => {
+  const [companies, setCompanies] = useState<CompanyLeadly[]>([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (open && prompt.type === "custom") {
+      fetchCompanies();
+    }
+  }, [open, prompt.type]);
+
+  const fetchCompanies = async () => {
+    setIsLoadingCompanies(true);
+    try {
+      const { data, error } = await supabase
+        .from('company_leadly')
+        .select('*')
+        .order('nome_fantasia', { ascending: true });
+
+      if (error) throw error;
+      setCompanies(data || []);
+    } catch (error) {
+      console.error('Erro ao buscar empresas:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar a lista de empresas.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingCompanies(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
@@ -62,7 +98,7 @@ export const PromptFormDialog = ({
             </label>
             <RadioGroup 
               value={prompt.type} 
-              onValueChange={(value) => onPromptChange({ ...prompt, type: value })}
+              onValueChange={(value) => onPromptChange({ ...prompt, type: value, company_id: value === "custom" ? prompt.company_id : undefined })}
               className="flex space-x-4"
             >
               <div className="flex items-center space-x-2">
@@ -75,6 +111,30 @@ export const PromptFormDialog = ({
               </div>
             </RadioGroup>
           </div>
+          
+          {prompt.type === "custom" && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Empresa
+              </label>
+              <Select 
+                value={prompt.company_id}
+                onValueChange={(value) => onPromptChange({ ...prompt, company_id: value })}
+                disabled={isLoadingCompanies}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione uma empresa" />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies.map((company) => (
+                    <SelectItem key={company.id} value={company.id}>
+                      {company.nome_fantasia || company.razao_social}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           
           <div className="space-y-2">
             <label className="text-sm font-medium">
