@@ -3,7 +3,7 @@ import React from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { iconMap } from "./module-constants";
 import { 
-  MessageCircle, Clock, Pencil, CheckCircle, Zap
+  MessageCircle, Clock, Pencil, CheckCircle, Zap, Trash2
 } from "lucide-react";
 import {
   Card,
@@ -40,7 +40,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
     : MessageCircle;
     
   return (
-    <Card className="mt-8 bg-[#F1F0FB] flex flex-col min-h-[680px]">
+    <Card className="mt-8 bg-[#F8F8FB] max-w-5xl mx-auto shadow-sm">
       <CardHeader className="p-6">
         <div className="flex justify-between items-start">
           <div className="flex items-start gap-4">
@@ -98,14 +98,37 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => onEdit(module)}>
-              <Pencil className="h-4 w-4 mr-1" /> Editar
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 text-xs px-3"
+              onClick={() => onEdit(module)}
+            >
+              <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 text-xs px-3 text-red-600 border-red-200 hover:bg-red-50"
+              onClick={() => onDelete(module.id)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <span className="animate-spin mr-1">●</span>
+                  Excluindo...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-3.5 w-3.5 mr-1" /> Excluir
+                </>
+              )}
             </Button>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="px-6 pt-0 flex-1 flex flex-col">
+      <CardContent className="px-6 pt-0 pb-6">
         {/* Sobre o módulo */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3 text-purple-500">Sobre o módulo</h3>
@@ -126,7 +149,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           
         {/* Benefícios e Como funciona */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-5 rounded-lg">
+          <div className="bg-white p-5 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-3 text-purple-500">Benefícios</h3>
             <div className="space-y-2">
               {module.benefits?.map((benefit, i) => (
@@ -138,7 +161,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
             </div>
           </div>
             
-          <div className="bg-white p-5 rounded-lg">
+          <div className="bg-white p-5 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-3 text-purple-500">Como funciona</h3>
             <div className="space-y-2">
               {module.howItWorks?.map((step, i) => (
