@@ -9,14 +9,17 @@ import { CreditsBalanceCard } from "./CreditsBalanceCard";
 import { AnalysisPackagesDialog } from "./AnalysisPackagesDialog";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
+import { Plan } from "@/components/admin/plans/plan-form-schema";
 
 export function PlanTabContent() {
   const { user } = useUser();
   const [isChangePlanDialogOpen, setIsChangePlanDialogOpen] = useState(false);
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
 
-  // Obter o plano atual do usuário
-  const planId = user?.organization?.plan || '';
+  // Get the user's current plan ID, ensuring it's a string
+  const planId = typeof user?.organization?.plan === 'string' 
+    ? user?.organization?.plan 
+    : user?.organization?.plan?.id || '';
   
   const { data: plan, isLoading } = useQuery({
     queryKey: ['plan', planId],
@@ -24,15 +27,15 @@ export function PlanTabContent() {
     enabled: !!planId,
   });
 
-  // Próxima data de faturamento (exemplo: primeiro dia do próximo mês)
+  // Next billing date (example: first day of next month)
   const nextBillingDate = new Date();
   nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
   nextBillingDate.setDate(1);
 
-  // Dados de créditos (exemplo)
-  const monthlyQuota = plan?.credits || 100;
-  const usedCredits = 45; // Exemplo
-  const additionalCredits = 20; // Exemplo
+  // Credits data (example)
+  const monthlyQuota = plan?.credits || 0;
+  const usedCredits = 45; // Example
+  const additionalCredits = 20; // Example
 
   if (isLoading) {
     return (
@@ -105,10 +108,6 @@ export function PlanTabContent() {
       <AnalysisPackagesDialog
         open={isPackagesDialogOpen}
         onOpenChange={setIsPackagesDialogOpen}
-        onPackagePurchased={() => {
-          toast.success("Pacote de créditos adicionado com sucesso");
-          setIsPackagesDialogOpen(false);
-        }}
       />
     </div>
   );

@@ -1,111 +1,126 @@
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { PaymentGatewayDialog } from "./PaymentGatewayDialog";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { useState } from "react";
+import { CheckCircle, FileBarChart2, PackageCheck } from "lucide-react";
+import { PaymentGatewayDialog } from "./PaymentGatewayDialog";
+import { toast } from "sonner";
 
 interface AnalysisPackagesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelectPackage?: (pkg: any) => void;
+  onPackagePurchased?: () => void;
 }
 
-const packages = [
-  {
-    name: "Pacote Inicial",
-    credits: 100,
-    price: 99.90,
-    features: [
-      "100 créditos para análise",
-      "Validade de 12 meses",
-      "Suporte por email"
-    ]
-  },
-  {
-    name: "Pacote Plus",
-    credits: 500,
-    price: 449.90,
-    features: [
-      "500 créditos para análise",
-      "Validade de 12 meses",
-      "Suporte prioritário",
-      "Relatórios avançados"
-    ]
-  },
-  {
-    name: "Pacote Enterprise",
-    credits: 1000,
-    price: 849.90,
-    features: [
-      "1000 créditos para análise",
-      "Validade de 12 meses",
-      "Suporte prioritário 24/7",
-      "Relatórios avançados",
-      "API dedicada"
-    ]
-  }
-];
-
-export function AnalysisPackagesDialog({
-  open,
+export function AnalysisPackagesDialog({ 
+  open, 
   onOpenChange,
-  onSelectPackage
+  onPackagePurchased 
 }: AnalysisPackagesDialogProps) {
-  const [selectedPackage, setSelectedPackage] = useState<typeof packages[0] | null>(null);
-  const [showPayment, setShowPayment] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<{
+    id: string;
+    name: string;
+    credits: number;
+    price: number;
+  } | null>(null);
+
+  const packages = [
+    {
+      id: "small",
+      name: "Pacote Pequeno",
+      credits: 50,
+      price: 99,
+      popular: false
+    },
+    {
+      id: "medium",
+      name: "Pacote Médio",
+      credits: 150,
+      price: 199,
+      popular: true
+    },
+    {
+      id: "large",
+      name: "Pacote Grande",
+      credits: 300,
+      price: 299,
+      popular: false
+    }
+  ];
 
   const handlePackageSelect = (pkg: typeof packages[0]) => {
     setSelectedPackage(pkg);
-    setShowPayment(true);
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    toast.success(`Pacote de ${selectedPackage?.credits} créditos adicionado com sucesso!`);
+    setShowPaymentDialog(false);
+    onOpenChange(false);
+    if (onPackagePurchased) {
+      onPackagePurchased();
+    }
   };
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[900px]">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Pacotes de Análise</DialogTitle>
-            <DialogDescription>
-              Escolha o pacote que melhor atende suas necessidades
-            </DialogDescription>
+            <DialogTitle className="flex items-center gap-2">
+              <FileBarChart2 className="h-5 w-5 text-primary" />
+              Pacotes de créditos para análises adicionais
+            </DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             {packages.map((pkg) => (
-              <Card key={pkg.name} className="p-6">
+              <Card
+                key={pkg.id}
+                className={`border p-4 hover:border-primary hover:shadow-sm transition-all ${
+                  pkg.popular ? "border-primary shadow-sm" : ""
+                }`}
+              >
+                {pkg.popular && (
+                  <div className="absolute -top-3 left-0 right-0 flex justify-center">
+                    <span className="bg-primary text-white text-xs px-3 py-1 rounded-full">
+                      Mais popular
+                    </span>
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <h3 className="font-bold text-xl">{pkg.name}</h3>
-                    <p className="text-3xl font-bold">
+                    <h3 className="font-semibold">{pkg.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <PackageCheck className="h-4 w-4 text-primary" />
+                      <span className="text-sm">
+                        <strong>{pkg.credits}</strong> créditos
+                      </span>
+                    </div>
+                    <div className="text-2xl font-semibold">
                       R$ {pkg.price.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {pkg.credits} créditos
-                    </p>
+                    </div>
                   </div>
 
-                  <ul className="space-y-2">
-                    {pkg.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>Não expiram</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>Disponíveis imediatamente</span>
+                    </li>
                   </ul>
 
                   <Button
                     className="w-full"
                     onClick={() => handlePackageSelect(pkg)}
                   >
-                    Selecionar pacote
+                    Comprar pacote
                   </Button>
                 </div>
               </Card>
@@ -114,11 +129,18 @@ export function AnalysisPackagesDialog({
         </DialogContent>
       </Dialog>
 
-      <PaymentGatewayDialog
-        open={showPayment}
-        onOpenChange={setShowPayment}
-        package={selectedPackage}
-      />
+      {selectedPackage && (
+        <PaymentGatewayDialog
+          open={showPaymentDialog}
+          onOpenChange={setShowPaymentDialog}
+          packageDetails={{
+            name: selectedPackage.name,
+            price: selectedPackage.price,
+            description: `${selectedPackage.credits} créditos para análise de arquivos`
+          }}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
     </>
   );
 }
