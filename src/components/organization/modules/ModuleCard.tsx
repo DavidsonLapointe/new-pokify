@@ -61,10 +61,10 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
   
   return (
     <Card 
-      className={`w-[220px] h-[190px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
+      className={`w-[200px] h-[180px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
       onClick={() => onShowDetails(tool)}
     >
-      <CardContent className="p-4 flex flex-col items-center justify-between h-full relative">
+      <CardContent className="p-3 flex flex-col items-center justify-between h-full relative">
         <div className="absolute top-2 right-2 flex items-center">
           <Tooltip>
             <TooltipTrigger asChild>
@@ -98,15 +98,15 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
           )}
         </div>
         
-        <div className="flex flex-col items-center mt-5">
+        <div className="flex flex-col items-center mt-4">
           <div className={`p-1 rounded-md ${isSelected ? 'text-[#9b87f5]' : 'text-gray-400'}`}>
-            {Icon && <Icon size={32} />}
+            {Icon && <Icon size={28} />}
           </div>
           
           <div className="text-center w-full mt-2">
-            <p className="font-medium text-sm mb-1">{tool.title}</p>
+            <p className="font-medium text-xs mb-1">{tool.title}</p>
             <div className="flex flex-col items-center">
-              <p className="text-sm text-[#6E59A5] font-bold">
+              <p className="text-xs text-[#6E59A5] font-bold">
                 {formatPrice(tool.price)}<span className="text-xs text-gray-500">/setup</span>
               </p>
               

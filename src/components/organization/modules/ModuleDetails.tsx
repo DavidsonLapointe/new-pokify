@@ -47,7 +47,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
   const Icon = selectedTool.icon;
 
   return (
-    <Card className="p-5 bg-[#F8F8FB]">
+    <Card className="p-5 bg-[#F8F8FB] max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 text-[#9b87f5]">
           {React.createElement(Icon, { size: 24 })}
@@ -81,8 +81,8 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
         )}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-lg border border-gray-100 h-full">
           <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
             <CheckCircle2 className="h-5 w-5 mr-2" />
             Benefícios
@@ -97,7 +97,7 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
           </ul>
         </div>
         
-        <div className="bg-white p-5 rounded-lg border border-gray-100 h-full">
+        <div className="bg-white p-4 rounded-lg border border-gray-100 h-full">
           <h4 className="text-[#9b87f5] font-medium mb-3 flex items-center">
             <CheckCircle2 className="h-5 w-5 mr-2" />
             Como Funciona
