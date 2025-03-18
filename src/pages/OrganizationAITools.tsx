@@ -20,7 +20,6 @@ const OrganizationAITools = () => {
     setIsExecuteModalOpen,
     currentConfigTool,
     currentExecuteTool,
-    handleToolAction,
     handleToolExecution,
     getToolById,
     updateSetupStatus
