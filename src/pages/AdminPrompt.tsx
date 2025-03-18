@@ -66,7 +66,9 @@ const AdminPrompt = () => {
         content: prompt.content,
         description: prompt.description || '',
         type: prompt.type,
-        module: prompt.metadata?.module || 'geral'
+        // Fix the metadata.module access with proper type safety
+        module: prompt.metadata && typeof prompt.metadata === 'object' ? 
+                prompt.metadata.module as string || 'geral' : 'geral'
       })));
     } catch (error) {
       console.error('Erro ao buscar prompts:', error);
