@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -283,12 +282,10 @@ const AIToolsPage = () => {
     <div className="space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold">Ferramentas de IA</h1>
-        <p className="text-gray-500">Ferramentas de IA para otimizar seu processo de vendas</p>
+        <p className="text-gray-500">Selecione abaixo uma ferramenta de IA para otimizar seu processo operacional:</p>
       </div>
 
       <div>
-        <p className="text-gray-600 mb-4">Ferramentas configuradas disponíveis para uso:</p>
-        
         <div className="relative">
           <div className="flex items-center space-x-4 overflow-x-auto py-4 px-1">
             <button 
