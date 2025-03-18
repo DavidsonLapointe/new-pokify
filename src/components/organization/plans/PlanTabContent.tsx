@@ -33,6 +33,7 @@ export function PlanTabContent() {
   nextBillingDate.setDate(1);
 
   // Credits data (example)
+  // Convert plan.credits to a number to fix the type error
   const monthlyQuota = plan?.credits ? Number(plan.credits) : 0;
   const usedCredits = 45; // Example
   const additionalCredits = 20; // Example
@@ -62,7 +63,7 @@ export function PlanTabContent() {
       />
       
       <CreditsBalanceCard 
-        monthlyQuota={Number(monthlyQuota)}
+        monthlyQuota={monthlyQuota}
         used={usedCredits}
         additionalCredits={additionalCredits}
         onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
