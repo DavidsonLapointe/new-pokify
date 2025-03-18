@@ -32,15 +32,7 @@ export function PlanTabContent() {
   nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
   nextBillingDate.setDate(1);
 
-  // Ensure credits is properly converted to a number
-  const credits = plan?.credits !== undefined ? 
-    (typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : Number(plan.credits)) : 0;
-  
-  // Ensure monthlyQuota is a number
-  const monthlyQuota = Number(credits);
-  const usedCredits = 45; // Example
-  const additionalCredits = 20; // Example
-
+  // Properly handle missing data case
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -57,13 +49,24 @@ export function PlanTabContent() {
     );
   }
 
-  // Create a plan object with properly typed properties
+  // Create a properly typed plan object with numerical values where needed
   const typedPlan: Plan = {
-    ...plan,
     id: typeof plan.id === 'string' ? parseInt(plan.id, 10) : plan.id,
+    name: plan.name,
     price: typeof plan.price === 'string' ? parseFloat(plan.price) : plan.price,
-    credits: typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : Number(plan.credits)
+    shortDescription: plan.shortDescription || plan.description || "",
+    description: plan.description,
+    benefits: Array.isArray(plan.benefits) ? plan.benefits : [],
+    active: Boolean(plan.active),
+    stripeProductId: plan.stripeProductId,
+    stripePriceId: plan.stripePriceId,
+    credits: typeof plan.credits === 'string' ? parseInt(plan.credits, 10) : Number(plan.credits || 0)
   };
+
+  // Ensure credits and used values are numbers
+  const monthlyQuota = typedPlan.credits || 0;
+  const usedCredits = 45; // Example
+  const additionalCredits = 20; // Example
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -86,11 +89,12 @@ export function PlanTabContent() {
         onOpenChange={setIsChangePlanDialogOpen}
         currentPlan={typedPlan}
         availablePlans={[
-          // Exemplos de planos disponíveis
+          // Exemplos de planos disponíveis (com valores numéricos)
           {
-            id: "starter",
+            id: 1,
             name: "Starter",
             price: 99,
+            shortDescription: "Para pequenas empresas iniciando com IA",
             description: "Para pequenas empresas iniciando com IA",
             benefits: [
               "Análise de até 20 leads por mês",
@@ -101,9 +105,10 @@ export function PlanTabContent() {
             active: true
           },
           {
-            id: "professional",
+            id: 2,
             name: "Professional",
             price: 249,
+            shortDescription: "Para equipes em crescimento",
             description: "Para equipes em crescimento",
             benefits: [
               "Análise de até 100 leads por mês",
