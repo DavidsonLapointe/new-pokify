@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -162,7 +161,7 @@ export const useModulesManagement = () => {
     setCancelModuleId,
     setCancelReason,
     setIsCancelDialogOpen,
-    setSetupContactDialogOpen,
+    setIsSetupContactDialogOpen,
     setSetupContactInfo,
     handleSaveModule,
     handleDeleteModule,

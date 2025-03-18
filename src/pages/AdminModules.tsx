@@ -26,7 +26,8 @@ const AdminModules = () => {
     setIsCreateDialogOpen,
     setEditingModule,
     setIsCancelDialogOpen,
-    setSetupContactDialogOpen,
+    setCancelModuleId,
+    setIsSetupContactDialogOpen,
     setSetupContactInfo,
     handleSaveModule,
     handleDeleteModule,
@@ -47,7 +48,7 @@ const AdminModules = () => {
 
   const handleSubmitContactInfo = () => {
     console.log("Informações de contato enviadas:", setupContactInfo);
-    setSetupContactDialogOpen(false);
+    setIsSetupContactDialogOpen(false);
     // Aqui você pode adicionar a lógica para enviar as informações de contato
   };
 
@@ -75,7 +76,7 @@ const AdminModules = () => {
               onDeleteModule={(id) => {
                 setIsCancelDialogOpen(true);
                 setEditingModule(null);
-                cancelModuleId !== id && setCancelModuleId(id);
+                setCancelModuleId(id);
               }}
               deletingModuleId={deletingModuleId}
             />
@@ -103,7 +104,7 @@ const AdminModules = () => {
       {/* Diálogo para setup de contato */}
       <SetupContactDialog
         open={isSetupContactDialogOpen}
-        onOpenChange={setSetupContactDialogOpen}
+        onOpenChange={setIsSetupContactDialogOpen}
         setupContactInfo={setupContactInfo}
         onContactInfoChange={handleContactInfoChange}
         onSubmit={handleSubmitContactInfo}
