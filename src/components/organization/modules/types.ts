@@ -17,6 +17,10 @@ export interface Tool {
   badgeLabel: string;
   howItWorks: string[];
   benefits: string[];
+  executeLabel?: string;
+  executeIcon?: React.ElementType;
+  actionLabel?: string;
+  actionIcon?: React.ElementType;
 }
 
 export interface SetupContactInfo {
