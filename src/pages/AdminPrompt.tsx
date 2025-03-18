@@ -20,17 +20,23 @@ type ModuleGroup = {
   prompts: Prompt[];
 };
 
+// Define type for our newPrompt state to ensure consistent type usage
+type PromptFormData = Omit<Prompt, "id"> & { 
+  module: string; 
+  company_id?: string;
+};
+
 const AdminPrompt = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [newPrompt, setNewPrompt] = useState({ 
+  const [newPrompt, setNewPrompt] = useState<PromptFormData>({ 
     name: "", 
     content: "", 
     description: "",
-    type: "global", // Valor padrão para o tipo
-    module: "geral", // Valor padrão para o módulo
-    company_id: undefined // Para prompts customizados
+    type: "global",
+    module: "geral",
+    company_id: undefined
   });
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -102,7 +108,14 @@ const AdminPrompt = () => {
   };
 
   const handleNewPrompt = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "global", module: "geral", company_id: undefined });
+    setNewPrompt({ 
+      name: "", 
+      content: "", 
+      description: "", 
+      type: "global", 
+      module: "geral", 
+      company_id: undefined 
+    });
     setIsEditing(false);
     setSelectedPrompt(null);
     setIsModalOpen(true);
@@ -187,7 +200,14 @@ const AdminPrompt = () => {
   };
 
   const handleCancel = () => {
-    setNewPrompt({ name: "", content: "", description: "", type: "global", module: "geral", company_id: undefined });
+    setNewPrompt({ 
+      name: "", 
+      content: "", 
+      description: "", 
+      type: "global", 
+      module: "geral", 
+      company_id: undefined 
+    });
     setIsModalOpen(false);
     setIsEditing(false);
     setSelectedPrompt(null);
@@ -210,6 +230,10 @@ const AdminPrompt = () => {
   const handleView = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
     setIsViewModalOpen(true);
+  };
+
+  const handlePromptChange = (updatedPrompt: PromptFormData) => {
+    setNewPrompt(updatedPrompt);
   };
 
   // Agrupar os prompts por módulo e tipo
@@ -310,7 +334,7 @@ const AdminPrompt = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         prompt={newPrompt}
-        onPromptChange={setNewPrompt}
+        onPromptChange={handlePromptChange}
         onSave={handleSavePrompt}
         onCancel={handleCancel}
         isEditing={isEditing}
