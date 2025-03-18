@@ -213,7 +213,9 @@ export const SetupNotesDialog = ({
                               </div>
                             </div>
                           ) : (
-                            <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+                            <p className="text-sm whitespace-pre-wrap">
+                              <span className="font-medium">({note.userName || "Usuário"})</span> {note.content}
+                            </p>
                           )}
 
                           <p className="text-xs text-gray-500">
