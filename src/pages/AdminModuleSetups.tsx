@@ -7,7 +7,7 @@ import { SetupStatus } from "@/components/organization/modules/types";
 import { toast } from "sonner";
 
 const AdminModuleSetups = () => {
-  // Handler para quando o status de um setup for alterado
+  // Handler for when the status of a setup is changed
   const handleSetupStatusChange = (
     setupId: string, 
     moduleId: string, 
@@ -16,11 +16,11 @@ const AdminModuleSetups = () => {
   ) => {
     console.log(`Setup ${setupId} para o módulo ${moduleId} da organização ${organizationId} foi atualizado para ${newStatus}`);
     
-    // Aqui você pode adicionar a lógica para atualizar o estado global ou fazer uma chamada de API
-    // Quando for "completed", isso deveria mudar o status do módulo para "contracted" na organização
+    // Here you could add logic to update global state or make an API call
+    // When status is "completed", this should change the module status to "contracted" for the organization
     if (newStatus === "completed") {
       toast.success(`O módulo ${moduleId} foi configurado e agora está disponível para a organização ${organizationId}`);
-      // Em um ambiente real, isso seria feito através de uma API
+      // In a real environment, this would be done through an API
     }
   };
 
@@ -30,7 +30,7 @@ const AdminModuleSetups = () => {
         <h1 className="text-2xl font-bold">Setups</h1>
         <p className="text-sm text-muted-foreground">Lista de Implantações Pendentes e em Andamento</p>
       </div>
-      <Card className="border-t-0 rounded-t-none border-0 shadow-none">
+      <Card className="border-0 shadow-none">
         <CardContent className="pt-6">
           <TooltipProvider>
             <ModuleSetupsList onStatusChange={handleSetupStatusChange} />
