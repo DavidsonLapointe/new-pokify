@@ -1,4 +1,3 @@
-
 import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm";
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
@@ -61,7 +60,7 @@ const mockedPackages: AnalysisPackage[] = [
 
 const AdminAnalysisPackages = () => {
   const [packages, setPackages] = useState<AnalysisPackage[]>(mockedPackages);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -73,8 +72,7 @@ const AdminAnalysisPackages = () => {
   });
 
   useEffect(() => {
-    // Just for visual demonstration, we'll not actually fetch from API
-    // but set a brief loading state
+    // Just for visual demonstration, we'll set a brief loading state
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -218,7 +216,7 @@ const AdminAnalysisPackages = () => {
       <div>
         <h1 className="text-3xl font-semibold">Pacotes de Créditos</h1>
         <p className="text-muted-foreground mt-1">
-          Gerencie os pacotes de créditos adicionais para análises
+          Gerencie os pacotes de créditos adicionais
         </p>
       </div>
 
