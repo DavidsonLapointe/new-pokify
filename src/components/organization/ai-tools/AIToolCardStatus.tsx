@@ -1,31 +1,58 @@
 
 import React from "react";
 import { ToolStatus } from "@/components/organization/modules/types";
-import { Lock, AlertTriangle, CheckCircle2, Clock, RotateCw } from "lucide-react";
+import { Lock, AlertTriangle, CheckCircle2, Clock, RefreshCw } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AIToolCardStatusProps {
   status: ToolStatus;
 }
 
 export const AIToolCardStatus: React.FC<AIToolCardStatusProps> = ({ status }) => {
-  const getStatusIcon = () => {
+  const getStatusInfo = () => {
     switch (status) {
       case "not_contracted": 
-        return <Lock size={16} className="text-red-500" />;
+        return { 
+          icon: <Lock size={16} className="text-red-500" />,
+          label: "Não contratada"
+        };
       case "contracted": 
-        return <AlertTriangle size={16} className="text-yellow-500" />;
+        return { 
+          icon: <AlertTriangle size={16} className="text-yellow-500" />,
+          label: "Pendente de configuração"
+        };
       case "configured": 
-        return <CheckCircle2 size={16} className="text-green-500" />;
+        return { 
+          icon: <CheckCircle2 size={16} className="text-green-500" />,
+          label: "Configurada e pronta para uso"
+        };
       case "coming_soon":
-        return <Clock size={16} className="text-gray-500" />;
+        return { 
+          icon: <Clock size={16} className="text-gray-500" />,
+          label: "Em breve disponível"
+        };
       case "setup":
-        return <RotateCw size={16} className="text-blue-500" />;
+        return { 
+          icon: <RefreshCw size={16} className="text-blue-500 animate-spin" />,
+          label: "Nossa equipe está configurando esta ferramenta para sua organização"
+        };
     }
   };
 
+  const statusInfo = getStatusInfo();
+
   return (
-    <div className="absolute top-2 right-2">
-      {getStatusIcon()}
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="absolute top-2 right-2">
+            {statusInfo.icon}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" align="center" className="bg-white p-2 text-xs max-w-[200px] text-center">
+          {statusInfo.label}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

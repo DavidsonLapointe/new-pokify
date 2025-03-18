@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tool } from "./types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, Clock, CreditCard, Pencil, Settings, Zap } from "lucide-react";
+import { CheckCircle2, Clock, CreditCard, Pencil, Settings, Zap, AlertTriangle, RefreshCw, Info } from "lucide-react";
 
 interface ModuleDetailsProps {
   selectedTool: Tool;
@@ -92,7 +92,35 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
             <AlertTriangle className="h-4 w-4 mr-1" /> Necessita configuração
           </span>
         )}
+        
+        {selectedTool.status === "setup" && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-blue-600 text-xs font-medium flex items-center cursor-help">
+                  <Info className="h-4 w-4 mr-1" /> Em configuração pela nossa equipe
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p>Nossa equipe está trabalhando na configuração deste módulo para sua organização. Você receberá uma notificação quando estiver pronto para uso.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
+      
+      {selectedTool.status === "setup" && (
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-md p-3 flex items-start">
+          <RefreshCw className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0 animate-spin" />
+          <div>
+            <p className="text-sm text-blue-800 font-medium">Configuração em andamento</p>
+            <p className="text-xs text-blue-600">
+              Nossa equipe de especialistas está configurando este módulo especificamente para as necessidades da sua organização. 
+              Este processo geralmente leva de 1 a 3 dias úteis e você será notificado quando estiver pronto para uso.
+            </p>
+          </div>
+        </div>
+      )}
       
       <p className="text-gray-600 mb-6 text-sm text-left">{selectedTool.detailedDescription}</p>
       
@@ -147,6 +175,3 @@ export const ModuleDetails: React.FC<ModuleDetailsProps> = ({
     </Card>
   );
 };
-
-// Adicione os ícones que faltavam
-import { AlertTriangle } from "lucide-react";

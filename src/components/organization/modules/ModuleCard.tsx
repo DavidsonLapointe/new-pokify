@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,7 +43,7 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
       case "setup":
         return {
           icon: <RefreshCw size={18} className="text-blue-500" />,
-          tooltip: "Módulo em processo de setup"
+          tooltip: "Nossa equipe está realizando a configuração inicial deste módulo para sua organização"
         };
     }
   };
@@ -60,6 +59,7 @@ export const ModuleCard = ({ tool, isSelected, onShowDetails, onCancelModule }: 
   const statusInfo = getStatusInfo(tool.status);
   
   return (
+    
     <Card 
       className={`w-[200px] h-[180px] flex-shrink-0 mx-auto ${isSelected ? 'bg-[#F1F0FB] border-[#9b87f5]' : 'bg-white border-gray-200'} hover:shadow-md transition-shadow cursor-pointer`}
       onClick={() => onShowDetails(tool)}

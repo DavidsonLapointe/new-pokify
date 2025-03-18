@@ -1,4 +1,3 @@
-
 import { Tool } from "./types";
 import { 
   Video,
@@ -18,7 +17,7 @@ export const MOCK_TOOLS: Tool[] = [
     detailedDescription: "Crie vídeos personalizados para seus leads utilizando IA. O sistema pode gerar um roteiro baseado no perfil do lead e automaticamente criar vídeos com seu avatar digital.",
     price: 199.90,
     credits: 5,
-    badgeLabel: "Em Setup",
+    badgeLabel: "Em Configuração",
     howItWorks: [
       "Importação de dados do lead a partir do seu CRM",
       "Geração de roteiro personalizado com base no perfil",
