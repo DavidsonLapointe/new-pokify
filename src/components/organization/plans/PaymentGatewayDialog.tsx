@@ -28,6 +28,7 @@ interface PaymentGatewayDialogProps {
     credits: number;
     price: number;
   } | null;
+  onPaymentSuccess?: () => void;
 }
 
 const PaymentForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -199,12 +200,14 @@ const BoletoPaymentDetails = ({
       </div>
     </div>
   );
+
 };
 
 export function PaymentGatewayDialog({
   open,
   onOpenChange,
   package: selectedPackage,
+  onPaymentSuccess
 }: PaymentGatewayDialogProps) {
   const [stripeStatus, setStripeStatus] = useState<StripeConfigStatus>(getInitialStripeStatus());
   const [loading, setLoading] = useState(true);
@@ -253,6 +256,9 @@ export function PaymentGatewayDialog({
   const handleSuccess = () => {
     onOpenChange(false);
     toast.success("Pagamento confirmado! Os créditos foram adicionados à sua conta.");
+    if (onPaymentSuccess) {
+      onPaymentSuccess();
+    }
   };
 
   const handleAlternativePayment = async (method: 'pix' | 'boleto') => {
@@ -364,7 +370,7 @@ export function PaymentGatewayDialog({
         <DialogHeader>
           <DialogTitle>Finalizar compra</DialogTitle>
           <DialogDescription>
-            {selectedPackage.name} - {selectedPackage.credits} créditos
+            {selectedPackage.name} - {selectedPackage.credits}
             <br />
             Valor: R$ {selectedPackage.price.toFixed(2)}
           </DialogDescription>

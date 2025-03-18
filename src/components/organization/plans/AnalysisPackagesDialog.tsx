@@ -133,11 +133,7 @@ export function AnalysisPackagesDialog({
         <PaymentGatewayDialog
           open={showPaymentDialog}
           onOpenChange={setShowPaymentDialog}
-          packageDetails={{
-            name: selectedPackage.name,
-            price: selectedPackage.price,
-            description: `${selectedPackage.credits} créditos para análise de arquivos`
-          }}
+          package={selectedPackage}
           onPaymentSuccess={handlePaymentSuccess}
         />
       )}

@@ -33,7 +33,7 @@ export function PlanTabContent() {
   nextBillingDate.setDate(1);
 
   // Credits data (example)
-  const monthlyQuota = plan?.credits || 0;
+  const monthlyQuota = plan?.credits ? Number(plan.credits) : 0;
   const usedCredits = 45; // Example
   const additionalCredits = 20; // Example
 
@@ -108,6 +108,10 @@ export function PlanTabContent() {
       <AnalysisPackagesDialog
         open={isPackagesDialogOpen}
         onOpenChange={setIsPackagesDialogOpen}
+        onPackagePurchased={() => {
+          // Refresh plan data or credits after purchase
+          // Could refetch query here
+        }}
       />
     </div>
   );
