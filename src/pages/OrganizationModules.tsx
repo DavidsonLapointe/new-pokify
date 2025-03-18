@@ -23,9 +23,9 @@ import {
   HelpCircle,
   Zap,
   Mail,
-  RotateCw,
   Settings,
-  Pencil
+  Pencil,
+  Wrench
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -405,7 +405,7 @@ const OrganizationModules = () => {
         };
       case "setup":
         return {
-          icon: <RotateCw size={18} className="text-blue-500 animate-spin" />,
+          icon: <Wrench size={18} className="text-blue-500" />,
           tooltip: "Módulo em processo de setup"
         };
     }
@@ -555,7 +555,7 @@ const OrganizationModules = () => {
                               className="w-full bg-blue-500 hover:bg-blue-600 h-9 text-xs px-1 shadow-sm opacity-75 cursor-not-allowed"
                               disabled
                             >
-                              <RotateCw className="h-3 w-3 mr-1 animate-spin" />
+                              <Wrench className="h-3 w-3 mr-1" />
                               Aguardando setup
                             </Button>
                           ) : (
