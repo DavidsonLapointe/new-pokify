@@ -1,15 +1,16 @@
 
 import { useState, useEffect } from "react";
 import { Organization } from "@/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { toast } from "sonner";
 import { mockCustomerSuccessOrganizations } from "@/mocks/customerSuccessMocks";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 interface OrganizationSelectorProps {
   onOrganizationChange: (organization: Organization | null) => void;
-  searchTerm?: string;
+  searchTerm: string;
 }
 
 export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: OrganizationSelectorProps) => {
@@ -56,7 +57,7 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
     fetchOrganizations();
   }, []);
 
-  const handleOrganizationChange = async (orgId: string) => {
+  const handleOrganizationClick = async (orgId: string) => {
     try {
       let selectedOrg: Organization | null = null;
       
@@ -98,7 +99,7 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
         (org.cnpj && org.cnpj.includes(searchTerm)) ||
         (org.nomeFantasia && org.nomeFantasia.toLowerCase().includes(searchTerm.toLowerCase()))
       )
-    : organizations;
+    : [];
     
   // Debug the search functionality
   useEffect(() => {
@@ -108,35 +109,45 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
     }
   }, [searchTerm, filteredOrganizations]);
 
+  if (loading) {
+    return (
+      <div className="w-full space-y-2">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-md"></div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full mb-6">
-      <label className="block text-sm font-medium mb-2 text-left">
-        Selecione uma empresa para analisar
-      </label>
-      <Select 
-        onValueChange={handleOrganizationChange}
-        disabled={loading}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Selecione uma empresa" />
-        </SelectTrigger>
-        <SelectContent>
-          {filteredOrganizations.length > 0 ? (
-            filteredOrganizations.map((org) => (
-              <SelectItem key={org.id} value={org.id}>
-                {org.name}
-                {org.status === "pending" && <span className="ml-2 text-xs text-amber-500"> (Pendente)</span>}
-              </SelectItem>
-            ))
-          ) : (
-            <div className="p-2 text-center text-sm text-gray-500">
-              {searchTerm && searchTerm.trim() !== "" 
-                ? "Nenhuma empresa encontrada com este termo" 
-                : "Nenhuma empresa disponível"}
-            </div>
-          )}
-        </SelectContent>
-      </Select>
+    <div className="w-full">
+      {filteredOrganizations.length > 0 ? (
+        <div className="space-y-2 mt-2">
+          {filteredOrganizations.map((org) => (
+            <Card 
+              key={org.id}
+              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleOrganizationClick(org.id)}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="font-medium">{org.name}</div>
+                  {org.nomeFantasia && (
+                    <div className="text-sm text-gray-500">{org.nomeFantasia}</div>
+                  )}
+                </div>
+                {org.status === "pending" && (
+                  <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">Pendente</span>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : searchTerm && searchTerm.trim() !== "" ? (
+        <div className="text-center p-6 border-2 border-dashed rounded-lg mt-2">
+          <p className="text-gray-500">Nenhuma empresa encontrada com este termo</p>
+        </div>
+      ) : null}
     </div>
   );
 };

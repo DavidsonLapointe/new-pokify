@@ -9,6 +9,8 @@ import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const AdminCustomerSuccess = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
@@ -24,6 +26,10 @@ const AdminCustomerSuccess = () => {
     }, 800);
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm("");
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -36,7 +42,23 @@ const AdminCustomerSuccess = () => {
       </div>
 
       <div className="space-y-4">
-        <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-2 text-left">
+            Selecione uma empresa para analisar
+          </label>
+          <div className="flex gap-2">
+            <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+            {searchTerm && (
+              <Button 
+                variant="outline" 
+                onClick={handleClearSearch} 
+                className="flex items-center gap-1"
+              >
+                <X className="h-4 w-4" /> Limpar Filtros
+              </Button>
+            )}
+          </div>
+        </div>
         <OrganizationSelector 
           onOrganizationChange={handleOrganizationChange}
           searchTerm={searchTerm}
