@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminIntegrations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("clients");
+  const [activeTab, setActiveTab] = useState("central");
 
   return (
     <div className="space-y-8">
@@ -28,18 +28,14 @@ const AdminIntegrations = () => {
       </div>
 
       <Tabs 
-        defaultValue="clients" 
+        defaultValue="central" 
         onValueChange={setActiveTab}
         className="w-full"
       >
         <TabsList className="mb-6">
-          <TabsTrigger value="clients">Integrações Clientes</TabsTrigger>
           <TabsTrigger value="central">Integrações Centrais</TabsTrigger>
+          <TabsTrigger value="clients">Integrações Clientes</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="clients">
-          <AdminIntegrationsList />
-        </TabsContent>
         
         <TabsContent value="central">
           <div className="bg-muted/40 rounded-md p-8 text-center">
@@ -49,6 +45,10 @@ const AdminIntegrations = () => {
               <br />Funcionalidade em desenvolvimento.
             </p>
           </div>
+        </TabsContent>
+        
+        <TabsContent value="clients">
+          <AdminIntegrationsList />
         </TabsContent>
       </Tabs>
       
