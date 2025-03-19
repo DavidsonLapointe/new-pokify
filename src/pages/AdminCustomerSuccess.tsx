@@ -11,7 +11,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface CustomerNote {
   id: string;
@@ -81,24 +80,22 @@ const AdminCustomerSuccess = () => {
         </div>
       </div>
 
-      <Card className="border shadow-sm">
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-left">
-                Selecione uma empresa para analisar
-              </label>
-              <div className="w-full max-w-3xl relative">
-                <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
-                <OrganizationSelector 
-                  onOrganizationChange={handleOrganizationChange}
-                  searchTerm={searchTerm}
-                />
-              </div>
+      <div className="p-4">
+        <div className="space-y-2">
+          <div>
+            <label className="block text-sm font-medium mb-2 text-left">
+              Selecione uma empresa para analisar
+            </label>
+            <div className="w-full max-w-3xl relative">
+              <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+              <OrganizationSelector 
+                onOrganizationChange={handleOrganizationChange}
+                searchTerm={searchTerm}
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {loading ? (
         <div className="space-y-6">

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,6 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileText, ChevronUp, ClipboardList } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface OrganizationOverviewProps {
   organization: Organization;
@@ -74,21 +74,15 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
             {getStatusBadge(organization.status)}
             
             {onOpenNotes && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="ml-2 p-0 h-auto w-auto" 
-                      onClick={onOpenNotes}
-                    >
-                      <ClipboardList size={64} strokeWidth={1.25} className="text-primary h-16 w-16" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Anotações de Customer Success</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onOpenNotes}
+                className="ml-2"
+              >
+                <ClipboardList className="mr-2 h-4 w-4" />
+                Anotações
+              </Button>
             )}
           </div>
           
