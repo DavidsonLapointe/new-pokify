@@ -108,7 +108,13 @@ export const SellersTabContent = ({ sellers }: SellersTabContentProps) => {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <RechartsTooltip content={<CustomTooltip />} />
-                <Bar dataKey="quantidade" name="Vendedores" fill="#2563eb" />
+                <Bar 
+                  dataKey="quantidade" 
+                  name="Vendedores" 
+                  fill="#2563eb" 
+                  activeBar={false}
+                  cursor="default"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
