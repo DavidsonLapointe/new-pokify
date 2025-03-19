@@ -37,8 +37,8 @@ export const UsersStatistics = ({ users, organizationName }: UsersStatisticsProp
               <p className="text-2xl font-bold">{users.length}</p>
               <p className="text-sm text-gray-500">Total</p>
               <Button 
-                variant="ghost" 
-                className="text-primary text-xs mt-2 h-6 px-2 hover:bg-primary/5 hover:no-underline"
+                variant="link" 
+                className="text-primary text-xs p-0 h-auto mt-2 hover:underline"
                 onClick={() => handleViewUsers(null)}
               >
                 Ver usuários
@@ -49,8 +49,8 @@ export const UsersStatistics = ({ users, organizationName }: UsersStatisticsProp
               <p className="text-2xl font-bold">{usersByStatus.active || 0}</p>
               <p className="text-sm text-gray-500">Ativos</p>
               <Button 
-                variant="ghost" 
-                className="text-primary text-xs mt-2 h-6 px-2 hover:bg-primary/5 hover:no-underline"
+                variant="link" 
+                className="text-primary text-xs p-0 h-auto mt-2 hover:underline"
                 onClick={() => handleViewUsers('active')}
               >
                 Ver usuários
@@ -61,8 +61,8 @@ export const UsersStatistics = ({ users, organizationName }: UsersStatisticsProp
               <p className="text-2xl font-bold">{usersByStatus.pending || 0}</p>
               <p className="text-sm text-gray-500">Pendentes</p>
               <Button 
-                variant="ghost" 
-                className="text-primary text-xs mt-2 h-6 px-2 hover:bg-primary/5 hover:no-underline"
+                variant="link" 
+                className="text-primary text-xs p-0 h-auto mt-2 hover:underline"
                 onClick={() => handleViewUsers('pending')}
               >
                 Ver usuários
@@ -73,8 +73,8 @@ export const UsersStatistics = ({ users, organizationName }: UsersStatisticsProp
               <p className="text-2xl font-bold">{usersByStatus.inactive || 0}</p>
               <p className="text-sm text-gray-500">Inativos</p>
               <Button 
-                variant="ghost" 
-                className="text-primary text-xs mt-2 h-6 px-2 hover:bg-primary/5 hover:no-underline"
+                variant="link" 
+                className="text-primary text-xs p-0 h-auto mt-2 hover:underline"
                 onClick={() => handleViewUsers('inactive')}
               >
                 Ver usuários
