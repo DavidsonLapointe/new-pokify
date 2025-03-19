@@ -112,7 +112,6 @@ export const AdminAIExecutionsChart = ({
               textAnchor="end"
               height={70}
               tick={{ fontSize: 12 }}
-              stroke="#3b82f6"
             />
             <YAxis 
               allowDecimals={false}
