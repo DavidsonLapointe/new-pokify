@@ -1,5 +1,5 @@
 
-import { User } from '@/types';
+import { User, UserRole } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
     try {
       // For database compatibility, if role is "manager", store it with a prefix
       // This is a temporary solution until the database enum is updated
-      let roleForDatabase = newUser.role;
+      let roleForDatabase: string = newUser.role;
       
       if (newUser.role === "manager") {
         roleForDatabase = "admin"; // Store managers as admins in the database for now
