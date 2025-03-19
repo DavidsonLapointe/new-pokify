@@ -6,3 +6,4 @@ export * from './callsMocks';
 export * from './leadsMocks';
 export * from './plansMocks';
 export * from './dashboardMocks';
+export * from './integrationsMocks';
