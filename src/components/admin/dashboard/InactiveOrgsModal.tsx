@@ -103,10 +103,14 @@ export const InactiveOrgsModal = ({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/admin/organizations/${org.id}`} className="flex items-center gap-1 text-blue-600 hover:underline">
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto text-blue-600 flex items-center gap-1"
+                      onClick={() => window.open('/admin/organizations', '_blank')}
+                    >
                       <ExternalLink className="h-4 w-4" />
                       <span>Ver detalhes</span>
-                    </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
