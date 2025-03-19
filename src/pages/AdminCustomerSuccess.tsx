@@ -8,8 +8,6 @@ import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 
 const AdminCustomerSuccess = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
@@ -45,19 +43,8 @@ const AdminCustomerSuccess = () => {
           <label className="block text-sm font-medium mb-2 text-left">
             Selecione uma empresa para analisar
           </label>
-          <div className="flex gap-2">
-            <div className="w-full max-w-3xl">
-              <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
-            </div>
-            {searchTerm && (
-              <Button 
-                variant="outline" 
-                onClick={handleClearSearch} 
-                className="flex items-center gap-1"
-              >
-                <X className="h-4 w-4" /> Limpar Filtros
-              </Button>
-            )}
+          <div className="w-full max-w-3xl">
+            <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
         <OrganizationSelector 

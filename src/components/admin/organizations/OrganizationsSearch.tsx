@@ -21,6 +21,14 @@ export const OrganizationsSearch = ({ value, onChange }: OrganizationsSearchProp
           onChange={(e) => onChange(e.target.value)}
         />
       </div>
+      <Button 
+        variant="cancel"
+        className="flex items-center gap-2"
+        onClick={() => onChange("")}
+      >
+        <FilterX className="h-4 w-4" />
+        Limpar Filtros
+      </Button>
     </div>
   );
 };
