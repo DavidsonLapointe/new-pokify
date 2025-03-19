@@ -11,7 +11,16 @@ import {
   Legend,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, isValid, parseISO, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { 
+  format, 
+  isValid, 
+  parseISO, 
+  startOfMonth, 
+  endOfMonth, 
+  isWithinInterval, 
+  eachDayOfInterval,
+  isSameDay 
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface DailyBillingData {
@@ -53,14 +62,46 @@ export const AdminDailyBillingChart = ({
       })
     : data;
 
-  // Format dates to show only day
-  const formattedData = filteredData.map(item => {
-    const date = parseISO(item.date);
-    return {
-      ...item,
-      formattedDate: isValid(date) ? format(date, "dd/MM/yyyy") : item.date
-    };
-  });
+  // Generate all days in the selected month
+  const allDaysInMonth = selectedDate && isValid(selectedDate) 
+    ? eachDayOfInterval({
+        start: startOfMonth(selectedDate),
+        end: endOfMonth(selectedDate)
+      })
+    : [];
+
+  // Create a complete dataset including days with zero billing
+  const completeData = allDaysInMonth.length > 0
+    ? allDaysInMonth.map(day => {
+        // Find if we have data for this day
+        const existingData = filteredData.find(item => {
+          const itemDate = parseISO(item.date);
+          return isValid(itemDate) && isSameDay(itemDate, day);
+        });
+
+        // If we have data, use it; otherwise create a zero-billing entry
+        if (existingData) {
+          return {
+            ...existingData,
+            formattedDate: format(day, "dd/MM/yyyy")
+          };
+        } else {
+          return {
+            date: format(day, "yyyy-MM-dd"),
+            amount: 0,
+            plansAmount: 0,
+            setupAmount: 0,
+            formattedDate: format(day, "dd/MM/yyyy")
+          };
+        }
+      })
+    : filteredData.map(item => {
+        const date = parseISO(item.date);
+        return {
+          ...item,
+          formattedDate: isValid(date) ? format(date, "dd/MM/yyyy") : item.date
+        };
+      });
 
   // Custom tooltip component with Portuguese labels
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -88,7 +129,7 @@ export const AdminDailyBillingChart = ({
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={formattedData}
+            data={completeData}
             margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
