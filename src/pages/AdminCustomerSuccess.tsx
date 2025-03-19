@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -80,7 +79,7 @@ const AdminCustomerSuccess = () => {
         </div>
       </div>
 
-      <div className="p-4">
+      <div>
         <div className="space-y-2">
           <div>
             <label className="block text-sm font-medium mb-2 text-left">
