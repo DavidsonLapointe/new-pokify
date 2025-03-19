@@ -74,11 +74,14 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
           </div>
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2 sm:mt-0">
-            <Badge 
-              className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
-            >
-              {getPlanDisplay()}
-            </Badge>
+            <div className="flex flex-col items-center">
+              <span className="text-xs font-medium text-muted-foreground mb-1">Plano</span>
+              <Badge 
+                className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
+              >
+                {getPlanDisplay()}
+              </Badge>
+            </div>
             
             <Button 
               variant="outline"
