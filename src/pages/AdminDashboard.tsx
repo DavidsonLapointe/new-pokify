@@ -73,11 +73,7 @@ const AdminDashboard = () => {
         <TabsContent value="billing" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Faturamento Mensal</h2>
-            <MonthYearSelector 
-              selectedDate={selectedDate} 
-              onDateChange={setSelectedDate}
-              showAllOption={true}
-            />
+            {/* Removido o seletor de mês */}
           </div>
           
           <AdminBillingChart 

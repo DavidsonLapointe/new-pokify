@@ -11,6 +11,8 @@ interface AdminDashboardData {
   monthlyBilling: Array<{
     month: string;
     amount: number;
+    plansAmount: number;
+    setupAmount: number;
   }>;
   newCustomers: Array<{
     month: string;
@@ -35,10 +37,18 @@ const generateMockData = (): AdminDashboardData => {
   }).reverse();
 
   // Generate random billing data
-  const monthlyBilling = months.map(month => ({
-    month,
-    amount: Math.floor(Math.random() * 50000) + 10000,
-  }));
+  const monthlyBilling = months.map(month => {
+    const totalAmount = Math.floor(Math.random() * 50000) + 10000;
+    const plansAmount = Math.floor(totalAmount * (0.6 + Math.random() * 0.2)); // 60-80% do total
+    const setupAmount = totalAmount - plansAmount;
+    
+    return {
+      month,
+      amount: totalAmount,
+      plansAmount,
+      setupAmount
+    };
+  });
 
   // Generate random new customers data
   const newCustomers = months.map(month => ({
