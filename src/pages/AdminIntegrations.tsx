@@ -8,12 +8,13 @@ import { CreateCentralIntegrationDialog } from "@/components/admin/integrations/
 import { CentralIntegrationsList } from "@/components/admin/integrations/CentralIntegrationsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Integration } from "@/types/integration";
+import { mockCentralIntegrations } from "@/mocks";
 
 const AdminIntegrations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isCreateCentralDialogOpen, setIsCreateCentralDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("central");
-  const [centralIntegrations, setCentralIntegrations] = useState<Integration[]>([]);
+  const [centralIntegrations, setCentralIntegrations] = useState<Integration[]>(mockCentralIntegrations);
 
   const handleCentralIntegrationCreated = (integration: Integration) => {
     setCentralIntegrations([...centralIntegrations, integration]);
