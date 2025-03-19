@@ -92,13 +92,21 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
   };
 
   // Filter organizations based on searchTerm
-  const filteredOrganizations = searchTerm 
+  const filteredOrganizations = searchTerm && searchTerm.trim() !== ""
     ? organizations.filter(org => 
         org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (org.cnpj && org.cnpj.includes(searchTerm)) ||
         (org.nomeFantasia && org.nomeFantasia.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : organizations;
+    
+  // Debug the search functionality
+  useEffect(() => {
+    if (searchTerm && searchTerm.trim() !== "") {
+      console.log("Searching with term:", searchTerm);
+      console.log("Found organizations:", filteredOrganizations.length);
+    }
+  }, [searchTerm, filteredOrganizations]);
 
   return (
     <div className="w-full mb-6">
@@ -113,12 +121,20 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
           <SelectValue placeholder="Selecione uma empresa" />
         </SelectTrigger>
         <SelectContent>
-          {filteredOrganizations.map((org) => (
-            <SelectItem key={org.id} value={org.id}>
-              {org.name}
-              {org.status === "pending" && <span className="ml-2 text-xs text-amber-500"> (Pendente)</span>}
-            </SelectItem>
-          ))}
+          {filteredOrganizations.length > 0 ? (
+            filteredOrganizations.map((org) => (
+              <SelectItem key={org.id} value={org.id}>
+                {org.name}
+                {org.status === "pending" && <span className="ml-2 text-xs text-amber-500"> (Pendente)</span>}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="p-2 text-center text-sm text-gray-500">
+              {searchTerm && searchTerm.trim() !== "" 
+                ? "Nenhuma empresa encontrada com este termo" 
+                : "Nenhuma empresa disponível"}
+            </div>
+          )}
         </SelectContent>
       </Select>
     </div>
