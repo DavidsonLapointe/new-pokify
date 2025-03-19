@@ -1,3 +1,4 @@
+
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
@@ -111,7 +112,13 @@ const OrganizationDashboard = () => {
         
         <TabsContent value="leads">
           <LeadsTabContent
-            monthStats={monthStats}
+            monthStats={{
+              total: monthStats.total,
+              active: monthStats.active || 0,
+              pending: monthStats.pending || 0,
+              processed: monthStats.processed || 0,
+              failed: monthStats.failed || 0
+            }}
             monthlyLeadsData={monthlyLeadsData}
             dailyLeadsData={dailyLeadsData}
             monthlyLeadsDate={monthlyLeadsDate}
