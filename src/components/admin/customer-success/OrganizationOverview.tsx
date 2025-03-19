@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, FileText } from "lucide-react";
+import { FileText, ChevronUp } from "lucide-react";
 
 interface OrganizationOverviewProps {
   organization: Organization;
@@ -72,51 +72,48 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
 
   return (
     <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {organization.name}
-          {getStatusBadge(organization.status)}
-        </CardTitle>
-        <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2">
-          <span>Cliente desde {formattedDate}</span>
-          {organization.pendingReason && (
-            <Badge variant="outline" className="sm:ml-2">
-              {getPendingReason(organization.pendingReason)}
-            </Badge>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap items-center gap-4 mb-4">
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500">Plano</h3>
-            <div className="font-medium mt-1">
-              {getPlanDisplay()}
-            </div>
+      <CardHeader className="pb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 mb-2 sm:mb-0">
+            <CardTitle>{organization.name}</CardTitle>
+            {getStatusBadge(organization.status)}
           </div>
-          
           <Button 
-            variant="outline" 
+            variant="cancel" 
             size="sm" 
             onClick={() => setShowMoreDetails(!showMoreDetails)}
-            className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200 ml-auto"
+            className="flex items-center gap-2 self-start sm:self-center"
           >
             {showMoreDetails ? (
               <>
-                <ChevronUp className="h-4 w-4 mr-2" />
+                <ChevronUp className="h-4 w-4" />
                 Ocultar dados cadastrais
               </>
             ) : (
               <>
-                <FileText className="h-4 w-4 mr-2" />
+                <FileText className="h-4 w-4" />
                 Dados cadastrais
               </>
             )}
           </Button>
         </div>
-        
-        {showMoreDetails && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
+          <span className="text-sm text-muted-foreground">Cliente desde {formattedDate}</span>
+          <div className="sm:ml-2 flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Plano:</span>
+            {getPlanDisplay()}
+          </div>
+          {organization.pendingReason && (
+            <Badge variant="outline" className="sm:ml-2 self-start sm:self-auto">
+              {getPendingReason(organization.pendingReason)}
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+      
+      {showMoreDetails && (
+        <CardContent className="pt-4 border-t mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h3 className="text-sm font-semibold text-gray-500">CNPJ</h3>
               <p className="font-medium">{organization.cnpj || "Não informado"}</p>
@@ -147,8 +144,8 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
               <p className="font-medium">{admin?.phone || organization.adminPhone || "Não informado"}</p>
             </div>
           </div>
-        )}
-      </CardContent>
+        </CardContent>
+      )}
     </Card>
   );
 };
