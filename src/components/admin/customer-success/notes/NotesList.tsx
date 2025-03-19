@@ -1,5 +1,4 @@
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { NoteItem } from "./NoteItem";
 
 interface ModuleNote {
@@ -25,25 +24,23 @@ export const NotesList = ({
   if (notes.length === 0) {
     return (
       <div className="text-center py-8 text-sm text-gray-500">
-        Nenhuma anotação encontrada para esta ferramenta.
+        Nenhuma anotação encontrada para esta implantação.
       </div>
     );
   }
 
   return (
-    <ScrollArea className="h-64 rounded-md border p-4">
-      <div className="space-y-4">
-        {notes.map((note) => (
-          <NoteItem
-            key={note.id}
-            note={note}
-            noteId={note.id}
-            moduleId={moduleId}
-            onEditNote={onEditNote}
-            onConfirmDelete={onConfirmDelete}
-          />
-        ))}
-      </div>
-    </ScrollArea>
+    <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+      {notes.map((note) => (
+        <NoteItem
+          key={note.id}
+          note={note}
+          noteId={note.id}
+          moduleId={moduleId}
+          onEditNote={onEditNote}
+          onConfirmDelete={onConfirmDelete}
+        />
+      ))}
+    </div>
   );
 };

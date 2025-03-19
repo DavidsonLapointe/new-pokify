@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -114,7 +113,7 @@ const AdminCustomerSuccess = () => {
             <div className="flex justify-end mb-2">
               <Button 
                 onClick={handleOpenNotes}
-                className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white"
+                className="bg-purple-500 hover:bg-purple-600 text-white"
               >
                 <ClipboardList className="mr-2 h-4 w-4" />
                 Anotações

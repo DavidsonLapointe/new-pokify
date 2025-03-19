@@ -1,10 +1,12 @@
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NotesList } from "./NotesList";
-import { NoteForm } from "./NoteForm";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import { DeleteNoteDialog } from "@/components/admin/modules/dialogs/notes/DeleteNoteDialog";
+import { NotesList } from "./NotesList";
+import { X } from "lucide-react";
 
 interface ModuleNote {
   id: string;
@@ -34,7 +36,7 @@ export const NotesDialog = ({
   onEditNote,
   onDeleteNote
 }: NotesDialogProps) => {
-  const [activeTab, setActiveTab] = useState("notes");
+  const [newNote, setNewNote] = useState("");
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const handleConfirmDelete = () => {
@@ -44,39 +46,62 @@ export const NotesDialog = ({
     }
   };
 
+  const handleAddNote = () => {
+    if (!newNote.trim()) {
+      toast.error("Por favor, digite uma anotação");
+      return;
+    }
+
+    onAddNote(moduleId, newNote);
+    setNewNote("");
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Anotações - {moduleName}</DialogTitle>
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle>Anotações de Customer Success</DialogTitle>
+            <button 
+              onClick={onClose} 
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
           </DialogHeader>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
-            <TabsList className="grid grid-cols-2 mb-4">
-              <TabsTrigger value="notes">Anotações</TabsTrigger>
-              <TabsTrigger value="add">Adicionar</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="notes" className="mt-4">
+          <div className="px-6 pb-2">
+            <div className="text-sm text-gray-600 -mt-2">
+              <p>Empresa: {moduleName}</p>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="text-sm font-medium mb-2">Nova Anotação</h3>
+              <Textarea
+                placeholder="Digite sua anotação sobre esta implantação..."
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                className="h-24 text-sm"
+              />
+              <Button 
+                onClick={handleAddNote} 
+                className="w-full mt-3 bg-purple-500 hover:bg-purple-600"
+              >
+                Adicionar Anotação
+              </Button>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="text-sm font-medium mb-2">Histórico de Anotações</h3>
               <NotesList
                 notes={notes}
                 moduleId={moduleId}
                 onEditNote={(moduleId, noteId, content) => onEditNote(moduleId, noteId, content)}
                 onConfirmDelete={(noteId) => setNoteToDelete(noteId)}
               />
-            </TabsContent>
-            
-            <TabsContent value="add" className="mt-4">
-              <NoteForm
-                moduleId={moduleId}
-                onAddNote={(moduleId, content) => {
-                  onAddNote(moduleId, content);
-                  setActiveTab("notes");
-                }}
-              />
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
       

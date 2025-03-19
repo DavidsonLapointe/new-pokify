@@ -75,6 +75,7 @@ export const NoteItem = ({
             <Button
               size="sm"
               onClick={saveEditedNote}
+              className="bg-purple-500 hover:bg-purple-600"
             >
               Salvar
             </Button>
