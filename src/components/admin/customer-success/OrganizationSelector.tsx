@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { toast } from "sonner";
+import { mockCustomerSuccessOrganizations } from "@/mocks/customerSuccessMocks";
 
 interface OrganizationSelectorProps {
   onOrganizationChange: (organization: Organization | null) => void;
@@ -13,11 +14,13 @@ interface OrganizationSelectorProps {
 export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelectorProps) => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
+  const [useMockData, setUseMockData] = useState(false);
 
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
         setLoading(true);
+        // First try to fetch from Supabase
         const { data, error } = await supabase
           .from('organizations')
           .select('*')
@@ -25,11 +28,25 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
 
         if (error) throw error;
 
-        const formattedOrgs = data.map(org => formatOrganizationData(org));
-        setOrganizations(formattedOrgs);
+        if (data && data.length > 0) {
+          const formattedOrgs = data.map(org => formatOrganizationData(org));
+          setOrganizations(formattedOrgs);
+          setUseMockData(false);
+        } else {
+          // If no data from Supabase, use mock data
+          console.log("Usando dados mockados para organizações na página de Customer Success");
+          setOrganizations(mockCustomerSuccessOrganizations);
+          setUseMockData(true);
+        }
       } catch (error) {
         console.error("Erro ao carregar organizações:", error);
-        toast.error("Erro ao carregar lista de organizações");
+        
+        // Fall back to mock data
+        console.log("Usando dados mockados devido a erro na API");
+        setOrganizations(mockCustomerSuccessOrganizations);
+        setUseMockData(true);
+        
+        toast.warning("Usando dados de exemplo para demonstração");
       } finally {
         setLoading(false);
       }
@@ -40,24 +57,32 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
 
   const handleOrganizationChange = async (orgId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('organizations')
-        .select(`
-          *,
-          profiles(*)
-        `)
-        .eq('id', orgId)
-        .single();
+      let selectedOrg: Organization | null = null;
+      
+      if (useMockData) {
+        // Use mock data
+        selectedOrg = mockCustomerSuccessOrganizations.find(org => org.id === orgId) || null;
+      } else {
+        // Use Supabase data
+        const { data, error } = await supabase
+          .from('organizations')
+          .select(`
+            *,
+            profiles(*)
+          `)
+          .eq('id', orgId)
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Formatando os dados da organização com seus usuários
-      const organization = formatOrganizationData({
-        ...data,
-        users: data.profiles || []
-      });
+        // Formatando os dados da organização com seus usuários
+        selectedOrg = formatOrganizationData({
+          ...data,
+          users: data.profiles || []
+        });
+      }
 
-      onOrganizationChange(organization);
+      onOrganizationChange(selectedOrg);
     } catch (error) {
       console.error("Erro ao carregar detalhes da organização:", error);
       toast.error("Erro ao carregar detalhes da organização");
@@ -81,6 +106,7 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
           {organizations.map((org) => (
             <SelectItem key={org.id} value={org.id}>
               {org.name}
+              {org.status === "pending" && <span className="ml-2 text-xs text-amber-500"> (Pendente)</span>}
             </SelectItem>
           ))}
         </SelectContent>
