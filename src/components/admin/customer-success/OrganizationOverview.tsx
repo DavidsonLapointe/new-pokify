@@ -73,39 +73,38 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
             {getStatusBadge(organization.status)}
           </div>
           
-          <Button 
-            variant="outline"
-            size="sm" 
-            onClick={() => setShowMoreDetails(!showMoreDetails)}
-            className="mt-2 sm:mt-0 bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5] border-0"
-          >
-            {showMoreDetails ? (
-              <>
-                <ChevronUp className="h-4 w-4 mr-1" />
-                Ocultar dados cadastrais
-              </>
-            ) : (
-              <>
-                <FileText className="h-4 w-4 mr-1" />
-                Dados cadastrais
-              </>
-            )}
-          </Button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2 sm:mt-0">
+            <Badge 
+              className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
+            >
+              {getPlanDisplay()}
+            </Badge>
+            
+            <Button 
+              variant="outline"
+              size="sm" 
+              onClick={() => setShowMoreDetails(!showMoreDetails)}
+              className="mt-2 sm:mt-0 bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5] border-0"
+            >
+              {showMoreDetails ? (
+                <>
+                  <ChevronUp className="h-4 w-4 mr-1" />
+                  Ocultar dados cadastrais
+                </>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 mr-1" />
+                  Dados cadastrais
+                </>
+              )}
+            </Button>
+          </div>
         </div>
         
         <div className="flex flex-col sm:flex-row mt-2 items-start sm:items-center gap-y-1 sm:gap-x-4">
           <div className="flex items-center gap-1">
             <span className="text-sm text-muted-foreground">Cliente desde</span>
             <span className="text-sm font-medium">{formattedDate}</span>
-          </div>
-          
-          <div className="flex items-center gap-1">
-            <span className="text-sm text-muted-foreground">Plano:</span>
-            <Badge 
-              className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
-            >
-              {getPlanDisplay()}
-            </Badge>
           </div>
           
           {organization.pendingReason && (
