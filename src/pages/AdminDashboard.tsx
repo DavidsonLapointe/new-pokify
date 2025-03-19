@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { 
   Users, 
   Clock, 
@@ -16,10 +17,12 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { AdminBillingChart } from "@/components/admin/dashboard/AdminBillingChart";
 import { AdminNewCustomersChart } from "@/components/admin/dashboard/AdminNewCustomersChart";
 import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExecutionsChart";
+import { AdminDailyBillingChart } from "@/components/admin/dashboard/AdminDailyBillingChart";
 
 const AdminDashboard = () => {
   const [selectedAIFunction, setSelectedAIFunction] = useState("all");
   const [activeTab, setActiveTab] = useState("billing");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   
   // Get dashboard data from a centralized hook
   const { isLoading, data } = useDashboardData();
@@ -76,6 +79,7 @@ const AdminDashboard = () => {
       >
         <TabsList>
           <TabsTrigger value="billing">Faturamento Mensal</TabsTrigger>
+          <TabsTrigger value="daily-billing">Faturamento Diário</TabsTrigger>
           <TabsTrigger value="customers">Novos Clientes</TabsTrigger>
           <TabsTrigger value="ai-executions">Execuções de IA</TabsTrigger>
         </TabsList>
@@ -88,6 +92,23 @@ const AdminDashboard = () => {
           
           <AdminBillingChart 
             data={data?.monthlyBilling || []} 
+            isLoading={isLoading}
+          />
+        </TabsContent>
+        
+        {/* Faturamento Diário */}
+        <TabsContent value="daily-billing" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Faturamento Diário</h2>
+            <MonthYearSelector 
+              selectedDate={selectedDate} 
+              onDateChange={setSelectedDate}
+            />
+          </div>
+          
+          <AdminDailyBillingChart 
+            data={data?.dailyBilling || []} 
+            selectedDate={selectedDate}
             isLoading={isLoading}
           />
         </TabsContent>
