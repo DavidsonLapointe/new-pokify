@@ -8,11 +8,12 @@ import { AIExecutionsChart } from "@/components/admin/customer-success/AIExecuti
 import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 
 const AdminCustomerSuccess = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleOrganizationChange = (organization: Organization | null) => {
     setLoading(true);
@@ -32,12 +33,15 @@ const AdminCustomerSuccess = () => {
             Acompanhe e gerencie o sucesso dos clientes Leadly
           </p>
         </div>
-        <Badge variant="success" className="text-xs self-start sm:self-auto">
-          Beta
-        </Badge>
       </div>
 
-      <OrganizationSelector onOrganizationChange={handleOrganizationChange} />
+      <div className="space-y-4">
+        <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+        <OrganizationSelector 
+          onOrganizationChange={handleOrganizationChange}
+          searchTerm={searchTerm}
+        />
+      </div>
 
       {loading ? (
         <div className="space-y-6">

@@ -9,9 +9,10 @@ import { mockCustomerSuccessOrganizations } from "@/mocks/customerSuccessMocks";
 
 interface OrganizationSelectorProps {
   onOrganizationChange: (organization: Organization | null) => void;
+  searchTerm?: string;
 }
 
-export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelectorProps) => {
+export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: OrganizationSelectorProps) => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [useMockData, setUseMockData] = useState(false);
@@ -90,6 +91,15 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
     }
   };
 
+  // Filter organizations based on searchTerm
+  const filteredOrganizations = searchTerm 
+    ? organizations.filter(org => 
+        org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (org.cnpj && org.cnpj.includes(searchTerm)) ||
+        (org.fantasyName && org.fantasyName.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : organizations;
+
   return (
     <div className="w-full mb-6">
       <label className="block text-sm font-medium mb-2 text-left">
@@ -103,7 +113,7 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
           <SelectValue placeholder="Selecione uma empresa" />
         </SelectTrigger>
         <SelectContent>
-          {organizations.map((org) => (
+          {filteredOrganizations.map((org) => (
             <SelectItem key={org.id} value={org.id}>
               {org.name}
               {org.status === "pending" && <span className="ml-2 text-xs text-amber-500"> (Pendente)</span>}

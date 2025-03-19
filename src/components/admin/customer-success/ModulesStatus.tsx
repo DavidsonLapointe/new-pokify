@@ -6,11 +6,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getOrganizationById } from "@/mocks/customerSuccessMocks";
+import { Button } from "@/components/ui/button";
+import { NotesDialog } from "./notes/NotesDialog";
 
 interface Module {
   id: string;
   name: string;
   status: "not_contracted" | "contracted" | "configured" | "setup";
+}
+
+interface ModuleNote {
+  id: string;
+  content: string;
+  createdAt: Date;
+  userName: string;
 }
 
 interface ModulesStatusProps {
@@ -20,6 +29,9 @@ interface ModulesStatusProps {
 export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
+  const [moduleNotes, setModuleNotes] = useState<Record<string, ModuleNote[]>>({});
 
   useEffect(() => {
     if (organizationId) {
@@ -113,42 +125,104 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'contracted':
-        return <Badge className="bg-yellow-500 text-white border-0">Contratado</Badge>;
+        return <Badge className="bg-yellow-500 text-white border-0">Contratada</Badge>;
       case 'configured':
-        return <Badge className="bg-green-500 text-white border-0">Configurado</Badge>;
+        return <Badge className="bg-green-500 text-white border-0">Configurada</Badge>;
       case 'setup':
         return <Badge className="bg-blue-500 text-white border-0">Setup</Badge>;
       default:
-        return <Badge className="bg-red-500 text-white border-0">Não contratado</Badge>;
+        return <Badge className="bg-red-500 text-white border-0">Não contratada</Badge>;
     }
   };
 
+  const handleOpenNotes = (module: Module) => {
+    setSelectedModule(module);
+    setIsNotesDialogOpen(true);
+  };
+
+  const handleAddNote = (moduleId: string, content: string) => {
+    const newNote: ModuleNote = {
+      id: crypto.randomUUID(),
+      content,
+      createdAt: new Date(),
+      userName: "Usuário atual" // Ideally, get this from the auth context
+    };
+    
+    setModuleNotes(prev => ({
+      ...prev,
+      [moduleId]: [...(prev[moduleId] || []), newNote]
+    }));
+    
+    toast.success("Anotação adicionada com sucesso!");
+  };
+
+  const handleEditNote = (moduleId: string, noteId: string, newContent: string) => {
+    setModuleNotes(prev => ({
+      ...prev,
+      [moduleId]: (prev[moduleId] || []).map(note => 
+        note.id === noteId ? { ...note, content: newContent } : note
+      )
+    }));
+  };
+
+  const handleDeleteNote = (moduleId: string, noteId: string) => {
+    setModuleNotes(prev => ({
+      ...prev,
+      [moduleId]: (prev[moduleId] || []).filter(note => note.id !== noteId)
+    }));
+    toast.success("Anotação excluída com sucesso!");
+  };
+
   return (
-    <Card className="mb-6">
-      <CardHeader className="p-5">
-        <CardTitle>Ferramentas de IA</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {modules.map((module) => (
-              <div 
-                key={module.id}
-                className="flex items-center justify-between p-3 border rounded-lg"
-              >
-                <span className="font-medium">{module.name}</span>
-                {getStatusBadge(module.status)}
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <Card className="mb-6">
+        <CardHeader className="p-5">
+          <CardTitle>Ferramentas de IA</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {modules.map((module) => (
+                <div 
+                  key={module.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <span className="font-medium">{module.name}</span>
+                  <div className="flex items-center gap-2">
+                    {getStatusBadge(module.status)}
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleOpenNotes(module)}
+                    >
+                      Anotações
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedModule && (
+        <NotesDialog
+          isOpen={isNotesDialogOpen}
+          onClose={() => setIsNotesDialogOpen(false)}
+          moduleName={selectedModule.name}
+          moduleId={selectedModule.id}
+          notes={moduleNotes[selectedModule.id] || []}
+          onAddNote={handleAddNote}
+          onEditNote={handleEditNote}
+          onDeleteNote={handleDeleteNote}
+        />
+      )}
+    </>
   );
 };
