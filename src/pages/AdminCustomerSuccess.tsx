@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -124,18 +125,19 @@ const AdminCustomerSuccess = () => {
                 users={selectedOrganization.users || []} 
                 organizationName={selectedOrganization.name}
               />
+              
+              {/* UsersByPermission moved to below UsersStatistics as per request */}
+              <div className="mt-6">
+                <UsersByPermission
+                  users={selectedOrganization.users || []}
+                  organizationName={selectedOrganization.name}
+                />
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <UsersByPermission
-                users={selectedOrganization.users || []}
-                organizationName={selectedOrganization.name}
-              />
-            </div>
-            
-            <div>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="w-full">
               <AIExecutionsChart organizationId={selectedOrganization.id} />
             </div>
           </div>
