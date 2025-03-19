@@ -96,7 +96,7 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
     ? organizations.filter(org => 
         org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (org.cnpj && org.cnpj.includes(searchTerm)) ||
-        (org.fantasyName && org.fantasyName.toLowerCase().includes(searchTerm.toLowerCase()))
+        (org.nomeFantasia && org.nomeFantasia.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : organizations;
 
