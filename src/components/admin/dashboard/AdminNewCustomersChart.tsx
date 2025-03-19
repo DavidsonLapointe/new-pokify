@@ -31,6 +31,34 @@ export const AdminNewCustomersChart = ({ data, isLoading }: AdminNewCustomersCha
     );
   }
 
+  // Format tooltip messages and translate months
+  const translateMonth = (month: string) => {
+    const [monthAbbr, year] = month.split('/');
+    
+    const monthTranslations: Record<string, string> = {
+      'Jan': 'Jan',
+      'Feb': 'Fev',
+      'Mar': 'Mar',
+      'Apr': 'Abr',
+      'May': 'Mai',
+      'Jun': 'Jun',
+      'Jul': 'Jul',
+      'Aug': 'Ago',
+      'Sep': 'Set',
+      'Oct': 'Out',
+      'Nov': 'Nov',
+      'Dec': 'Dez'
+    };
+    
+    return `${monthTranslations[monthAbbr] || monthAbbr}/${year}`;
+  };
+
+  // Traduz os meses nos dados
+  const translatedData = data.map(item => ({
+    ...item,
+    month: translateMonth(item.month)
+  }));
+
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -51,7 +79,7 @@ export const AdminNewCustomersChart = ({ data, isLoading }: AdminNewCustomersCha
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={data}
+            data={translatedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -60,9 +88,13 @@ export const AdminNewCustomersChart = ({ data, isLoading }: AdminNewCustomersCha
               angle={-45}
               textAnchor="end"
               height={70}
+              tick={{ fontSize: 12 }}
             />
-            <YAxis allowDecimals={false} />
-            <Tooltip content={<CustomTooltip />} />
+            <YAxis 
+              allowDecimals={false} 
+              tick={{ fontSize: 10 }}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={false} />
             <Legend />
             <Bar 
               dataKey="count" 
