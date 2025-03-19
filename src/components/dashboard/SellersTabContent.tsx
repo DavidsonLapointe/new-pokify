@@ -73,13 +73,6 @@ export const SellersTabContent = ({ sellers }: SellersTabContentProps) => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Vendedores</h2>
-        <p className="text-muted-foreground">
-          Visão geral dos vendedores da organização
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           title="Total de Vendedores"
