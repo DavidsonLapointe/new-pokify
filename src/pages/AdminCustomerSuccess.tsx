@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -6,6 +7,7 @@ import { UsersStatistics } from "@/components/admin/customer-success/UsersStatis
 import { AIExecutionsChart } from "@/components/admin/customer-success/AIExecutionsChart";
 import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
+import { CustomerNotes } from "@/components/admin/customer-success/CustomerNotes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 
@@ -21,10 +23,6 @@ const AdminCustomerSuccess = () => {
       setSelectedOrganization(organization);
       setLoading(false);
     }, 800);
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm("");
   };
 
   return (
@@ -68,6 +66,14 @@ const AdminCustomerSuccess = () => {
           {/* OrganizationOverview - Full width */}
           <div className="w-full">
             <OrganizationOverview organization={selectedOrganization} />
+          </div>
+          
+          {/* Customer Notes - Full width */}
+          <div className="w-full">
+            <CustomerNotes 
+              organizationId={selectedOrganization.id} 
+              organizationName={selectedOrganization.name}
+            />
           </div>
           
           {/* ModulesStatus and UsersStatistics - Two columns */}
