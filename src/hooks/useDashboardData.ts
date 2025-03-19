@@ -6,6 +6,7 @@ import { useCallsData } from './dashboard/useCallsData';
 import { usePerformanceData } from './dashboard/usePerformanceData';
 import { useSuggestionsData } from './dashboard/useSuggestionsData';
 import { useObjectionsData } from './dashboard/useObjectionsData';
+import { useAdminDashboard } from './useAdminDashboard';
 
 interface DashboardData {
   callsStats: MonthStats;
@@ -32,6 +33,26 @@ interface DashboardData {
     name: string;
     count: number;
   }[];
+  // Admin dashboard data
+  activeOrganizations: number;
+  pendingSetups: number;
+  inactiveUsers: number;
+  monthlyBilling: Array<{
+    month: string;
+    amount: number;
+  }>;
+  newCustomers: Array<{
+    month: string;
+    count: number;
+  }>;
+  aiExecutions: Array<{
+    month: string;
+    all: number;
+    analysis: number;
+    transcription: number;
+    scoring: number;
+    suggestions: number;
+  }>;
 }
 
 // Mock data for dashboard stats
@@ -76,7 +97,14 @@ export const mockDashboardStats: DashboardData = {
     { name: 'Mostrar ROI', count: 12 },
     { name: 'Contato de follow-up', count: 10 },
     { name: 'Personalizar proposta', count: 8 }
-  ]
+  ],
+  // Admin dashboard mock data
+  activeOrganizations: 28,
+  pendingSetups: 12,
+  inactiveUsers: 8,
+  monthlyBilling: [],
+  newCustomers: [],
+  aiExecutions: []
 };
 
 export const useDashboardData = () => {
@@ -137,6 +165,9 @@ export const useDashboardData = () => {
     updateSuggestionStatus
   } = useSuggestionsData();
 
+  // Get admin dashboard data
+  const { data: adminData, isLoading: adminDataLoading } = useAdminDashboard();
+
   // Mock data for dashboard stats
   const [data, setData] = useState<DashboardData>(mockDashboardStats);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -167,13 +198,26 @@ export const useDashboardData = () => {
     setIsLoading(true);
     
     setTimeout(() => {
+      // Update data with admin dashboard data if available
+      if (adminData) {
+        setData(prevData => ({
+          ...prevData,
+          activeOrganizations: adminData.activeOrganizations,
+          pendingSetups: adminData.pendingSetups,
+          inactiveUsers: adminData.inactiveUsers,
+          monthlyBilling: adminData.monthlyBilling,
+          newCustomers: adminData.newCustomers,
+          aiExecutions: adminData.aiExecutions
+        }));
+      }
+      
       setIsLoading(false);
     }, 500);
-  }, [dateRange]);
+  }, [dateRange, adminData]);
 
   return {
     data,
-    isLoading,
+    isLoading: isLoading || adminDataLoading,
     dateRange,
     setDateRange,
     // Return all the specialized data
