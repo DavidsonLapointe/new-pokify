@@ -106,15 +106,15 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'contracted':
-        return <Badge variant="success">Contratado</Badge>;
+        return <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50">Contratado</Badge>;
       case 'configured':
-        return <Badge variant="secondary">Configurado</Badge>;
+        return <Badge variant="outline" className="border-gray-300 text-gray-700 bg-gray-50">Configurado</Badge>;
       case 'setup':
-        return <Badge variant="warning">Em configuração</Badge>;
+        return <Badge className="bg-yellow-500 text-white border-0">Em configuração</Badge>;
       case 'coming_soon':
-        return <Badge className="bg-purple-500">Em breve</Badge>;
+        return <Badge className="bg-purple-500 text-white border-0">Em breve</Badge>;
       default:
-        return <Badge variant="outline">Não contratado</Badge>;
+        return <Badge variant="outline" className="border-gray-300 text-gray-500">Não contratado</Badge>;
     }
   };
 
