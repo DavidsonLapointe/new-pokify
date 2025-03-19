@@ -32,6 +32,7 @@ export const useAuthLogin = (setUser: (user: User | null) => void) => {
         throw error;
       }
 
+      // Check if the user is a Leadly employee or master
       if (data.role === 'leadly_employee' || data.role === 'leadly_master') {
         const formattedUser = formatUserData(data);
         localStorage.setItem('adminUser', JSON.stringify(formattedUser));

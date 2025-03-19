@@ -14,8 +14,8 @@ interface LoginModalProps {
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [error, setError] = useState<string | null>(null);
-  const { user, setUser } = useUser();
-  const { handleLogin, loading } = useAuthLogin(setUser);
+  const { user, updateUser } = useUser();
+  const { handleLogin, loading } = useAuthLogin(updateUser);
 
   const onLogin = async (email: string, password: string) => {
     try {

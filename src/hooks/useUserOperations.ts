@@ -11,10 +11,10 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
     try {
       // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
-      let roleForDatabase = newUser.role;
+      let roleForDatabase: string = newUser.role;
       
       if (newUser.role === "manager") {
-        roleForDatabase = "admin" as UserRole; // Cast to UserRole to satisfy TypeScript
+        roleForDatabase = "admin";
       }
         
       const { error } = await supabase
