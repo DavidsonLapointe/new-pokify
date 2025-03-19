@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { AdminIntegrationsList } from "@/components/admin/integrations/AdminIntegrationsList";
 import { CreateIntegrationDialog } from "@/components/admin/integrations/CreateIntegrationDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminIntegrations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("clients");
 
   return (
     <div className="space-y-8">
@@ -17,13 +19,38 @@ const AdminIntegrations = () => {
             Gerencie as integrações disponíveis para as empresas
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Integração
-        </Button>
+        {activeTab === "clients" && (
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Integração
+          </Button>
+        )}
       </div>
 
-      <AdminIntegrationsList />
+      <Tabs 
+        defaultValue="clients" 
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <TabsList className="mb-6">
+          <TabsTrigger value="clients">Integrações Clientes</TabsTrigger>
+          <TabsTrigger value="central">Integrações Centrais</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="clients">
+          <AdminIntegrationsList />
+        </TabsContent>
+        
+        <TabsContent value="central">
+          <div className="bg-muted/40 rounded-md p-8 text-center">
+            <h3 className="text-lg font-medium mb-2">Configuração de Integrações Centrais</h3>
+            <p className="text-muted-foreground">
+              Esta área permite configurar integrações que afetam todo o sistema.
+              <br />Funcionalidade em desenvolvimento.
+            </p>
+          </div>
+        </TabsContent>
+      </Tabs>
       
       <CreateIntegrationDialog 
         open={isCreateDialogOpen} 
