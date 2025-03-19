@@ -103,6 +103,7 @@ const AdminDashboard = () => {
             <MonthYearSelector 
               selectedDate={selectedDate} 
               onDateChange={setSelectedDate}
+              billingData={data?.dailyBilling}
             />
           </div>
           
