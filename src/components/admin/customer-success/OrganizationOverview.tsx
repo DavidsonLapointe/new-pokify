@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, FileText } from "lucide-react";
+import { ChevronUp, FileText } from "lucide-react";
 
 interface OrganizationOverviewProps {
   organization: Organization;
@@ -87,7 +87,7 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="flex flex-wrap items-center gap-4 mb-4">
           <div>
             <h3 className="text-sm font-semibold text-gray-500">Plano</h3>
             <div className="font-medium mt-1">
@@ -95,34 +95,25 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
             </div>
           </div>
           
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500">Módulos</h3>
-            <p className="font-medium">
-              {Array.isArray(organization.modules) 
-                ? organization.modules.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ') 
-                : organization.modules || 'Nenhum'}
-            </p>
-          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowMoreDetails(!showMoreDetails)}
+            className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200 ml-auto"
+          >
+            {showMoreDetails ? (
+              <>
+                <ChevronUp className="h-4 w-4 mr-2" />
+                Ocultar dados cadastrais
+              </>
+            ) : (
+              <>
+                <FileText className="h-4 w-4 mr-2" />
+                Dados cadastrais
+              </>
+            )}
+          </Button>
         </div>
-        
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => setShowMoreDetails(!showMoreDetails)}
-          className="flex items-center mt-2 bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200"
-        >
-          {showMoreDetails ? (
-            <>
-              <ChevronUp className="h-4 w-4 mr-2" />
-              Ocultar dados cadastrais
-            </>
-          ) : (
-            <>
-              <FileText className="h-4 w-4 mr-2" />
-              Dados cadastrais
-            </>
-          )}
-        </Button>
         
         {showMoreDetails && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t">
