@@ -92,7 +92,7 @@ export const OrganizationSelector = ({ onOrganizationChange }: OrganizationSelec
 
   return (
     <div className="w-full mb-6">
-      <label className="block text-sm font-medium mb-2">
+      <label className="block text-sm font-medium mb-2 text-left">
         Selecione uma empresa para analisar
       </label>
       <Select 

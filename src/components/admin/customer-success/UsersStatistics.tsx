@@ -1,7 +1,7 @@
 
 import { User, UserStatus } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Link } from "@/components/ui/link";
 import { UsersDialog } from "./UsersDialog";
 import { useState } from "react";
 
@@ -35,49 +35,45 @@ export const UsersStatistics = ({ users }: UsersStatisticsProps) => {
             <div className="bg-gray-50 p-4 rounded-lg text-center">
               <p className="text-2xl font-bold">{users.length}</p>
               <p className="text-sm text-gray-500">Total</p>
-              <Button 
-                variant="link" 
-                className="mt-2"
+              <Link 
+                className="text-primary mt-2 inline-block cursor-pointer"
                 onClick={() => handleViewUsers(null)}
               >
-                Ver todos
-              </Button>
+                Ver usuários
+              </Link>
             </div>
             
             <div className="bg-green-50 p-4 rounded-lg text-center">
               <p className="text-2xl font-bold">{usersByStatus.active || 0}</p>
               <p className="text-sm text-gray-500">Ativos</p>
-              <Button 
-                variant="link" 
-                className="mt-2"
+              <Link 
+                className="text-primary mt-2 inline-block cursor-pointer"
                 onClick={() => handleViewUsers('active')}
               >
-                Ver ativos
-              </Button>
+                Ver usuários
+              </Link>
             </div>
             
             <div className="bg-orange-50 p-4 rounded-lg text-center">
               <p className="text-2xl font-bold">{usersByStatus.pending || 0}</p>
               <p className="text-sm text-gray-500">Pendentes</p>
-              <Button 
-                variant="link" 
-                className="mt-2"
+              <Link 
+                className="text-primary mt-2 inline-block cursor-pointer"
                 onClick={() => handleViewUsers('pending')}
               >
-                Ver pendentes
-              </Button>
+                Ver usuários
+              </Link>
             </div>
             
             <div className="bg-red-50 p-4 rounded-lg text-center">
               <p className="text-2xl font-bold">{usersByStatus.inactive || 0}</p>
               <p className="text-sm text-gray-500">Inativos</p>
-              <Button 
-                variant="link" 
-                className="mt-2"
+              <Link 
+                className="text-primary mt-2 inline-block cursor-pointer"
                 onClick={() => handleViewUsers('inactive')}
               >
-                Ver inativos
-              </Button>
+                Ver usuários
+              </Link>
             </div>
           </div>
         </CardContent>
