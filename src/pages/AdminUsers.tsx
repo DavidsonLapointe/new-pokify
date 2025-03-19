@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -70,13 +71,19 @@ const AdminUsers = () => {
 
   const handleUserUpdate = async (updatedUser: User) => {
     try {
+      // For database compatibility, if role is "manager", store it as "admin"
+      // This is a temporary solution until the database enum is updated
+      const roleForDatabase = updatedUser.role === "manager" 
+        ? "admin" // Store managers as admins in the database for now
+        : updatedUser.role;
+        
       const { error } = await supabase
         .from('profiles')
         .update({
           name: updatedUser.name,
           email: updatedUser.email,
           phone: updatedUser.phone,
-          role: updatedUser.role,
+          role: roleForDatabase,
           permissions: updatedUser.permissions,
           status: updatedUser.status,
           company_leadly_id: updatedUser.company_leadly_id

@@ -9,6 +9,12 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
 
   const updateUser = async (newUser: User) => {
     try {
+      // For database compatibility, if role is "manager", store it with a prefix
+      // This is a temporary solution until the database enum is updated
+      const roleForDatabase = newUser.role === "manager" 
+        ? "admin" // Store managers as admins in the database for now
+        : newUser.role;
+        
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -16,7 +22,7 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
           email: newUser.email,
           phone: newUser.phone,
           avatar: newUser.avatar,
-          role: newUser.role, // This should now work with "manager" role
+          role: roleForDatabase, // Use the converted role
           status: newUser.status,
         })
         .eq('id', newUser.id);
