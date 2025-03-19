@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -124,7 +125,7 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
 
   return (
     <Card className="mb-6">
-      <CardHeader>
+      <CardHeader className="p-5">
         <CardTitle>Ferramentas de IA</CardTitle>
       </CardHeader>
       <CardContent>

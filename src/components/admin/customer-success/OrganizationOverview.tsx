@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Organization } from "@/types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -61,50 +61,55 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
       ? organization.planName || organization.plan 
       : organization.plan.name;
     
-    return (
-      <Badge 
-        className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
-      >
-        {planName}
-      </Badge>
-    );
+    return planName || "Plano não especificado";
   };
 
   return (
     <Card className="mb-6">
-      <CardHeader className="pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 mb-2 sm:mb-0">
+      <CardHeader className="p-5 pb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <div className="flex items-center gap-2">
             <CardTitle>{organization.name}</CardTitle>
             {getStatusBadge(organization.status)}
           </div>
+          
           <Button 
-            variant="cancel" 
+            variant="outline"
             size="sm" 
             onClick={() => setShowMoreDetails(!showMoreDetails)}
-            className="flex items-center gap-2 self-start sm:self-center"
+            className="mt-2 sm:mt-0 bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5] border-0"
           >
             {showMoreDetails ? (
               <>
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="h-4 w-4 mr-1" />
                 Ocultar dados cadastrais
               </>
             ) : (
               <>
-                <FileText className="h-4 w-4" />
+                <FileText className="h-4 w-4 mr-1" />
                 Dados cadastrais
               </>
             )}
           </Button>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
-          <span className="text-sm text-muted-foreground">Cliente desde {formattedDate}</span>
-          <div className="sm:ml-2 flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Plano:</span>
-            {getPlanDisplay()}
+        
+        <div className="flex flex-col sm:flex-row mt-2 items-start sm:items-center gap-y-1 sm:gap-x-4">
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-muted-foreground">Cliente desde</span>
+            <span className="text-sm font-medium">{formattedDate}</span>
           </div>
+          
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-muted-foreground">Plano:</span>
+            <Badge 
+              className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
+            >
+              {getPlanDisplay()}
+            </Badge>
+          </div>
+          
           {organization.pendingReason && (
-            <Badge variant="outline" className="sm:ml-2 self-start sm:self-auto">
+            <Badge variant="outline" className="mt-1 sm:mt-0">
               {getPendingReason(organization.pendingReason)}
             </Badge>
           )}
@@ -112,7 +117,7 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
       </CardHeader>
       
       {showMoreDetails && (
-        <CardContent className="pt-4 border-t mt-4">
+        <CardContent className="pt-4 border-t">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h3 className="text-sm font-semibold text-gray-500">CNPJ</h3>
