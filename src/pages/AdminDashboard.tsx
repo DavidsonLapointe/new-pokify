@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,9 +19,17 @@ import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExec
 
 const AdminDashboard = () => {
   const [selectedAIFunction, setSelectedAIFunction] = useState("all");
+  const [activeTab, setActiveTab] = useState("billing");
   
   // Get dashboard data from a centralized hook
   const { isLoading, data } = useDashboardData();
+  
+  // Reset selectedAIFunction when changing tabs
+  useEffect(() => {
+    if (activeTab === "ai-executions") {
+      setSelectedAIFunction("all");
+    }
+  }, [activeTab]);
   
   return (
     <div className="space-y-6">
@@ -60,7 +68,12 @@ const AdminDashboard = () => {
       </div>
 
       {/* Dashboard tabs */}
-      <Tabs defaultValue="billing" className="space-y-4">
+      <Tabs 
+        defaultValue="billing" 
+        className="space-y-4"
+        onValueChange={setActiveTab}
+        value={activeTab}
+      >
         <TabsList>
           <TabsTrigger value="billing">Faturamento Mensal</TabsTrigger>
           <TabsTrigger value="customers">Novos Clientes</TabsTrigger>
