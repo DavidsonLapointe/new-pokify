@@ -112,8 +112,7 @@ export const AdminBillingChart = ({ data, isLoading }: AdminBillingChartProps) =
               angle={-45}
               textAnchor="end"
               height={70}
-              tick={{ fill: '#3b82f6', fontSize: 12 }}
-              stroke="#3b82f6"
+              tick={{ fontSize: 12 }}
             />
             <YAxis 
               tickFormatter={(value) => formatCurrency(value)}
