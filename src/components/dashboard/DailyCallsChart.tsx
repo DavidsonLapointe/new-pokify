@@ -74,9 +74,19 @@ export const DailyCallsChart = ({
       </div>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          <BarChart 
+            data={data} 
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            barCategoryGap="20%"
+            barGap={0}
+          >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={isMonthly ? "month" : "day"} />
+            <XAxis 
+              dataKey={isMonthly ? "month" : "day"} 
+              axisLine={true}
+              tickLine={false}
+              padding={{ left: 30, right: 30 }}
+            />
             <YAxis />
             <RechartsTooltip content={<CustomTooltip />} cursor={false} />
             <Bar 
@@ -85,7 +95,7 @@ export const DailyCallsChart = ({
               fill="#2563eb" 
               activeBar={false}
               cursor="default"
-              barSize={40}
+              barSize={60}
             />
             <Bar 
               dataKey="processed" 
@@ -93,7 +103,7 @@ export const DailyCallsChart = ({
               fill="#16a34a" 
               activeBar={false}
               cursor="default"
-              barSize={40}
+              barSize={60}
             />
             <Bar 
               dataKey="failed" 
@@ -101,7 +111,7 @@ export const DailyCallsChart = ({
               fill="#dc2626" 
               activeBar={false}
               cursor="default"
-              barSize={40}
+              barSize={60}
             />
           </BarChart>
         </ResponsiveContainer>
