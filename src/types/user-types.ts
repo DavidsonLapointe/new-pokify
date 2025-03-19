@@ -1,5 +1,5 @@
 
-export type UserRole = "admin" | "seller" | "leadly_employee";
+export type UserRole = "admin" | "seller" | "leadly_employee" | "manager";
 export type UserStatus = "active" | "inactive" | "pending";
 
 export interface UserLog {
@@ -14,11 +14,15 @@ export interface User {
   email: string;
   phone?: string;
   role: UserRole;
-  status: UserStatus;
+  status?: UserStatus;
   createdAt: string;
-  lastAccess: string;  
-  permissions: { [key: string]: boolean };
-  logs: UserLog[];
+  updatedAt?: string;
+  lastAccess?: string;  
+  permissions?: { 
+    [key: string]: boolean;
+    routes?: string[];
+  };
+  logs?: UserLog[];
   avatar?: string | null;
   organization?: Organization;
   company_leadly_id?: string;

@@ -55,7 +55,7 @@ export const mockUsers: User[] = [
     email: "gestor@empresa.com",
     phone: "(11) 99876-5432",
     avatar: null,
-    role: "manager",
+    role: "admin", // Changed from 'manager' to 'admin' as manager is not a valid UserRole
     createdAt: "2023-05-16T10:15:00Z",
     updatedAt: "2023-05-16T10:15:00Z",
     lastAccess: "2023-06-01T11:20:00Z",

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { mockDashboardData } from "@/mocks/dashboardMocks";
+import { mockDashboardStats, mockDailyCallsData, mockDailyLeadsData } from "@/mocks/dashboardMocks";
 import { DailyPerformanceData, MonthlyPerformanceData, PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 import { mockOrganizations } from "@/mocks/organizationMocks";
 import { addMonths, format } from "date-fns";
@@ -31,6 +31,33 @@ export const useDashboardData = () => {
 
   // Get ALL sellers from the first organization, regardless of status
   const sellers = mockOrganizations[0]?.users || [];
+
+  // Mock dashboard data
+  const mockDashboardData = {
+    monthStats: mockDashboardStats.currentMonth,
+    dailyPerformanceData: [
+      { day: "01/06", joao: 4, maria: 2 },
+      { day: "02/06", joao: 5, maria: 3 },
+      { day: "03/06", joao: 3, maria: 4 }
+    ],
+    monthlyPerformanceData: [
+      { month: "Jan", joao: 45, maria: 30 },
+      { month: "Fev", joao: 52, maria: 42 },
+      { month: "Mar", joao: 49, maria: 45 }
+    ],
+    dailyLeadsData: mockDailyLeadsData,
+    monthlyLeadsData: [
+      { month: "Jan", novos: 15 },
+      { month: "Fev", novos: 18 },
+      { month: "Mar", novos: 12 }
+    ],
+    dailyCallsData: mockDailyCallsData,
+    monthlyCallsData: [
+      { month: "Jan", calls: 45 },
+      { month: "Fev", calls: 52 },
+      { month: "Mar", calls: 49 }
+    ]
+  };
 
   // Ensure the performance data is correctly typed
   const typedDailyPerformanceData: DailyPerformanceData[] = 

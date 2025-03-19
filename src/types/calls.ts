@@ -22,35 +22,48 @@ export interface LeadInfo {
   interests?: string[];
   painPoints?: string[];
   nextSteps?: string;
+  temperature?: "hot" | "warm" | "cold";
+  status?: string;
 }
 
 export interface CallAnalysis {
-  transcription: string;
-  summary: string;
+  transcription?: string;
+  summary?: string;
   sentiment: {
     temperature: LeadTemperature;
     reason: string;
   };
-  leadInfo: LeadInfo;
+  keywords?: string[];
+  suggestions?: string[];
+  objections?: string[];
+  leadInfo?: LeadInfo;
 }
 
 export interface Call {
   id: string;
-  leadId: string;
-  date: string;
+  leadId?: string;
+  organizationId?: string;
+  userId?: string;
+  date?: string;
   duration: string;
-  status: "success" | "failed";
-  phone: string;
-  seller: string;
-  audioUrl: string | null;
+  status: "success" | "failed" | "processed";
+  phone?: string;
+  seller?: string;
+  audioUrl?: string | null;
   videoUrl?: string | null;
   transcriptionUrl?: string | null;
-  mediaType: "audio" | "video";
+  mediaType?: "audio" | "video";
   analysis?: CallAnalysis;
   crmInfo?: CRMInfo;
-  leadInfo: LeadInfo;
+  leadInfo?: LeadInfo;
   emptyLead?: boolean;
   isNewLead?: boolean;
+  fileName?: string;
+  fileUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  transcription?: string;
+  summary?: string;
 }
 
 export interface StatusConfig {

@@ -37,8 +37,9 @@ export const mockLeads: Lead[] = [
       {
         id: uuidv4(),
         fileName: "call-01.mp3",
-        duration: 325,
-        createdAt: "2023-05-15T14:30:00Z"
+        duration: "5:25",
+        date: "2023-05-15T14:30:00Z",
+        status: "success"
       }
     ]
   },
@@ -82,3 +83,6 @@ export const mockLeads: Lead[] = [
     calls: []
   }
 ];
+
+// Define the exported leadsOrganizacao1 used in other components
+export const leadsOrganizacao1 = mockLeads;

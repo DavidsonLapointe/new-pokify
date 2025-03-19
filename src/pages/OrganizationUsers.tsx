@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { OrgUser } from "@/types/organization-types"; // Import from organization-types
+import { User } from "@/types";
 import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AddUserDialog } from "@/components/organization/AddUserDialog";
@@ -15,14 +15,14 @@ const OrganizationUsers = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<OrgUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   
   const { 
     users, 
-    loading, 
+    isLoading, 
     fetchOrganizationUsers, 
     updateUser 
-  } = useOrganizationUsers(currentUser?.organization?.id);
+  } = useOrganizationUsers();
 
   // Configurar o listener de realtime
   useEffect(() => {
@@ -50,24 +50,24 @@ const OrganizationUsers = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentUser?.organization?.id]);
+  }, [currentUser?.organization?.id, fetchOrganizationUsers]);
 
   const handleAddUser = () => {
     fetchOrganizationUsers();
     setIsAddDialogOpen(false);
   };
 
-  const handleEditUser = (user: OrgUser) => {
+  const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setIsEditDialogOpen(true);
   };
 
-  const handleEditPermissions = (user: OrgUser) => {
+  const handleEditPermissions = (user: User) => {
     setSelectedUser(user);
     setIsPermissionsDialogOpen(true);
   };
 
-  const handleUserUpdate = async (updatedUser: OrgUser) => {
+  const handleUserUpdate = async (updatedUser: User) => {
     const success = await updateUser(updatedUser);
     if (success) {
       setIsEditDialogOpen(false);
@@ -83,7 +83,7 @@ const OrganizationUsers = () => {
     <div className="space-y-8">
       <OrganizationUsersHeader onAddUser={() => setIsAddDialogOpen(true)} />
 
-      {loading ? (
+      {isLoading ? (
         <div>Carregando usuários...</div>
       ) : (
         <UsersTable

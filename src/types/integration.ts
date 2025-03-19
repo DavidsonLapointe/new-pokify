@@ -4,8 +4,11 @@ export interface Integration {
   name: string;
   type: "crm" | "call" | "llm" | "whatsapp";
   description: string;
-  isConnected: boolean;
+  isConnected?: boolean;
+  isActive?: boolean;
   lastSync?: string;
   apiKey?: string;
+  apiEndpoint?: string;
+  iconUrl?: string;
   contactValue?: string;
 }

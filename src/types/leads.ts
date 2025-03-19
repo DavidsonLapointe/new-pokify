@@ -3,18 +3,42 @@ import { Call, LeadInfo } from "./calls";
 
 export interface Lead {
   id: string;
+  organizationId?: string;
   firstName: string;
   lastName?: string;
-  contactType: "phone" | "email";
-  contactValue: string;
-  status: "pending" | "contacted" | "failed";
+  status: "pending" | "contacted" | "failed" | "qualified" | "negotiation";
+  temperature?: "cold" | "warm" | "hot";
+  personType?: "pf" | "pj";
+  contactType?: "phone" | "email";
+  contactValue?: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  razaoSocial?: string;
+  cnpj?: string;
+  cpf?: string;
+  lastContactDate?: string;
   createdAt: string;
-  callCount: number;
+  updatedAt?: string;
+  callCount?: number;
   calls?: {
     id: string;
     date: string;
     duration: string;
     status: "success" | "failed";
+    fileName?: string;
+  }[];
+  crmId?: string;
+  crmLink?: string;
+  source?: string;
+  notes?: {
+    id: string;
+    content: string;
+    createdAt: string;
+    createdBy: {
+      id: string;
+      name: string;
+    };
   }[];
   crmInfo?: {
     funnel: string;
