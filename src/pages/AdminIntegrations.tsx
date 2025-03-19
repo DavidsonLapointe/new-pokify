@@ -33,8 +33,8 @@ const AdminIntegrations = () => {
         className="w-full"
       >
         <TabsList className="mb-6">
-          <TabsTrigger value="central">Integrações Centrais</TabsTrigger>
           <TabsTrigger value="clients">Integrações Clientes</TabsTrigger>
+          <TabsTrigger value="central">Integrações Centrais</TabsTrigger>
         </TabsList>
         
         <TabsContent value="clients">
