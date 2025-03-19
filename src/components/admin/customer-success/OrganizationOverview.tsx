@@ -74,7 +74,7 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
             <CardTitle>{organization.name}</CardTitle>
             {getStatusBadge(organization.status)}
             
-            {/* Botão de anotações (ícone) na posição que foi solicitada */}
+            {/* Botão de anotações (ícone) com tamanho duplicado */}
             {onOpenNotes && (
               <TooltipProvider>
                 <Tooltip>
@@ -82,10 +82,10 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 ml-2"
+                      className="h-12 w-12 ml-2"
                       onClick={onOpenNotes}
                     >
-                      <ClipboardList className="h-6 w-6 text-primary" />
+                      <ClipboardList className="h-12 w-12 text-primary" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Anotações de Customer Success</TooltipContent>
