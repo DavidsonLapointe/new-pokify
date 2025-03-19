@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -282,16 +281,7 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 justify-between">
           <div className="flex flex-row items-center gap-2">
-            {viewMode === "daily" && (
-              <div className="w-[180px]">
-                <MonthYearSelector
-                  selectedDate={selectedDate}
-                  onDateChange={setSelectedDate}
-                  showAllOption={false}
-                  billingData={availableMonths}
-                />
-              </div>
-            )}
+            {/* Modified order: Function select first followed by date selector */}
             <Select
               value={selectedFunction}
               onValueChange={setSelectedFunction}
@@ -307,6 +297,17 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
                 <SelectItem value="suggestions">Sugestões</SelectItem>
               </SelectContent>
             </Select>
+            
+            {viewMode === "daily" && (
+              <div className="w-[180px]">
+                <MonthYearSelector
+                  selectedDate={selectedDate}
+                  onDateChange={setSelectedDate}
+                  showAllOption={false}
+                  billingData={availableMonths}
+                />
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
