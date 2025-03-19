@@ -38,24 +38,6 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
     }
   };
 
-  // Format pending reason
-  const getPendingReason = (reason: string | null) => {
-    if (!reason) return null;
-    
-    switch (reason) {
-      case 'contract_signature':
-        return 'Assinatura de contrato pendente';
-      case 'user_validation':
-        return 'Validação de usuário pendente';
-      case 'mensalidade_payment':
-        return 'Pagamento de mensalidade pendente';
-      case 'pro_rata_payment':
-        return 'Pagamento pro-rata pendente';
-      default:
-        return 'Motivo desconhecido';
-    }
-  };
-
   // Get plan display
   const getPlanDisplay = () => {
     const planName = typeof organization.plan === 'string' 
@@ -123,11 +105,7 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
             <span className="text-sm font-medium">{formattedDate}</span>
           </div>
           
-          {organization.pendingReason && (
-            <Badge variant="outline" className="mt-1 sm:mt-0">
-              {getPendingReason(organization.pendingReason)}
-            </Badge>
-          )}
+          {/* Removed the pendingReason badge as requested */}
         </div>
       </CardHeader>
       
