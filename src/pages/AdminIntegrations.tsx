@@ -20,6 +20,18 @@ const AdminIntegrations = () => {
     setCentralIntegrations([...centralIntegrations, integration]);
   };
 
+  const handleUpdateCentralIntegration = (updatedIntegration: Integration) => {
+    setCentralIntegrations(
+      centralIntegrations.map(integration => 
+        integration.id === updatedIntegration.id ? updatedIntegration : integration
+      )
+    );
+  };
+
+  const handleDeleteCentralIntegration = (id: string) => {
+    setCentralIntegrations(centralIntegrations.filter(integration => integration.id !== id));
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -54,7 +66,11 @@ const AdminIntegrations = () => {
         </TabsList>
         
         <TabsContent value="central">
-          <CentralIntegrationsList />
+          <CentralIntegrationsList 
+            integrations={centralIntegrations} 
+            onUpdateIntegration={handleUpdateCentralIntegration} 
+            onDeleteIntegration={handleDeleteCentralIntegration} 
+          />
         </TabsContent>
         
         <TabsContent value="clients">

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,44 +18,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export const CentralIntegrationsList = () => {
-  // Initialize with three mock integrations
-  const [centralIntegrations, setCentralIntegrations] = useState<Integration[]>([
-    {
-      id: "central-1",
-      name: "Salesforce",
-      type: "crm",
-      description: "Integração central com Salesforce",
-      isConnected: true,
-      apiKey: "sf_api_key_12345",
-      lastSync: "2023-10-15T14:30:00Z"
-    },
-    {
-      id: "central-2",
-      name: "HubSpot",
-      type: "crm",
-      description: "Integração central com HubSpot",
-      isConnected: true,
-      apiKey: "hs_api_key_67890",
-      lastSync: "2023-10-10T09:15:00Z"
-    },
-    {
-      id: "central-3",
-      name: "Zendesk",
-      type: "crm",
-      description: "Integração central com Zendesk",
-      isConnected: false,
-      apiKey: undefined
-    }
-  ]);
-  
+interface CentralIntegrationsListProps {
+  integrations: Integration[];
+  onUpdateIntegration: (updatedIntegration: Integration) => void;
+  onDeleteIntegration: (id: string) => void;
+}
+
+export const CentralIntegrationsList = ({
+  integrations,
+  onUpdateIntegration,
+  onDeleteIntegration
+}: CentralIntegrationsListProps) => {
   const [showApiKey, setShowApiKey] = useState<Record<string, boolean>>({});
   const [currentIntegration, setCurrentIntegration] = useState<Integration | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
-  const handleDeleteIntegration = (id: string) => {
-    setCentralIntegrations(centralIntegrations.filter(integration => integration.id !== id));
-  };
 
   const toggleShowApiKey = (id: string) => {
     setShowApiKey(prev => ({
@@ -68,15 +45,7 @@ export const CentralIntegrationsList = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleUpdateIntegration = (updatedIntegration: Integration) => {
-    setCentralIntegrations(
-      centralIntegrations.map(integration => 
-        integration.id === updatedIntegration.id ? updatedIntegration : integration
-      )
-    );
-  };
-
-  if (centralIntegrations.length === 0) {
+  if (integrations.length === 0) {
     return (
       <div className="bg-muted/40 rounded-md p-8 text-center">
         <h3 className="text-lg font-medium mb-2">Nenhuma integração central configurada</h3>
@@ -90,7 +59,7 @@ export const CentralIntegrationsList = () => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {centralIntegrations.map((integration) => (
+        {integrations.map((integration) => (
           <Card key={integration.id} className="shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">{integration.name}</CardTitle>
@@ -160,7 +129,7 @@ export const CentralIntegrationsList = () => {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction 
-                      onClick={() => handleDeleteIntegration(integration.id)}
+                      onClick={() => onDeleteIntegration(integration.id)}
                       className="bg-destructive text-white hover:bg-destructive/90"
                     >
                       Excluir
@@ -177,7 +146,7 @@ export const CentralIntegrationsList = () => {
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         integration={currentIntegration}
-        onIntegrationUpdated={handleUpdateIntegration}
+        onIntegrationUpdated={onUpdateIntegration}
       />
     </>
   );

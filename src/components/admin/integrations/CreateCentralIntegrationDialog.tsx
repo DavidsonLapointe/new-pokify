@@ -37,7 +37,7 @@ export const CreateCentralIntegrationDialog = ({
       name,
       type: "crm",
       description: `Integração central com ${name}`,
-      isConnected: !!apiKey,
+      isConnected: Boolean(apiKey), // Ensure isConnected is false when no apiKey is provided
       apiKey: apiKey || undefined,
     };
     
