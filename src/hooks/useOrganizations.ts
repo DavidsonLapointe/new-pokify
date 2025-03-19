@@ -14,7 +14,14 @@ export const useOrganizations = () => {
     try {
       // In a real app, this would be an API call
       // For now, we're using mock data
-      setOrganizations(mockOrganizations);
+      
+      // Ensure each organization has a users array
+      const orgsWithUsers = mockOrganizations.map(org => ({
+        ...org,
+        users: org.users || []
+      }));
+      
+      setOrganizations(orgsWithUsers);
       setIsLoading(false);
       return true;
     } catch (err) {

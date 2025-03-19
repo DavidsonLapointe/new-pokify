@@ -51,7 +51,8 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   };
 
   const getActiveUsersCount = (org: Organization) => {
-    return org.users.filter(user => user.status === "active").length;
+    // Safely access users array, providing an empty array if undefined
+    return (org.users || []).filter(user => user.status === "active").length;
   };
 
   const getPendingSteps = (org: Organization) => {
