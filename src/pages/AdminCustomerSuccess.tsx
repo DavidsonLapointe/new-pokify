@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -80,22 +81,24 @@ const AdminCustomerSuccess = () => {
         </div>
       </div>
 
-      <div className="p-4 bg-white rounded-lg shadow-sm">
-        <div className="space-y-2">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-left">
-              Selecione uma empresa para analisar
-            </label>
-            <div className="w-full max-w-3xl relative">
-              <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
-              <OrganizationSelector 
-                onOrganizationChange={handleOrganizationChange}
-                searchTerm={searchTerm}
-              />
+      <Card className="border shadow-sm">
+        <CardContent className="p-4">
+          <div className="space-y-2">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-left">
+                Selecione uma empresa para analisar
+              </label>
+              <div className="w-full max-w-3xl relative">
+                <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+                <OrganizationSelector 
+                  onOrganizationChange={handleOrganizationChange}
+                  searchTerm={searchTerm}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="space-y-6">

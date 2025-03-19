@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,12 +79,11 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="ml-2 p-0 h-16 w-16" 
+                      size="icon"
+                      className="ml-2 p-0 h-auto w-auto" 
                       onClick={onOpenNotes}
                     >
-                      <div className="text-primary w-16 h-16 flex items-center justify-center">
-                        <ClipboardList className="w-12 h-12" strokeWidth={1.25} />
-                      </div>
+                      <ClipboardList size={64} strokeWidth={1.25} className="text-primary h-16 w-16" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Anotações de Customer Success</TooltipContent>
