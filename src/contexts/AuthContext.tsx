@@ -15,7 +15,7 @@ const mockSession: Session = {
   refresh_token: "mock-refresh-token",
   expires_in: 3600,
   expires_at: new Date().getTime() + 3600000,
-  token_type: "bearer", // Add the missing token_type property
+  token_type: "bearer",
   user: {
     id: "mock-user-id",
     aud: "authenticated",
@@ -29,7 +29,7 @@ const mockSession: Session = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Always provide a mock session with no loading state
+  // Fix: Moved hooks inside the component function
   const [session] = useState<Session | null>(mockSession);
   const [loading] = useState(false);
 

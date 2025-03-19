@@ -1,7 +1,5 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
-import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
 import OrganizationLayout from "./components/OrganizationLayout";
@@ -154,10 +152,4 @@ function AppRoutes() {
   );
 }
 
-export default function Root() {
-  return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
-  );
-}
+export default AppRoutes;
