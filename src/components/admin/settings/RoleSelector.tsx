@@ -22,6 +22,10 @@ export const RoleSelector = ({ selectedRole, onRoleChange }: RoleSelectorProps) 
           <Label htmlFor="leadly_employee">Funcionário Leadly</Label>
         </div>
         <div className="flex items-center space-x-2">
+          <RadioGroupItem value="leadly_master" id="leadly_master" />
+          <Label htmlFor="leadly_master">Master Leadly</Label>
+        </div>
+        <div className="flex items-center space-x-2">
           <RadioGroupItem value="admin" id="admin" />
           <Label htmlFor="admin">Administrador</Label>
         </div>

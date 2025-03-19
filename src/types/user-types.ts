@@ -1,5 +1,5 @@
 
-export type UserRole = "admin" | "seller" | "leadly_employee" | "manager";
+export type UserRole = "admin" | "seller" | "leadly_employee" | "manager" | "leadly_master";
 export type UserStatus = "active" | "inactive" | "pending";
 
 export interface UserLog {

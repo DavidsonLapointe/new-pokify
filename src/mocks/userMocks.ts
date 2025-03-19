@@ -214,5 +214,38 @@ export const mockLeadlyEmployees: User[] = [
     ],
     avatar: null,
     company_leadly_id: "leadly1"
+  },
+  {
+    id: "l2",
+    name: "Master Leadly",
+    email: "master@leadly.ai",
+    phone: "+5511999999990",
+    role: "leadly_master" as UserRole,
+    status: "active" as UserStatus,
+    createdAt: "2022-01-01T00:00:00.000Z",
+    lastAccess: "2023-08-15T10:30:00.000Z",
+    permissions: {
+      dashboard: true,
+      organizations: true,
+      users: true,
+      modules: true,
+      plans: true,
+      "credit-packages": true,
+      financial: true,
+      integrations: true,
+      prompt: true,
+      settings: true,
+      profile: true,
+      "analysis-packages": true
+    },
+    logs: [
+      {
+        id: "1",
+        date: "2023-08-15T10:30:00.000Z",
+        action: "Usuário fez login"
+      }
+    ],
+    avatar: null,
+    company_leadly_id: "leadly1"
   }
 ];

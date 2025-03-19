@@ -52,9 +52,9 @@ export const useAuthLogin = () => {
         return;
       }
 
-      // Se for leadly_employee, redireciona para a página de prompts
-      if (profile.role === 'leadly_employee') {
-        console.log("Leadly employee login successful");
+      // Se for leadly_employee ou leadly_master, redireciona para a página de prompts
+      if (profile.role === 'leadly_employee' || profile.role === 'leadly_master') {
+        console.log("Leadly employee/master login successful");
         navigate('/admin/prompt');
         toast.success('Login realizado com sucesso!');
         return;

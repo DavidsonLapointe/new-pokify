@@ -13,6 +13,20 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     settings: true,
     profile: true
   },
+  leadly_master: {
+    dashboard: true,
+    organizations: true,
+    users: true,
+    modules: true,
+    plans: true,
+    "credit-packages": true,
+    financial: true,
+    integrations: true,
+    prompt: true,
+    settings: true,
+    profile: true,
+    "analysis-packages": true
+  },
   admin: {
     dashboard: true,
     leads: true,

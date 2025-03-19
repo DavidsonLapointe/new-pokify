@@ -51,5 +51,19 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     "leads",
     "users",
     "profile"
+  ],
+  leadly_master: [
+    "dashboard",
+    "organizations",
+    "users",
+    "modules",
+    "plans",
+    "credit-packages",
+    "financial",
+    "integrations",
+    "prompt",
+    "settings",
+    "profile",
+    "analysis-packages"
   ]
 };
