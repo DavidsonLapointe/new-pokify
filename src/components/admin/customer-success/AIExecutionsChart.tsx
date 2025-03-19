@@ -18,8 +18,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 
+// Update the interface to make month optional when day is present
 interface AIExecutionData {
-  month: string;
+  month?: string;
   day?: string;
   all: number;
   analysis: number;
@@ -58,7 +59,7 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
         if (viewMode === "monthly") {
           const last6Months = getLastMonths(6);
           const chartData = last6Months.map(month => {
-            const monthData = {
+            const monthData: AIExecutionData = {
               month,
               all: 0,
               analysis: 0,
@@ -99,7 +100,8 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
 
           const daysInMonth = getDaysInMonth(selectedDate);
           const chartData = daysInMonth.map(day => {
-            const dayData = {
+            // Ensure the daily data conforms to AIExecutionData by including all required properties
+            const dayData: AIExecutionData = {
               day,
               all: 0,
               analysis: 0,
@@ -211,7 +213,7 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
     if (viewMode === "monthly") {
       return data.map(item => ({
         ...item,
-        month: translateMonth(item.month)
+        month: item.month ? translateMonth(item.month) : undefined
       }));
     } else {
       return data;
@@ -256,16 +258,17 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 justify-between">
           {viewMode === "daily" && (
-            <MonthYearSelector
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-              showAllOption={false}
-            />
+            <div className="w-[180px]">
+              <MonthYearSelector
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                showAllOption={false}
+              />
+            </div>
           )}
           <Select
             value={selectedFunction}
             onValueChange={setSelectedFunction}
-            className={viewMode === "daily" ? "sm:ml-auto" : ""}
           >
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Selecionar função" />
