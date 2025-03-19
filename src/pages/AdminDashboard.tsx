@@ -18,11 +18,13 @@ import { AdminBillingChart } from "@/components/admin/dashboard/AdminBillingChar
 import { AdminNewCustomersChart } from "@/components/admin/dashboard/AdminNewCustomersChart";
 import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExecutionsChart";
 import { AdminDailyBillingChart } from "@/components/admin/dashboard/AdminDailyBillingChart";
+import { InactiveOrgsModal } from "@/components/admin/dashboard/InactiveOrgsModal";
 
 const AdminDashboard = () => {
   const [selectedAIFunction, setSelectedAIFunction] = useState("all");
   const [activeTab, setActiveTab] = useState("billing");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
   
   // Get dashboard data from a centralized hook
   const { isLoading, data } = useDashboardData();
@@ -61,13 +63,18 @@ const AdminDashboard = () => {
           tooltip="Empresas com configuração inicial pendente ou em andamento"
         />
         
-        <StatCard
-          title="Empresas Sem Acesso (>5 dias)"
-          value={data?.inactiveUsers || 0}
-          icon={Calendar}
-          color="text-red-500"
-          tooltip="Empresas onde nenhum usuário fez login nos últimos 5 dias"
-        />
+        <div 
+          className="cursor-pointer" 
+          onClick={() => setIsInactiveOrgsModalOpen(true)}
+        >
+          <StatCard
+            title="Empresas Sem Acesso (>5 dias)"
+            value={data?.inactiveUsers || 0}
+            icon={Calendar}
+            color="text-red-500"
+            tooltip="Empresas onde nenhum usuário fez login nos últimos 5 dias"
+          />
+        </div>
       </div>
 
       {/* Dashboard tabs */}
@@ -156,6 +163,14 @@ const AdminDashboard = () => {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Inactive Organizations Modal */}
+      <InactiveOrgsModal 
+        isOpen={isInactiveOrgsModalOpen}
+        onOpenChange={setIsInactiveOrgsModalOpen}
+        inactiveOrgs={data?.inactiveOrganizations || []}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { format, subMonths, subDays, parseISO } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,15 @@ export interface AdminDashboardData {
   activeOrganizations: number;
   pendingSetups: number;
   inactiveUsers: number;
+  inactiveOrganizations: Array<{
+    id: string;
+    name: string;
+    adminName: string;
+    adminEmail: string;
+    adminPhone?: string;
+    lastAccessDate: string;
+    lastAccessUser: string;
+  }>;
   monthlyBilling: Array<{
     month: string;
     amount: number;
@@ -96,10 +104,42 @@ const generateMockData = (): AdminDashboardData => {
     };
   });
 
+  // Mock inactive organizations
+  const inactiveOrganizations = [
+    {
+      id: '1',
+      name: 'Empresa Tech ABC',
+      adminName: 'João Silva',
+      adminEmail: 'joao.silva@empresatech.com',
+      adminPhone: '(11) 98765-4321',
+      lastAccessDate: '2023-10-15T14:30:00Z',
+      lastAccessUser: 'Ana Souza (Vendedora)'
+    },
+    {
+      id: '2',
+      name: 'Consultoria XYZ',
+      adminName: 'Maria Oliveira',
+      adminEmail: 'maria@consultoriaxyz.com.br',
+      adminPhone: '(21) 97654-3210',
+      lastAccessDate: '2023-10-12T09:15:00Z',
+      lastAccessUser: 'Carlos Mendes (Gerente)'
+    },
+    {
+      id: '3',
+      name: 'Indústria Solutions',
+      adminName: 'Pedro Santos',
+      adminEmail: 'pedro@industriasolutions.com',
+      adminPhone: '(31) 99876-5432',
+      lastAccessDate: '2023-10-10T16:45:00Z',
+      lastAccessUser: 'Mariana Lima (Vendedora)'
+    }
+  ];
+
   return {
     activeOrganizations: 28,
     pendingSetups: 12,
-    inactiveUsers: 8,
+    inactiveUsers: inactiveOrganizations.length,
+    inactiveOrganizations,
     monthlyBilling,
     dailyBilling,
     newCustomers,
