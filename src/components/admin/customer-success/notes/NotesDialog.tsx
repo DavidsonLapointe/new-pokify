@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -62,13 +61,6 @@ export const NotesDialog = ({
         <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
           <DialogHeader className="p-6 pb-4">
             <DialogTitle>Anotações de Customer Success</DialogTitle>
-            <button 
-              onClick={onClose} 
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
           </DialogHeader>
           
           <div className="px-6 pb-2">
