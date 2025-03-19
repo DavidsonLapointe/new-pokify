@@ -7,9 +7,10 @@ import { useState } from "react";
 
 interface UsersStatisticsProps {
   users: User[];
+  organizationName?: string;
 }
 
-export const UsersStatistics = ({ users }: UsersStatisticsProps) => {
+export const UsersStatistics = ({ users, organizationName }: UsersStatisticsProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<UserStatus | null>(null);
 
@@ -84,6 +85,7 @@ export const UsersStatistics = ({ users }: UsersStatisticsProps) => {
         onClose={() => setDialogOpen(false)} 
         users={statusFilter ? users.filter(user => user.status === statusFilter) : users}
         statusFilter={statusFilter}
+        organizationName={organizationName}
       />
     </>
   );

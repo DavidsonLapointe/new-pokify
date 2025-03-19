@@ -19,9 +19,10 @@ interface UsersDialogProps {
   onClose: () => void;
   users: User[];
   statusFilter: UserStatus | null;
+  organizationName?: string;
 }
 
-export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialogProps) => {
+export const UsersDialog = ({ isOpen, onClose, users, statusFilter, organizationName }: UsersDialogProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   
@@ -81,7 +82,10 @@ export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialo
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>
-            {statusFilter ? `Usuários ${getStatusText(statusFilter).toLowerCase()}s` : 'Todos os usuários'}
+            {statusFilter 
+              ? `Usuários ${getStatusText(statusFilter).toLowerCase()}s` 
+              : 'Todos os usuários'} 
+            {organizationName && <span className="text-primary ml-2">- {organizationName}</span>}
           </DialogTitle>
         </DialogHeader>
         

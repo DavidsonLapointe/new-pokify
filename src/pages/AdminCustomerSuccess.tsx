@@ -63,7 +63,10 @@ const AdminCustomerSuccess = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <UsersStatistics users={selectedOrganization.users || []} />
+            <UsersStatistics 
+              users={selectedOrganization.users || []} 
+              organizationName={selectedOrganization.name}
+            />
           </div>
 
           <div className="lg:col-span-3">
