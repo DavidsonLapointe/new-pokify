@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -6,6 +7,7 @@ import { UsersStatistics } from "@/components/admin/customer-success/UsersStatis
 import { AIExecutionsChart } from "@/components/admin/customer-success/AIExecutionsChart";
 import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
+import { UsersByPermission } from "@/components/admin/customer-success/UsersByPermission";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
@@ -125,9 +127,18 @@ const AdminCustomerSuccess = () => {
               />
             </div>
           </div>
-
-          <div className="w-full">
-            <AIExecutionsChart organizationId={selectedOrganization.id} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <UsersByPermission
+                users={selectedOrganization.users || []}
+                organizationName={selectedOrganization.name}
+              />
+            </div>
+            
+            <div className="w-full">
+              <AIExecutionsChart organizationId={selectedOrganization.id} />
+            </div>
           </div>
 
           <div className="w-full">

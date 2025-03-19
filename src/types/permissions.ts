@@ -57,5 +57,11 @@ export const permissionLabels: { [key: string]: string } = {
   'dashboard.performance': "Performance",
   'dashboard.objections': "Objeções",
   'dashboard.suggestions': "Sugestões",
-  'dashboard.sellers': "Vendedores"
+  'dashboard.sellers': "Vendedores",
+  'settings.alerts': "Alertas",
+  'settings.analysis': "Análise",
+  'settings.retention': "Retenção",
+  'settings.llm': "Modelos de IA",
+  'settings.system': "Sistema",
+  'settings.permissions': "Permissões"
 };
