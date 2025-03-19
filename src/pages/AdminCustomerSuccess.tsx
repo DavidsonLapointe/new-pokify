@@ -42,7 +42,10 @@ const AdminCustomerSuccess = () => {
       {loading ? (
         <div className="space-y-6">
           <Skeleton className="w-full h-48 rounded-lg" />
-          <Skeleton className="w-full h-72 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Skeleton className="w-full h-72 rounded-lg" />
+            <Skeleton className="w-full h-72 rounded-lg" />
+          </div>
           <Skeleton className="w-full h-72 rounded-lg" />
           <Skeleton className="w-full h-64 rounded-lg" />
         </div>
@@ -53,22 +56,25 @@ const AdminCustomerSuccess = () => {
             <OrganizationOverview organization={selectedOrganization} />
           </div>
           
-          {/* ModulesStatus - Full width (moved up) */}
-          <div className="w-full">
-            <ModulesStatus organizationId={selectedOrganization.id} />
+          {/* ModulesStatus and UsersStatistics - Two columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* ModulesStatus - Half width */}
+            <div>
+              <ModulesStatus organizationId={selectedOrganization.id} />
+            </div>
+
+            {/* UsersStatistics - Half width */}
+            <div>
+              <UsersStatistics 
+                users={selectedOrganization.users || []} 
+                organizationName={selectedOrganization.name}
+              />
+            </div>
           </div>
 
           {/* AIExecutionsChart - Full width */}
           <div className="w-full">
             <AIExecutionsChart organizationId={selectedOrganization.id} />
-          </div>
-
-          {/* UsersStatistics - Full width */}
-          <div className="w-full">
-            <UsersStatistics 
-              users={selectedOrganization.users || []} 
-              organizationName={selectedOrganization.name}
-            />
           </div>
 
           {/* UserLogsList - Full width */}
