@@ -69,7 +69,7 @@ const AdminDashboard = () => {
           <div className="space-y-2">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <p className="text-sm text-muted-foreground">Empresas Sem Acesso (>5 dias)</p>
+                <p className="text-sm text-muted-foreground">Empresas Sem Acesso ({'>'}5 dias)</p>
                 <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
               </div>
               <div className="flex items-center gap-2">
