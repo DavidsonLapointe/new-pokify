@@ -11,7 +11,8 @@ import {
   Calendar, 
   DollarSign, 
   UserPlus, 
-  Zap
+  Zap,
+  ExternalLink
 } from "lucide-react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { AdminBillingChart } from "@/components/admin/dashboard/AdminBillingChart";
@@ -19,6 +20,7 @@ import { AdminNewCustomersChart } from "@/components/admin/dashboard/AdminNewCus
 import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExecutionsChart";
 import { AdminDailyBillingChart } from "@/components/admin/dashboard/AdminDailyBillingChart";
 import { InactiveOrgsModal } from "@/components/admin/dashboard/InactiveOrgsModal";
+import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
   const [selectedAIFunction, setSelectedAIFunction] = useState("all");
@@ -63,18 +65,29 @@ const AdminDashboard = () => {
           tooltip="Empresas com configuração inicial pendente ou em andamento"
         />
         
-        <div 
-          className="cursor-pointer" 
-          onClick={() => setIsInactiveOrgsModalOpen(true)}
-        >
-          <StatCard
-            title="Empresas Sem Acesso (>5 dias)"
-            value={data?.inactiveUsers || 0}
-            icon={Calendar}
-            color="text-red-500"
-            tooltip="Empresas onde nenhum usuário fez login nos últimos 5 dias"
-          />
-        </div>
+        <Card className="p-4">
+          <div className="space-y-2">
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm text-muted-foreground">Empresas Sem Acesso (>5 dias)</p>
+                <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-red-500" />
+                </div>
+              </div>
+            </div>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-blue-600 flex items-center gap-1"
+              onClick={() => setIsInactiveOrgsModalOpen(true)}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Ver empresas</span>
+            </Button>
+          </div>
+        </Card>
       </div>
 
       {/* Dashboard tabs */}
