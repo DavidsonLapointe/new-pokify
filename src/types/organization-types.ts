@@ -61,6 +61,14 @@ export interface Organization {
   address?: OrganizationAddress;
   modules?: string[] | string; // Array or comma-separated string
   setupCompleted?: boolean;
+  features?: {
+    calls?: boolean;
+    leads?: boolean;
+    dashboard?: boolean;
+    crm?: boolean;
+    scoring?: boolean;
+    [key: string]: boolean | undefined;
+  };
 }
 
 // Updated OrgUser to match User interface structure
@@ -72,7 +80,7 @@ export interface OrgUser {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
-  lastAccess?: string;
+  lastAccess?: string | null;
   permissions?: {
     [key: string]: boolean;
   };
