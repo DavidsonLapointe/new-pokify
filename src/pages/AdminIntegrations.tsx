@@ -38,7 +38,7 @@ const AdminIntegrations = () => {
         <div>
           <h1 className="text-3xl font-semibold">Integrações</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie as integrações disponíveis para as empresas
+            Gerencie as integrações disponíveis
           </p>
         </div>
         {activeTab === "central" && (
