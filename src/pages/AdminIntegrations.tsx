@@ -50,7 +50,7 @@ const AdminIntegrations = () => {
         {activeTab === "clients" && (
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Nova Integração
+            Nova Integração Clientes
           </Button>
         )}
       </div>
