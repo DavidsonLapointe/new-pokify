@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, FileText } from "lucide-react";
 
 interface OrganizationOverviewProps {
   organization: Organization;
@@ -87,17 +87,12 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h3 className="text-sm font-semibold text-gray-500">Plano</h3>
             <div className="font-medium mt-1">
               {getPlanDisplay()}
             </div>
-          </div>
-          
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500">Telefone</h3>
-            <p className="font-medium">{organization.phone || "Não informado"}</p>
           </div>
           
           <div>
@@ -114,7 +109,7 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
           variant="outline" 
           size="sm" 
           onClick={() => setShowMoreDetails(!showMoreDetails)}
-          className="flex items-center mt-1"
+          className="flex items-center mt-2 bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200"
         >
           {showMoreDetails ? (
             <>
@@ -123,7 +118,7 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
             </>
           ) : (
             <>
-              <ChevronDown className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 mr-2" />
               Dados cadastrais
             </>
           )}
@@ -139,6 +134,11 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
             <div>
               <h3 className="text-sm font-semibold text-gray-500">Email</h3>
               <p className="font-medium">{organization.email || "Não informado"}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">Telefone</h3>
+              <p className="font-medium">{organization.phone || "Não informado"}</p>
             </div>
             
             <div>
