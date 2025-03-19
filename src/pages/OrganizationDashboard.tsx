@@ -7,11 +7,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadsTabContent } from "@/components/dashboard/LeadsTabContent";
 import { SellersTabContent } from "@/components/dashboard/SellersTabContent";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { useCallsData } from "@/hooks/dashboard/useCallsData";
+import { usePerformanceData } from "@/hooks/dashboard/usePerformanceData";
+import { useLeadsData } from "@/hooks/dashboard/useLeadsData";
 import { useUser } from "@/contexts/UserContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 import { User } from "@/types";
+import { SellersStats } from "@/components/sellers/SellersStats";
 
 const OrganizationDashboard = () => {
   const { user, loading } = useUser();
@@ -26,48 +30,61 @@ const OrganizationDashboard = () => {
     }
   }, [user, loading, navigate]);
 
+  // Use the dashboard data for shared data and organization stats
   const {
     monthStats,
+    sellers,
+    isLoading,
+  } = useDashboardData();
+
+  // Use specific hooks for each tab functionality
+  const {
     dailyLeadsData,
     monthlyLeadsData,
-    dailyCallsData,
-    monthlyCallsData,
-    dailyPerformanceData,
-    monthlyPerformanceData,
     monthlyLeadsDate,
     setMonthlyLeadsDate,
     dailyLeadsDate,
     setDailyLeadsDate,
+    monthlyLeadsSeller,
+    setMonthlyLeadsSeller,
+    dailyLeadsSeller,
+    setDailyLeadsSeller
+  } = useLeadsData();
+
+  const {
+    dailyCallsData,
+    monthlyCallsData,
     callsDate,
     setCallsDate,
-    performanceDate,
     monthlyCallsSeller,
     setMonthlyCallsSeller,
     dailyCallsSeller,
     setDailyCallsSeller,
-    monthlyLeadsSeller,
-    setMonthlyLeadsSeller,
-    dailyLeadsSeller,
-    setDailyLeadsSeller,
+  } = useCallsData();
+
+  const {
+    dailyPerformanceData,
+    monthlyPerformanceData,
+    performanceDate,
+    setPerformanceDate,
     dailyMetric,
     setDailyMetric,
     monthlyMetric,
     setMonthlyMetric,
-    sellers
-  } = useDashboardData();
+  } = usePerformanceData();
 
   // Create a proper User array from the simplified sellers data
   const formattedSellers: User[] = sellers.map(seller => ({
     id: seller.id,
     name: seller.name,
-    email: `${seller.id}@example.com`, // Placeholder email
+    email: `${seller.name.toLowerCase().replace(' ', '.')}@example.com`, // Generate plausible email
     role: "seller",
     status: "active",
     createdAt: new Date().toISOString(),
   }));
 
   // Mostra loading enquanto carrega o usuário
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -91,6 +108,11 @@ const OrganizationDashboard = () => {
   // Mostra todas as tabs em desenvolvimento
   const userTabs = availableTabs;
   const defaultTab = "leads";
+
+  // Calculate mock stats for sellers
+  const totalSellers = formattedSellers.length;
+  const activeSellers = formattedSellers.filter(s => s.status === "active").length;
+  const topPerformerLeads = Math.floor(Math.random() * 50) + 30; // Random value between 30 and 80
 
   return (
     <div className="space-y-6">
@@ -168,8 +190,13 @@ const OrganizationDashboard = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="sellers-info">
-          <SellersTabContent sellers={[]} />
+        <TabsContent value="sellers-info" className="space-y-6">
+          <SellersStats 
+            totalSellers={totalSellers}
+            activeSellers={activeSellers}
+            topPerformerLeads={topPerformerLeads}
+          />
+          <SellersTabContent sellers={formattedSellers} />
         </TabsContent>
       </Tabs>
     </div>
