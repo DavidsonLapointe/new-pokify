@@ -4,11 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { AdminIntegrationsList } from "@/components/admin/integrations/AdminIntegrationsList";
 import { CreateIntegrationDialog } from "@/components/admin/integrations/CreateIntegrationDialog";
+import { CreateCentralIntegrationDialog } from "@/components/admin/integrations/CreateCentralIntegrationDialog";
+import { CentralIntegrationsList } from "@/components/admin/integrations/CentralIntegrationsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Integration } from "@/types/integration";
 
 const AdminIntegrations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCreateCentralDialogOpen, setIsCreateCentralDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("central");
+  const [centralIntegrations, setCentralIntegrations] = useState<Integration[]>([]);
+
+  const handleCentralIntegrationCreated = (integration: Integration) => {
+    setCentralIntegrations([...centralIntegrations, integration]);
+  };
 
   return (
     <div className="space-y-8">
@@ -19,6 +28,12 @@ const AdminIntegrations = () => {
             Gerencie as integrações disponíveis para as empresas
           </p>
         </div>
+        {activeTab === "central" && (
+          <Button onClick={() => setIsCreateCentralDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Integração Central
+          </Button>
+        )}
         {activeTab === "clients" && (
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -38,13 +53,7 @@ const AdminIntegrations = () => {
         </TabsList>
         
         <TabsContent value="central">
-          <div className="bg-muted/40 rounded-md p-8 text-center">
-            <h3 className="text-lg font-medium mb-2">Configuração de Integrações Centrais</h3>
-            <p className="text-muted-foreground">
-              Esta área permite configurar integrações que afetam todo o sistema.
-              <br />Funcionalidade em desenvolvimento.
-            </p>
-          </div>
+          <CentralIntegrationsList />
         </TabsContent>
         
         <TabsContent value="clients">
@@ -55,6 +64,12 @@ const AdminIntegrations = () => {
       <CreateIntegrationDialog 
         open={isCreateDialogOpen} 
         onOpenChange={setIsCreateDialogOpen} 
+      />
+
+      <CreateCentralIntegrationDialog
+        open={isCreateCentralDialogOpen}
+        onOpenChange={setIsCreateCentralDialogOpen}
+        onIntegrationCreated={handleCentralIntegrationCreated}
       />
     </div>
   );
