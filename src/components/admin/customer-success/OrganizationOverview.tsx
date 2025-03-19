@@ -75,12 +75,12 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
             
             {onOpenNotes && (
               <Button
-                variant="outline"
+                variant="cancel"
                 size="sm"
                 onClick={onOpenNotes}
-                className="ml-2"
+                className="ml-2 flex items-center gap-2"
               >
-                <ClipboardList className="mr-2 h-4 w-4" />
+                <ClipboardList className="h-4 w-4" />
                 Anotações
               </Button>
             )}
