@@ -51,14 +51,42 @@ export const AdminAIExecutionsChart = ({
     }
   };
 
+  // Traduz meses do inglês para português
+  const translateMonth = (month: string) => {
+    const [monthAbbr, year] = month.split('/');
+    
+    const monthTranslations: Record<string, string> = {
+      'Jan': 'Jan',
+      'Feb': 'Fev',
+      'Mar': 'Mar',
+      'Apr': 'Abr',
+      'May': 'Mai',
+      'Jun': 'Jun',
+      'Jul': 'Jul',
+      'Aug': 'Ago',
+      'Sep': 'Set',
+      'Oct': 'Out',
+      'Nov': 'Nov',
+      'Dec': 'Dez'
+    };
+    
+    return `${monthTranslations[monthAbbr] || monthAbbr}/${year}`;
+  };
+
+  // Traduz os meses nos dados
+  const translatedData = data.map(item => ({
+    ...item,
+    month: translateMonth(item.month)
+  }));
+
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-4 border rounded shadow-md">
           <p className="font-medium">{label}</p>
-          <p className="text-purple-600 font-semibold">
-            {payload[0].value} execuções
+          <p className="text-blue-600 font-semibold">
+            {payload[0].value} {payload[0].value === 1 ? 'execução' : 'execuções'}
           </p>
           <p className="text-xs text-gray-500">
             {getFunctionLabel(selectedFunction)}
@@ -69,23 +97,12 @@ export const AdminAIExecutionsChart = ({
     return null;
   };
 
-  // Dynamic bar color based on selected function
-  const getBarColor = () => {
-    switch (selectedFunction) {
-      case "analysis": return "#8b5cf6";
-      case "transcription": return "#ec4899";
-      case "scoring": return "#06b6d4";
-      case "suggestions": return "#f59e0b";
-      default: return "#9333ea";
-    }
-  };
-
   return (
     <Card className="p-6">
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={data}
+            data={translatedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -94,14 +111,19 @@ export const AdminAIExecutionsChart = ({
               angle={-45}
               textAnchor="end"
               height={70}
+              tick={{ fontSize: 12 }}
+              stroke="#3b82f6"
             />
-            <YAxis allowDecimals={false} />
-            <Tooltip content={<CustomTooltip />} />
+            <YAxis 
+              allowDecimals={false}
+              tick={{ fontSize: 10 }} 
+            />
+            <Tooltip content={<CustomTooltip />} cursor={false} />
             <Legend />
             <Bar 
               dataKey={selectedFunction} 
               name={getFunctionLabel(selectedFunction)} 
-              fill={getBarColor()} 
+              fill="#3b82f6" 
               radius={[4, 4, 0, 0]} 
             />
           </BarChart>

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MonthYearSelector } from "@/components/dashboard/MonthYearSelector";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Users, 
@@ -19,7 +18,6 @@ import { AdminNewCustomersChart } from "@/components/admin/dashboard/AdminNewCus
 import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExecutionsChart";
 
 const AdminDashboard = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAIFunction, setSelectedAIFunction] = useState("all");
   
   // Get dashboard data from a centralized hook
@@ -98,16 +96,11 @@ const AdminDashboard = () => {
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Execuções de IA por Mês</h2>
             <div className="flex gap-4">
-              <MonthYearSelector 
-                selectedDate={selectedDate} 
-                onDateChange={setSelectedDate}
-                showAllOption={true}
-              />
               <Select
                 value={selectedAIFunction}
                 onValueChange={setSelectedAIFunction}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[240px]">
                   <SelectValue placeholder="Função de IA" />
                 </SelectTrigger>
                 <SelectContent>
