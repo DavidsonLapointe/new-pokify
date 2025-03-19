@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
 import { toast } from "sonner";
-import { ClipboardList } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CustomerNote {
   id: string;
@@ -81,20 +81,24 @@ const AdminCustomerSuccess = () => {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="mb-2">
-          <label className="block text-sm font-medium mb-2 text-left">
-            Selecione uma empresa para analisar
-          </label>
-          <div className="w-full max-w-3xl">
-            <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+      <Card className="border shadow-sm">
+        <CardContent className="p-4">
+          <div className="space-y-2">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-left">
+                Selecione uma empresa para analisar
+              </label>
+              <div className="w-full max-w-3xl relative">
+                <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+                <OrganizationSelector 
+                  onOrganizationChange={handleOrganizationChange}
+                  searchTerm={searchTerm}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <OrganizationSelector 
-          onOrganizationChange={handleOrganizationChange}
-          searchTerm={searchTerm}
-        />
-      </div>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="space-y-6">
@@ -108,20 +112,16 @@ const AdminCustomerSuccess = () => {
         </div>
       ) : selectedOrganization ? (
         <div className="space-y-6">
-          {/* OrganizationOverview - pass handleOpenNotes to show notes button */}
           <OrganizationOverview 
             organization={selectedOrganization} 
             onOpenNotes={handleOpenNotes}
           />
           
-          {/* ModulesStatus and UsersStatistics - Two columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* ModulesStatus - Half width */}
             <div>
               <ModulesStatus organizationId={selectedOrganization.id} />
             </div>
 
-            {/* UsersStatistics - Half width */}
             <div>
               <UsersStatistics 
                 users={selectedOrganization.users || []} 
@@ -130,12 +130,10 @@ const AdminCustomerSuccess = () => {
             </div>
           </div>
 
-          {/* AIExecutionsChart - Full width */}
           <div className="w-full">
             <AIExecutionsChart organizationId={selectedOrganization.id} />
           </div>
 
-          {/* UserLogsList - Full width */}
           <div className="w-full">
             <UserLogsList organizationId={selectedOrganization.id} />
           </div>

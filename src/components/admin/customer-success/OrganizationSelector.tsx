@@ -1,11 +1,20 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Organization } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { toast } from "sonner";
 import { mockCustomerSuccessOrganizations } from "@/mocks/customerSuccessMocks";
-import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
+import { UserCheck, Building, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface OrganizationSelectorProps {
   onOrganizationChange: (organization: Organization | null) => void;
@@ -16,6 +25,7 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [useMockData, setUseMockData] = useState(false);
+  const commandRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -102,43 +112,62 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
     
   if (loading) {
     return (
-      <div className="w-full space-y-2">
-        {[1, 2, 3].map(i => (
-          <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-md"></div>
-        ))}
+      <div className="relative w-full">
+        <div className="animate-pulse space-y-1.5 overflow-hidden rounded-md border border-input p-2">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-9 bg-slate-100 rounded-md"></div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      {filteredOrganizations.length > 0 ? (
-        <div className="space-y-2 mt-2">
-          {filteredOrganizations.map((org) => (
-            <Card 
-              key={org.id}
-              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleOrganizationClick(org.id)}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-medium">{org.name}</div>
-                  {org.nomeFantasia && (
-                    <div className="text-sm text-gray-500">{org.nomeFantasia}</div>
-                  )}
-                </div>
-                {org.status === "pending" && (
-                  <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">Pendente</span>
-                )}
-              </div>
-            </Card>
-          ))}
+    <div className="relative w-full">
+      {searchTerm && searchTerm.trim() !== "" && (
+        <div className="absolute z-10 w-full">
+          <Command ref={commandRef} className="rounded-lg border shadow-md">
+            <CommandList>
+              {filteredOrganizations.length > 0 ? (
+                <CommandGroup heading="Empresas">
+                  {filteredOrganizations.map((org) => (
+                    <CommandItem
+                      key={org.id}
+                      onSelect={() => handleOrganizationClick(org.id)}
+                      className="flex items-center justify-between p-2 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium">{org.name}</div>
+                          {org.nomeFantasia && (
+                            <div className="text-xs text-muted-foreground">{org.nomeFantasia}</div>
+                          )}
+                        </div>
+                      </div>
+                      {org.status === "active" ? (
+                        <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-0">
+                          <UserCheck className="h-3 w-3 mr-1" />
+                          Ativo
+                        </Badge>
+                      ) : org.status === "pending" ? (
+                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-0">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          Pendente
+                        </Badge>
+                      ) : null}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ) : (
+                <CommandEmpty className="py-6 text-center text-sm">
+                  Nenhuma empresa encontrada com este termo
+                </CommandEmpty>
+              )}
+            </CommandList>
+          </Command>
         </div>
-      ) : searchTerm && searchTerm.trim() !== "" ? (
-        <div className="text-center p-6 border-2 border-dashed rounded-lg mt-2">
-          <p className="text-gray-500">Nenhuma empresa encontrada com este termo</p>
-        </div>
-      ) : null}
+      )}
     </div>
   );
 };
