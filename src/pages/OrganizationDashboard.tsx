@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
 import { User } from "@/types";
-import { SellersStats } from "@/components/sellers/SellersStats";
 
 const OrganizationDashboard = () => {
   const { user, loading } = useUser();
@@ -109,11 +108,6 @@ const OrganizationDashboard = () => {
   const userTabs = availableTabs;
   const defaultTab = "leads";
 
-  // Calculate mock stats for sellers
-  const totalSellers = formattedSellers.length;
-  const activeSellers = formattedSellers.filter(s => s.status === "active").length;
-  const topPerformerLeads = Math.floor(Math.random() * 50) + 30; // Random value between 30 and 80
-
   return (
     <div className="space-y-6">
       <div>
@@ -191,11 +185,6 @@ const OrganizationDashboard = () => {
         </TabsContent>
 
         <TabsContent value="sellers-info" className="space-y-6">
-          <SellersStats 
-            totalSellers={totalSellers}
-            activeSellers={activeSellers}
-            topPerformerLeads={topPerformerLeads}
-          />
           <SellersTabContent sellers={formattedSellers} />
         </TabsContent>
       </Tabs>
