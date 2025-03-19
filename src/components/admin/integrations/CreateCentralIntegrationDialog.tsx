@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface CreateCentralIntegrationDialogProps {
   open: boolean;
@@ -26,6 +27,7 @@ export const CreateCentralIntegrationDialog = ({
   onIntegrationCreated,
 }: CreateCentralIntegrationDialogProps) => {
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
@@ -36,7 +38,7 @@ export const CreateCentralIntegrationDialog = ({
       id: uuidv4(),
       name,
       type: "crm",
-      description: `Integração central com ${name}`,
+      description: description || `Integração central com ${name}`,
       isConnected: Boolean(apiKey), // Ensure isConnected is false when no apiKey is provided
       apiKey: apiKey || undefined,
     };
@@ -47,6 +49,7 @@ export const CreateCentralIntegrationDialog = ({
 
   const handleReset = () => {
     setName("");
+    setDescription("");
     setApiKey("");
     setShowApiKeyInput(false);
     onOpenChange(false);
@@ -72,6 +75,17 @@ export const CreateCentralIntegrationDialog = ({
             />
           </div>
 
+          <div className="grid gap-2">
+            <Label htmlFor="description">Descrição (opcional)</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descreva a finalidade desta integração"
+              rows={3}
+            />
+          </div>
+
           {showApiKeyInput ? (
             <div className="grid gap-2">
               <Label htmlFor="apiKey">Chave API</Label>
@@ -94,7 +108,7 @@ export const CreateCentralIntegrationDialog = ({
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={handleReset}>
+          <Button variant="cancel" onClick={handleReset}>
             Cancelar
           </Button>
           <Button type="submit" onClick={handleSave} disabled={!name}>
