@@ -96,7 +96,13 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
       leads: true,
       dashboard: true,
       crm: true,
-      scoring: true
+      scoring: true,
+      moduleStatus: {
+        "call-analysis": "configured",
+        "crm-integration": "setup",
+        "lead-scoring": "contracted",
+        "sales-coaching": "not_contracted"
+      }
     },
     users: createMockUsers(8, uuidv4(), true)
   },
@@ -135,7 +141,11 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
       leads: false,
       dashboard: false,
       crm: false,
-      scoring: false
+      scoring: false,
+      moduleStatus: {
+        "call-analysis": "contracted",
+        "crm-integration": "not_contracted"
+      }
     },
     users: createMockUsers(3, uuidv4(), true)
   },
@@ -174,7 +184,11 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
       leads: true,
       dashboard: true,
       crm: true,
-      scoring: false
+      scoring: false,
+      moduleStatus: {
+        "call-analysis": "setup",
+        "crm-integration": "configured"
+      }
     },
     users: createMockUsers(5, uuidv4(), true)
   }

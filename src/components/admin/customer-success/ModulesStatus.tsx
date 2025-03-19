@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +9,7 @@ import { getOrganizationById } from "@/mocks/customerSuccessMocks";
 interface Module {
   id: string;
   name: string;
-  status: "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
+  status: "not_contracted" | "contracted" | "configured" | "setup" | "coming_soon";
 }
 
 interface ModulesStatusProps {
@@ -60,7 +59,6 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
         { id: 'crm-integration', name: 'Integração com CRM', status: 'not_contracted' as const },
         { id: 'lead-scoring', name: 'Pontuação de Leads', status: 'not_contracted' as const },
         { id: 'sales-coaching', name: 'Coaching de Vendas', status: 'not_contracted' as const },
-        { id: 'smart-replies', name: 'Respostas Inteligentes', status: 'coming_soon' as const }
       ];
       
       // Determinar módulos contratados com base no plano
@@ -77,8 +75,15 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
       // Atualizar status dos módulos com base nos recursos configurados
       const updatedModules = defaultModules.map(module => {
         if (contractedModules.includes(module.id)) {
-          // Verificar se o módulo está configurado com base nos recursos
-          if (module.id === 'call-analysis' && organization.features?.calls) {
+          // Use the status directly from moduleStatus if available
+          if (organization.features?.moduleStatus?.[module.id]) {
+            return { 
+              ...module, 
+              status: organization.features.moduleStatus[module.id] as 'not_contracted' | 'contracted' | 'configured' | 'setup' 
+            };
+          }
+          // Otherwise use the old logic
+          else if (module.id === 'call-analysis' && organization.features?.calls) {
             return { ...module, status: 'configured' as const };
           } else if (module.id === 'crm-integration' && organization.features?.crm) {
             return { ...module, status: 'configured' as const };
@@ -93,7 +98,10 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
         return module;
       });
       
-      setModules(updatedModules);
+      // Filter out any "coming_soon" modules as requested
+      const filteredModules = updatedModules.filter(module => module.status !== 'coming_soon');
+      
+      setModules(filteredModules);
       
     } catch (error) {
       console.error("Erro ao carregar módulos:", error);
@@ -106,15 +114,13 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'contracted':
-        return <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50">Contratado</Badge>;
+        return <Badge className="bg-yellow-500 text-white border-0">Contratado</Badge>;
       case 'configured':
-        return <Badge variant="outline" className="border-gray-300 text-gray-700 bg-gray-50">Configurado</Badge>;
+        return <Badge className="bg-green-500 text-white border-0">Configurado</Badge>;
       case 'setup':
-        return <Badge className="bg-yellow-500 text-white border-0">Em configuração</Badge>;
-      case 'coming_soon':
-        return <Badge className="bg-purple-500 text-white border-0">Em breve</Badge>;
+        return <Badge className="bg-blue-500 text-white border-0">Setup</Badge>;
       default:
-        return <Badge variant="outline" className="border-gray-300 text-gray-500">Não contratado</Badge>;
+        return <Badge className="bg-red-500 text-white border-0">Não contratado</Badge>;
     }
   };
 

@@ -67,7 +67,10 @@ export interface Organization {
     dashboard?: boolean;
     crm?: boolean;
     scoring?: boolean;
-    [key: string]: boolean | undefined;
+    moduleStatus?: {
+      [moduleId: string]: "not_contracted" | "contracted" | "configured" | "setup";
+    };
+    [key: string]: boolean | { [moduleId: string]: string } | undefined;
   };
 }
 
