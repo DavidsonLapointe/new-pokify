@@ -66,7 +66,7 @@ export const UsersByPermission = ({ users, organizationName }: UsersByPermission
           <CardTitle>Usuários por Função</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center p-2 bg-gray-50 rounded-lg">
+          <div className="text-center p-2 bg-gray-50 rounded-lg flex flex-col items-center justify-center">
             <p className="mb-2">
               Visualize como estão distribuídas as permissões de acesso entre os usuários
             </p>
