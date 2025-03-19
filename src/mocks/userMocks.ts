@@ -2,6 +2,35 @@
 import { User, UserRole, UserStatus } from "@/types/user-types";
 import { v4 as uuidv4 } from 'uuid';
 
+// Create mock authenticated user
+export const mockAuthenticatedUser: User = {
+  id: "1",
+  name: "John Admin",
+  email: "admin@example.com",
+  phone: "+5511999999999",
+  role: "admin" as UserRole,
+  status: "active" as UserStatus,
+  createdAt: "2023-01-01T00:00:00.000Z",
+  lastAccess: "2023-08-15T14:30:00.000Z",
+  permissions: {
+    dashboard: true,
+    leads: true,
+    users: true,
+    integrations: true,
+    settings: true,
+    plan: true,
+    profile: true
+  },
+  logs: [
+    {
+      id: "1",
+      date: "2023-08-15T14:30:00.000Z",
+      action: "Usuário fez login"
+    }
+  ],
+  avatar: null
+};
+
 // Create mock users data
 export const mockUsers: User[] = [
   {
@@ -20,8 +49,7 @@ export const mockUsers: User[] = [
       integrations: true,
       settings: true,
       plan: true,
-      profile: true,
-      routes: ["dashboard", "leads", "users", "integrations", "settings", "plan", "profile"]
+      profile: true
     },
     logs: [
       {
@@ -51,8 +79,7 @@ export const mockUsers: User[] = [
     permissions: {
       dashboard: true,
       leads: true,
-      profile: true,
-      routes: ["dashboard", "leads", "profile"]
+      profile: true
     },
     logs: [
       {
@@ -83,8 +110,7 @@ export const mockUsers: User[] = [
       dashboard: true,
       leads: true,
       users: true,
-      profile: true,
-      routes: ["dashboard", "leads", "users", "profile"]
+      profile: true
     },
     logs: [
       {

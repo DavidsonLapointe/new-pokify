@@ -53,7 +53,7 @@ export interface Organization {
   cnpj?: string;
   adminName?: string;
   adminEmail?: string;
-  adminPhone?: string;  // Added this property
+  adminPhone?: string;
   contractSignedAt?: string | null;
   createdAt: string;
   updatedAt?: string;
@@ -69,7 +69,7 @@ export interface OrgUser {
   name: string;
   email: string;
   phone?: string;
-  role: "admin" | "seller" | "leadly_employee" | "manager";  // Updated to match UserRole
+  role: UserRole;
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;
@@ -86,3 +86,6 @@ export interface UserLog {
   date: string;
   action: string;
 }
+
+// Import UserRole from user-types to avoid circular dependencies
+import { UserRole } from "./user-types";

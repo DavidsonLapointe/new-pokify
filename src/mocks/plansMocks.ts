@@ -7,6 +7,7 @@ export const mockPlans: Plan[] = [
     id: uuidv4(),
     name: "Plano Básico",
     description: "Ideal para pequenas empresas começarem a utilizar a plataforma",
+    shortDescription: "Ideal para pequenas empresas começarem a utilizar a plataforma",
     price: 149.90,
     callsIncluded: 100,
     features: [
@@ -15,15 +16,23 @@ export const mockPlans: Plan[] = [
       "Dashboard básico",
       "Integração com 1 CRM"
     ],
+    benefits: [
+      "Análise de até 100 chamadas/mês",
+      "Identificação de objeções e sugestões",
+      "Dashboard básico",
+      "Integração com 1 CRM"
+    ],
     isPopular: false,
     active: true,
     stripeProductId: "prod_basic",
-    stripePriceId: "price_basic"
+    stripePriceId: "price_basic",
+    credits: 100
   },
   {
     id: uuidv4(),
     name: "Plano Profissional",
     description: "Ideal para empresas em crescimento com equipe de vendas",
+    shortDescription: "Ideal para empresas em crescimento com equipe de vendas",
     price: 299.90,
     callsIncluded: 300,
     features: [
@@ -33,15 +42,24 @@ export const mockPlans: Plan[] = [
       "Integração com múltiplos CRMs",
       "Relatórios de performance"
     ],
+    benefits: [
+      "Análise de até 300 chamadas/mês",
+      "Identificação de objeções e sugestões",
+      "Dashboard completo",
+      "Integração com múltiplos CRMs",
+      "Relatórios de performance"
+    ],
     isPopular: true,
     active: true,
     stripeProductId: "prod_professional",
-    stripePriceId: "price_professional"
+    stripePriceId: "price_professional",
+    credits: 300
   },
   {
     id: uuidv4(),
     name: "Plano Enterprise",
     description: "Para empresas com grandes equipes de vendas",
+    shortDescription: "Para empresas com grandes equipes de vendas",
     price: 599.90,
     callsIncluded: 1000,
     features: [
@@ -51,10 +69,18 @@ export const mockPlans: Plan[] = [
       "Suporte premium 24/7",
       "Treinamento da equipe"
     ],
+    benefits: [
+      "Análise ilimitada de chamadas",
+      "Todas as funcionalidades do plano Profissional",
+      "API personalizada",
+      "Suporte premium 24/7",
+      "Treinamento da equipe"
+    ],
     isPopular: false,
     active: true,
     stripeProductId: "prod_enterprise",
-    stripePriceId: "price_enterprise"
+    stripePriceId: "price_enterprise",
+    credits: 1000
   }
 ];
 
@@ -68,5 +94,8 @@ export const mockSubscription = {
   currentPeriodEnd: "2023-06-01T00:00:00Z",
   cancelAtPeriodEnd: false,
   stripeSubscriptionId: "sub_123456",
-  stripeCustomerId: "cus_123456"
+  stripeCustomerId: "cus_123456",
+  currentPeriodStart: "2023-05-01T00:00:00Z",
+  createdAt: "2023-05-01T00:00:00Z",
+  updatedAt: "2023-05-01T00:00:00Z"
 };

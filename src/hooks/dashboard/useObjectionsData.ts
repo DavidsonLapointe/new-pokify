@@ -1,63 +1,52 @@
 
 import { useState, useMemo } from "react";
-import { format, subMonths } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { filterDataBySeller } from "./utils";
 
 export const useObjectionsData = () => {
-  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState<Date>(() => new Date());
+  const [monthlyObjectionsDate, setMonthlyObjectionsDate] = useState(() => new Date());
   const [monthlyObjectionsSeller, setMonthlyObjectionsSeller] = useState("all");
   const [objectionTrendsSeller, setObjectionTrendsSeller] = useState("all");
 
-  const objectionsData = useMemo(() => {
-    // Ensure we have a valid date object
-    const date = monthlyObjectionsDate instanceof Date ? monthlyObjectionsDate : new Date();
-    const monthYear = format(date, 'MM/yyyy');
-    const seed = parseInt(monthYear.replace('/', ''));
-    
-    const baseData = [
-      { name: "Preço muito alto", count: 28 + (seed % 10) },
-      { name: "Não tenho orçamento no momento", count: 24 + (seed % 8) },
-      { name: "Preciso consultar outras pessoas", count: 20 + (seed % 6) },
-      { name: "Já uso outro produto similar", count: 18 + (seed % 5) },
-      { name: "Não é prioridade agora", count: 15 + (seed % 7) },
-      { name: "Não entendi o valor agregado", count: 12 + (seed % 4) },
-      { name: "Preciso de mais tempo para avaliar", count: 10 + (seed % 3) },
-    ].sort((a, b) => b.count - a.count);
+  // Mock objections data
+  const objectionsData = useMemo(() => [
+    { name: 'Preço alto', count: 15 },
+    { name: 'Falta de recursos', count: 12 },
+    { name: 'Já utiliza concorrente', count: 10 },
+    { name: 'Sem orçamento', count: 8 },
+    { name: 'Timing inadequado', count: 7 }
+  ], []);
 
-    return filterDataBySeller(baseData, monthlyObjectionsSeller);
-  }, [monthlyObjectionsDate, monthlyObjectionsSeller]);
+  // Mock objection trends data
+  const objectionTrendsData = useMemo(() => [
+    { month: 'Jan', count: 5 },
+    { month: 'Fev', count: 7 },
+    { month: 'Mar', count: 10 },
+    { month: 'Abr', count: 8 },
+    { month: 'Mai', count: 12 },
+    { month: 'Jun', count: 15 },
+  ], []);
 
-  const objectionTrendsData = useMemo(() => {
-    const currentDate = new Date();
-    
-    const baseData = Array.from({ length: 6 }).map((_, index) => {
-      const date = subMonths(currentDate, 5 - index);
-      const monthSeed = parseInt(format(date, 'MMyyy'));
-      
-      return {
-        month: format(date, 'MMM/yy', { locale: ptBR }),
-        "Preço muito alto": 10 + (monthSeed % 20),
-        "Não tenho orçamento": 8 + (monthSeed % 15),
-        "Preciso consultar": 6 + (monthSeed % 12),
-      };
-    });
-
-    return filterDataBySeller(baseData, objectionTrendsSeller);
-  }, [objectionTrendsSeller]);
-
-  const objectionExamples = useMemo(() => ({
-    "Preço muito alto": [
-      "O valor está acima do nosso orçamento atual",
-      "Encontramos soluções mais baratas no mercado",
-      "Precisamos de um desconto maior para aprovar"
-    ],
-    "Não tenho orçamento no momento": [
-      "Nosso orçamento já foi definido para este ano",
-      "Precisamos esperar o próximo trimestre",
-      "Estamos com restrições orçamentárias"
-    ],
-  }), []);
+  // Mock objection examples
+  const objectionExamples = useMemo(() => [
+    {
+      id: "1",
+      objection: "Preço alto",
+      examples: [
+        "O valor está muito acima do que tínhamos orçado",
+        "Estamos com restrições orçamentárias neste momento",
+        "A diferença de preço para o concorrente é significativa"
+      ]
+    },
+    {
+      id: "2",
+      objection: "Falta de recursos",
+      examples: [
+        "Não temos equipe para implementar agora",
+        "Nossa estrutura de TI está limitada",
+        "Precisaríamos contratar mais pessoas para isso"
+      ]
+    }
+  ], []);
 
   return {
     objectionsData,
@@ -68,6 +57,6 @@ export const useObjectionsData = () => {
     monthlyObjectionsSeller,
     setMonthlyObjectionsSeller,
     objectionTrendsSeller,
-    setObjectionTrendsSeller,
+    setObjectionTrendsSeller
   };
 };

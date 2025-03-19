@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { User } from '@/types';
+import { User, OrgUser } from '@/types';
 import { mockUsers } from '@/mocks/userMocks';
 import { useUser } from '@/contexts/UserContext';
 
@@ -9,9 +9,11 @@ export const useOrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchOrganizationUsers = useCallback(async () => {
     setIsLoading(true);
+    setLoading(true);
     setError(null);
     try {
       // In a real app, this would be an API call filtered by the current user's organization
@@ -23,11 +25,13 @@ export const useOrganizationUsers = () => {
       
       setUsers(filteredUsers);
       setIsLoading(false);
+      setLoading(false);
       return true;
     } catch (err) {
       console.error('Error fetching organization users:', err);
       setError(err instanceof Error ? err : new Error('Unknown error occurred'));
       setIsLoading(false);
+      setLoading(false);
       return false;
     }
   }, [user?.organization?.id]);
@@ -53,15 +57,16 @@ export const useOrganizationUsers = () => {
       fetchOrganizationUsers();
     } else {
       setIsLoading(false);
+      setLoading(false);
     }
   }, [user?.organization?.id, fetchOrganizationUsers]);
 
   return {
     users,
     isLoading,
+    loading,
     error,
     setUsers,
-    loading: isLoading,
     fetchOrganizationUsers,
     updateUser,
   };

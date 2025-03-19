@@ -20,7 +20,6 @@ export interface User {
   lastAccess?: string;  
   permissions?: { 
     [key: string]: boolean;
-    routes?: string[];
   };
   logs?: UserLog[];
   avatar?: string | null;

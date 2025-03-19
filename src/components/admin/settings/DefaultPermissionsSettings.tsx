@@ -139,7 +139,7 @@ export const DefaultPermissionsSettings = () => {
                 </div>
                 
                 {(typeof route === 'string' ? route : route.id) === 'dashboard' && 
-                 (selectedRole === 'admin' || selectedRole === 'seller') && (
+                 (selectedRole === 'admin' || selectedRole === 'manager' || selectedRole === 'seller') && (
                   <DashboardTabs 
                     hasAccess={hasAccess}
                     onTogglePermission={handleTogglePermission}
