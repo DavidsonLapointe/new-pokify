@@ -85,7 +85,7 @@ export const DailyCallsChart = ({
               fill="#2563eb" 
               activeBar={false}
               cursor="default"
-              barSize={30}
+              barSize={40}
             />
             <Bar 
               dataKey="processed" 
@@ -93,7 +93,7 @@ export const DailyCallsChart = ({
               fill="#16a34a" 
               activeBar={false}
               cursor="default"
-              barSize={30}
+              barSize={40}
             />
             <Bar 
               dataKey="failed" 
@@ -101,7 +101,7 @@ export const DailyCallsChart = ({
               fill="#dc2626" 
               activeBar={false}
               cursor="default"
-              barSize={30}
+              barSize={40}
             />
           </BarChart>
         </ResponsiveContainer>
