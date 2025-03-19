@@ -9,7 +9,7 @@ import { getOrganizationById } from "@/mocks/customerSuccessMocks";
 interface Module {
   id: string;
   name: string;
-  status: "not_contracted" | "contracted" | "configured" | "setup" | "coming_soon";
+  status: "not_contracted" | "contracted" | "configured" | "setup";
 }
 
 interface ModulesStatusProps {
@@ -98,10 +98,8 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
         return module;
       });
       
-      // Filter out any "coming_soon" modules as requested
-      const filteredModules = updatedModules.filter(module => module.status !== 'coming_soon');
-      
-      setModules(filteredModules);
+      // We no longer need to filter out "coming_soon" modules as we've removed that status
+      setModules(updatedModules);
       
     } catch (error) {
       console.error("Erro ao carregar módulos:", error);
