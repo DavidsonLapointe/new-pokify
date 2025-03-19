@@ -33,6 +33,12 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   onEditOrganization,
   onShowActiveUsers,
 }) => {
+  // Checa se organizations é válido antes de prosseguir
+  if (!Array.isArray(organizations)) {
+    console.error("Organizations não é um array válido:", organizations);
+    return <div>Erro ao carregar dados das organizações</div>;
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -51,8 +57,12 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   };
 
   const getActiveUsersCount = (org: Organization) => {
-    // Safely access users array, providing an empty array if undefined
-    return (org.users || []).filter(user => user.status === "active").length;
+    // Verificação dupla para garantir que users exista e seja um array
+    if (!org || !org.users || !Array.isArray(org.users)) {
+      console.log("Organização sem array de usuários válido:", org);
+      return 0;
+    }
+    return org.users.filter(user => user.status === "active").length;
   };
 
   const getPendingSteps = (org: Organization) => {

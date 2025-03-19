@@ -34,7 +34,27 @@ export const mockOrganizations: Organization[] = [
       price: 299.90,
       features: ["Análise de chamadas", "Gestão de leads"],
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    }
+    },
+    users: [
+      {
+        id: uuidv4(),
+        name: "Administrador",
+        email: "admin@empresa.com",
+        role: "admin",
+        status: "active",
+        createdAt: "2023-05-15T14:30:00Z",
+        lastAccess: "2023-05-15T14:30:00Z"
+      },
+      {
+        id: uuidv4(),
+        name: "Vendedor Exemplo",
+        email: "vendedor@empresa.com",
+        role: "seller",
+        status: "active",
+        createdAt: "2023-05-15T14:30:00Z",
+        lastAccess: "2023-05-15T14:30:00Z"
+      }
+    ]
   },
   {
     id: uuidv4(),
@@ -67,6 +87,17 @@ export const mockOrganizations: Organization[] = [
       price: 149.90,
       features: ["Análise de chamadas"],
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    }
+    },
+    users: [
+      {
+        id: uuidv4(),
+        name: "Gestor Startup",
+        email: "admin@startuptech.com",
+        role: "admin",
+        status: "active",
+        createdAt: "2023-05-20T10:15:00Z",
+        lastAccess: "2023-05-20T10:15:00Z"
+      }
+    ]
   }
 ];

@@ -18,7 +18,7 @@ const Organizations = () => {
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   
-  // Fetch organizations data with staleTime set to 0 to always refetch
+  // Fetch organizations data
   const { organizations, isLoading, error, refetch } = useOrganizations();
 
   // Show error toast if there's an error
@@ -51,6 +51,7 @@ const Organizations = () => {
   }, [refetch]);
 
   const handleEditOrganization = (organization: Organization) => {
+    console.log("Editando organização:", organization);
     setEditingOrganization(organization);
   };
 
@@ -69,6 +70,7 @@ const Organizations = () => {
   };
 
   const handleShowActiveUsers = (organization: Organization) => {
+    console.log("Mostrando usuários ativos para:", organization.name);
     setSelectedOrganization(organization);
   };
 
@@ -77,11 +79,12 @@ const Organizations = () => {
     refetch();
   };
 
-  const filteredOrganizations = organizations.filter((org) =>
+  // Garante que organizações esteja definido antes de filtrar
+  const filteredOrganizations = organizations ? organizations.filter((org) =>
     [org.name, org.nomeFantasia, org.cnpj].some(field =>
       field?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  );
+  ) : [];
 
   return (
     <div className="space-y-8">
@@ -96,11 +99,11 @@ const Organizations = () => {
         isLoading={isLoading}
         error={error as Error | null}
         refetch={refetch}
-        isEmpty={organizations.length === 0}
+        isEmpty={!organizations || organizations.length === 0}
         onCreateNew={() => setIsCreateDialogOpen(true)}
       />
 
-      {!isLoading && !error && organizations.length > 0 && (
+      {!isLoading && !error && organizations && organizations.length > 0 && (
         <OrganizationsTable 
           organizations={filteredOrganizations}
           onEditOrganization={handleEditOrganization}
