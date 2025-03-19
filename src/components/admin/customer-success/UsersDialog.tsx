@@ -4,6 +4,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { useState, useMemo } from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from "@/components/ui/pagination";
 
 interface UsersDialogProps {
   isOpen: boolean;
@@ -13,6 +22,9 @@ interface UsersDialogProps {
 }
 
 export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialogProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
+  
   const getStatusText = (status: UserStatus) => {
     switch (status) {
       case 'active': return 'Ativo';
@@ -41,6 +53,28 @@ export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialo
       default: return role;
     }
   };
+  
+  // Calculate pagination data
+  const totalPages = Math.ceil(users.length / usersPerPage);
+  
+  // Get current users
+  const currentUsers = useMemo(() => {
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    return users.slice(indexOfFirstUser, indexOfLastUser);
+  }, [users, currentPage, usersPerPage]);
+  
+  // Change page
+  const paginate = (pageNumber: number) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+  
+  // Reset to first page when dialog opens or filter changes
+  if (!isOpen) {
+    if (currentPage !== 1) setCurrentPage(1);
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -63,8 +97,8 @@ export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialo
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.length > 0 ? (
-                users.map((user) => (
+              {currentUsers.length > 0 ? (
+                currentUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -88,6 +122,39 @@ export const UsersDialog = ({ isOpen, onClose, users, statusFilter }: UsersDialo
               )}
             </TableBody>
           </Table>
+          
+          {users.length > usersPerPage && (
+            <div className="flex justify-center mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => paginate(currentPage - 1)} 
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: totalPages }).map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        isActive={currentPage === index + 1}
+                        onClick={() => paginate(index + 1)}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => paginate(currentPage + 1)} 
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
