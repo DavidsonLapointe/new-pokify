@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -8,7 +9,6 @@ import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
-import { Button } from "@/components/ui/button";
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
 import { toast } from "sonner";
 import { ClipboardList } from "lucide-react";
@@ -108,19 +108,11 @@ const AdminCustomerSuccess = () => {
         </div>
       ) : selectedOrganization ? (
         <div className="space-y-6">
-          {/* OrganizationOverview with Anotações button moved to not overlap */}
-          <div className="w-full">
-            <div className="flex justify-end mb-2">
-              <Button 
-                onClick={handleOpenNotes}
-                className="bg-purple-500 hover:bg-purple-600 text-white"
-              >
-                <ClipboardList className="mr-2 h-4 w-4" />
-                Anotações
-              </Button>
-            </div>
-            <OrganizationOverview organization={selectedOrganization} />
-          </div>
+          {/* OrganizationOverview - pass handleOpenNotes to show notes button */}
+          <OrganizationOverview 
+            organization={selectedOrganization} 
+            onOpenNotes={handleOpenNotes}
+          />
           
           {/* ModulesStatus and UsersStatistics - Two columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

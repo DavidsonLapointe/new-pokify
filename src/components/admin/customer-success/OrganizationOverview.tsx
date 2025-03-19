@@ -6,13 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { FileText, ChevronUp } from "lucide-react";
+import { FileText, ChevronUp, ClipboardList } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface OrganizationOverviewProps {
   organization: Organization;
+  onOpenNotes?: () => void;
 }
 
-export const OrganizationOverview = ({ organization }: OrganizationOverviewProps) => {
+export const OrganizationOverview = ({ organization, onOpenNotes }: OrganizationOverviewProps) => {
   const [showMoreDetails, setShowMoreDetails] = useState(false);
   
   // Encontrar o administrador
@@ -71,6 +73,25 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
           <div className="flex items-center gap-2">
             <CardTitle>{organization.name}</CardTitle>
             {getStatusBadge(organization.status)}
+            
+            {/* Botão de anotações (ícone) na posição que foi solicitada */}
+            {onOpenNotes && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 ml-2"
+                      onClick={onOpenNotes}
+                    >
+                      <ClipboardList className="h-4 w-4 text-primary" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Anotações de Customer Success</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2 sm:mt-0">
