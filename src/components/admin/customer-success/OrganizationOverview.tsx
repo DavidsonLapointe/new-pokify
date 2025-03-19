@@ -85,7 +85,7 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
                       className="h-8 w-8 ml-2"
                       onClick={onOpenNotes}
                     >
-                      <ClipboardList className="h-4 w-4 text-primary" />
+                      <ClipboardList className="h-6 w-6 text-primary" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Anotações de Customer Success</TooltipContent>
