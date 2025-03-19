@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -47,7 +46,9 @@ const AdminCustomerSuccess = () => {
             Selecione uma empresa para analisar
           </label>
           <div className="flex gap-2">
-            <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+            <div className="w-full max-w-3xl">
+              <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+            </div>
             {searchTerm && (
               <Button 
                 variant="outline" 
