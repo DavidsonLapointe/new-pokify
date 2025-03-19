@@ -15,7 +15,7 @@ export const RoleSelector = ({ selectedRole, onRoleChange }: RoleSelectorProps) 
       <RadioGroup
         value={selectedRole}
         onValueChange={(value: UserRole) => onRoleChange(value)}
-        className="flex space-x-4"
+        className="flex flex-wrap gap-4"
       >
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="leadly_employee" id="leadly_employee" />
@@ -28,6 +28,10 @@ export const RoleSelector = ({ selectedRole, onRoleChange }: RoleSelectorProps) 
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="seller" id="seller" />
           <Label htmlFor="seller">Vendedor</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="manager" id="manager" />
+          <Label htmlFor="manager">Gerente</Label>
         </div>
       </RadioGroup>
     </div>

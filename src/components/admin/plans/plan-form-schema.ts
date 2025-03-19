@@ -15,22 +15,22 @@ export const planFormSchema = z.object({
 export type PlanFormValues = z.infer<typeof planFormSchema>;
 
 export interface Plan {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
-  shortDescription: string;
+  shortDescription?: string;
   description?: string;
-  benefits: string[];
+  benefits?: string[];
+  features?: string[];
   active: boolean;
   stripeProductId?: string;
   stripePriceId?: string;
   credits?: number | null;
-  // Propriedades adicionais utilizadas no módulo AdminModules
-  features?: string[];
+  // Additional properties used in AdminModules
   howItWorks?: string[];
   comingSoon?: boolean;
   actionButtonText?: string;
   icon?: string;
-  // Adicionando a propriedade status para o módulo
+  // Module status property
   status?: "not_contracted" | "contracted" | "configured" | "coming_soon" | "setup";
 }

@@ -53,12 +53,13 @@ export interface Organization {
   cnpj?: string;
   adminName?: string;
   adminEmail?: string;
+  adminPhone?: string;  // Added this property
   contractSignedAt?: string | null;
   createdAt: string;
   updatedAt?: string;
   logo?: string;
   address?: OrganizationAddress;
-  modules?: string[] | string; // Add modules field that can be array or comma-separated string
+  modules?: string[] | string; // Array or comma-separated string
   setupCompleted?: boolean;
 }
 
@@ -68,7 +69,7 @@ export interface OrgUser {
   name: string;
   email: string;
   phone?: string;
-  role: "admin" | "seller" | "leadly_employee";
+  role: "admin" | "seller" | "leadly_employee" | "manager";  // Updated to match UserRole
   status: "active" | "inactive" | "pending";
   createdAt: string;
   lastAccess: string;

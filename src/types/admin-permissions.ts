@@ -26,6 +26,12 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     dashboard: true,
     leads: true,
     profile: true
+  },
+  manager: {
+    dashboard: true,
+    leads: true,
+    users: true,
+    profile: true
   }
 };
 

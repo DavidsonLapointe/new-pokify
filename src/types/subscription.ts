@@ -18,18 +18,7 @@ export interface Subscription {
   updatedAt: string;
 }
 
-export interface Plan {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  callsIncluded?: number;
-  features: string[];
-  isPopular?: boolean;
-  active?: boolean;
-  stripeProductId?: string;
-  stripePriceId?: string;
-}
+import { Plan } from '@/components/admin/plans/plan-form-schema';
 
 export interface CreateSubscriptionDTO {
   organizationId: string;

@@ -42,5 +42,14 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     "financial",
     "users",
     "profile"
+  ],
+  manager: [
+    "dashboard",
+    "dashboard.leads",
+    "dashboard.performance",
+    "dashboard.sellers",
+    "leads",
+    "users",
+    "profile"
   ]
 };

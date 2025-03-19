@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomSwitch } from "@/components/ui/custom-switch";
@@ -50,6 +51,15 @@ const initialPermissions: RolePermissions = {
     dashboard: true,
     "dashboard.leads": true,
     leads: true
+  },
+  manager: {
+    profile: true,
+    dashboard: true,
+    "dashboard.leads": true,
+    "dashboard.performance": true,
+    "dashboard.sellers": true,
+    leads: true,
+    users: true
   }
 };
 

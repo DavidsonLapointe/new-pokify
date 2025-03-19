@@ -83,4 +83,5 @@ export interface MonthStats {
   pending: number;
   processed?: number;
   failed?: number;
+  novos?: number;
 }

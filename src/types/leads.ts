@@ -25,7 +25,7 @@ export interface Lead {
     id: string;
     date: string;
     duration: string;
-    status: "success" | "failed";
+    status: "success" | "failed" | "processed";
     fileName?: string;
   }[];
   crmId?: string;

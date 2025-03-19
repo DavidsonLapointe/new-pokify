@@ -1,108 +1,192 @@
 
-import { User } from "@/types";
-import { v4 as uuidv4 } from "uuid";
-import { mockOrganizations } from "./organizationMocks";
+import { User, UserRole, UserStatus } from "@/types/user-types";
+import { v4 as uuidv4 } from 'uuid';
 
-export const mockAuthenticatedUser: User = {
-  id: uuidv4(),
-  name: "Admin",
-  email: "admin@empresa.com",
-  phone: "(11) 98765-4321",
-  avatar: null,
-  role: "admin",
-  createdAt: "2023-05-15T14:30:00Z",
-  updatedAt: "2023-05-15T14:30:00Z",
-  lastAccess: "2023-06-01T08:45:00Z",
-  organization: mockOrganizations[0],
-  permissions: {
-    routes: [
-      "dashboard",
-      "leads",
-      "calls",
-      "ai-tools",
-      "users",
-      "integrations",
-      "settings",
-      "profile"
-    ]
-  }
-};
-
+// Create mock users data
 export const mockUsers: User[] = [
-  mockAuthenticatedUser,
   {
-    id: uuidv4(),
-    name: "Vendedor 1",
-    email: "vendedor1@empresa.com",
-    phone: "(11) 91234-5678",
-    avatar: null,
-    role: "seller",
-    createdAt: "2023-05-16T09:20:00Z",
-    updatedAt: "2023-05-16T09:20:00Z",
-    lastAccess: "2023-05-31T16:30:00Z",
-    organization: mockOrganizations[0],
+    id: "1",
+    name: "John Admin",
+    email: "admin@example.com",
+    phone: "+5511999999999",
+    role: "admin" as UserRole,
+    status: "active" as UserStatus,
+    createdAt: "2023-01-01T00:00:00.000Z",
+    lastAccess: "2023-08-15T14:30:00.000Z",
     permissions: {
-      routes: [
-        "dashboard",
-        "leads",
-        "calls"
-      ]
+      dashboard: true,
+      leads: true,
+      users: true,
+      integrations: true,
+      settings: true,
+      plan: true,
+      profile: true,
+      routes: ["dashboard", "leads", "users", "integrations", "settings", "plan", "profile"]
+    },
+    logs: [
+      {
+        id: "1",
+        date: "2023-08-15T14:30:00.000Z",
+        action: "Usuário fez login"
+      }
+    ],
+    avatar: null,
+    organization: {
+      id: "org1",
+      name: "Exemplo Empresa",
+      status: "active",
+      createdAt: "2022-12-01T00:00:00.000Z",
+      plan: "premium"
     }
   },
   {
-    id: uuidv4(),
-    name: "Gestor",
-    email: "gestor@empresa.com",
-    phone: "(11) 99876-5432",
-    avatar: null,
-    role: "admin", // Changed from 'manager' to 'admin' as manager is not a valid UserRole
-    createdAt: "2023-05-16T10:15:00Z",
-    updatedAt: "2023-05-16T10:15:00Z",
-    lastAccess: "2023-06-01T11:20:00Z",
-    organization: mockOrganizations[0],
+    id: "2",
+    name: "Jane Seller",
+    email: "seller@example.com",
+    phone: "+5511988888888",
+    role: "seller" as UserRole,
+    status: "active" as UserStatus,
+    createdAt: "2023-02-01T00:00:00.000Z",
+    lastAccess: "2023-08-14T10:15:00.000Z",
     permissions: {
-      routes: [
-        "dashboard",
-        "leads",
-        "calls",
-        "users",
-        "settings"
-      ]
+      dashboard: true,
+      leads: true,
+      profile: true,
+      routes: ["dashboard", "leads", "profile"]
+    },
+    logs: [
+      {
+        id: "1",
+        date: "2023-08-14T10:15:00.000Z",
+        action: "Usuário fez login"
+      }
+    ],
+    avatar: null,
+    organization: {
+      id: "org1",
+      name: "Exemplo Empresa",
+      status: "active",
+      createdAt: "2022-12-01T00:00:00.000Z",
+      plan: "premium"
+    }
+  },
+  {
+    id: "3",
+    name: "Mark Manager",
+    email: "manager@example.com",
+    phone: "+5511977777777",
+    role: "manager" as UserRole,
+    status: "active" as UserStatus,
+    createdAt: "2023-03-01T00:00:00.000Z",
+    lastAccess: "2023-08-13T16:45:00.000Z",
+    permissions: {
+      dashboard: true,
+      leads: true,
+      users: true,
+      profile: true,
+      routes: ["dashboard", "leads", "users", "profile"]
+    },
+    logs: [
+      {
+        id: "1",
+        date: "2023-08-13T16:45:00.000Z",
+        action: "Usuário fez login"
+      }
+    ],
+    avatar: null,
+    organization: {
+      id: "org1",
+      name: "Exemplo Empresa",
+      status: "active",
+      createdAt: "2022-12-01T00:00:00.000Z",
+      plan: "premium"
     }
   }
 ];
 
-export const mockAdminUsers = [
-  {
+// Create a function to generate a random user
+export const generateRandomUser = (role: UserRole = "seller", organizationId: string = "org1"): User => {
+  return {
     id: uuidv4(),
+    name: `User ${Math.floor(Math.random() * 1000)}`,
+    email: `user${Math.floor(Math.random() * 1000)}@example.com`,
+    phone: `+551199999${Math.floor(Math.random() * 10000)}`,
+    role: role,
+    status: "active" as UserStatus,
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 90 * 24 * 60 * 60 * 1000)).toISOString(),
+    lastAccess: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString(),
+    permissions: role === "admin" 
+      ? {
+          dashboard: true,
+          leads: true,
+          users: true,
+          integrations: true,
+          settings: true,
+          plan: true,
+          profile: true
+        }
+      : role === "manager"
+      ? {
+          dashboard: true,
+          leads: true,
+          users: true,
+          profile: true
+        }
+      : {
+          dashboard: true,
+          leads: true,
+          profile: true
+        },
+    logs: [
+      {
+        id: "1",
+        date: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString(),
+        action: "Usuário fez login"
+      }
+    ],
+    avatar: null,
+    organization: {
+      id: organizationId,
+      name: "Exemplo Empresa",
+      status: "active",
+      createdAt: "2022-12-01T00:00:00.000Z",
+      plan: "premium"
+    }
+  };
+};
+
+// Create mock leadly employees
+export const mockLeadlyEmployees: User[] = [
+  {
+    id: "l1",
     name: "Admin Leadly",
-    email: "admin@leadly.com",
-    phone: "(11) 98888-7777",
-    avatar: null,
-    role: "leadly_employee",
-    createdAt: "2023-04-01T08:00:00Z",
-    updatedAt: "2023-04-01T08:00:00Z",
-    lastAccess: "2023-06-01T09:30:00Z",
+    email: "admin@leadly.ai",
+    phone: "+5511999999999",
+    role: "leadly_employee" as UserRole,
+    status: "active" as UserStatus,
+    createdAt: "2022-01-01T00:00:00.000Z",
+    lastAccess: "2023-08-15T09:30:00.000Z",
     permissions: {
-      routes: ["*"]
-    }
-  },
-  {
-    id: uuidv4(),
-    name: "Suporte Leadly",
-    email: "suporte@leadly.com",
-    phone: "(11) 97777-8888",
+      dashboard: true,
+      organizations: true,
+      users: true,
+      modules: true,
+      plans: true,
+      "credit-packages": true,
+      financial: true,
+      integrations: true,
+      prompt: true,
+      settings: true,
+      profile: true
+    },
+    logs: [
+      {
+        id: "1",
+        date: "2023-08-15T09:30:00.000Z",
+        action: "Usuário fez login"
+      }
+    ],
     avatar: null,
-    role: "leadly_employee",
-    createdAt: "2023-04-02T08:00:00Z",
-    updatedAt: "2023-04-02T08:00:00Z",
-    lastAccess: "2023-06-01T10:15:00Z",
-    permissions: {
-      routes: [
-        "organizations",
-        "users",
-        "prompt"
-      ]
-    }
+    company_leadly_id: "leadly1"
   }
 ];
