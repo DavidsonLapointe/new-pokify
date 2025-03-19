@@ -16,7 +16,8 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
           email: newUser.email,
           phone: newUser.phone,
           avatar: newUser.avatar,
-          role: newUser.role,
+          role: newUser.role, // This should now work with "manager" role
+          status: newUser.status,
         })
         .eq('id', newUser.id);
 

@@ -14,7 +14,7 @@ export interface User {
   email: string;
   phone?: string;
   role: UserRole;
-  status?: UserStatus;
+  status: UserStatus; // Changed from optional to required to match OrgUser
   createdAt: string;
   updatedAt?: string;
   lastAccess?: string;  

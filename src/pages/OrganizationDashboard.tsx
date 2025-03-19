@@ -1,4 +1,3 @@
-
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
@@ -11,9 +10,10 @@ import { useUser } from "@/contexts/UserContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PerformanceMetric } from "@/hooks/dashboard/usePerformanceData";
+import { User } from "@/types";
 
 const OrganizationDashboard = () => {
-  const { user, loading } = useUser(); // Adicionamos loading do contexto
+  const { user, loading } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,6 +54,16 @@ const OrganizationDashboard = () => {
     setMonthlyMetric,
     sellers
   } = useDashboardData();
+
+  // Create a proper User array from the simplified sellers data
+  const formattedSellers: User[] = sellers.map(seller => ({
+    id: seller.id,
+    name: seller.name,
+    email: `${seller.id}@example.com`, // Placeholder email
+    role: "seller",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  }));
 
   // Mostra loading enquanto carrega o usuário
   if (loading) {
@@ -112,7 +122,7 @@ const OrganizationDashboard = () => {
             setMonthlyLeadsSeller={setMonthlyLeadsSeller}
             dailyLeadsSeller={dailyLeadsSeller}
             setDailyLeadsSeller={setDailyLeadsSeller}
-            sellers={sellers}
+            sellers={formattedSellers}
           />
         </TabsContent>
 
@@ -129,7 +139,7 @@ const OrganizationDashboard = () => {
               isMonthly={true}
               selectedSeller={monthlyCallsSeller}
               onSellerChange={setMonthlyCallsSeller}
-              sellers={sellers}
+              sellers={formattedSellers}
             />
             <DailyCallsChart 
               data={dailyCallsData}
@@ -137,7 +147,7 @@ const OrganizationDashboard = () => {
               onDateChange={setCallsDate}
               selectedSeller={dailyCallsSeller}
               onSellerChange={setDailyCallsSeller}
-              sellers={sellers}
+              sellers={formattedSellers}
             />
           </div>
         </TabsContent>

@@ -4,6 +4,7 @@ import { Book } from "lucide-react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { ObjectionsTabContent } from "@/components/dashboard/ObjectionsTabContent";
 import { SuggestionsTabContent } from "@/components/dashboard/SuggestionsTabContent";
+import { User } from "@/types";
 
 const OrganizationKnowledgeBase = () => {
   const {
@@ -24,6 +25,16 @@ const OrganizationKnowledgeBase = () => {
     updateSuggestionStatus,
     sellers
   } = useDashboardData();
+
+  // Create a proper User array from the simplified sellers data
+  const formattedSellers: User[] = sellers.map(seller => ({
+    id: seller.id,
+    name: seller.name,
+    email: `${seller.id}@example.com`, // Placeholder email
+    role: "seller",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  }));
 
   return (
     <div className="space-y-6">
@@ -52,7 +63,7 @@ const OrganizationKnowledgeBase = () => {
             setMonthlyObjectionsSeller={setMonthlyObjectionsSeller}
             objectionTrendsSeller={objectionTrendsSeller}
             setObjectionTrendsSeller={setObjectionTrendsSeller}
-            sellers={sellers}
+            sellers={formattedSellers}
           />
         </TabsContent>
 
@@ -63,7 +74,7 @@ const OrganizationKnowledgeBase = () => {
             setMonthlySuggestionsDate={setMonthlySuggestionsDate}
             monthlySuggestionsSeller={monthlySuggestionsSeller}
             setMonthlySuggestionsSeller={setMonthlySuggestionsSeller}
-            sellers={sellers}
+            sellers={formattedSellers}
             onUpdateStatus={updateSuggestionStatus}
           />
         </TabsContent>

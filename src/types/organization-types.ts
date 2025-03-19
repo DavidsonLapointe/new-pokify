@@ -63,21 +63,21 @@ export interface Organization {
   setupCompleted?: boolean;
 }
 
-// Rename to OrgUser to avoid conflicts with User from user-types.ts
+// Updated OrgUser to match User interface structure
 export interface OrgUser {
   id: string;
   name: string;
   email: string;
   phone?: string;
   role: UserRole;
-  status: "active" | "inactive" | "pending";
+  status: UserStatus;
   createdAt: string;
-  lastAccess: string;
-  permissions: {
+  lastAccess?: string;
+  permissions?: {
     [key: string]: boolean;
   };
-  logs: UserLog[];
-  organization: Organization;
+  logs?: UserLog[];
+  organization?: Organization;
   avatar?: string | null;
 }
 
@@ -88,4 +88,4 @@ export interface UserLog {
 }
 
 // Import UserRole from user-types to avoid circular dependencies
-import { UserRole } from "./user-types";
+import { UserRole, UserStatus } from "./user-types";
