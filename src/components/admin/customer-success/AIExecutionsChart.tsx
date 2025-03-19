@@ -39,6 +39,7 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"monthly" | "daily">("monthly");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [availableMonths, setAvailableMonths] = useState<Array<{ date: string; amount: number }>>([]);
 
   useEffect(() => {
     const fetchExecutionsData = async () => {
@@ -55,10 +56,33 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
 
         if (error) throw error;
 
+        // Generate data for available months that have AI executions
+        if (analyses && analyses.length > 0) {
+          const monthCounts = new Map<string, number>();
+          
+          analyses.forEach(analysis => {
+            const analysisDate = new Date(analysis.created_at);
+            const dateKey = analysisDate.toISOString().substring(0, 10); // YYYY-MM-DD format
+            
+            // Count by month for the MonthYearSelector
+            const monthKey = dateKey.substring(0, 7); // YYYY-MM format
+            const currentCount = monthCounts.get(monthKey) || 0;
+            monthCounts.set(monthKey, currentCount + 1);
+          });
+          
+          // Convert to array for MonthYearSelector
+          const monthsWithData = Array.from(monthCounts.entries()).map(([date, amount]) => ({
+            date, 
+            amount
+          }));
+          
+          setAvailableMonths(monthsWithData);
+        }
+        
         // Process data based on view mode
         if (viewMode === "monthly") {
-          const last6Months = getLastMonths(6);
-          const chartData = last6Months.map(month => {
+          const last13Months = getLastMonths(13);
+          const chartData = last13Months.map(month => {
             const monthData: AIExecutionData = {
               month,
               all: 0,
@@ -257,30 +281,33 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
           </Tabs>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 justify-between">
-          {viewMode === "daily" && (
-            <div className="w-[180px]">
-              <MonthYearSelector
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                showAllOption={false}
-              />
-            </div>
-          )}
-          <Select
-            value={selectedFunction}
-            onValueChange={setSelectedFunction}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Selecionar função" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas as funções</SelectItem>
-              <SelectItem value="analysis">Análise de Chamadas</SelectItem>
-              <SelectItem value="transcription">Transcrição</SelectItem>
-              <SelectItem value="scoring">Pontuação de Leads</SelectItem>
-              <SelectItem value="suggestions">Sugestões</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-row items-center gap-2">
+            {viewMode === "daily" && (
+              <div className="w-[180px]">
+                <MonthYearSelector
+                  selectedDate={selectedDate}
+                  onDateChange={setSelectedDate}
+                  showAllOption={false}
+                  billingData={availableMonths}
+                />
+              </div>
+            )}
+            <Select
+              value={selectedFunction}
+              onValueChange={setSelectedFunction}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Selecionar função" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as funções</SelectItem>
+                <SelectItem value="analysis">Análise de Chamadas</SelectItem>
+                <SelectItem value="transcription">Transcrição</SelectItem>
+                <SelectItem value="scoring">Pontuação de Leads</SelectItem>
+                <SelectItem value="suggestions">Sugestões</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
