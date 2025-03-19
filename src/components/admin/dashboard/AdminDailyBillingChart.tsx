@@ -69,7 +69,7 @@ export const AdminDailyBillingChart = ({
         <div className="bg-white p-4 border rounded shadow-md">
           <p className="font-medium">{label}</p>
           <p className="text-blue-600 font-semibold">
-            Total: R$ {Number(payload[0].payload.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            Total: R$ {Number(payload[0].value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
           <p className="text-green-600">
             Planos: R$ {Number(payload[0].payload.plansAmount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -108,20 +108,8 @@ export const AdminDailyBillingChart = ({
             <Legend />
             <Bar 
               dataKey="amount" 
-              name="Total" 
+              name="Faturamento" 
               fill="#3b82f6" 
-              radius={[4, 4, 0, 0]} 
-            />
-            <Bar 
-              dataKey="plansAmount" 
-              name="Planos" 
-              fill="#22c55e" 
-              radius={[4, 4, 0, 0]} 
-            />
-            <Bar 
-              dataKey="setupAmount" 
-              name="Setup" 
-              fill="#f59e0b" 
               radius={[4, 4, 0, 0]} 
             />
           </BarChart>
