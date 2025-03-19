@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -136,7 +135,7 @@ const AdminCustomerSuccess = () => {
               />
             </div>
             
-            <div className="w-full">
+            <div>
               <AIExecutionsChart organizationId={selectedOrganization.id} />
             </div>
           </div>
