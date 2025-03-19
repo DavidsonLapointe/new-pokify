@@ -72,9 +72,9 @@ export const UsersByPermission = ({ users, organizationName }: UsersByPermission
             </p>
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              variant="secondary"
+              variant="cancel"
               size="sm"
-              className="mt-1"
+              className="mt-1 flex items-center gap-2"
             >
               Clique aqui para verificar as permissões
             </Button>
