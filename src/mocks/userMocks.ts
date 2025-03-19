@@ -1,109 +1,108 @@
 
-import { User } from '../types';
-import { generateRandomLogs } from './utils';
-import { Organization } from '@/types/organization-types';
+import { User } from "@/types";
+import { v4 as uuidv4 } from "uuid";
+import { mockOrganizations } from "./organizationMocks";
 
-// Função para gerar usuários mock com diferentes funções e status
-export const createMockUser = (role: User['role'] = 'seller', status: User['status'] = 'active', orgIndex: number = 0, nameIndex: number = 0): User => {
-  const now = new Date().toISOString();
-  const isAdmin = role === 'admin';
-  
-  return {
-    id: `user-${Math.random().toString(36).substr(2, 9)}`,
-    name: isAdmin ? `Admin ${orgIndex + 1}` : `Vendedor ${nameIndex}`,
-    email: isAdmin ? `admin${orgIndex + 1}@empresa.com` : `vendedor${nameIndex}@empresa.com`,
+export const mockAuthenticatedUser: User = {
+  id: uuidv4(),
+  name: "Admin",
+  email: "admin@empresa.com",
+  phone: "(11) 98765-4321",
+  avatar: null,
+  role: "admin",
+  createdAt: "2023-05-15T14:30:00Z",
+  updatedAt: "2023-05-15T14:30:00Z",
+  lastAccess: "2023-06-01T08:45:00Z",
+  organization: mockOrganizations[0],
+  permissions: {
+    routes: [
+      "dashboard",
+      "leads",
+      "calls",
+      "ai-tools",
+      "users",
+      "integrations",
+      "settings",
+      "profile"
+    ]
+  }
+};
+
+export const mockUsers: User[] = [
+  mockAuthenticatedUser,
+  {
+    id: uuidv4(),
+    name: "Vendedor 1",
+    email: "vendedor1@empresa.com",
+    phone: "(11) 91234-5678",
     avatar: null,
-    role,
-    status,
-    createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
-    lastAccess: now,
+    role: "seller",
+    createdAt: "2023-05-16T09:20:00Z",
+    updatedAt: "2023-05-16T09:20:00Z",
+    lastAccess: "2023-05-31T16:30:00Z",
+    organization: mockOrganizations[0],
     permissions: {
-      dashboard: true,
-      leads: true,
-      users: isAdmin,
-      integrations: isAdmin,
-      settings: isAdmin,
-      plan: isAdmin,
-      company: isAdmin,
-      profile: true,
-    },
-    logs: generateRandomLogs(10).map(log => ({
-      id: log.id,
-      date: log.timestamp,
-      action: log.activity
-    })),
-    // Add optional organization field - will be populated later
-    organization: undefined,
-    // Add company_leadly_id for leadly_employee role
-    ...(role === 'leadly_employee' ? {company_leadly_id: `company-${Math.random().toString(36).substr(2, 9)}`} : {})
-  };
-};
-
-// Gera uma lista específica de usuários mock para garantir 23 usuários (1 admin + 22 vendedores)
-export const generateMockUsers = (count: number, orgIndex: number = 0): User[] => {
-  const users: User[] = [];
-  
-  // Garantir sempre 1 admin
-  users.push(createMockUser('admin', 'active', orgIndex));
-  
-  if (count === 23) {
-    // Caso especial para a primeira organização: garantir 1 admin + 22 vendedores com diferentes status
-    
-    // Adicionar 15 vendedores ativos
-    for (let i = 1; i <= 15; i++) {
-      users.push(createMockUser('seller', 'active', orgIndex, i));
+      routes: [
+        "dashboard",
+        "leads",
+        "calls"
+      ]
     }
-    
-    // Adicionar 4 vendedores inativos
-    for (let i = 16; i <= 19; i++) {
-      users.push(createMockUser('seller', 'inactive', orgIndex, i));
+  },
+  {
+    id: uuidv4(),
+    name: "Gestor",
+    email: "gestor@empresa.com",
+    phone: "(11) 99876-5432",
+    avatar: null,
+    role: "manager",
+    createdAt: "2023-05-16T10:15:00Z",
+    updatedAt: "2023-05-16T10:15:00Z",
+    lastAccess: "2023-06-01T11:20:00Z",
+    organization: mockOrganizations[0],
+    permissions: {
+      routes: [
+        "dashboard",
+        "leads",
+        "calls",
+        "users",
+        "settings"
+      ]
     }
-    
-    // Adicionar 3 vendedores pendentes
-    for (let i = 20; i <= 22; i++) {
-      users.push(createMockUser('seller', 'pending', orgIndex, i));
+  }
+];
+
+export const mockAdminUsers = [
+  {
+    id: uuidv4(),
+    name: "Admin Leadly",
+    email: "admin@leadly.com",
+    phone: "(11) 98888-7777",
+    avatar: null,
+    role: "leadly_employee",
+    createdAt: "2023-04-01T08:00:00Z",
+    updatedAt: "2023-04-01T08:00:00Z",
+    lastAccess: "2023-06-01T09:30:00Z",
+    permissions: {
+      routes: ["*"]
     }
-    
-    return users;
+  },
+  {
+    id: uuidv4(),
+    name: "Suporte Leadly",
+    email: "suporte@leadly.com",
+    phone: "(11) 97777-8888",
+    avatar: null,
+    role: "leadly_employee",
+    createdAt: "2023-04-02T08:00:00Z",
+    updatedAt: "2023-04-02T08:00:00Z",
+    lastAccess: "2023-06-01T10:15:00Z",
+    permissions: {
+      routes: [
+        "organizations",
+        "users",
+        "prompt"
+      ]
+    }
   }
-  
-  // Para outras organizações, manter a lógica original
-  for (let i = 1; i < count; i++) {
-    const status: User['status'] = Math.random() > 0.8 
-      ? (Math.random() > 0.5 ? 'inactive' : 'pending') 
-      : 'active';
-    
-    users.push(createMockUser('seller', status, orgIndex, i));
-  }
-  
-  return users;
-};
-
-// Variável para armazenar as organizações depois que forem criadas
-let mockOrganizationsRef: Organization[] = [];
-
-// Função para definir as organizações após serem criadas
-export const setMockOrganizations = (orgs: Organization[]) => {
-  mockOrganizationsRef = orgs;
-};
-
-// Criamos um usuário autenticado que será atualizado com a organização
-export const createMockAuthenticatedUser = (): User => {
-  const user = createMockUser('admin');
-  
-  // Se as organizações já estiverem disponíveis, associamos a primeira ao usuário
-  if (mockOrganizationsRef.length > 0) {
-    return {
-      ...user,
-      organization: mockOrganizationsRef[0],
-    };
-  }
-  
-  return user;
-};
-
-// Usuários mockados para uso em diferentes contextos
-export const mockUsers = generateMockUsers(15);
-
-// Mock para o usuário autenticado (será atualizado depois com a organização)
-export const mockAuthenticatedUser: User = createMockAuthenticatedUser();
+];

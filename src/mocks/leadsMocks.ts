@@ -1,78 +1,84 @@
 
-import { Lead } from '@/types';
-import { randomNumber, randomDate } from './utils';
+import { Lead } from "@/types/leads";
+import { v4 as uuidv4 } from "uuid";
 
-// Nomes brasileiros para leads
-const firstNames = [
-  'João', 'Maria', 'Pedro', 'Ana', 'Carlos', 'Mariana', 'José', 'Fernanda', 
-  'Lucas', 'Amanda', 'Rodrigo', 'Juliana', 'Rafael', 'Paula', 'Luiz', 'Camila',
-  'Roberto', 'Beatriz', 'Gustavo', 'Letícia', 'Marcos', 'Natália', 'Paulo', 'Larissa',
-  'Ricardo', 'Sandra', 'Fernando', 'Patrícia', 'André', 'Débora', 'Márcio', 'Carolina'
-];
-
-const lastNames = [
-  'Silva', 'Oliveira', 'Santos', 'Souza', 'Ferreira', 'Pereira', 'Almeida', 'Costa',
-  'Rodrigues', 'Martins', 'Carvalho', 'Gomes', 'Ribeiro', 'Alves', 'Monteiro', 'Mendes',
-  'Barbosa', 'Lopes', 'Campos', 'Amaral', 'Moreira', 'Cardoso', 'Teixeira', 'Lima',
-  'Cavalcanti', 'Correia', 'Dias', 'Azevedo', 'Nascimento', 'Moura', 'Cunha', 'Freitas'
-];
-
-// Gera leads mockados
-export const generateMockLeads = (count: number): Lead[] => {
-  const leads: Lead[] = [];
-  
-  for (let i = 0; i < count; i++) {
-    const firstName = firstNames[randomNumber(0, firstNames.length - 1)];
-    const lastName = lastNames[randomNumber(0, lastNames.length - 1)];
-    const statuses: ("pending" | "contacted" | "failed")[] = ["pending", "contacted", "failed"];
-    
-    // Gera uma data nos últimos 6 meses
-    const createdAtDate = randomDate(new Date(Date.now() - 180 * 24 * 60 * 60 * 1000));
-    
-    // Mais chamadas para leads mais antigos
-    const callCount = Math.max(1, Math.floor((Date.now() - createdAtDate.getTime()) / (15 * 24 * 60 * 60 * 1000)));
-    
-    // Array de chamadas
-    const calls = Array.from({ length: randomNumber(0, callCount) }, (_, j) => {
-      // Chamadas mais recentes que a data de criação do lead
-      const callDate = randomDate(new Date(createdAtDate.getTime() + j * 24 * 60 * 60 * 1000));
-      
-      return {
-        id: `call-${i}-${j}`,
-        date: callDate.toISOString(),
-        duration: `${randomNumber(1, 15)}:${randomNumber(10, 59)}`,
-        status: Math.random() > 0.2 ? "success" : "failed" as "success" | "failed"
+export const mockLeads: Lead[] = [
+  {
+    id: uuidv4(),
+    organizationId: "org-123",
+    status: "qualified",
+    temperature: "hot",
+    personType: "pj",
+    firstName: "João",
+    lastName: "Silva",
+    email: "joao@empresa.com",
+    phone: "(11) 98765-4321",
+    company: "Empresa ABC",
+    razaoSocial: "Empresa ABC Ltda",
+    cnpj: "12.345.678/0001-90",
+    lastContactDate: "2023-05-20T14:30:00Z",
+    createdAt: "2023-05-15T14:30:00Z",
+    updatedAt: "2023-05-20T14:30:00Z",
+    crmId: "crm-123",
+    crmLink: "https://crm.example.com/lead/crm-123",
+    source: "call",
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente interessado em nossa solução premium",
+        createdAt: "2023-05-15T15:00:00Z",
+        createdBy: {
+          id: "user-123",
+          name: "Vendedor 1"
+        }
       }
-    });
-    
-    // 60% dos leads têm informações de CRM
-    const hasCrmInfo = Math.random() > 0.4;
-    
-    leads.push({
-      id: `lead-${Math.random().toString(36).substr(2, 9)}`,
-      firstName,
-      lastName,
-      contactType: Math.random() > 0.5 ? "phone" : "email",
-      contactValue: Math.random() > 0.5 
-        ? `(${randomNumber(11, 99)}) ${randomNumber(91000, 99999)}-${randomNumber(1000, 9999)}`
-        : `${firstName.toLowerCase()}.${lastName.toLowerCase()}${randomNumber(1, 99)}@gmail.com`,
-      status: statuses[randomNumber(0, 2)],
-      createdAt: createdAtDate.toISOString(),
-      callCount: calls.length,
-      calls: calls,
-      crmInfo: hasCrmInfo ? {
-        funnel: `Funil ${randomNumber(1, 3)}`,
-        stage: `Etapa ${randomNumber(1, 5)}`
-      } : undefined
-    });
+    ],
+    calls: [
+      {
+        id: uuidv4(),
+        fileName: "call-01.mp3",
+        duration: 325,
+        createdAt: "2023-05-15T14:30:00Z"
+      }
+    ]
+  },
+  {
+    id: uuidv4(),
+    organizationId: "org-123",
+    status: "negotiation",
+    temperature: "warm",
+    personType: "pf",
+    firstName: "Maria",
+    lastName: "Oliveira",
+    email: "maria@example.com",
+    phone: "(11) 91234-5678",
+    cpf: "123.456.789-00",
+    lastContactDate: "2023-05-22T10:15:00Z",
+    createdAt: "2023-05-16T10:15:00Z",
+    updatedAt: "2023-05-22T10:15:00Z",
+    crmId: "crm-456",
+    crmLink: "https://crm.example.com/lead/crm-456",
+    source: "website",
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente solicitou uma demonstração",
+        createdAt: "2023-05-16T11:00:00Z",
+        createdBy: {
+          id: "user-123",
+          name: "Vendedor 1"
+        }
+      },
+      {
+        id: uuidv4(),
+        content: "Demonstração agendada para 25/05",
+        createdAt: "2023-05-22T10:15:00Z",
+        createdBy: {
+          id: "user-456",
+          name: "Gestor"
+        }
+      }
+    ],
+    calls: []
   }
-  
-  // Ordenação: mais recente primeiro
-  return leads.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
-
-// Exporta leads mockados especificamente para a Organização 1 Ltda
-export const leadsOrganizacao1 = generateMockLeads(32);
-
-// Exporta leads mockados gerais
-export const mockLeads = generateMockLeads(100);
+];

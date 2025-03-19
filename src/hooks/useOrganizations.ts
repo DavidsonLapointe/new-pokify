@@ -1,36 +1,31 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { Organization } from "@/types";
-import { mockOrganizations } from "@/mocks";
+import { useState, useEffect } from 'react';
+import { Organization } from '@/types';
+import { mockOrganizations } from '@/mocks/organizationMocks';
 
 export const useOrganizations = () => {
-  const fetchOrganizations = async (): Promise<Organization[]> => {
-    // Simula uma chamada de API com um delay
-    return new Promise((resolve) => {
-      console.log("Buscando organizações mockadas");
-      setTimeout(() => {
-        console.log(`Retornando ${mockOrganizations.length} organizações mockadas`);
-        resolve(mockOrganizations);
-      }, 800);
-    });
-  };
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { 
-    data: organizations = [], 
-    isLoading, 
-    error,
-    refetch 
-  } = useQuery({
-    queryKey: ['organizations'],
-    queryFn: fetchOrganizations,
-    staleTime: 0, // Desabilitar cache para sempre buscar dados novos
-    refetchOnWindowFocus: true
-  });
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        // In a real app, this would be an API call
+        // For now, we're using mock data
+        setOrganizations(mockOrganizations);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching organizations:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
 
   return {
     organizations,
     isLoading,
-    error,
-    refetch
+    setOrganizations,
   };
 };

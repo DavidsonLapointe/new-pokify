@@ -1,88 +1,72 @@
 
-import { Organization, OrganizationStatus, OrganizationPendingReason } from '../types/organization-types';
-import { User, UserRole, UserStatus } from '../types/user-types';
-import { generateMockUsers, setMockOrganizations } from './userMocks';
-import { generateRandomCNPJ } from './utils';
+import { Organization } from "@/types";
+import { v4 as uuidv4 } from "uuid";
 
-// Cria uma organização mock com diferentes status
-export const createMockOrganization = (
-  index: number,
-  status: OrganizationStatus = 'active',
-  userCount: number = 5
-): Organization => {
-  const id = `org-${Math.random().toString(36).substr(2, 9)}`;
-  // Para a primeira organização, sempre garantir 23 usuários
-  const actualUserCount = index === 0 ? 23 : userCount;
-  
-  // We need to transform the User[] from userMocks to match Organization.users
-  const mockUsers = generateMockUsers(actualUserCount, index);
-  const now = new Date().toISOString();
-
-  const mockPlans = [
-    { id: 'basic', name: 'Plano Básico', price: 99.90 },
-    { id: 'standard', name: 'Plano Padrão', price: 199.90 },
-    { id: 'premium', name: 'Plano Premium', price: 299.90 }
-  ];
-
-  const pendingReasons = [
-    "contract_signature", "user_validation", "mensalidade_payment", "pro_rata_payment", null
-  ] as const;
-
-  const pendingReason: OrganizationPendingReason = 
-    status === 'pending' ? pendingReasons[index % pendingReasons.length] : null;
-
-  return {
-    id,
-    name: `Organização ${index + 1} Ltda.`,
-    nomeFantasia: `Org ${index + 1}`,
-    plan: mockPlans[index % 3],
-    planName: mockPlans[index % 3].name,
-    users: mockUsers as any[], // Type assertion here as we know the structure is compatible
-    status,
-    pendingReason,
-    contractStatus: status === 'active' ? 'completed' : 'pending',
-    paymentStatus: status === 'active' ? 'completed' : 'pending',
-    registrationStatus: status === 'active' ? 'completed' : 'pending',
-    integratedCRM: status === 'active' ? (Math.random() > 0.5 ? 'hubspot' : 'pipedrive') : undefined,
-    integratedLLM: status === 'active' ? 'openai' : undefined,
-    email: `contato@organizacao${index + 1}.com.br`,
-    phone: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-    cnpj: generateRandomCNPJ(),
-    adminName: mockUsers.find(u => u.role === 'admin')?.name || 'Admin',
-    adminEmail: mockUsers.find(u => u.role === 'admin')?.email || `admin${index + 1}@empresa.com`,
-    contractSignedAt: status === 'active' ? new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString() : null,
-    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-    logo: Math.random() > 0.7 ? `https://ui-avatars.com/api/?name=Org+${index + 1}&background=random` : undefined,
+export const mockOrganizations: Organization[] = [
+  {
+    id: uuidv4(),
+    name: "Empresa Exemplo",
+    status: "active",
+    createdAt: "2023-05-15T14:30:00Z",
+    updatedAt: "2023-05-15T14:30:00Z",
+    cnpj: "12.345.678/0001-90",
     address: {
-      logradouro: 'Av. Paulista',
-      numero: `${Math.floor(Math.random() * 2000) + 1}`,
-      complemento: `Sala ${Math.floor(Math.random() * 100) + 1}`,
-      bairro: 'Bela Vista',
-      cidade: 'São Paulo',
-      estado: 'SP',
-      cep: `01311-${Math.floor(Math.random() * 900) + 100}`
+      street: "Rua das Flores",
+      number: "123",
+      complement: "Sala 45",
+      neighborhood: "Centro",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "01234-567"
+    },
+    adminEmail: "admin@empresa.com",
+    adminName: "Administrador",
+    adminPhone: "(11) 98765-4321",
+    logo: null,
+    paymentStatus: "completed",
+    registrationStatus: "completed",
+    pendingReason: null,
+    setupCompleted: true,
+    modules: ["calls", "leads"],
+    plan: {
+      id: uuidv4(),
+      name: "Plano Profissional",
+      price: 299.90,
+      features: ["Análise de chamadas", "Gestão de leads"],
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     }
-  };
-};
-
-// Gera uma lista de organizações mock com diferentes status
-export const generateMockOrganizations = (count: number): Organization[] => {
-  const organizations: Organization[] = [];
-  
-  for (let i = 0; i < count; i++) {
-    const status: OrganizationStatus = 
-      i % 5 === 0 ? 'pending' : 
-      i % 7 === 0 ? 'inactive' : 
-      'active';
-    
-    organizations.push(createMockOrganization(i, status, Math.floor(Math.random() * 10) + 3));
+  },
+  {
+    id: uuidv4(),
+    name: "Startup Tech",
+    status: "pending",
+    createdAt: "2023-05-20T10:15:00Z",
+    updatedAt: "2023-05-20T10:15:00Z",
+    cnpj: "98.765.432/0001-10",
+    address: {
+      street: "Avenida Paulista",
+      number: "1500",
+      complement: "Andar 10",
+      neighborhood: "Bela Vista",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "01310-200"
+    },
+    adminEmail: "admin@startuptech.com",
+    adminName: "Gestor Startup",
+    adminPhone: "(11) 91234-5678",
+    logo: null,
+    paymentStatus: "pending",
+    registrationStatus: "completed",
+    pendingReason: "mensalidade_payment",
+    setupCompleted: false,
+    modules: ["calls"],
+    plan: {
+      id: uuidv4(),
+      name: "Plano Básico",
+      price: 149.90,
+      features: ["Análise de chamadas"],
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    }
   }
-  
-  return organizations;
-};
-
-// Exporta organizações mockadas para uso em diferentes contextos
-export const mockOrganizations = generateMockOrganizations(20);
-
-// Atualiza a referência nas userMocks
-setMockOrganizations(mockOrganizations);
+];

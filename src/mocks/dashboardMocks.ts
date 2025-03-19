@@ -1,193 +1,117 @@
 
-import { randomNumber } from './utils';
-import { Suggestion } from '@/components/dashboard/types/suggestions';
-import { format, subMonths } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { v4 as uuidv4 } from "uuid";
 
-// Generate consistent lead data
-const generateLeadData = (count: number, baseValue: number, variance: number) => 
-  Math.round(baseValue + (Math.random() * variance * 2) - variance);
-
-// Generate consistent trend data
-const generateTrendData = (months: number, values: {[key: string]: number}) => {
-  const currentDate = new Date();
-  
-  return Array.from({ length: months }, (_, i) => {
-    const date = subMonths(currentDate, months - i - 1);
-    const monthStr = format(date, 'MMM/yy', { locale: ptBR });
-    
-    const result: {[key: string]: any} = { month: monthStr };
-    
-    Object.keys(values).forEach(key => {
-      const baseValue = values[key];
-      const trend = i / (months - 1); // 0 to 1 trend factor
-      const variance = baseValue * 0.2; // 20% variance
-      
-      // Slightly increase values over time for an upward trend
-      result[key] = Math.round(baseValue * (0.8 + trend * 0.5) + (Math.random() * variance * 2) - variance);
-    });
-    
-    return result;
-  });
-};
-
-// Generate daily data with consistent pattern
-const generateDailyData = (daysCount: number, baseValues: {[key: string]: number}) => {
-  const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() - daysCount + 1);
-  
-  return Array.from({ length: daysCount }, (_, i) => {
-    const date = new Date(currentDate);
-    date.setDate(date.getDate() + i);
-    const dayStr = format(date, 'dd/MM');
-    
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const weekdayFactor = isWeekend ? 0.4 : 1; // Less activity on weekends
-    
-    const result: {[key: string]: any} = { 
-      date: format(date, 'yyyy-MM-dd'),
-      day: dayStr
-    };
-    
-    Object.keys(baseValues).forEach(key => {
-      const baseValue = baseValues[key];
-      const variance = baseValue * 0.3; // 30% variance
-      
-      result[key] = Math.round(baseValue * weekdayFactor + (Math.random() * variance * 2) - variance);
-      // Ensure we don't get negative values
-      result[key] = Math.max(0, result[key]);
-    });
-    
-    return result;
-  });
-};
-
-// Cálculo de acumulados para garantir dados coerentes
-const calcActiveLeads = 382;
-const calcPendingLeads = 68;
-const calcTotalLeads = calcActiveLeads + calcPendingLeads;
-
-// Dados mockados para o dashboard com valores mais coerentes
-export const mockDashboardData = {
-  // Dados de estatísticas gerais com valores mais realistas
-  monthStats: {
-    total: calcTotalLeads,
-    active: calcActiveLeads,
-    pending: calcPendingLeads,
-    processed: 362,
-    failed: 20,
-    leads: 180,
-    conversions: 42,
+export const mockDashboardStats = {
+  currentMonth: {
+    totalCalls: 87,
+    totalLeads: 42,
+    conversionRate: 48.3,
+    callTime: 4680 // em segundos
   },
-  
-  // Gráfico de leads diários (somente novos leads)
-  dailyLeadsData: generateDailyData(30, {
-    novos: 8,
-  }),
-  
-  // Gráfico de leads mensais (somente novos leads) - agora com 13 meses
-  monthlyLeadsData: generateTrendData(13, {
-    novos: 40,
-  }),
-  
-  // Gráfico de chamadas diárias
-  dailyCallsData: generateDailyData(30, {
-    total: 25,
-    processed: 22,
-    failed: 3,
-    uploads: 18
-  }),
-  
-  // Gráfico de chamadas mensais
-  monthlyCallsData: generateTrendData(12, {
-    total: 600,
-    processed: 560,
-    failed: 40,
-    uploads: 450
-  }),
-  
-  // Desempenho diário
-  dailyPerformanceData: generateDailyData(30, {
-    joao: 28,
-    maria: 22
-  }),
-  
-  // Desempenho mensal
-  monthlyPerformanceData: generateTrendData(12, {
-    joao: 650,
-    maria: 520
-  }),
-  
-  // Dados de objeções - valores coerentes e consistentes
-  objectionsData: [
-    { name: 'Preço muito alto', value: 28, count: 28 },
-    { name: 'Não tenho orçamento no momento', value: 24, count: 24 },
-    { name: 'Concorrente oferece mais', value: 18, count: 18 },
-    { name: 'Sem necessidade atual', value: 16, count: 16 },
-    { name: 'Já possuímos solução similar', value: 12, count: 12 },
-    { name: 'Outros', value: 22, count: 22 },
-  ],
-  
-  // Tendências de objeções - 6 meses de dados com padrões realistas
-  objectionTrendsData: generateTrendData(6, {
-    'Preço muito alto': 22,
-    'Não tenho orçamento no momento': 25,
-    'Concorrente oferece mais': 16,
-    'Sem necessidade atual': 14,
-    'Já possuímos solução similar': 10
-  }),
-  
-  // Exemplos de objeções - ampliados para cobrir todos os tipos
-  objectionExamples: {
-    'Preço muito alto': [
-      'O valor está acima do nosso orçamento neste momento.',
-      'Encontramos opções mais acessíveis no mercado.',
-      'O custo-benefício não justifica o investimento.'
-    ],
-    'Não tenho orçamento no momento': [
-      'Não temos recurso financeiro no momento para este investimento.',
-      'Nosso orçamento já foi comprometido para este trimestre.',
-      'Precisaremos esperar o próximo ciclo orçamentário.'
-    ],
-    'Concorrente oferece mais': [
-      'Já estamos em negociação com outro fornecedor que oferece mais recursos.',
-      'O concorrente oferece condições melhores para nosso segmento.',
-      'Encontramos uma solução que se encaixa melhor nas nossas necessidades.'
-    ],
-    'Sem necessidade atual': [
-      'No momento não temos demanda para este tipo de solução.',
-      'Nossa equipe atual consegue atender nossos processos sem problemas.',
-      'Não é uma prioridade para nossa empresa neste momento.'
-    ],
-    'Já possuímos solução similar': [
-      'Já contratamos uma ferramenta semelhante recentemente.',
-      'Já temos uma solução implementada que cumpre essa função.',
-      'Acabamos de renovar contrato com outro fornecedor.'
-    ],
-    'Outros': [
-      'Precisamos de mais tempo para avaliar todas as opções disponíveis.',
-      'Estamos passando por reestruturação interna no momento.',
-      'Aguardamos definição da matriz sobre padronização global.'
-    ]
-  },
-  
-  // Dados de sugestões
-  suggestionsData: Array.from({ length: 15 }, (_, i) => ({
-    id: `sugestao-${i + 1}`,
-    date: new Date(Date.now() - randomNumber(1, 60) * 24 * 60 * 60 * 1000).toISOString(),
-    leadName: `Lead ${randomNumber(1000, 9999)}`,
-    suggestion: [
-      'Explicar melhor os benefícios do produto',
-      'Oferecer desconto para fechar a venda',
-      'Agendar demonstração com time técnico',
-      'Compartilhar casos de sucesso do setor',
-      'Apresentar ROI detalhado',
-      'Adicionar funcionalidade específica',
-      'Melhorar abordagem inicial',
-      'Seguir com negociação via email',
-    ][randomNumber(0, 7)],
-    type: ['Abordagem', 'Negociação', 'Produto', 'Técnica'][randomNumber(0, 3)],
-    subType: ['Preço', 'Apresentação', 'Funcionalidade', 'Comunicação', 'Demonstração'][randomNumber(0, 4)],
-    status: ['pending', 'implemented', 'rejected'][randomNumber(0, 2)] as Suggestion['status'],
-  })),
+  previousMonth: {
+    totalCalls: 65,
+    totalLeads: 31,
+    conversionRate: 47.7,
+    callTime: 3250 // em segundos
+  }
 };
+
+export const mockDailyCallsData = [
+  { day: "01/06", calls: 4 },
+  { day: "02/06", calls: 5 },
+  { day: "03/06", calls: 3 },
+  { day: "04/06", calls: 6 },
+  { day: "05/06", calls: 8 },
+  { day: "06/06", calls: 7 },
+  { day: "07/06", calls: 5 },
+  { day: "08/06", calls: 4 },
+  { day: "09/06", calls: 6 },
+  { day: "10/06", calls: 9 },
+  { day: "11/06", calls: 7 },
+  { day: "12/06", calls: 5 },
+  { day: "13/06", calls: 4 },
+  { day: "14/06", calls: 6 }
+];
+
+export const mockDailyLeadsData = [
+  { day: "01/06", leads: 2 },
+  { day: "02/06", leads: 3 },
+  { day: "03/06", leads: 1 },
+  { day: "04/06", leads: 4 },
+  { day: "05/06", leads: 5 },
+  { day: "06/06", leads: 3 },
+  { day: "07/06", leads: 2 },
+  { day: "08/06", leads: 1 },
+  { day: "09/06", leads: 3 },
+  { day: "10/06", leads: 4 },
+  { day: "11/06", leads: 3 },
+  { day: "12/06", leads: 2 },
+  { day: "13/06", leads: 2 },
+  { day: "14/06", leads: 3 }
+];
+
+export const mockObjectionsData = [
+  { name: "Preço", count: 15 },
+  { name: "Prazo de entrega", count: 8 },
+  { name: "Funcionalidades", count: 6 },
+  { name: "Suporte", count: 4 },
+  { name: "Integração", count: 3 }
+];
+
+export const mockSuggestions = [
+  {
+    id: uuidv4(),
+    suggestion: "Oferecer desconto para pagamento à vista",
+    category: "pricing",
+    occurrence: 12,
+    impact: "high"
+  },
+  {
+    id: uuidv4(),
+    suggestion: "Destacar diferenciais em relação à concorrência",
+    category: "objection",
+    occurrence: 9,
+    impact: "medium"
+  },
+  {
+    id: uuidv4(),
+    suggestion: "Mencionar casos de sucesso similares",
+    category: "pitch",
+    occurrence: 7,
+    impact: "high"
+  },
+  {
+    id: uuidv4(),
+    suggestion: "Oferecer período de teste estendido",
+    category: "closing",
+    occurrence: 5,
+    impact: "medium"
+  }
+];
+
+export const mockSellersPerformance = [
+  {
+    id: uuidv4(),
+    name: "Vendedor 1",
+    calls: 32,
+    leads: 18,
+    conversionRate: 56.3,
+    averageCallTime: 320 // em segundos
+  },
+  {
+    id: uuidv4(),
+    name: "Vendedor 2",
+    calls: 28,
+    leads: 13,
+    conversionRate: 46.4,
+    averageCallTime: 280 // em segundos
+  },
+  {
+    id: uuidv4(),
+    name: "Vendedor 3",
+    calls: 27,
+    leads: 11,
+    conversionRate: 40.7,
+    averageCallTime: 310 // em segundos
+  }
+];

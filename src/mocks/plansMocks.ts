@@ -1,81 +1,72 @@
 
-// Plans mocks
-export const mockPlans = [
+import { Plan } from "@/types/subscription";
+import { v4 as uuidv4 } from "uuid";
+
+export const mockPlans: Plan[] = [
   {
-    id: 1,
-    name: 'Básico',
-    description: 'Plano básico para empresas iniciantes',
-    shortDescription: 'Ideal para pequenas empresas começando a usar IA',
-    price: 97,
+    id: uuidv4(),
+    name: "Plano Básico",
+    description: "Ideal para pequenas empresas começarem a utilizar a plataforma",
+    price: 149.90,
+    callsIncluded: 100,
     features: [
-      'Até 5 usuários',
-      'Análise de 50 leads por mês',
-      'Suporte por email',
-      'Integrações básicas'
+      "Análise de até 100 chamadas/mês",
+      "Identificação de objeções e sugestões",
+      "Dashboard básico",
+      "Integração com 1 CRM"
     ],
-    benefits: [
-      'Até 5 usuários',
-      'Análise de 50 leads por mês',
-      'Suporte por email',
-      'Integrações básicas'
-    ],
+    isPopular: false,
     active: true,
-    credits: 100,
-    stripeProductId: 'mock_product_basic',
-    stripePriceId: 'mock_price_basic'
+    stripeProductId: "prod_basic",
+    stripePriceId: "price_basic"
   },
   {
-    id: 2,
-    name: 'Profissional',
-    description: 'Plano ideal para empresas em crescimento',
-    shortDescription: 'Perfeito para empresas em expansão',
-    price: 197,
+    id: uuidv4(),
+    name: "Plano Profissional",
+    description: "Ideal para empresas em crescimento com equipe de vendas",
+    price: 299.90,
+    callsIncluded: 300,
     features: [
-      'Até 15 usuários',
-      'Análise de 200 leads por mês',
-      'Suporte prioritário',
-      'Todas as integrações',
-      'Dashboard avançado'
+      "Análise de até 300 chamadas/mês",
+      "Identificação de objeções e sugestões",
+      "Dashboard completo",
+      "Integração com múltiplos CRMs",
+      "Relatórios de performance"
     ],
-    benefits: [
-      'Até 15 usuários',
-      'Análise de 200 leads por mês',
-      'Suporte prioritário',
-      'Todas as integrações',
-      'Dashboard avançado'
-    ],
+    isPopular: true,
     active: true,
-    credits: 300,
-    stripeProductId: 'mock_product_pro',
-    stripePriceId: 'mock_price_pro'
+    stripeProductId: "prod_professional",
+    stripePriceId: "price_professional"
   },
   {
-    id: 3,
-    name: 'Empresarial',
-    description: 'Para grandes empresas com necessidades avançadas',
-    shortDescription: 'Solução completa para grandes empresas',
-    price: 497,
+    id: uuidv4(),
+    name: "Plano Enterprise",
+    description: "Para empresas com grandes equipes de vendas",
+    price: 599.90,
+    callsIncluded: 1000,
     features: [
-      'Usuários ilimitados',
-      'Análise de 1000 leads por mês',
-      'Suporte 24/7',
-      'Todas as integrações',
-      'Dashboard personalizado',
-      'API exclusiva',
-      'Treinamento dedicado'
+      "Análise ilimitada de chamadas",
+      "Todas as funcionalidades do plano Profissional",
+      "API personalizada",
+      "Suporte premium 24/7",
+      "Treinamento da equipe"
     ],
-    benefits: [
-      'Usuários ilimitados',
-      'Análise de 1000 leads por mês',
-      'Suporte 24/7',
-      'Todas as integrações',
-      'Dashboard personalizado',
-      'API exclusiva',
-      'Treinamento dedicado'
-    ],
+    isPopular: false,
     active: true,
-    credits: 1000,
-    stripeProductId: 'mock_product_enterprise',
-    stripePriceId: 'mock_price_enterprise'
+    stripeProductId: "prod_enterprise",
+    stripePriceId: "price_enterprise"
   }
 ];
+
+export const mockSubscription = {
+  id: uuidv4(),
+  organizationId: "org-123",
+  planId: mockPlans[1].id,
+  plan: mockPlans[1],
+  status: "active",
+  startDate: "2023-05-01T00:00:00Z",
+  currentPeriodEnd: "2023-06-01T00:00:00Z",
+  cancelAtPeriodEnd: false,
+  stripeSubscriptionId: "sub_123456",
+  stripeCustomerId: "cus_123456"
+};

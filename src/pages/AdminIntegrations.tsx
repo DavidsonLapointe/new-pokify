@@ -8,7 +8,7 @@ import { CreateCentralIntegrationDialog } from "@/components/admin/integrations/
 import { CentralIntegrationsList } from "@/components/admin/integrations/CentralIntegrationsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Integration } from "@/types/integration";
-import { mockCentralIntegrations } from "@/mocks";
+import { mockCentralIntegrations } from "@/mocks/integrationsMocks";
 
 const AdminIntegrations = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);

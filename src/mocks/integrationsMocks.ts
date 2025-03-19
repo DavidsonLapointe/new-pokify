@@ -1,50 +1,61 @@
 
 import { Integration } from "@/types/integration";
+import { v4 as uuidv4 } from "uuid";
 
+// Mock data for central integrations (managed by Leadly)
 export const mockCentralIntegrations: Integration[] = [
   {
-    id: "central-1",
+    id: uuidv4(),
+    name: "HubSpot",
+    type: "crm",
+    isActive: true,
+    apiKey: "mock-hubspot-api-key",
+    apiEndpoint: "https://api.hubspot.com/v3",
+    description: "Integração com HubSpot CRM",
+    iconUrl: "/images/hubspot-logo.png"
+  },
+  {
+    id: uuidv4(),
     name: "Salesforce",
     type: "crm",
-    description: "Integração central com Salesforce",
-    isConnected: true,
-    apiKey: "sf_api_key_12345",
-    lastSync: "2023-10-15T14:30:00Z"
+    isActive: true,
+    apiKey: "mock-salesforce-api-key",
+    apiEndpoint: "https://api.salesforce.com/v1",
+    description: "Integração com Salesforce CRM",
+    iconUrl: "/images/salesforce-logo.png"
   },
   {
-    id: "central-2",
-    name: "HubSpot", 
-    type: "crm",
-    description: "Integração central com HubSpot",
-    isConnected: true,
-    apiKey: "hs_api_key_67890",
-    lastSync: "2023-10-10T09:15:00Z"
-  },
-  {
-    id: "central-3",
-    name: "Zendesk",
-    type: "crm",
-    description: "Integração central com Zendesk",
-    isConnected: false,
-    apiKey: undefined
+    id: uuidv4(),
+    name: "OpenAI",
+    type: "llm",
+    isActive: true,
+    apiKey: "mock-openai-api-key",
+    apiEndpoint: "https://api.openai.com/v1",
+    description: "Integração com OpenAI (GPT)",
+    iconUrl: "/images/openai-logo.png"
   }
 ];
 
-export const mockClientIntegrations: Integration[] = [
+// Mock data for client integrations (managed by organizations)
+export const mockIntegrations: Integration[] = [
   {
-    id: "client-1",
-    name: "Google Calendar",
-    type: "call",
-    description: "Integração de agenda",
-    isConnected: true,
-    lastSync: "2023-10-20T11:45:00Z"
+    id: uuidv4(),
+    name: "Zoho CRM",
+    type: "crm",
+    isActive: false,
+    apiKey: "",
+    apiEndpoint: "https://api.zoho.com/crm/v3",
+    description: "Integração com Zoho CRM",
+    iconUrl: "/images/zoho-logo.png"
   },
   {
-    id: "client-2",
-    name: "Microsoft Teams",
-    type: "call",
-    description: "Integração de chamadas",
-    isConnected: true,
-    lastSync: "2023-10-18T16:30:00Z"
+    id: uuidv4(),
+    name: "WhatsApp Business",
+    type: "whatsapp",
+    isActive: true,
+    apiKey: "mock-whatsapp-api-key",
+    apiEndpoint: "https://api.whatsapp.com/business/v1",
+    description: "Integração com WhatsApp Business API",
+    iconUrl: "/images/whatsapp-logo.png"
   }
 ];
