@@ -10,11 +10,24 @@ import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus
 import { CustomerNotes } from "@/components/admin/customer-success/CustomerNotes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
+import { Button } from "@/components/ui/button";
+import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
+import { toast } from "sonner";
+import { ClipboardList } from "lucide-react";
+
+interface CustomerNote {
+  id: string;
+  content: string;
+  createdAt: Date;
+  userName: string;
+}
 
 const AdminCustomerSuccess = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [customerNotes, setCustomerNotes] = useState<CustomerNote[]>([]);
+  const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
 
   const handleOrganizationChange = (organization: Organization | null) => {
     setLoading(true);
@@ -23,6 +36,38 @@ const AdminCustomerSuccess = () => {
       setSelectedOrganization(organization);
       setLoading(false);
     }, 800);
+  };
+
+  const handleOpenNotes = () => {
+    if (selectedOrganization) {
+      setIsNotesDialogOpen(true);
+    } else {
+      toast.error("Selecione uma empresa primeiro");
+    }
+  };
+
+  const handleAddNote = (organizationId: string, content: string) => {
+    const newNote: CustomerNote = {
+      id: crypto.randomUUID(),
+      content,
+      createdAt: new Date(),
+      userName: "Usuário atual" // Ideally, get this from the auth context
+    };
+    
+    setCustomerNotes(prev => [...prev, newNote]);
+    toast.success("Anotação adicionada com sucesso!");
+  };
+
+  const handleEditNote = (organizationId: string, noteId: string, newContent: string) => {
+    setCustomerNotes(prev => 
+      prev.map(note => note.id === noteId ? { ...note, content: newContent } : note)
+    );
+    toast.success("Anotação atualizada com sucesso!");
+  };
+
+  const handleDeleteNote = (organizationId: string, noteId: string) => {
+    setCustomerNotes(prev => prev.filter(note => note.id !== noteId));
+    toast.success("Anotação excluída com sucesso!");
   };
 
   return (
@@ -45,10 +90,21 @@ const AdminCustomerSuccess = () => {
             <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
-        <OrganizationSelector 
-          onOrganizationChange={handleOrganizationChange}
-          searchTerm={searchTerm}
-        />
+        <div className="flex items-center justify-between">
+          <OrganizationSelector 
+            onOrganizationChange={handleOrganizationChange}
+            searchTerm={searchTerm}
+          />
+          {selectedOrganization && (
+            <Button 
+              onClick={handleOpenNotes}
+              className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white ml-2"
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Anotações
+            </Button>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -66,14 +122,6 @@ const AdminCustomerSuccess = () => {
           {/* OrganizationOverview - Full width */}
           <div className="w-full">
             <OrganizationOverview organization={selectedOrganization} />
-          </div>
-          
-          {/* Customer Notes - Full width */}
-          <div className="w-full">
-            <CustomerNotes 
-              organizationId={selectedOrganization.id} 
-              organizationName={selectedOrganization.name}
-            />
           </div>
           
           {/* ModulesStatus and UsersStatistics - Two columns */}
@@ -108,6 +156,19 @@ const AdminCustomerSuccess = () => {
             Selecione uma empresa para visualizar suas informações
           </p>
         </div>
+      )}
+
+      {selectedOrganization && (
+        <NotesDialog
+          isOpen={isNotesDialogOpen}
+          onClose={() => setIsNotesDialogOpen(false)}
+          moduleName={selectedOrganization.name}
+          moduleId={selectedOrganization.id}
+          notes={customerNotes}
+          onAddNote={handleAddNote}
+          onEditNote={handleEditNote}
+          onDeleteNote={handleDeleteNote}
+        />
       )}
     </div>
   );
