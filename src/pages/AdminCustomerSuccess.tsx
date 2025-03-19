@@ -42,34 +42,37 @@ const AdminCustomerSuccess = () => {
       {loading ? (
         <div className="space-y-6">
           <Skeleton className="w-full h-48 rounded-lg" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Skeleton className="lg:col-span-2 h-72 rounded-lg" />
-            <Skeleton className="lg:col-span-1 h-72 rounded-lg" />
-            <Skeleton className="lg:col-span-3 h-64 rounded-lg" />
-          </div>
+          <Skeleton className="w-full h-72 rounded-lg" />
+          <Skeleton className="w-full h-72 rounded-lg" />
+          <Skeleton className="w-full h-64 rounded-lg" />
         </div>
       ) : selectedOrganization ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-3">
+        <div className="space-y-6">
+          {/* OrganizationOverview - Full width */}
+          <div className="w-full">
             <OrganizationOverview organization={selectedOrganization} />
           </div>
-
-          <div className="lg:col-span-2">
-            <AIExecutionsChart organizationId={selectedOrganization.id} />
-          </div>
-
-          <div className="lg:col-span-1">
+          
+          {/* ModulesStatus - Full width (moved up) */}
+          <div className="w-full">
             <ModulesStatus organizationId={selectedOrganization.id} />
           </div>
 
-          <div className="lg:col-span-3">
+          {/* AIExecutionsChart - Full width */}
+          <div className="w-full">
+            <AIExecutionsChart organizationId={selectedOrganization.id} />
+          </div>
+
+          {/* UsersStatistics - Full width */}
+          <div className="w-full">
             <UsersStatistics 
               users={selectedOrganization.users || []} 
               organizationName={selectedOrganization.name}
             />
           </div>
 
-          <div className="lg:col-span-3">
+          {/* UserLogsList - Full width */}
+          <div className="w-full">
             <UserLogsList organizationId={selectedOrganization.id} />
           </div>
         </div>
