@@ -1,15 +1,20 @@
 
+import { useState } from "react";
 import { Organization } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface OrganizationOverviewProps {
   organization: Organization;
 }
 
 export const OrganizationOverview = ({ organization }: OrganizationOverviewProps) => {
+  const [showMoreDetails, setShowMoreDetails] = useState(false);
+  
   // Encontrar o administrador
   const admin = organization.users?.find(user => user.role === 'admin');
   
@@ -50,6 +55,21 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
     }
   };
 
+  // Get plan display
+  const getPlanDisplay = () => {
+    const planName = typeof organization.plan === 'string' 
+      ? organization.planName || organization.plan 
+      : organization.plan.name;
+    
+    return (
+      <Badge 
+        className="bg-[#7E69AB] text-white hover:bg-[#6E59A5] border-0 font-medium px-2.5 py-1"
+      >
+        {planName}
+      </Badge>
+    );
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -66,59 +86,77 @@ export const OrganizationOverview = ({ organization }: OrganizationOverviewProps
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Plano</h3>
-          <p className="font-medium">
-            {typeof organization.plan === 'string' 
-              ? organization.planName || organization.plan 
-              : organization.plan.name}
-          </p>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500">Plano</h3>
+            <div className="font-medium mt-1">
+              {getPlanDisplay()}
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500">Telefone</h3>
+            <p className="font-medium">{organization.phone || "Não informado"}</p>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500">Módulos</h3>
+            <p className="font-medium">
+              {Array.isArray(organization.modules) 
+                ? organization.modules.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ') 
+                : organization.modules || 'Nenhum'}
+            </p>
+          </div>
         </div>
         
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">CNPJ</h3>
-          <p className="font-medium">{organization.cnpj || "Não informado"}</p>
-        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setShowMoreDetails(!showMoreDetails)}
+          className="flex items-center mt-1"
+        >
+          {showMoreDetails ? (
+            <>
+              <ChevronUp className="h-4 w-4 mr-2" />
+              Ocultar dados cadastrais
+            </>
+          ) : (
+            <>
+              <ChevronDown className="h-4 w-4 mr-2" />
+              Dados cadastrais
+            </>
+          )}
+        </Button>
         
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Módulos</h3>
-          <p className="font-medium">
-            {Array.isArray(organization.modules) 
-              ? organization.modules.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ') 
-              : organization.modules || 'Nenhum'}
-          </p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Email</h3>
-          <p className="font-medium">{organization.email || "Não informado"}</p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Telefone</h3>
-          <p className="font-medium">{organization.phone || "Não informado"}</p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Total de Usuários</h3>
-          <p className="font-medium">{organization.users?.length || 0}</p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Administrador</h3>
-          <p className="font-medium">{admin?.name || organization.adminName || "Não definido"}</p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Email do Administrador</h3>
-          <p className="font-medium">{admin?.email || organization.adminEmail || "Não informado"}</p>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500">Telefone do Administrador</h3>
-          <p className="font-medium">{admin?.phone || organization.adminPhone || "Não informado"}</p>
-        </div>
+        {showMoreDetails && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">CNPJ</h3>
+              <p className="font-medium">{organization.cnpj || "Não informado"}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">Email</h3>
+              <p className="font-medium">{organization.email || "Não informado"}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">Administrador</h3>
+              <p className="font-medium">{admin?.name || organization.adminName || "Não definido"}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">Email do Administrador</h3>
+              <p className="font-medium">{admin?.email || organization.adminEmail || "Não informado"}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500">Telefone do Administrador</h3>
+              <p className="font-medium">{admin?.phone || organization.adminPhone || "Não informado"}</p>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
