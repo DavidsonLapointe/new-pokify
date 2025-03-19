@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -122,8 +123,8 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   };
 
   return (
-    <Card className="mb-6">
-      <CardHeader className="p-5">
+    <Card className="h-full">
+      <CardHeader className="pb-2">
         <CardTitle>Ferramentas de IA</CardTitle>
       </CardHeader>
       <CardContent>
@@ -134,11 +135,11 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
             <Skeleton className="h-12 w-full" />
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {modules.map((module) => (
               <div 
                 key={module.id}
-                className="flex items-center justify-between p-3 border rounded-lg"
+                className="flex items-center justify-between p-2 border rounded-lg"
               >
                 <span className="font-medium">{module.name}</span>
                 <div>

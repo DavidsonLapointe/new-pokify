@@ -61,18 +61,20 @@ export const UsersByPermission = ({ users, organizationName }: UsersByPermission
 
   return (
     <>
-      <Card className="mb-6">
-        <CardHeader>
+      <Card className="h-full">
+        <CardHeader className="pb-2">
           <CardTitle>Usuários por Função</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <p className="mb-3">
+          <div className="text-center p-2 bg-gray-50 rounded-lg">
+            <p className="mb-2">
               Visualize como estão distribuídas as permissões de acesso entre os usuários
             </p>
             <Button 
               onClick={() => setIsDialogOpen(true)}
               variant="secondary"
+              size="sm"
+              className="mt-1"
             >
               Clique aqui para verificar as permissões
             </Button>
