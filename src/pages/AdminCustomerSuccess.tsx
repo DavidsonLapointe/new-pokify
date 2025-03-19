@@ -91,21 +91,10 @@ const AdminCustomerSuccess = () => {
             <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
-        <div className="flex items-center justify-between">
-          <OrganizationSelector 
-            onOrganizationChange={handleOrganizationChange}
-            searchTerm={searchTerm}
-          />
-          {selectedOrganization && (
-            <Button 
-              onClick={handleOpenNotes}
-              className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white ml-2"
-            >
-              <ClipboardList className="mr-2 h-4 w-4" />
-              Anotações
-            </Button>
-          )}
-        </div>
+        <OrganizationSelector 
+          onOrganizationChange={handleOrganizationChange}
+          searchTerm={searchTerm}
+        />
       </div>
 
       {loading ? (
@@ -121,8 +110,15 @@ const AdminCustomerSuccess = () => {
       ) : selectedOrganization ? (
         <div className="space-y-6">
           {/* OrganizationOverview - Full width */}
-          <div className="w-full">
+          <div className="w-full relative">
             <OrganizationOverview organization={selectedOrganization} />
+            <Button 
+              onClick={handleOpenNotes}
+              className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white absolute top-5 right-5"
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Anotações
+            </Button>
           </div>
           
           {/* ModulesStatus and UsersStatistics - Two columns */}
