@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +73,6 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
             <CardTitle>{organization.name}</CardTitle>
             {getStatusBadge(organization.status)}
             
-            {/* Botão de anotações com ícone bem maior */}
             {onOpenNotes && (
               <TooltipProvider>
                 <Tooltip>
@@ -82,10 +80,10 @@ export const OrganizationOverview = ({ organization, onOpenNotes }: Organization
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="ml-2"
+                      className="ml-2 p-0 h-auto w-auto" 
                       onClick={onOpenNotes}
                     >
-                      <ClipboardList size={48} strokeWidth={1.5} className="text-primary" />
+                      <ClipboardList size={64} strokeWidth={1.25} className="text-primary h-16 w-16" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Anotações de Customer Success</TooltipContent>
