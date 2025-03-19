@@ -58,7 +58,7 @@ export const AdminDailyBillingChart = ({
     const date = parseISO(item.date);
     return {
       ...item,
-      formattedDate: isValid(date) ? format(date, "dd 'de' MMMM", { locale: ptBR }) : item.date
+      formattedDate: isValid(date) ? format(date, "dd/MM/yyyy") : item.date
     };
   });
 
@@ -71,10 +71,10 @@ export const AdminDailyBillingChart = ({
           <p className="text-blue-600 font-semibold">
             Total: R$ {Number(payload[0].value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-green-600">
+          <p className="text-blue-600">
             Planos: R$ {Number(payload[0].payload.plansAmount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-amber-600">
+          <p className="text-blue-600">
             Setup: R$ {Number(payload[0].payload.setupAmount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
         </div>
@@ -98,7 +98,6 @@ export const AdminDailyBillingChart = ({
               textAnchor="end"
               height={70}
               tick={{ fontSize: 12 }}
-              stroke="#3b82f6"
             />
             <YAxis 
               tickFormatter={(value) => `R$ ${value.toLocaleString('pt-BR')}`}
