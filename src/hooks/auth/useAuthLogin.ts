@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { User } from '@/types';
+import { User, UserRole } from '@/types';
 import { formatUserData } from '@/utils/userUtils';
 
 export const useAuthLogin = (setUser: (user: User | null) => void) => {

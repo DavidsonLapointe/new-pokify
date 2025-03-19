@@ -73,7 +73,7 @@ const AdminUsers = () => {
     try {
       // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
-      let roleForDatabase: string = updatedUser.role;
+      let roleForDatabase: string | UserRole = updatedUser.role;
       
       if (updatedUser.role === "manager") {
         roleForDatabase = "admin";
@@ -85,7 +85,7 @@ const AdminUsers = () => {
           name: updatedUser.name,
           email: updatedUser.email,
           phone: updatedUser.phone,
-          role: roleForDatabase,
+          role: roleForDatabase as any, // Use type assertion for database compatibility
           permissions: updatedUser.permissions,
           status: updatedUser.status,
           company_leadly_id: updatedUser.company_leadly_id

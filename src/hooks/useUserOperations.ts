@@ -11,7 +11,7 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
     try {
       // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
-      let roleForDatabase: string = newUser.role;
+      let roleForDatabase: string | UserRole = newUser.role;
       
       if (newUser.role === "manager") {
         roleForDatabase = "admin";
@@ -24,7 +24,7 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
           email: newUser.email,
           phone: newUser.phone,
           avatar: newUser.avatar,
-          role: roleForDatabase, // Use the converted role
+          role: roleForDatabase as any, // Use type assertion for database compatibility
           status: newUser.status,
         })
         .eq('id', newUser.id);
