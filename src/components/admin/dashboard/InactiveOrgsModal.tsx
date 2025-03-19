@@ -15,9 +15,7 @@ import {
   TableHead, 
   TableCell 
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/components/ui/link";
-import { ExternalLink, Phone, Mail } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -70,7 +68,6 @@ export const InactiveOrgsModal = ({
                 <TableHead>Administrador</TableHead>
                 <TableHead>Contato</TableHead>
                 <TableHead>Último Acesso</TableHead>
-                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,16 +98,6 @@ export const InactiveOrgsModal = ({
                         {org.lastAccessUser}
                       </span>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button 
-                      variant="link" 
-                      className="p-0 h-auto text-blue-600 flex items-center gap-1"
-                      onClick={() => window.open('/admin/organizations', '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      <span>Ver detalhes</span>
-                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
