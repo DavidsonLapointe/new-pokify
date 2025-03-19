@@ -109,16 +109,18 @@ const AdminCustomerSuccess = () => {
         </div>
       ) : selectedOrganization ? (
         <div className="space-y-6">
-          {/* OrganizationOverview - Full width */}
-          <div className="w-full relative">
+          {/* OrganizationOverview with Anotações button moved to not overlap */}
+          <div className="w-full">
+            <div className="flex justify-end mb-2">
+              <Button 
+                onClick={handleOpenNotes}
+                className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white"
+              >
+                <ClipboardList className="mr-2 h-4 w-4" />
+                Anotações
+              </Button>
+            </div>
             <OrganizationOverview organization={selectedOrganization} />
-            <Button 
-              onClick={handleOpenNotes}
-              className="bg-[#7E69AB] hover:bg-[#6E59A5] text-white absolute top-5 right-5"
-            >
-              <ClipboardList className="mr-2 h-4 w-4" />
-              Anotações
-            </Button>
           </div>
           
           {/* ModulesStatus and UsersStatistics - Two columns */}
