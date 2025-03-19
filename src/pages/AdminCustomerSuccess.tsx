@@ -43,10 +43,7 @@ const AdminCustomerSuccess = () => {
         <div className="space-y-6">
           <Skeleton className="w-full h-48 rounded-lg" />
           <Skeleton className="w-full h-72 rounded-lg" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-96 rounded-lg" />
-            <Skeleton className="h-96 rounded-lg" />
-          </div>
+          <Skeleton className="w-full h-72 rounded-lg" />
           <Skeleton className="w-full h-64 rounded-lg" />
         </div>
       ) : selectedOrganization ? (
@@ -56,17 +53,14 @@ const AdminCustomerSuccess = () => {
             <OrganizationOverview organization={selectedOrganization} />
           </div>
           
-          {/* Grid layout for Ferramentas de IA and AIExecutionsChart */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Ferramentas de IA */}
-            <div>
-              <ModulesStatus organizationId={selectedOrganization.id} />
-            </div>
-            
-            {/* AIExecutionsChart */}
-            <div>
-              <AIExecutionsChart organizationId={selectedOrganization.id} />
-            </div>
+          {/* ModulesStatus - Full width (moved up) */}
+          <div className="w-full">
+            <ModulesStatus organizationId={selectedOrganization.id} />
+          </div>
+
+          {/* AIExecutionsChart - Full width */}
+          <div className="w-full">
+            <AIExecutionsChart organizationId={selectedOrganization.id} />
           </div>
 
           {/* UsersStatistics - Full width */}
