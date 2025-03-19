@@ -33,7 +33,7 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
       // Buscar módulos contratados pela organização
       const { data: organization, error } = await supabase
         .from('organizations')
-        .select('modules')
+        .select('*')
         .eq('id', organizationId)
         .single();
       
@@ -48,24 +48,22 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
         { id: 'smart-replies', name: 'Respostas Inteligentes', status: 'coming_soon' as const }
       ];
       
-      // Se a organização tem módulos contratados
-      if (organization.modules) {
-        const contractedModules = typeof organization.modules === 'string' 
-          ? organization.modules.split(',') 
-          : organization.modules;
+      // Check if organization has contracted modules
+      const contractedModules = organization.plan === 'enterprise' ? 
+        ['call-analysis', 'crm-integration', 'lead-scoring'] : 
+        organization.plan === 'premium' ? 
+          ['call-analysis', 'crm-integration'] : 
+          ['call-analysis'];
           
-        // Atualizar status dos módulos contratados
-        const updatedModules = defaultModules.map(module => {
-          if (contractedModules.includes(module.id)) {
-            return { ...module, status: 'contracted' as const };
-          }
-          return module;
-        });
-        
-        setModules(updatedModules);
-      } else {
-        setModules(defaultModules);
-      }
+      // Atualizar status dos módulos contratados
+      const updatedModules = defaultModules.map(module => {
+        if (contractedModules.includes(module.id)) {
+          return { ...module, status: 'contracted' as const };
+        }
+        return module;
+      });
+      
+      setModules(updatedModules);
       
     } catch (error) {
       console.error("Erro ao carregar módulos:", error);
@@ -78,11 +76,11 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'contracted':
-        return <Badge className="bg-green-500">Contratado</Badge>;
+        return <Badge variant="success">Contratado</Badge>;
       case 'configured':
-        return <Badge className="bg-blue-500">Configurado</Badge>;
+        return <Badge variant="secondary">Configurado</Badge>;
       case 'setup':
-        return <Badge className="bg-yellow-500">Em configuração</Badge>;
+        return <Badge variant="warning">Em configuração</Badge>;
       case 'coming_soon':
         return <Badge className="bg-purple-500">Em breve</Badge>;
       default:

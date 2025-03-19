@@ -44,7 +44,7 @@ export const AIExecutionsChart = ({ organizationId }: AIExecutionsChartProps) =>
         const { data: analyses, error } = await supabase
           .from('organization_lead_analyses')
           .select('created_at, analysis_type, status')
-          .eq('lead_id', supabase.rpc('get_leads_by_organization', { org_id: organizationId }))
+          .eq('lead_id', organizationId)
           .order('created_at');
 
         if (error) throw error;

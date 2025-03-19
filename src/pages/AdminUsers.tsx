@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import { User } from "@/types";
+import { User, UserRole } from "@/types";
 import { useUser } from "@/contexts/UserContext";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { AddLeadlyEmployeeDialog } from "@/components/admin/users/AddLeadlyEmployeeDialog";
@@ -73,10 +73,10 @@ const AdminUsers = () => {
     try {
       // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
-      let roleForDatabase: string = updatedUser.role;
+      let roleForDatabase = updatedUser.role;
       
       if (updatedUser.role === "manager") {
-        roleForDatabase = "admin"; // Store managers as admins in the database for now
+        roleForDatabase = "admin" as UserRole; // Cast to UserRole to satisfy TypeScript
       }
         
       const { error } = await supabase

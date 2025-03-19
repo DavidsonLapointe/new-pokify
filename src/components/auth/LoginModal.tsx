@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { useAuthLogin } from "@/hooks/auth/useAuthLogin";
+import { useUser } from "@/contexts/UserContext";
 
 interface LoginModalProps {
   open: boolean;
@@ -13,11 +14,12 @@ interface LoginModalProps {
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [mode, setMode] = useState<"login" | "forgot">("login");
   const [error, setError] = useState<string | null>(null);
-  const { login, loading } = useAuthLogin();
+  const { user, setUser } = useUser();
+  const { handleLogin, loading } = useAuthLogin(setUser);
 
-  const handleLogin = async (email: string, password: string) => {
+  const onLogin = async (email: string, password: string) => {
     try {
-      await login(email, password);
+      await handleLogin(email, password);
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login");
@@ -51,7 +53,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
         {mode === "login" ? (
           <LoginForm
-            onSubmit={handleLogin}
+            onSubmit={onLogin}
             onForgotPassword={toggleMode}
             isLoading={loading}
             error={error}

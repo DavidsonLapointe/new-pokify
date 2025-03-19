@@ -1,8 +1,10 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { User } from '@/types';
+import { formatUserData } from '@/utils/userUtils';
 
 export const useAuthLogin = (setUser: (user: User | null) => void) => {
   const [loading, setLoading] = useState(false);
@@ -31,12 +33,14 @@ export const useAuthLogin = (setUser: (user: User | null) => void) => {
       }
 
       if (data.role === 'leadly_employee' || data.role === 'leadly_master') {
-        localStorage.setItem('adminUser', JSON.stringify(data));
-        setUser(data as User);
+        const formattedUser = formatUserData(data);
+        localStorage.setItem('adminUser', JSON.stringify(formattedUser));
+        setUser(formattedUser);
         navigate('/admin/dashboard');
       } else {
-        localStorage.setItem('orgUser', JSON.stringify(data));
-        setUser(data as User);
+        const formattedUser = formatUserData(data);
+        localStorage.setItem('orgUser', JSON.stringify(formattedUser));
+        setUser(formattedUser);
         navigate('/organization/dashboard');
       }
 
