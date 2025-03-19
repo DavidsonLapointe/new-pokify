@@ -104,7 +104,7 @@ export const EditCentralIntegrationDialog = ({
             </Button>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="cancel" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
             <Button type="submit" onClick={handleSave} disabled={!name}>
@@ -118,6 +118,7 @@ export const EditCentralIntegrationDialog = ({
         open={isApiKeyDialogOpen}
         onOpenChange={setIsApiKeyDialogOpen}
         title="Atualizar Chave API"
+        integrationName={integration?.name}
         onSave={handleUpdateApiKey}
       />
     </>

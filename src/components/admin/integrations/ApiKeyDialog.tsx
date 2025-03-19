@@ -14,6 +14,7 @@ interface ApiKeyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
+  integrationName?: string;
   onSave: (apiKey: string) => void;
 }
 
@@ -21,6 +22,7 @@ export const ApiKeyDialog = ({
   open,
   onOpenChange,
   title,
+  integrationName,
   onSave,
 }: ApiKeyDialogProps) => {
   const [apiKey, setApiKey] = useState("");
@@ -37,7 +39,10 @@ export const ApiKeyDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>
+            {title}
+            {integrationName && <span className="ml-1 text-muted-foreground">({integrationName})</span>}
+          </DialogTitle>
         </DialogHeader>
         <div className="py-6">
           <div className="grid gap-2">
@@ -53,7 +58,7 @@ export const ApiKeyDialog = ({
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="cancel" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
           <Button
