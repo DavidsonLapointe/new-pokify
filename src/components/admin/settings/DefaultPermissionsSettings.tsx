@@ -30,6 +30,15 @@ const initialPermissions: RolePermissions = {
     "settings.system": true,
     "settings.permissions": true
   },
+  leadly_master: {
+    ...ADMIN_DEFAULT_PERMISSIONS.leadly_master,
+    "settings.alerts": true,
+    "settings.analysis": true,
+    "settings.retention": true,
+    "settings.llm": true,
+    "settings.system": true,
+    "settings.permissions": true
+  },
   admin: {
     profile: true,
     dashboard: true,

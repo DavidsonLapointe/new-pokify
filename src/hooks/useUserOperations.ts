@@ -11,9 +11,11 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
     try {
       // For database compatibility, if role is "manager", store it with a prefix
       // This is a temporary solution until the database enum is updated
-      const roleForDatabase = newUser.role === "manager" 
-        ? "admin" // Store managers as admins in the database for now
-        : newUser.role;
+      let roleForDatabase = newUser.role;
+      
+      if (newUser.role === "manager") {
+        roleForDatabase = "admin"; // Store managers as admins in the database for now
+      }
         
       const { error } = await supabase
         .from('profiles')

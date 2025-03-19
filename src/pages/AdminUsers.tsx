@@ -23,7 +23,7 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Buscar apenas perfis do tipo leadly_employee
+      // Buscar perfis do tipo leadly_employee e leadly_master
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
@@ -38,7 +38,7 @@ const AdminUsers = () => {
           last_access,
           company_leadly_id
         `)
-        .eq('role', 'leadly_employee');
+        .or('role.eq.leadly_employee,role.eq.leadly_master');
 
       if (profilesError) throw profilesError;
 
@@ -73,9 +73,11 @@ const AdminUsers = () => {
     try {
       // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
-      const roleForDatabase = updatedUser.role === "manager" 
-        ? "admin" // Store managers as admins in the database for now
-        : updatedUser.role;
+      let roleForDatabase = updatedUser.role;
+      
+      if (updatedUser.role === "manager") {
+        roleForDatabase = "admin"; // Store managers as admins in the database for now
+      }
         
       const { error } = await supabase
         .from('profiles')
