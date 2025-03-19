@@ -146,8 +146,15 @@ export const useDashboardData = () => {
   const [dailyMetric, setDailyMetric] = useState<string>('conversion');
   const [monthlyMetric, setMonthlyMetric] = useState<string>('conversion');
 
-  // Mock data for organization dashboard
-  const monthStats = { total: 320, processed: 300, failed: 20 };
+  // Mock data for organization dashboard - updated to include active and pending properties
+  const monthStats = { 
+    total: 320, 
+    processed: 300, 
+    failed: 20,
+    active: 250,  // Added missing property
+    pending: 50   // Added missing property
+  };
+  
   const dailyLeadsData = [];
   const monthlyLeadsData = [];
   const dailyCallsData = [];

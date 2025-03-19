@@ -112,13 +112,7 @@ const OrganizationDashboard = () => {
         
         <TabsContent value="leads">
           <LeadsTabContent
-            monthStats={{
-              total: monthStats.total,
-              active: monthStats.active || 0,
-              pending: monthStats.pending || 0,
-              processed: monthStats.processed || 0,
-              failed: monthStats.failed || 0
-            }}
+            monthStats={monthStats}
             monthlyLeadsData={monthlyLeadsData}
             dailyLeadsData={dailyLeadsData}
             monthlyLeadsDate={monthlyLeadsDate}
