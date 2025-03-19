@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getOrganizationById } from "@/mocks/customerSuccessMocks";
 
 interface Module {
   id: string;
@@ -30,14 +31,28 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
     try {
       setLoading(true);
       
-      // Buscar módulos contratados pela organização
-      const { data: organization, error } = await supabase
-        .from('organizations')
-        .select('*')
-        .eq('id', organizationId)
-        .single();
+      // Buscar dados da organização (do mock ou Supabase)
+      let organization;
       
-      if (error) throw error;
+      try {
+        // Primeira tentativa: buscar do Supabase
+        const { data: orgData, error } = await supabase
+          .from('organizations')
+          .select('*')
+          .eq('id', organizationId)
+          .single();
+        
+        if (error) throw error;
+        organization = orgData;
+      } catch (e) {
+        // Se falhar, usar dados mockados
+        console.log("Usando dados mockados para módulos");
+        organization = getOrganizationById(organizationId);
+        
+        if (!organization) {
+          throw new Error("Organização não encontrada");
+        }
+      }
       
       // Determinar quais módulos estão disponíveis e seu status
       const defaultModules = [
@@ -48,17 +63,32 @@ export const ModulesStatus = ({ organizationId }: ModulesStatusProps) => {
         { id: 'smart-replies', name: 'Respostas Inteligentes', status: 'coming_soon' as const }
       ];
       
-      // Check if organization has contracted modules
-      const contractedModules = organization.plan === 'enterprise' ? 
-        ['call-analysis', 'crm-integration', 'lead-scoring'] : 
-        organization.plan === 'premium' ? 
-          ['call-analysis', 'crm-integration'] : 
-          ['call-analysis'];
-          
-      // Atualizar status dos módulos contratados
+      // Determinar módulos contratados com base no plano
+      let contractedModules: string[] = [];
+      
+      if (organization.plan === 'enterprise') {
+        contractedModules = ['call-analysis', 'crm-integration', 'lead-scoring', 'sales-coaching'];
+      } else if (organization.plan === 'premium') {
+        contractedModules = ['call-analysis', 'crm-integration'];
+      } else {
+        contractedModules = ['call-analysis'];
+      }
+      
+      // Atualizar status dos módulos com base nos recursos configurados
       const updatedModules = defaultModules.map(module => {
         if (contractedModules.includes(module.id)) {
-          return { ...module, status: 'contracted' as const };
+          // Verificar se o módulo está configurado com base nos recursos
+          if (module.id === 'call-analysis' && organization.features?.calls) {
+            return { ...module, status: 'configured' as const };
+          } else if (module.id === 'crm-integration' && organization.features?.crm) {
+            return { ...module, status: 'configured' as const };
+          } else if (module.id === 'lead-scoring' && organization.features?.scoring) {
+            return { ...module, status: 'configured' as const };
+          } else if (module.id === 'sales-coaching') {
+            return { ...module, status: 'setup' as const };
+          } else {
+            return { ...module, status: 'contracted' as const };
+          }
         }
         return module;
       });

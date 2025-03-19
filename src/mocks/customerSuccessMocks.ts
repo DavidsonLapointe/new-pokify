@@ -90,12 +90,13 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
     pendingReason: null,
     setupCompleted: true,
     modules: ["calls", "leads", "dashboard"],
-    plan: {
-      id: uuidv4(),
-      name: "Premium",
-      price: 799.90,
-      features: ["Atendimento prioritário", "Número ilimitado de usuários", "API avançada"],
-      expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString()
+    plan: "enterprise",
+    features: {
+      calls: true,
+      leads: true,
+      dashboard: true,
+      crm: true,
+      scoring: true
     },
     users: createMockUsers(8, uuidv4(), true)
   },
@@ -128,14 +129,54 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
     pendingReason: "mensalidade_payment",
     setupCompleted: false,
     modules: ["calls"],
-    plan: {
-      id: uuidv4(),
-      name: "Básico",
-      price: 299.90,
-      features: ["Até 3 usuários", "Análise básica de chamadas"],
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    plan: "basic",
+    features: {
+      calls: true,
+      leads: false,
+      dashboard: false,
+      crm: false,
+      scoring: false
     },
     users: createMockUsers(3, uuidv4(), true)
+  },
+  {
+    id: uuidv4(),
+    name: "TechSolutions Software",
+    nomeFantasia: "TechSolutions",
+    status: "active",
+    createdAt: "2023-04-10T11:20:00Z",
+    updatedAt: "2023-09-15T16:30:00Z",
+    cnpj: "45.678.901/0001-23",
+    email: "contato@techsolutions.com.br",
+    phone: "(31) 3333-4444",
+    adminName: "Rafael Mendes",
+    adminEmail: "rafael@techsolutions.com.br",
+    adminPhone: "(31) 98888-7777",
+    logo: "https://via.placeholder.com/150?text=TechSolutions",
+    address: {
+      street: "Avenida Tecnológica",
+      number: "789",
+      complement: "Andar 5",
+      neighborhood: "Distrito Tech",
+      city: "Belo Horizonte",
+      state: "MG",
+      zipCode: "30000-000"
+    },
+    paymentStatus: "completed",
+    registrationStatus: "completed",
+    contractStatus: "completed",
+    pendingReason: null,
+    setupCompleted: true,
+    modules: ["calls", "leads", "dashboard"],
+    plan: "premium",
+    features: {
+      calls: true,
+      leads: true,
+      dashboard: true,
+      crm: true,
+      scoring: false
+    },
+    users: createMockUsers(5, uuidv4(), true)
   }
 ];
 
