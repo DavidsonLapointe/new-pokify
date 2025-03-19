@@ -9,7 +9,7 @@ export const useUserOperations = (setUser: (user: User | null) => void) => {
 
   const updateUser = async (newUser: User) => {
     try {
-      // For database compatibility, if role is "manager", store it with a prefix
+      // For database compatibility, if role is "manager", store it as "admin"
       // This is a temporary solution until the database enum is updated
       let roleForDatabase: string = newUser.role;
       

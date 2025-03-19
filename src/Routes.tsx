@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -25,6 +26,7 @@ import AdminFinancial from "./pages/AdminFinancial";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPlans from "./pages/AdminPlans";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
+import AdminCustomerSuccess from "./pages/AdminCustomerSuccess"; // Nova página
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -116,6 +118,7 @@ function AppRoutes() {
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="financial" element={<AdminFinancial />} />
+          <Route path="customer-success" element={<AdminCustomerSuccess />} /> {/* Nova rota */}
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 
