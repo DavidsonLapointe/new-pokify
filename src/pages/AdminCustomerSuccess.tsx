@@ -7,7 +7,6 @@ import { UsersStatistics } from "@/components/admin/customer-success/UsersStatis
 import { AIExecutionsChart } from "@/components/admin/customer-success/AIExecutionsChart";
 import { UserLogsList } from "@/components/admin/customer-success/UserLogsList";
 import { ModulesStatus } from "@/components/admin/customer-success/ModulesStatus";
-import { CustomerNotes } from "@/components/admin/customer-success/CustomerNotes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { Button } from "@/components/ui/button";
@@ -35,6 +34,8 @@ const AdminCustomerSuccess = () => {
     setTimeout(() => {
       setSelectedOrganization(organization);
       setLoading(false);
+      // Reset search term when an organization is selected
+      setSearchTerm("");
     }, 800);
   };
 

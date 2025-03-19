@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatOrganizationData } from "@/utils/organizationUtils";
 import { toast } from "sonner";
 import { mockCustomerSuccessOrganizations } from "@/mocks/customerSuccessMocks";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 
 interface OrganizationSelectorProps {
@@ -101,14 +100,6 @@ export const OrganizationSelector = ({ onOrganizationChange, searchTerm }: Organ
       )
     : [];
     
-  // Debug the search functionality
-  useEffect(() => {
-    if (searchTerm && searchTerm.trim() !== "") {
-      console.log("Searching with term:", searchTerm);
-      console.log("Found organizations:", filteredOrganizations.length);
-    }
-  }, [searchTerm, filteredOrganizations]);
-
   if (loading) {
     return (
       <div className="w-full space-y-2">
