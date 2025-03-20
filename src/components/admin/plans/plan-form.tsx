@@ -106,7 +106,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
         <div className="space-y-3">
           <FormField
             control={form.control}
-            name="shortDescription"
+            name="description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Descrição</FormLabel>

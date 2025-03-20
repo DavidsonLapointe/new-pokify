@@ -33,6 +33,13 @@ const AdminPrompt = () => {
   const globalPromptGroups = groupPromptsByModule(prompts, 'global', availableModules);
   const customPromptGroups = groupPromptsByModule(prompts, 'custom', availableModules);
 
+  // Convert availableModules to the expected format for the PromptFormDialog
+  const moduleOptions = availableModules.map(module => ({
+    id: module.id,
+    name: module.name,
+    icon: module.icon
+  }));
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -87,9 +94,7 @@ const AdminPrompt = () => {
         onSave={handleSavePrompt}
         onCancel={handleCancel}
         isEditing={isEditing}
-        // We pass the modules as an optional prop, but the component will
-        // fetch from useModulesManagement if this is empty
-        modules={availableModules}
+        modules={moduleOptions}
       />
     </div>
   );

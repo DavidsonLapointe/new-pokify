@@ -12,7 +12,7 @@ export type ModuleGroup = {
 export type AvailableModule = {
   id: string;
   name: string;
-  icon: keyof typeof iconMap;
+  icon: string;
 };
 
 // Define the available modules
@@ -31,7 +31,7 @@ export const groupPromptsByModule = (prompts: Prompt[], type: string, modules: A
   
   return modules.map(module => ({
     name: module.name,
-    icon: iconMap[module.icon],
+    icon: iconMap[module.icon as keyof typeof iconMap],
     prompts: filteredPrompts.filter(prompt => prompt.module === module.id)
   })).filter(group => group.prompts.length > 0);
 };

@@ -1,5 +1,29 @@
 
 import { Plan } from "@/components/admin/plans/plan-form-schema";
+import {
+  MessageCircle,
+  Video,
+  Headphones,
+  UserRound,
+  LineChart,
+  Brain,
+  Blocks,
+  BookOpen,
+  CreditCard
+} from "lucide-react";
+
+// Icon mapping for modules
+export const iconMap = {
+  MessageCircle,
+  Video,
+  Headphones,
+  UserRound,
+  LineChart,
+  Brain,
+  Blocks,
+  BookOpen,
+  CreditCard
+};
 
 // Mock data for modules
 export const mockModules: Plan[] = [

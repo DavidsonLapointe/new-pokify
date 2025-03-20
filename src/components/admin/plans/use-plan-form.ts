@@ -21,13 +21,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     resolver: zodResolver(planFormSchema),
     defaultValues: {
       name: "",
-      price: "",
+      price: "0",
+      description: "",
       shortDescription: "",
-      benefits: "",
+      benefits: [],
       active: true,
       credits: null,
-      stripeProductId: "",
-      stripePriceId: "",
+      areas: [],
     },
   });
 
@@ -41,6 +41,9 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       let benefitsString = "";
       if (Array.isArray(plan.benefits)) {
         benefitsString = plan.benefits.join("\n");
+      } else if (Array.isArray(plan.features)) {
+        // Backward compatibility for features
+        benefitsString = plan.features.join("\n");
       } else if (typeof plan.benefits === 'string') {
         benefitsString = plan.benefits;
       }
@@ -49,25 +52,25 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       form.reset({
         name: plan.name,
         price: plan.price.toString(),
+        description: plan.description || "",
         shortDescription: plan.shortDescription || "",
         benefits: benefitsString,
         active: plan.active,
         credits: plan.credits || null,
-        stripeProductId: plan.stripeProductId || "",
-        stripePriceId: plan.stripePriceId || "",
+        areas: plan.areas || [],
       });
     } else {
       // Caso contrário, reseta para os valores padrão (modo criação)
       console.log("Resetando formulário para valores padrão");
       form.reset({
         name: "",
-        price: "",
+        price: "0",
+        description: "",
         shortDescription: "",
         benefits: "",
         active: true,
         credits: null,
-        stripeProductId: "",
-        stripePriceId: "",
+        areas: [],
       });
     }
   }, [plan, form]);
@@ -77,8 +80,10 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       // Ensure price is a number and parse string lists to arrays
       const formattedValues = {
         ...values,
-        price: parseFloat(values.price),
-        benefits: values.benefits.split("\n").filter(f => f.trim()),
+        price: parseFloat(values.price.toString()),
+        benefits: typeof values.benefits === 'string' 
+          ? values.benefits.split("\n").filter(f => f.trim()) 
+          : values.benefits,
         active: values.active,
       };
       
@@ -91,10 +96,12 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
           ...plan,
           name: formattedValues.name,
           price: formattedValues.price,
+          description: formattedValues.description,
           shortDescription: formattedValues.shortDescription,
           benefits: formattedValues.benefits,
           active: formattedValues.active,
           credits: formattedValues.credits,
+          areas: formattedValues.areas,
           // Mantém os outros campos do plano original
         };
       } else {
@@ -103,10 +110,12 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
           id: nextId++,
           name: formattedValues.name,
           price: formattedValues.price,
+          description: formattedValues.description,
           shortDescription: formattedValues.shortDescription,
           benefits: formattedValues.benefits,
           active: formattedValues.active,
           credits: formattedValues.credits,
+          areas: formattedValues.areas,
           stripeProductId: `mock_product_${Date.now()}`,
           stripePriceId: `mock_price_${Date.now()}`
         };

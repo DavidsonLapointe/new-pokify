@@ -8,6 +8,7 @@ export interface Plan {
   shortDescription?: string;
   description?: string;
   benefits?: string[];
+  features?: string[]; // Optional for backward compatibility
   howItWorks?: string[];
   active: boolean;
   comingSoon?: boolean;
@@ -15,6 +16,9 @@ export interface Plan {
   actionButtonText?: string;
   credits?: number | null;
   areas?: string[]; // IDs of company areas associated with this module
+  // Support for legacy Stripe properties
+  stripeProductId?: string;
+  stripePriceId?: string;
 }
 
 export const planFormSchema = z.object({
@@ -30,7 +34,8 @@ export const planFormSchema = z.object({
       message: "O preço deve ser maior ou igual a zero.",
     })
   ),
-  features: z.array(z.string()).nonempty({
+  shortDescription: z.string().optional(),
+  benefits: z.array(z.string()).nonempty({
     message: "Adicione pelo menos um recurso.",
   }),
   active: z.boolean().default(true),
@@ -45,4 +50,3 @@ export const planFormSchema = z.object({
 });
 
 export type PlanFormValues = z.infer<typeof planFormSchema>;
-
