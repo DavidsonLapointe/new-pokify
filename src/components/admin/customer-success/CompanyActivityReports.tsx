@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -224,7 +223,7 @@ export const CompanyActivityReports = () => {
   const getReportDescription = () => {
     switch (reportType) {
       case "ai-executions":
-        return "Ranking das empresas ordenado pelo número de execuções de IA realizadas, do maior para o menor valor.";
+        return "Ranking do número de execuções de IA por empresa.";
       case "user-activity":
         return "Este relatório apresenta um ranking das empresas ordenado pelo número de usuários ativos na plataforma, do maior para o menor valor.";
       case "module-usage":
@@ -265,7 +264,7 @@ export const CompanyActivityReports = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h3 className="text-xl font-semibold text-left">{getReportTitle()}</h3>
-          <p className="text-sm text-muted-foreground mt-1">{getReportDescription()}</p>
+          <p className="text-sm text-muted-foreground">{getReportDescription()}</p>
         </div>
         
         <Select
@@ -329,7 +328,6 @@ export const CompanyActivityReports = () => {
         </table>
       </div>
       
-      {/* Pagination section */}
       {totalPages > 1 && (
         <Pagination className="mt-4">
           <PaginationContent>
