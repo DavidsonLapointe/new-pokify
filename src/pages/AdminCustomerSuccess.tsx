@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -413,7 +412,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-amber-100"
               iconColor="text-amber-600"
               bottomText="+2% no último mês"
-              tooltip="Porcentagem de empresas que continuam ativas em relação ao período anterior. Calculado como: (Total de empresas atuais - Novas empresas) / Total de empresas no período anterior."
+              tooltip="Porcentagem de empresas que continuam ativas em relação ao período anterior. Calculado como: (Total de empresas atuais ativas - Novas empresas ativadas no mês vigente) / Total de empresas com status ativo no período anterior."
             />
             
             <CustomerSuccessStatCard
