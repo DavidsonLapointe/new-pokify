@@ -54,7 +54,7 @@ export const PermissionCategoryCard = ({
                   {permissionData[category].count}
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent side="left" align="center" className="z-50">
                 <UserTooltip users={permissionData[category].users} />
               </TooltipContent>
             </Tooltip>

@@ -15,7 +15,7 @@ export const UserTooltip = ({ users }: UserTooltipProps) => {
           {users.map((user, idx) => (
             <li key={idx} className="text-xs flex items-center gap-1.5">
               <UserIcon className="h-3 w-3" />
-              <span>{user.name || user.email}</span>
+              <span className="truncate">{user.name || user.email}</span>
             </li>
           ))}
         </ul>
