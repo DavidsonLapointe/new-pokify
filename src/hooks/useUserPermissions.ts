@@ -1,14 +1,18 @@
 
 import { User } from "@/types";
-import { availablePermissions } from "@/types/permissions";
 import { useState, useEffect } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-const dashboardTabs = [
-  'leads', 'uploads', 'performance', 'objections', 'suggestions', 'sellers'
-];
+// Define the parent-child relationship for nested permissions
+const permissionRelationships: Record<string, string[]> = {
+  dashboard: ["dashboard.analytics", "dashboard.organizations", "dashboard.financial"],
+  organizations: ["organizations.manage", "organizations.support"],
+  modules: ["modules.manage", "modules.setups"],
+  "credit-packages": ["credit-packages.manage", "credit-packages.sales"],
+  financial: ["financial.invoices", "financial.reports"]
+};
 
 export const useUserPermissions = (
   user: User | null,
@@ -22,73 +26,58 @@ export const useUserPermissions = (
 
   useEffect(() => {
     if (isOpen && user) {
-      // Garantimos que temos um objeto de permissões válido
-      const userPermissions = user.permissions || {};
+      // Set default permissions with profile always enabled
+      const defaultPermissions = {
+        profile: true,
+        ...user.permissions
+      };
       
-      // Criamos um novo objeto com todas as permissões inicializadas como false
-      const initializedPermissions: { [key: string]: boolean } = {
-        dashboard: false,
-        ...Object.fromEntries(dashboardTabs.map(tab => [`dashboard.${tab}`, false])),
-        ...Object.fromEntries(availablePermissions.map(perm => [perm, false])),
-        profile: true // Perfil sempre true
-      };
-
-      // Sobrescrevemos com as permissões existentes do usuário
-      const mergedPermissions = {
-        ...initializedPermissions,
-        ...userPermissions
-      };
-
-      // Verificamos se há alguma subpermissão do dashboard ativa
-      const hasAnyDashboardTab = dashboardTabs.some(tab => 
-        mergedPermissions[`dashboard.${tab}`]
-      );
-
-      // Garantimos que o dashboard principal está ativo se houver alguma subpermissão ativa
-      if (hasAnyDashboardTab) {
-        mergedPermissions.dashboard = true;
-      }
-
-      console.log('Carregando permissões do usuário:', mergedPermissions);
-      setTempPermissions(mergedPermissions);
+      setTempPermissions(defaultPermissions);
     } else {
       setTempPermissions({});
     }
   }, [isOpen, user]);
 
-  const handlePermissionChange = (routeId: string) => {
-    if (routeId === 'profile') return;
+  const handlePermissionChange = (permissionId: string) => {
+    if (permissionId === 'profile') return; // Profile permission can't be changed
 
     setTempPermissions(prev => {
       const newPermissions = { ...prev };
-
-      if (routeId === 'dashboard') {
-        // Altera o valor do dashboard
-        newPermissions['dashboard'] = !prev['dashboard'];
-        
-        // Se o dashboard foi desativado, desativa todas as suas subpermissões
-        if (!newPermissions['dashboard']) {
-          dashboardTabs.forEach(tab => {
-            newPermissions[`dashboard.${tab}`] = false;
-          });
-        }
-      } else if (routeId.startsWith('dashboard.')) {
-        // Altera o valor da subpermissão
-        newPermissions[routeId] = !prev[routeId];
-        
-        // Verifica se tem alguma subpermissão ativa
-        const hasAnySubPermission = dashboardTabs.some(tab => 
-          newPermissions[`dashboard.${tab}`]
-        );
-        
-        // Atualiza o estado do dashboard principal
-        newPermissions['dashboard'] = hasAnySubPermission;
-      } else {
-        // Para outras permissões, simplesmente inverte o valor
-        newPermissions[routeId] = !prev[routeId];
+      
+      // Toggle the permission
+      newPermissions[permissionId] = !prev[permissionId];
+      
+      // If this is a parent permission being disabled
+      if (!newPermissions[permissionId] && permissionRelationships[permissionId]) {
+        // Disable all child permissions
+        permissionRelationships[permissionId].forEach(childId => {
+          newPermissions[childId] = false;
+        });
+      }
+      
+      // If this is a child permission being enabled
+      if (newPermissions[permissionId] && permissionId.includes('.')) {
+        const parentId = permissionId.split('.')[0];
+        // Enable the parent permission
+        newPermissions[parentId] = true;
       }
 
-      console.log('Novas permissões após mudança:', newPermissions);
+      // If this is a child permission being disabled, check if we need to disable the parent
+      if (!newPermissions[permissionId] && permissionId.includes('.')) {
+        const parentId = permissionId.split('.')[0];
+        // Check if all sibling permissions are also disabled
+        const allSiblingsDisabled = permissionRelationships[parentId]?.every(
+          childId => !newPermissions[childId]
+        );
+        
+        // If all children are disabled, you might want to disable the parent as well
+        // This is optional and depends on the business logic
+        if (allSiblingsDisabled) {
+          // Uncomment the following line if you want to disable the parent when all children are disabled
+          // newPermissions[parentId] = false;
+        }
+      }
+
       return newPermissions;
     });
   };
@@ -98,11 +87,17 @@ export const useUserPermissions = (
     setSaving(true);
     
     try {
-      // Atualiza as permissões no banco de dados
+      // Ensure profile permission is always true
+      const finalPermissions = {
+        ...tempPermissions,
+        profile: true
+      };
+      
+      // In a real app, this would update the database
       const { data, error } = await supabase
         .from('profiles')
         .update({
-          permissions: tempPermissions
+          permissions: finalPermissions
         })
         .eq('id', user.id)
         .select()
@@ -110,23 +105,21 @@ export const useUserPermissions = (
 
       if (error) throw error;
 
-      // Garantimos que as permissões retornadas são do tipo correto
+      // Ensure the permissions are of the correct type
       const permissions = data.permissions as { [key: string]: boolean };
 
-      // Atualiza o usuário localmente com as novas permissões do banco
+      // Update the user with the new permissions
       const updatedUser: User = {
         ...user,
         permissions
       };
 
-      onUserUpdate(updatedUser);
-
-      // Se o usuário está alterando suas próprias permissões, atualiza o contexto
+      // Update the user in the context if it's the current user
       if (currentUser && user.id === currentUser.id) {
-        console.log('Atualizando permissões do usuário atual no contexto');
         updateCurrentUser(updatedUser);
       }
 
+      onUserUpdate(updatedUser);
       onClose();
       toast.success("Permissões atualizadas com sucesso");
     } catch (error) {
