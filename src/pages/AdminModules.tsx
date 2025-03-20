@@ -9,6 +9,7 @@ import { ModuleDetailsView } from "@/components/admin/modules/ModuleDetailsView"
 import { CancelModuleDialog } from "@/components/admin/modules/CancelModuleDialog";
 import { SetupContactDialog } from "@/components/admin/modules/SetupContactDialog";
 import { useModulesManagement } from "@/components/admin/modules/hooks/useModulesManagement";
+import { standardAreas } from "@/components/admin/modules/module-form-schema";
 
 const AdminModules = () => {
   const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
@@ -82,6 +83,12 @@ const AdminModules = () => {
     return groups;
   };
 
+  // Get the name of the active area filter
+  const getActiveAreaName = () => {
+    const defaultAreas = standardAreas.filter(area => area.isDefault);
+    return defaultAreas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter;
+  };
+
   return (
     <div className="container py-6 max-w-6xl mx-auto">
       <PageHeader 
@@ -94,6 +101,15 @@ const AdminModules = () => {
         <LoadingState />
       ) : (
         <ScrollArea className="w-full">
+          {/* User-friendly message when no modules match the area filter */}
+          {activeAreaFilter && filteredModules.length === 0 && (
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md mb-4">
+              <p className="text-sm text-yellow-700">
+                Nenhum módulo encontrado para a área "{getActiveAreaName()}".
+              </p>
+            </div>
+          )}
+          
           {/* Carrossel de módulos */}
           <ModuleCarousel
             moduleGroups={activeAreaFilter ? getFilteredModuleGroups() : moduleGroups()}
