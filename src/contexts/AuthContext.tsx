@@ -29,9 +29,8 @@ const mockSession: Session = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Fix: Moved hooks inside the component function
-  const [session] = useState<Session | null>(mockSession);
-  const [loading] = useState(false);
+  const [session, setSession] = useState<Session | null>(mockSession);
+  const [loading, setLoading] = useState(false);
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
