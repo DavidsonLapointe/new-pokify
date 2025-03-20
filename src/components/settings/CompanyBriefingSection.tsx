@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -92,7 +93,7 @@ export const CompanyBriefingSection = () => {
                 name="segmento"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Segmento de Atuação</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Segmento de Atuação</FormLabel>
                     <FormControl>
                       <Input disabled={!isEditing} placeholder="Ex: Tecnologia, Saúde, Educação" {...field} />
                     </FormControl>
@@ -106,7 +107,7 @@ export const CompanyBriefingSection = () => {
                 name="porte"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Porte da Empresa</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Porte da Empresa</FormLabel>
                     <FormControl>
                       <Input disabled={!isEditing} placeholder="Ex: Pequeno, Médio, Grande" {...field} />
                     </FormControl>
@@ -120,7 +121,7 @@ export const CompanyBriefingSection = () => {
                 name="regioes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Regiões Atendidas</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Regiões Atendidas</FormLabel>
                     <FormControl>
                       <Input disabled={!isEditing} placeholder="Ex: Sudeste, Nacional, Global" {...field} />
                     </FormControl>
@@ -134,7 +135,7 @@ export const CompanyBriefingSection = () => {
                 name="numeroFuncionarios"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Número de Funcionários</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Número de Funcionários</FormLabel>
                     <FormControl>
                       <Input disabled={!isEditing} placeholder="Ex: 10-50, 51-200, 201+" {...field} />
                     </FormControl>
@@ -153,7 +154,7 @@ export const CompanyBriefingSection = () => {
                 name="principaisProdutos"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Principais Produtos/Serviços</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Principais Produtos/Serviços</FormLabel>
                     <FormControl>
                       <Textarea 
                         disabled={!isEditing} 
@@ -172,7 +173,7 @@ export const CompanyBriefingSection = () => {
                 name="publicoAlvo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Público-alvo</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Público-alvo</FormLabel>
                     <FormControl>
                       <Textarea 
                         disabled={!isEditing} 
@@ -196,7 +197,7 @@ export const CompanyBriefingSection = () => {
                 name="diferenciaisCompetitivos"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Diferenciais Competitivos</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Diferenciais Competitivos</FormLabel>
                     <FormControl>
                       <Textarea 
                         disabled={!isEditing} 
@@ -215,7 +216,7 @@ export const CompanyBriefingSection = () => {
                 name="principaisObjecoes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Principais Objeções</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Principais Objeções</FormLabel>
                     <FormControl>
                       <Textarea 
                         disabled={!isEditing} 
@@ -262,7 +263,7 @@ export const CompanyBriefingSection = () => {
                   name="concorrentes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-medium">Principais Concorrentes</FormLabel>
+                      <FormLabel className="font-medium text-left w-full">Principais Concorrentes</FormLabel>
                       <FormControl>
                         <Textarea 
                           disabled={!isEditing} 
@@ -282,7 +283,7 @@ export const CompanyBriefingSection = () => {
                 name="observacoesAdicionais"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium">Observações Adicionais</FormLabel>
+                    <FormLabel className="font-medium text-left w-full">Observações Adicionais</FormLabel>
                     <FormControl>
                       <Textarea 
                         disabled={!isEditing} 

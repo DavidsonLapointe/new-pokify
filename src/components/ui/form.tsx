@@ -91,11 +91,10 @@ const FormLabel = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { formItemId } = useFormField()
 
-  // Removida a lógica que adicionava a classe "text-destructive" quando havia erro
   return (
     <Label
       ref={ref}
-      className={cn(className)}
+      className={cn("text-left block", className)}
       htmlFor={formItemId}
       {...props}
     />
