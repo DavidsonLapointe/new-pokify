@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
-import { moduleFormSchema, ModuleFormValues } from "./module-form-schema";
+import { moduleFormSchema, ModuleFormValues, standardAreas } from "./module-form-schema";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -25,6 +25,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { Separator } from "@/components/ui/separator";
+import { CheckIcon, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ModuleDialogProps {
   open: boolean;
@@ -56,6 +65,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
       icon: module?.icon || "MessageCircle",
       actionButtonText: module?.actionButtonText || "Contratar",
       credits: module?.credits || null,
+      areas: module?.areas || [],
     }
   });
 
@@ -74,6 +84,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
         icon: module.icon || "MessageCircle",
         actionButtonText: module.actionButtonText || "Contratar",
         credits: module.credits || null,
+        areas: module.areas || [],
       });
     } else {
       form.reset({
@@ -88,6 +99,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
         icon: "MessageCircle",
         actionButtonText: "Contratar",
         credits: null,
+        areas: [],
       });
     }
   }, [module, form]);
@@ -101,6 +113,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
         price: parseFloat(values.price),
         benefits: values.benefits.split("\n").filter(b => b.trim()),
         howItWorks: values.howItWorks.split("\n").filter(hw => hw.trim()),
+        areas: values.areas,
       };
       
       await onSave(formattedValues);
@@ -109,6 +122,20 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
       console.error('Erro ao salvar módulo:', error);
       toast.error("Ocorreu um erro ao salvar o módulo.");
     }
+  };
+
+  // Adicionar uma área à lista de áreas selecionadas
+  const handleAddArea = (areaId: string) => {
+    const currentAreas = form.getValues().areas || [];
+    if (!currentAreas.includes(areaId)) {
+      form.setValue('areas', [...currentAreas, areaId]);
+    }
+  };
+
+  // Remover uma área da lista de áreas selecionadas
+  const handleRemoveArea = (areaId: string) => {
+    const currentAreas = form.getValues().areas || [];
+    form.setValue('areas', currentAreas.filter(id => id !== areaId));
   };
 
   // Seleção de ícone simplificada
@@ -344,6 +371,81 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                 )}
               />
             </div>
+
+            <Separator className="my-2" />
+
+            {/* Área para seleção de áreas da empresa */}
+            <FormField
+              control={form.control}
+              name="areas"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Áreas da Empresa</FormLabel>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {field.value.map((areaId) => {
+                        const area = standardAreas.find(a => a.id === areaId);
+                        if (!area) return null;
+                        
+                        return (
+                          <Badge 
+                            key={area.id} 
+                            variant="secondary"
+                            className="px-2.5 py-1 flex items-center"
+                          >
+                            {area.name}
+                            <button 
+                              type="button"
+                              className="ml-1.5 text-gray-500 hover:text-gray-700 focus:outline-none"
+                              onClick={() => handleRemoveArea(area.id)}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </Badge>
+                        );
+                      })}
+                      {field.value.length === 0 && (
+                        <div className="text-sm text-gray-500">
+                          Nenhuma área selecionada
+                        </div>
+                      )}
+                    </div>
+                    <Select
+                      onValueChange={(value) => handleAddArea(value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione uma área" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {standardAreas.map((area) => (
+                          <SelectItem
+                            key={area.id}
+                            value={area.id}
+                            disabled={field.value.includes(area.id)}
+                          >
+                            <div className="flex items-center">
+                              <span>{area.name}</span>
+                              {area.isDefault && (
+                                <span className="ml-1.5 text-xs bg-primary text-white py-0.5 px-1.5 rounded">
+                                  Padrão
+                                </span>
+                              )}
+                              {field.value.includes(area.id) && (
+                                <CheckIcon className="ml-auto h-4 w-4 text-primary" />
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="text-xs text-gray-500">
+                      Selecione as áreas da empresa que este módulo atende.
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex justify-end gap-4 pt-2">
               <Button type="button" variant="cancel" onClick={() => onOpenChange(false)}>

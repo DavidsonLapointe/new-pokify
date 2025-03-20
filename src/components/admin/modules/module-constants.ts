@@ -1,37 +1,7 @@
 
-import { 
-  MessageCircle, Video, Headphones, UserRound, ShieldCheck, Bell, 
-  Brain, BookOpen, CreditCard, FileText, LineChart, Mail, Share2, 
-  Smartphone, Star, Zap, Briefcase, Clock, Package, Blocks, AppWindow
-} from "lucide-react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 
-// Map of icon names to their Lucide components
-export const iconMap = {
-  MessageCircle,
-  Video,
-  Headphones,
-  UserRound,
-  ShieldCheck,
-  Bell,
-  Brain,
-  BookOpen,
-  CreditCard,
-  FileText,
-  LineChart,
-  Mail,
-  Share2,
-  Smartphone,
-  Star,
-  Zap,
-  Briefcase,
-  Clock,
-  Package,
-  Blocks,
-  AppWindow
-};
-
-// Dados de exemplo para os módulos
+// Mock data for modules
 export const mockModules: Plan[] = [
   {
     id: 1,
@@ -55,7 +25,8 @@ export const mockModules: Plan[] = [
     comingSoon: false,
     actionButtonText: "Contratar Assistente",
     icon: "MessageCircle",
-    credits: 5
+    credits: 5,
+    areas: ["4", "5"] // Marketing e Vendas
   },
   {
     id: 2,
@@ -79,7 +50,8 @@ export const mockModules: Plan[] = [
     comingSoon: true,
     actionButtonText: "Criar Vídeos",
     icon: "Video",
-    credits: 20
+    credits: 20,
+    areas: ["4"] // Marketing
   },
   {
     id: 3,
@@ -103,7 +75,8 @@ export const mockModules: Plan[] = [
     comingSoon: false,
     actionButtonText: "Transcrever Áudios",
     icon: "Headphones",
-    credits: 8
+    credits: 8,
+    areas: ["2", "9"] // RH e PERA
   },
   {
     id: 4,
@@ -127,7 +100,8 @@ export const mockModules: Plan[] = [
     comingSoon: false,
     actionButtonText: "Adquirir CRM",
     icon: "UserRound",
-    credits: 15
+    credits: 15,
+    areas: ["5"] // Vendas
   },
   {
     id: 5,
@@ -151,6 +125,7 @@ export const mockModules: Plan[] = [
     comingSoon: true,
     actionButtonText: "Analisar Tendências",
     icon: "LineChart",
-    credits: 25
+    credits: 25,
+    areas: ["1", "6"] // Financeiro e Controladoria
   }
 ];

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -34,8 +35,14 @@ export const useModulesManagement = () => {
       // Simulamos a busca no banco de dados usando dados mockados
       // Em um ambiente real, nós usaríamos fetchPlans() e adaptaríamos para módulos
       setTimeout(() => {
-        console.log("Módulos carregados com mock data:", mockModules);
-        setModules(mockModules);
+        // Adicione a propriedade areas aos módulos mockados se ainda não existirem
+        const modulesWithAreas = mockModules.map(module => ({
+          ...module,
+          areas: module.areas || []
+        }));
+        
+        console.log("Módulos carregados com mock data:", modulesWithAreas);
+        setModules(modulesWithAreas);
         setIsLoading(false);
       }, 1000);
     } catch (error) {
@@ -74,6 +81,7 @@ export const useModulesManagement = () => {
           ...data,
           active: data.active !== undefined ? data.active : true,
           comingSoon: data.comingSoon || false,
+          areas: data.areas || [],
         } as Plan;
         
         // Adicionar à lista de módulos
