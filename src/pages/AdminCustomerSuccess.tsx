@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -33,6 +32,7 @@ import { UnusedPermissionsModal } from "@/components/admin/customer-success/Unus
 import { CustomerSuccessMetricsChart } from "@/components/admin/customer-success/CustomerSuccessMetricsChart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PendingUser, PendingUsersModal } from "@/components/admin/customer-success/PendingUsersModal";
+import { CompanyActivityReports } from "@/components/admin/customer-success/CompanyActivityReports";
 
 interface CustomerNote {
   id: string;
@@ -514,57 +514,7 @@ const AdminCustomerSuccess = () => {
           </Card>
           
           <Card className="p-6">
-            <h3 className="text-xl font-semibold mb-4">Empresas com Maior Atividade</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Empresa</th>
-                    <th className="text-left py-3 px-4">Usuários Ativos</th>
-                    <th className="text-left py-3 px-4">Interações</th>
-                    <th className="text-left py-3 px-4">Módulos</th>
-                    <th className="text-left py-3 px-4">Última Atividade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">TechSolutions Brasil</td>
-                    <td className="py-3 px-4">24</td>
-                    <td className="py-3 px-4">187</td>
-                    <td className="py-3 px-4">4</td>
-                    <td className="py-3 px-4">Hoje</td>
-                  </tr>
-                  <tr className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">GloboTech</td>
-                    <td className="py-3 px-4">18</td>
-                    <td className="py-3 px-4">143</td>
-                    <td className="py-3 px-4">3</td>
-                    <td className="py-3 px-4">Hoje</td>
-                  </tr>
-                  <tr className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">Conecta Software</td>
-                    <td className="py-3 px-4">15</td>
-                    <td className="py-3 px-4">112</td>
-                    <td className="py-3 px-4">3</td>
-                    <td className="py-3 px-4">Ontem</td>
-                  </tr>
-                  <tr className="border-b hover:bg-muted/50">
-                    <td className="py-3 px-4">Sistemas Integrados SA</td>
-                    <td className="py-3 px-4">12</td>
-                    <td className="py-3 px-4">98</td>
-                    <td className="py-3 px-4">2</td>
-                    <td className="py-3 px-4">Ontem</td>
-                  </tr>
-                  <tr className="hover:bg-muted/50">
-                    <td className="py-3 px-4">DataSoft</td>
-                    <td className="py-3 px-4">10</td>
-                    <td className="py-3 px-4">87</td>
-                    <td className="py-3 px-4">3</td>
-                    <td className="py-3 px-4">Há 2 dias</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <CompanyActivityReports />
           </Card>
         </TabsContent>
 
