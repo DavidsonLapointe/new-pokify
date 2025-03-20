@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -290,19 +291,19 @@ export const CompanyActivityReports = () => {
           <thead>
             <tr className="border-b">
               <th className="text-left py-3 px-4">Empresa</th>
-              <th className="text-left py-3 px-4">Execuções IA</th>
-              <th className="text-left py-3 px-4">Usuários Ativos</th>
-              <th className="text-left py-3 px-4">Módulos</th>
-              <th className="text-left py-3 px-4">Última Atividade</th>
+              <th className="text-center py-3 px-4">Execuções IA</th>
+              <th className="text-center py-3 px-4">Usuários Ativos</th>
+              <th className="text-center py-3 px-4">Módulos</th>
+              <th className="text-center py-3 px-4">Última Atividade</th>
             </tr>
           </thead>
           <tbody>
             {currentCompanies.map((company, index) => (
               <tr key={index} className="border-b hover:bg-muted/50">
-                <td className="py-3 px-4">{company.name}</td>
-                <td className="py-3 px-4">{company.interactions}</td>
-                <td className="py-3 px-4">{company.activeUsers}</td>
-                <td className="py-3 px-4">
+                <td className="py-3 px-4 text-left">{company.name}</td>
+                <td className="py-3 px-4 text-center">{company.interactions}</td>
+                <td className="py-3 px-4 text-center">{company.activeUsers}</td>
+                <td className="py-3 px-4 text-center">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -321,7 +322,7 @@ export const CompanyActivityReports = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </td>
-                <td className="py-3 px-4">{company.lastActivity}</td>
+                <td className="py-3 px-4 text-center">{company.lastActivity}</td>
               </tr>
             ))}
           </tbody>
