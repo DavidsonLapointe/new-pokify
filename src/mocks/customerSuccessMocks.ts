@@ -29,46 +29,107 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "dashboard.leads": true,
         "dashboard.performance": true,
         "dashboard.objections": true,
+        "dashboard.suggestions": true,
+        "dashboard.uploads": true,
+        "dashboard.sellers": true,
         leads: true,
-        settings: true,
-        "settings.permissions": true,
-        "settings.system": true,
         users: true,
         integrations: true,
-        plan: true
+        reports: true,
+        settings: true,
+        "settings.alerts": true,
+        "settings.analysis": true,
+        "settings.retention": true,
+        "settings.llm": true,
+        "settings.system": true,
+        "settings.permissions": true,
+        plan: true,
+        profile: true,
+        products: true,
+        calendar: true,
+        crm: true,
+        "crm.contacts": true,
+        "crm.opportunities": true,
+        "crm.pipeline": true,
+        "crm.activities": true,
+        notifications: true,
+        support: true
       }
     });
     count--;
   }
   
-  const roles: UserRole[] = ["seller", "manager"];
-  const statuses: UserStatus[] = ["active", "inactive", "pending"];
-  
-  // Create mock permissions data with a variety of permission patterns
+  // Create a variety of permission templates
   const permissionTemplates = [
-    // Manager with most permissions including tabs
+    // Manager with access to most modules and specific tabs
     {
       role: "manager" as UserRole,
       status: "active" as UserStatus,
       permissions: {
-        dashboard: true,
+        dashboard: false,
         "dashboard.leads": true,
         "dashboard.performance": true,
         leads: true,
+        users: true,
         settings: true,
         "settings.analysis": true,
-        users: true,
-        plan: true
+        "settings.permissions": true,
+        calendar: true,
+        products: true,
+        crm: false,
+        "crm.contacts": true,
+        "crm.opportunities": true
       }
     },
-    // Seller with limited permissions and no tabs
+    // Seller with basic permissions
     {
       role: "seller" as UserRole,
       status: "active" as UserStatus,
       permissions: {
         dashboard: true,
+        "dashboard.leads": true,
         leads: true,
-        plan: true
+        calendar: true,
+        crm: true,
+        "crm.contacts": true,
+        notifications: true
+      }
+    },
+    // Support representative
+    {
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        dashboard: false,
+        "dashboard.leads": false,
+        leads: false,
+        support: true,
+        notifications: true,
+        profile: true
+      }
+    },
+    // Finance user
+    {
+      role: "manager" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        reports: true,
+        products: true,
+        plan: true,
+        settings: false,
+        "settings.system": true
+      }
+    },
+    // Marketing user
+    {
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        reports: true,
+        products: true,
+        calendar: true,
+        dashboard: true,
+        "dashboard.performance": true
       }
     },
     // Inactive user with various permissions
@@ -78,26 +139,9 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
       permissions: {
         dashboard: true,
         "dashboard.leads": true,
-        leads: true
-      }
-    },
-    // User with only specific dashboard tabs
-    {
-      role: "seller" as UserRole,
-      status: "active" as UserStatus,
-      permissions: {
-        dashboard: false,
-        "dashboard.leads": true,
-        "dashboard.suggestions": true,
-        leads: false
-      }
-    },
-    // User with minimal permissions
-    {
-      role: "seller" as UserRole,
-      status: "active" as UserStatus,
-      permissions: {
-        leads: true
+        leads: true,
+        crm: true,
+        "crm.contacts": true
       }
     }
   ];

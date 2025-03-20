@@ -15,13 +15,19 @@ export interface RoutePermission {
 
 // Rotas disponíveis para usuários da organização
 export const availablePermissions = [
-  "dashboard",           // Tem subpermissões (abas)
-  "leads",              // Análise de Leads
-  "users",              // Usuários
-  "integrations",       // Integrações
-  "settings",           // Configurações
-  "plan",              // Meu Plano
-  "profile"            // Perfil
+  "dashboard",        // Tem subpermissões (abas)
+  "leads",            // Análise de Leads
+  "users",            // Usuários
+  "integrations",     // Integrações
+  "reports",          // Relatórios
+  "settings",         // Configurações (com abas)
+  "plan",             // Meu Plano
+  "profile",          // Perfil
+  "products",         // Produtos
+  "calendar",         // Calendário
+  "crm",              // CRM (com abas)
+  "notifications",    // Notificações
+  "support"           // Suporte
 ];
 
 // Subpermissões para páginas com abas
@@ -43,25 +49,48 @@ export const settingsTabPermissions = [
   'settings.permissions'
 ];
 
+export const crmTabPermissions = [
+  'crm.contacts',
+  'crm.opportunities',
+  'crm.pipeline',
+  'crm.activities'
+];
+
 // Labels em português para as permissões
 export const permissionLabels: { [key: string]: string } = {
   dashboard: "Dashboard",
   leads: "Análise de Leads",
   users: "Usuários",
   integrations: "Integrações",
+  reports: "Relatórios",
   settings: "Configurações",
   plan: "Meu Plano",
   profile: "Meu Perfil",
+  products: "Produtos",
+  calendar: "Calendário",
+  crm: "CRM",
+  notifications: "Notificações",
+  support: "Suporte",
+  
+  // Dashboard tabs
   'dashboard.leads': "Leads",
   'dashboard.uploads': "Uploads",
   'dashboard.performance': "Performance",
   'dashboard.objections': "Objeções",
   'dashboard.suggestions': "Sugestões",
   'dashboard.sellers': "Vendedores",
+  
+  // Settings tabs
   'settings.alerts': "Alertas",
   'settings.analysis': "Análise",
   'settings.retention': "Retenção",
   'settings.llm': "Modelos de IA",
   'settings.system': "Sistema",
-  'settings.permissions': "Permissões"
+  'settings.permissions': "Permissões",
+  
+  // CRM tabs
+  'crm.contacts': "Contatos",
+  'crm.opportunities': "Oportunidades",
+  'crm.pipeline': "Pipeline",
+  'crm.activities': "Atividades"
 };
