@@ -57,7 +57,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               className={`
                 px-2.5 py-1 text-xs cursor-pointer
                 ${activeAreaFilter === area.id 
-                  ? "bg-primary hover:bg-primary-hover" 
+                  ? "bg-primary text-white hover:bg-primary-hover" 
                   : "hover:bg-gray-100 text-gray-700"}
               `}
               onClick={() => handleAreaFilterClick(area.id)}
