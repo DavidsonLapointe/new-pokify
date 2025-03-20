@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleCarousel } from "@/components/organization/modules/ModuleCarousel";
 import { ModuleDetails } from "@/components/organization/modules/ModuleDetails";
@@ -9,6 +9,7 @@ import { useModulesManagement } from "@/components/organization/modules/hooks/us
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { standardAreas } from "@/components/admin/modules/module-form-schema";
+import { Tool } from "@/components/organization/modules/types";
 
 const OrganizationModules = () => {
   const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
@@ -72,6 +73,18 @@ const OrganizationModules = () => {
     setActiveAreaFilter(null);
   };
 
+  // Add debugging logs to identify filter issues
+  useEffect(() => {
+    if (activeAreaFilter) {
+      console.log("Active filter:", activeAreaFilter);
+      console.log("Tools with areas:", tools.map(t => ({ id: t.id, areas: t.areas })));
+      const filtered = tools.filter(tool => 
+        Array.isArray(tool.areas) && tool.areas.includes(activeAreaFilter)
+      );
+      console.log("Filtered tools:", filtered);
+    }
+  }, [activeAreaFilter, tools]);
+
   // Filter tools based on the active area filter
   const filteredTools = activeAreaFilter
     ? tools.filter(tool => 
@@ -119,6 +132,15 @@ const OrganizationModules = () => {
             )}
           </div>
         </div>
+
+        {/* Debug info - can be removed after testing */}
+        {activeAreaFilter && filteredTools.length === 0 && (
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-sm text-yellow-700">
+              Nenhuma ferramenta encontrada para a área "{defaultAreas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter}".
+            </p>
+          </div>
+        )}
 
         <ModuleCarousel
           tools={filteredTools}
