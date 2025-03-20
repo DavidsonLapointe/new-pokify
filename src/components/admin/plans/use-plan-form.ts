@@ -21,7 +21,7 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     resolver: zodResolver(planFormSchema),
     defaultValues: {
       name: "",
-      price: "0",
+      price: 0,
       description: "",
       shortDescription: "",
       benefits: [],
@@ -37,26 +37,18 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
     
     // Se temos um plano (modo edição)
     if (plan) {
-      // Prepare benefits for form
-      let benefitsString = "";
-      if (Array.isArray(plan.benefits)) {
-        benefitsString = plan.benefits.join("\n");
-      } else if (Array.isArray(plan.features)) {
-        // Backward compatibility for features
-        benefitsString = plan.features.join("\n");
-      } else if (typeof plan.benefits === 'string') {
-        benefitsString = plan.benefits;
-      }
+      // Determine benefits based on available fields
+      const benefitsArray = plan.benefits || plan.features || [];
       
       // Preenche o formulário com os dados do plano
       form.reset({
         name: plan.name,
-        price: plan.price.toString(),
+        price: plan.price,
         description: plan.description || "",
         shortDescription: plan.shortDescription || "",
-        benefits: benefitsString,
+        benefits: benefitsArray,
         active: plan.active,
-        credits: plan.credits || null,
+        credits: plan.credits,
         areas: plan.areas || [],
       });
     } else {
@@ -64,10 +56,10 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
       console.log("Resetando formulário para valores padrão");
       form.reset({
         name: "",
-        price: "0",
+        price: 0,
         description: "",
         shortDescription: "",
-        benefits: "",
+        benefits: [],
         active: true,
         credits: null,
         areas: [],
@@ -77,14 +69,13 @@ export function usePlanForm({ plan, onSave, onOpenChange }: UsePlanFormProps) {
 
   const onSubmit = async (values: PlanFormValues) => {
     try {
-      // Ensure price is a number and parse string lists to arrays
+      // Ensure values are properly formatted
       const formattedValues = {
         ...values,
-        price: parseFloat(values.price.toString()),
-        benefits: typeof values.benefits === 'string' 
-          ? values.benefits.split("\n").filter(f => f.trim()) 
-          : values.benefits,
+        price: Number(values.price),
+        benefits: values.benefits,
         active: values.active,
+        credits: values.credits !== undefined ? Number(values.credits) : null,
       };
       
       let savedPlan: Plan | null = null;

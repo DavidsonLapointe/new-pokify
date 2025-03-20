@@ -91,7 +91,7 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                   <Input 
                     type="number" 
                     {...field} 
-                    value={field.value || ''} 
+                    value={field.value === null ? '' : field.value} 
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
@@ -121,6 +121,23 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
               </FormItem>
             )}
           />
+          
+          <FormField
+            control={form.control}
+            name="shortDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Descrição curta</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    placeholder="Ex: Plano básico para startups"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -133,6 +150,34 @@ export function PlanForm({ form, isEditing, onSubmit, onCancel }: PlanFormProps)
                     {...field} 
                     rows={4} 
                     placeholder="Ex: Até 4 usuários&#10;100 créditos&#10;Integração com 1 CRM&#10;Suporte por email"
+                    value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+                    onChange={(e) => {
+                      const lines = e.target.value.split('\n').filter(line => line.trim());
+                      field.onChange(lines);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="areas"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Áreas da empresa (opcional)</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field} 
+                    rows={2} 
+                    placeholder="Ex: Financeiro, Vendas, Marketing"
+                    value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+                    onChange={(e) => {
+                      const lines = e.target.value.split('\n').filter(line => line.trim());
+                      field.onChange(lines);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
