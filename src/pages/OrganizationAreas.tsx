@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -280,7 +279,9 @@ const OrganizationAreas = () => {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Excluir Área</DialogTitle>
+            <DialogTitle>
+              Excluir Área: <span className="text-primary">{currentArea?.name}</span>
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p>
@@ -289,7 +290,11 @@ const OrganizationAreas = () => {
             </p>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button 
+              type="button" 
+              variant="cancel" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
               Cancelar
             </Button>
             <Button type="button" variant="destructive" onClick={handleDelete}>
