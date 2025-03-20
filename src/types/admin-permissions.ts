@@ -2,28 +2,52 @@
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
+    "dashboard.analytics": true,
+    "dashboard.organizations": true,
     organizations: true,
+    "organizations.manage": true,
     users: true,
     modules: true,
+    "modules.manage": true,
     plans: true,
     "credit-packages": true,
+    "credit-packages.manage": true,
     financial: true,
+    "financial.invoices": true,
     integrations: true,
     prompt: true,
     settings: true,
+    "settings.alerts": true,
     profile: true
   },
   leadly_master: {
     dashboard: true,
+    "dashboard.analytics": true,
+    "dashboard.organizations": true,
+    "dashboard.financial": true,
     organizations: true,
+    "organizations.manage": true,
+    "organizations.support": true,
     users: true,
     modules: true,
+    "modules.manage": true,
+    "modules.setups": true,
     plans: true,
     "credit-packages": true,
+    "credit-packages.manage": true,
+    "credit-packages.sales": true,
     financial: true,
+    "financial.invoices": true,
+    "financial.reports": true,
     integrations: true,
     prompt: true,
     settings: true,
+    "settings.alerts": true,
+    "settings.analysis": true,
+    "settings.retention": true,
+    "settings.llm": true,
+    "settings.system": true,
+    "settings.permissions": true,
     profile: true,
     "analysis-packages": true
   },
@@ -54,56 +78,73 @@ export const availableAdminRoutePermissions = [
     id: "profile",
     label: "Meu Perfil",
     path: "/admin/profile",
-    isDefault: true
+    isDefault: true,
+    description: "Acesso às configurações do próprio perfil. Esta permissão não pode ser removida."
   },
   {
     id: "dashboard",
     label: "Dashboard",
-    path: "/admin"
+    path: "/admin",
+    description: "Visão geral com métricas, KPIs e informações sobre organizações e faturamento"
   },
   {
     id: "organizations",
     label: "Empresas",
-    path: "/admin/organizations"
+    path: "/admin/organizations",
+    description: "Gerenciamento completo de empresas clientes, incluindo cadastro, edição e suporte"
   },
   {
     id: "users",
     label: "Usuários",
-    path: "/admin/users"
+    path: "/admin/users",
+    description: "Gerenciamento de funcionários da Leadly e suas permissões"
   },
   {
     id: "modules",
     label: "Módulos",
-    path: "/admin/modules"
+    path: "/admin/modules",
+    description: "Configuração de módulos disponíveis para os clientes"
   },
   {
     id: "plans",
     label: "Planos",
-    path: "/admin/plans"
+    path: "/admin/plans",
+    description: "Gerenciamento de planos de assinatura disponíveis para os clientes"
   },
   {
     id: "credit-packages",
     label: "Pacotes de Créditos",
-    path: "/admin/credit-packages"
+    path: "/admin/credit-packages",
+    description: "Criação e gerenciamento de pacotes de créditos para análise de leads"
   },
   {
     id: "financial",
     label: "Financeiro",
-    path: "/admin/financial"
+    path: "/admin/financial",
+    description: "Gerenciamento financeiro, faturas, pagamentos e relatórios"
   },
   {
     id: "integrations",
     label: "Integrações",
-    path: "/admin/integrations"
+    path: "/admin/integrations",
+    description: "Configuração de integrações com sistemas externos (CRMs, ERPs, etc)"
   },
   {
     id: "prompt",
     label: "Prompt",
-    path: "/admin/prompt"
+    path: "/admin/prompt",
+    description: "Configuração de prompts para análise de leads com inteligência artificial"
   },
   {
     id: "settings",
     label: "Configurações",
-    path: "/admin/settings"
+    path: "/admin/settings",
+    description: "Configurações gerais do sistema, alertas, análises e políticas de retenção"
+  },
+  {
+    id: "analysis-packages",
+    label: "Pacotes de Análise",
+    path: "/admin/analysis-packages",
+    description: "Gerenciamento de pacotes de análise de leads para os clientes"
   }
 ];
