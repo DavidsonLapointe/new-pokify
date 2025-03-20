@@ -403,7 +403,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-green-100"
               iconColor="text-green-600"
               bottomText="+8% no último mês"
-              tooltip="Número de usuários que fizeram login na plataforma nos últimos 30 dias. Calculado a partir dos registros de acesso ao sistema."
+              tooltip="Número de usuários que utilizam a plataforma. Calculado a partir do número de usuários com acesso ao ambiente dos clientes com status 'ativo' na base de dados."
             />
             
             <CustomerSuccessStatCard
