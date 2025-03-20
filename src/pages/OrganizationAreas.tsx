@@ -37,6 +37,9 @@ const OrganizationAreas = () => {
     description: ""
   });
 
+  // Sort areas alphabetically by name
+  const sortedAreas = [...areas].sort((a, b) => a.name.localeCompare(b.name));
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -114,7 +117,7 @@ const OrganizationAreas = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {areas.map((area) => (
+        {sortedAreas.map((area) => (
           <Card key={area.id} className="overflow-hidden">
             <CardHeader className="bg-slate-50 pb-2">
               <CardTitle className="flex items-center text-lg">
@@ -135,7 +138,7 @@ const OrganizationAreas = () => {
                     variant="ghost" 
                     size="sm" 
                     onClick={() => openEditDialog(area)}
-                    disabled={area.isDefault}
+                    disabled={false}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
