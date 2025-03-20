@@ -75,7 +75,7 @@ export const mockModules: Plan[] = [
     actionButtonText: "Criar Vídeos",
     icon: "Video",
     credits: 20,
-    areas: ["4"] // Marketing
+    areas: ["4", "7"] // Marketing e Marketing Digital
   },
   {
     id: 3,
@@ -100,7 +100,7 @@ export const mockModules: Plan[] = [
     actionButtonText: "Transcrever Áudios",
     icon: "Headphones",
     credits: 8,
-    areas: ["2", "9"] // RH e PERA
+    areas: ["2", "9", "3"] // RH, PERA e Jurídico
   },
   {
     id: 4,
@@ -125,7 +125,7 @@ export const mockModules: Plan[] = [
     actionButtonText: "Adquirir CRM",
     icon: "UserRound",
     credits: 15,
-    areas: ["5"] // Vendas
+    areas: ["5", "8"] // Vendas e Atendimento ao Cliente
   },
   {
     id: 5,
@@ -150,6 +150,6 @@ export const mockModules: Plan[] = [
     actionButtonText: "Analisar Tendências",
     icon: "LineChart",
     credits: 25,
-    areas: ["1", "6"] // Financeiro e Controladoria
+    areas: ["1", "6", "10"] // Financeiro, Controladoria e Diretoria
   }
 ];

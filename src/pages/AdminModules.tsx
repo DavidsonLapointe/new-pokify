@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ModuleDialog } from "@/components/admin/modules/ModuleDialog";
 import { LoadingState } from "@/components/admin/modules/LoadingState";
@@ -11,6 +11,8 @@ import { SetupContactDialog } from "@/components/admin/modules/SetupContactDialo
 import { useModulesManagement } from "@/components/admin/modules/hooks/useModulesManagement";
 
 const AdminModules = () => {
+  const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
+  
   const {
     modules,
     isLoading,
@@ -52,9 +54,32 @@ const AdminModules = () => {
     // Aqui você pode adicionar a lógica para enviar as informações de contato
   };
 
+  // Filter modules based on the active area filter
+  const filteredModules = activeAreaFilter
+    ? modules.filter(module => 
+        Array.isArray(module.areas) && module.areas.includes(activeAreaFilter)
+      )
+    : modules;
+
+  // Get module groups with filtered modules
+  const getFilteredModuleGroups = () => {
+    const groups = [];
+    const groupSize = 4; // 4 cards per slide
+    
+    for (let i = 0; i < filteredModules.length; i += groupSize) {
+      groups.push(filteredModules.slice(i, i + groupSize));
+    }
+    
+    return groups;
+  };
+
   return (
     <div className="container py-6 max-w-6xl mx-auto">
-      <PageHeader setIsCreateDialogOpen={setIsCreateDialogOpen} />
+      <PageHeader 
+        setIsCreateDialogOpen={setIsCreateDialogOpen}
+        activeAreaFilter={activeAreaFilter}
+        setActiveAreaFilter={setActiveAreaFilter}
+      />
       
       {isLoading ? (
         <LoadingState />
@@ -62,7 +87,7 @@ const AdminModules = () => {
         <ScrollArea className="w-full">
           {/* Carrossel de módulos */}
           <ModuleCarousel
-            moduleGroups={moduleGroups()}
+            moduleGroups={activeAreaFilter ? getFilteredModuleGroups() : moduleGroups()}
             selectedModule={selectedModule}
             onEditModule={handleEditModule}
             onSelectModule={handleSelectModule}
