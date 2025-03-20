@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -50,7 +49,7 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      {/* Key metrics cards - updated to use the same height */}
+      {/* Key metrics cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Empresas Ativas"
