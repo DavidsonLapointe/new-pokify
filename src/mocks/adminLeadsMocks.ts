@@ -7,6 +7,7 @@ export const mockLeadlyLeads: LeadlyLead[] = [
     name: "João Silva",
     phone: "(11) 98765-4321",
     createdAt: "2023-08-15T14:30:00Z",
+    status: "ganho",
     notes: [
       {
         id: "note-1",
@@ -21,6 +22,7 @@ export const mockLeadlyLeads: LeadlyLead[] = [
     name: "Maria Oliveira",
     phone: "(21) 97654-3210",
     createdAt: "2023-08-16T10:15:00Z",
+    status: "contactar",
     notes: []
   },
   {
@@ -28,6 +30,7 @@ export const mockLeadlyLeads: LeadlyLead[] = [
     name: "Pedro Santos",
     phone: "(31) 96543-2109",
     createdAt: "2023-08-17T09:45:00Z",
+    status: "email_onboarding",
     notes: [
       {
         id: "note-2",
@@ -48,6 +51,7 @@ export const mockLeadlyLeads: LeadlyLead[] = [
     name: "Lucia Ferreira",
     phone: "(41) 95432-1098",
     createdAt: "2023-08-18T16:30:00Z",
+    status: "nutricao_mkt",
     notes: []
   },
   {
@@ -55,6 +59,7 @@ export const mockLeadlyLeads: LeadlyLead[] = [
     name: "Roberto Almeida",
     phone: "(51) 94321-0987",
     createdAt: "2023-08-19T11:20:00Z",
+    status: "qualificacao",
     notes: [
       {
         id: "note-4",

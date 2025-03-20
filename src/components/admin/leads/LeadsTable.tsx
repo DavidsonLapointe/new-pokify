@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LeadlyLead } from "@/pages/AdminLeads";
+import { Badge } from "@/components/ui/badge";
 
 interface LeadsTableProps {
   leads: LeadlyLead[];
@@ -25,12 +26,32 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
     return formatDistanceToNow(date, { addSuffix: true, locale: ptBR });
   };
 
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { color: string; label: string }> = {
+      ganho: { color: "bg-green-100 text-green-800", label: "Ganho" },
+      perda: { color: "bg-red-100 text-red-800", label: "Perda" },
+      nutricao_mkt: { color: "bg-blue-100 text-blue-800", label: "Nutrição Mkt" },
+      email_onboarding: { color: "bg-yellow-100 text-yellow-800", label: "Email Onboarding" },
+      contactar: { color: "bg-gray-100 text-gray-800", label: "Contactar" },
+      qualificacao: { color: "bg-purple-100 text-purple-800", label: "Qualificação" },
+    };
+
+    const config = statusConfig[status] || { color: "bg-gray-100 text-gray-800", label: status };
+
+    return (
+      <Badge className={`${config.color} hover:${config.color}`}>
+        {config.label}
+      </Badge>
+    );
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Telefone</TableHead>
             <TableHead>Cadastrado</TableHead>
             <TableHead>Anotações</TableHead>
@@ -42,6 +63,7 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
             leads.map((lead) => (
               <TableRow key={lead.id}>
                 <TableCell className="font-medium">{lead.name}</TableCell>
+                <TableCell>{getStatusBadge(lead.status)}</TableCell>
                 <TableCell>{lead.phone}</TableCell>
                 <TableCell>{formatCreatedAt(lead.createdAt)}</TableCell>
                 <TableCell>{lead.notes.length}</TableCell>
@@ -52,14 +74,14 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
                     onClick={() => onOpenNotes(lead)}
                     title="Anotações"
                   >
-                    <StickyNote className="h-4 w-4" />
+                    <StickyNote className="h-4 w-4 text-[#7E69AB]" />
                   </Button>
                 </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center">
+              <TableCell colSpan={6} className="h-24 text-center">
                 Nenhum lead encontrado.
               </TableCell>
             </TableRow>

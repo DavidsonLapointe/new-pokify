@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeadsTable } from "@/components/admin/leads/LeadsTable";
 import { NotesDialog } from "@/components/admin/leads/NotesDialog";
-import { mockLeadlyLeads } from "@/mocks/leadsMocks";
+import { mockLeadlyLeads } from "@/mocks/adminLeadsMocks";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export type LeadNote = {
   id: string;
@@ -18,6 +19,7 @@ export interface LeadlyLead {
   name: string;
   phone: string;
   createdAt: string;
+  status: string;
   notes: LeadNote[];
 }
 
@@ -113,6 +115,40 @@ const AdminLeads = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Leads da Landing Page</h1>
       </div>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Legenda de Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-green-100 text-green-800">Ganho</Badge>
+              <span className="text-sm">Lead que recebeu email de onboarding e concluiu o cadastro</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-red-100 text-red-800">Perda</Badge>
+              <span className="text-sm">Lead que descartou o uso do SaaS</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-blue-100 text-blue-800">Nutrição Mkt</Badge>
+              <span className="text-sm">Em processo de nutrição de marketing</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-yellow-100 text-yellow-800">Email Onboarding</Badge>
+              <span className="text-sm">Recebeu email mas não finalizou cadastro</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-gray-100 text-gray-800">Contactar</Badge>
+              <span className="text-sm">Empresa que ainda não foi contactada</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-purple-100 text-purple-800">Qualificação</Badge>
+              <span className="text-sm">Empresa já contactada mas nada resolvido</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
