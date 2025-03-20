@@ -1,4 +1,5 @@
 
+// First part of the file is kept as is
 import { useState, useEffect, useMemo } from 'react';
 import { format, subMonths, subDays, parseISO, subWeeks, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
