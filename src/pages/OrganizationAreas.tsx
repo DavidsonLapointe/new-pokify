@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { Building2, Plus, Trash2, Pencil, AlertTriangle } from "lucide-react";
+import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -44,7 +45,9 @@ const OrganizationAreas = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [currentArea, setCurrentArea] = useState<Area | null>(null);
+  const [deletedAreaName, setDeletedAreaName] = useState<string>("");
   const [linkedUsers, setLinkedUsers] = useState<LinkedUser[]>([]);
   
   const [formData, setFormData] = useState({
@@ -149,9 +152,11 @@ const OrganizationAreas = () => {
 
   const handleDelete = () => {
     if (currentArea) {
+      // Save the area name before removing it
+      setDeletedAreaName(currentArea.name);
       setAreas(prev => prev.filter(area => area.id !== currentArea.id));
-      toast.success("Área excluída com sucesso");
       setIsDeleteDialogOpen(false);
+      setIsSuccessDialogOpen(true);
     }
   };
 
@@ -299,6 +304,28 @@ const OrganizationAreas = () => {
             </Button>
             <Button type="button" variant="destructive" onClick={handleDelete}>
               Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog after deletion */}
+      <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Check className="h-5 w-5 text-green-500" />
+              Área excluída com sucesso
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>
+              A área <strong>{deletedAreaName}</strong> foi excluída com sucesso.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button type="button" onClick={() => setIsSuccessDialogOpen(false)}>
+              Fechar
             </Button>
           </DialogFooter>
         </DialogContent>
