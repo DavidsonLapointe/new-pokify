@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -224,7 +223,7 @@ export const CompanyActivityReports = () => {
   const getReportDescription = () => {
     switch (reportType) {
       case "ai-executions":
-        return "Este relatório apresenta um ranking das empresas ordenado pelo número de execuções de IA realizadas, do maior para o menor valor.";
+        return "Ranking das empresas ordenado pelo número de execuções de IA realizadas, do maior para o menor valor.";
       case "user-activity":
         return "Este relatório apresenta um ranking das empresas ordenado pelo número de usuários ativos na plataforma, do maior para o menor valor.";
       case "module-usage":
