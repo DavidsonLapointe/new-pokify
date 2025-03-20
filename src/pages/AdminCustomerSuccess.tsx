@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CustomerNote {
   id: string;
@@ -26,6 +27,7 @@ const AdminCustomerSuccess = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [customerNotes, setCustomerNotes] = useState<CustomerNote[]>([]);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("company-analysis");
 
   const handleOrganizationChange = (organization: Organization | null) => {
     setLoading(true);
@@ -81,78 +83,89 @@ const AdminCustomerSuccess = () => {
         </div>
       </div>
 
-      <div>
-        <div className="space-y-2">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList className="w-full max-w-md">
+          <TabsTrigger value="company-analysis" className="flex-1">Análise por Empresa</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="company-analysis" className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2 text-left">
-              Selecione uma empresa para analisar
-            </label>
-            <div className="w-full max-w-3xl relative">
-              <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
-              <OrganizationSelector 
-                onOrganizationChange={handleOrganizationChange}
-                searchTerm={searchTerm}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="space-y-6">
-          <Skeleton className="w-full h-48 rounded-lg" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="w-full h-72 rounded-lg" />
-            <Skeleton className="w-full h-72 rounded-lg" />
-          </div>
-          <Skeleton className="w-full h-72 rounded-lg" />
-          <Skeleton className="w-full h-64 rounded-lg" />
-        </div>
-      ) : selectedOrganization ? (
-        <div className="space-y-6">
-          <OrganizationOverview 
-            organization={selectedOrganization} 
-            onOpenNotes={handleOpenNotes}
-          />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <ModulesStatus organizationId={selectedOrganization.id} />
-            </div>
-
-            <div>
-              <UsersStatistics 
-                users={selectedOrganization.users || []} 
-                organizationName={selectedOrganization.name}
-              />
-              
-              {/* UsersByPermission moved to below UsersStatistics as per request */}
-              <div className="mt-6">
-                <UsersByPermission
-                  users={selectedOrganization.users || []}
-                  organizationName={selectedOrganization.name}
-                />
+            <div className="space-y-2">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-left">
+                  Selecione uma empresa para analisar
+                </label>
+                <div className="w-full max-w-3xl relative">
+                  <OrganizationsSearch value={searchTerm} onChange={setSearchTerm} />
+                  <OrganizationSelector 
+                    onOrganizationChange={handleOrganizationChange}
+                    searchTerm={searchTerm}
+                  />
+                </div>
               </div>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 gap-6">
-            <div className="w-full">
-              <AIExecutionsChart organizationId={selectedOrganization.id} />
-            </div>
-          </div>
 
-          <div className="w-full">
-            <UserLogsList organizationId={selectedOrganization.id} />
-          </div>
-        </div>
-      ) : (
-        <div className="p-12 text-center border-2 border-dashed rounded-lg">
-          <p className="text-lg text-gray-500">
-            Selecione uma empresa para visualizar suas informações
-          </p>
-        </div>
-      )}
+          {loading ? (
+            <div className="space-y-6">
+              <Skeleton className="w-full h-48 rounded-lg" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Skeleton className="w-full h-72 rounded-lg" />
+                <Skeleton className="w-full h-72 rounded-lg" />
+              </div>
+              <Skeleton className="w-full h-72 rounded-lg" />
+              <Skeleton className="w-full h-64 rounded-lg" />
+            </div>
+          ) : selectedOrganization ? (
+            <div className="space-y-6">
+              <OrganizationOverview 
+                organization={selectedOrganization} 
+                onOpenNotes={handleOpenNotes}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <ModulesStatus organizationId={selectedOrganization.id} />
+                </div>
+
+                <div>
+                  <UsersStatistics 
+                    users={selectedOrganization.users || []} 
+                    organizationName={selectedOrganization.name}
+                  />
+                  
+                  <div className="mt-6">
+                    <UsersByPermission
+                      users={selectedOrganization.users || []}
+                      organizationName={selectedOrganization.name}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-6">
+                <div className="w-full">
+                  <AIExecutionsChart organizationId={selectedOrganization.id} />
+                </div>
+              </div>
+
+              <div className="w-full">
+                <UserLogsList organizationId={selectedOrganization.id} />
+              </div>
+            </div>
+          ) : (
+            <div className="p-12 text-center border-2 border-dashed rounded-lg">
+              <p className="text-lg text-gray-500">
+                Selecione uma empresa para visualizar suas informações
+              </p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {selectedOrganization && (
         <NotesDialog
