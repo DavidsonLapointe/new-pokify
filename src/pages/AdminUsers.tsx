@@ -12,6 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatUserData } from "@/utils/userUtils";
 import { mockLeadlyEmployees } from "@/mocks/userMocks";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from "@/components/ui/pagination";
 
 const AdminUsers = () => {
   const { user } = useUser();
@@ -21,6 +29,8 @@ const AdminUsers = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchUsers = async () => {
     try {
@@ -133,6 +143,21 @@ const AdminUsers = () => {
     setIsPermissionsDialogOpen(true);
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = users.slice(startIndex, endIndex);
+
+  // Generate page numbers for display
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+    return pageNumbers;
+  };
+
   if (loading) {
     return <div>Carregando usuários...</div>;
   }
@@ -153,10 +178,43 @@ const AdminUsers = () => {
       </div>
 
       <UsersTable
-        users={users}
+        users={currentUsers}
         onEditUser={handleEditUser}
         onEditPermissions={handleEditPermissions}
       />
+
+      {totalPages > 1 && (
+        <Pagination className="mt-4">
+          <PaginationContent>
+            {currentPage > 1 && (
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => setCurrentPage(1)} 
+                />
+              </PaginationItem>
+            )}
+            
+            {getPageNumbers().map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={currentPage === page}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => setCurrentPage(totalPages)} 
+                />
+              </PaginationItem>
+            )}
+          </PaginationContent>
+        </Pagination>
+      )}
 
       <AddLeadlyEmployeeDialog
         isOpen={isAddDialogOpen}
