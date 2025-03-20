@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Lock, Edit, Save } from "lucide-react";
+import { Edit, Save } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const briefingSchema = z.object({
@@ -74,19 +73,11 @@ export const CompanyBriefingSection = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between pb-2">
-        <div>
-          <h3 className="text-2xl font-semibold tracking-tight text-primary">Briefing da Empresa</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Forneça informações sobre sua empresa para otimizar as ferramentas de IA
-          </p>
-        </div>
-        {!isEditing && (
-          <div className="flex items-center text-muted-foreground">
-            <Lock className="h-4 w-4 mr-1" />
-            <span className="text-xs">Bloqueado</span>
-          </div>
-        )}
+      <div className="text-center pb-2">
+        <h3 className="text-2xl font-semibold tracking-tight">Briefing da Empresa</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Forneça informações sobre sua empresa para otimizar as ferramentas de IA
+        </p>
       </div>
 
       <Separator className="my-4" />
