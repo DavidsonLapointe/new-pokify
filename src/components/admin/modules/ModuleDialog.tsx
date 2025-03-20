@@ -248,10 +248,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                 name="areas"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Áreas da Empresa</FormLabel>
-                    <div className="text-xs text-gray-500 -mt-1 mb-2">
-                      Selecione as áreas da empresa que este módulo atende.
-                    </div>
+                    <FormLabel>Áreas da Empresa (Selecione as áreas da empresa que este módulo atende)</FormLabel>
                     <div className="space-y-3">
                       <div className="flex flex-wrap gap-2 mb-2">
                         {field.value.map((areaId) => {
@@ -304,9 +301,6 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                           ))}
                         </SelectContent>
                       </Select>
-                      <div className="text-xs text-gray-500">
-                        Selecione as áreas da empresa que este módulo atende.
-                      </div>
                     </div>
                     <FormMessage />
                   </FormItem>
