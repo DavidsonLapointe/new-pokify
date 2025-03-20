@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   BarChart,
@@ -20,7 +21,7 @@ interface CustomerSuccessMetricsChartProps {
   metricType: "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client";
 }
 
-// Generate last 12 months for X-axis
+// Generate last 13 months for X-axis (changed from 12 to 13)
 const generateLastMonths = (count: number) => {
   const months = [];
   const today = new Date();
@@ -34,7 +35,8 @@ const generateLastMonths = (count: number) => {
   return months;
 };
 
-const MONTHS = generateLastMonths(12);
+// Changed from 12 to 13 months
+const MONTHS = generateLastMonths(13);
 
 // Generate mock data based on metric type
 const generateMockData = (metricType: string) => {
@@ -158,6 +160,7 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
             strokeWidth={2}
             dot={{ r: 4 }}
             activeDot={{ r: 6 }}
+            // Removed any hover effects by not adding them
           />
         </LineChart>
       );
@@ -186,6 +189,7 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
           name={getYAxisLabel()}
           fill="#3b82f6" 
           radius={[4, 4, 0, 0]}
+          // Removed any hover effects by not adding them
         />
       </BarChart>
     );

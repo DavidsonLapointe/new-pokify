@@ -393,7 +393,9 @@ const AdminCustomerSuccess = () => {
             <CardHeader className="px-0 pt-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <CardTitle>{getMetricLabel()}</CardTitle>
+                  <CardTitle className="text-xl">
+                    {getMetricLabel()}
+                  </CardTitle>
                   <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                     <Info className="h-4 w-4" />
                     Valores baseados na posição de fechamento de cada mês
