@@ -70,59 +70,53 @@ const AdminDashboard = () => {
         
         <Card className="p-4">
           <div className="space-y-2">
-            <div className="flex flex-col items-center">
-              <div className="mb-2">
-                <p className="text-sm text-muted-foreground text-center">Empresas Sem Acesso ({'>'}5 dias)</p>
-              </div>
-              
-              <div className="flex items-center justify-center mb-2">
-                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-red-500" />
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm text-muted-foreground">Empresas Sem Acesso ({'>'}5 dias)</p>
+                <div className="h-8 flex items-center">
+                  <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-center mb-2">
-                <h3 className="text-2xl font-semibold">{data?.inactiveUsers || 0}</h3>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-red-500" />
+                </div>
               </div>
-              
-              <Button 
-                variant="link" 
-                className="p-0 h-auto text-blue-600 flex items-center gap-1"
-                onClick={() => setIsInactiveOrgsModalOpen(true)}
-              >
-                <ExternalLink className="h-4 w-4" />
-                <span>Ver empresas</span>
-              </Button>
             </div>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-blue-600 flex items-center gap-1"
+              onClick={() => setIsInactiveOrgsModalOpen(true)}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Ver empresas</span>
+            </Button>
           </div>
         </Card>
 
         <Card className="p-4">
           <div className="space-y-2">
-            <div className="flex flex-col items-center">
-              <div className="mb-2">
-                <p className="text-sm text-muted-foreground text-center">Empresas com menos de 50 créditos</p>
-              </div>
-              
-              <div className="flex items-center justify-center mb-2">
-                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5 text-amber-500" />
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm text-muted-foreground">Empresas com menos de 50 créditos</p>
+                <div className="h-8 flex items-center">
+                  <h3 className="text-xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-center mb-2">
-                <h3 className="text-2xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
+                </div>
               </div>
-              
-              <Button 
-                variant="link" 
-                className="p-0 h-auto text-blue-600 flex items-center gap-1"
-                onClick={() => setIsLowCreditsOrgsModalOpen(true)}
-              >
-                <ExternalLink className="h-4 w-4" />
-                <span>Ver empresas</span>
-              </Button>
             </div>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-blue-600 flex items-center gap-1"
+              onClick={() => setIsLowCreditsOrgsModalOpen(true)}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Ver empresas</span>
+            </Button>
           </div>
         </Card>
       </div>

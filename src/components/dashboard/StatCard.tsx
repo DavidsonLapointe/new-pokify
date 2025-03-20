@@ -28,26 +28,21 @@ export const StatCard = ({
 }: StatCardProps) => (
   <Card className="p-4">
     <div className="space-y-2">
-      <div className="flex flex-col items-center">
-        <div className="mb-2">
-          <p className="text-sm text-muted-foreground text-center">{title}</p>
+      <div className="flex items-start justify-between">
+        <div className="space-y-0.5">
+          <p className="text-sm text-muted-foreground">{title}</p>
           {subtitle && (
-            <p className="text-xs text-muted-foreground/60 text-center">{subtitle}</p>
+            <p className="text-xs text-muted-foreground/60">{subtitle}</p>
           )}
-        </div>
-        
-        <div className="flex items-center justify-center mb-2">
-          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <Icon className={`w-5 h-5 ${color}`} />
+          <div className="h-8 flex items-center">
+            <h3 className="text-xl font-semibold">{value}</h3>
           </div>
         </div>
-        
-        <div className="flex items-center justify-center">
-          <h3 className="text-2xl font-semibold">{value}</h3>
+        <div className="flex items-center gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full ml-2">
+                <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
                   <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
                 </button>
               </TooltipTrigger>
@@ -56,6 +51,9 @@ export const StatCard = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+            <Icon className={`w-4 h-4 ${color}`} />
+          </div>
         </div>
       </div>
     </div>
