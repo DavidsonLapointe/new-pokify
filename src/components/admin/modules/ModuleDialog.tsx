@@ -242,14 +242,14 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                 )}
               />
               
-              {/* Área para seleção de áreas da empresa - com o texto não negrito */}
+              {/* Área para seleção de áreas da empresa - com o texto mais claro */}
               <FormField
                 control={form.control}
                 name="areas"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
                     <FormLabel>
-                      Áreas da Empresa <span className="font-normal">(Selecione as áreas da empresa que este módulo atende)</span>
+                      Áreas da Empresa <span className="font-normal text-gray-500">(selecione as áreas da empresa que este módulo atende)</span>
                     </FormLabel>
                     <div className="space-y-3">
                       <div className="flex flex-wrap gap-2 mb-2">
