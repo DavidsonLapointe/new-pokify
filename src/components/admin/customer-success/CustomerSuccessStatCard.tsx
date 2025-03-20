@@ -44,10 +44,10 @@ export const CustomerSuccessStatCard = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                <InfoIcon className="h-4 w-4 text-muted-foreground cursor-help" />
               </TooltipTrigger>
-              <TooltipContent side="top">
-                <p className="max-w-xs">{tooltip}</p>
+              <TooltipContent side="top" className="max-w-[300px] text-sm">
+                <p>{tooltip}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

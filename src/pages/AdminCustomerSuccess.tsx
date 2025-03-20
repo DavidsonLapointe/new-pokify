@@ -393,6 +393,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-indigo-100"
               iconColor="text-indigo-600"
               bottomText="+12% no último mês"
+              tooltip="Total de empresas ativas que utilizam a plataforma. Calculado a partir do número de organizações com status 'ativo' na base de dados."
             />
             
             <CustomerSuccessStatCard
@@ -402,6 +403,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-green-100"
               iconColor="text-green-600"
               bottomText="+8% no último mês"
+              tooltip="Número de usuários que fizeram login na plataforma nos últimos 30 dias. Calculado a partir dos registros de acesso ao sistema."
             />
             
             <CustomerSuccessStatCard
@@ -411,6 +413,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-amber-100"
               iconColor="text-amber-600"
               bottomText="+2% no último mês"
+              tooltip="Porcentagem de empresas que continuam ativas em relação ao período anterior. Calculado como: (Total de empresas atuais - Novas empresas) / Total de empresas no período anterior."
             />
             
             <CustomerSuccessStatCard
@@ -419,7 +422,7 @@ const AdminCustomerSuccess = () => {
               icon={ClipboardCheck}
               iconBgColor="bg-orange-100"
               iconColor="text-orange-500"
-              tooltip="Empresas com processos de setup em andamento ou pendentes de finalização"
+              tooltip="Empresas que estão no processo de implantação ou configuração inicial. Inclui todas as organizações com status de setup classificado como 'pendente' ou 'em andamento'."
             />
           </div>
           
@@ -431,7 +434,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-blue-100"
               iconColor="text-blue-500"
               onClick={() => setIsInactiveOrgsModalOpen(true)}
-              tooltip="Empresas onde nenhum usuário fez login nos últimos 5 dias"
+              tooltip="Empresas onde nenhum usuário realizou login na plataforma nos últimos 5 dias consecutivos. Calculado com base nos timestamps do último acesso registrado de qualquer usuário da organização."
               buttonLabel="Ver empresas"
             />
             
@@ -442,7 +445,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-amber-100"
               iconColor="text-amber-500"
               onClick={() => setIsLowCreditsModalOpen(true)}
-              tooltip="Empresas com saldo de créditos inferior a 50 unidades"
+              tooltip="Empresas cujo saldo de créditos para utilização de ferramentas de IA está abaixo de 50 unidades. Calculado a partir do saldo atual de créditos disponíveis na conta da organização."
               buttonLabel="Ver empresas"
             />
             
@@ -453,7 +456,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-purple-100"
               iconColor="text-purple-500"
               onClick={() => setIsUnusedPermissionsModalOpen(true)}
-              tooltip="Empresas que possuem funções ou abas configuradas mas sem usuários com acesso"
+              tooltip="Permissões ou módulos configurados para uma organização, mas que não possuem nenhum usuário com acesso. Calculado pela comparação entre permissões disponíveis e permissões efetivamente utilizadas por usuários ativos."
               buttonLabel="Ver empresas"
             />
             
@@ -464,7 +467,7 @@ const AdminCustomerSuccess = () => {
               iconBgColor="bg-blue-100"
               iconColor="text-blue-600"
               onClick={() => setIsPendingUsersModalOpen(true)}
-              tooltip="Usuários que foram criados mas ainda não completaram o processo de registro"
+              tooltip="Usuários que foram cadastrados na plataforma mas ainda não completaram o processo de registro ou ativação. Inclui todos os usuários com status 'pendente' ou que não finalizaram a configuração inicial."
               buttonLabel="Ver empresas"
             />
           </div>
