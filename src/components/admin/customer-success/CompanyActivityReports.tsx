@@ -252,6 +252,86 @@ export const CompanyActivityReports = () => {
     return items;
   };
 
+  // Render table header based on report type
+  const renderTableHeader = () => {
+    if (reportType === "ai-tools") {
+      return (
+        <tr className="border-b">
+          <th className="text-left py-3 px-4">Empresa</th>
+          <th className="text-center py-3 px-4">Módulos (qtde)</th>
+        </tr>
+      );
+    }
+    
+    return (
+      <tr className="border-b">
+        <th className="text-left py-3 px-4">Empresa</th>
+        <th className="text-center py-3 px-4">Execuções IA</th>
+        <th className="text-center py-3 px-4">Usuários Ativos</th>
+        <th className="text-center py-3 px-4">Módulos</th>
+        <th className="text-center py-3 px-4">Última Atividade</th>
+      </tr>
+    );
+  };
+
+  // Render table rows based on report type
+  const renderTableRows = () => {
+    if (reportType === "ai-tools") {
+      return currentCompanies.map((company, index) => (
+        <tr key={index} className="border-b hover:bg-muted/50">
+          <td className="py-3 px-4 text-left">{company.name}</td>
+          <td className="py-3 px-4 text-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">{company.modules.count}</span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[300px] text-sm">
+                  <div className="space-y-1">
+                    <p className="font-medium">Módulos contratados:</p>
+                    <ul className="list-disc list-inside">
+                      {company.modules.names.map((name, idx) => (
+                        <li key={idx}>{name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </td>
+        </tr>
+      ));
+    }
+    
+    return currentCompanies.map((company, index) => (
+      <tr key={index} className="border-b hover:bg-muted/50">
+        <td className="py-3 px-4 text-left">{company.name}</td>
+        <td className="py-3 px-4 text-center">{company.interactions}</td>
+        <td className="py-3 px-4 text-center">{company.activeUsers}</td>
+        <td className="py-3 px-4 text-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">{company.modules.count}</span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[300px] text-sm">
+                <div className="space-y-1">
+                  <p className="font-medium">Módulos contratados:</p>
+                  <ul className="list-disc list-inside">
+                    {company.modules.names.map((name, idx) => (
+                      <li key={idx}>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </td>
+        <td className="py-3 px-4 text-center">{company.lastActivity}</td>
+      </tr>
+    ));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -280,42 +360,10 @@ export const CompanyActivityReports = () => {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b">
-              <th className="text-left py-3 px-4">Empresa</th>
-              <th className="text-center py-3 px-4">Execuções IA</th>
-              <th className="text-center py-3 px-4">Usuários Ativos</th>
-              <th className="text-center py-3 px-4">Módulos</th>
-              <th className="text-center py-3 px-4">Última Atividade</th>
-            </tr>
+            {renderTableHeader()}
           </thead>
           <tbody>
-            {currentCompanies.map((company, index) => (
-              <tr key={index} className="border-b hover:bg-muted/50">
-                <td className="py-3 px-4 text-left">{company.name}</td>
-                <td className="py-3 px-4 text-center">{company.interactions}</td>
-                <td className="py-3 px-4 text-center">{company.activeUsers}</td>
-                <td className="py-3 px-4 text-center">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="cursor-help">{company.modules.count}</span>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-[300px] text-sm">
-                        <div className="space-y-1">
-                          <p className="font-medium">Módulos contratados:</p>
-                          <ul className="list-disc list-inside">
-                            {company.modules.names.map((name, idx) => (
-                              <li key={idx}>{name}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </td>
-                <td className="py-3 px-4 text-center">{company.lastActivity}</td>
-              </tr>
-            ))}
+            {renderTableRows()}
           </tbody>
         </table>
       </div>
