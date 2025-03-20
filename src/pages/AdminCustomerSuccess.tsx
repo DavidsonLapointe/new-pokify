@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -218,7 +219,8 @@ const AdminCustomerSuccess = () => {
   const [customerNotes, setCustomerNotes] = useState<CustomerNote[]>([]);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedMetric, setSelectedMetric] = useState("active-companies");
+  // Update type to match the expected union type
+  const [selectedMetric, setSelectedMetric] = useState<"active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client">("active-companies");
   
   // State for modals
   const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
