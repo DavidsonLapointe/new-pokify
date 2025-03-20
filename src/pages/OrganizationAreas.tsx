@@ -330,7 +330,7 @@ const OrganizationAreas = () => {
           </div>
           
           <AlertDialogFooter>
-            <AlertDialogCancel>Fechar</AlertDialogCancel>
+            <AlertDialogCancel className="bg-[#F1F1F1] text-primary hover:bg-[#E5E5E5]">Fechar</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
