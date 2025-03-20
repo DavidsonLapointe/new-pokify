@@ -57,6 +57,7 @@ export interface Tool {
   cancelationDescription?: string;
   setupDescription?: string;
   setupContactInfo?: SetupContactInfo;
+  areas?: string[]; // Added areas property
   
   // Properties that were causing errors
   icon?: any;
