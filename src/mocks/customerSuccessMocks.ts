@@ -53,7 +53,10 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "crm.pipeline": true,
         "crm.activities": true,
         notifications: true,
-        support: true
+        support: true,
+        knowledge: true,
+        analytics: true,
+        tools: true
       }
     });
     count--;
@@ -66,7 +69,7 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
       role: "manager" as UserRole,
       status: "active" as UserStatus,
       permissions: {
-        dashboard: false,
+        dashboard: true,
         "dashboard.leads": true,
         "dashboard.performance": true,
         leads: true,
@@ -76,9 +79,11 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "settings.permissions": true,
         calendar: true,
         products: true,
-        crm: false,
+        crm: true,
         "crm.contacts": true,
-        "crm.opportunities": true
+        "crm.opportunities": true,
+        knowledge: true,
+        analytics: true
       }
     },
     // Seller with basic permissions
@@ -92,7 +97,8 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         calendar: true,
         crm: true,
         "crm.contacts": true,
-        notifications: true
+        notifications: true,
+        tools: true
       }
     },
     // Support representative
@@ -100,12 +106,10 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
       role: "seller" as UserRole,
       status: "active" as UserStatus,
       permissions: {
-        dashboard: false,
-        "dashboard.leads": false,
-        leads: false,
         support: true,
         notifications: true,
-        profile: true
+        profile: true,
+        knowledge: true
       }
     },
     // Finance user
@@ -116,7 +120,7 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         reports: true,
         products: true,
         plan: true,
-        settings: false,
+        settings: true,
         "settings.system": true
       }
     },
@@ -129,7 +133,8 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         products: true,
         calendar: true,
         dashboard: true,
-        "dashboard.performance": true
+        "dashboard.performance": true,
+        analytics: true
       }
     },
     // Inactive user with various permissions

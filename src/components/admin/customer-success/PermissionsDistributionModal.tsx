@@ -13,16 +13,16 @@ import {
   permissionLabels, 
   dashboardTabPermissions, 
   settingsTabPermissions,
-  crmTabPermissions
+  crmTabPermissions,
+  availablePermissions
 } from "@/types/permissions";
 import {
   User as UserIcon,
   FolderTree,
   Search,
-  PanelRight
+  ChevronRight
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -125,6 +125,26 @@ export const PermissionsDistributionModal = ({
         .sort((a, b) => a[1].label.localeCompare(b[1].label))
     : [];
 
+  const renderUserTooltip = (users: User[]) => {
+    return (
+      <div className="max-w-60">
+        <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
+        {users.length > 0 ? (
+          <ul className="space-y-1">
+            {users.map((user, idx) => (
+              <li key={idx} className="text-xs flex items-center gap-1.5">
+                <UserIcon className="h-3 w-3" />
+                <span>{user.name || user.email}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs">Nenhum usuário com acesso</p>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -148,7 +168,7 @@ export const PermissionsDistributionModal = ({
           />
         </div>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 pr-2">
           {searchTerm ? (
             <div className="space-y-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-2">
@@ -169,25 +189,18 @@ export const PermissionsDistributionModal = ({
                           <TooltipTrigger asChild>
                             <Badge 
                               variant="outline" 
-                              className="bg-primary/10 text-primary border-primary/20 cursor-help"
+                              className={cn(
+                                "cursor-help",
+                                data.count > 0 
+                                  ? "bg-primary/10 text-primary border-primary/20" 
+                                  : "bg-gray-100 text-gray-500 border-gray-200"
+                              )}
                             >
                               {data.count}
                             </Badge>
                           </TooltipTrigger>
-                          <TooltipContent className="max-w-64">
-                            <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
-                            {data.users.length > 0 ? (
-                              <ul className="space-y-1">
-                                {data.users.map((user, idx) => (
-                                  <li key={idx} className="text-xs flex items-center gap-1.5">
-                                    <UserIcon className="h-3 w-3" />
-                                    <span>{user.name || user.email}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="text-xs">Nenhum usuário com acesso</p>
-                            )}
+                          <TooltipContent>
+                            {renderUserTooltip(data.users)}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -210,59 +223,45 @@ export const PermissionsDistributionModal = ({
                 
                 return (
                   <div key={category} className="border rounded-lg overflow-hidden">
-                    <div className="bg-gray-50 p-3 border-b">
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-medium">
-                          {permissionData[category].label}
-                          {moduleHasTabs && (
-                            <span className="ml-1 text-xs text-muted-foreground">(com abas)</span>
-                          )}
-                        </h3>
-                        
-                        {!moduleHasTabs && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Badge 
-                                  variant="outline" 
-                                  className={cn(
-                                    "cursor-help",
-                                    permissionData[category].count > 0 
-                                      ? "bg-primary/10 text-primary border-primary/20" 
-                                      : "bg-gray-100 text-gray-500 border-gray-200"
-                                  )}
-                                >
-                                  {permissionData[category].count}
-                                </Badge>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-64">
-                                <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
-                                {permissionData[category].users.length > 0 ? (
-                                  <ul className="space-y-1">
-                                    {permissionData[category].users.map((user, idx) => (
-                                      <li key={idx} className="text-xs flex items-center gap-1.5">
-                                        <UserIcon className="h-3 w-3" />
-                                        <span>{user.name || user.email}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                ) : (
-                                  <p className="text-xs">Nenhum usuário com acesso</p>
-                                )}
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                    <div className="bg-gray-50 p-3 border-b flex justify-between items-center">
+                      <h3 className="font-medium">
+                        {permissionData[category].label}
+                        {moduleHasTabs && (
+                          <span className="ml-1 text-xs text-muted-foreground">(com abas)</span>
                         )}
-                      </div>
+                      </h3>
+                      
+                      {!moduleHasTabs && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge 
+                                variant="outline" 
+                                className={cn(
+                                  "cursor-help",
+                                  permissionData[category].count > 0 
+                                    ? "bg-primary/10 text-primary border-primary/20" 
+                                    : "bg-gray-100 text-gray-500 border-gray-200"
+                                )}
+                              >
+                                {permissionData[category].count}
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {renderUserTooltip(permissionData[category].users)}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
                     
-                    {moduleHasTabs ? (
+                    {moduleHasTabs && (
                       <div className="px-2 py-2">
                         <ul className="space-y-2">
                           {tabKeys.map(tabKey => (
                             <li key={tabKey} className="flex justify-between items-center px-2 py-1 rounded hover:bg-gray-50">
                               <div className="flex items-center gap-1.5">
-                                <PanelRight className="h-3 w-3 text-muted-foreground" />
+                                <ChevronRight className="h-3 w-3 text-muted-foreground" />
                                 <span className="text-sm">{permissionData[tabKey]?.label}</span>
                               </div>
                               
@@ -281,32 +280,14 @@ export const PermissionsDistributionModal = ({
                                       {permissionData[tabKey]?.count || 0}
                                     </Badge>
                                   </TooltipTrigger>
-                                  <TooltipContent className="max-w-64">
-                                    <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
-                                    {permissionData[tabKey]?.users.length > 0 ? (
-                                      <ul className="space-y-1">
-                                        {permissionData[tabKey]?.users.map((user, idx) => (
-                                          <li key={idx} className="text-xs flex items-center gap-1.5">
-                                            <UserIcon className="h-3 w-3" />
-                                            <span>{user.name || user.email}</span>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    ) : (
-                                      <p className="text-xs">Nenhum usuário com acesso</p>
-                                    )}
+                                  <TooltipContent>
+                                    {renderUserTooltip(permissionData[tabKey]?.users || [])}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
                             </li>
                           ))}
                         </ul>
-                      </div>
-                    ) : (
-                      <div className="p-3 text-center text-xs text-muted-foreground">
-                        {permissionData[category].count > 0 
-                          ? `${permissionData[category].count} usuário${permissionData[category].count !== 1 ? 's' : ''} com acesso` 
-                          : "Nenhum usuário com esta permissão"}
                       </div>
                     )}
                   </div>

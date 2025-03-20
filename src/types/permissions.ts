@@ -27,7 +27,10 @@ export const availablePermissions = [
   "calendar",         // Calendário
   "crm",              // CRM (com abas)
   "notifications",    // Notificações
-  "support"           // Suporte
+  "support",          // Suporte
+  "knowledge",        // Base de Conhecimento
+  "analytics",        // Análises
+  "tools"             // Ferramentas
 ];
 
 // Subpermissões para páginas com abas
@@ -71,6 +74,9 @@ export const permissionLabels: { [key: string]: string } = {
   crm: "CRM",
   notifications: "Notificações",
   support: "Suporte",
+  knowledge: "Base de Conhecimento",
+  analytics: "Análises",
+  tools: "Ferramentas",
   
   // Dashboard tabs
   'dashboard.leads': "Leads",
