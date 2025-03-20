@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Phone, Mail, ShieldAlert, LayoutDashboard } from "lucide-react";
+import { Phone, Mail, ShieldAlert, LayoutDashboard, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface UnusedPermissionOrg {
@@ -44,11 +44,35 @@ export const UnusedPermissionsModal = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Empresas com Funções ou Abas sem Usuários</DialogTitle>
+          <DialogTitle>
+            Empresas com <span className="text-blue-700">Funções</span> ou <span className="text-purple-700">Abas</span> sem Usuários
+          </DialogTitle>
           <DialogDescription>
             Lista de empresas que possuem funções ou abas configuradas mas sem usuários com acesso
           </DialogDescription>
         </DialogHeader>
+        
+        {/* Legend to identify types */}
+        <div className="flex gap-4 mb-4 p-2 bg-slate-50 rounded-md">
+          <div className="flex items-center gap-1.5">
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
+              Exemplo
+            </Badge>
+            <span className="text-sm font-medium">= Abas</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              <ShieldAlert className="h-3.5 w-3.5 mr-1" />
+              Exemplo
+            </Badge>
+            <span className="text-sm font-medium">= Funções</span>
+          </div>
+          <div className="flex items-center gap-1.5 ml-auto text-xs text-slate-500">
+            <HelpCircle className="h-3.5 w-3.5 mr-1" />
+            <span>Abas são seções de navegação, funções são permissões específicas</span>
+          </div>
+        </div>
         
         {isLoading ? (
           <div className="flex justify-center items-center p-8">
