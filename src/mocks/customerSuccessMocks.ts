@@ -17,7 +17,7 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
   if (isAdmin) {
     users.push({
       id: uuidv4(),
-      name: "Administrador",
+      name: "Administrador Principal",
       email: "admin@exemplo.com.br",
       phone: "(11) 99999-8888",
       role: "admin" as UserRole,
@@ -29,9 +29,7 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "dashboard.leads": true,
         "dashboard.performance": true,
         "dashboard.objections": true,
-        "dashboard.suggestions": true,
         "dashboard.uploads": true,
-        "dashboard.sellers": true,
         leads: true,
         users: true,
         integrations: true,
@@ -40,9 +38,7 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "settings.alerts": true,
         "settings.analysis": true,
         "settings.retention": true,
-        "settings.llm": true,
         "settings.system": true,
-        "settings.permissions": true,
         plan: true,
         profile: true,
         products: true,
@@ -62,10 +58,11 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
     count--;
   }
   
-  // Create a variety of permission templates
+  // Create a variety of permission templates with names to show in tooltips
   const permissionTemplates = [
-    // Manager with access to most modules and specific tabs
+    // Manager with access to dashboard and settings
     {
+      name: "Gerente de Vendas",
       role: "manager" as UserRole,
       status: "active" as UserStatus,
       permissions: {
@@ -76,18 +73,28 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         users: true,
         settings: true,
         "settings.analysis": true,
-        "settings.permissions": true,
-        calendar: true,
-        products: true,
-        crm: true,
-        "crm.contacts": true,
-        "crm.opportunities": true,
-        knowledge: true,
+        profile: true,
         analytics: true
       }
     },
-    // Seller with basic permissions
+    // CRM Manager
     {
+      name: "Gerente de CRM",
+      role: "manager" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        crm: true,
+        "crm.contacts": true,
+        "crm.opportunities": true,
+        "crm.pipeline": true,
+        "crm.activities": true,
+        profile: true,
+        reports: true
+      }
+    },
+    // Seller with dashboard access
+    {
+      name: "Vendedor Sênior",
       role: "seller" as UserRole,
       status: "active" as UserStatus,
       permissions: {
@@ -95,14 +102,12 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "dashboard.leads": true,
         leads: true,
         calendar: true,
-        crm: true,
-        "crm.contacts": true,
-        notifications: true,
-        tools: true
+        profile: true
       }
     },
     // Support representative
     {
+      name: "Suporte ao Cliente",
       role: "seller" as UserRole,
       status: "active" as UserStatus,
       permissions: {
@@ -114,31 +119,71 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
     },
     // Finance user
     {
+      name: "Analista Financeiro",
       role: "manager" as UserRole,
       status: "active" as UserStatus,
       permissions: {
         reports: true,
         products: true,
         plan: true,
-        settings: true,
-        "settings.system": true
+        profile: true
       }
     },
     // Marketing user
     {
+      name: "Especialista de Marketing",
       role: "seller" as UserRole,
       status: "active" as UserStatus,
       permissions: {
         reports: true,
+        analytics: true,
+        profile: true
+      }
+    },
+    // Products manager
+    {
+      name: "Gerente de Produtos",
+      role: "manager" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
         products: true,
         calendar: true,
-        dashboard: true,
-        "dashboard.performance": true,
-        analytics: true
+        profile: true
+      }
+    },
+    // Tools specialist
+    {
+      name: "Especialista em Ferramentas",
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        tools: true,
+        profile: true
+      }
+    },
+    // Knowledge base manager
+    {
+      name: "Gestor de Conhecimento",
+      role: "manager" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        knowledge: true,
+        profile: true
+      }
+    },
+    // Integrations specialist
+    {
+      name: "Especialista em Integrações",
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        integrations: true,
+        profile: true
       }
     },
     // Inactive user with various permissions
     {
+      name: "Usuário Inativo",
       role: "seller" as UserRole,
       status: "inactive" as UserStatus,
       permissions: {
@@ -146,7 +191,8 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
         "dashboard.leads": true,
         leads: true,
         crm: true,
-        "crm.contacts": true
+        "crm.contacts": true,
+        profile: true
       }
     }
   ];
@@ -156,8 +202,8 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
     
     users.push({
       id: uuidv4(),
-      name: `Usuário ${i + 1}`,
-      email: `usuario${i + 1}@exemplo.com.br`,
+      name: template.name || `Usuário ${i + 1}`,
+      email: `${template.name.toLowerCase().replace(/ /g, '.')}@exemplo.com.br`,
       phone: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
       role: template.role,
       status: template.status,
@@ -215,7 +261,7 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
         "sales-coaching": "not_contracted"
       }
     },
-    users: createMockUsers(8, uuidv4(), true)
+    users: createMockUsers(10, uuidv4(), true)
   },
   {
     id: uuidv4(),
@@ -258,7 +304,7 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
         "crm-integration": "not_contracted"
       }
     },
-    users: createMockUsers(3, uuidv4(), true)
+    users: createMockUsers(10, uuidv4(), true)
   },
   {
     id: uuidv4(),
@@ -301,7 +347,7 @@ export const mockCustomerSuccessOrganizations: Organization[] = [
         "crm-integration": "configured"
       }
     },
-    users: createMockUsers(5, uuidv4(), true)
+    users: createMockUsers(10, uuidv4(), true)
   }
 ];
 

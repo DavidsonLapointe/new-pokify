@@ -38,18 +38,14 @@ export const dashboardTabPermissions = [
   'dashboard.leads',
   'dashboard.uploads',
   'dashboard.performance',
-  'dashboard.objections',
-  'dashboard.suggestions',
-  'dashboard.sellers'
+  'dashboard.objections'
 ];
 
 export const settingsTabPermissions = [
   'settings.alerts',
   'settings.analysis',
   'settings.retention',
-  'settings.llm',
-  'settings.system',
-  'settings.permissions'
+  'settings.system'
 ];
 
 export const crmTabPermissions = [
@@ -83,16 +79,12 @@ export const permissionLabels: { [key: string]: string } = {
   'dashboard.uploads': "Uploads",
   'dashboard.performance': "Performance",
   'dashboard.objections': "Objeções",
-  'dashboard.suggestions': "Sugestões",
-  'dashboard.sellers': "Vendedores",
   
   // Settings tabs
   'settings.alerts': "Alertas",
   'settings.analysis': "Análise",
   'settings.retention': "Retenção",
-  'settings.llm': "Modelos de IA",
   'settings.system': "Sistema",
-  'settings.permissions': "Permissões",
   
   // CRM tabs
   'crm.contacts': "Contatos",

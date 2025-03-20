@@ -147,7 +147,7 @@ export const PermissionsDistributionModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl flex items-center gap-2">
             <FolderTree className="h-5 w-5 text-primary/80" />
@@ -216,7 +216,7 @@ export const PermissionsDistributionModal = ({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-6">
               {mainCategories.map(category => {
                 const moduleHasTabs = hasTabPermissions(category);
                 const tabKeys = getTabPermissions(category);
