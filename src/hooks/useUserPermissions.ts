@@ -62,22 +62,6 @@ export const useUserPermissions = (
         newPermissions[parentId] = true;
       }
 
-      // If this is a child permission being disabled, check if we need to disable the parent
-      if (!newPermissions[permissionId] && permissionId.includes('.')) {
-        const parentId = permissionId.split('.')[0];
-        // Check if all sibling permissions are also disabled
-        const allSiblingsDisabled = permissionRelationships[parentId]?.every(
-          childId => !newPermissions[childId]
-        );
-        
-        // If all children are disabled, you might want to disable the parent as well
-        // This is optional and depends on the business logic
-        if (allSiblingsDisabled) {
-          // Uncomment the following line if you want to disable the parent when all children are disabled
-          // newPermissions[parentId] = false;
-        }
-      }
-
       return newPermissions;
     });
   };

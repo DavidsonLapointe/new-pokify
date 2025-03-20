@@ -13,7 +13,6 @@ import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { CheckCircle2, Circle, HelpCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -30,7 +29,7 @@ interface PermissionItem {
   children?: PermissionItem[];
 }
 
-// Define the permissions tree structure based on the image
+// Define the permissions tree structure
 const permissionsTree: PermissionItem[] = [
   {
     id: "profile",
@@ -121,33 +120,77 @@ export const UserPermissionsDialog = ({
     handleClose,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
-  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
+  // Helper function to render a permission item
+  const renderPermissionItem = (permission: PermissionItem) => {
+    const isActive = !!tempPermissions[permission.id];
+    const isProfilePermission = permission.id === 'profile';
+    const hasChildren = permission.children && permission.children.length > 0;
+    
+    return (
+      <div key={permission.id} className="mb-3">
+        <div className="flex items-center gap-2">
+          <div 
+            className={`cursor-pointer ${isProfilePermission ? 'opacity-70' : ''}`}
+            onClick={() => !isProfilePermission && handlePermissionChange(permission.id)}
+          >
+            {isActive ? (
+              <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
+          
+          <span className="font-medium">{permission.label}</span>
+          
+          {permission.description && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" align="start" className="max-w-xs">
+                  {permission.description}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
 
-  // Initialize expanded sections when dialog opens
-  useEffect(() => {
-    if (isOpen) {
-      const expandedState: { [key: string]: boolean } = {};
-      
-      permissionsTree.forEach(item => {
-        if (item.children) {
-          // Check if any child permission is active to auto-expand the section
-          const shouldExpand = item.children.some(child => 
-            tempPermissions[child.id]
-          );
-          expandedState[item.id] = shouldExpand || false;
-        }
-      });
-      
-      setExpandedSections(expandedState);
-    }
-  }, [isOpen, tempPermissions]);
-
-  // Toggle section expansion
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [sectionId]: !prev[sectionId]
-    }));
+        {/* Render children if parent is active */}
+        {hasChildren && isActive && (
+          <div className="ml-8 space-y-2 mt-2">
+            {permission.children?.map((child) => (
+              <div key={child.id} className="flex items-center gap-2">
+                <div
+                  className="cursor-pointer"
+                  onClick={() => handlePermissionChange(child.id)}
+                >
+                  {tempPermissions[child.id] ? (
+                    <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
+                  ) : (
+                    <Circle className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+                <span>{child.label}</span>
+                
+                {child.description && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="start" className="max-w-xs">
+                        {child.description}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -160,85 +203,9 @@ export const UserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-4 py-4">
-            {permissionsTree.map((permission) => (
-              <div key={permission.id} className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {permission.id === "profile" ? (
-                    <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
-                  ) : (
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => handlePermissionChange(permission.id)}
-                    >
-                      {tempPermissions[permission.id] ? (
-                        <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
-                      ) : (
-                        <Circle className="h-5 w-5 text-muted-foreground" />
-                      )}
-                    </div>
-                  )}
-                  <span className="font-medium">{permission.label}</span>
-                  
-                  {permission.description && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right" align="start" className="max-w-xs">
-                          {permission.description}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                  
-                  {permission.children && (
-                    <button 
-                      onClick={() => toggleSection(permission.id)}
-                      className="ml-auto text-xs text-muted-foreground"
-                    >
-                      {expandedSections[permission.id] ? "▼" : "▶"}
-                    </button>
-                  )}
-                </div>
-
-                {/* Render child permissions if parent is active and section is expanded */}
-                {permission.children && tempPermissions[permission.id] && expandedSections[permission.id] && (
-                  <div className="ml-8 space-y-2 border-l-2 border-gray-100 pl-4">
-                    {permission.children.map((child) => (
-                      <div key={child.id} className="flex items-center gap-2">
-                        <div
-                          className="cursor-pointer"
-                          onClick={() => handlePermissionChange(child.id)}
-                        >
-                          {tempPermissions[child.id] ? (
-                            <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
-                          ) : (
-                            <Circle className="h-5 w-5 text-muted-foreground" />
-                          )}
-                        </div>
-                        <span>{child.label}</span>
-                        
-                        {child.description && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                              </TooltipTrigger>
-                              <TooltipContent side="right" align="start" className="max-w-xs">
-                                {child.description}
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+        <ScrollArea className="flex-1 pr-4 h-[420px]">
+          <div className="space-y-1 py-4">
+            {permissionsTree.map(renderPermissionItem)}
           </div>
         </ScrollArea>
 
