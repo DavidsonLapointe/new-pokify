@@ -38,6 +38,7 @@ const OrganizationAreas = () => {
     { id: "5", name: "Vendas", description: "Área responsável pelas vendas da empresa", isDefault: true },
     { id: "6", name: "Controladoria", description: "Área responsável pelo controle financeiro da empresa", isDefault: true },
     { id: "7", name: "Logística", description: "Área responsável pela logística da empresa", isDefault: true },
+    { id: "8", name: "Jurídico", description: "Área responsável pelos assuntos jurídicos da empresa", isDefault: true },
   ]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
