@@ -1,7 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Buildings, 
+  Building, 
   Users, 
   Activity, 
   Zap, 
@@ -32,7 +31,7 @@ export const CustomerSuccessDashboard = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Buildings className="h-4 w-4 text-primary" />
+              <Building className="h-4 w-4 text-primary" />
               Empresas
             </CardTitle>
           </CardHeader>
