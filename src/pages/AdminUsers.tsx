@@ -11,6 +11,7 @@ import { AdminUserPermissionsDialog } from "@/components/admin/users/AdminUserPe
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatUserData } from "@/utils/userUtils";
+import { mockLeadlyEmployees } from "@/mocks/userMocks";
 
 const AdminUsers = () => {
   const { user } = useUser();
@@ -23,30 +24,53 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Buscar perfis do tipo leadly_employee e leadly_master
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select(`
+      // For demonstration purposes, we'll use mock data to populate with 15 users
+      // In a real environment, we would fetch from the database
+      
+      // Start with the 2 existing Leadly employees from our mocks
+      let mockUsers = [...mockLeadlyEmployees];
+      
+      // Generate 13 more random Leadly employees to reach a total of 15
+      for (let i = 0; i < 13; i++) {
+        const id = `l${i + 3}`; // l3, l4, l5, etc. (since l1 and l2 already exist)
+        const newUser: User = {
           id,
-          name,
-          email,
-          phone,
-          role,
-          status,
-          permissions,
-          created_at,
-          last_access,
-          company_leadly_id
-        `)
-        .or('role.eq.leadly_employee,role.eq.leadly_master');
+          name: `Funcionário Leadly ${i + 3}`,
+          email: `employee${i + 3}@leadly.ai`,
+          phone: `+55119999${String(i).padStart(5, '0')}`,
+          role: i % 3 === 0 ? "leadly_master" as UserRole : "leadly_employee" as UserRole,
+          status: i % 5 === 0 ? "inactive" as "inactive" : i % 7 === 0 ? "pending" as "pending" : "active" as "active",
+          createdAt: new Date(Date.now() - (i * 30 * 24 * 60 * 60 * 1000)).toISOString(), // Different creation dates
+          lastAccess: new Date(Date.now() - (i * 3 * 24 * 60 * 60 * 1000)).toISOString(), // Different last access dates
+          permissions: {
+            dashboard: true,
+            organizations: i % 2 === 0,
+            users: i % 3 === 0,
+            modules: i % 2 === 0,
+            plans: i % 4 === 0,
+            "credit-packages": i % 3 === 0,
+            financial: i % 5 === 0,
+            integrations: i % 2 === 0,
+            prompt: i % 3 === 0,
+            settings: i % 4 === 0,
+            profile: true
+          },
+          logs: [
+            {
+              id: "1",
+              date: new Date(Date.now() - (i * 24 * 60 * 60 * 1000)).toISOString(),
+              action: "Usuário fez login"
+            }
+          ],
+          avatar: null,
+          company_leadly_id: "leadly1"
+        };
+        
+        mockUsers.push(newUser);
+      }
 
-      if (profilesError) throw profilesError;
-
-      // Formatar todos os usuários Leadly
-      const formattedUsers = profiles.map(profile => formatUserData(profile));
-
-      console.log("Usuários Leadly carregados:", formattedUsers);
-      setUsers(formattedUsers);
+      console.log("Usuários Leadly carregados:", mockUsers);
+      setUsers(mockUsers);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
       toast.error('Erro ao carregar usuários');
