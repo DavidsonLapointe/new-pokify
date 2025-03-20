@@ -55,18 +55,18 @@ export const UnusedPermissionsModal = ({
         {/* Legend to identify types */}
         <div className="flex gap-4 mb-4 p-2 bg-slate-50 rounded-md">
           <div className="flex items-center gap-1.5">
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-              <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
-              Exemplo
-            </Badge>
-            <span className="text-sm font-medium">= Abas</span>
-          </div>
-          <div className="flex items-center gap-1.5">
             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
               <ShieldAlert className="h-3.5 w-3.5 mr-1" />
               Exemplo
             </Badge>
             <span className="text-sm font-medium">= Funções</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
+              Exemplo
+            </Badge>
+            <span className="text-sm font-medium">= Abas</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto text-xs text-slate-500">
             <HelpCircle className="h-3.5 w-3.5 mr-1" />
