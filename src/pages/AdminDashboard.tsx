@@ -101,7 +101,7 @@ const AdminDashboard = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4 text-amber-500" />
+                  <AlertCircle className="w-4 w-4 text-amber-500" />
                 </div>
               </div>
             </div>
