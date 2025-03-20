@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { User } from "@/types";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
-import { CheckCircle2, Circle, HelpCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface UserPermissionsDialogProps {
   isOpen: boolean;
@@ -120,77 +121,9 @@ export const UserPermissionsDialog = ({
     handleClose,
   } = useUserPermissions(user, isOpen, onClose, onUserUpdate);
 
-  // Helper function to render a permission item
-  const renderPermissionItem = (permission: PermissionItem) => {
-    const isActive = !!tempPermissions[permission.id];
-    const isProfilePermission = permission.id === 'profile';
-    const hasChildren = permission.children && permission.children.length > 0;
-    
-    return (
-      <div key={permission.id} className="mb-3">
-        <div className="flex items-center gap-2">
-          <div 
-            className={`cursor-pointer ${isProfilePermission ? 'opacity-70' : ''}`}
-            onClick={() => !isProfilePermission && handlePermissionChange(permission.id)}
-          >
-            {isActive ? (
-              <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
-            ) : (
-              <Circle className="h-5 w-5 text-muted-foreground" />
-            )}
-          </div>
-          
-          <span className="font-medium">{permission.label}</span>
-          
-          {permission.description && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent side="right" align="start" className="max-w-xs">
-                  {permission.description}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-
-        {/* Render children if parent is active */}
-        {hasChildren && isActive && (
-          <div className="ml-8 space-y-2 mt-2">
-            {permission.children?.map((child) => (
-              <div key={child.id} className="flex items-center gap-2">
-                <div
-                  className="cursor-pointer"
-                  onClick={() => handlePermissionChange(child.id)}
-                >
-                  {tempPermissions[child.id] ? (
-                    <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </div>
-                <span>{child.label}</span>
-                
-                {child.description && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent side="right" align="start" className="max-w-xs">
-                        {child.description}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
+  // Verifica se uma permissão está ativa
+  const isPermissionActive = (permissionId: string): boolean => {
+    return !!tempPermissions[permissionId];
   };
 
   return (
@@ -204,8 +137,68 @@ export const UserPermissionsDialog = ({
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4 h-[420px]">
-          <div className="space-y-1 py-4">
-            {permissionsTree.map(renderPermissionItem)}
+          <div className="space-y-6 py-4">
+            {permissionsTree.map((route) => (
+              <div key={route.id} className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`section-${route.id}`}
+                    checked={isPermissionActive(route.id)}
+                    onCheckedChange={() => handlePermissionChange(route.id)}
+                    disabled={route.id === 'profile'}
+                    className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                  />
+                  <label
+                    htmlFor={`section-${route.id}`}
+                    className="font-medium flex items-center gap-2"
+                  >
+                    {route.label}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="start" className="max-w-xs">
+                          {route.description || `Acesso à seção ${route.label}`}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </label>
+                </div>
+
+                {/* Renderiza as abas quando aplicável e a permissão principal está ativa */}
+                {route.children && isPermissionActive(route.id) && (
+                  <div className="ml-6 border-l-2 border-primary/20 pl-4 space-y-2">
+                    {route.children.map(tab => (
+                      <div key={tab.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`tab-${tab.id}`}
+                          checked={isPermissionActive(tab.id)}
+                          onCheckedChange={() => handlePermissionChange(tab.id)}
+                          className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                        />
+                        <label
+                          htmlFor={`tab-${tab.id}`}
+                          className="text-sm flex items-center gap-2"
+                        >
+                          {tab.label}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent side="right" align="start" className="max-w-xs">
+                                {tab.description}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </ScrollArea>
 
