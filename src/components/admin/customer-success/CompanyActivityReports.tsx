@@ -3,6 +3,14 @@ import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info } from "lucide-react";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 type ReportType = "ai-executions" | "user-activity" | "module-usage";
 
@@ -107,6 +115,8 @@ const generateMockData = (): CompanyData[] => {
 
 export const CompanyActivityReports = () => {
   const [reportType, setReportType] = useState<ReportType>("ai-executions");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const allCompanies = useMemo(() => generateMockData(), []);
   
   // Order companies based on the report type
@@ -140,6 +150,32 @@ export const CompanyActivityReports = () => {
     }
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(companies.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCompanies = companies.slice(startIndex, endIndex);
+
+  // Function to generate pagination items
+  const renderPaginationItems = () => {
+    const items = [];
+    
+    for (let i = 1; i <= totalPages; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => setCurrentPage(i)}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+    
+    return items;
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -147,7 +183,10 @@ export const CompanyActivityReports = () => {
         
         <Select
           value={reportType}
-          onValueChange={(value) => setReportType(value as ReportType)}
+          onValueChange={(value) => {
+            setReportType(value as ReportType);
+            setCurrentPage(1); // Reset to first page when changing report type
+          }}
         >
           <SelectTrigger className="w-full sm:w-[300px]">
             <SelectValue placeholder="Selecione o tipo de relatório" />
@@ -172,7 +211,7 @@ export const CompanyActivityReports = () => {
             </tr>
           </thead>
           <tbody>
-            {companies.map((company, index) => (
+            {currentCompanies.map((company, index) => (
               <tr key={index} className="border-b hover:bg-muted/50">
                 <td className="py-3 px-4">{company.name}</td>
                 <td className="py-3 px-4">{company.activeUsers}</td>
@@ -202,6 +241,30 @@ export const CompanyActivityReports = () => {
           </tbody>
         </table>
       </div>
+      
+      {totalPages > 1 && (
+        <Pagination className="mt-4">
+          <PaginationContent>
+            {currentPage > 1 && (
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => setCurrentPage(1)} 
+                />
+              </PaginationItem>
+            )}
+            
+            {renderPaginationItems()}
+            
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => setCurrentPage(totalPages)} 
+                />
+              </PaginationItem>
+            )}
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
