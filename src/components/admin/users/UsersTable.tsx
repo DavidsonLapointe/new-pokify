@@ -1,7 +1,7 @@
 
 import React from "react";
 import { User } from "@/types";
-import { Pencil, Shield } from "lucide-react";
+import { Pencil, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -118,7 +118,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     onClick={() => onEditPermissions(user)}
                     className="text-primary hover:bg-primary/10 hover:text-primary"
                   >
-                    <Shield className="h-4 w-4" />
+                    <Lock className="h-4 w-4" />
                   </Button>
                 </div>
               </td>
