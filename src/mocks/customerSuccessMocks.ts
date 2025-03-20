@@ -26,9 +26,16 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
       lastAccess: getRandomRecentDate(5),
       permissions: {
         dashboard: true,
-        calls: true,
+        "dashboard.leads": true,
+        "dashboard.performance": true,
+        "dashboard.objections": true,
         leads: true,
-        settings: true
+        settings: true,
+        "settings.permissions": true,
+        "settings.system": true,
+        users: true,
+        integrations: true,
+        plan: true
       }
     });
     count--;
@@ -37,22 +44,77 @@ const createMockUsers = (count: number, orgId: string, isAdmin: boolean = false)
   const roles: UserRole[] = ["seller", "manager"];
   const statuses: UserStatus[] = ["active", "inactive", "pending"];
   
+  // Create mock permissions data with a variety of permission patterns
+  const permissionTemplates = [
+    // Manager with most permissions including tabs
+    {
+      role: "manager" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        dashboard: true,
+        "dashboard.leads": true,
+        "dashboard.performance": true,
+        leads: true,
+        settings: true,
+        "settings.analysis": true,
+        users: true,
+        plan: true
+      }
+    },
+    // Seller with limited permissions and no tabs
+    {
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        dashboard: true,
+        leads: true,
+        plan: true
+      }
+    },
+    // Inactive user with various permissions
+    {
+      role: "seller" as UserRole,
+      status: "inactive" as UserStatus,
+      permissions: {
+        dashboard: true,
+        "dashboard.leads": true,
+        leads: true
+      }
+    },
+    // User with only specific dashboard tabs
+    {
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        dashboard: false,
+        "dashboard.leads": true,
+        "dashboard.suggestions": true,
+        leads: false
+      }
+    },
+    // User with minimal permissions
+    {
+      role: "seller" as UserRole,
+      status: "active" as UserStatus,
+      permissions: {
+        leads: true
+      }
+    }
+  ];
+  
   for (let i = 0; i < count; i++) {
+    const template = permissionTemplates[i % permissionTemplates.length];
+    
     users.push({
       id: uuidv4(),
       name: `Usuário ${i + 1}`,
       email: `usuario${i + 1}@exemplo.com.br`,
       phone: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-      role: roles[Math.floor(Math.random() * roles.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
+      role: template.role,
+      status: template.status,
       createdAt: getRandomRecentDate(90),
-      lastAccess: Math.random() > 0.3 ? getRandomRecentDate(15) : null,
-      permissions: {
-        dashboard: Math.random() > 0.3,
-        calls: Math.random() > 0.3,
-        leads: Math.random() > 0.3,
-        settings: Math.random() > 0.7
-      }
+      lastAccess: template.status === "active" ? getRandomRecentDate(15) : null,
+      permissions: template.permissions
     });
   }
   

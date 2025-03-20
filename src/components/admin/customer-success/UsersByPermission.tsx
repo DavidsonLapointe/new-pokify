@@ -14,6 +14,9 @@ interface UsersByPermissionProps {
 export const UsersByPermission = ({ users, organizationName }: UsersByPermissionProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Count active users
+  const activeUsersCount = users.filter(user => user.status === 'active').length;
+
   return (
     <>
       <Card className="h-full flex flex-col">
@@ -26,7 +29,7 @@ export const UsersByPermission = ({ users, organizationName }: UsersByPermission
         <CardContent className="flex-1 flex flex-col">
           <div className="text-center p-4 bg-gray-50 rounded-lg flex flex-col items-center justify-center h-full">
             <p className="mb-4 text-gray-600">
-              Visualize como estão distribuídas as permissões de acesso entre os usuários
+              Visualize como estão distribuídas as permissões de acesso entre os {activeUsersCount} usuários ativos
             </p>
             <Button 
               onClick={() => setIsModalOpen(true)}

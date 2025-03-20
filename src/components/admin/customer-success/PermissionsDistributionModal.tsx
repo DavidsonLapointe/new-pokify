@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { User } from "@/types";
-import { permissionLabels } from "@/types/permissions";
+import { permissionLabels, dashboardTabPermissions, settingsTabPermissions } from "@/types/permissions";
 import {
   User as UserIcon,
   FolderTree,
@@ -17,10 +17,23 @@ import {
   Check,
   X,
   MoreHorizontal,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface PermissionsDistributionModalProps {
   isOpen: boolean;
@@ -37,17 +50,26 @@ export const PermissionsDistributionModal = ({
 }: PermissionsDistributionModalProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  // Filter only active users
+  const activeUsers = users.filter(user => user.status === 'active');
+
   // Organize permissions and users
   const getPermissionData = () => {
-    const permissionMap: Record<string, { users: User[], label: string, count: number }> = {};
+    const permissionMap: Record<string, { users: User[], label: string, count: number, hasChildPermissions?: boolean }> = {};
     
     // Initialize with all permissions from permissionLabels
     Object.entries(permissionLabels).forEach(([key, label]) => {
-      permissionMap[key] = { users: [], label, count: 0 };
+      const hasChildPermissions = key === 'dashboard' || key === 'settings';
+      permissionMap[key] = { 
+        users: [], 
+        label, 
+        count: 0,
+        hasChildPermissions 
+      };
     });
 
-    // Populate with actual users
-    users.forEach(user => {
+    // Populate with actual active users
+    activeUsers.forEach(user => {
       if (!user.permissions) return;
 
       Object.entries(user.permissions).forEach(([permKey, hasPermission]) => {
@@ -140,9 +162,30 @@ export const PermissionsDistributionModal = ({
                 <div key={category} className="space-y-4">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-medium">{permissionData[category].label}</h3>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {permissionData[category].count}
-                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 cursor-help">
+                            {permissionData[category].count}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-64">
+                          <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
+                          {permissionData[category].users.length > 0 ? (
+                            <ul className="space-y-1">
+                              {permissionData[category].users.map((user, idx) => (
+                                <li key={idx} className="text-xs flex items-center gap-1.5">
+                                  <UserIcon className="h-3 w-3" />
+                                  <span>{user.name || user.email}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-xs">Nenhum usuário com acesso</p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -153,6 +196,7 @@ export const PermissionsDistributionModal = ({
                       users={permissionData[category].users}
                       count={permissionData[category].count}
                       isMainPermission
+                      hasChildPermissions={permissionData[category].hasChildPermissions}
                     />
 
                     {/* Child permissions */}
@@ -184,6 +228,7 @@ interface PermissionCardProps {
   users: User[];
   count: number;
   isMainPermission?: boolean;
+  hasChildPermissions?: boolean;
 }
 
 const PermissionCard = ({ 
@@ -191,64 +236,68 @@ const PermissionCard = ({
   subtitle, 
   users, 
   count, 
-  isMainPermission = false 
+  isMainPermission = false,
+  hasChildPermissions = false
 }: PermissionCardProps) => {
   const [expanded, setExpanded] = useState(false);
-  const displayUsers = expanded ? users : users.slice(0, 3);
   
   return (
     <div className={`border rounded-lg overflow-hidden ${isMainPermission ? 'bg-secondary/10 border-secondary/30' : 'bg-white'}`}>
       <div className="p-4 border-b">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="font-medium text-sm">{title}</h4>
+            <h4 className="font-medium text-sm">
+              {title}
+              {hasChildPermissions && (
+                <span className="ml-1 text-xs text-muted-foreground">(com abas)</span>
+              )}
+            </h4>
             {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
           </div>
-          <Badge variant="outline" className={`
-            ${isMainPermission 
-              ? 'bg-secondary/20 text-secondary border-secondary/30' 
-              : 'bg-primary/10 text-primary border-primary/20'} 
-            text-xs px-2`
-          }>
-            {count}
-          </Badge>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="outline" className={`
+                  ${isMainPermission 
+                    ? 'bg-secondary/20 text-secondary border-secondary/30' 
+                    : 'bg-primary/10 text-primary border-primary/20'} 
+                  text-xs px-2 cursor-help`
+                }>
+                  {count}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-64">
+                <p className="text-sm font-medium mb-1">Usuários com acesso:</p>
+                {users.length > 0 ? (
+                  <ul className="space-y-1">
+                    {users.map((user, idx) => (
+                      <li key={idx} className="text-xs flex items-center gap-1.5">
+                        <UserIcon className="h-3 w-3" />
+                        <span>{user.name || user.email}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs">Nenhum usuário com acesso</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       
-      <div className="p-3 space-y-2.5">
-        {displayUsers.map(user => (
-          <div key={user.id} className="flex items-center justify-between gap-2 text-sm">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <UserIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-              <span className="truncate">{user.name || user.email}</span>
-            </div>
-            {user.status === 'active' 
-              ? <Check className="h-4 w-4 text-green-500" /> 
-              : <X className="h-4 w-4 text-gray-400" />
-            }
-          </div>
-        ))}
-        
-        {users.length > 3 && (
-          <button 
-            onClick={() => setExpanded(!expanded)} 
-            className="text-xs text-primary font-medium flex items-center gap-1.5 mt-2 w-full"
-          >
-            {expanded ? (
-              <span>Mostrar menos</span>
-            ) : (
-              <span>+ {users.length - 3} outros usuários</span>
-            )}
-            <MoreHorizontal className="h-3 w-3" />
-          </button>
-        )}
-        
-        {users.length === 0 && (
+      <div className="p-3">
+        {users.length === 0 ? (
           <div className="text-xs text-center py-2 text-muted-foreground">
             Nenhum usuário com esta permissão
+          </div>
+        ) : (
+          <div className="text-xs text-center py-2 text-muted-foreground">
+            {count} usuário{count !== 1 ? 's' : ''} com acesso
           </div>
         )}
       </div>
     </div>
   );
 };
+
