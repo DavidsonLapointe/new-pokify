@@ -22,7 +22,8 @@ import {
   Calendar,
   CreditCard,
   ShieldAlert,
-  Info
+  Info,
+  UserCheck
 } from "lucide-react";
 import { CustomerSuccessStatCard } from "@/components/admin/customer-success/CustomerSuccessStatCard";
 import { InactiveOrgsModal } from "@/components/admin/customer-success/InactiveOrgsModal";
@@ -30,6 +31,7 @@ import { LowCreditsOrgsModal } from "@/components/admin/customer-success/LowCred
 import { UnusedPermissionsModal } from "@/components/admin/customer-success/UnusedPermissionsModal";
 import { CustomerSuccessMetricsChart } from "@/components/admin/customer-success/CustomerSuccessMetricsChart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PendingUser, PendingUsersModal } from "@/components/admin/customer-success/PendingUsersModal";
 
 interface CustomerNote {
   id: string;
@@ -211,6 +213,80 @@ const mockUnusedPermissionsOrgs = [
   }
 ];
 
+// Mock data for pending users
+const mockPendingUsers: PendingUser[] = [
+  {
+    id: "1",
+    name: "Carlos Silva",
+    email: "carlos.silva@exemplo.com.br",
+    userType: "Vendedor",
+    createdAt: "2023-11-18T10:30:00Z",
+    organization: {
+      id: "1",
+      name: "TechSolutions Brasil",
+      adminName: "João Silva",
+      adminEmail: "joao.silva@techsolutions.com.br",
+      adminPhone: "(11) 98765-4321"
+    }
+  },
+  {
+    id: "2",
+    name: "Ana Oliveira",
+    email: "ana.oliveira@conecta.com.br",
+    userType: "Analista",
+    createdAt: "2023-11-17T14:45:00Z",
+    organization: {
+      id: "2",
+      name: "Conecta Software",
+      adminName: "Ana Santos",
+      adminEmail: "ana@conectasoftware.com.br",
+      adminPhone: "(21) 97654-3210"
+    }
+  },
+  {
+    id: "3",
+    name: "Ricardo Mendes",
+    email: "ricardo@bytecode.com.br",
+    userType: "Gerente",
+    createdAt: "2023-11-15T09:15:00Z",
+    organization: {
+      id: "4",
+      name: "ByteCode Systems",
+      adminName: "Lucia Ferreira",
+      adminEmail: "lucia@bytecode.com.br",
+      adminPhone: "(47) 98521-3647"
+    }
+  },
+  {
+    id: "4",
+    name: "Fernanda Lima",
+    email: "fernanda@datasoft.com.br",
+    userType: "Suporte",
+    createdAt: "2023-11-12T16:20:00Z",
+    organization: {
+      id: "3",
+      name: "DataSoft Tecnologia",
+      adminName: "Roberto Lima",
+      adminEmail: "roberto@datasoft.com.br",
+      adminPhone: "(31) 96543-2109"
+    }
+  },
+  {
+    id: "5",
+    name: "Lucas Pereira",
+    email: "lucas@neosoft.com.br",
+    userType: "Vendedor",
+    createdAt: "2023-11-10T11:30:00Z",
+    organization: {
+      id: "7",
+      name: "NeoSoft",
+      adminName: "Ricardo Oliveira",
+      adminEmail: "ricardo@neosoft.com.br",
+      adminPhone: "(48) 99632-8521"
+    }
+  }
+];
+
 const AdminCustomerSuccess = () => {
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(false);
@@ -225,6 +301,7 @@ const AdminCustomerSuccess = () => {
   const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
   const [isLowCreditsModalOpen, setIsLowCreditsModalOpen] = useState(false);
   const [isUnusedPermissionsModalOpen, setIsUnusedPermissionsModalOpen] = useState(false);
+  const [isPendingUsersModalOpen, setIsPendingUsersModalOpen] = useState(false);
 
   const handleOrganizationChange = (organization: Organization | null) => {
     setLoading(true);
@@ -371,12 +448,14 @@ const AdminCustomerSuccess = () => {
             />
             
             <CustomerSuccessStatCard
-              title="Interações"
-              value="1.249"
-              icon={MessageSquare}
+              title="Usuários com status pendente"
+              value={5}
+              icon={UserCheck}
               iconBgColor="bg-blue-100"
               iconColor="text-blue-600"
-              bottomText="+23% no último mês"
+              onClick={() => setIsPendingUsersModalOpen(true)}
+              tooltip="Usuários que foram criados mas ainda não completaram o processo de registro"
+              buttonLabel="Ver empresas"
             />
             
             <CustomerSuccessStatCard
@@ -574,6 +653,12 @@ const AdminCustomerSuccess = () => {
         isOpen={isUnusedPermissionsModalOpen} 
         onOpenChange={setIsUnusedPermissionsModalOpen}
         unusedPermissionsOrgs={mockUnusedPermissionsOrgs}
+      />
+      
+      <PendingUsersModal
+        isOpen={isPendingUsersModalOpen}
+        onOpenChange={setIsPendingUsersModalOpen}
+        pendingUsers={mockPendingUsers}
       />
 
       {selectedOrganization && (
