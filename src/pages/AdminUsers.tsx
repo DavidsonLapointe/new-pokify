@@ -34,21 +34,23 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // For demonstration purposes, we'll use mock data to populate with 15 users
+      // For demonstration purposes, we'll use mock data
       // In a real environment, we would fetch from the database
       
       // Start with the 2 existing Leadly employees from our mocks
       let mockUsers = [...mockLeadlyEmployees];
       
-      // Generate 13 more random Leadly employees to reach a total of 15
+      // Generate 13 more Leadly employees to reach a total of 15
       for (let i = 0; i < 13; i++) {
         const id = `l${i + 3}`; // l3, l4, l5, etc. (since l1 and l2 already exist)
+        const role = i % 3 === 0 ? "leadly_master" as UserRole : "leadly_employee" as UserRole;
+        
         const newUser: User = {
           id,
           name: `Funcionário Leadly ${i + 3}`,
           email: `employee${i + 3}@leadly.ai`,
           phone: `+55119999${String(i).padStart(5, '0')}`,
-          role: i % 3 === 0 ? "leadly_master" as UserRole : "leadly_employee" as UserRole,
+          role: role,
           status: i % 5 === 0 ? "inactive" as "inactive" : i % 7 === 0 ? "pending" as "pending" : "active" as "active",
           createdAt: new Date(Date.now() - (i * 30 * 24 * 60 * 60 * 1000)).toISOString(), // Different creation dates
           lastAccess: new Date(Date.now() - (i * 3 * 24 * 60 * 60 * 1000)).toISOString(), // Different last access dates
@@ -189,7 +191,7 @@ const AdminUsers = () => {
             {currentPage > 1 && (
               <PaginationItem>
                 <PaginationPrevious 
-                  onClick={() => setCurrentPage(1)} 
+                  onClick={() => setCurrentPage(currentPage - 1)} 
                 />
               </PaginationItem>
             )}
@@ -208,7 +210,7 @@ const AdminUsers = () => {
             {currentPage < totalPages && (
               <PaginationItem>
                 <PaginationNext 
-                  onClick={() => setCurrentPage(totalPages)} 
+                  onClick={() => setCurrentPage(currentPage + 1)} 
                 />
               </PaginationItem>
             )}
