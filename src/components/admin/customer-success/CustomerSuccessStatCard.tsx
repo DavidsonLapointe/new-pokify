@@ -12,13 +12,14 @@ import { InfoIcon } from "lucide-react";
 
 interface CustomerSuccessStatCardProps {
   title: string;
-  value: number;
+  value: number | string;
   icon: LucideIcon;
   iconBgColor: string;
   iconColor: string;
   onClick?: () => void;
   buttonLabel?: string;
   tooltip?: string;
+  bottomText?: string;
 }
 
 export const CustomerSuccessStatCard = ({
@@ -29,7 +30,8 @@ export const CustomerSuccessStatCard = ({
   iconColor,
   onClick,
   buttonLabel = "Ver empresas",
-  tooltip
+  tooltip,
+  bottomText
 }: CustomerSuccessStatCardProps) => {
   return (
     <Card className="p-4 flex flex-col">
@@ -54,6 +56,10 @@ export const CustomerSuccessStatCard = ({
       
       <h3 className="text-sm text-muted-foreground">{title}</h3>
       <p className="text-3xl font-bold mt-1">{value}</p>
+      
+      {bottomText && (
+        <p className="text-sm text-muted-foreground mt-2">{bottomText}</p>
+      )}
       
       {onClick && (
         <Button 

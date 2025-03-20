@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -21,7 +20,6 @@ import {
   BarChart3,
   ClipboardCheck,
   Calendar,
-  Clock,
   CreditCard,
   ShieldAlert
 } from "lucide-react";
@@ -306,6 +304,7 @@ const AdminCustomerSuccess = () => {
               iconColor="text-blue-500"
               onClick={() => setIsInactiveOrgsModalOpen(true)}
               tooltip="Empresas onde nenhum usuário fez login nos últimos 5 dias"
+              buttonLabel="Ver empresas"
             />
             
             <CustomerSuccessStatCard
@@ -316,6 +315,7 @@ const AdminCustomerSuccess = () => {
               iconColor="text-amber-500"
               onClick={() => setIsLowCreditsModalOpen(true)}
               tooltip="Empresas com saldo de créditos inferior a 50 unidades"
+              buttonLabel="Ver empresas"
             />
             
             <CustomerSuccessStatCard
@@ -326,45 +326,46 @@ const AdminCustomerSuccess = () => {
               iconColor="text-purple-500"
               onClick={() => setIsUnusedPermissionsModalOpen(true)}
               tooltip="Empresas que possuem funções ou abas configuradas mas sem usuários com acesso"
+              buttonLabel="Ver empresas"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-4 flex flex-col items-center text-center">
-              <div className="bg-primary/10 p-3 rounded-full mb-3">
-                <Building className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-medium">Total de Empresas</h3>
-              <p className="text-3xl font-bold mt-2">48</p>
-              <p className="text-sm text-muted-foreground mt-2">+12% no último mês</p>
-            </Card>
+            <CustomerSuccessStatCard
+              title="Total de Empresas"
+              value={48}
+              icon={Building}
+              iconBgColor="bg-indigo-100"
+              iconColor="text-indigo-600"
+              bottomText="+12% no último mês"
+            />
             
-            <Card className="p-4 flex flex-col items-center text-center">
-              <div className="bg-green-100 p-3 rounded-full mb-3">
-                <Users className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-medium">Usuários Ativos</h3>
-              <p className="text-3xl font-bold mt-2">345</p>
-              <p className="text-sm text-muted-foreground mt-2">+8% no último mês</p>
-            </Card>
+            <CustomerSuccessStatCard
+              title="Usuários Ativos"
+              value={345}
+              icon={Users}
+              iconBgColor="bg-green-100"
+              iconColor="text-green-600"
+              bottomText="+8% no último mês"
+            />
             
-            <Card className="p-4 flex flex-col items-center text-center">
-              <div className="bg-blue-100 p-3 rounded-full mb-3">
-                <MessageSquare className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-medium">Interações</h3>
-              <p className="text-3xl font-bold mt-2">1.249</p>
-              <p className="text-sm text-muted-foreground mt-2">+23% no último mês</p>
-            </Card>
+            <CustomerSuccessStatCard
+              title="Interações"
+              value="1.249"
+              icon={MessageSquare}
+              iconBgColor="bg-blue-100"
+              iconColor="text-blue-600"
+              bottomText="+23% no último mês"
+            />
             
-            <Card className="p-4 flex flex-col items-center text-center">
-              <div className="bg-amber-100 p-3 rounded-full mb-3">
-                <ClipboardCheck className="h-6 w-6 text-amber-600" />
-              </div>
-              <h3 className="text-lg font-medium">Taxa de Retenção</h3>
-              <p className="text-3xl font-bold mt-2">92%</p>
-              <p className="text-sm text-muted-foreground mt-2">+2% no último mês</p>
-            </Card>
+            <CustomerSuccessStatCard
+              title="Taxa de Retenção"
+              value="92%"
+              icon={ClipboardCheck}
+              iconBgColor="bg-amber-100"
+              iconColor="text-amber-600"
+              bottomText="+2% no último mês"
+            />
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
