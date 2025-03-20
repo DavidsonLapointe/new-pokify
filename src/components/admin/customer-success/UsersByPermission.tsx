@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types";
-import { Users, Layers } from "lucide-react";
+import { Users, FolderTree } from "lucide-react";
 import { PermissionsDistributionModal } from "./PermissionsDistributionModal";
 
 interface UsersByPermissionProps {
@@ -34,8 +34,8 @@ export const UsersByPermission = ({ users, organizationName }: UsersByPermission
               size="sm"
               className="mt-2 mx-auto flex items-center gap-2"
             >
-              <Layers className="h-4 w-4" />
-              Clique aqui para verificar as permissões
+              <FolderTree className="h-4 w-4" />
+              Visualizar distribuição de permissões
             </Button>
           </div>
         </CardContent>
