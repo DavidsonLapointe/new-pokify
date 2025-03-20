@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Building2, Plus, Trash2, Pencil } from "lucide-react";
+import { Building2, Plus, Trash2, Pencil, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useOrganizationUsers } from "@/hooks/useOrganizationUsers";
 
 // Interface for Area objects
 interface Area {
@@ -15,6 +18,14 @@ interface Area {
   name: string;
   description: string;
   isDefault: boolean;
+}
+
+// Mock interface for linked users - in a real application, we would need to extend this
+interface LinkedUser {
+  id: string;
+  name: string;
+  email: string;
+  area: string;
 }
 
 const OrganizationAreas = () => {
@@ -31,11 +42,17 @@ const OrganizationAreas = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
   const [currentArea, setCurrentArea] = useState<Area | null>(null);
+  const [linkedUsers, setLinkedUsers] = useState<LinkedUser[]>([]);
+  
   const [formData, setFormData] = useState({
     name: "",
     description: ""
   });
+
+  // Get organization users to check for linked users
+  const { users } = useOrganizationUsers();
 
   // Sort areas alphabetically by name
   const sortedAreas = [...areas].sort((a, b) => a.name.localeCompare(b.name));
@@ -61,8 +78,30 @@ const OrganizationAreas = () => {
   };
 
   const openDeleteDialog = (area: Area) => {
-    setCurrentArea(area);
-    setIsDeleteDialogOpen(true);
+    // Check if any users are linked to this area before allowing deletion
+    const areaUsers = checkForLinkedUsers(area.id);
+    
+    if (areaUsers.length > 0) {
+      setLinkedUsers(areaUsers);
+      setCurrentArea(area);
+      setIsDeleteWarningOpen(true);
+    } else {
+      setCurrentArea(area);
+      setIsDeleteDialogOpen(true);
+    }
+  };
+
+  // Mock function to check for linked users - in real app, this would query the database
+  const checkForLinkedUsers = (areaId: string): LinkedUser[] => {
+    // This is a simplified mock - in a real app we would check if users have this area assigned
+    // For demo purposes, we'll pretend Marketing (id=4) has users linked
+    if (areaId === "4") {
+      return [
+        { id: "u1", name: "João Silva", email: "joao.silva@example.com", area: "Marketing" },
+        { id: "u2", name: "Maria Souza", email: "maria.souza@example.com", area: "Marketing" }
+      ];
+    }
+    return [];
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -139,18 +178,41 @@ const OrganizationAreas = () => {
                     size="sm" 
                     onClick={() => openEditDialog(area)}
                     disabled={false}
+                    className={!area.isDefault ? "text-purple-600 hover:text-purple-800 hover:bg-purple-50" : ""}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => openDeleteDialog(area)}
-                    disabled={area.isDefault}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  
+                  {area.isDefault ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              disabled={true}
+                              className="text-red-300 cursor-not-allowed"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Áreas padrão não podem ser excluídas</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => openDeleteDialog(area)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -225,6 +287,42 @@ const OrganizationAreas = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Warning Dialog for Linked Users */}
+      <AlertDialog open={isDeleteWarningOpen} onOpenChange={setIsDeleteWarningOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              Impossível excluir área
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              A área <strong>{currentArea?.name}</strong> não pode ser excluída pois existem usuários ativos ou pendentes vinculados a ela. 
+              Você precisa primeiro mudar a área destes usuários para depois excluir esta área.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="my-4 border rounded-md overflow-hidden">
+            <div className="bg-slate-50 p-3 font-medium border-b">
+              Usuários vinculados à área
+            </div>
+            <div className="p-3 space-y-2">
+              {linkedUsers.map(user => (
+                <div key={user.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <AlertDialogFooter>
+            <AlertDialogCancel>Fechar</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
