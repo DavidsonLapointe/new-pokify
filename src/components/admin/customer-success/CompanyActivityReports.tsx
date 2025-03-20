@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,7 +11,7 @@ import {
   PaginationPrevious 
 } from "@/components/ui/pagination";
 
-type ReportType = "ai-executions" | "user-activity" | "module-usage";
+type ReportType = "ai-executions" | "user-activity" | "module-usage" | "ai-tools";
 
 interface CompanyData {
   name: string;
@@ -199,6 +198,7 @@ export const CompanyActivityReports = () => {
         // Order by active users in descending order
         return [...allCompanies].sort((a, b) => b.activeUsers - a.activeUsers);
       case "module-usage":
+      case "ai-tools":
         // Order by module count in descending order
         return [...allCompanies].sort((a, b) => b.modules.count - a.modules.count);
       default:
@@ -215,6 +215,8 @@ export const CompanyActivityReports = () => {
         return "Usuários Ativos por Empresa";
       case "module-usage":
         return "Módulos Contratados por Empresa";
+      case "ai-tools":
+        return "Ferramentas de IA contratadas por Empresa";
       default:
         return "Empresas com Maior Atividade";
     }
@@ -229,6 +231,8 @@ export const CompanyActivityReports = () => {
         return "Este relatório apresenta um ranking das empresas ordenado pelo número de usuários ativos na plataforma, do maior para o menor valor.";
       case "module-usage":
         return "Este relatório apresenta um ranking das empresas ordenado pela quantidade de módulos contratados, do maior para o menor número.";
+      case "ai-tools":
+        return "Quantidade de ferramentas de IA contratadas por empresa.";
       default:
         return "";
     }
@@ -282,6 +286,7 @@ export const CompanyActivityReports = () => {
             <SelectItem value="ai-executions">Execuções de IA por Empresa</SelectItem>
             <SelectItem value="user-activity">Usuários Ativos por Empresa</SelectItem>
             <SelectItem value="module-usage">Módulos Contratados por Empresa</SelectItem>
+            <SelectItem value="ai-tools">Ferramentas de IA contratadas por Empresa</SelectItem>
           </SelectContent>
         </Select>
       </div>
