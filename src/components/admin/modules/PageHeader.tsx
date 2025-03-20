@@ -16,8 +16,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   activeAreaFilter,
   setActiveAreaFilter 
 }) => {
-  // Filter only default areas
-  const defaultAreas = standardAreas.filter(area => area.isDefault);
+  // Filter only default areas and sort them alphabetically by name
+  const defaultAreas = standardAreas
+    .filter(area => area.isDefault)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleAreaFilterClick = (areaId: string) => {
     if (activeAreaFilter === areaId) {
