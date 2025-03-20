@@ -12,7 +12,7 @@ import { OrganizationsSearch } from "@/components/admin/organizations/Organizati
 import { NotesDialog } from "@/components/admin/customer-success/notes/NotesDialog";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Users,
   Building,
@@ -21,12 +21,15 @@ import {
   ClipboardCheck,
   Calendar,
   CreditCard,
-  ShieldAlert
+  ShieldAlert,
+  Info
 } from "lucide-react";
 import { CustomerSuccessStatCard } from "@/components/admin/customer-success/CustomerSuccessStatCard";
 import { InactiveOrgsModal } from "@/components/admin/customer-success/InactiveOrgsModal";
 import { LowCreditsOrgsModal } from "@/components/admin/customer-success/LowCreditsOrgsModal";
 import { UnusedPermissionsModal } from "@/components/admin/customer-success/UnusedPermissionsModal";
+import { CustomerSuccessMetricsChart } from "@/components/admin/customer-success/CustomerSuccessMetricsChart";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CustomerNote {
   id: string;
@@ -215,6 +218,7 @@ const AdminCustomerSuccess = () => {
   const [customerNotes, setCustomerNotes] = useState<CustomerNote[]>([]);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [selectedMetric, setSelectedMetric] = useState("active-companies");
   
   // State for modals
   const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
@@ -262,6 +266,22 @@ const AdminCustomerSuccess = () => {
   const handleDeleteNote = (organizationId: string, noteId: string) => {
     setCustomerNotes(prev => prev.filter(note => note.id !== noteId));
     toast.success("Anotação excluída com sucesso!");
+  };
+
+  // Get the metric label based on the selected value
+  const getMetricLabel = () => {
+    switch (selectedMetric) {
+      case "active-companies":
+        return "Crescimento de empresas clientes ativas";
+      case "active-users":
+        return "Crescimento de usuários Ativos";
+      case "ai-executions":
+        return "Qtde de execuções de ferramentas de IA";
+      case "ai-tools-per-client":
+        return "Média de contratação de ferramentas de IA por cliente";
+      default:
+        return "Crescimento de empresas clientes ativas";
+    }
   };
 
   return (
@@ -368,23 +388,38 @@ const AdminCustomerSuccess = () => {
             />
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Crescimento de Usuários</h3>
-              <div className="h-[300px] flex items-center justify-center">
-                <BarChart3 className="h-24 w-24 text-muted-foreground opacity-20" />
-                <p className="text-muted-foreground absolute">Gráfico de crescimento de usuários</p>
+          <Card className="p-6">
+            <CardHeader className="px-0 pt-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>{getMetricLabel()}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+                    <Info className="h-4 w-4" />
+                    Valores baseados na posição de fechamento de cada mês
+                  </p>
+                </div>
+                <Select
+                  value={selectedMetric}
+                  onValueChange={setSelectedMetric}
+                >
+                  <SelectTrigger className="w-full sm:w-[300px]">
+                    <SelectValue placeholder="Selecione a métrica" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active-companies">Crescimento de empresas clientes ativas</SelectItem>
+                    <SelectItem value="active-users">Crescimento de usuários Ativos</SelectItem>
+                    <SelectItem value="ai-executions">Qtde de execuções de ferramentas de IA</SelectItem>
+                    <SelectItem value="ai-tools-per-client">Média de contratação de ferramentas de IA por cliente</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </Card>
-            
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Atividade por Módulo</h3>
-              <div className="h-[300px] flex items-center justify-center">
-                <BarChart3 className="h-24 w-24 text-muted-foreground opacity-20" />
-                <p className="text-muted-foreground absolute">Gráfico de atividade por módulo</p>
+            </CardHeader>
+            <CardContent className="pt-0 px-0">
+              <div className="h-[350px]">
+                <CustomerSuccessMetricsChart metricType={selectedMetric} />
               </div>
-            </Card>
-          </div>
+            </CardContent>
+          </Card>
           
           <Card className="p-6">
             <h3 className="text-xl font-semibold mb-4">Empresas com Maior Atividade</h3>
