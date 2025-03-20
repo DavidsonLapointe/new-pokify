@@ -82,7 +82,7 @@ const OrganizationSettings = () => {
         </TabsContent>
         
         <TabsContent value="briefing" className="mt-4">
-          <Card className="border border-gray-100">
+          <Card className="border border-gray-100 shadow-sm">
             <div className="p-6">
               <CompanyBriefingSection />
             </div>

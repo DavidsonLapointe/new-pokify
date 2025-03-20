@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
+import { Lock, Edit, Save } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const briefingSchema = z.object({
   segmento: z.string().min(2, {
@@ -72,222 +73,251 @@ export const CompanyBriefingSection = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between pb-2">
         <div>
-          <h3 className="text-lg font-medium">Briefing da Empresa</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-2xl font-semibold tracking-tight text-primary">Briefing da Empresa</h3>
+          <p className="text-sm text-muted-foreground mt-1">
             Forneça informações sobre sua empresa para otimizar as ferramentas de IA
           </p>
         </div>
         {!isEditing && (
-          <Lock className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center text-muted-foreground">
+            <Lock className="h-4 w-4 mr-1" />
+            <span className="text-xs">Bloqueado</span>
+          </div>
         )}
       </div>
 
+      <Separator className="my-4" />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="segmento"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Segmento de Atuação</FormLabel>
-                  <FormControl>
-                    <Input disabled={!isEditing} placeholder="Ex: Tecnologia, Saúde, Educação" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
+            <h4 className="text-md font-medium mb-4 text-gray-700">Informações Básicas</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="segmento"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Segmento de Atuação</FormLabel>
+                    <FormControl>
+                      <Input disabled={!isEditing} placeholder="Ex: Tecnologia, Saúde, Educação" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="porte"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Porte da Empresa</FormLabel>
-                  <FormControl>
-                    <Input disabled={!isEditing} placeholder="Ex: Pequeno, Médio, Grande" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="porte"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Porte da Empresa</FormLabel>
+                    <FormControl>
+                      <Input disabled={!isEditing} placeholder="Ex: Pequeno, Médio, Grande" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="regioes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Regiões Atendidas</FormLabel>
-                  <FormControl>
-                    <Input disabled={!isEditing} placeholder="Ex: Sudeste, Nacional, Global" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="regioes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Regiões Atendidas</FormLabel>
+                    <FormControl>
+                      <Input disabled={!isEditing} placeholder="Ex: Sudeste, Nacional, Global" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="numeroFuncionarios"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Número de Funcionários</FormLabel>
-                  <FormControl>
-                    <Input disabled={!isEditing} placeholder="Ex: 10-50, 51-200, 201+" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="numeroFuncionarios"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Número de Funcionários</FormLabel>
+                    <FormControl>
+                      <Input disabled={!isEditing} placeholder="Ex: 10-50, 51-200, 201+" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
-          <FormField
-            control={form.control}
-            name="principaisProdutos"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Principais Produtos/Serviços</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    disabled={!isEditing} 
-                    placeholder="Descreva os principais produtos ou serviços oferecidos pela sua empresa" 
-                    className="min-h-[100px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
+            <h4 className="text-md font-medium mb-4 text-gray-700">Produtos e Mercado</h4>
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="principaisProdutos"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Principais Produtos/Serviços</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        disabled={!isEditing} 
+                        placeholder="Descreva os principais produtos ou serviços oferecidos pela sua empresa" 
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="publicoAlvo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Público-alvo</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    disabled={!isEditing} 
-                    placeholder="Descreva o perfil dos seus clientes ideais" 
-                    className="min-h-[100px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="publicoAlvo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Público-alvo</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        disabled={!isEditing} 
+                        placeholder="Descreva o perfil dos seus clientes ideais" 
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
-          <FormField
-            control={form.control}
-            name="diferenciaisCompetitivos"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Diferenciais Competitivos</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    disabled={!isEditing} 
-                    placeholder="O que faz sua empresa se destacar da concorrência?" 
-                    className="min-h-[100px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
+            <h4 className="text-md font-medium mb-4 text-gray-700">Diferenciação e Desafios</h4>
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="diferenciaisCompetitivos"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Diferenciais Competitivos</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        disabled={!isEditing} 
+                        placeholder="O que faz sua empresa se destacar da concorrência?" 
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="principaisObjecoes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Principais Objeções</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    disabled={!isEditing} 
-                    placeholder="Quais são as objeções mais comuns que os clientes apresentam?" 
-                    className="min-h-[100px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="principaisObjecoes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Principais Objeções</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        disabled={!isEditing} 
+                        placeholder="Quais são as objeções mais comuns que os clientes apresentam?" 
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
-          <FormField
-            control={form.control}
-            name="possuiConcorrentes"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    disabled={!isEditing}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Possui Concorrentes Diretos</FormLabel>
-                  <FormDescription>
-                    Marque esta opção se sua empresa possui concorrentes diretos no mercado
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
+          <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
+            <h4 className="text-md font-medium mb-4 text-gray-700">Concorrência</h4>
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="possuiConcorrentes"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        disabled={!isEditing}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Possui Concorrentes Diretos</FormLabel>
+                      <FormDescription>
+                        Marque esta opção se sua empresa possui concorrentes diretos no mercado
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
 
-          {form.watch("possuiConcorrentes") && (
-            <FormField
-              control={form.control}
-              name="concorrentes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Principais Concorrentes</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      disabled={!isEditing} 
-                      placeholder="Liste os principais concorrentes da sua empresa" 
-                      className="min-h-[100px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              {form.watch("possuiConcorrentes") && (
+                <FormField
+                  control={form.control}
+                  name="concorrentes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-medium">Principais Concorrentes</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          disabled={!isEditing} 
+                          placeholder="Liste os principais concorrentes da sua empresa" 
+                          className="min-h-[100px] resize-none"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
-          )}
 
-          <FormField
-            control={form.control}
-            name="observacoesAdicionais"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Observações Adicionais</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    disabled={!isEditing} 
-                    placeholder="Informações adicionais relevantes para o contexto da empresa" 
-                    className="min-h-[100px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="observacoesAdicionais"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium">Observações Adicionais</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        disabled={!isEditing} 
+                        placeholder="Informações adicionais relevantes para o contexto da empresa" 
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           <Button 
             type={isEditing ? "submit" : "button"}
             onClick={isEditing ? undefined : () => setIsEditing(true)}
+            className="w-full md:w-auto"
+            variant={isEditing ? "default" : "outline"}
           >
-            {isEditing ? "Salvar Briefing" : "Editar Informações"}
+            {isEditing ? (
+              <><Save className="w-4 h-4 mr-2" /> Salvar Briefing</>
+            ) : (
+              <><Edit className="w-4 h-4 mr-2" /> Editar Informações</>
+            )}
           </Button>
         </form>
       </Form>
