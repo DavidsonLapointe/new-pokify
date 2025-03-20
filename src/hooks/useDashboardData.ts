@@ -19,6 +19,16 @@ export interface AdminDashboardData {
     lastAccessDate: string;
     lastAccessUser: string;
   }>;
+  lowCreditsOrganizations: Array<{
+    id: string;
+    name: string;
+    adminName: string;
+    adminEmail: string;
+    adminPhone?: string;
+    remainingCredits: number;
+    lastAccessDate: string;
+    lastAccessUser: string;
+  }>;
   monthlyBilling: Array<{
     month: string;
     amount: number;
@@ -137,11 +147,56 @@ const generateMockData = (): AdminDashboardData => {
     }
   ];
 
+  // Mock low credits organizations
+  const lowCreditsOrganizations = [
+    {
+      id: '4',
+      name: 'Startup Inovação',
+      adminName: 'Rafael Costa',
+      adminEmail: 'rafael@startupinova.com',
+      adminPhone: '(11) 97777-8888',
+      remainingCredits: 32,
+      lastAccessDate: '2023-10-18T10:30:00Z',
+      lastAccessUser: 'Rafael Costa (Administrador)'
+    },
+    {
+      id: '5',
+      name: 'Marketing Digital Ltda',
+      adminName: 'Bianca Souza',
+      adminEmail: 'bianca@marketingdigital.com.br',
+      adminPhone: '(21) 98888-7777',
+      remainingCredits: 12,
+      lastAccessDate: '2023-10-17T14:45:00Z',
+      lastAccessUser: 'Bianca Souza (Administrador)'
+    },
+    {
+      id: '6',
+      name: 'Vendas Express',
+      adminName: 'Thiago Mendes',
+      adminEmail: 'thiago@vendasexpress.com',
+      adminPhone: '(31) 96666-5555',
+      remainingCredits: 47,
+      lastAccessDate: '2023-10-16T09:15:00Z',
+      lastAccessUser: 'Paulo Almeida (Vendedor)'
+    },
+    {
+      id: '7',
+      name: 'Tecnologia Ágil',
+      adminName: 'Amanda Ferreira',
+      adminEmail: 'amanda@tecagil.com',
+      adminPhone: '(11) 95555-4444',
+      remainingCredits: 8,
+      lastAccessDate: '2023-10-15T16:20:00Z',
+      lastAccessUser: 'Amanda Ferreira (Administrador)'
+    }
+  ];
+
   return {
     activeOrganizations: 28,
     pendingSetups: 12,
     inactiveUsers: inactiveOrganizations.length,
     inactiveOrganizations,
+    lowCreditsOrganizations,
     monthlyBilling,
     dailyBilling,
     newCustomers,

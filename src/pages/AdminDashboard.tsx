@@ -12,7 +12,8 @@ import {
   DollarSign, 
   UserPlus, 
   Zap,
-  ExternalLink
+  ExternalLink,
+  AlertCircle
 } from "lucide-react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { AdminBillingChart } from "@/components/admin/dashboard/AdminBillingChart";
@@ -20,6 +21,7 @@ import { AdminNewCustomersChart } from "@/components/admin/dashboard/AdminNewCus
 import { AdminAIExecutionsChart } from "@/components/admin/dashboard/AdminAIExecutionsChart";
 import { AdminDailyBillingChart } from "@/components/admin/dashboard/AdminDailyBillingChart";
 import { InactiveOrgsModal } from "@/components/admin/dashboard/InactiveOrgsModal";
+import { LowCreditsOrgsModal } from "@/components/admin/dashboard/LowCreditsOrgsModal";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
@@ -27,6 +29,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("billing");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
+  const [isLowCreditsOrgsModalOpen, setIsLowCreditsOrgsModalOpen] = useState(false);
   
   // Get dashboard data from a centralized hook
   const { isLoading, data } = useDashboardData();
@@ -48,7 +51,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Key metrics cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Empresas Ativas"
           value={data?.activeOrganizations || 0}
@@ -82,6 +85,30 @@ const AdminDashboard = () => {
               variant="link" 
               className="p-0 h-auto text-blue-600 flex items-center gap-1"
               onClick={() => setIsInactiveOrgsModalOpen(true)}
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Ver empresas</span>
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="space-y-2">
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm text-muted-foreground">Empresas com menos de 50 créditos</p>
+                <h3 className="text-xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
+                </div>
+              </div>
+            </div>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-blue-600 flex items-center gap-1"
+              onClick={() => setIsLowCreditsOrgsModalOpen(true)}
             >
               <ExternalLink className="h-4 w-4" />
               <span>Ver empresas</span>
@@ -182,6 +209,14 @@ const AdminDashboard = () => {
         isOpen={isInactiveOrgsModalOpen}
         onOpenChange={setIsInactiveOrgsModalOpen}
         inactiveOrgs={data?.inactiveOrganizations || []}
+        isLoading={isLoading}
+      />
+
+      {/* Low Credits Organizations Modal */}
+      <LowCreditsOrgsModal 
+        isOpen={isLowCreditsOrgsModalOpen}
+        onOpenChange={setIsLowCreditsOrgsModalOpen}
+        lowCreditsOrgs={data?.lowCreditsOrganizations || []}
         isLoading={isLoading}
       />
     </div>
