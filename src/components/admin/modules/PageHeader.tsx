@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 import { standardAreas } from "@/components/admin/modules/module-form-schema";
+import { Badge } from "@/components/ui/badge";
 
 interface PageHeaderProps {
   setIsCreateDialogOpen: (open: boolean) => void;
@@ -47,30 +48,35 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </div>
       
       <div className="flex flex-wrap items-center gap-2">
-        <div className="text-sm font-medium mr-2">Filtrar por área:</div>
-        {defaultAreas.map((area) => (
-          <Button
-            key={area.id}
-            size="sm"
-            variant={activeAreaFilter === area.id ? "default" : "outline"}
-            className={activeAreaFilter === area.id ? "bg-[#9b87f5]" : ""}
-            onClick={() => handleAreaFilterClick(area.id)}
-          >
-            {area.name}
-          </Button>
-        ))}
-        
-        {activeAreaFilter && (
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="ml-2"
-            onClick={clearFilter}
-          >
-            <X className="w-3.5 h-3.5 mr-1" />
-            Limpar filtro
-          </Button>
-        )}
+        <div className="text-sm text-muted-foreground mr-2">Filtrar por área:</div>
+        <div className="flex flex-wrap gap-1.5">
+          {defaultAreas.map((area) => (
+            <Badge
+              key={area.id}
+              variant={activeAreaFilter === area.id ? "default" : "outline"}
+              className={`
+                px-2.5 py-1 text-xs cursor-pointer
+                ${activeAreaFilter === area.id 
+                  ? "bg-primary hover:bg-primary-hover" 
+                  : "hover:bg-gray-100 text-gray-700"}
+              `}
+              onClick={() => handleAreaFilterClick(area.id)}
+            >
+              {area.name}
+            </Badge>
+          ))}
+          
+          {activeAreaFilter && (
+            <Badge 
+              variant="outline" 
+              className="px-2 py-1 text-xs cursor-pointer flex items-center gap-1 hover:bg-gray-100 text-gray-700"
+              onClick={clearFilter}
+            >
+              <X className="w-3 h-3" />
+              Limpar
+            </Badge>
+          )}
+        </div>
       </div>
     </div>
   );
