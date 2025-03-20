@@ -301,7 +301,7 @@ const OrganizationAreas = () => {
 
       {/* Warning Dialog for Linked Users */}
       <AlertDialog open={isDeleteWarningOpen} onOpenChange={setIsDeleteWarningOpen}>
-        <AlertDialogContent className="border-0 shadow-none">
+        <AlertDialogContent className="border-0 shadow-none !border-transparent" style={{ border: 'none', boxShadow: 'none' }}>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-500" />
