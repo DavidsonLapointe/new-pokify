@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { User, OrgUser } from '@/types';
-import { mockUsers, mockOrganizationUsers } from '@/mocks/userMocks';
+import { mockOrganizationUsers } from '@/mocks/userMocks';
 import { useUser } from '@/contexts/UserContext';
 
 export const useOrganizationUsers = () => {
@@ -20,10 +20,24 @@ export const useOrganizationUsers = () => {
       // For now, we're using mock data
       const organizationId = user?.organization?.id;
       
-      // Use the new mockOrganizationUsers array that contains 15 users across different organizations
-      const filteredUsers = mockOrganizationUsers.filter(
+      // Use the mockOrganizationUsers array that contains 15 users across different organizations
+      // But clone and add more users for the current organization to test pagination
+      let filteredUsers = mockOrganizationUsers.filter(
         (mockUser) => mockUser.organization?.id === organizationId
       );
+      
+      // Duplicate users to ensure we have more than 12 for pagination testing
+      if (filteredUsers.length > 0 && filteredUsers.length < 15) {
+        const additionalUsers = [...filteredUsers]
+          .map((user, index) => ({
+            ...user,
+            id: `dup-${index}-${user.id}`,
+            name: `${user.name} (Copy ${index + 1})`,
+            email: `copy${index + 1}.${user.email}`
+          }));
+        
+        filteredUsers = [...filteredUsers, ...additionalUsers];
+      }
       
       setUsers(filteredUsers);
       setIsLoading(false);
