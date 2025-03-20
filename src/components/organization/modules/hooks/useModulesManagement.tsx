@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Tool, SetupContactInfo } from "@/components/organization/modules/types";
@@ -22,13 +21,6 @@ export const useModulesManagement = () => {
     phone: ""
   });
   const [processingPayment, setProcessingPayment] = useState(false);
-
-  // Initialize with the first module selected on load
-  useEffect(() => {
-    if (tools.length > 0) {
-      setSelectedTool(tools[0]);
-    }
-  }, []);
 
   // Handlers for contract actions
   const handleContractTool = (toolId: string) => {
@@ -201,6 +193,7 @@ export const useModulesManagement = () => {
     setIsPaymentFailedDialogOpen,
     setIsTermsDialogOpen,
     setCancelReason,
+    setSelectedTool,
     
     // Handlers
     handleContractTool,
