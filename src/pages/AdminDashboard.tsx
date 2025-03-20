@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -68,21 +67,13 @@ const AdminDashboard = () => {
           tooltip="Empresas com configuração inicial pendente ou em andamento"
         />
         
-        <Card className="p-4">
-          <div className="space-y-2">
-            <div className="flex items-start justify-between">
-              <div className="space-y-0.5">
-                <p className="text-sm text-muted-foreground">Empresas Sem Acesso ({'>'}5 dias)</p>
-                <div className="h-8 flex items-center">
-                  <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-red-500" />
-                </div>
-              </div>
-            </div>
+        <StatCard
+          title="Empresas Sem Acesso (>5 dias)"
+          value={data?.inactiveUsers || 0}
+          icon={Calendar}
+          color="text-red-500"
+          tooltip="Empresas que não acessaram a plataforma nos últimos 5 dias"
+          actionButton={
             <Button 
               variant="link" 
               className="p-0 h-auto text-blue-600 flex items-center gap-1"
@@ -91,24 +82,16 @@ const AdminDashboard = () => {
               <ExternalLink className="h-4 w-4" />
               <span>Ver empresas</span>
             </Button>
-          </div>
-        </Card>
+          }
+        />
 
-        <Card className="p-4">
-          <div className="space-y-2">
-            <div className="flex items-start justify-between">
-              <div className="space-y-0.5">
-                <p className="text-sm text-muted-foreground">Empresas com menos de 50 créditos</p>
-                <div className="h-8 flex items-center">
-                  <h3 className="text-xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4 text-amber-500" />
-                </div>
-              </div>
-            </div>
+        <StatCard
+          title="Empresas com menos de 50 créditos"
+          value={data?.lowCreditsOrganizations?.length || 0}
+          icon={AlertCircle}
+          color="text-amber-500"
+          tooltip="Empresas com baixo saldo de créditos que precisam de atenção"
+          actionButton={
             <Button 
               variant="link" 
               className="p-0 h-auto text-blue-600 flex items-center gap-1"
@@ -117,8 +100,8 @@ const AdminDashboard = () => {
               <ExternalLink className="h-4 w-4" />
               <span>Ver empresas</span>
             </Button>
-          </div>
-        </Card>
+          }
+        />
       </div>
 
       {/* Dashboard tabs */}

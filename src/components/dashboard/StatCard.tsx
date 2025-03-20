@@ -16,6 +16,7 @@ interface StatCardProps {
   icon: LucideIcon;
   color?: string;
   tooltip: string;
+  actionButton?: React.ReactNode;
 }
 
 export const StatCard = ({
@@ -25,6 +26,7 @@ export const StatCard = ({
   icon: Icon,
   color = "text-muted-foreground",
   tooltip,
+  actionButton,
 }: StatCardProps) => (
   <Card className="p-4">
     <div className="space-y-2">
@@ -34,9 +36,6 @@ export const StatCard = ({
           {subtitle && (
             <p className="text-xs text-muted-foreground/60">{subtitle}</p>
           )}
-          <div className="h-8 flex items-center">
-            <h3 className="text-xl font-semibold">{value}</h3>
-          </div>
         </div>
         <div className="flex items-center gap-2">
           <TooltipProvider>
@@ -51,11 +50,15 @@ export const StatCard = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-            <Icon className={`w-4 h-4 ${color}`} />
+          <div className="flex flex-col items-center">
+            <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+              <Icon className={`w-4 h-4 ${color}`} />
+            </div>
+            <h3 className="text-xl font-semibold mt-1">{value}</h3>
           </div>
         </div>
       </div>
+      {actionButton && <div className="mt-2">{actionButton}</div>}
     </div>
   </Card>
 );
