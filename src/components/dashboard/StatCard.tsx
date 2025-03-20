@@ -34,7 +34,9 @@ export const StatCard = ({
           {subtitle && (
             <p className="text-xs text-muted-foreground/60">{subtitle}</p>
           )}
-          <h3 className="text-xl font-semibold">{value}</h3>
+          <div className="h-8 flex items-center">
+            <h3 className="text-xl font-semibold">{value}</h3>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <TooltipProvider>

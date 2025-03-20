@@ -73,7 +73,9 @@ const AdminDashboard = () => {
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
                 <p className="text-sm text-muted-foreground">Empresas Sem Acesso ({'>'}5 dias)</p>
-                <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
+                <div className="h-8 flex items-center">
+                  <h3 className="text-xl font-semibold">{data?.inactiveUsers || 0}</h3>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
@@ -97,11 +99,13 @@ const AdminDashboard = () => {
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
                 <p className="text-sm text-muted-foreground">Empresas com menos de 50 créditos</p>
-                <h3 className="text-xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
+                <div className="h-8 flex items-center">
+                  <h3 className="text-xl font-semibold">{data?.lowCreditsOrganizations?.length || 0}</h3>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-                  <AlertCircle className="w-4 w-4 text-amber-500" />
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
                 </div>
               </div>
             </div>
