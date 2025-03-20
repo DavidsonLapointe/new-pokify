@@ -11,7 +11,7 @@ import {
   PaginationPrevious 
 } from "@/components/ui/pagination";
 
-type ReportType = "ai-executions" | "user-activity" | "module-usage" | "ai-tools";
+type ReportType = "ai-executions" | "ai-tools";
 
 interface CompanyData {
   name: string;
@@ -194,10 +194,6 @@ export const CompanyActivityReports = () => {
       case "ai-executions":
         // Order by interactions (AI executions) in descending order
         return [...allCompanies].sort((a, b) => b.interactions - a.interactions);
-      case "user-activity":
-        // Order by active users in descending order
-        return [...allCompanies].sort((a, b) => b.activeUsers - a.activeUsers);
-      case "module-usage":
       case "ai-tools":
         // Order by module count in descending order
         return [...allCompanies].sort((a, b) => b.modules.count - a.modules.count);
@@ -211,10 +207,6 @@ export const CompanyActivityReports = () => {
     switch (reportType) {
       case "ai-executions":
         return "Execuções de IA por Empresa";
-      case "user-activity":
-        return "Usuários Ativos por Empresa";
-      case "module-usage":
-        return "Módulos Contratados por Empresa";
       case "ai-tools":
         return "Ferramentas de IA contratadas por Empresa";
       default:
@@ -227,10 +219,6 @@ export const CompanyActivityReports = () => {
     switch (reportType) {
       case "ai-executions":
         return "Ranking do número de execuções de IA por empresa.";
-      case "user-activity":
-        return "Este relatório apresenta um ranking das empresas ordenado pelo número de usuários ativos na plataforma, do maior para o menor valor.";
-      case "module-usage":
-        return "Este relatório apresenta um ranking das empresas ordenado pela quantidade de módulos contratados, do maior para o menor número.";
       case "ai-tools":
         return "Quantidade de ferramentas de IA contratadas por empresa.";
       default:
@@ -284,8 +272,6 @@ export const CompanyActivityReports = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ai-executions">Execuções de IA por Empresa</SelectItem>
-            <SelectItem value="user-activity">Usuários Ativos por Empresa</SelectItem>
-            <SelectItem value="module-usage">Módulos Contratados por Empresa</SelectItem>
             <SelectItem value="ai-tools">Ferramentas de IA contratadas por Empresa</SelectItem>
           </SelectContent>
         </Select>
