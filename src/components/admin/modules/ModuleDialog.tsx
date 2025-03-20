@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -250,6 +249,9 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
                     <FormLabel>Áreas da Empresa</FormLabel>
+                    <div className="text-xs text-gray-500 -mt-1 mb-2">
+                      Selecione as áreas da empresa que este módulo atende.
+                    </div>
                     <div className="space-y-3">
                       <div className="flex flex-wrap gap-2 mb-2">
                         {field.value.map((areaId) => {
