@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -263,7 +264,7 @@ export const CompanyActivityReports = () => {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h3 className="text-xl font-semibold">{getReportTitle()}</h3>
+          <h3 className="text-xl font-semibold text-left">{getReportTitle()}</h3>
           <p className="text-sm text-muted-foreground mt-1">{getReportDescription()}</p>
         </div>
         
@@ -290,8 +291,8 @@ export const CompanyActivityReports = () => {
           <thead>
             <tr className="border-b">
               <th className="text-left py-3 px-4">Empresa</th>
-              <th className="text-left py-3 px-4">Usuários Ativos</th>
               <th className="text-left py-3 px-4">Execuções IA</th>
+              <th className="text-left py-3 px-4">Usuários Ativos</th>
               <th className="text-left py-3 px-4">Módulos</th>
               <th className="text-left py-3 px-4">Última Atividade</th>
             </tr>
@@ -300,8 +301,8 @@ export const CompanyActivityReports = () => {
             {currentCompanies.map((company, index) => (
               <tr key={index} className="border-b hover:bg-muted/50">
                 <td className="py-3 px-4">{company.name}</td>
-                <td className="py-3 px-4">{company.activeUsers}</td>
                 <td className="py-3 px-4">{company.interactions}</td>
+                <td className="py-3 px-4">{company.activeUsers}</td>
                 <td className="py-3 px-4">
                   <TooltipProvider>
                     <Tooltip>
@@ -328,6 +329,7 @@ export const CompanyActivityReports = () => {
         </table>
       </div>
       
+      {/* Pagination section */}
       {totalPages > 1 && (
         <Pagination className="mt-4">
           <PaginationContent>
