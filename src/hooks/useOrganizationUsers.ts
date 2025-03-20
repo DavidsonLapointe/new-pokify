@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { User, OrgUser } from '@/types';
-import { mockUsers } from '@/mocks/userMocks';
+import { mockUsers, mockOrganizationUsers } from '@/mocks/userMocks';
 import { useUser } from '@/contexts/UserContext';
 
 export const useOrganizationUsers = () => {
@@ -19,7 +19,9 @@ export const useOrganizationUsers = () => {
       // In a real app, this would be an API call filtered by the current user's organization
       // For now, we're using mock data
       const organizationId = user?.organization?.id;
-      const filteredUsers = mockUsers.filter(
+      
+      // Use the new mockOrganizationUsers array that contains 15 users across different organizations
+      const filteredUsers = mockOrganizationUsers.filter(
         (mockUser) => mockUser.organization?.id === organizationId
       );
       
