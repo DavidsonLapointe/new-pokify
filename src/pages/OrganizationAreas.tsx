@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -183,7 +182,7 @@ const OrganizationAreas = () => {
               <p className="text-sm text-gray-600 mb-4">{area.description}</p>
               <div className="flex justify-between items-center">
                 {area.isDefault ? (
-                  <span className="text-xs bg-slate-100 text-slate-600 py-1 px-2 rounded">Área padrão</span>
+                  <span className="text-xs bg-primary text-white py-1 px-2 rounded">Área padrão</span>
                 ) : (
                   <span></span>
                 )}
