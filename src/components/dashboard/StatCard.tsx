@@ -28,8 +28,8 @@ export const StatCard = ({
   tooltip,
   actionButton,
 }: StatCardProps) => (
-  <Card className="p-4">
-    <div className="space-y-2">
+  <Card className="p-4 relative flex flex-col h-full">
+    <div className="space-y-2 flex-1">
       <div className="flex items-start justify-between">
         <div className="space-y-0.5">
           <p className="text-sm text-muted-foreground">{title}</p>
@@ -50,15 +50,20 @@ export const StatCard = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div className="flex flex-col items-center">
+          <div className="flex items-center">
             <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
               <Icon className={`w-4 h-4 ${color}`} />
             </div>
-            <h3 className="text-xl font-semibold mt-1">{value}</h3>
           </div>
         </div>
       </div>
+      
       {actionButton && <div className="mt-2">{actionButton}</div>}
+    </div>
+    
+    {/* Value displayed at the bottom of the card */}
+    <div className="mt-auto pt-3 w-full flex justify-center">
+      <h3 className="text-2xl font-semibold">{value}</h3>
     </div>
   </Card>
 );
