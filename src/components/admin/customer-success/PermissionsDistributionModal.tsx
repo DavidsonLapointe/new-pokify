@@ -147,8 +147,8 @@ export const PermissionsDistributionModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+        <DialogHeader className="pb-4">
           <DialogTitle className="text-xl flex items-center gap-2">
             <FolderTree className="h-5 w-5 text-primary/80" />
             Distribuição de Permissões
@@ -168,7 +168,7 @@ export const PermissionsDistributionModal = ({
           />
         </div>
 
-        <ScrollArea className="flex-1 pr-2">
+        <ScrollArea className="flex-1 pr-4 h-[calc(80vh-12rem)]">
           {searchTerm ? (
             <div className="space-y-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-2">
@@ -177,8 +177,8 @@ export const PermissionsDistributionModal = ({
               
               <div className="space-y-4">
                 {filteredPermissions.map(([key, data]) => (
-                  <div key={key} className="border rounded-lg p-3">
-                    <div className="flex justify-between items-center">
+                  <div key={key} className="border rounded-lg p-3 w-full">
+                    <div className="flex justify-between items-center w-full">
                       <h4 className="font-medium text-sm">
                         {data.label}
                         {key.includes('.') && <span className="text-xs text-muted-foreground ml-1">(aba)</span>}
@@ -222,7 +222,7 @@ export const PermissionsDistributionModal = ({
                 const tabKeys = getTabPermissions(category);
                 
                 return (
-                  <div key={category} className="border rounded-lg overflow-hidden">
+                  <div key={category} className="border rounded-lg overflow-hidden mb-4 w-full">
                     <div className="bg-gray-50 p-3 border-b flex justify-between items-center">
                       <h3 className="font-medium">
                         {permissionData[category].label}
