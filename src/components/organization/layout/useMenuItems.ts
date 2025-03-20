@@ -15,7 +15,8 @@ import {
   Book,
   ClipboardCheck,
   Package,
-  Wallet
+  Wallet,
+  Building2
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -64,6 +65,12 @@ export const useMenuItems = (user: User) => {
       label: "Configurações",
       path: "/organization/settings",
       permissionId: "settings"
+    },
+    {
+      icon: Building2,
+      label: "Cadastro de Áreas",
+      path: "/organization/areas",
+      permissionId: "areas"
     },
     {
       icon: Package,
