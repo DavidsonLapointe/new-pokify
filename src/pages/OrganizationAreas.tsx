@@ -39,6 +39,7 @@ const OrganizationAreas = () => {
     { id: "6", name: "Controladoria", description: "Área responsável pelo controle financeiro da empresa", isDefault: true },
     { id: "7", name: "Logística", description: "Área responsável pela logística da empresa", isDefault: true },
     { id: "8", name: "Jurídico", description: "Área responsável pelos assuntos jurídicos da empresa", isDefault: true },
+    { id: "9", name: "PERA", description: "Área de Pesquisa e Recursos Avançados", isDefault: false },
   ]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -94,14 +95,23 @@ const OrganizationAreas = () => {
 
   // Mock function to check for linked users - in real app, this would query the database
   const checkForLinkedUsers = (areaId: string): LinkedUser[] => {
-    // This is a simplified mock - in a real app we would check if users have this area assigned
-    // For demo purposes, we'll pretend Marketing (id=4) has users linked
+    // Simulation for the PERA area (id=9)
+    if (areaId === "9") {
+      return [
+        { id: "u1", name: "Carlos Oliveira", email: "carlos.oliveira@example.com", area: "PERA" },
+        { id: "u2", name: "Ana Beatriz", email: "ana.beatriz@example.com", area: "PERA" },
+        { id: "u3", name: "Felipe Santos", email: "felipe.santos@example.com", area: "PERA" }
+      ];
+    }
+    
+    // Previous simulation for Marketing (id=4)
     if (areaId === "4") {
       return [
         { id: "u1", name: "João Silva", email: "joao.silva@example.com", area: "Marketing" },
         { id: "u2", name: "Maria Souza", email: "maria.souza@example.com", area: "Marketing" }
       ];
     }
+    
     return [];
   };
 
