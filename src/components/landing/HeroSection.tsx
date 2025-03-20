@@ -32,7 +32,7 @@ export function HeroSection() {
                 Começar Gratuitamente
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="text-lg">
+              <Button size="lg" variant="outline" className="text-lg" onClick={() => setIsFormOpen(true)}>
                 Ver Demonstração
               </Button>
             </div>
