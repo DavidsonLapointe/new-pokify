@@ -25,6 +25,7 @@ const AdminModules = () => {
     isSetupContactDialogOpen,
     setupContactInfo,
     moduleGroups,
+    setSelectedModule,
     setIsCreateDialogOpen,
     setEditingModule,
     setIsCancelDialogOpen,
@@ -36,6 +37,14 @@ const AdminModules = () => {
     handleEditModule,
     handleSelectModule
   } = useModulesManagement();
+
+  // Update the active area filter and close any open module details
+  const handleAreaFilterChange = (areaId: string | null) => {
+    setActiveAreaFilter(areaId);
+    if (selectedModule) {
+      setSelectedModule(null);
+    }
+  };
 
   const handleConfirmCancel = () => {
     if (cancelModuleId) {
@@ -78,7 +87,7 @@ const AdminModules = () => {
       <PageHeader 
         setIsCreateDialogOpen={setIsCreateDialogOpen}
         activeAreaFilter={activeAreaFilter}
-        setActiveAreaFilter={setActiveAreaFilter}
+        setActiveAreaFilter={handleAreaFilterChange}
       />
       
       {isLoading ? (

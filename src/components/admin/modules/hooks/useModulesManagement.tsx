@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -21,12 +20,7 @@ export const useModulesManagement = () => {
     loadModules();
   }, []);
 
-  useEffect(() => {
-    // Selecionar o primeiro módulo ao carregar os módulos
-    if (modules.length > 0 && !selectedModule) {
-      setSelectedModule(modules[0]);
-    }
-  }, [modules, selectedModule]);
+  // Removed the useEffect that automatically selects the first module
 
   const loadModules = async () => {
     setIsLoading(true);
