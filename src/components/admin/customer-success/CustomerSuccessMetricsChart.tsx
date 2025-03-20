@@ -18,7 +18,7 @@ import { ptBR } from "date-fns/locale";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 interface CustomerSuccessMetricsChartProps {
-  metricType: "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client";
+  metricType: "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client" | "deactivated-companies";
 }
 
 // Generate last 13 months for X-axis (changed from 12 to 13)
@@ -73,6 +73,13 @@ const generateMockData = (metricType: string) => {
           value: parseFloat(value)
         };
       
+      case "deactivated-companies":
+        // Deactivated companies per month (1-5)
+        return {
+          month,
+          value: 1 + Math.floor(Math.random() * 4)
+        };
+        
       default:
         return { month, value: baseValue };
     }
@@ -114,6 +121,8 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
         return "Execuções";
       case "ai-tools-per-client":
         return "Média por cliente";
+      case "deactivated-companies":
+        return "Empresas inativadas";
       default:
         return "";
     }
@@ -187,7 +196,7 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
         <Bar 
           dataKey="value" 
           name={getYAxisLabel()}
-          fill="#3b82f6" 
+          fill={metricType === "deactivated-companies" ? "#ef4444" : "#3b82f6"} 
           radius={[4, 4, 0, 0]}
           isAnimationActive={false}
           cursor="default"

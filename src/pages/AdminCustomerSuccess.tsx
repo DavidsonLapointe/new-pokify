@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -295,7 +296,7 @@ const AdminCustomerSuccess = () => {
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   // Define the metric type to match the expected union type
-  const [selectedMetric, setSelectedMetric] = useState<"active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client">("active-companies");
+  const [selectedMetric, setSelectedMetric] = useState<"active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client" | "deactivated-companies">("active-companies");
   
   // State for modals
   const [isInactiveOrgsModalOpen, setIsInactiveOrgsModalOpen] = useState(false);
@@ -357,6 +358,8 @@ const AdminCustomerSuccess = () => {
         return "Qtde de execuções de ferramentas de IA";
       case "ai-tools-per-client":
         return "Média de contratação de ferramentas de IA por cliente";
+      case "deactivated-companies":
+        return "Quantidade de empresas inativadas por mês";
       default:
         return "Crescimento de empresas clientes ativas";
     }
@@ -487,7 +490,7 @@ const AdminCustomerSuccess = () => {
                   value={selectedMetric}
                   onValueChange={(value: string) => {
                     // Add type assertion to ensure the value is of the correct type
-                    setSelectedMetric(value as "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client");
+                    setSelectedMetric(value as "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client" | "deactivated-companies");
                   }}
                 >
                   <SelectTrigger className="w-full sm:w-[300px]">
@@ -498,6 +501,7 @@ const AdminCustomerSuccess = () => {
                     <SelectItem value="active-users">Crescimento de usuários Ativos</SelectItem>
                     <SelectItem value="ai-executions">Qtde de execuções de ferramentas de IA</SelectItem>
                     <SelectItem value="ai-tools-per-client">Média de contratação de ferramentas de IA por cliente</SelectItem>
+                    <SelectItem value="deactivated-companies">Quantidade de empresas inativadas por mês</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
