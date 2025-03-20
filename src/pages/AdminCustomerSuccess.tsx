@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -386,6 +387,33 @@ const AdminCustomerSuccess = () => {
         <TabsContent value="dashboard" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <CustomerSuccessStatCard
+              title="Total de Empresas"
+              value={48}
+              icon={Building}
+              iconBgColor="bg-indigo-100"
+              iconColor="text-indigo-600"
+              bottomText="+12% no último mês"
+            />
+            
+            <CustomerSuccessStatCard
+              title="Usuários Ativos"
+              value={345}
+              icon={Users}
+              iconBgColor="bg-green-100"
+              iconColor="text-green-600"
+              bottomText="+8% no último mês"
+            />
+            
+            <CustomerSuccessStatCard
+              title="Taxa de Retenção"
+              value="92%"
+              icon={ClipboardCheck}
+              iconBgColor="bg-amber-100"
+              iconColor="text-amber-600"
+              bottomText="+2% no último mês"
+            />
+            
+            <CustomerSuccessStatCard
               title="Setups Pendentes/Em Andamento"
               value={12}
               icon={ClipboardCheck}
@@ -393,7 +421,9 @@ const AdminCustomerSuccess = () => {
               iconColor="text-orange-500"
               tooltip="Empresas com processos de setup em andamento ou pendentes de finalização"
             />
-            
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <CustomerSuccessStatCard
               title="Empresas Sem Acesso (>5 dias)"
               value={3}
@@ -426,26 +456,6 @@ const AdminCustomerSuccess = () => {
               tooltip="Empresas que possuem funções ou abas configuradas mas sem usuários com acesso"
               buttonLabel="Ver empresas"
             />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <CustomerSuccessStatCard
-              title="Total de Empresas"
-              value={48}
-              icon={Building}
-              iconBgColor="bg-indigo-100"
-              iconColor="text-indigo-600"
-              bottomText="+12% no último mês"
-            />
-            
-            <CustomerSuccessStatCard
-              title="Usuários Ativos"
-              value={345}
-              icon={Users}
-              iconBgColor="bg-green-100"
-              iconColor="text-green-600"
-              bottomText="+8% no último mês"
-            />
             
             <CustomerSuccessStatCard
               title="Usuários com status pendente"
@@ -456,15 +466,6 @@ const AdminCustomerSuccess = () => {
               onClick={() => setIsPendingUsersModalOpen(true)}
               tooltip="Usuários que foram criados mas ainda não completaram o processo de registro"
               buttonLabel="Ver empresas"
-            />
-            
-            <CustomerSuccessStatCard
-              title="Taxa de Retenção"
-              value="92%"
-              icon={ClipboardCheck}
-              iconBgColor="bg-amber-100"
-              iconColor="text-amber-600"
-              bottomText="+2% no último mês"
             />
           </div>
           
