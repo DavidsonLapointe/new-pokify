@@ -160,7 +160,7 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
             strokeWidth={2}
             dot={{ r: 4 }}
             activeDot={{ r: 6 }}
-            // Removed any hover effects by not adding them
+            isAnimationActive={false}
           />
         </LineChart>
       );
@@ -189,7 +189,8 @@ export const CustomerSuccessMetricsChart = ({ metricType }: CustomerSuccessMetri
           name={getYAxisLabel()}
           fill="#3b82f6" 
           radius={[4, 4, 0, 0]}
-          // Removed any hover effects by not adding them
+          isAnimationActive={false}
+          cursor="default"
         />
       </BarChart>
     );
