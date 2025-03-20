@@ -108,6 +108,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => onEditUser(user)}
+                    className="text-primary hover:bg-primary/10 hover:text-primary"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -115,6 +116,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => onEditPermissions(user)}
+                    className="text-primary hover:bg-primary/10 hover:text-primary"
                   >
                     <Shield className="h-4 w-4" />
                   </Button>
