@@ -9,8 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Edit, Save } from "lucide-react";
+import { Edit, Save, Globe, LinkIcon, ExternalLink, Plus, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "@/components/ui/link";
+
+const competitorSchema = z.object({
+  name: z.string().min(1, "O nome é obrigatório"),
+  url: z.string().url("URL inválida").or(z.literal("")),
+});
 
 const briefingSchema = z.object({
   segmento: z.string().min(2, {
@@ -39,13 +45,17 @@ const briefingSchema = z.object({
   }),
   possuiConcorrentes: z.boolean().default(false),
   concorrentes: z.string().optional(),
+  competidores: z.array(competitorSchema).optional().default([]),
   observacoesAdicionais: z.string().optional(),
 });
 
 type BriefingFormValues = z.infer<typeof briefingSchema>;
+type Competitor = z.infer<typeof competitorSchema>;
 
 export const CompanyBriefingSection = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [newCompetitor, setNewCompetitor] = useState<Competitor>({ name: "", url: "" });
+  const [showCompetitorForm, setShowCompetitorForm] = useState(false);
 
   const defaultValues: Partial<BriefingFormValues> = {
     segmento: "",
@@ -58,6 +68,7 @@ export const CompanyBriefingSection = () => {
     publicoAlvo: "",
     possuiConcorrentes: false,
     concorrentes: "",
+    competidores: [],
     observacoesAdicionais: "",
   };
 
@@ -66,16 +77,56 @@ export const CompanyBriefingSection = () => {
     defaultValues,
   });
 
+  const watchPossuiConcorrentes = form.watch("possuiConcorrentes");
+  const watchCompetidores = form.watch("competidores") || [];
+
+  const handleAddCompetitor = () => {
+    if (!newCompetitor.name) {
+      toast.error("Nome do concorrente é obrigatório");
+      return;
+    }
+
+    if (newCompetitor.url && !newCompetitor.url.startsWith("http")) {
+      setNewCompetitor({
+        ...newCompetitor,
+        url: `https://${newCompetitor.url}`
+      });
+    }
+
+    const updatedCompetidores = [...watchCompetidores, newCompetitor];
+    form.setValue("competidores", updatedCompetidores);
+    setNewCompetitor({ name: "", url: "" });
+    setShowCompetitorForm(false);
+  };
+
+  const handleRemoveCompetitor = (index: number) => {
+    const updatedCompetidores = [...watchCompetidores];
+    updatedCompetidores.splice(index, 1);
+    form.setValue("competidores", updatedCompetidores);
+  };
+
   function onSubmit(data: BriefingFormValues) {
     console.log(data);
     toast.success("Briefing salvo com sucesso!");
     setIsEditing(false);
   }
 
+  function formatURL(url: string): string {
+    if (!url) return "";
+    
+    // Remove protocol and www
+    let formatted = url.replace(/^(https?:\/\/)?(www\.)?/, "");
+    
+    // Remove trailing slash
+    formatted = formatted.replace(/\/$/, "");
+    
+    return formatted;
+  }
+
   return (
     <div className="space-y-8">
       <div className="text-center pb-2">
-        <h3 className="text-2xl font-semibold tracking-tight">Briefing da Empresa</h3>
+        <h3 className="text-3xl font-semibold tracking-tight">Briefing da Empresa</h3>
         <p className="text-sm text-muted-foreground mt-1">
           Forneça informações sobre sua empresa para otimizar as ferramentas de IA
         </p>
@@ -257,25 +308,121 @@ export const CompanyBriefingSection = () => {
                 )}
               />
 
-              {form.watch("possuiConcorrentes") && (
-                <FormField
-                  control={form.control}
-                  name="concorrentes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium text-left w-full">Principais Concorrentes</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          disabled={!isEditing} 
-                          placeholder="Liste os principais concorrentes da sua empresa" 
-                          className="min-h-[100px] resize-none"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {watchPossuiConcorrentes && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <FormLabel className="font-medium text-left w-full flex items-center">
+                      <span>Principais Concorrentes</span>
+                      {isEditing && (
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm" 
+                          className="ml-2"
+                          onClick={() => setShowCompetitorForm(true)}
+                        >
+                          <Plus className="w-4 h-4 mr-1" /> Adicionar
+                        </Button>
+                      )}
+                    </FormLabel>
+                    
+                    {showCompetitorForm && isEditing && (
+                      <div className="p-4 border rounded-md bg-white mb-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <FormLabel>Nome do Concorrente</FormLabel>
+                              <Input
+                                placeholder="Ex: Empresa XYZ"
+                                value={newCompetitor.name}
+                                onChange={(e) => setNewCompetitor({...newCompetitor, name: e.target.value})}
+                              />
+                            </div>
+                            <div>
+                              <FormLabel>URL do Site</FormLabel>
+                              <Input
+                                placeholder="Ex: www.empresaxyz.com"
+                                value={newCompetitor.url}
+                                onChange={(e) => setNewCompetitor({...newCompetitor, url: e.target.value})}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end space-x-2">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setShowCompetitorForm(false);
+                                setNewCompetitor({ name: "", url: "" });
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button 
+                              type="button" 
+                              size="sm"
+                              onClick={handleAddCompetitor}
+                            >
+                              Adicionar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {watchCompetidores.length > 0 ? (
+                      <div className="rounded-md border bg-white">
+                        <div className="divide-y">
+                          {watchCompetidores.map((competidor, index) => (
+                            <div key={index} className="p-3 flex justify-between items-center">
+                              <div className="flex-1">
+                                <div className="font-medium">{competidor.name}</div>
+                                {competidor.url && (
+                                  <div className="text-sm text-muted-foreground flex items-center mt-1">
+                                    <Globe className="w-3 h-3 mr-1" />
+                                    <Link href={competidor.url} target="_blank" className="flex items-center hover:underline">
+                                      {formatURL(competidor.url)}
+                                      <ExternalLink className="w-3 h-3 ml-1" />
+                                    </Link>
+                                  </div>
+                                )}
+                              </div>
+                              {isEditing && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveCompetitor(index)}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="concorrentes"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea 
+                                disabled={!isEditing} 
+                                placeholder="Liste os principais concorrentes da sua empresa" 
+                                className="min-h-[100px] resize-none"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
+                </div>
               )}
 
               <FormField
