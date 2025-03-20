@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -219,7 +218,7 @@ const AdminCustomerSuccess = () => {
   const [customerNotes, setCustomerNotes] = useState<CustomerNote[]>([]);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-  // Update type to match the expected union type
+  // Define the metric type to match the expected union type
   const [selectedMetric, setSelectedMetric] = useState<"active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client">("active-companies");
   
   // State for modals
@@ -402,7 +401,10 @@ const AdminCustomerSuccess = () => {
                 </div>
                 <Select
                   value={selectedMetric}
-                  onValueChange={setSelectedMetric}
+                  onValueChange={(value: string) => {
+                    // Add type assertion to ensure the value is of the correct type
+                    setSelectedMetric(value as "active-companies" | "active-users" | "ai-executions" | "ai-tools-per-client");
+                  }}
                 >
                   <SelectTrigger className="w-full sm:w-[300px]">
                     <SelectValue placeholder="Selecione a métrica" />
