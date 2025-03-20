@@ -166,7 +166,7 @@ export const CompanyActivityReports = () => {
             <tr className="border-b">
               <th className="text-left py-3 px-4">Empresa</th>
               <th className="text-left py-3 px-4">Usuários Ativos</th>
-              <th className="text-left py-3 px-4">Interações</th>
+              <th className="text-left py-3 px-4">Execuções IA</th>
               <th className="text-left py-3 px-4">Módulos</th>
               <th className="text-left py-3 px-4">Última Atividade</th>
             </tr>
