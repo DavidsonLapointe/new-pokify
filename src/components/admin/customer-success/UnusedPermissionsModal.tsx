@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Phone, Mail, ShieldAlert } from "lucide-react";
+import { Phone, Mail, ShieldAlert, LayoutDashboard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface UnusedPermissionOrg {
@@ -19,6 +19,20 @@ interface UnusedPermissionsModalProps {
   unusedPermissionsOrgs: UnusedPermissionOrg[];
   isLoading?: boolean;
 }
+
+// Helper function to determine if a permission is a tab or a function
+const isTab = (permission: string): boolean => {
+  // Define keywords that indicate tabs - these are common section names in dashboards
+  const tabKeywords = [
+    'dashboard', 'painel', 'módulo', 'relatórios', 'configurações', 'análise',
+    'integração', 'gestão', 'ferramentas', 'controle'
+  ];
+  
+  // Check if the permission name contains any of the tab keywords
+  return tabKeywords.some(keyword => 
+    permission.toLowerCase().includes(keyword.toLowerCase())
+  );
+};
 
 export const UnusedPermissionsModal = ({ 
   isOpen, 
@@ -75,16 +89,26 @@ export const UnusedPermissionsModal = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {org.unusedPermissions.map((permission, index) => (
-                        <Badge 
-                          key={index}
-                          variant="outline" 
-                          className="bg-blue-50 text-blue-600 border-blue-200"
-                        >
-                          <ShieldAlert className="h-3.5 w-3.5 mr-1" />
-                          {permission}
-                        </Badge>
-                      ))}
+                      {org.unusedPermissions.map((permission, index) => {
+                        const isTabItem = isTab(permission);
+                        return (
+                          <Badge 
+                            key={index}
+                            variant="outline" 
+                            className={isTabItem 
+                              ? "bg-purple-50 text-purple-700 border-purple-200" 
+                              : "bg-blue-50 text-blue-700 border-blue-200"
+                            }
+                          >
+                            {isTabItem ? (
+                              <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
+                            ) : (
+                              <ShieldAlert className="h-3.5 w-3.5 mr-1" />
+                            )}
+                            {permission}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </TableCell>
                 </TableRow>
