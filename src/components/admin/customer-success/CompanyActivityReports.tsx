@@ -25,7 +25,7 @@ interface CompanyData {
   lastActivity: string;
 }
 
-// Mock data generator
+// Mock data generator with 15 companies
 const generateMockData = (): CompanyData[] => {
   const companies = [
     { 
@@ -107,6 +107,76 @@ const generateMockData = (): CompanyData[] => {
         names: ["Gestão de Leads", "Dashboard Básico"] 
       },
       lastActivity: "Há 4 dias" 
+    },
+    { 
+      name: "TecnoPro Soluções", 
+      activeUsers: 16, 
+      interactions: 123, 
+      modules: { 
+        count: 3, 
+        names: ["CRM Avançado", "Dashboard Analítico", "Gestão de Vendas"] 
+      },
+      lastActivity: "Ontem" 
+    },
+    { 
+      name: "Nexus IT", 
+      activeUsers: 14, 
+      interactions: 105, 
+      modules: { 
+        count: 2, 
+        names: ["Automação de Vendas", "CRM Avançado"] 
+      },
+      lastActivity: "Hoje" 
+    },
+    { 
+      name: "Alpha Tecnologia", 
+      activeUsers: 9, 
+      interactions: 82, 
+      modules: { 
+        count: 2, 
+        names: ["CRM Básico", "Integração de Leads"] 
+      },
+      lastActivity: "Há 2 dias" 
+    },
+    { 
+      name: "Digitel Sistemas", 
+      activeUsers: 11, 
+      interactions: 94, 
+      modules: { 
+        count: 3, 
+        names: ["Automação de Marketing", "Dashboard Analítico", "CRM Básico"] 
+      },
+      lastActivity: "Ontem" 
+    },
+    { 
+      name: "SoftWay Brasil", 
+      activeUsers: 5, 
+      interactions: 48, 
+      modules: { 
+        count: 1, 
+        names: ["CRM Básico"] 
+      },
+      lastActivity: "Há 5 dias" 
+    },
+    { 
+      name: "Conexão Digital", 
+      activeUsers: 4, 
+      interactions: 42, 
+      modules: { 
+        count: 1, 
+        names: ["Gestão de Leads"] 
+      },
+      lastActivity: "Há 5 dias" 
+    },
+    { 
+      name: "DataCore Brasil", 
+      activeUsers: 3, 
+      interactions: 35, 
+      modules: { 
+        count: 1, 
+        names: ["CRM Básico"] 
+      },
+      lastActivity: "Há 6 dias" 
     }
   ];
   
@@ -150,6 +220,20 @@ export const CompanyActivityReports = () => {
     }
   };
 
+  // Report description based on type
+  const getReportDescription = () => {
+    switch (reportType) {
+      case "ai-executions":
+        return "Este relatório apresenta um ranking das empresas ordenado pelo número de execuções de IA realizadas, do maior para o menor valor.";
+      case "user-activity":
+        return "Este relatório apresenta um ranking das empresas ordenado pelo número de usuários ativos na plataforma, do maior para o menor valor.";
+      case "module-usage":
+        return "Este relatório apresenta um ranking das empresas ordenado pela quantidade de módulos contratados, do maior para o menor número.";
+      default:
+        return "";
+    }
+  };
+
   // Pagination calculations
   const totalPages = Math.ceil(companies.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -179,7 +263,10 @@ export const CompanyActivityReports = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h3 className="text-xl font-semibold">{getReportTitle()}</h3>
+        <div>
+          <h3 className="text-xl font-semibold">{getReportTitle()}</h3>
+          <p className="text-sm text-muted-foreground mt-1">{getReportDescription()}</p>
+        </div>
         
         <Select
           value={reportType}
