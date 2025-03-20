@@ -261,7 +261,7 @@ export const ModuleDialog: React.FC<ModuleDialogProps> = ({
                             <Badge 
                               key={area.id} 
                               variant="secondary"
-                              className="px-2.5 py-1 flex items-center bg-[#9b87f5] text-white"
+                              className="px-2.5 py-1 flex items-center bg-[#9b87f5] text-white hover:bg-[#7E69AB] transition-colors"
                             >
                               {area.name}
                               <button 
