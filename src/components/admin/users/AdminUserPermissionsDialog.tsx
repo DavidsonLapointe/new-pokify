@@ -129,7 +129,7 @@ export const AdminUserPermissionsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
+        <ScrollArea className="flex-1 pr-4 h-[50vh] overflow-y-auto">
           <div className="space-y-6 py-4">
             {availableAdminRoutePermissions.map((route) => (
               <div key={route.id} className="space-y-3">
