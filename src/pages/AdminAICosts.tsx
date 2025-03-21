@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CpuIcon } from "lucide-react";
+import { CpuIcon, FilterX } from "lucide-react";
 import { 
   Table, 
   TableHeader, 
@@ -22,6 +22,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Mock data for AI executions - in a real app, this would come from an API
 const mockAIExecutions = [
@@ -90,6 +97,7 @@ const mockAIExecutions = [
 const AdminAICosts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [toolFilter, setToolFilter] = useState("");
 
   // Fetch AI executions data
   const { data: aiExecutions, isLoading } = useQuery({
@@ -101,16 +109,21 @@ const AdminAICosts = () => {
     }
   });
 
-  // Filter executions based on search term and date
+  // Get unique tool names for filter
+  const uniqueToolNames = [...new Set(mockAIExecutions.map(execution => execution.toolName))];
+
+  // Filter executions based on search term, date and tool
   const filteredExecutions = aiExecutions?.filter(execution => {
     const matchesSearch = searchTerm === "" || 
-      execution.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       execution.organizationName.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesDate = dateFilter === "" || 
       format(execution.executionDate, "yyyy-MM-dd") === dateFilter;
     
-    return matchesSearch && matchesDate;
+    const matchesTool = toolFilter === "" || 
+      execution.toolName === toolFilter;
+    
+    return matchesSearch && matchesDate && matchesTool;
   });
 
   // Calculate total cost of all filtered executions
@@ -162,10 +175,27 @@ const AdminAICosts = () => {
           <Label htmlFor="search" className="mb-2">Buscar</Label>
           <Input
             id="search"
-            placeholder="Buscar por ferramenta ou empresa..."
+            placeholder="Buscar por empresa..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+        <div className="w-full sm:w-72">
+          <Label htmlFor="tool" className="mb-2">Ferramenta de IA</Label>
+          <Select
+            value={toolFilter}
+            onValueChange={setToolFilter}
+          >
+            <SelectTrigger id="tool">
+              <SelectValue placeholder="Todas as ferramentas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Todas as ferramentas</SelectItem>
+              {uniqueToolNames.map((tool) => (
+                <SelectItem key={tool} value={tool}>{tool}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="w-full sm:w-72">
           <Label htmlFor="date" className="mb-2">Data de Execução</Label>
@@ -178,12 +208,15 @@ const AdminAICosts = () => {
         </div>
         <div className="flex items-end">
           <Button 
-            variant="outline"
+            variant="cancel"
+            className="flex items-center gap-2"
             onClick={() => {
               setSearchTerm("");
               setDateFilter("");
+              setToolFilter("");
             }}
           >
+            <FilterX className="h-4 w-4" />
             Limpar Filtros
           </Button>
         </div>
@@ -198,7 +231,7 @@ const AdminAICosts = () => {
                 <TableHead className="text-left">Ferramenta de IA</TableHead>
                 <TableHead className="text-left">Data e Hora</TableHead>
                 <TableHead className="text-right">Custo Total</TableHead>
-                <TableHead>Empresa</TableHead>
+                <TableHead className="text-right pr-8">Empresa</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -259,7 +292,7 @@ const AdminAICosts = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
-                    <TableCell>{execution.organizationName}</TableCell>
+                    <TableCell className="text-right">{execution.organizationName}</TableCell>
                   </TableRow>
                 ))
               )}
