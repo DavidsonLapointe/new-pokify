@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { LeadlyLead } from "@/pages/AdminLeads";
 import {
@@ -44,6 +45,7 @@ interface LeadFormData {
   city?: string;
   state?: string;
   zipCode?: string;
+  lossReason?: string;
 }
 
 export const EditLeadDialog = ({
@@ -65,6 +67,7 @@ export const EditLeadDialog = ({
     city: lead.city || "",
     state: lead.state || "",
     zipCode: lead.zipCode || "",
+    lossReason: lead.lossReason || "",
   });
 
   const [previousStatus, setPreviousStatus] = useState(lead.status);
@@ -85,6 +88,7 @@ export const EditLeadDialog = ({
         city: lead.city || "",
         state: lead.state || "",
         zipCode: lead.zipCode || "",
+        lossReason: lead.lossReason || "",
       });
       setPreviousStatus(lead.status);
     }
@@ -121,6 +125,7 @@ export const EditLeadDialog = ({
       city: formData.city,
       state: formData.state,
       zipCode: formData.zipCode,
+      lossReason: formData.lossReason,
     };
 
     onUpdateLead(updatedLead);
@@ -188,6 +193,20 @@ export const EditLeadDialog = ({
                 </SelectContent>
               </Select>
             </div>
+
+            {formData.status === "perda" && (
+              <div className="space-y-2">
+                <Label htmlFor="lossReason">Motivo da Perda</Label>
+                <Input
+                  id="lossReason"
+                  name="lossReason"
+                  value={formData.lossReason || ""}
+                  onChange={handleInputChange}
+                  disabled={previousStatus === "perda"}
+                  placeholder={previousStatus !== "perda" ? "Preencha o motivo após salvar" : ""}
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label>Tipo de Pessoa</Label>
