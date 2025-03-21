@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -27,7 +26,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminPlans from "./pages/AdminPlans";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
-import AdminLeads from "./pages/AdminLeads"; // New import
+import AdminLeads from "./pages/AdminLeads"; 
+import AdminCompany from "./pages/AdminCompany"; // New import
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -44,7 +44,7 @@ import OrganizationSetup from "./pages/OrganizationSetup";
 import OrganizationKnowledgeBase from "./pages/OrganizationKnowledgeBase";
 import OrganizationCredits from "./pages/OrganizationCredits";
 import OrganizationAreas from "./pages/OrganizationAreas";
-import OrganizationUnusedPermissions from "./pages/OrganizationUnusedPermissions"; // Nova importação
+import OrganizationUnusedPermissions from "./pages/OrganizationUnusedPermissions";
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -120,9 +120,10 @@ function AppRoutes() {
           <Route path="plans" element={<AdminPlans />} />
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />
           <Route path="settings" element={<AdminSettings />} />
-          <Route path="leads" element={<AdminLeads />} /> {/* New route */}
+          <Route path="leads" element={<AdminLeads />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
+          <Route path="company" element={<AdminCompany />} />  {/* New route */}
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 
