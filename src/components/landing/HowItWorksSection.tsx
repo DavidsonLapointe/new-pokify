@@ -28,29 +28,29 @@ export function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Input */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="bg-[#E5DEFF] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <FileText className="h-8 w-8 text-[#9b87f5]" />
+            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <FileText className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Múltiplas Fontes de Dados</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileAudio className="h-5 w-5 text-[#9b87f5]" />
+                <FileAudio className="h-5 w-5 text-primary" />
                 <span>Arquivos de áudio e reuniões</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileVideo className="h-5 w-5 text-[#7E69AB]" />
+                <FileVideo className="h-5 w-5 text-primary" />
                 <span>Vídeos e apresentações</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Database className="h-5 w-5 text-[#D946EF]" />
+                <Database className="h-5 w-5 text-primary" />
                 <span>Dados estruturados e não-estruturados</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MessageSquare className="h-5 w-5 text-[#F97316]" />
+                <MessageSquare className="h-5 w-5 text-primary" />
                 <span>Mensagens e interações com clientes</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <BookOpen className="h-5 w-5 text-[#0EA5E9]" />
+                <BookOpen className="h-5 w-5 text-primary" />
                 <span>Documentos e materiais de conhecimento</span>
               </div>
             </div>
@@ -58,11 +58,11 @@ export function HowItWorksSection() {
 
           {/* Processing */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="inline-flex px-3 py-1 rounded-full bg-[#9b87f5]/10 text-[#9b87f5] text-sm font-medium mb-4">
+            <div className="inline-flex px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               Processamento de IA
             </div>
-            <div className="bg-[#D3E4FD] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <Brain className="h-8 w-8 text-[#0EA5E9] animate-pulse" />
+            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <Brain className="h-8 w-8 text-primary animate-pulse" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-2">Inteligência Adaptativa</h3>
             <p className="text-gray-600 text-center text-sm mb-4">
@@ -77,29 +77,29 @@ export function HowItWorksSection() {
 
           {/* Output */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="bg-[#F2FCE2] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <BarChart2 className="h-8 w-8 text-[#84cc16]" />
+            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <BarChart2 className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Resultados para Toda Empresa</h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <TrendingUp className="h-5 w-5 text-[#84cc16]" />
+                <TrendingUp className="h-5 w-5 text-primary" />
                 <span>Leads Qualificados</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <Lightbulb className="h-5 w-5 text-[#F97316]" />
+                <Lightbulb className="h-5 w-5 text-primary" />
                 <span>Insights de Vendas</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <PieChart className="h-5 w-5 text-[#D946EF]" />
+                <PieChart className="h-5 w-5 text-primary" />
                 <span>Métricas Detalhadas</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <CheckCircle className="h-5 w-5 text-[#9b87f5]" />
+                <CheckCircle className="h-5 w-5 text-primary" />
                 <span>Sugestões de Ação</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <BarChart2 className="h-5 w-5 text-[#0EA5E9]" />
+                <BarChart2 className="h-5 w-5 text-primary" />
                 <span>Otimização de Processos</span>
               </li>
             </ul>
