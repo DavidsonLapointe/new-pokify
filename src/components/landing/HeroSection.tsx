@@ -8,8 +8,8 @@ export function HeroSection() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
-    <section className="pt-36 pb-20">
-      <div className="container mx-auto px-8">
+    <section className="pt-44 pb-20">
+      <div className="container mx-auto px-12">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-2 mb-6">
