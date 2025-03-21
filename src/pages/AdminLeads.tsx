@@ -1,9 +1,9 @@
-
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LeadsTable } from "@/components/admin/leads/LeadsTable";
 import { NotesDialog } from "@/components/admin/leads/NotesDialog";
 import { LeadsFilter } from "@/components/admin/leads/LeadsFilter";
+import { LeadsStats } from "@/components/admin/leads/LeadsStats";
 import { mockLeadlyLeads } from "@/mocks/adminLeadsMocks";
 import { toast } from "sonner";
 import {
@@ -51,6 +51,27 @@ const AdminLeads = () => {
   const [statusFilter, setStatusFilter] = useState("todos");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Calculate counts for each status
+  const leadCounts = useMemo(() => {
+    const counts = {
+      contactar: 0,
+      qualificacao: 0,
+      nutricao_mkt: 0,
+      email_onboarding: 0,
+      ganho: 0,
+      perda: 0,
+      total: leads.length
+    };
+    
+    leads.forEach(lead => {
+      if (counts.hasOwnProperty(lead.status)) {
+        counts[lead.status as keyof typeof counts] += 1;
+      }
+    });
+    
+    return counts;
+  }, [leads]);
+  
   const handleOpenNotes = (lead: LeadlyLead) => {
     setSelectedLead(lead);
     setIsNotesDialogOpen(true);
@@ -233,6 +254,9 @@ const AdminLeads = () => {
           Gerencie e acompanhe todos os leads capturados através da landing page do seu produto
         </p>
       </div>
+
+      {/* Lead Stats Cards */}
+      <LeadsStats counts={leadCounts} />
 
       <Card className="border-0 shadow-sm">
         <CardContent className="p-6">
