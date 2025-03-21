@@ -223,7 +223,9 @@ const AdminAICosts = () => {
                 // Data rows
                 filteredExecutions?.map((execution) => (
                   <TableRow key={execution.id}>
-                    <TableCell>{execution.toolName}</TableCell>
+                    <TableCell className="font-medium text-foreground">
+                      {execution.toolName}
+                    </TableCell>
                     <TableCell>
                       {format(execution.executionDate, "dd/MM/yyyy HH:mm")}
                     </TableCell>
