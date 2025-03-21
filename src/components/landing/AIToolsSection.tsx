@@ -2,13 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ChevronLeft, ChevronRight, Tag } from "lucide-react";
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { toolsData } from "@/components/organization/ai-tools/data/toolsData";
 import { Card, CardContent } from "@/components/ui/card";
@@ -87,26 +80,26 @@ export function AIToolsSection() {
           Descubra como nossa plataforma pode transformar cada departamento da sua empresa com soluções de IA especializadas
         </p>
 
-        {/* Tool tags carousel - now showing tool names */}
+        {/* Tool tags in multiple lines */}
         <div className="mb-12">
-          <Carousel className="max-w-4xl mx-auto">
-            <CarouselContent>
-              {allTags.map((tag) => (
-                <CarouselItem key={tag} className="basis-auto">
-                  <Button
-                    variant={selectedTag === tag ? "default" : "outline"}
-                    onClick={() => handleTagChange(tag)}
-                    className="mx-1 flex items-center gap-1"
-                  >
-                    <Tag className="h-3.5 w-3.5 mr-1" />
-                    {tag}
-                  </Button>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-12 h-9 w-9 bg-white" />
-            <CarouselNext className="hidden md:flex -right-12 h-9 w-9 bg-white" />
-          </Carousel>
+          <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+            {allTags.map((tag) => (
+              <Button
+                key={tag}
+                variant={selectedTag === tag ? "default" : "outline"}
+                onClick={() => handleTagChange(tag)}
+                className={cn(
+                  "px-3 py-1 h-8 text-sm rounded-full flex items-center gap-1",
+                  selectedTag === tag 
+                    ? "bg-primary text-white hover:bg-primary/90" 
+                    : "border-primary text-primary hover:bg-primary/10"
+                )}
+              >
+                <Tag className="h-3 w-3" />
+                {tag}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {filteredTools.length > 0 ? (
@@ -119,7 +112,6 @@ export function AIToolsSection() {
                   alt={activeTool.title}
                   className="w-full h-full object-cover"
                 />
-                {/* Removed the text overlay from the image */}
                 
                 {/* Navigation buttons */}
                 <div className="absolute top-1/2 left-0 -translate-y-1/2 flex justify-between w-full px-4">
@@ -225,7 +217,6 @@ export function AIToolsSection() {
                         <p className="text-sm text-primary font-medium">+ {areaTools.length - 4} outras</p>
                       )}
                     </div>
-                    {/* Removed the "Ver ferramentas" button */}
                   </CardContent>
                 </Card>
               );
