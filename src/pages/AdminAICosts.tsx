@@ -16,11 +16,18 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Mock data for AI executions - in a real app, this would come from an API
 const mockAIExecutions = [
   {
     id: "1",
+    toolName: "Lead Analyzer",
     modelName: "GPT-4o",
     organizationName: "Acme Inc",
     executionDate: new Date("2023-09-15T10:30:00"),
@@ -32,6 +39,7 @@ const mockAIExecutions = [
   },
   {
     id: "2",
+    toolName: "Call Transcriber",
     modelName: "Claude 3",
     organizationName: "TechCorp",
     executionDate: new Date("2023-09-15T14:45:00"),
@@ -43,6 +51,7 @@ const mockAIExecutions = [
   },
   {
     id: "3",
+    toolName: "Content Summarizer",
     modelName: "GPT-4o-mini",
     organizationName: "Global Services",
     executionDate: new Date("2023-09-14T09:15:00"),
@@ -54,6 +63,7 @@ const mockAIExecutions = [
   },
   {
     id: "4",
+    toolName: "Lead Analyzer",
     modelName: "GPT-4o",
     organizationName: "Acme Inc",
     executionDate: new Date("2023-09-14T16:20:00"),
@@ -65,6 +75,7 @@ const mockAIExecutions = [
   },
   {
     id: "5",
+    toolName: "Knowledge Base Query",
     modelName: "Claude 3",
     organizationName: "DataSystems",
     executionDate: new Date("2023-09-13T11:05:00"),
@@ -93,7 +104,7 @@ const AdminAICosts = () => {
   // Filter executions based on search term and date
   const filteredExecutions = aiExecutions?.filter(execution => {
     const matchesSearch = searchTerm === "" || 
-      execution.modelName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      execution.toolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       execution.organizationName.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesDate = dateFilter === "" || 
@@ -151,7 +162,7 @@ const AdminAICosts = () => {
           <Label htmlFor="search" className="mb-2">Buscar</Label>
           <Input
             id="search"
-            placeholder="Buscar por modelo ou empresa..."
+            placeholder="Buscar por ferramenta ou empresa..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -184,11 +195,10 @@ const AdminAICosts = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Modelo</TableHead>
-                <TableHead>Empresa</TableHead>
+                <TableHead>Ferramenta de IA</TableHead>
                 <TableHead>Data e Hora</TableHead>
-                <TableHead>LLMs Utilizadas</TableHead>
                 <TableHead className="text-right">Custo Total</TableHead>
+                <TableHead>Empresa</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,17 +206,16 @@ const AdminAICosts = () => {
                 // Loading state
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
+                    <TableCell><Skeleton className="h-6 w-36" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-40" /></TableCell>
                     <TableCell><Skeleton className="h-6 w-24" /></TableCell>
                     <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-48" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                   </TableRow>
                 ))
               ) : filteredExecutions?.length === 0 ? (
                 // Empty state
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
                     Nenhuma execução de IA encontrada com os filtros atuais
                   </TableCell>
                 </TableRow>
@@ -214,24 +223,41 @@ const AdminAICosts = () => {
                 // Data rows
                 filteredExecutions?.map((execution) => (
                   <TableRow key={execution.id}>
-                    <TableCell>{execution.modelName}</TableCell>
-                    <TableCell>{execution.organizationName}</TableCell>
+                    <TableCell>{execution.toolName}</TableCell>
                     <TableCell>
                       {format(execution.executionDate, "dd/MM/yyyy HH:mm")}
                     </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        {execution.llmDetails.map((llm, index) => (
-                          <div key={index} className="flex justify-between text-sm">
-                            <span>{llm.name}</span>
-                            <span className="text-muted-foreground">${llm.cost.toFixed(4)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </TableCell>
                     <TableCell className="text-right font-medium">
-                      ${execution.totalCost.toFixed(4)}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="cursor-help">${execution.totalCost.toFixed(4)}</span>
+                          </TooltipTrigger>
+                          <TooltipContent className="w-64 p-0">
+                            <div className="bg-white rounded-md shadow-md p-3">
+                              <p className="font-semibold text-sm mb-2">Detalhamento de custos:</p>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span className="font-medium">Modelo:</span>
+                                  <span>{execution.modelName}</span>
+                                </div>
+                                {execution.llmDetails.map((llm, index) => (
+                                  <div key={index} className="flex justify-between text-sm">
+                                    <span>{llm.name}:</span>
+                                    <span>${llm.cost.toFixed(4)}</span>
+                                  </div>
+                                ))}
+                                <div className="flex justify-between text-sm border-t pt-1 mt-1 font-medium">
+                                  <span>Total:</span>
+                                  <span>${execution.totalCost.toFixed(4)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </TableCell>
+                    <TableCell>{execution.organizationName}</TableCell>
                   </TableRow>
                 ))
               )}
