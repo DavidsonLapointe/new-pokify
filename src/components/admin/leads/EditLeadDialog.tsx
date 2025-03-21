@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { LeadlyLead } from "@/pages/AdminLeads";
 import {
@@ -137,7 +136,14 @@ export const EditLeadDialog = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-md mx-auto">
+        <DialogContent 
+          className={`
+            max-w-md 
+            ${formData.personType === 'pj' ? 'max-h-[90vh]' : 'max-h-[70vh]'}
+            mx-auto 
+            overflow-y-auto
+          `}
+        >
           <DialogHeader>
             <DialogTitle>Editar Lead</DialogTitle>
           </DialogHeader>
