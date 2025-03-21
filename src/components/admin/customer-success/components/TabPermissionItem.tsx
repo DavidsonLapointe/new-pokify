@@ -46,8 +46,7 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
           </TooltipTrigger>
           <TooltipContent 
             side="left" 
-            align="center" 
-            alignOffset={-30} 
+            align="start" 
             className="z-50"
             sideOffset={5}
           >

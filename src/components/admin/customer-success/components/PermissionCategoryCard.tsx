@@ -61,8 +61,7 @@ export const PermissionCategoryCard = ({
               </TooltipTrigger>
               <TooltipContent 
                 side="left" 
-                align="center" 
-                alignOffset={-30} 
+                align="start" 
                 className="z-50"
                 sideOffset={5}
               >
