@@ -16,6 +16,7 @@ export interface ModuleAverageCost {
   costPeriods: Array<{
     days: number;
     avgCost: number;
+    llmCosts: Array<{ name: string; avgCost: number }>;
   }>;
 }
 
@@ -56,9 +57,13 @@ export const calculateAverageCosts = (
       const totalCost = periodExecutions.reduce((sum, exec) => sum + exec.totalCost, 0);
       const avgCost = periodExecutions.length > 0 ? totalCost / periodExecutions.length : 0;
       
+      // Calculate average LLM costs
+      const llmCosts = calculateAverageLLMCosts(periodExecutions);
+      
       return {
         days,
-        avgCost
+        avgCost,
+        llmCosts
       };
     });
     
@@ -66,6 +71,28 @@ export const calculateAverageCosts = (
       moduleName,
       costPeriods: moduleCosts,
       operationDays
+    };
+  });
+};
+
+export const calculateAverageLLMCosts = (executions: AIExecution[]): Array<{ name: string; avgCost: number }> => {
+  if (executions.length === 0) return [];
+  
+  // Get all unique LLM names from all executions
+  const llmNames = [...new Set(executions.flatMap(exec => exec.llmDetails.map(detail => detail.name)))];
+  
+  // Calculate average cost for each LLM
+  return llmNames.map(llmName => {
+    const llmCosts = executions.map(exec => 
+      exec.llmDetails.find(detail => detail.name === llmName)?.cost || 0
+    );
+    
+    const totalLLMCost = llmCosts.reduce((sum, cost) => sum + cost, 0);
+    const avgLLMCost = totalLLMCost / executions.length;
+    
+    return {
+      name: llmName,
+      avgCost: avgLLMCost
     };
   });
 };
