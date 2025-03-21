@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleCarousel } from "@/components/organization/modules/ModuleCarousel";
 import { ModuleDetails } from "@/components/organization/modules/ModuleDetails";
