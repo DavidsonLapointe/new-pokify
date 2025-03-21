@@ -190,7 +190,7 @@ const AdminAICosts = () => {
               <SelectValue placeholder="Todas as ferramentas" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as ferramentas</SelectItem>
+              <SelectItem value="all">Todas as ferramentas</SelectItem>
               {uniqueToolNames.map((tool) => (
                 <SelectItem key={tool} value={tool}>{tool}</SelectItem>
               ))}
