@@ -1,6 +1,7 @@
 
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { AIToolsSection } from "@/components/landing/AIToolsSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
@@ -12,6 +13,7 @@ export default function Index() {
     <div className="min-h-screen bg-gradient-to-b from-[#F1F0FB] to-white">
       <Navbar />
       <HeroSection />
+      <AIToolsSection />
       <HowItWorksSection />
       <FeaturesSection />
       <TestimonialsSection />
