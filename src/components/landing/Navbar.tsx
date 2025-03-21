@@ -7,7 +7,7 @@ export function Navbar() {
 
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm fixed w-full top-0 z-50">
-      <div className="container mx-auto px-8 py-4">
+      <div className="container mx-auto px-12 py-4">
         <div className="flex items-center">
           <div className="font-bold text-2xl text-gray-900 mr-auto">Leadly</div>
           
@@ -19,7 +19,7 @@ export function Navbar() {
             <a href="#" className="text-gray-600 hover:text-primary transition-colors">Contato</a>
           </div>
           
-          <Button onClick={() => navigate("/auth")} className="mr-8">
+          <Button onClick={() => navigate("/auth")} className="mr-12">
             Acessar Plataforma
           </Button>
         </div>
