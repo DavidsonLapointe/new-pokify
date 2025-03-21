@@ -44,7 +44,7 @@ export const PermissionCategoryCard = ({
         </h3>
         
         {!moduleHasTabs && (
-          <TooltipProvider>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Badge 
@@ -61,9 +61,9 @@ export const PermissionCategoryCard = ({
               </TooltipTrigger>
               <TooltipContent 
                 side="left" 
-                align="start" 
+                align="center"
                 className="z-50"
-                sideOffset={5}
+                sideOffset={-5}
               >
                 <UserTooltip users={currentPermission.users} />
               </TooltipContent>

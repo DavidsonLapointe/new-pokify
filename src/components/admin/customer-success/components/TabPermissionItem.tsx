@@ -29,7 +29,7 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
         <span className={cn("text-sm", hasNoUsers && "text-red-500 font-medium")}>{label}</span>
       </div>
       
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Badge 
@@ -46,9 +46,9 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
           </TooltipTrigger>
           <TooltipContent 
             side="left" 
-            align="start" 
+            align="center"
             className="z-50"
-            sideOffset={5}
+            sideOffset={-5}
           >
             <UserTooltip users={users} />
           </TooltipContent>
