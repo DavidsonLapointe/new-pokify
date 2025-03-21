@@ -67,7 +67,7 @@ export function AIToolsSection() {
     );
   };
 
-  // Handle tag selection
+  // Handle tag selection - clicking a tag directly shows the specific tool
   const handleTagChange = (tag: string) => {
     setSelectedTag(tag);
     // Reset to first tool when changing tag (handled by useEffect)
@@ -83,7 +83,7 @@ export function AIToolsSection() {
           Descubra como nossa plataforma pode transformar cada departamento da sua empresa com soluções de IA especializadas
         </p>
 
-        {/* Tool tags in multiple lines - without "Todas" */}
+        {/* Tool tags in multiple lines */}
         <div className="mb-12">
           <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
             {allTags.map((tag) => (
@@ -105,91 +105,89 @@ export function AIToolsSection() {
           </div>
         </div>
 
-        {filteredTools.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Tool image - now without overlay text */}
-            <div className="order-2 md:order-1">
-              <div className="relative rounded-xl overflow-hidden shadow-xl h-[350px] md:h-[450px]">
-                <img
-                  src={toolImages[activeTool.id as keyof typeof toolImages] || "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
-                  alt={activeTool.title}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Navigation buttons */}
-                <div className="absolute top-1/2 left-0 -translate-y-1/2 flex justify-between w-full px-4">
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="rounded-full bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
-                    onClick={handlePrevTool}
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="rounded-full bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
-                    onClick={handleNextTool}
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
-                </div>
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          {/* Tool image - now without overlay text */}
+          <div className="order-2 md:order-1">
+            <div className="relative rounded-xl overflow-hidden shadow-xl h-[350px] md:h-[450px]">
+              <img
+                src={toolImages[activeTool.id as keyof typeof toolImages] || "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                alt={activeTool.title}
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Navigation buttons */}
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 flex justify-between w-full px-4">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="rounded-full bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                  onClick={handlePrevTool}
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="rounded-full bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                  onClick={handleNextTool}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
               </div>
             </div>
+          </div>
 
-            {/* Tool details */}
-            <div className="order-1 md:order-2">
-              <div className="bg-primary/5 p-8 rounded-xl border border-primary/10">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="bg-primary/10 w-14 h-14 rounded-full flex items-center justify-center">
-                    {activeTool.icon && <activeTool.icon className="h-7 w-7 text-primary" />}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold">{activeTool.title}</h3>
-                    <p className="text-gray-600">{activeTool.description}</p>
-                  </div>
+          {/* Tool details */}
+          <div className="order-1 md:order-2">
+            <div className="bg-primary/5 p-8 rounded-xl border border-primary/10">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-primary/10 w-14 h-14 rounded-full flex items-center justify-center">
+                  {activeTool.icon && <activeTool.icon className="h-7 w-7 text-primary" />}
                 </div>
-
-                <div className="mb-6">
-                  <h4 className="font-medium text-lg mb-3">Descrição Detalhada</h4>
-                  <p className="text-gray-700 mb-4">{activeTool.detailedDescription}</p>
+                <div>
+                  <h3 className="text-2xl font-bold">{activeTool.title}</h3>
+                  <p className="text-gray-600">{activeTool.description}</p>
                 </div>
+              </div>
 
-                <div className="mb-6">
-                  <h4 className="font-medium text-lg mb-3">Principais Benefícios</h4>
-                  <ul className="space-y-2">
-                    {activeTool.benefits?.slice(0, 3).map((benefit, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                        <span className="text-gray-700">{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="mb-6">
+                <h4 className="font-medium text-lg mb-3">Descrição Detalhada</h4>
+                <p className="text-gray-700 mb-4">{activeTool.detailedDescription}</p>
+              </div>
 
-                <div className="flex justify-center mt-8">
-                  <div className="flex items-center gap-2">
-                    {filteredTools.map((_, index) => (
-                      <div 
-                        key={index}
-                        className={cn(
-                          "w-2.5 h-2.5 rounded-full cursor-pointer transition-all",
-                          index === activeToolIndex ? "bg-primary scale-125" : "bg-primary/30"
-                        )}
-                        onClick={() => setActiveToolIndex(index)}
-                      />
-                    ))}
-                  </div>
+              <div className="mb-6">
+                <h4 className="font-medium text-lg mb-3">Principais Benefícios</h4>
+                <ul className="space-y-2">
+                  {activeTool.benefits?.slice(0, 3).map((benefit, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                      <span className="text-gray-700">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Navigation dots - always visible */}
+              <div className="flex justify-center mt-8">
+                <div className="flex items-center gap-2">
+                  {toolsData.map((tool, index) => (
+                    <div 
+                      key={index}
+                      className={cn(
+                        "w-2.5 h-2.5 rounded-full cursor-pointer transition-all",
+                        tool.title === activeTool.title ? "bg-primary scale-125" : "bg-primary/30"
+                      )}
+                      onClick={() => {
+                        setSelectedTag(tool.title);
+                        setActiveToolIndex(0);
+                      }}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        ) : (
-          <div className="text-center p-8 bg-gray-50 rounded-lg">
-            <p className="text-gray-600">Nenhuma ferramenta encontrada com esta tag.</p>
-          </div>
-        )}
+        </div>
         
         {/* Tools by departments in grid layout - now without buttons */}
         <div className="mt-16">
