@@ -54,7 +54,7 @@ export const StatCard = ({
             <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
               <Icon className={`w-4 h-4 ${color}`} />
             </div>
-            <h3 className="text-xl font-semibold mt-1">{value}</h3>
+            <h3 className="text-xl font-semibold mt-1 min-w-[1.5rem] text-center">{value}</h3>
           </div>
         </div>
       </div>

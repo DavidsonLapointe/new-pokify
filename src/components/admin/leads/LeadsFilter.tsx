@@ -29,6 +29,11 @@ export const LeadsFilter = ({
   // Debounce search input to avoid excessive re-renders
   const [inputValue, setInputValue] = useState(searchQuery);
 
+  // Update local input value when searchQuery prop changes
+  useEffect(() => {
+    setInputValue(searchQuery);
+  }, [searchQuery]);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onSearchChange(inputValue);
@@ -36,6 +41,11 @@ export const LeadsFilter = ({
 
     return () => clearTimeout(timeoutId);
   }, [inputValue, onSearchChange]);
+
+  const handleClearFilters = () => {
+    setInputValue(""); // Reset the local input value
+    onClearFilters(); // Call the parent's clear function
+  };
 
   return (
     <div className="mb-6 space-y-4">
@@ -67,8 +77,8 @@ export const LeadsFilter = ({
           </SelectContent>
         </Select>
         <Button 
-          variant="cancel"
-          onClick={onClearFilters}
+          variant="outline"
+          onClick={handleClearFilters}
           className="flex items-center gap-2"
         >
           <FilterX className="h-4 w-4" />
