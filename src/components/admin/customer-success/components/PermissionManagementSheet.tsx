@@ -4,8 +4,7 @@ import {
   SheetContent, 
   SheetHeader, 
   SheetTitle, 
-  SheetDescription, 
-  SheetFooter 
+  SheetDescription 
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -92,8 +91,8 @@ export const PermissionManagementSheet = ({
   };
 
   return (
-    <SheetContent className="sm:max-w-md flex flex-col h-full">
-      <SheetHeader className="mb-3">
+    <SheetContent className="sm:max-w-md flex flex-col h-[500px] max-h-[80vh]">
+      <SheetHeader className="mb-2">
         <SheetTitle className="text-base">Gerenciar Acesso - {label}</SheetTitle>
         <SheetDescription className="text-xs">
           Defina quais usuários têm acesso a esta função. Usuários inativos não são exibidos.
@@ -105,8 +104,8 @@ export const PermissionManagementSheet = ({
           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <ScrollArea className="flex-grow pr-2 mb-4">
-          <div className="space-y-3">
+        <ScrollArea className="flex-grow pr-2 mb-3">
+          <div className="space-y-2">
             {activeUsers.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-4">
                 Nenhum usuário ativo ou pendente encontrado
