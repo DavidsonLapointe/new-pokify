@@ -1,15 +1,10 @@
 
-import { FolderTree } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { UserTooltip } from "./UserTooltip";
 import { TabPermissionItem } from "./TabPermissionItem";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { PermissionManagementSheet } from "./PermissionManagementSheet";
 import { 
   PermissionMap, 
   getTabPermissions, 
@@ -44,29 +39,30 @@ export const PermissionCategoryCard = ({
         </h3>
         
         {!moduleHasTabs && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge 
-                  variant="outline" 
-                  className={cn(
-                    "cursor-help",
-                    hasNoUsers 
-                      ? "bg-red-100 text-red-500 border-red-200" 
-                      : "bg-primary/10 text-primary border-primary/20"
-                  )}
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant="outline" 
+              className={cn(
+                hasNoUsers 
+                  ? "bg-red-100 text-red-500 border-red-200" 
+                  : "bg-primary/10 text-primary border-primary/20"
+              )}
+            >
+              {currentPermission.count}
+            </Badge>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <button 
+                  className="text-primary hover:text-primary/80 transition-colors"
+                  aria-label="Ver e gerenciar usuários com acesso a esta função"
                 >
-                  {currentPermission.count}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent 
-                side="left"
-                className="z-50"
-              >
-                <UserTooltip users={currentPermission.users} />
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  <Eye size={18} />
+                </button>
+              </SheetTrigger>
+              <PermissionManagementSheet permissionKey={category} label={currentPermission.label} />
+            </Sheet>
+          </div>
         )}
       </div>
       

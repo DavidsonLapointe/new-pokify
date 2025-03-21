@@ -2,9 +2,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { User } from "@/types";
-import { Shield, Users } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getPermissionData } from "@/components/admin/customer-success/utils/permission-utils";
 import { PermissionCategoryCard } from "@/components/admin/customer-success/components/PermissionCategoryCard";

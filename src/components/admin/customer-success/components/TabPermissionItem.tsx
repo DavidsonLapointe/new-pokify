@@ -1,15 +1,10 @@
 
-import { ChevronRight } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { UserTooltip } from "./UserTooltip";
 import { PermissionWithUsers } from "../utils/permission-utils";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { PermissionManagementSheet } from "./PermissionManagementSheet";
 
 interface TabPermissionItemProps {
   tabKey: string;
@@ -25,33 +20,33 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
   return (
     <li className="flex justify-between items-center px-2 py-1 rounded hover:bg-gray-50">
       <div className="flex items-center gap-1.5">
-        <ChevronRight className="h-3 w-3 text-muted-foreground" />
         <span className={cn("text-sm", hasNoUsers && "text-red-500 font-medium")}>{label}</span>
       </div>
       
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
-              className={cn(
-                "cursor-help",
-                hasNoUsers 
-                  ? "bg-red-100 text-red-500 border-red-200" 
-                  : "bg-primary/10 text-primary border-primary/20"
-              )}
+      <div className="flex items-center gap-2">
+        <Badge 
+          variant="outline" 
+          className={cn(
+            hasNoUsers 
+              ? "bg-red-100 text-red-500 border-red-200" 
+              : "bg-primary/10 text-primary border-primary/20"
+          )}
+        >
+          {count}
+        </Badge>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <button 
+              className="text-primary hover:text-primary/80 transition-colors"
+              aria-label="Ver e gerenciar usuários com acesso a esta função"
             >
-              {count}
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent 
-            side="left" 
-            className="z-50"
-          >
-            <UserTooltip users={users} />
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+              <Eye size={18} />
+            </button>
+          </SheetTrigger>
+          <PermissionManagementSheet permissionKey={tabKey} label={label} />
+        </Sheet>
+      </div>
     </li>
   );
 };
