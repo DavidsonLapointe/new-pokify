@@ -137,7 +137,7 @@ const AdminAICosts = () => {
           <Label htmlFor="search" className="mb-2">Buscar</Label>
           <Input
             id="search"
-            placeholder="Buscar por empresa..."
+            placeholder="Buscar por empresa ou CNPJ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -183,7 +183,7 @@ const AdminAICosts = () => {
                 <TableHead className="text-left">Ferramenta de IA</TableHead>
                 <TableHead className="text-left">Data e Hora</TableHead>
                 <TableHead className="text-right">Custo Total</TableHead>
-                <TableHead className="text-right pr-8">Empresa</TableHead>
+                <TableHead className="text-left">Empresa</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -244,7 +244,7 @@ const AdminAICosts = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
-                    <TableCell className="text-right">{execution.organizationName}</TableCell>
+                    <TableCell className="text-left">{execution.organizationName}</TableCell>
                   </TableRow>
                 ))
               )}
