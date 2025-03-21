@@ -69,14 +69,14 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
     const config = statusConfig[status] || { color: "bg-gray-100 text-gray-800", label: status, description: "" };
 
     return (
-      <TooltipProvider delayDuration={300}>
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Badge className={`${config.color} hover:bg-opacity-80 cursor-help`}>
               {config.label}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent className="bg-white p-2 shadow-md border rounded-md max-w-xs">
+          <TooltipContent side="top" align="center" className="z-50 bg-white p-2 shadow-md border rounded-md max-w-xs text-gray-800">
             <p className="text-sm font-medium">{config.description}</p>
           </TooltipContent>
         </Tooltip>
