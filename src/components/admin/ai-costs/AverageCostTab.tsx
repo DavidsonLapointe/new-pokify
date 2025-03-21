@@ -3,14 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import ModuleCostCard from "./ModuleCostCard";
 import { calculateAverageCosts, getOperationDays, type AIExecution } from "./utils";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 
 const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] }) => {
-  // Fetch exchange rate
-  const { exchangeRate, isLoading: isLoadingExchangeRate } = useExchangeRate();
-  
   // Fetch AI executions data
-  const { data: aiExecutions, isLoading: isLoadingExecutions } = useQuery({
+  const { data: aiExecutions, isLoading } = useQuery({
     queryKey: ['ai-executions'],
     queryFn: async () => {
       // In a real app, this would be an API call
@@ -29,9 +25,6 @@ const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] 
   const moduleAverageCosts = aiExecutions 
     ? calculateAverageCosts(aiExecutions, periodDays)
     : [];
-  
-  // Show loading state if either data is loading
-  const isLoading = isLoadingExecutions || isLoadingExchangeRate;
   
   if (isLoading) {
     return (
@@ -53,7 +46,6 @@ const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] 
           moduleName={module.moduleName}
           costPeriods={module.costPeriods}
           operationDays={operationDays}
-          exchangeRate={exchangeRate}
         />
       ))}
       

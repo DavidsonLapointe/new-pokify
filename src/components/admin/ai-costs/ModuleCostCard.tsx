@@ -10,15 +10,9 @@ interface ModuleCostCardProps {
   moduleName: string;
   costPeriods: CostPeriod[];
   operationDays: number;
-  exchangeRate: number;
 }
 
-const ModuleCostCard = ({ 
-  moduleName, 
-  costPeriods, 
-  operationDays,
-  exchangeRate
-}: ModuleCostCardProps) => {
+const ModuleCostCard = ({ moduleName, costPeriods, operationDays }: ModuleCostCardProps) => {
   return (
     <Card className="w-full">
       <CardContent className="p-6">
@@ -33,15 +27,7 @@ const ModuleCostCard = ({
                     ? `Últimos ${period.days} dias` 
                     : `Últimos ${period.days} dias`}:
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    ${period.avgCost.toFixed(4)}
-                  </span>
-                  <span className="text-muted-foreground">|</span>
-                  <span className="font-medium">
-                    R$ {(period.avgCost * exchangeRate).toFixed(2)}
-                  </span>
-                </div>
+                <span className="font-medium">${period.avgCost.toFixed(4)}</span>
               </div>
             ) : null
           ))}
