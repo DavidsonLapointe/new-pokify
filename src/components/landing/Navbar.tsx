@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LoginModal from "@/components/auth/LoginModal";
+import { UserProvider } from "@/contexts/UserContext";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -39,19 +40,19 @@ export function Navbar() {
             </div>
             
             <div className="hidden md:flex items-center space-x-8 mr-12">
-              <a href="#" className={`hover:text-primary-light transition-colors ${
+              <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Soluções</a>
-              <a href="#" className={`hover:text-primary-light transition-colors ${
+              <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Preços</a>
-              <a href="#" className={`hover:text-primary-light transition-colors ${
+              <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Recursos</a>
-              <a href="#" className={`hover:text-primary-light transition-colors ${
+              <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Sobre</a>
-              <a href="#" className={`hover:text-primary-light transition-colors ${
+              <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Contato</a>
             </div>
@@ -69,10 +70,12 @@ export function Navbar() {
         </div>
       </nav>
 
-      <LoginModal 
-        open={loginModalOpen}
-        onOpenChange={setLoginModalOpen}
-      />
+      <UserProvider>
+        <LoginModal 
+          open={loginModalOpen}
+          onOpenChange={setLoginModalOpen}
+        />
+      </UserProvider>
     </>
   );
 }
