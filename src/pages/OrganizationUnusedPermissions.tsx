@@ -90,15 +90,6 @@ const OrganizationUnusedPermissions = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <CardHeader className="p-0 pb-3">
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary/80" />
-              Distribuição de Permissões
-            </CardTitle>
-            <CardDescription>
-              {user?.organization?.name || "Empresa"} - Visualização de permissões por função
-            </CardDescription>
-          </CardHeader>
           <ScrollArea className="h-[calc(100vh-250px)] pr-4">
             <div className="space-y-6">
               {mainCategories.map(category => (
