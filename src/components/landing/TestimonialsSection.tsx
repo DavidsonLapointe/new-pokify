@@ -24,35 +24,35 @@ const testimonials: Testimonial[] = [
     role: "Gerente de Vendas",
     company: "TechCorp",
     image: "/photo-1519389950473-47ba0277781c",
-    text: "O Leadly transformou completamente nossa forma de avaliar chamadas. Aumentamos nossas conversões em 40% em apenas 3 meses de uso!"
+    text: "O Leadly transformou completamente nosso departamento de vendas. Além da análise de chamadas, as ferramentas de IA para prospecção nos ajudaram a aumentar conversões em 40%!"
   },
   {
     name: "Carlos Santos",
-    role: "Diretor Comercial",
-    company: "InnovaSales",
+    role: "Diretor de Operações",
+    company: "InnovaSys",
     image: "/photo-1649972904349-6e44c42644a7",
-    text: "A análise automática nos ajudou a identificar pontos de melhoria que nem sabíamos que existiam. Nosso time está muito mais produtivo."
+    text: "Implementamos o Leadly em três departamentos diferentes e os resultados foram surpreendentes. A eficiência operacional aumentou significativamente com a automação de processos."
   },
   {
     name: "Marina Costa",
-    role: "Supervisora de Equipe",
+    role: "Diretora de RH",
     company: "VendaMais",
     image: "/photo-1581091226825-a6a2a5aee158",
-    text: "Economizamos horas de trabalho manual e melhoramos a qualidade das nossas análises. O retorno sobre o investimento foi impressionante!"
+    text: "As ferramentas de IA do Leadly para recrutamento e desenvolvimento de talentos mudaram nossa maneira de trabalhar. Economizamos tempo e melhoramos a qualidade das contratações."
   },
   {
     name: "Pedro Almeida",
     role: "CEO",
     company: "SalesForce",
     image: "/photo-1486312338219-ce68d2c6f44d",
-    text: "A plataforma é incrivelmente intuitiva e os insights gerados pela IA são muito precisos. Recomendo fortemente para qualquer equipe de vendas."
+    text: "A integração da IA em diversos setores da empresa aumentou nossa produtividade em 30%. A plataforma é incrivelmente intuitiva e adaptável às necessidades específicas de cada equipe."
   },
   {
     name: "Juliana Torres",
-    role: "Head de Vendas",
+    role: "Diretora de Marketing",
     company: "TechSales",
     image: "/photo-1519389950473-47ba0277781c",
-    text: "Desde que implementamos o Leadly, nossa equipe melhorou significativamente a taxa de conversão. Os relatórios automáticos são fantásticos!"
+    text: "As ferramentas de análise de dados e geração de conteúdo do Leadly revolucionaram nossas estratégias de marketing. Os insights automatizados nos ajudaram a direcionar campanhas com muito mais precisão."
   }
 ];
 
@@ -64,7 +64,7 @@ export function TestimonialsSection() {
           O que nossos clientes dizem
         </h2>
         <p className="text-xl text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-          Descubra como empresas estão transformando suas vendas com nossa plataforma
+          Descubra como empresas estão transformando seus departamentos com nossa plataforma de IA
         </p>
         
         <Carousel className="max-w-5xl mx-auto">

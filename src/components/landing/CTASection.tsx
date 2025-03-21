@@ -11,10 +11,10 @@ export function CTASection() {
     <section className="py-20 bg-primary text-white">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-4xl font-bold mb-4">
-          Pronto para automatizar seu processo de vendas?
+          Pronto para transformar sua empresa com IA?
         </h2>
         <p className="text-xl mb-8 opacity-90">
-          Junte-se a centenas de empresas que já transformaram suas vendas com o Leadly
+          Junte-se a centenas de empresas que já aumentaram sua eficiência e produtividade com o Leadly
         </p>
         <Button 
           size="lg" 

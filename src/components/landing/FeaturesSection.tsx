@@ -1,5 +1,5 @@
 
-import { Clock, Target, Link } from "lucide-react";
+import { Clock, Target, Link, BrainCircuit, Shield, Zap } from "lucide-react";
 
 export function FeaturesSection() {
   return (
@@ -15,16 +15,16 @@ export function FeaturesSection() {
             </div>
             <h3 className="text-xl font-semibold mb-4">Economia de Tempo</h3>
             <p className="text-gray-600">
-              Automatize suas análises e foque no que realmente importa: fechar negócios.
+              Automatize tarefas repetitivas em todos os departamentos e libere sua equipe para atividades estratégicas.
             </p>
           </div>
           <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
             <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-6">
-              <Target className="h-6 w-6 text-primary" />
+              <BrainCircuit className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-4">Maior Precisão</h3>
+            <h3 className="text-xl font-semibold mb-4">IA Avançada</h3>
             <p className="text-gray-600">
-              Nossa IA garante análises precisas e consistentes em todas as chamadas.
+              Modelos de IA de última geração que se adaptam às necessidades específicas de cada departamento.
             </p>
           </div>
           <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
@@ -33,7 +33,34 @@ export function FeaturesSection() {
             </div>
             <h3 className="text-xl font-semibold mb-4">Integração Total</h3>
             <p className="text-gray-600">
-              Conecte-se facilmente com suas ferramentas existentes de CRM e vendas.
+              Conecta-se facilmente com suas ferramentas existentes, como CRM, ERP e plataformas de colaboração.
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-6">
+              <Target className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Personalização</h3>
+            <p className="text-gray-600">
+              Ferramentas adaptáveis às necessidades específicas de cada área da sua empresa.
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-6">
+              <Shield className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Segurança</h3>
+            <p className="text-gray-600">
+              Proteção de dados rigorosa e conformidade com regulamentações de privacidade.
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-6">
+              <Zap className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Escalabilidade</h3>
+            <p className="text-gray-600">
+              Cresce com seu negócio, atendendo desde startups até grandes corporações.
             </p>
           </div>
         </div>

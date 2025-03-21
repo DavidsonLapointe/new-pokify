@@ -1,5 +1,5 @@
 
-import { FileText, Brain, BarChart2, FileAudio, FileVideo } from "lucide-react";
+import { FileText, Brain, BarChart2, FileAudio, FileVideo, Database, MessageSquare, BookOpen } from "lucide-react";
 
 export function HowItWorksSection() {
   return (
@@ -9,7 +9,7 @@ export function HowItWorksSection() {
           Como Funciona
         </h2>
         <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
-          Nossa plataforma processa seus dados de vendas usando IA avançada para gerar insights valiosos e se integra perfeitamente com seu CRM
+          Nossa plataforma oferece ferramentas de IA para diversos departamentos, processando diferentes tipos de dados para gerar insights e automatizar tarefas
         </p>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -18,19 +18,27 @@ export function HowItWorksSection() {
             <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
               <FileText className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold text-center mb-4">Entrada de Dados</h3>
+            <h3 className="text-lg font-semibold text-center mb-4">Múltiplas Fontes de Dados</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <FileAudio className="h-5 w-5 text-primary/70" />
-                <span>Arquivos de áudio de chamadas</span>
+                <span>Arquivos de áudio e reuniões</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <FileVideo className="h-5 w-5 text-primary/70" />
-                <span>Gravações de videochamadas</span>
+                <span>Vídeos e apresentações</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileText className="h-5 w-5 text-primary/70" />
-                <span>Transcrições e anotações</span>
+                <Database className="h-5 w-5 text-primary/70" />
+                <span>Dados estruturados e não-estruturados</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MessageSquare className="h-5 w-5 text-primary/70" />
+                <span>Mensagens e interações com clientes</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <BookOpen className="h-5 w-5 text-primary/70" />
+                <span>Documentos e materiais de conhecimento</span>
               </div>
             </div>
           </div>
@@ -43,9 +51,9 @@ export function HowItWorksSection() {
             <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
               <Brain className="h-8 w-8 text-primary animate-pulse" />
             </div>
-            <h3 className="text-lg font-semibold text-center mb-2">Análise Inteligente</h3>
+            <h3 className="text-lg font-semibold text-center mb-2">Inteligência Adaptativa</h3>
             <p className="text-gray-600 text-center text-sm">
-              Nossa IA analisa e identifica padrões de sucesso em suas vendas
+              Nossa IA analisa, processa e otimiza informações específicas para cada departamento da sua empresa
             </p>
           </div>
 
@@ -54,23 +62,27 @@ export function HowItWorksSection() {
             <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
               <BarChart2 className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold text-center mb-4">Resultados</h3>
+            <h3 className="text-lg font-semibold text-center mb-4">Resultados para Toda Empresa</h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Aumento de taxa de conversão</span>
+                <span>Comercial: Análise de chamadas e leads</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Identificação de objeções comuns</span>
+                <span>Marketing: Otimização de conteúdo</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Insights para treinamento</span>
+                <span>RH: Triagem e avaliação de candidatos</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Melhoria contínua do script</span>
+                <span>Financeiro: Análise preditiva</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
+                <span>Operações: Otimização de processos</span>
               </li>
             </ul>
           </div>

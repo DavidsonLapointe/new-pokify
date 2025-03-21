@@ -15,17 +15,17 @@ export function HeroSection() {
             <div className="flex items-center gap-2 mb-6">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-medium">
-                Tecnologia de ponta em Vendas
+                Inteligência Artificial para Negócios
               </span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                Potencialize seu time
+                Transforme sua empresa
               </span>{" "}
               com Inteligência Artificial
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Use inteligência artificial para analisar 100% das suas chamadas, identificar padrões de sucesso e multiplicar suas vendas
+              Potencialize todos os departamentos da sua empresa com ferramentas de IA que aumentam a produtividade, automatizam processos e geram insights valiosos para seu negócio
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Button size="lg" className="text-lg" onClick={() => setIsFormOpen(true)}>
@@ -42,7 +42,7 @@ export function HeroSection() {
                 <div className="text-sm text-gray-600">Precisão</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-2xl text-primary">2.5x</div>
+                <div className="font-bold text-2xl text-primary">3x</div>
                 <div className="text-sm text-gray-600">Produtividade</div>
               </div>
               <div className="text-center">
@@ -56,7 +56,7 @@ export function HeroSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-lg z-10" />
               <img
                 src="/lovable-uploads/817f098f-b9a1-4bd0-87f9-c523e1b33f53.png"
-                alt="Equipe de vendas trabalhando"
+                alt="Equipe trabalhando com IA"
                 className="w-full h-full object-cover rounded-lg shadow-2xl"
               />
               <div className="absolute -bottom-6 -left-6 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-100 z-20">
@@ -65,7 +65,7 @@ export function HeroSection() {
                     <div className="absolute -inset-1 bg-yellow-400 rounded-full blur opacity-30"></div>
                     <Star className="text-yellow-400 h-5 w-5 relative" />
                   </div>
-                  <span className="font-medium">Lead Qualificado</span>
+                  <span className="font-medium">Eficiência Aumentada</span>
                 </div>
               </div>
             </div>
