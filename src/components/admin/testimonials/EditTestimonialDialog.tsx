@@ -73,10 +73,17 @@ export const EditTestimonialDialog = ({
   }, [testimonial, form]);
 
   const onSubmit = (data: TestimonialFormValues) => {
-    onSave({
+    // Create a complete Testimonial object with required fields
+    const completeTestimonial: Testimonial = {
       id: testimonial?.id || uuidv4(),
-      ...data,
-    });
+      name: data.name,
+      role: data.role,
+      company: data.company,
+      image: data.image,
+      text: data.text,
+    };
+    
+    onSave(completeTestimonial);
   };
 
   return (
