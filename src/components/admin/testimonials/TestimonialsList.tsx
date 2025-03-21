@@ -88,7 +88,7 @@ export const TestimonialsList = ({
                       size="icon"
                       onClick={() => onEdit(testimonial)}
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-4 w-4 text-[#9b87f5]" />
                     </Button>
                     <AlertDialog open={deletingId === testimonial.id} onOpenChange={(open) => !open && setDeletingId(null)}>
                       <AlertDialogTrigger asChild>
@@ -97,7 +97,7 @@ export const TestimonialsList = ({
                           size="icon"
                           onClick={() => setDeletingId(testimonial.id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 text-[#D946EF]" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
