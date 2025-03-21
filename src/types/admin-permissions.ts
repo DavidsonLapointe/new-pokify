@@ -1,3 +1,4 @@
+
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
@@ -18,7 +19,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     settings: true,
     "settings.alerts": true,
     profile: true,
-    "ai-costs": true // New permission
+    "ai-costs": true,
+    testimonials: true // New permission
   },
   leadly_master: {
     dashboard: true,
@@ -50,7 +52,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     "settings.permissions": true,
     profile: true,
     "analysis-packages": true,
-    "ai-costs": true // New permission
+    "ai-costs": true,
+    testimonials: true // New permission
   },
   admin: {
     dashboard: true,
@@ -60,7 +63,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     settings: true,
     plan: true,
     profile: true,
-    "ai-costs": true // New permission
+    "ai-costs": true,
+    testimonials: true // New permission
   },
   seller: {
     dashboard: true,
@@ -160,5 +164,11 @@ export const availableAdminRoutePermissions = [
     label: "Minha Empresa",
     path: "/admin/company",
     description: "Informações da empresa"
+  },
+  {
+    id: "testimonials",
+    label: "Depoimentos",
+    path: "/admin/testimonials",
+    description: "Gerenciamento de depoimentos exibidos na landing page"
   },
 ];

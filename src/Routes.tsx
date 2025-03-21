@@ -28,7 +28,8 @@ import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
 import AdminLeads from "./pages/AdminLeads"; 
 import AdminCompany from "./pages/AdminCompany";
-import AdminAICosts from "./pages/AdminAICosts"; // New import
+import AdminAICosts from "./pages/AdminAICosts";
+import AdminTestimonials from "./pages/AdminTestimonials"; // New import
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -104,8 +105,9 @@ function AppRoutes() {
           <Route path="leads" element={<AdminLeads />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
-          <Route path="ai-costs" element={<AdminAICosts />} />  {/* New route */}
+          <Route path="ai-costs" element={<AdminAICosts />} />
           <Route path="company" element={<AdminCompany />} />
+          <Route path="testimonials" element={<AdminTestimonials />} /> {/* New route */}
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 

@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -9,17 +9,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Testimonial } from "@/types/testimonial";
 
-interface Testimonial {
-  name: string;
-  role: string;
-  company: string;
-  image: string;
-  text: string;
-}
+const STORAGE_KEY = "leadly_testimonials";
 
-const testimonials: Testimonial[] = [
+// Fallback testimonials in case none are stored
+const fallbackTestimonials: Testimonial[] = [
   {
+    id: "1",
     name: "Ana Silva",
     role: "Gerente de Vendas",
     company: "TechCorp",
@@ -27,6 +24,7 @@ const testimonials: Testimonial[] = [
     text: "O Leadly transformou completamente nosso departamento de vendas. Além da análise de chamadas, as ferramentas de IA para prospecção nos ajudaram a aumentar conversões em 40%!"
   },
   {
+    id: "2",
     name: "Carlos Santos",
     role: "Diretor de Operações",
     company: "InnovaSys",
@@ -34,6 +32,7 @@ const testimonials: Testimonial[] = [
     text: "Implementamos o Leadly em três departamentos diferentes e os resultados foram surpreendentes. A eficiência operacional aumentou significativamente com a automação de processos."
   },
   {
+    id: "3",
     name: "Marina Costa",
     role: "Diretora de RH",
     company: "VendaMais",
@@ -41,6 +40,7 @@ const testimonials: Testimonial[] = [
     text: "As ferramentas de IA do Leadly para recrutamento e desenvolvimento de talentos mudaram nossa maneira de trabalhar. Economizamos tempo e melhoramos a qualidade das contratações."
   },
   {
+    id: "4",
     name: "Pedro Almeida",
     role: "CEO",
     company: "SalesForce",
@@ -48,6 +48,7 @@ const testimonials: Testimonial[] = [
     text: "A integração da IA em diversos setores da empresa aumentou nossa produtividade em 30%. A plataforma é incrivelmente intuitiva e adaptável às necessidades específicas de cada equipe."
   },
   {
+    id: "5",
     name: "Juliana Torres",
     role: "Diretora de Marketing",
     company: "TechSales",
@@ -57,6 +58,22 @@ const testimonials: Testimonial[] = [
 ];
 
 export function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
+
+  useEffect(() => {
+    const storedTestimonials = localStorage.getItem(STORAGE_KEY);
+    if (storedTestimonials) {
+      try {
+        const parsed = JSON.parse(storedTestimonials);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTestimonials(parsed);
+        }
+      } catch (error) {
+        console.error("Error parsing testimonials:", error);
+      }
+    }
+  }, []);
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
@@ -70,7 +87,7 @@ export function TestimonialsSection() {
         <Carousel className="max-w-5xl mx-auto">
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 p-2">
+              <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/3 p-2">
                 <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
                   <div className="mb-6">
                     <div className="bg-primary/5 w-12 h-12 rounded-full flex items-center justify-center mb-6">
