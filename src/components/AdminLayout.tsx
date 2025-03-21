@@ -39,7 +39,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: MessageCircle, label: "Leads", path: "/admin/leads", permissionId: "leads" },
     { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" },
     { icon: Building, label: "Minha Empresa", path: "/admin/company", permissionId: "company" },
-    { icon: Quote, label: "Depoimentos", path: "/admin/testimonials", permissionId: "testimonials", iconColor: "#9b87f5" },
+    { icon: Quote, label: "Depoimentos", path: "/admin/testimonials", permissionId: "testimonials" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },
   ];
 
@@ -98,7 +98,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     label={item.label}
                     path={item.path}
                     active={isActive(item.path)}
-                    iconColor={item.iconColor}
                   />
                 ))}
               </div>
