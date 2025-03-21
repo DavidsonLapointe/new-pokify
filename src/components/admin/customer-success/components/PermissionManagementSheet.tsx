@@ -92,43 +92,42 @@ export const PermissionManagementSheet = ({
   };
 
   return (
-    <SheetContent className="sm:max-w-md">
-      <SheetHeader>
-        <SheetTitle>Gerenciar Acesso - {label}</SheetTitle>
-        <SheetDescription>
+    <SheetContent className="sm:max-w-xs">
+      <SheetHeader className="mb-4">
+        <SheetTitle className="text-base">Gerenciar Acesso - {label}</SheetTitle>
+        <SheetDescription className="text-xs">
           Defina quais usuários têm acesso a esta função. Usuários inativos não são exibidos.
         </SheetDescription>
       </SheetHeader>
       
       {loading ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+        <div className="flex items-center justify-center h-36">
+          <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <ScrollArea className="h-[calc(100vh-220px)] mt-6 pr-4">
-          <div className="space-y-4">
+        <ScrollArea className="h-[calc(100vh-200px)] pr-2">
+          <div className="space-y-3">
             {activeUsers.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
+              <p className="text-xs text-muted-foreground text-center py-4">
                 Nenhum usuário ativo ou pendente encontrado
               </p>
             ) : (
               activeUsers.map(user => (
                 <div key={user.id} className="flex items-center justify-between py-2 border-b border-gray-100">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{user.name || user.email}</span>
-                    <span className="text-sm text-muted-foreground">{user.email}</span>
-                    <div className="mt-1">
-                      <Badge 
-                        variant={user.status === 'active' ? 'success' : 'warning'}
-                        className="text-xs"
-                      >
-                        {user.status === 'active' ? 'Ativo' : 'Pendente'}
-                      </Badge>
-                    </div>
+                  <div className="flex flex-col space-y-0.5">
+                    <span className="font-medium text-sm">{user.name || user.email}</span>
+                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                    <Badge 
+                      variant={user.status === 'active' ? 'success' : 'warning'}
+                      className="text-[10px] w-fit mt-1 px-1.5 py-0"
+                    >
+                      {user.status === 'active' ? 'Ativo' : 'Pendente'}
+                    </Badge>
                   </div>
                   <Switch
                     checked={userPermissions[user.id] || false}
                     onCheckedChange={() => handlePermissionToggle(user.id)}
+                    className="ml-2"
                   />
                 </div>
               ))
@@ -137,11 +136,11 @@ export const PermissionManagementSheet = ({
         </ScrollArea>
       )}
       
-      <SheetFooter className="mt-6">
+      <SheetFooter className="mt-4 sm:justify-center">
         <Button 
           onClick={handleSave} 
           disabled={saving || loading}
-          className="w-full"
+          className="w-full text-sm py-2"
         >
           {saving ? "Salvando..." : "Salvar alterações"}
         </Button>
