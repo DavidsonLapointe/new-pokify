@@ -8,7 +8,7 @@ export function CTASection() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
-    <section className="py-20 bg-primary text-white">
+    <section className="py-20 pb-32 bg-primary text-white">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-4xl font-bold mb-4">
           Pronto para transformar sua empresa com IA?
