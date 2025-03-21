@@ -13,18 +13,11 @@ import { cn } from "@/lib/utils";
 import { toolsData } from "@/components/organization/ai-tools/data/toolsData";
 import { Card, CardContent } from "@/components/ui/card";
 
-// Extract unique tags from tools data
-const extractTags = () => {
-  const allTags = toolsData.flatMap(tool => {
-    // Create tags from various tool properties
-    const statusTag = tool.status ? `status:${tool.status}` : null;
-    const areasTags = tool.areas ? tool.areas.map(area => `area:${area}`) : [];
-    
-    return [statusTag, ...areasTags].filter(Boolean);
-  });
-  
-  // Get unique tags
-  return ["all", ...new Set(allTags)];
+// Extract unique tool names for the filter tags
+const extractToolNames = () => {
+  const allToolNames = toolsData.map(tool => tool.title);
+  // Get unique tool names
+  return ["Todas", ...new Set(allToolNames)];
 };
 
 // Define business areas with their names and IDs
@@ -51,8 +44,8 @@ const toolImages = {
 };
 
 export function AIToolsSection() {
-  // Get unique tool tags
-  const allTags = ["Todas", "Vendas", "Marketing", "RH", "Atendimento", "Automação", "Análise"];
+  // Get tool names for filter tags
+  const allTags = extractToolNames();
   
   const [selectedTag, setSelectedTag] = useState<string>("Todas");
   const [activeToolIndex, setActiveToolIndex] = useState(0);
@@ -60,14 +53,7 @@ export function AIToolsSection() {
   // Filter tools based on selected tag
   const filteredTools = selectedTag === "Todas" 
     ? toolsData 
-    : toolsData.filter(tool => {
-        // Match tag to tool properties (simple string matching for demo)
-        return tool.title.includes(selectedTag) || 
-               (tool.areas && tool.areas.some(area => {
-                 const areaObj = businessAreas.find(a => a.id === area);
-                 return areaObj?.name.includes(selectedTag);
-               }));
-      });
+    : toolsData.filter(tool => tool.title === selectedTag);
 
   // Get the currently active tool
   const activeTool = filteredTools[activeToolIndex] || toolsData[0];
@@ -101,7 +87,7 @@ export function AIToolsSection() {
           Descubra como nossa plataforma pode transformar cada departamento da sua empresa com soluções de IA especializadas
         </p>
 
-        {/* Tool tags carousel */}
+        {/* Tool tags carousel - now showing tool names */}
         <div className="mb-12">
           <Carousel className="max-w-4xl mx-auto">
             <CarouselContent>
@@ -125,7 +111,7 @@ export function AIToolsSection() {
 
         {filteredTools.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Tool image */}
+            {/* Tool image - now without overlay text */}
             <div className="order-2 md:order-1">
               <div className="relative rounded-xl overflow-hidden shadow-xl h-[350px] md:h-[450px]">
                 <img
@@ -133,15 +119,7 @@ export function AIToolsSection() {
                   alt={activeTool.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                  <div className="p-6 text-white">
-                    <div className="inline-flex px-3 py-1 rounded-full bg-primary/80 text-white text-sm font-medium mb-2">
-                      {activeTool.badgeLabel}
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">{activeTool.title}</h3>
-                    <p className="text-white/90">{activeTool.description}</p>
-                  </div>
-                </div>
+                {/* Removed the text overlay from the image */}
                 
                 {/* Navigation buttons */}
                 <div className="absolute top-1/2 left-0 -translate-y-1/2 flex justify-between w-full px-4">
@@ -218,7 +196,7 @@ export function AIToolsSection() {
           </div>
         )}
         
-        {/* Tools by departments in grid layout */}
+        {/* Tools by departments in grid layout - now without buttons */}
         <div className="mt-16">
           <h3 className="text-2xl font-semibold text-center mb-8">
             Ferramentas por Departamento
@@ -247,14 +225,7 @@ export function AIToolsSection() {
                         <p className="text-sm text-primary font-medium">+ {areaTools.length - 4} outras</p>
                       )}
                     </div>
-                    <Button 
-                      variant="default" 
-                      className="mt-4 w-full justify-between text-white bg-primary hover:bg-primary/90"
-                      onClick={() => handleTagChange(area.name)}
-                    >
-                      Ver ferramentas
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Button>
+                    {/* Removed the "Ver ferramentas" button */}
                   </CardContent>
                 </Card>
               );
