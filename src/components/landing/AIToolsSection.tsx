@@ -43,28 +43,29 @@ export function AIToolsSection() {
   const [selectedTag, setSelectedTag] = useState<string>(allTags[0] || "");
   const [activeToolIndex, setActiveToolIndex] = useState(0);
   
-  // When a tag is selected, find the corresponding tool in the full toolsData array
-  const selectedTagToolIndex = toolsData.findIndex(tool => tool.title === selectedTag);
-  
-  // Get the currently active tool based on the activeToolIndex
-  const activeTool = toolsData[selectedTagToolIndex >= 0 ? selectedTagToolIndex + activeToolIndex : activeToolIndex];
+  // Make sure we have a valid tool to display at all times
+  const activeTool = toolsData[activeToolIndex] || toolsData[0];
   
   // Reset the active tool index when the selected tag changes
   useEffect(() => {
-    setActiveToolIndex(0);
+    // Find the index of the selected tool in the toolsData array
+    const toolIndex = toolsData.findIndex(tool => tool.title === selectedTag);
+    if (toolIndex >= 0) {
+      setActiveToolIndex(toolIndex);
+    }
   }, [selectedTag]);
   
-  // Handle tool navigation with arrows - now works across all tools
+  // Handle tool navigation with arrows
   const handlePrevTool = () => {
-    setActiveToolIndex(prev => (prev - 1 + toolsData.length) % toolsData.length);
-    // Update the selected tag to match the current tool
-    setSelectedTag(toolsData[(selectedTagToolIndex + activeToolIndex - 1 + toolsData.length) % toolsData.length].title);
+    const newIndex = (activeToolIndex - 1 + toolsData.length) % toolsData.length;
+    setActiveToolIndex(newIndex);
+    setSelectedTag(toolsData[newIndex].title);
   };
 
   const handleNextTool = () => {
-    setActiveToolIndex(prev => (prev + 1) % toolsData.length);
-    // Update the selected tag to match the current tool
-    setSelectedTag(toolsData[(selectedTagToolIndex + activeToolIndex + 1) % toolsData.length].title);
+    const newIndex = (activeToolIndex + 1) % toolsData.length;
+    setActiveToolIndex(newIndex);
+    setSelectedTag(toolsData[newIndex].title);
   };
 
   // Handle tag selection - clicking a tag directly shows the specific tool
@@ -114,8 +115,8 @@ export function AIToolsSection() {
           <div className="order-2 md:order-1">
             <div className="relative rounded-xl overflow-hidden shadow-xl h-[350px] md:h-[450px]">
               <img
-                src={toolImages[activeTool.id as keyof typeof toolImages] || "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
-                alt={activeTool.title}
+                src={activeTool && activeTool.id ? toolImages[activeTool.id as keyof typeof toolImages] || "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" : "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                alt={activeTool ? activeTool.title : "Ferramenta de IA"}
                 className="w-full h-full object-cover"
               />
               
@@ -146,23 +147,23 @@ export function AIToolsSection() {
             <div className="bg-primary/5 p-8 rounded-xl border border-primary/10">
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-primary/10 w-14 h-14 rounded-full flex items-center justify-center">
-                  {activeTool.icon && <activeTool.icon className="h-7 w-7 text-primary" />}
+                  {activeTool && activeTool.icon && <activeTool.icon className="h-7 w-7 text-primary" />}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold">{activeTool.title}</h3>
-                  <p className="text-gray-600">{activeTool.description}</p>
+                  <h3 className="text-2xl font-bold">{activeTool ? activeTool.title : ""}</h3>
+                  <p className="text-gray-600">{activeTool ? activeTool.description : ""}</p>
                 </div>
               </div>
 
               <div className="mb-6">
                 <h4 className="font-medium text-lg mb-3">Descrição Detalhada</h4>
-                <p className="text-gray-700 mb-4">{activeTool.detailedDescription}</p>
+                <p className="text-gray-700 mb-4">{activeTool ? activeTool.detailedDescription : ""}</p>
               </div>
 
               <div className="mb-6">
                 <h4 className="font-medium text-lg mb-3">Principais Benefícios</h4>
                 <ul className="space-y-2">
-                  {activeTool.benefits?.slice(0, 3).map((benefit, index) => (
+                  {activeTool && activeTool.benefits?.slice(0, 3).map((benefit, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                       <span className="text-gray-700">{benefit}</span>
@@ -179,7 +180,7 @@ export function AIToolsSection() {
                       key={index}
                       className={cn(
                         "w-2.5 h-2.5 rounded-full cursor-pointer transition-all",
-                        tool.title === activeTool.title ? "bg-primary scale-125" : "bg-primary/30"
+                        index === activeToolIndex ? "bg-primary scale-125" : "bg-primary/30"
                       )}
                       onClick={() => {
                         setSelectedTag(tool.title);
