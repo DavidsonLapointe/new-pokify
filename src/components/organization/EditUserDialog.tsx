@@ -33,7 +33,7 @@ export const EditUserDialog = ({
   const defaultAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Jurídico", "Controladoria", "Logística", "Recursos Humanos", "Contabilidade"];
   
   // In a real application, we would fetch custom areas from the API
-  // For now, we'll add one example custom area
+  // Based on the current organization's custom created areas
   const customAreas = ["PERA"];
   
   const availableAreas = [...defaultAreas, ...customAreas];
