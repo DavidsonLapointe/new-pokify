@@ -44,7 +44,13 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
               {count}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent side="left" align="center" alignOffset={-30} className="z-50">
+          <TooltipContent 
+            side="left" 
+            align="center" 
+            alignOffset={-30} 
+            className="z-50"
+            sideOffset={5}
+          >
             <UserTooltip users={users} />
           </TooltipContent>
         </Tooltip>
