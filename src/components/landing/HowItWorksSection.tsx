@@ -33,23 +33,23 @@ export function HowItWorksSection() {
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Múltiplas Fontes de Dados</h3>
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <FileAudio className="h-5 w-5 text-primary" />
                 <span>Arquivos de áudio e reuniões</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <FileVideo className="h-5 w-5 text-primary" />
                 <span>Vídeos e apresentações</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <Database className="h-5 w-5 text-primary" />
                 <span>Dados estruturados e não-estruturados</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <MessageSquare className="h-5 w-5 text-primary" />
                 <span>Mensagens e interações com clientes</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <BookOpen className="h-5 w-5 text-primary" />
                 <span>Documentos e materiais de conhecimento</span>
               </div>
@@ -65,7 +65,7 @@ export function HowItWorksSection() {
               <Brain className="h-8 w-8 text-primary animate-pulse" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-2">Inteligência Adaptativa</h3>
-            <p className="text-gray-600 text-center text-sm mb-4">
+            <p className="text-gray-600 text-left text-sm mb-4">
               Nossa IA analisa, processa e otimiza informações específicas para cada departamento da sua empresa
             </p>
             <div className="space-y-2 text-center text-xs text-gray-500">
@@ -82,23 +82,23 @@ export function HowItWorksSection() {
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Resultados para Toda Empresa</h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span>Leads Qualificados</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <Lightbulb className="h-5 w-5 text-primary" />
                 <span>Insights de Vendas</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <PieChart className="h-5 w-5 text-primary" />
                 <span>Métricas Detalhadas</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <CheckCircle className="h-5 w-5 text-primary" />
                 <span>Sugestões de Ação</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2 text-sm text-gray-600 text-left">
                 <BarChart2 className="h-5 w-5 text-primary" />
                 <span>Otimização de Processos</span>
               </li>

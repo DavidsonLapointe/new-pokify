@@ -97,10 +97,10 @@ export function AIToolsSection() {
                 variant={selectedTag === tag ? "default" : "outline"}
                 onClick={() => handleTagChange(tag)}
                 className={cn(
-                  "px-3 py-1 h-8 text-sm rounded-full flex items-center gap-1",
+                  "px-3 py-1 h-8 text-sm rounded-full flex items-center gap-1 transition-colors",
                   selectedTag === tag 
                     ? "bg-purple-600 text-white hover:bg-purple-700" 
-                    : "border-purple-600 text-purple-600 hover:bg-purple-100"
+                    : "border-purple-600 text-purple-600 hover:bg-purple-100 hover:text-purple-800"
                 )}
               >
                 <Tag className="h-3 w-3" />
