@@ -37,40 +37,44 @@ const toolImages = {
 };
 
 export function AIToolsSection() {
-  // Get tool names for filter tags (without "Todas")
+  // Get tool names for filter tags
   const allTags = extractToolNames();
   
   const [selectedTag, setSelectedTag] = useState<string>(allTags[0] || "");
   const [activeToolIndex, setActiveToolIndex] = useState(0);
   
-  // Filter tools based on selected tag - now directly filtering by the selected tag
-  const filteredTools = toolsData.filter(tool => tool.title === selectedTag);
-
-  // Get the currently active tool
-  const activeTool = filteredTools[activeToolIndex] || toolsData[0];
-
-  // Set the first tool of the selected tag when tag changes
+  // When a tag is selected, find the corresponding tool in the full toolsData array
+  const selectedTagToolIndex = toolsData.findIndex(tool => tool.title === selectedTag);
+  
+  // Get the currently active tool based on the activeToolIndex
+  const activeTool = toolsData[selectedTagToolIndex >= 0 ? selectedTagToolIndex + activeToolIndex : activeToolIndex];
+  
+  // Reset the active tool index when the selected tag changes
   useEffect(() => {
     setActiveToolIndex(0);
   }, [selectedTag]);
-
-  // Handle tool navigation
+  
+  // Handle tool navigation with arrows - now works across all tools
   const handlePrevTool = () => {
-    setActiveToolIndex(prev => 
-      prev === 0 ? filteredTools.length - 1 : prev - 1
-    );
+    setActiveToolIndex(prev => (prev - 1 + toolsData.length) % toolsData.length);
+    // Update the selected tag to match the current tool
+    setSelectedTag(toolsData[(selectedTagToolIndex + activeToolIndex - 1 + toolsData.length) % toolsData.length].title);
   };
 
   const handleNextTool = () => {
-    setActiveToolIndex(prev => 
-      prev === filteredTools.length - 1 ? 0 : prev + 1
-    );
+    setActiveToolIndex(prev => (prev + 1) % toolsData.length);
+    // Update the selected tag to match the current tool
+    setSelectedTag(toolsData[(selectedTagToolIndex + activeToolIndex + 1) % toolsData.length].title);
   };
 
   // Handle tag selection - clicking a tag directly shows the specific tool
   const handleTagChange = (tag: string) => {
     setSelectedTag(tag);
-    // Reset to first tool when changing tag (handled by useEffect)
+    // Find the index of the selected tool in the toolsData array
+    const toolIndex = toolsData.findIndex(tool => tool.title === tag);
+    if (toolIndex >= 0) {
+      setActiveToolIndex(toolIndex);
+    }
   };
 
   return (
@@ -94,8 +98,8 @@ export function AIToolsSection() {
                 className={cn(
                   "px-3 py-1 h-8 text-sm rounded-full flex items-center gap-1",
                   selectedTag === tag 
-                    ? "bg-primary text-white hover:bg-primary/90" 
-                    : "border-primary text-primary hover:bg-primary/10"
+                    ? "bg-purple-600 text-white hover:bg-purple-700" 
+                    : "border-purple-600 text-purple-600 hover:bg-purple-100"
                 )}
               >
                 <Tag className="h-3 w-3" />
@@ -179,7 +183,7 @@ export function AIToolsSection() {
                       )}
                       onClick={() => {
                         setSelectedTag(tool.title);
-                        setActiveToolIndex(0);
+                        setActiveToolIndex(index);
                       }}
                     />
                   ))}
