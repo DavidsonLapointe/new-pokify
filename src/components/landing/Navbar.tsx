@@ -19,7 +19,7 @@ export function Navbar() {
             <a href="#" className="text-gray-600 hover:text-primary transition-colors">Contato</a>
           </div>
           
-          <Button onClick={() => navigate("/auth")} className="mr-4">
+          <Button onClick={() => navigate("/auth")} className="mr-8">
             Acessar Plataforma
           </Button>
         </div>
