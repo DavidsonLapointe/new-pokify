@@ -1,4 +1,3 @@
-
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
@@ -18,7 +17,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     prompt: true,
     settings: true,
     "settings.alerts": true,
-    profile: true
+    profile: true,
+    "ai-costs": true // New permission
   },
   leadly_master: {
     dashboard: true,
@@ -49,7 +49,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     "settings.system": true,
     "settings.permissions": true,
     profile: true,
-    "analysis-packages": true
+    "analysis-packages": true,
+    "ai-costs": true // New permission
   },
   admin: {
     dashboard: true,
@@ -58,7 +59,8 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     integrations: true,
     settings: true,
     plan: true,
-    profile: true
+    profile: true,
+    "ai-costs": true // New permission
   },
   seller: {
     dashboard: true,
@@ -146,5 +148,17 @@ export const availableAdminRoutePermissions = [
     label: "Pacotes de Análise",
     path: "/admin/analysis-packages",
     description: "Gerenciamento de pacotes de análise de leads para os clientes"
-  }
+  },
+  {
+    id: "ai-costs",
+    label: "Custo de IA",
+    path: "/admin/ai-costs",
+    description: "Visualização de custos relacionados às execuções de IA e modelos LLM"
+  },
+  {
+    id: "company",
+    label: "Minha Empresa",
+    path: "/admin/company",
+    description: "Informações da empresa"
+  },
 ];

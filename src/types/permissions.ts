@@ -32,6 +32,7 @@ export const permissionLabels: Record<string, string> = {
   "analysis-packages": "Pacotes de Análise",
   leads: "Análise de Leads",
   company: "Empresa",
+  "ai-costs": "Custo de IA", // New permission label
   "dashboard.leads": "Leads",
   "dashboard.uploads": "Uploads",
   "dashboard.performance": "Performance",

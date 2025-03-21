@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -26,7 +27,8 @@ import AdminPlans from "./pages/AdminPlans";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
 import AdminLeads from "./pages/AdminLeads"; 
-import AdminCompany from "./pages/AdminCompany"; // New import
+import AdminCompany from "./pages/AdminCompany";
+import AdminAICosts from "./pages/AdminAICosts"; // New import
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -102,7 +104,8 @@ function AppRoutes() {
           <Route path="leads" element={<AdminLeads />} />
           <Route path="financial" element={<AdminFinancial />} />
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
-          <Route path="company" element={<AdminCompany />} />  {/* New route */}
+          <Route path="ai-costs" element={<AdminAICosts />} />  {/* New route */}
+          <Route path="company" element={<AdminCompany />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 

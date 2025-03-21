@@ -1,6 +1,5 @@
-
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building, CpuIcon } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -37,7 +36,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
     { icon: MessageCircle, label: "Leads", path: "/admin/leads", permissionId: "leads" },
-    { icon: Building, label: "Minha Empresa", path: "/admin/company", permissionId: "company" }, // New menu item
+    { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" }, // New menu item
+    { icon: Building, label: "Minha Empresa", path: "/admin/company", permissionId: "company" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },
   ];
 
