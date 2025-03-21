@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building, CpuIcon } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building, CpuIcon, Quote } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -36,7 +36,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
     { icon: MessageCircle, label: "Leads", path: "/admin/leads", permissionId: "leads" },
-    { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" }, // New menu item
+    { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" },
+    { icon: Quote, label: "Depoimentos", path: "/admin/testimonials", permissionId: "testimonials" }, // New menu item
     { icon: Building, label: "Minha Empresa", path: "/admin/company", permissionId: "company" },
     { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },
   ];
@@ -60,7 +61,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
   }
 
-  // Se não houver usuário, não renderiza o layout
+  // If there is no user, don't render the layout
   if (!user) {
     return null;
   }
