@@ -27,12 +27,17 @@ export const PermissionCategoryCard = ({
 }: PermissionCategoryCardProps) => {
   const moduleHasTabs = hasTabPermissions(category);
   const tabKeys = getTabPermissions(category);
+  const currentPermission = permissionData[category];
+  const hasNoUsers = currentPermission.count === 0;
   
   return (
     <div className="border rounded-lg overflow-hidden mb-4 w-full">
       <div className="bg-gray-50 p-3 border-b flex justify-between items-center">
-        <h3 className="font-medium">
-          {permissionData[category].label}
+        <h3 className={cn(
+          "font-medium", 
+          hasNoUsers && !moduleHasTabs && "text-red-500"
+        )}>
+          {currentPermission.label}
           {moduleHasTabs && (
             <span className="ml-1 text-xs text-muted-foreground">(com abas)</span>
           )}
@@ -46,16 +51,16 @@ export const PermissionCategoryCard = ({
                   variant="outline" 
                   className={cn(
                     "cursor-help",
-                    permissionData[category].count > 0 
-                      ? "bg-primary/10 text-primary border-primary/20" 
-                      : "bg-gray-100 text-gray-500 border-gray-200"
+                    hasNoUsers 
+                      ? "bg-red-100 text-red-500 border-red-200" 
+                      : "bg-primary/10 text-primary border-primary/20"
                   )}
                 >
-                  {permissionData[category].count}
+                  {currentPermission.count}
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent side="left" align="center" className="z-50">
-                <UserTooltip users={permissionData[category].users} />
+              <TooltipContent side="left" align="center" alignOffset={-30} className="z-50">
+                <UserTooltip users={currentPermission.users} />
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

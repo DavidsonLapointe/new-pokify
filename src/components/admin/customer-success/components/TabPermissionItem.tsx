@@ -20,12 +20,13 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
   const users = permissionData?.users || [];
   const count = permissionData?.count || 0;
   const label = permissionData?.label || "";
+  const hasNoUsers = count === 0;
 
   return (
     <li className="flex justify-between items-center px-2 py-1 rounded hover:bg-gray-50">
       <div className="flex items-center gap-1.5">
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="text-sm">{label}</span>
+        <span className={cn("text-sm", hasNoUsers && "text-red-500 font-medium")}>{label}</span>
       </div>
       
       <TooltipProvider>
@@ -35,15 +36,15 @@ export const TabPermissionItem = ({ tabKey, permissionData }: TabPermissionItemP
               variant="outline" 
               className={cn(
                 "cursor-help",
-                count > 0 
-                  ? "bg-primary/10 text-primary border-primary/20" 
-                  : "bg-gray-100 text-gray-500 border-gray-200"
+                hasNoUsers 
+                  ? "bg-red-100 text-red-500 border-red-200" 
+                  : "bg-primary/10 text-primary border-primary/20"
               )}
             >
               {count}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent side="left" align="center" className="z-50">
+          <TooltipContent side="left" align="center" alignOffset={-30} className="z-50">
             <UserTooltip users={users} />
           </TooltipContent>
         </Tooltip>
