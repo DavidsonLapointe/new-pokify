@@ -1,11 +1,5 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
 interface CostPeriod {
@@ -49,11 +43,8 @@ const ModuleCostCard = ({
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <div className="flex items-center cursor-help">
-                      <span className="text-xs font-medium text-muted-foreground mr-1">
-                        ${period.avgCost.toFixed(4)}
-                      </span>
                       <span className="font-medium">
-                        {formatBrlValue(period.avgCost)}
+                        ${period.avgCost.toFixed(4)}
                       </span>
                     </div>
                   </HoverCardTrigger>
@@ -66,24 +57,14 @@ const ModuleCostCard = ({
                             <div key={index} className="flex justify-between text-sm">
                               <span>{llm.name}:</span>
                               <div>
-                                <span className="text-xs text-muted-foreground mr-1">
-                                  ${llm.avgCost.toFixed(4)}
-                                </span>
-                                <span>
-                                  {formatBrlValue(llm.avgCost)}
-                                </span>
+                                <span>${llm.avgCost.toFixed(4)}</span>
                               </div>
                             </div>
                           ))}
                           <div className="flex justify-between text-sm pt-1 mt-1 border-t font-medium">
                             <span>Total:</span>
                             <div>
-                              <span className="text-xs text-muted-foreground mr-1">
-                                ${period.avgCost.toFixed(4)}
-                              </span>
-                              <span>
-                                {formatBrlValue(period.avgCost)}
-                              </span>
+                              <span>${period.avgCost.toFixed(4)}</span>
                             </div>
                           </div>
                         </div>
