@@ -26,9 +26,9 @@ export const ModuleCarousel: React.FC<ModuleCarouselProps> = ({
         }}
         className="w-full" 
       >
-        <CarouselContent className="-ml-2">
+        <CarouselContent className="-ml-4">
           {tools.map((tool) => (
-            <CarouselItem key={tool.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5 pl-2">
+            <CarouselItem key={tool.id} className="basis-full sm:basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4">
               <ModuleCard
                 tool={tool}
                 isSelected={selectedTool?.id === tool.id}

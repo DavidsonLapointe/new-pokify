@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleCarousel } from "@/components/organization/modules/ModuleCarousel";
@@ -20,6 +19,7 @@ const OrganizationModules = () => {
     isConfirmDialogOpen,
     isCancelDialogOpen,
     isPaymentProcessingDialogOpen,
+    isPaymentSuccessDialogOpen,
     isPaymentSuccessDialogOpen,
     isPaymentFailedDialogOpen,
     isTermsDialogOpen,
@@ -138,15 +138,13 @@ const OrganizationModules = () => {
           </div>
         )}
 
-        {/* Only show carousel when there are tools to display */}
-        {filteredTools.length > 0 && (
-          <ModuleCarousel
-            tools={filteredTools}
-            selectedTool={selectedTool}
-            onSelectTool={handleSelectTool}
-            onCancelModule={handleCancelTool}
-          />
-        )}
+        {/* Always show the carousel, but with filtered tools */}
+        <ModuleCarousel
+          tools={filteredTools}
+          selectedTool={selectedTool}
+          onSelectTool={handleSelectTool}
+          onCancelModule={handleCancelTool}
+        />
 
         {/* Details of selected module - only shown when a module is selected */}
         {selectedTool && (
