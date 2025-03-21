@@ -65,7 +65,7 @@ export function HowItWorksSection() {
               <Brain className="h-8 w-8 text-primary animate-pulse" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-2">Inteligência Adaptativa</h3>
-            <p className="text-gray-600 text-left text-sm mb-4">
+            <p className="text-gray-600 text-center text-sm mb-4">
               Nossa IA analisa, processa e otimiza informações específicas para cada departamento da sua empresa
             </p>
             <div className="space-y-2 text-center text-xs text-gray-500">
