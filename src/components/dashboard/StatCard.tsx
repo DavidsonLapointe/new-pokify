@@ -37,25 +37,18 @@ export const StatCard = ({
             <p className="text-xs text-muted-foreground/60">{subtitle}</p>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
-                  <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">{tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <div className="flex flex-col items-center">
-            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-              <Icon className={`w-4 h-4 ${color}`} />
-            </div>
-          </div>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
+                <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={10}>
+              <p className="max-w-xs">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div className="text-center">
         <h3 className="text-xl font-semibold min-w-[2rem] text-center">{value}</h3>
