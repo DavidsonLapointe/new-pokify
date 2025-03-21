@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
 import { OrganizationOverview } from "@/components/admin/customer-success/OrganizationOverview";
@@ -303,6 +304,15 @@ const AdminCustomerSuccess = () => {
   const [isLowCreditsModalOpen, setIsLowCreditsModalOpen] = useState(false);
   const [isUnusedPermissionsModalOpen, setIsUnusedPermissionsModalOpen] = useState(false);
   const [isPendingUsersModalOpen, setIsPendingUsersModalOpen] = useState(false);
+
+  // Reset company analysis tab state when the tab changes
+  useEffect(() => {
+    if (activeTab === "company-analysis") {
+      setSelectedOrganization(null);
+      setLoading(false);
+      setSearchTerm("");
+    }
+  }, [activeTab]);
 
   const handleOrganizationChange = (organization: Organization | null) => {
     setLoading(true);
