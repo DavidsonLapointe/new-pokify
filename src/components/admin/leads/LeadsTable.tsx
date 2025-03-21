@@ -72,11 +72,18 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Badge className={`${config.color} hover:bg-opacity-80 cursor-help`}>
-              {config.label}
-            </Badge>
+            <div className="inline-block">
+              <Badge className={`${config.color} hover:bg-opacity-80 cursor-help`}>
+                {config.label}
+              </Badge>
+            </div>
           </TooltipTrigger>
-          <TooltipContent side="top" align="center" className="z-50 bg-white p-2 shadow-md border rounded-md max-w-xs text-gray-800">
+          <TooltipContent 
+            side="top" 
+            align="center" 
+            className="z-50 bg-white p-2 shadow-md border rounded-md max-w-xs text-gray-800"
+            sideOffset={5}
+          >
             <p className="text-sm font-medium">{config.description}</p>
           </TooltipContent>
         </Tooltip>
