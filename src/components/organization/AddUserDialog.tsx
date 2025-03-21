@@ -35,7 +35,15 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     area: "",
   });
 
-  const availableAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Outro"];
+  // Get areas from the OrganizationAreas page
+  // This would ideally come from an API or context in a real application
+  const defaultAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Jurídico", "Controladoria", "Logística", "Recursos Humanos", "Contabilidade"];
+  
+  // In a real application, we would fetch custom areas from the API
+  // For now, we'll add one example custom area
+  const customAreas = ["PERA"];
+  
+  const availableAreas = [...defaultAreas, ...customAreas];
 
   const handleAddUser = () => {
     // TODO: Implementar integração com a API
