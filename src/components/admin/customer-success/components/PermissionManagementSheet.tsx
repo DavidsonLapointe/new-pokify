@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
 import { useOrganizationUsers } from "@/hooks/useOrganizationUsers";
 import { toast } from "sonner";
+import { CustomSwitch } from "@/components/ui/custom-switch";
 
 interface PermissionManagementSheetProps {
   permissionKey: string;
@@ -129,7 +129,7 @@ export const PermissionManagementSheet = ({
                         {user.status === 'active' ? 'Ativo' : 'Pendente'}
                       </Badge>
                     </div>
-                    <Switch
+                    <CustomSwitch
                       checked={userPermissions[user.id] || false}
                       onCheckedChange={() => handlePermissionToggle(user.id)}
                       className="ml-2"
