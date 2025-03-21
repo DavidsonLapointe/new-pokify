@@ -95,7 +95,7 @@ const OrganizationUnusedPermissions = () => {
             isOpen={isPermissionsModalOpen}
             onClose={() => setIsPermissionsModalOpen(false)}
             users={users}
-            organizationName={user?.company?.name}
+            organizationName={user?.organization?.name}
           />
         </div>
       )}
