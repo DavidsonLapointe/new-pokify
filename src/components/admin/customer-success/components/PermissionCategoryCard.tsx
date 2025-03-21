@@ -2,8 +2,8 @@
 import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { TabPermissionItem } from "./TabPermissionItem";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { PermissionManagementSheet } from "./PermissionManagementSheet";
 import { 
   PermissionMap, 
@@ -20,6 +20,7 @@ export const PermissionCategoryCard = ({
   category, 
   permissionData 
 }: PermissionCategoryCardProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const moduleHasTabs = hasTabPermissions(category);
   const tabKeys = getTabPermissions(category);
   const currentPermission = permissionData[category];
@@ -51,17 +52,20 @@ export const PermissionCategoryCard = ({
               {currentPermission.count}
             </Badge>
 
-            <Sheet>
-              <SheetTrigger asChild>
-                <button 
-                  className="text-primary hover:text-primary/80 transition-colors"
-                  aria-label="Ver e gerenciar usuários com acesso a esta função"
-                >
-                  <Eye size={18} />
-                </button>
-              </SheetTrigger>
-              <PermissionManagementSheet permissionKey={category} label={currentPermission.label} />
-            </Sheet>
+            <button 
+              className="text-primary hover:text-primary/80 transition-colors"
+              aria-label="Ver e gerenciar usuários com acesso a esta função"
+              onClick={() => setIsOpen(true)}
+            >
+              <Eye size={18} />
+            </button>
+            
+            <PermissionManagementSheet 
+              permissionKey={category} 
+              label={currentPermission.label} 
+              open={isOpen}
+              onOpenChange={setIsOpen}
+            />
           </div>
         )}
       </div>
