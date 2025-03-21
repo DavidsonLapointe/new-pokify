@@ -43,7 +43,8 @@ import OrganizationCompany from "./pages/OrganizationCompany";
 import OrganizationSetup from "./pages/OrganizationSetup";
 import OrganizationKnowledgeBase from "./pages/OrganizationKnowledgeBase";
 import OrganizationCredits from "./pages/OrganizationCredits";
-import OrganizationAreas from "./pages/OrganizationAreas"; // New import
+import OrganizationAreas from "./pages/OrganizationAreas";
+import OrganizationUnusedPermissions from "./pages/OrganizationUnusedPermissions"; // Nova importação
 
 const LogoutButton = () => {
   const handleLogout = async () => {
@@ -144,9 +145,10 @@ function AppRoutes() {
           <Route path="leads" element={<OrganizationLeads />} />
           <Route path="ai-tools" element={<OrganizationAITools />} />
           <Route path="users" element={<OrganizationUsers />} />
+          <Route path="unused-permissions" element={<OrganizationUnusedPermissions />} /> {/* Nova rota */}
           <Route path="integrations" element={<OrganizationIntegrations />} />
           <Route path="settings" element={<OrganizationSettings />} />
-          <Route path="areas" element={<OrganizationAreas />} /> {/* New route */}
+          <Route path="areas" element={<OrganizationAreas />} />
           <Route path="modules" element={<OrganizationModules />} />
           <Route path="company" element={<OrganizationCompany />} />
           <Route path="credits" element={<OrganizationCredits />} />

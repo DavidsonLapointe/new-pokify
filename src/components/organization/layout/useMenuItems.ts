@@ -16,7 +16,8 @@ import {
   ClipboardCheck,
   Package,
   Wallet,
-  Building2
+  Building2,
+  Shield
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -52,6 +53,12 @@ export const useMenuItems = (user: User) => {
       icon: Users, 
       label: "Usuários", 
       path: "/organization/users",
+      permissionId: "users"
+    },
+    {
+      icon: Shield,
+      label: "Funções sem Usuários",
+      path: "/organization/unused-permissions",
       permissionId: "users"
     },
     {
