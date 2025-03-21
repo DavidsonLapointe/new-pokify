@@ -1,5 +1,18 @@
 
-import { FileText, Brain, BarChart2, FileAudio, FileVideo, Database, MessageSquare, BookOpen } from "lucide-react";
+import { 
+  FileText, 
+  Brain, 
+  BarChart2, 
+  FileAudio, 
+  FileVideo, 
+  Database, 
+  MessageSquare, 
+  BookOpen,
+  TrendingUp,
+  Lightbulb,
+  CheckCircle,
+  PieChart
+} from "lucide-react";
 
 export function HowItWorksSection() {
   return (
@@ -15,29 +28,29 @@ export function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Input */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <FileText className="h-8 w-8 text-primary" />
+            <div className="bg-[#E5DEFF] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <FileText className="h-8 w-8 text-[#9b87f5]" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Múltiplas Fontes de Dados</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileAudio className="h-5 w-5 text-primary/70" />
+                <FileAudio className="h-5 w-5 text-[#9b87f5]" />
                 <span>Arquivos de áudio e reuniões</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileVideo className="h-5 w-5 text-primary/70" />
+                <FileVideo className="h-5 w-5 text-[#7E69AB]" />
                 <span>Vídeos e apresentações</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Database className="h-5 w-5 text-primary/70" />
+                <Database className="h-5 w-5 text-[#D946EF]" />
                 <span>Dados estruturados e não-estruturados</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MessageSquare className="h-5 w-5 text-primary/70" />
+                <MessageSquare className="h-5 w-5 text-[#F97316]" />
                 <span>Mensagens e interações com clientes</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <BookOpen className="h-5 w-5 text-primary/70" />
+                <BookOpen className="h-5 w-5 text-[#0EA5E9]" />
                 <span>Documentos e materiais de conhecimento</span>
               </div>
             </div>
@@ -45,44 +58,49 @@ export function HowItWorksSection() {
 
           {/* Processing */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="inline-flex px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <div className="inline-flex px-3 py-1 rounded-full bg-[#9b87f5]/10 text-[#9b87f5] text-sm font-medium mb-4">
               Processamento de IA
             </div>
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <Brain className="h-8 w-8 text-primary animate-pulse" />
+            <div className="bg-[#D3E4FD] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <Brain className="h-8 w-8 text-[#0EA5E9] animate-pulse" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-2">Inteligência Adaptativa</h3>
-            <p className="text-gray-600 text-center text-sm">
+            <p className="text-gray-600 text-center text-sm mb-4">
               Nossa IA analisa, processa e otimiza informações específicas para cada departamento da sua empresa
             </p>
+            <div className="space-y-2 text-center text-xs text-gray-500">
+              <p>Análise Avançada</p>
+              <p>Extração de Dados</p>
+              <p>Identificação de Padrões</p>
+            </div>
           </div>
 
           {/* Output */}
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <BarChart2 className="h-8 w-8 text-primary" />
+            <div className="bg-[#F2FCE2] w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <BarChart2 className="h-8 w-8 text-[#84cc16]" />
             </div>
             <h3 className="text-lg font-semibold text-center mb-4">Resultados para Toda Empresa</h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Comercial: Análise de chamadas e leads</span>
+                <TrendingUp className="h-5 w-5 text-[#84cc16]" />
+                <span>Leads Qualificados</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Marketing: Otimização de conteúdo</span>
+                <Lightbulb className="h-5 w-5 text-[#F97316]" />
+                <span>Insights de Vendas</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>RH: Triagem e avaliação de candidatos</span>
+                <PieChart className="h-5 w-5 text-[#D946EF]" />
+                <span>Métricas Detalhadas</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Financeiro: Análise preditiva</span>
+                <CheckCircle className="h-5 w-5 text-[#9b87f5]" />
+                <span>Sugestões de Ação</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/70" />
-                <span>Operações: Otimização de processos</span>
+                <BarChart2 className="h-5 w-5 text-[#0EA5E9]" />
+                <span>Otimização de Processos</span>
               </li>
             </ul>
           </div>
