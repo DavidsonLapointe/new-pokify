@@ -35,6 +35,7 @@ import {
   TabsList,
   TabsTrigger
 } from "@/components/ui/tabs";
+import AverageCostTab from "@/components/admin/ai-costs/AverageCostTab";
 
 // Mock data for AI executions - in a real app, this would come from an API
 const mockAIExecutions = [
@@ -103,7 +104,7 @@ const mockAIExecutions = [
 const AdminAICosts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [toolFilter, setToolFilter] = useState("");
-  const [activeTab, setActiveTab] = useState("analytic-report");
+  const [activeTab, setActiveTab] = useState("custo-medio");
 
   // Fetch AI executions data
   const { data: aiExecutions, isLoading } = useQuery({
@@ -140,8 +141,13 @@ const AdminAICosts = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full max-w-md">
+          <TabsTrigger value="custo-medio" className="flex-1">Custo Médio</TabsTrigger>
           <TabsTrigger value="analytic-report" className="flex-1">Relatório Analítico</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="custo-medio" className="space-y-4">
+          <AverageCostTab mockAIExecutions={mockAIExecutions} />
+        </TabsContent>
 
         <TabsContent value="analytic-report" className="space-y-4">
           {/* Filters */}
