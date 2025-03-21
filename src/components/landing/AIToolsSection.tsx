@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ChevronLeft, ChevronRight, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,8 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 // Extract unique tool names for the filter tags
 const extractToolNames = () => {
   const allToolNames = toolsData.map(tool => tool.title);
-  // Get unique tool names
-  return ["Todas", ...new Set(allToolNames)];
+  // Get unique tool names (without "Todas")
+  return [...new Set(allToolNames)];
 };
 
 // Define business areas with their names and IDs
@@ -37,19 +37,22 @@ const toolImages = {
 };
 
 export function AIToolsSection() {
-  // Get tool names for filter tags
+  // Get tool names for filter tags (without "Todas")
   const allTags = extractToolNames();
   
-  const [selectedTag, setSelectedTag] = useState<string>("Todas");
+  const [selectedTag, setSelectedTag] = useState<string>(allTags[0] || "");
   const [activeToolIndex, setActiveToolIndex] = useState(0);
   
-  // Filter tools based on selected tag
-  const filteredTools = selectedTag === "Todas" 
-    ? toolsData 
-    : toolsData.filter(tool => tool.title === selectedTag);
+  // Filter tools based on selected tag - now directly filtering by the selected tag
+  const filteredTools = toolsData.filter(tool => tool.title === selectedTag);
 
   // Get the currently active tool
   const activeTool = filteredTools[activeToolIndex] || toolsData[0];
+
+  // Set the first tool of the selected tag when tag changes
+  useEffect(() => {
+    setActiveToolIndex(0);
+  }, [selectedTag]);
 
   // Handle tool navigation
   const handlePrevTool = () => {
@@ -67,7 +70,7 @@ export function AIToolsSection() {
   // Handle tag selection
   const handleTagChange = (tag: string) => {
     setSelectedTag(tag);
-    setActiveToolIndex(0); // Reset to first tool when changing tag
+    // Reset to first tool when changing tag (handled by useEffect)
   };
 
   return (
@@ -80,7 +83,7 @@ export function AIToolsSection() {
           Descubra como nossa plataforma pode transformar cada departamento da sua empresa com soluções de IA especializadas
         </p>
 
-        {/* Tool tags in multiple lines */}
+        {/* Tool tags in multiple lines - without "Todas" */}
         <div className="mb-12">
           <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
             {allTags.map((tag) => (
