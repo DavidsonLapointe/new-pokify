@@ -46,6 +46,12 @@ const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] 
 
   return (
     <div className="space-y-4">
+      {exchangeRate && (
+        <div className="text-sm text-muted-foreground mb-2">
+          Cotação atual: 1 USD = R$ {exchangeRate.toFixed(2)} (atualizada diariamente às 11:00)
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {moduleAverageCosts.map((module) => (
           <ModuleCostCard 
