@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleCarousel } from "@/components/organization/modules/ModuleCarousel";
@@ -19,7 +20,6 @@ const OrganizationModules = () => {
     isConfirmDialogOpen,
     isCancelDialogOpen,
     isPaymentProcessingDialogOpen,
-    isPaymentSuccessDialogOpen,
     isPaymentSuccessDialogOpen,
     isPaymentFailedDialogOpen,
     isTermsDialogOpen,
