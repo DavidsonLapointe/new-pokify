@@ -19,7 +19,7 @@ export const MOCK_TOOLS: Tool[] = [
     price: 199.90,
     credits: 5,
     badgeLabel: "Em Configuração",
-    areas: ["marketing", "sales", "digital_marketing"],
+    areas: ["4", "5", "7"],  // Marketing, Vendas, Marketing Digital
     howItWorks: [
       "Importação de dados do lead a partir do seu CRM",
       "Geração de roteiro personalizado com base no perfil",
@@ -43,7 +43,7 @@ export const MOCK_TOOLS: Tool[] = [
     price: 149.90,
     credits: 3,
     badgeLabel: "Não contratada",
-    areas: ["customer_service", "sales", "support"],
+    areas: ["8", "5"],  // Atendimento ao Cliente, Vendas
     howItWorks: [
       "Instalação de widget de chat no seu website",
       "Configuração de respostas para perguntas frequentes",
@@ -67,7 +67,7 @@ export const MOCK_TOOLS: Tool[] = [
     price: 249.90,
     credits: 10,
     badgeLabel: "Configurada",
-    areas: ["sales", "customer_service", "training"],
+    areas: ["5", "8", "2"],  // Vendas, Atendimento ao Cliente, RH
     howItWorks: [
       "Upload da gravação da chamada na plataforma",
       "Processamento e transcrição automática do áudio",
@@ -91,7 +91,7 @@ export const MOCK_TOOLS: Tool[] = [
     price: 129.90,
     credits: 2,
     badgeLabel: "Em breve",
-    areas: ["marketing", "digital_marketing", "sales_enablement"],
+    areas: ["4", "7", "9"],  // Marketing, Marketing Digital, Vendas
     howItWorks: [
       "Segmentação dos leads por perfil e comportamento",
       "Criação de sequências de conteúdo personalizado",
@@ -115,7 +115,7 @@ export const MOCK_TOOLS: Tool[] = [
     price: 179.90,
     credits: 7,
     badgeLabel: "Contratada",
-    areas: ["sales", "business_development", "marketing"],
+    areas: ["5", "4", "1"],  // Vendas, Marketing, Financeiro
     howItWorks: [
       "Pesquisa automática de informações sobre empresas-alvo",
       "Elaboração de abordagens personalizadas para cada lead",

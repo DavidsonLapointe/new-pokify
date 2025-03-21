@@ -73,18 +73,6 @@ const OrganizationModules = () => {
     setActiveAreaFilter(null);
   };
 
-  // Add debugging logs to identify filter issues
-  useEffect(() => {
-    if (activeAreaFilter) {
-      console.log("Active filter:", activeAreaFilter);
-      console.log("Tools with areas:", tools.map(t => ({ id: t.id, areas: t.areas })));
-      const filtered = tools.filter(tool => 
-        Array.isArray(tool.areas) && tool.areas.includes(activeAreaFilter)
-      );
-      console.log("Filtered tools:", filtered);
-    }
-  }, [activeAreaFilter, tools]);
-
   // Filter tools based on the active area filter
   const filteredTools = activeAreaFilter
     ? tools.filter(tool => 
@@ -133,21 +121,32 @@ const OrganizationModules = () => {
           </div>
         </div>
 
-        {/* Debug info - can be removed after testing */}
+        {/* Show empty state when no tools match the filter */}
         {activeAreaFilter && filteredTools.length === 0 && (
-          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-700">
-              Nenhuma ferramenta encontrada para a área "{defaultAreas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter}".
+          <div className="p-6 bg-gray-50 border border-gray-200 rounded-md text-center">
+            <p className="text-gray-600">
+              Nenhuma ferramenta encontrada para a área selecionada.
             </p>
+            <Badge 
+              variant="outline" 
+              className="mt-3 px-3 py-1.5 text-xs cursor-pointer flex items-center gap-1 hover:bg-gray-100 text-gray-700 mx-auto w-fit"
+              onClick={clearFilter}
+            >
+              <X className="w-3 h-3" />
+              Limpar filtro
+            </Badge>
           </div>
         )}
 
-        <ModuleCarousel
-          tools={filteredTools}
-          selectedTool={selectedTool}
-          onSelectTool={handleSelectTool}
-          onCancelModule={handleCancelTool}
-        />
+        {/* Only show carousel when there are tools to display */}
+        {filteredTools.length > 0 && (
+          <ModuleCarousel
+            tools={filteredTools}
+            selectedTool={selectedTool}
+            onSelectTool={handleSelectTool}
+            onCancelModule={handleCancelTool}
+          />
+        )}
 
         {/* Details of selected module - only shown when a module is selected */}
         {selectedTool && (
