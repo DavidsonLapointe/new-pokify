@@ -1,94 +1,64 @@
 
-export type Permission = boolean;
+export const permissionLabels: Record<string, string> = {
+  dashboard: "Dashboard",
+  "dashboard.analytics": "Analytics",
+  "dashboard.organizations": "Organizações",
+  "dashboard.financial": "Financeiro",
+  organizations: "Empresas",
+  "organizations.manage": "Gerenciar",
+  "organizations.support": "Suporte",
+  users: "Usuários",
+  modules: "Módulos",
+  "modules.manage": "Gerenciar",
+  "modules.setups": "Setups",
+  plans: "Planos",
+  "credit-packages": "Pacotes de Créditos",
+  "credit-packages.manage": "Gerenciar",
+  "credit-packages.sales": "Vendas",
+  financial: "Financeiro",
+  "financial.invoices": "Faturas",
+  "financial.reports": "Relatórios",
+  integrations: "Integrações",
+  prompt: "Prompt",
+  settings: "Configurações",
+  "settings.alerts": "Alertas",
+  "settings.analysis": "Análise",
+  "settings.retention": "Retenção",
+  "settings.llm": "LLM",
+  "settings.system": "Sistema",
+  "settings.permissions": "Permissões",
+  profile: "Meu Perfil",
+  "analysis-packages": "Pacotes de Análise",
+  leads: "Análise de Leads",
+  company: "Empresa",
+  "dashboard.leads": "Leads",
+  "dashboard.uploads": "Uploads",
+  "dashboard.performance": "Performance",
+  "dashboard.objections": "Objeções",
+  "dashboard.suggestions": "Sugestões",
+  "dashboard.sellers": "Vendedores",
+  crm: "CRM",
+  "crm.integration": "Integração",
+  "crm.fields": "Campos",
+};
 
-export interface Permissions {
-  [key: string]: Permission;
-}
-
-export interface RoutePermission {
-  id: string;
-  label: string;
-  path: string;
-  isDefault?: boolean;
-  hasTabs?: boolean;
-}
-
-// Rotas disponíveis para usuários da organização
-export const availablePermissions = [
-  "dashboard",        // Tem subpermissões (abas)
-  "leads",            // Análise de Leads
-  "users",            // Usuários
-  "integrations",     // Integrações
-  "reports",          // Relatórios
-  "settings",         // Configurações (com abas)
-  "plan",             // Meu Plano
-  "profile",          // Perfil
-  "products",         // Produtos
-  "calendar",         // Calendário
-  "crm",              // CRM (com abas)
-  "notifications",    // Notificações
-  "support",          // Suporte
-  "knowledge",        // Base de Conhecimento
-  "analytics",        // Análises
-  "tools"             // Ferramentas
-];
-
-// Subpermissões para páginas com abas
+// Define tab permissions
 export const dashboardTabPermissions = [
-  'dashboard.leads',
-  'dashboard.uploads',
-  'dashboard.performance',
-  'dashboard.objections'
+  "dashboard.analytics",
+  "dashboard.organizations",
+  "dashboard.financial"
 ];
 
 export const settingsTabPermissions = [
-  'settings.alerts',
-  'settings.analysis',
-  'settings.retention',
-  'settings.system'
+  "settings.alerts",
+  "settings.analysis",
+  "settings.retention",
+  "settings.llm",
+  "settings.system",
+  "settings.permissions"
 ];
 
 export const crmTabPermissions = [
-  'crm.contacts',
-  'crm.opportunities',
-  'crm.pipeline',
-  'crm.activities'
+  "crm.integration",
+  "crm.fields"
 ];
-
-// Labels em português para as permissões
-export const permissionLabels: { [key: string]: string } = {
-  dashboard: "Dashboard",
-  leads: "Análise de Leads",
-  users: "Usuários",
-  integrations: "Integrações",
-  reports: "Relatórios",
-  settings: "Configurações",
-  plan: "Meu Plano",
-  profile: "Meu Perfil",
-  products: "Produtos",
-  calendar: "Calendário",
-  crm: "CRM",
-  notifications: "Notificações",
-  support: "Suporte",
-  knowledge: "Base de Conhecimento",
-  analytics: "Análises",
-  tools: "Ferramentas",
-  
-  // Dashboard tabs
-  'dashboard.leads': "Leads",
-  'dashboard.uploads': "Uploads",
-  'dashboard.performance': "Performance",
-  'dashboard.objections': "Objeções",
-  
-  // Settings tabs
-  'settings.alerts': "Alertas",
-  'settings.analysis': "Análise",
-  'settings.retention': "Retenção",
-  'settings.system': "Sistema",
-  
-  // CRM tabs
-  'crm.contacts': "Contatos",
-  'crm.opportunities': "Oportunidades",
-  'crm.pipeline': "Pipeline",
-  'crm.activities': "Atividades"
-};
