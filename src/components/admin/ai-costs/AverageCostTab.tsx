@@ -2,10 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import ModuleCostCard from "./ModuleCostCard";
-import { calculateAverageCosts, getOperationDays, type AIExecution } from "./utils";
+import { calculateAverageCosts, getOperationDays, type AIExecution, mockAverageCostData } from "./utils";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 
-const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] }) => {
+const AverageCostTab = () => {
   // Fetch exchange rate
   const { rate: exchangeRate, isLoading: isLoadingRate } = useExchangeRate();
   
@@ -15,7 +15,7 @@ const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] 
     queryFn: async () => {
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-      return mockAIExecutions;
+      return mockAverageCostData;
     }
   });
 
@@ -35,7 +35,7 @@ const AverageCostTab = ({ mockAIExecutions }: { mockAIExecutions: AIExecution[] 
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3, 4, 5].map((i) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
           <div key={i} className="w-full">
             <Skeleton className="h-[180px] w-full rounded-lg" />
           </div>

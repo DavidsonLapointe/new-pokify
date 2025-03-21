@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FilterX } from "lucide-react";
@@ -36,70 +35,10 @@ import {
   TabsTrigger
 } from "@/components/ui/tabs";
 import AverageCostTab from "@/components/admin/ai-costs/AverageCostTab";
+import { mockAverageCostData } from "@/components/admin/ai-costs/utils";
 
 // Mock data for AI executions - in a real app, this would come from an API
-const mockAIExecutions = [
-  {
-    id: "1",
-    toolName: "Lead Analyzer",
-    modelName: "GPT-4o",
-    organizationName: "Acme Inc",
-    executionDate: new Date("2023-09-15T10:30:00"),
-    llmDetails: [
-      { name: "TokenProcessing", cost: 0.0012 },
-      { name: "EmbeddingGeneration", cost: 0.0008 }
-    ],
-    totalCost: 0.002
-  },
-  {
-    id: "2",
-    toolName: "Call Transcriber",
-    modelName: "Claude 3",
-    organizationName: "TechCorp",
-    executionDate: new Date("2023-09-15T14:45:00"),
-    llmDetails: [
-      { name: "TokenProcessing", cost: 0.0015 },
-      { name: "ImageAnalysis", cost: 0.0025 }
-    ],
-    totalCost: 0.004
-  },
-  {
-    id: "3",
-    toolName: "Content Summarizer",
-    modelName: "GPT-4o-mini",
-    organizationName: "Global Services",
-    executionDate: new Date("2023-09-14T09:15:00"),
-    llmDetails: [
-      { name: "TokenProcessing", cost: 0.0008 },
-      { name: "TextSummarization", cost: 0.0005 }
-    ],
-    totalCost: 0.0013
-  },
-  {
-    id: "4",
-    toolName: "Lead Analyzer",
-    modelName: "GPT-4o",
-    organizationName: "Acme Inc",
-    executionDate: new Date("2023-09-14T16:20:00"),
-    llmDetails: [
-      { name: "TokenProcessing", cost: 0.0018 },
-      { name: "TranslationService", cost: 0.0012 }
-    ],
-    totalCost: 0.003
-  },
-  {
-    id: "5",
-    toolName: "Knowledge Base Query",
-    modelName: "Claude 3",
-    organizationName: "DataSystems",
-    executionDate: new Date("2023-09-13T11:05:00"),
-    llmDetails: [
-      { name: "TokenProcessing", cost: 0.0014 },
-      { name: "SemanticSearch", cost: 0.0022 }
-    ],
-    totalCost: 0.0036
-  },
-];
+const mockAIExecutions = mockAverageCostData.slice(0, 20); // Take just a sample for the detailed table
 
 const AdminAICosts = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,7 +47,7 @@ const AdminAICosts = () => {
 
   // Fetch AI executions data
   const { data: aiExecutions, isLoading } = useQuery({
-    queryKey: ['ai-executions'],
+    queryKey: ['ai-executions-table'],
     queryFn: async () => {
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
@@ -146,7 +85,7 @@ const AdminAICosts = () => {
         </TabsList>
 
         <TabsContent value="custo-medio" className="space-y-4">
-          <AverageCostTab mockAIExecutions={mockAIExecutions} />
+          <AverageCostTab />
         </TabsContent>
 
         <TabsContent value="analytic-report" className="space-y-4">
