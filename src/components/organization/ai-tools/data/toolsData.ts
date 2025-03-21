@@ -29,7 +29,7 @@ export const toolsData: Tool[] = [
     badgeLabel: "Em Setup",
     price: 150,
     credits: 3,
-    areas: ["marketing", "sales"],
+    areas: ["4", "5", "7"],  // Marketing, Vendas, Marketing Digital
     howItWorks: [
       "Importação de dados do lead a partir do seu CRM",
       "Geração de roteiro personalizado com base no perfil",
@@ -53,7 +53,7 @@ export const toolsData: Tool[] = [
     badgeLabel: "Não contratada",
     price: 100,
     credits: 2,
-    areas: ["customer_service", "sales"],
+    areas: ["8", "5"],  // Atendimento ao Cliente, Vendas
     howItWorks: [
       "Instalação de widget de chat no seu website",
       "Configuração de respostas para perguntas frequentes",
@@ -77,7 +77,7 @@ export const toolsData: Tool[] = [
     badgeLabel: "Configurada",
     price: 75,
     credits: 1,
-    areas: ["sales", "customer_service"],
+    areas: ["5", "8", "2"],  // Vendas, Atendimento ao Cliente, RH
     howItWorks: [
       "Upload da gravação da chamada na plataforma",
       "Processamento e transcrição automática do áudio",
@@ -101,7 +101,7 @@ export const toolsData: Tool[] = [
     badgeLabel: "Em breve",
     price: 200,
     credits: 4,
-    areas: ["marketing"],
+    areas: ["4", "7"],  // Marketing, Marketing Digital
     howItWorks: [
       "Segmentação dos leads por perfil e comportamento",
       "Criação de sequências de conteúdo personalizado",
@@ -125,7 +125,7 @@ export const toolsData: Tool[] = [
     badgeLabel: "Contratada",
     price: 125,
     credits: 2,
-    areas: ["sales", "marketing"],
+    areas: ["5", "4", "1"],  // Vendas, Marketing, Financeiro
     howItWorks: [
       "Pesquisa automática de informações sobre empresas-alvo",
       "Elaboração de abordagens personalizadas para cada lead",
