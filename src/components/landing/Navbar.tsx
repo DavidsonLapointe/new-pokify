@@ -11,17 +11,19 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           <div className="font-bold text-2xl text-gray-900">Leadly</div>
           
-          <div className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 hover:text-primary transition-colors">Soluções</a>
-            <a href="#" className="text-gray-600 hover:text-primary transition-colors">Preços</a>
-            <a href="#" className="text-gray-600 hover:text-primary transition-colors">Recursos</a>
-            <a href="#" className="text-gray-600 hover:text-primary transition-colors">Sobre</a>
-            <a href="#" className="text-gray-600 hover:text-primary transition-colors">Contato</a>
+          <div className="flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-6 mr-4">
+              <a href="#" className="text-gray-600 hover:text-primary transition-colors">Soluções</a>
+              <a href="#" className="text-gray-600 hover:text-primary transition-colors">Preços</a>
+              <a href="#" className="text-gray-600 hover:text-primary transition-colors">Recursos</a>
+              <a href="#" className="text-gray-600 hover:text-primary transition-colors">Sobre</a>
+              <a href="#" className="text-gray-600 hover:text-primary transition-colors">Contato</a>
+            </div>
+            
+            <Button onClick={() => navigate("/auth")}>
+              Acessar Plataforma
+            </Button>
           </div>
-          
-          <Button onClick={() => navigate("/auth")}>
-            Acessar Plataforma
-          </Button>
         </div>
       </div>
     </nav>
