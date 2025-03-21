@@ -195,8 +195,8 @@ const AdminAICosts = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ferramenta de IA</TableHead>
-                <TableHead>Data e Hora</TableHead>
+                <TableHead className="text-left">Ferramenta de IA</TableHead>
+                <TableHead className="text-left">Data e Hora</TableHead>
                 <TableHead className="text-right">Custo Total</TableHead>
                 <TableHead>Empresa</TableHead>
               </TableRow>
@@ -223,11 +223,11 @@ const AdminAICosts = () => {
                 // Data rows
                 filteredExecutions?.map((execution) => (
                   <TableRow key={execution.id}>
-                    <TableCell className="font-medium text-foreground">
+                    <TableCell className="font-medium text-foreground text-left">
                       {execution.toolName}
                     </TableCell>
-                    <TableCell>
-                      {format(execution.executionDate, "dd/MM/yyyy HH:mm")}
+                    <TableCell className="text-left">
+                      {format(execution.executionDate, "dd/MM/yyyy 'às' HH:mm")}
                     </TableCell>
                     <TableCell className="text-right font-medium">
                       <TooltipProvider>
