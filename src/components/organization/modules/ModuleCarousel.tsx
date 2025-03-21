@@ -26,15 +26,17 @@ export const ModuleCarousel: React.FC<ModuleCarouselProps> = ({
         }}
         className="w-full" 
       >
-        <CarouselContent className="-ml-1">
+        <CarouselContent className="mx-0">
           {tools.map((tool) => (
-            <CarouselItem key={tool.id} className="pl-1 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <ModuleCard
-                tool={tool}
-                isSelected={selectedTool?.id === tool.id}
-                onShowDetails={onSelectTool}
-                onCancelModule={onCancelModule}
-              />
+            <CarouselItem key={tool.id} className="px-0.5 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <div className="px-0.5">
+                <ModuleCard
+                  tool={tool}
+                  isSelected={selectedTool?.id === tool.id}
+                  onShowDetails={onSelectTool}
+                  onCancelModule={onCancelModule}
+                />
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -44,4 +46,3 @@ export const ModuleCarousel: React.FC<ModuleCarouselProps> = ({
     </div>
   );
 };
-
