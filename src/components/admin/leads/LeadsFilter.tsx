@@ -79,7 +79,7 @@ export const LeadsFilter = ({
         <Button 
           variant="outline"
           onClick={handleClearFilters}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
         >
           <FilterX className="h-4 w-4" />
           Limpar Filtros

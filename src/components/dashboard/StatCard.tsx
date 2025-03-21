@@ -51,12 +51,14 @@ export const StatCard = ({
             </Tooltip>
           </TooltipProvider>
           <div className="flex flex-col items-center">
-            <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
               <Icon className={`w-4 h-4 ${color}`} />
             </div>
-            <h3 className="text-xl font-semibold mt-1 min-w-[1.5rem] text-center">{value}</h3>
           </div>
         </div>
+      </div>
+      <div className="text-center">
+        <h3 className="text-xl font-semibold min-w-[2rem] text-center">{value}</h3>
       </div>
       {actionButton && <div className="mt-2">{actionButton}</div>}
     </div>

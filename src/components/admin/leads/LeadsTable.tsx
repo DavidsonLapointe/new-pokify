@@ -107,8 +107,8 @@ export const LeadsTable = ({ leads, onOpenNotes, onUpdateLead }: LeadsTableProps
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-left">Nome</TableHead>
+              <TableHead className="text-center">Status</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Cadastrado</TableHead>
               <TableHead>Anotações</TableHead>
@@ -119,8 +119,8 @@ export const LeadsTable = ({ leads, onOpenNotes, onUpdateLead }: LeadsTableProps
             {leads.length > 0 ? (
               leads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.name}</TableCell>
-                  <TableCell>{getStatusBadge(lead.status)}</TableCell>
+                  <TableCell className="font-medium text-left">{lead.name}</TableCell>
+                  <TableCell className="text-center">{getStatusBadge(lead.status)}</TableCell>
                   <TableCell>{lead.phone}</TableCell>
                   <TableCell>{formatCreatedAt(lead.createdAt)}</TableCell>
                   <TableCell>{lead.notes.length}</TableCell>
