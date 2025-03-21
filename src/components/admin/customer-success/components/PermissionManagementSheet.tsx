@@ -92,8 +92,8 @@ export const PermissionManagementSheet = ({
   };
 
   return (
-    <SheetContent className="sm:max-w-xs">
-      <SheetHeader className="mb-4">
+    <SheetContent className="sm:max-w-md">
+      <SheetHeader className="mb-3">
         <SheetTitle className="text-base">Gerenciar Acesso - {label}</SheetTitle>
         <SheetDescription className="text-xs">
           Defina quais usuários têm acesso a esta função. Usuários inativos não são exibidos.
@@ -101,11 +101,11 @@ export const PermissionManagementSheet = ({
       </SheetHeader>
       
       {loading ? (
-        <div className="flex items-center justify-center h-36">
+        <div className="flex items-center justify-center h-24">
           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <ScrollArea className="h-[calc(100vh-200px)] pr-2">
+        <ScrollArea className="h-[380px] pr-2">
           <div className="space-y-3">
             {activeUsers.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-4">
@@ -114,12 +114,11 @@ export const PermissionManagementSheet = ({
             ) : (
               activeUsers.map(user => (
                 <div key={user.id} className="flex items-center justify-between py-2 border-b border-gray-100">
-                  <div className="flex flex-col space-y-0.5">
-                    <span className="font-medium text-sm">{user.name || user.email}</span>
-                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm">{user.name || user.id}</span>
                     <Badge 
                       variant={user.status === 'active' ? 'success' : 'warning'}
-                      className="text-[10px] w-fit mt-1 px-1.5 py-0"
+                      className="text-[10px] px-1.5 py-0"
                     >
                       {user.status === 'active' ? 'Ativo' : 'Pendente'}
                     </Badge>
