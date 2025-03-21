@@ -12,26 +12,15 @@ export interface UserFormProps {
   editedUser: User | null;
   pendingRole: UserRole | "";
   pendingStatus: string;
+  pendingArea?: string;
   onEditUser: (field: string, value: string) => void;
   onRoleChange: (value: UserRole) => void;
   onStatusChange: (value: string) => void;
+  onAreaChange?: (value: string) => void;
 }
 
 // Definição das permissões padrão por função
 export const DEFAULT_PERMISSIONS = {
-  admin: {
-    dashboard: ["view", "export"],
-    leads: ["view", "edit", "delete"],
-    users: ["view", "edit", "delete"],
-    integrations: ["view", "edit"],
-    settings: ["view", "edit"],
-    plan: ["view", "upgrade"],
-    profile: ["contact", "password"]
-  },
-  seller: {
-    dashboard: ["view"],
-    leads: ["view", "edit"],
-    integrations: ["view"],
-    profile: ["contact", "password"]
-  }
+  admin: ["dashboard", "leads", "users", "integrations", "settings", "plan", "profile"],
+  seller: ["dashboard", "leads", "integrations", "profile"]
 };

@@ -26,11 +26,15 @@ export const EditUserDialog = ({
   const [editedUser, setEditedUser] = useState<User | null>(user);
   const [pendingStatus, setPendingStatus] = useState<string>("");
   const [pendingRole, setPendingRole] = useState<UserRole | "">("");
+  const [pendingArea, setPendingArea] = useState<string>("");
+
+  const availableAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Outro"];
 
   useEffect(() => {
     setEditedUser(user);
     setPendingStatus("");
     setPendingRole("");
+    setPendingArea(user?.area || "");
   }, [user]);
 
   const handleUpdateUser = () => {
@@ -39,7 +43,8 @@ export const EditUserDialog = ({
     const newRole = pendingRole || editedUser.role;
     
     // Convert array permissions to object permissions
-    const newPermissions = DEFAULT_PERMISSIONS[newRole].reduce((acc, permission) => ({
+    const permissionsList = DEFAULT_PERMISSIONS[newRole];
+    const newPermissions = permissionsList.reduce((acc, permission) => ({
       ...acc,
       [permission]: true
     }), {} as { [key: string]: boolean });
@@ -47,6 +52,7 @@ export const EditUserDialog = ({
     const updatedUser = {
       ...editedUser,
       role: newRole,
+      area: pendingArea || editedUser.area,
       status: pendingStatus ? (pendingStatus as "active" | "inactive" | "pending") : editedUser.status,
       permissions: newPermissions,
       logs: [
@@ -133,11 +139,14 @@ export const EditUserDialog = ({
           editedUser={editedUser}
           pendingRole={pendingRole}
           pendingStatus={pendingStatus}
+          pendingArea={pendingArea}
           onEditUser={handleEditUser}
           onRoleChange={(value: UserRole) => setPendingRole(value)}
           onStatusChange={setPendingStatus}
+          onAreaChange={setPendingArea}
           availableStatusOptions={editedUser ? getAvailableStatusOptions(editedUser.status) : []}
           availableRoles={editedUser ? getAvailableRoles(editedUser.role) : []}
+          availableAreas={availableAreas}
           currentStatusLabel={
             editedUser ? (
               <div className="flex items-center gap-2">

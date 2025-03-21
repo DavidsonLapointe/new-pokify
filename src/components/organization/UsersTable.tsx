@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -98,6 +99,7 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
             <TableRow>
               <TableHead>Usuário</TableHead>
               <TableHead>Função</TableHead>
+              <TableHead>Área</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Data de Cadastro</TableHead>
               <TableHead>Qtde de Logs</TableHead>
@@ -128,6 +130,11 @@ export const UsersTable = ({ users, onEditUser, onEditPermissions }: UsersTableP
                 <TableCell>
                   <span className="capitalize">
                     {user.role === "admin" ? "Administrador" : "Vendedor"}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    {user.area || "Não definida"}
                   </span>
                 </TableCell>
                 <TableCell>

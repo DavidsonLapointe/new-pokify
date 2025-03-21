@@ -24,11 +24,14 @@ interface UserFormProps {
   editedUser: User | null;
   pendingRole: UserRole | "";
   pendingStatus: string;
+  pendingArea?: string;
   onEditUser: (field: string, value: string) => void;
   onRoleChange: (value: UserRole) => void;
   onStatusChange: (value: string) => void;
+  onAreaChange?: (value: string) => void;
   availableStatusOptions: StatusOption[];
   availableRoles: RoleOption[];
+  availableAreas?: string[];
   currentStatusLabel: React.ReactNode;
   currentRole?: UserRole;
 }
@@ -37,11 +40,14 @@ export const UserForm = ({
   editedUser,
   pendingRole,
   pendingStatus,
+  pendingArea,
   onEditUser,
   onRoleChange,
   onStatusChange,
+  onAreaChange,
   availableStatusOptions,
   availableRoles,
+  availableAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Outro"],
   currentStatusLabel,
   currentRole
 }: UserFormProps) => {
@@ -79,6 +85,24 @@ export const UserForm = ({
           value={editedUser.phone}
           onChange={(e) => onEditUser("phone", e.target.value)}
         />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="area">Área</Label>
+        <Select
+          value={pendingArea || editedUser.area || ""}
+          onValueChange={onAreaChange || (() => {})}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione a área" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableAreas.map((area) => (
+              <SelectItem key={area} value={area}>
+                {area}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-2">
         <Label>Função atual:</Label>

@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { UserRole } from "@/types";
 
@@ -33,14 +32,17 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
     email: "",
     phone: "",
     role: "seller" as UserRole,
+    area: "",
   });
+
+  const availableAreas = ["Vendas", "Marketing", "Financeiro", "Operações", "Administrativo", "Tecnologia", "Suporte", "Outro"];
 
   const handleAddUser = () => {
     // TODO: Implementar integração com a API
     console.log("Novo usuário:", newUser);
     toast.success("Usuário adicionado com sucesso!");
     onClose();
-    setNewUser({ name: "", email: "", phone: "", role: "seller" });
+    setNewUser({ name: "", email: "", phone: "", role: "seller", area: "" });
     onUserAdded();
   };
 
@@ -86,6 +88,26 @@ export const AddUserDialog = ({ isOpen, onClose, onUserAdded }: AddUserDialogPro
                 setNewUser({ ...newUser, phone: e.target.value })
               }
             />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Área</label>
+            <Select
+              value={newUser.area}
+              onValueChange={(value) =>
+                setNewUser({ ...newUser, area: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a área" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableAreas.map((area) => (
+                  <SelectItem key={area} value={area}>
+                    {area}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>

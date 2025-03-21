@@ -25,6 +25,7 @@ export interface User {
   avatar?: string | null;
   organization?: Organization;
   company_leadly_id?: string;
+  area?: string; // Added area field
 }
 
 // Import the Organization type from organization-types.ts to avoid duplication
