@@ -19,7 +19,7 @@ export const SidebarMenuItem = ({ icon: Icon, label, path, active }: SidebarMenu
           : "text-gray-600"
       }`}
     >
-      <Icon className={`w-4 h-4 mr-3 ${active ? "text-[#9b87f5]" : "text-gray-600"}`} />
+      <Icon className={`w-4 h-4 mr-3 ${active ? "text-[#9b87f5]" : "text-[#9b87f5]"}`} />
       {label}
     </Link>
   );
