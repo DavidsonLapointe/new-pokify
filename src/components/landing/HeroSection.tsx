@@ -20,12 +20,12 @@ export function HeroSection() {
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                Multiplique seus resultados
+                Transforme sua empresa
               </span>{" "}
-              com o poder da Inteligência Artificial
+              com Inteligência Artificial
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Transforme sua empresa com ferramentas de IA que geram resultados imediatos. Aumente vendas, reduza custos e potencialize cada departamento da sua organização.
+              Potencialize todos os departamentos da sua empresa com ferramentas de IA que aumentam a produtividade, automatizam processos e geram insights valiosos para seu negócio
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Button size="lg" className="text-lg" onClick={() => setIsFormOpen(true)}>
@@ -55,7 +55,7 @@ export function HeroSection() {
             <div className="relative h-[500px]">
               <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-lg z-10" />
               <img
-                src="/lovable-uploads/e7a2a901-0aa5-41a5-b7f9-93aed906384f.png"
+                src="/lovable-uploads/817f098f-b9a1-4bd0-87f9-c523e1b33f53.png"
                 alt="Equipe trabalhando com IA"
                 className="w-full h-full object-cover rounded-lg shadow-2xl"
               />
