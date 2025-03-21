@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { StickyNote, MessageCircle } from "lucide-react";
+import { StickyNote, MessageCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -69,15 +69,15 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
     const config = statusConfig[status] || { color: "bg-gray-100 text-gray-800", label: status, description: "" };
 
     return (
-      <TooltipProvider>
+      <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Badge className={`${config.color} hover:${config.color}`}>
+            <Badge className={`${config.color} hover:bg-opacity-80 cursor-help`}>
               {config.label}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-sm">{config.description}</p>
+          <TooltipContent className="bg-white p-2 shadow-md border rounded-md max-w-xs">
+            <p className="text-sm font-medium">{config.description}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
