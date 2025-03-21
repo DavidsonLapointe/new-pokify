@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ChevronLeft, ChevronRight, Tag } from "lucide-react";
@@ -248,8 +247,8 @@ export function AIToolsSection() {
                       )}
                     </div>
                     <Button 
-                      variant="ghost" 
-                      className="mt-4 w-full justify-between"
+                      variant="primary" 
+                      className="mt-4 w-full justify-between text-white bg-primary hover:bg-primary/90"
                       onClick={() => handleTagChange(area.name)}
                     >
                       Ver ferramentas
