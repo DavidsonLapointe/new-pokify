@@ -1,8 +1,9 @@
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeadsTable } from "@/components/admin/leads/LeadsTable";
 import { NotesDialog } from "@/components/admin/leads/NotesDialog";
+import { LeadsFilter } from "@/components/admin/leads/LeadsFilter";
 import { mockLeadlyLeads } from "@/mocks/adminLeadsMocks";
 import { toast } from "sonner";
 
@@ -36,6 +37,8 @@ const AdminLeads = () => {
   const [leads, setLeads] = useState<LeadlyLead[]>(mockLeadlyLeads);
   const [selectedLead, setSelectedLead] = useState<LeadlyLead | null>(null);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
 
   const handleOpenNotes = (lead: LeadlyLead) => {
     setSelectedLead(lead);
@@ -132,6 +135,26 @@ const AdminLeads = () => {
     toast.success("Anotação excluída com sucesso!");
   };
 
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("todos");
+  };
+
+  // Filter leads based on search query and status filter
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      // Filter by search query (name or company name)
+      const matchesSearch = searchQuery === "" || 
+        lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (lead.companyName && lead.companyName.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      // Filter by status
+      const matchesStatus = statusFilter === "todos" || lead.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [leads, searchQuery, statusFilter]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -143,8 +166,15 @@ const AdminLeads = () => {
           <CardTitle>Leads Cadastrados</CardTitle>
         </CardHeader>
         <CardContent>
+          <LeadsFilter 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+            onClearFilters={handleClearFilters}
+          />
           <LeadsTable 
-            leads={leads} 
+            leads={filteredLeads} 
             onOpenNotes={handleOpenNotes}
             onUpdateLead={handleUpdateLead}
           />
