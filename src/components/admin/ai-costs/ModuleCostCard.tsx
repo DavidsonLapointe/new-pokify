@@ -45,15 +45,15 @@ const ModuleCostCard = ({ moduleName, costPeriods, operationDays }: ModuleCostCa
                     ? `Últimos ${period.days} dias` 
                     : `Últimos ${period.days} dias`}:
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">USD:</span>
-                  <span className="font-medium">${period.avgCost.toFixed(4)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">BRL:</span>
-                  <span className="font-medium">
-                    {isLoading ? "..." : `R$ ${(period.avgCost * currentRate).toFixed(2)}`}
-                  </span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Custo médio:</span>
+                  <div className="flex gap-2 items-center">
+                    <span className="font-medium">${period.avgCost.toFixed(4)}</span>
+                    <span className="text-sm text-muted-foreground">|</span>
+                    <span className="font-medium">
+                      {isLoading ? "..." : `R$ ${(period.avgCost * currentRate).toFixed(2)}`}
+                    </span>
+                  </div>
                 </div>
               </div>
             ) : null
