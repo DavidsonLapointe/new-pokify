@@ -2,16 +2,17 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { User } from "@/types";
-import { Button } from "@/components/ui/button";
 import { Shield, Users } from "lucide-react";
-import { PermissionsDistributionModal } from "@/components/admin/customer-success/PermissionsDistributionModal";
 import { useUser } from "@/contexts/UserContext";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { getPermissionData } from "@/components/admin/customer-success/utils/permission-utils";
+import { PermissionCategoryCard } from "@/components/admin/customer-success/components/PermissionCategoryCard";
 
 const OrganizationUnusedPermissions = () => {
   const { user } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(true);
 
   // Função para buscar os usuários da organização atual
   useEffect(() => {
@@ -63,9 +64,14 @@ const OrganizationUnusedPermissions = () => {
     fetchUsers();
   }, [user]);
 
-  const openPermissionsModal = () => {
-    setIsPermissionsModalOpen(true);
-  };
+  // Get permission data
+  const activeUsers = users.filter(user => user.status === 'active');
+  const permissionData = getPermissionData(activeUsers);
+
+  // Get main categories (parent permissions without dots)
+  const mainCategories = Object.keys(permissionData)
+    .filter(key => !key.includes('.'))
+    .sort((a, b) => permissionData[a].label.localeCompare(permissionData[b].label));
 
   return (
     <div className="space-y-6">
@@ -76,13 +82,6 @@ const OrganizationUnusedPermissions = () => {
             Visualize as funções e abas do sistema que não possuem usuários atribuídos.
           </p>
         </div>
-        
-        {!isPermissionsModalOpen && (
-          <Button onClick={openPermissionsModal} className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Visualizar Permissões
-          </Button>
-        )}
       </div>
 
       {loading ? (
@@ -90,14 +89,30 @@ const OrganizationUnusedPermissions = () => {
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <div className="flex items-center justify-center min-h-[300px]">
-          <PermissionsDistributionModal
-            isOpen={isPermissionsModalOpen}
-            onClose={() => setIsPermissionsModalOpen(false)}
-            users={users}
-            organizationName={user?.organization?.name}
-          />
-        </div>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary/80" />
+              Distribuição de Permissões
+            </CardTitle>
+            <CardDescription>
+              {user?.organization?.name || "Empresa"} - Visualização de permissões por função
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[calc(100vh-250px)] pr-4">
+              <div className="space-y-6">
+                {mainCategories.map(category => (
+                  <PermissionCategoryCard 
+                    key={category} 
+                    category={category} 
+                    permissionData={permissionData} 
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
