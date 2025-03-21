@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { StickyNote, MessageCircle, Info } from "lucide-react";
+import { StickyNote, MessageCircle, Info, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -20,16 +20,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { EditLeadDialog } from "./EditLeadDialog";
 
 interface LeadsTableProps {
   leads: LeadlyLead[];
   onOpenNotes: (lead: LeadlyLead) => void;
+  onUpdateLead: (updatedLead: LeadlyLead) => void;
 }
 
-export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
+export const LeadsTable = ({ leads, onOpenNotes, onUpdateLead }: LeadsTableProps) => {
+  const [selectedLead, setSelectedLead] = useState<LeadlyLead | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
   const formatCreatedAt = (dateString: string) => {
     const date = new Date(dateString);
     return formatDistanceToNow(date, { addSuffix: true, locale: ptBR });
+  };
+
+  const handleOpenEditDialog = (lead: LeadlyLead) => {
+    setSelectedLead(lead);
+    setIsEditDialogOpen(true);
   };
 
   const getStatusBadge = (status: string) => {
@@ -92,48 +102,69 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Telefone</TableHead>
-            <TableHead>Cadastrado</TableHead>
-            <TableHead>Anotações</TableHead>
-            <TableHead className="w-[80px]">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leads.length > 0 ? (
-            leads.map((lead) => (
-              <TableRow key={lead.id}>
-                <TableCell className="font-medium">{lead.name}</TableCell>
-                <TableCell>{getStatusBadge(lead.status)}</TableCell>
-                <TableCell>{lead.phone}</TableCell>
-                <TableCell>{formatCreatedAt(lead.createdAt)}</TableCell>
-                <TableCell>{lead.notes.length}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onOpenNotes(lead)}
-                    title="Anotações"
-                  >
-                    <StickyNote className="h-4 w-4 text-[#7E69AB]" />
-                  </Button>
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Telefone</TableHead>
+              <TableHead>Cadastrado</TableHead>
+              <TableHead>Anotações</TableHead>
+              <TableHead className="w-[120px]">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {leads.length > 0 ? (
+              leads.map((lead) => (
+                <TableRow key={lead.id}>
+                  <TableCell className="font-medium">{lead.name}</TableCell>
+                  <TableCell>{getStatusBadge(lead.status)}</TableCell>
+                  <TableCell>{lead.phone}</TableCell>
+                  <TableCell>{formatCreatedAt(lead.createdAt)}</TableCell>
+                  <TableCell>{lead.notes.length}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onOpenNotes(lead)}
+                        title="Anotações"
+                      >
+                        <StickyNote className="h-4 w-4 text-[#7E69AB]" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenEditDialog(lead)}
+                        title="Editar Lead"
+                      >
+                        <Pencil className="h-4 w-4 text-[#7E69AB]" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  Nenhum lead encontrado.
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
-                Nenhum lead encontrado.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {selectedLead && (
+        <EditLeadDialog
+          lead={selectedLead}
+          isOpen={isEditDialogOpen}
+          onClose={() => setIsEditDialogOpen(false)}
+          onUpdateLead={onUpdateLead}
+        />
+      )}
+    </>
   );
 };

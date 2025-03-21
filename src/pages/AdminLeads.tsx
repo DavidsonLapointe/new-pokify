@@ -20,6 +20,16 @@ export interface LeadlyLead {
   createdAt: string;
   status: string;
   notes: LeadNote[];
+  personType?: "pf" | "pj";
+  email?: string;
+  companyName?: string;
+  employeeCount?: string;
+  sector?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  lossReason?: string;
 }
 
 const AdminLeads = () => {
@@ -30,6 +40,19 @@ const AdminLeads = () => {
   const handleOpenNotes = (lead: LeadlyLead) => {
     setSelectedLead(lead);
     setIsNotesDialogOpen(true);
+  };
+
+  const handleUpdateLead = (updatedLead: LeadlyLead) => {
+    setLeads(leads.map(lead => 
+      lead.id === updatedLead.id ? updatedLead : lead
+    ));
+    
+    // If this is the currently selected lead, update it as well
+    if (selectedLead && selectedLead.id === updatedLead.id) {
+      setSelectedLead(updatedLead);
+    }
+    
+    toast.success("Lead atualizado com sucesso!");
   };
 
   const handleAddNote = (leadId: string, content: string) => {
@@ -122,7 +145,8 @@ const AdminLeads = () => {
         <CardContent>
           <LeadsTable 
             leads={leads} 
-            onOpenNotes={handleOpenNotes} 
+            onOpenNotes={handleOpenNotes}
+            onUpdateLead={handleUpdateLead}
           />
         </CardContent>
       </Card>
