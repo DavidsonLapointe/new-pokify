@@ -149,6 +149,7 @@ const AdminLeads = () => {
   const handleClearFilters = () => {
     setSearchQuery("");
     setStatusFilter("todos");
+    setCurrentPage(1); // Reset to first page when clearing filters
   };
 
   // Filter leads based on search query and status filter
