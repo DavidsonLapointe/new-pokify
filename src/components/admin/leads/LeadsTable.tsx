@@ -14,6 +14,12 @@ import {
 } from "@/components/ui/table";
 import { LeadlyLead } from "@/pages/AdminLeads";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface LeadsTableProps {
   leads: LeadlyLead[];
@@ -27,21 +33,54 @@ export const LeadsTable = ({ leads, onOpenNotes }: LeadsTableProps) => {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { color: string; label: string }> = {
-      ganho: { color: "bg-green-100 text-green-800", label: "Ganho" },
-      perda: { color: "bg-red-100 text-red-800", label: "Perda" },
-      nutricao_mkt: { color: "bg-blue-100 text-blue-800", label: "Nutrição Mkt" },
-      email_onboarding: { color: "bg-yellow-100 text-yellow-800", label: "Email Onboarding" },
-      contactar: { color: "bg-gray-100 text-gray-800", label: "Contactar" },
-      qualificacao: { color: "bg-purple-100 text-purple-800", label: "Qualificação" },
+    const statusConfig: Record<string, { color: string; label: string; description: string }> = {
+      ganho: { 
+        color: "bg-green-100 text-green-800", 
+        label: "Ganho",
+        description: "Lead que recebeu email de onboarding e concluiu o cadastro"
+      },
+      perda: { 
+        color: "bg-red-100 text-red-800", 
+        label: "Perda",
+        description: "Lead que descartou o uso do SaaS"
+      },
+      nutricao_mkt: { 
+        color: "bg-blue-100 text-blue-800", 
+        label: "Nutrição Mkt",
+        description: "Em processo de nutrição de marketing"
+      },
+      email_onboarding: { 
+        color: "bg-yellow-100 text-yellow-800", 
+        label: "Email Onboarding",
+        description: "Recebeu email mas não finalizou cadastro"
+      },
+      contactar: { 
+        color: "bg-gray-100 text-gray-800", 
+        label: "Contactar",
+        description: "Empresa que ainda não foi contactada"
+      },
+      qualificacao: { 
+        color: "bg-purple-100 text-purple-800", 
+        label: "Qualificação",
+        description: "Empresa já contactada mas nada resolvido"
+      },
     };
 
-    const config = statusConfig[status] || { color: "bg-gray-100 text-gray-800", label: status };
+    const config = statusConfig[status] || { color: "bg-gray-100 text-gray-800", label: status, description: "" };
 
     return (
-      <Badge className={`${config.color} hover:${config.color}`}>
-        {config.label}
-      </Badge>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge className={`${config.color} hover:${config.color}`}>
+              {config.label}
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm">{config.description}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
