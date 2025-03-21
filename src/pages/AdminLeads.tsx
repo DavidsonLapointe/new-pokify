@@ -1,11 +1,19 @@
 
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { LeadsTable } from "@/components/admin/leads/LeadsTable";
 import { NotesDialog } from "@/components/admin/leads/NotesDialog";
 import { LeadsFilter } from "@/components/admin/leads/LeadsFilter";
 import { mockLeadlyLeads } from "@/mocks/adminLeadsMocks";
 import { toast } from "sonner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export type LeadNote = {
   id: string;
@@ -33,12 +41,15 @@ export interface LeadlyLead {
   lossReason?: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const AdminLeads = () => {
   const [leads, setLeads] = useState<LeadlyLead[]>(mockLeadlyLeads);
   const [selectedLead, setSelectedLead] = useState<LeadlyLead | null>(null);
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleOpenNotes = (lead: LeadlyLead) => {
     setSelectedLead(lead);
@@ -155,17 +166,75 @@ const AdminLeads = () => {
     });
   }, [leads, searchQuery, statusFilter]);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredLeads.length / ITEMS_PER_PAGE);
+  const paginatedLeads = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredLeads.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredLeads, currentPage]);
+
+  // Generate page numbers
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if there are less than maxPagesToShow
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Calculate start and end of middle pages
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust to show maxPagesToShow - 2 pages (excluding first and last)
+      if (endPage - startPage < maxPagesToShow - 3) {
+        if (currentPage < totalPages / 2) {
+          endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 3);
+        } else {
+          startPage = Math.max(2, endPage - (maxPagesToShow - 3));
+        }
+      }
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pages.push('ellipsis');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push('ellipsis');
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="space-y-2">
         <h1 className="text-2xl font-bold">Leads da Landing Page</h1>
+        <p className="text-gray-500">
+          Gerencie e acompanhe todos os leads capturados através da landing page do seu produto
+        </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Leads Cadastrados</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-6">
           <LeadsFilter 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -174,10 +243,47 @@ const AdminLeads = () => {
             onClearFilters={handleClearFilters}
           />
           <LeadsTable 
-            leads={filteredLeads} 
+            leads={paginatedLeads} 
             onOpenNotes={handleOpenNotes}
             onUpdateLead={handleUpdateLead}
           />
+          
+          {totalPages > 1 && (
+            <div className="mt-4 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                  
+                  {pageNumbers.map((page, index) => (
+                    <PaginationItem key={index}>
+                      {page === 'ellipsis' ? (
+                        <span className="flex h-8 w-8 items-center justify-center">...</span>
+                      ) : (
+                        <PaginationLink
+                          isActive={currentPage === page}
+                          onClick={() => setCurrentPage(Number(page))}
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </CardContent>
       </Card>
 
