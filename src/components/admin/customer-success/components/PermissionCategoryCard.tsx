@@ -31,8 +31,8 @@ export const PermissionCategoryCard = ({
   const hasNoUsers = currentPermission.count === 0;
   
   return (
-    <div className="border rounded-lg overflow-hidden mb-4 w-full">
-      <div className="bg-gray-50 p-3 border-b flex justify-between items-center">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-4 w-full">
+      <div className="bg-gray-50 p-3 flex justify-between items-center">
         <h3 className={cn(
           "font-medium", 
           hasNoUsers && !moduleHasTabs && "text-red-500"
@@ -44,7 +44,7 @@ export const PermissionCategoryCard = ({
         </h3>
         
         {!moduleHasTabs && (
-          <TooltipProvider delayDuration={0}>
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Badge 
@@ -60,10 +60,8 @@ export const PermissionCategoryCard = ({
                 </Badge>
               </TooltipTrigger>
               <TooltipContent 
-                side="left" 
-                align="center"
+                side="left"
                 className="z-50"
-                sideOffset={-5}
               >
                 <UserTooltip users={currentPermission.users} />
               </TooltipContent>

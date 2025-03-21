@@ -79,7 +79,7 @@ const OrganizationUnusedPermissions = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Funções sem Usuários</h1>
           <p className="text-muted-foreground">
-            Visualize as funções e abas do sistema que não possuem usuários atribuídos.
+            Visualize a distribuição das funções e abas do sistema entre os usuários ativos da sua empresa.
           </p>
         </div>
       </div>
@@ -89,8 +89,8 @@ const OrganizationUnusedPermissions = () => {
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <Card>
-          <CardHeader className="pb-3">
+        <div className="space-y-6">
+          <CardHeader className="p-0 pb-3">
             <CardTitle className="text-xl flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary/80" />
               Distribuição de Permissões
@@ -99,20 +99,18 @@ const OrganizationUnusedPermissions = () => {
               {user?.organization?.name || "Empresa"} - Visualização de permissões por função
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[calc(100vh-250px)] pr-4">
-              <div className="space-y-6">
-                {mainCategories.map(category => (
-                  <PermissionCategoryCard 
-                    key={category} 
-                    category={category} 
-                    permissionData={permissionData} 
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+          <ScrollArea className="h-[calc(100vh-250px)] pr-4">
+            <div className="space-y-6">
+              {mainCategories.map(category => (
+                <PermissionCategoryCard 
+                  key={category} 
+                  category={category} 
+                  permissionData={permissionData} 
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
       )}
     </div>
   );
