@@ -92,7 +92,7 @@ export const PermissionManagementSheet = ({
   };
 
   return (
-    <SheetContent className="sm:max-w-md">
+    <SheetContent className="sm:max-w-md flex flex-col h-full">
       <SheetHeader className="mb-3">
         <SheetTitle className="text-base">Gerenciar Acesso - {label}</SheetTitle>
         <SheetDescription className="text-xs">
@@ -105,7 +105,7 @@ export const PermissionManagementSheet = ({
           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" />
         </div>
       ) : (
-        <ScrollArea className="h-[380px] pr-2">
+        <ScrollArea className="flex-grow pr-2 mb-4">
           <div className="space-y-3">
             {activeUsers.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-4">
@@ -135,15 +135,13 @@ export const PermissionManagementSheet = ({
         </ScrollArea>
       )}
       
-      <SheetFooter className="mt-4 sm:justify-center">
-        <Button 
-          onClick={handleSave} 
-          disabled={saving || loading}
-          className="w-full text-sm py-2"
-        >
-          {saving ? "Salvando..." : "Salvar alterações"}
-        </Button>
-      </SheetFooter>
+      <Button 
+        onClick={handleSave} 
+        disabled={saving || loading}
+        className="w-full text-sm py-2 mt-auto"
+      >
+        {saving ? "Salvando..." : "Salvar alterações"}
+      </Button>
     </SheetContent>
   );
 };
