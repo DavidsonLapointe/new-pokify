@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building, CpuIcon, Quote, Clipboard } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, Building, CpuIcon, Quote } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -25,7 +25,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
-    { icon: Clipboard, label: "Cadastros", path: "/admin/registrations", permissionId: "registrations" },
     { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
     { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
@@ -89,8 +88,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </header>
 
         <div className="flex pt-16">
-          <aside className="w-[160px] bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
-            <nav className="flex flex-col h-full py-4 px-2">
+          <aside className="w-[240px] bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+            <nav className="flex flex-col h-full py-6 px-3">
               <div className="space-y-0.5">
                 {filteredMenuItems.map((item) => (
                   <SidebarMenuItem
@@ -117,8 +116,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </nav>
           </aside>
 
-          <main className="flex-1 ml-[160px]">
-            <div className="p-4 animate-fadeIn">
+          <main className="flex-1 ml-[240px]">
+            <div className="p-6 animate-fadeIn">
               {children ?? <Outlet />}
             </div>
           </main>
