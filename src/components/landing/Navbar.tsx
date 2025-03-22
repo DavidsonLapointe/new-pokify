@@ -32,14 +32,14 @@ export function Navbar() {
         isScrolled ? "bg-primary shadow-md" : "bg-white/80"
       }`}>
         <div className="w-full mx-auto px-4 md:px-8 lg:px-16 py-6">
-          <div className="flex items-center">
-            <div className={`font-bold text-2xl mr-auto ${
+          <div className="flex items-center justify-between">
+            <div className={`font-bold text-2xl ${
               isScrolled ? "text-white" : "text-gray-900"
             }`}>
               Leadly
             </div>
             
-            <div className="hidden md:flex items-center space-x-8 mr-12">
+            <div className="hidden md:flex items-center space-x-8">
               <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Soluções</a>
