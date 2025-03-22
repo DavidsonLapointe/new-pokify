@@ -1,4 +1,3 @@
-
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
@@ -7,6 +6,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     registrations: true,
     "registrations-two": true,
     management: true,
+    "management.financial": true, // Added this permission for the financial tab in management
     organizations: true,
     "organizations.manage": true,
     users: true,
@@ -15,8 +15,6 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     plans: true,
     "credit-packages": true,
     "credit-packages.manage": true,
-    financial: true,
-    "financial.invoices": true,
     integrations: true,
     prompt: true,
     settings: true,
@@ -33,6 +31,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     registrations: true,
     "registrations-two": true,
     management: true,
+    "management.financial": true, // Added this permission for the financial tab in management
     organizations: true,
     "organizations.manage": true,
     "organizations.support": true,
@@ -44,9 +43,6 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     "credit-packages": true,
     "credit-packages.manage": true,
     "credit-packages.sales": true,
-    financial: true,
-    "financial.invoices": true,
-    "financial.reports": true,
     integrations: true,
     prompt: true,
     settings: true,
@@ -66,6 +62,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     registrations: true,
     "registrations-two": true,
     management: true,
+    "management.financial": true, // Added this permission for the financial tab in management
     leads: true,
     users: true,
     integrations: true,
@@ -149,12 +146,6 @@ export const availableAdminRoutePermissions = [
     label: "Pacotes de Créditos",
     path: "/admin/credit-packages",
     description: "Criação e gerenciamento de pacotes de créditos para análise de leads"
-  },
-  {
-    id: "financial",
-    label: "Financeiro",
-    path: "/admin/financial",
-    description: "Gerenciamento financeiro, faturas, pagamentos e relatórios"
   },
   {
     id: "integrations",
