@@ -17,8 +17,7 @@ import {
   Package,
   Wallet,
   Building2,
-  Shield,
-  Clipboard
+  Shield
 } from "lucide-react";
 import { User } from "@/types";
 
@@ -31,12 +30,6 @@ export const useMenuItems = (user: User) => {
       label: "Dashboard",
       path: "/organization/dashboard",
       permissionId: "dashboard"
-    },
-    {
-      icon: Clipboard,
-      label: "Cadastros",
-      path: "/organization/registrations",
-      permissionId: "registrations"
     },
     {
       icon: Book,
