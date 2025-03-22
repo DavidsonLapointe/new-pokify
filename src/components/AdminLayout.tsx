@@ -25,7 +25,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
-    { icon: FileText, label: "Cadastro", path: "/admin/registrations", permissionId: "registrations" },
+    { icon: FileText, label: "Cadastro 1", path: "/admin/registrations", permissionId: "registrations" },
     { icon: Building2, label: "Empresas", path: "/admin/organizations", permissionId: "organizations" },
     { icon: Users, label: "Usuários", path: "/admin/users", permissionId: "users" },
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
