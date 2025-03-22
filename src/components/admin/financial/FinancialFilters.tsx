@@ -35,17 +35,19 @@ export const FinancialFilters = ({ onSearch, initialFilters }: FinancialFiltersP
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <FilterFields 
-        status={status}
-        type={type}
-        search={search}
-        onStatusChange={setStatus}
-        onTypeChange={setType}
-        onSearchChange={setSearch}
-      />
+    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-end sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end gap-4 flex-1">
+        <FilterFields 
+          status={status}
+          type={type}
+          search={search}
+          onStatusChange={setStatus}
+          onTypeChange={setType}
+          onSearchChange={setSearch}
+        />
+      </div>
       
-      <div className="flex gap-2">
+      <div className="flex gap-2 sm:self-end">
         <FilterButtons
           onSearch={handleSearch}
           onClear={handleClearFilters}

@@ -57,7 +57,7 @@ export const FilterFields = ({
         </Select>
       </div>
 
-      <div className="flex-1 space-y-1.5">
+      <div className="space-y-1.5 flex-1">
         <Label htmlFor="search-input" className="text-sm text-muted-foreground">
           Buscar Empresa
         </Label>
@@ -66,7 +66,7 @@ export const FilterFields = ({
           placeholder="Buscar por razão social, nome fantasia ou CNPJ..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="max-w-sm"
+          className="w-full"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               // Handled by parent component
