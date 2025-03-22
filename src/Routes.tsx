@@ -47,6 +47,7 @@ import OrganizationKnowledgeBase from "./pages/OrganizationKnowledgeBase";
 import OrganizationCredits from "./pages/OrganizationCredits";
 import OrganizationAreas from "./pages/OrganizationAreas";
 import OrganizationUnusedPermissions from "./pages/OrganizationUnusedPermissions";
+import OrganizationRegistrations from "./pages/OrganizationRegistrations";
 
 function AppRoutes() {
   const { session, loading } = useAuth();
@@ -125,12 +126,13 @@ function AppRoutes() {
           <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="profile" element={<OrganizationProfile />} />
           <Route path="dashboard" element={<OrganizationDashboard />} />
+          <Route path="registrations" element={<OrganizationRegistrations />} />
           <Route path="knowledge-base" element={<OrganizationKnowledgeBase />} />
           <Route path="calls" element={<OrganizationCalls />} />
           <Route path="leads" element={<OrganizationLeads />} />
           <Route path="ai-tools" element={<OrganizationAITools />} />
           <Route path="users" element={<OrganizationUsers />} />
-          <Route path="unused-permissions" element={<OrganizationUnusedPermissions />} /> {/* Nova rota */}
+          <Route path="unused-permissions" element={<OrganizationUnusedPermissions />} />
           <Route path="integrations" element={<OrganizationIntegrations />} />
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="areas" element={<OrganizationAreas />} />
