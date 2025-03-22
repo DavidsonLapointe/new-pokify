@@ -119,7 +119,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </aside>
 
           <main className="flex-1 ml-[240px]">
-            <div className="p-6 animate-fadeIn">
+            <div className="p-2 animate-fadeIn">
               {children ?? <Outlet />}
             </div>
           </main>
