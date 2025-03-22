@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -30,7 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     // Removed both Empresas and Usuarios menu items since they're now part of Cadastro 1
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     { icon: ClipboardCheck, label: "Setups", path: "/admin/module-setups", permissionId: "module-setups" },
-    { icon: CreditCard, label: "Planos", path: "/admin/plans", permissionId: "plans" },
+    // Removed Planos menu item since it's now part of Cadastro 2
     { icon: Package, label: "Pacotes de Créditos", path: "/admin/credit-packages", permissionId: "credit-packages" },
     { icon: DollarSign, label: "Financeiro", path: "/admin/financial", permissionId: "financial" },
     { icon: HeadphonesIcon, label: "Customer Success", path: "/admin/customer-success", permissionId: "customer-success" },

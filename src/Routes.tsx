@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -22,7 +23,6 @@ import AdminPrompt from "./pages/AdminPrompt";
 import AdminSettings from "./pages/AdminSettings";
 import AdminFinancial from "./pages/AdminFinancial";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminPlans from "./pages/AdminPlans";
 import AdminAnalysisPackages from "./pages/AdminAnalysisPackages";
 import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
 import AdminLeads from "./pages/AdminLeads"; 
@@ -101,7 +101,8 @@ function AppRoutes() {
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="modules" element={<AdminModules />} />
           <Route path="module-setups" element={<AdminModuleSetups />} />
-          <Route path="plans" element={<AdminPlans />} />
+          {/* Redirect Planos to RegistrationsTwo with planos tab */}
+          <Route path="plans" element={<Navigate to="/admin/registrations-two?tab=planos" replace />} />
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="leads" element={<AdminLeads />} />
