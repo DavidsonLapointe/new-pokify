@@ -1,10 +1,10 @@
-
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
     "dashboard.analytics": true,
     "dashboard.organizations": true,
     registrations: true,
+    "registrations-two": true,
     organizations: true,
     "organizations.manage": true,
     users: true,
@@ -29,6 +29,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     "dashboard.organizations": true,
     "dashboard.financial": true,
     registrations: true,
+    "registrations-two": true,
     organizations: true,
     "organizations.manage": true,
     "organizations.support": true,
@@ -60,6 +61,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
   admin: {
     dashboard: true,
     registrations: true,
+    "registrations-two": true,
     leads: true,
     users: true,
     integrations: true,
@@ -98,9 +100,15 @@ export const availableAdminRoutePermissions = [
   },
   {
     id: "registrations",
-    label: "Cadastro",
+    label: "Cadastro 1",
     path: "/admin/registrations",
     description: "Gerenciamento de cadastros do sistema"
+  },
+  {
+    id: "registrations-two",
+    label: "Cadastro 2",
+    path: "/admin/registrations-two",
+    description: "Gerenciamento de cadastros secundários do sistema"
   },
   {
     id: "organizations",

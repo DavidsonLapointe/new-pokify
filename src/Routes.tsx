@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -31,6 +30,7 @@ import AdminCompany from "./pages/AdminCompany";
 import AdminAICosts from "./pages/AdminAICosts";
 import AdminTestimonials from "./pages/AdminTestimonials";
 import AdminRegistrations from "./pages/AdminRegistrations"; // New import for Cadastro page
+import AdminRegistrationsTwo from "./pages/AdminRegistrationsTwo"; // New import for Cadastro 2 page
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -94,7 +94,8 @@ function AppRoutes() {
         >
           <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="registrations" element={<AdminRegistrations />} /> {/* New route for Cadastro */}
+          <Route path="registrations" element={<AdminRegistrations />} />
+          <Route path="registrations-two" element={<AdminRegistrationsTwo />} /> {/* New route for Cadastro 2 */}
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
