@@ -4,6 +4,14 @@ import { User } from "@/types";
 import { Pencil, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface UsersTableProps {
   users: User[];
@@ -54,22 +62,22 @@ export const UsersTable: React.FC<UsersTableProps> = ({
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left py-3 px-4">Usuário</th>
-            <th className="text-left py-3 px-4">Função</th>
-            <th className="text-center py-3 px-4">Status</th>
-            <th className="text-center py-3 px-4">Data de Cadastro</th>
-            <th className="text-center py-3 px-4">Último Acesso</th>
-            <th className="text-center py-3 px-4">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="border rounded-md overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            <TableHead className="font-medium">Usuário</TableHead>
+            <TableHead className="font-medium">Função</TableHead>
+            <TableHead className="font-medium text-center">Status</TableHead>
+            <TableHead className="font-medium text-center">Data de Cadastro</TableHead>
+            <TableHead className="font-medium text-center">Último Acesso</TableHead>
+            <TableHead className="font-medium text-center">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {users.map((user) => (
-            <tr key={user.id} className="border-b hover:bg-muted/50">
-              <td className="py-3 px-4">
+            <TableRow key={user.id} className="border-b hover:bg-muted/50">
+              <TableCell>
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-medium mr-3">
                     {user.name?.charAt(0).toUpperCase() || "U"}
@@ -81,11 +89,11 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     </div>
                   </div>
                 </div>
-              </td>
-              <td className="py-3 px-4">
+              </TableCell>
+              <TableCell>
                 {getRoleLabel(user.role)}
-              </td>
-              <td className="py-3 px-4 text-center">
+              </TableCell>
+              <TableCell className="text-center">
                 <Badge
                   className={`${getStatusColor(
                     user.status
@@ -93,16 +101,16 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                 >
                   {getStatusLabel(user.status)}
                 </Badge>
-              </td>
-              <td className="py-3 px-4 text-center">
+              </TableCell>
+              <TableCell className="text-center">
                 {new Date(user.createdAt).toLocaleDateString("pt-BR")}
-              </td>
-              <td className="py-3 px-4 text-center">
+              </TableCell>
+              <TableCell className="text-center">
                 {user.lastAccess
                   ? new Date(user.lastAccess).toLocaleDateString("pt-BR")
                   : "-"}
-              </td>
-              <td className="py-3 px-4 text-center">
+              </TableCell>
+              <TableCell className="text-center">
                 <div className="flex justify-center space-x-2">
                   <Button
                     variant="ghost"
@@ -121,11 +129,11 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     <Lock className="h-4 w-4" />
                   </Button>
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };
