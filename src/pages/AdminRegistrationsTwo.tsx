@@ -329,11 +329,11 @@ const AdminRegistrationsTwo = () => {
                               <Separator className="mb-4" />
                               <ul className="space-y-2">
                                 {plan.benefits && Array.isArray(plan.benefits) && plan.benefits.map((benefit, index) => (
-                                  <li key={index} className="flex items-start text-sm text-gray-600">
+                                  <li key={index} className="flex items-start text-sm text-gray-600 text-left">
                                     <div className="h-5 w-5 bg-purple-100 flex items-center justify-center flex-shrink-0 mr-2 rounded-full">
                                       <Check className="h-3 w-3 text-purple-500" />
                                     </div>
-                                    <span>{benefit}</span>
+                                    <span className="text-left">{benefit}</span>
                                   </li>
                                 ))}
                               </ul>
