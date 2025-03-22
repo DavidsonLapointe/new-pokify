@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
@@ -302,7 +302,7 @@ const AdminRegistrations = () => {
         <h1 className="text-2xl font-bold">Cadastro 1</h1>
       </div>
 
-      <Card>
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <CardHeader>
           <Tabs defaultValue="areas" className="w-full">
             <TabsList className="mb-4">
@@ -570,7 +570,7 @@ const AdminRegistrations = () => {
             </TabsContent>
           </Tabs>
         </CardHeader>
-      </Card>
+      </div>
     </div>
   );
 };
