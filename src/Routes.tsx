@@ -30,6 +30,7 @@ import AdminCompany from "./pages/AdminCompany";
 import AdminAICosts from "./pages/AdminAICosts";
 import AdminRegistrations from "./pages/AdminRegistrations"; 
 import AdminRegistrationsTwo from "./pages/AdminRegistrationsTwo"; 
+import AdminManagement from "./pages/AdminManagement";
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -95,6 +96,7 @@ function AppRoutes() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="registrations" element={<AdminRegistrations />} />
           <Route path="registrations-two" element={<AdminRegistrationsTwo />} />
+          <Route path="management" element={<AdminManagement />} />
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />

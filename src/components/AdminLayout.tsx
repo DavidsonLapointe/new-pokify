@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus, BriefcaseIcon } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
     { icon: FileText, label: "Cadastro 1", path: "/admin/registrations", permissionId: "registrations" },
     { icon: FilePlus, label: "Cadastro 2", path: "/admin/registrations-two", permissionId: "registrations-two" },
+    { icon: BriefcaseIcon, label: "Gestão", path: "/admin/management", permissionId: "management" },
     // Removed both Empresas and Usuarios menu items since they're now part of Cadastro 1
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     { icon: ClipboardCheck, label: "Setups", path: "/admin/module-setups", permissionId: "module-setups" },
