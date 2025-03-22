@@ -1,5 +1,5 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Package, 
@@ -199,8 +199,8 @@ const AdminRegistrationsTwo = () => {
         <h1 className="text-2xl font-bold">Cadastro 2</h1>
       </div>
 
-      <Card>
-        <CardHeader>
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="p-6">
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="integracoes">
@@ -231,34 +231,34 @@ const AdminRegistrationsTwo = () => {
             
             <TabsContent value="integracoes">
               <CardTitle>Integrações</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <p className="text-muted-foreground">
                   O conteúdo desta aba será implementado posteriormente.
                 </p>
-              </CardContent>
+              </div>
             </TabsContent>
             
             <TabsContent value="modulos">
               <CardTitle>Módulos</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <p className="text-muted-foreground">
                   O conteúdo desta aba será implementado posteriormente.
                 </p>
-              </CardContent>
+              </div>
             </TabsContent>
             
             <TabsContent value="pacotes-creditos">
               <CardTitle>Pacotes de Créditos</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <p className="text-muted-foreground">
                   O conteúdo desta aba será implementado posteriormente.
                 </p>
-              </CardContent>
+              </div>
             </TabsContent>
             
             <TabsContent value="planos">
               <CardTitle>Planos</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <div className="space-y-2">
@@ -295,8 +295,8 @@ const AdminRegistrationsTwo = () => {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {localPlans.map((plan) => (
-                        <Card key={plan.id} className="border rounded-lg shadow-sm overflow-hidden flex flex-col">
-                          <CardContent className="p-4 pt-6 flex-grow flex flex-col">
+                        <div key={plan.id} className="border rounded-lg shadow-sm overflow-hidden flex flex-col">
+                          <div className="p-4 pt-6 flex-grow flex flex-col">
                             <div className="flex justify-between items-start mb-2">
                               <h3 className="text-xl font-semibold">{plan.name}</h3>
                               <div className="text-purple-500 font-medium">
@@ -352,8 +352,8 @@ const AdminRegistrationsTwo = () => {
                                 Editar Plano
                               </Button>
                             </div>
-                          </CardContent>
-                        </Card>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -365,21 +365,21 @@ const AdminRegistrationsTwo = () => {
                     onSave={handleSavePlan}
                   />
                 </div>
-              </CardContent>
+              </div>
             </TabsContent>
             
             <TabsContent value="prompts">
               <CardTitle>Prompts</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <p className="text-muted-foreground">
                   O conteúdo desta aba será implementado posteriormente.
                 </p>
-              </CardContent>
+              </div>
             </TabsContent>
             
             <TabsContent value="depoimentos">
               <CardTitle>Depoimentos</CardTitle>
-              <CardContent className="pt-4">
+              <div className="pt-4">
                 <div className="space-y-6">
                   <div>
                     <p className="text-muted-foreground">
@@ -407,11 +407,11 @@ const AdminRegistrationsTwo = () => {
                     onSave={handleSaveTestimonial}
                   />
                 </div>
-              </CardContent>
+              </div>
             </TabsContent>
           </Tabs>
-        </CardHeader>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
