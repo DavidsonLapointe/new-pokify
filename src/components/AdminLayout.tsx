@@ -89,7 +89,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </header>
 
         <div className="flex pt-16">
-          <aside className="w-[240px] bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
+          <aside className="w-[200px] bg-white border-r border-border fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30">
             <nav className="flex flex-col h-full py-6 px-3">
               <div className="space-y-0.5">
                 {filteredMenuItems.map((item) => (
@@ -117,7 +117,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </nav>
           </aside>
 
-          <main className="flex-1 ml-[240px]">
+          <main className="flex-1 ml-[200px]">
             <div className="p-6 animate-fadeIn">
               {children ?? <Outlet />}
             </div>
