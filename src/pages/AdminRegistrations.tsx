@@ -27,8 +27,8 @@ const AdminRegistrations = () => {
       </div>
 
       <Tabs defaultValue="areas" className="w-full">
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-          <TabsList className="w-full flex flex-wrap items-center justify-start gap-2">
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 overflow-x-auto">
+          <TabsList className="flex items-center justify-start gap-2 min-w-max">
             <TabsTrigger value="areas" className="flex items-center gap-2 rounded-md">
               <MapPin className="h-4 w-4" />
               Áreas
