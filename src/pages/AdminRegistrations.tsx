@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CreateOrganizationDialog } from "@/components/admin/organizations/CreateOrganizationDialog";
@@ -85,18 +84,15 @@ const AdminRegistrations = () => {
   ) : [];
 
   // Users tab functions
-  const fetchUsers = async () => {
+  const fetchUsers = () => {
     try {
       setLoadingUsers(true);
-      // For demonstration purposes, we'll use mock data
-      // In a real environment, we would fetch from the database
-      
-      // Start with the 2 existing Leadly employees from our mocks
+      // Obter os 2 funcionários Leadly existentes dos mocks
       let mockUsers = [...mockLeadlyEmployees];
       
-      // Generate 13 more Leadly employees to reach a total of 15
+      // Gerar mais 13 funcionários Leadly para chegar a um total de 15
       for (let i = 0; i < 13; i++) {
-        const id = `l${i + 3}`; // l3, l4, l5, etc. (since l1 and l2 already exist)
+        const id = `l${i + 3}`; // l3, l4, l5, etc. (já que l1 e l2 já existem)
         const role = i % 3 === 0 ? "leadly_master" as UserRole : "leadly_employee" as UserRole;
         
         const newUser: User = {
@@ -106,8 +102,8 @@ const AdminRegistrations = () => {
           phone: `+55119999${String(i).padStart(5, '0')}`,
           role: role,
           status: i % 5 === 0 ? "inactive" : i % 7 === 0 ? "pending" : "active",
-          createdAt: new Date(Date.now() - (i * 30 * 24 * 60 * 60 * 1000)).toISOString(), // Different creation dates
-          lastAccess: new Date(Date.now() - (i * 3 * 24 * 60 * 60 * 1000)).toISOString(), // Different last access dates
+          createdAt: new Date(Date.now() - (i * 30 * 24 * 60 * 60 * 1000)).toISOString(), // Diferentes datas de criação
+          lastAccess: new Date(Date.now() - (i * 3 * 24 * 60 * 60 * 1000)).toISOString(), // Diferentes datas de último acesso
           permissions: {
             dashboard: true,
             organizations: i % 2 === 0,
@@ -145,6 +141,13 @@ const AdminRegistrations = () => {
     }
   };
 
+  // Chamar a função fetchUsers quando o componente for montado
+  useEffect(() => {
+    // Verifica se a tab atual é "usuarios" baseado na URL ou outra lógica
+    // e só carrega os usuários se necessário
+    fetchUsers();
+  }, []); // Array vazio para executar apenas uma vez na montagem
+
   const handleAddUser = () => {
     fetchUsers(); // Recarrega a lista após adicionar
     setIsAddUserDialogOpen(false);
@@ -162,8 +165,8 @@ const AdminRegistrations = () => {
 
   const handleUserUpdate = async (updatedUser: User) => {
     try {
-      // For database compatibility, if role is "manager", store it as "admin"
-      // This is a temporary solution until the database enum is updated
+      // Para compatibilidade com o banco de dados, se a função for "manager", armazene-a como "admin"
+      // Isso é uma solução temporária até que o enum do banco de dados seja atualizado
       let roleForDatabase: string | UserRole = updatedUser.role;
       
       if (updatedUser.role === "manager") {
@@ -186,7 +189,14 @@ const AdminRegistrations = () => {
       if (error) throw error;
 
       toast.success('Usuário atualizado com sucesso');
-      await fetchUsers(); // Recarrega a lista após atualizar
+      
+      // Atualiza o usuário na lista local
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === updatedUser.id ? updatedUser : user
+        )
+      );
+      
       setIsEditUserDialogOpen(false);
       setIsPermissionsDialogOpen(false);
     } catch (error) {
@@ -304,7 +314,7 @@ const AdminRegistrations = () => {
               </CardContent>
             </TabsContent>
             
-            <TabsContent value="usuarios" onSelect={() => fetchUsers()}>
+            <TabsContent value="usuarios">
               <CardTitle>Usuários</CardTitle>
               <CardContent className="pt-4 px-0">
                 <div className="space-y-8">
