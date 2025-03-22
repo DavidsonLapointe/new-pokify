@@ -31,7 +31,7 @@ export function Navbar() {
       <nav className={`border-b backdrop-blur-sm fixed w-full top-0 z-50 transition-colors duration-300 ${
         isScrolled ? "bg-primary shadow-md" : "bg-white/80"
       }`}>
-        <div className="container mx-auto px-12">
+        <div className="max-w-screen-xl mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between py-6">
             <div className={`font-bold text-2xl ${
               isScrolled ? "text-white" : "text-gray-900"
