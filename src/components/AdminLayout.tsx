@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, Quote, FileText, FilePlus } from "lucide-react";
+import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, CreditCard, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -40,7 +40,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: MessageCircle, label: "Leads", path: "/admin/leads", permissionId: "leads" },
     { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" },
     // Removed the Minha Empresa menu item since it's now part of Cadastro 1
-    { icon: Quote, label: "Depoimentos", path: "/admin/testimonials", permissionId: "testimonials" },
+    // Removed the Depoimentos menu item since it's now part of Cadastro 2
     { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },
   ];
 

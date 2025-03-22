@@ -28,9 +28,8 @@ import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
 import AdminLeads from "./pages/AdminLeads"; 
 import AdminCompany from "./pages/AdminCompany";
 import AdminAICosts from "./pages/AdminAICosts";
-import AdminTestimonials from "./pages/AdminTestimonials";
-import AdminRegistrations from "./pages/AdminRegistrations"; // New import for Cadastro page
-import AdminRegistrationsTwo from "./pages/AdminRegistrationsTwo"; // New import for Cadastro 2 page
+import AdminRegistrations from "./pages/AdminRegistrations"; 
+import AdminRegistrationsTwo from "./pages/AdminRegistrationsTwo"; 
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -95,7 +94,7 @@ function AppRoutes() {
           <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="registrations" element={<AdminRegistrations />} />
-          <Route path="registrations-two" element={<AdminRegistrationsTwo />} /> {/* New route for Cadastro 2 */}
+          <Route path="registrations-two" element={<AdminRegistrationsTwo />} />
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
@@ -110,7 +109,6 @@ function AppRoutes() {
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
           <Route path="ai-costs" element={<AdminAICosts />} />
           <Route path="company" element={<AdminCompany />} />
-          <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 

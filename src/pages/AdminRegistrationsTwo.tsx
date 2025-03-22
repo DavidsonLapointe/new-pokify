@@ -1,9 +1,48 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Package, CreditCard, Database, MessageSquare, Puzzle, Quote } from "lucide-react";
+import { Package, CreditCard, Database, MessageSquare, Puzzle, Quote, PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { TestimonialsList } from "@/components/admin/testimonials/TestimonialsList";
+import { EditTestimonialDialog } from "@/components/admin/testimonials/EditTestimonialDialog";
+import { useTestimonials } from "@/hooks/admin/useTestimonials";
+import { Testimonial } from "@/types/testimonial";
 
 const AdminRegistrationsTwo = () => {
+  const { 
+    testimonials, 
+    addTestimonial, 
+    updateTestimonial, 
+    deleteTestimonial 
+  } = useTestimonials();
+  
+  const [open, setOpen] = useState(false);
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setOpen(true);
+  };
+
+  const handleAddTestimonial = () => {
+    setEditingTestimonial(null);
+    setOpen(true);
+  };
+
+  const handleSaveTestimonial = (testimonial: Testimonial) => {
+    if (editingTestimonial) {
+      updateTestimonial(testimonial);
+    } else {
+      addTestimonial(testimonial);
+    }
+    setOpen(false);
+  };
+
+  const handleDeleteTestimonial = (id: string) => {
+    deleteTestimonial(id);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -88,9 +127,33 @@ const AdminRegistrationsTwo = () => {
             <TabsContent value="depoimentos">
               <CardTitle>Depoimentos</CardTitle>
               <CardContent className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-muted-foreground">
+                      Gerencie os depoimentos exibidos na página inicial do site.
+                    </p>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button onClick={handleAddTestimonial}>
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Adicionar Depoimento
+                    </Button>
+                  </div>
+
+                  <TestimonialsList 
+                    testimonials={testimonials}
+                    onEdit={handleEditTestimonial}
+                    onDelete={handleDeleteTestimonial}
+                  />
+
+                  <EditTestimonialDialog
+                    open={open}
+                    onOpenChange={setOpen}
+                    testimonial={editingTestimonial}
+                    onSave={handleSaveTestimonial}
+                  />
+                </div>
               </CardContent>
             </TabsContent>
           </Tabs>
