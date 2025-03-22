@@ -297,9 +297,10 @@ const AdminRegistrationsTwo = () => {
                       {localPlans.map((plan) => (
                         <div key={plan.id} className="border rounded-lg shadow-sm overflow-hidden flex flex-col">
                           <div className="p-4 pt-6 flex-grow flex flex-col">
-                            <div className="flex justify-between items-start mb-2">
+                            {/* Coloca o nome do plano e o preço em elementos separados, um abaixo do outro */}
+                            <div className="flex flex-col mb-2">
                               <h3 className="text-xl font-semibold">{plan.name}</h3>
-                              <div className="text-purple-500 font-medium">
+                              <div className="text-purple-500 font-medium mt-1">
                                 R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
                               </div>
                             </div>
