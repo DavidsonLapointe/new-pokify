@@ -4,6 +4,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     dashboard: true,
     "dashboard.analytics": true,
     "dashboard.organizations": true,
+    registrations: true,
     organizations: true,
     "organizations.manage": true,
     users: true,
@@ -20,13 +21,14 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     "settings.alerts": true,
     profile: true,
     "ai-costs": true,
-    testimonials: true // New permission
+    testimonials: true
   },
   leadly_master: {
     dashboard: true,
     "dashboard.analytics": true,
     "dashboard.organizations": true,
     "dashboard.financial": true,
+    registrations: true,
     organizations: true,
     "organizations.manage": true,
     "organizations.support": true,
@@ -53,10 +55,11 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     profile: true,
     "analysis-packages": true,
     "ai-costs": true,
-    testimonials: true // New permission
+    testimonials: true
   },
   admin: {
     dashboard: true,
+    registrations: true,
     leads: true,
     users: true,
     integrations: true,
@@ -64,7 +67,7 @@ export const ADMIN_DEFAULT_PERMISSIONS = {
     plan: true,
     profile: true,
     "ai-costs": true,
-    testimonials: true // New permission
+    testimonials: true
   },
   seller: {
     dashboard: true,
@@ -92,6 +95,12 @@ export const availableAdminRoutePermissions = [
     label: "Dashboard",
     path: "/admin",
     description: "Visão geral com métricas, KPIs e informações sobre organizações e faturamento"
+  },
+  {
+    id: "registrations",
+    label: "Cadastro",
+    path: "/admin/registrations",
+    description: "Gerenciamento de cadastros do sistema"
   },
   {
     id: "organizations",

@@ -29,7 +29,8 @@ import AdminCustomerSuccess from "./pages/AdminCustomerSuccess";
 import AdminLeads from "./pages/AdminLeads"; 
 import AdminCompany from "./pages/AdminCompany";
 import AdminAICosts from "./pages/AdminAICosts";
-import AdminTestimonials from "./pages/AdminTestimonials"; // New import
+import AdminTestimonials from "./pages/AdminTestimonials";
+import AdminRegistrations from "./pages/AdminRegistrations"; // New import for Cadastro page
 
 // Organization Pages
 import OrganizationProfile from "./pages/OrganizationProfile";
@@ -93,6 +94,7 @@ function AppRoutes() {
         >
           <Route path="" element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="registrations" element={<AdminRegistrations />} /> {/* New route for Cadastro */}
           <Route path="organizations" element={<AdminOrganizations />} />
           <Route path="prompt" element={<AdminPrompt />} />
           <Route path="users" element={<AdminUsers />} />
@@ -107,7 +109,7 @@ function AppRoutes() {
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
           <Route path="ai-costs" element={<AdminAICosts />} />
           <Route path="company" element={<AdminCompany />} />
-          <Route path="testimonials" element={<AdminTestimonials />} /> {/* New route */}
+          <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 
@@ -130,7 +132,7 @@ function AppRoutes() {
           <Route path="leads" element={<OrganizationLeads />} />
           <Route path="ai-tools" element={<OrganizationAITools />} />
           <Route path="users" element={<OrganizationUsers />} />
-          <Route path="unused-permissions" element={<OrganizationUnusedPermissions />} /> {/* Nova rota */}
+          <Route path="unused-permissions" element={<OrganizationUnusedPermissions />} />
           <Route path="integrations" element={<OrganizationIntegrations />} />
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="areas" element={<OrganizationAreas />} />
