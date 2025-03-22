@@ -55,17 +55,17 @@ export function Navbar() {
               <a href="#" className={`hover:text-primary transition-colors ${
                 isScrolled ? "text-white/80 hover:text-white" : "text-gray-600"
               }`}>Contato</a>
+              
+              <Button 
+                onClick={() => setLoginModalOpen(true)} 
+                className={`${isScrolled 
+                  ? "bg-white text-primary hover:bg-white/90" 
+                  : "bg-primary text-white hover:bg-primary/90"
+                }`}
+              >
+                Acessar Plataforma
+              </Button>
             </div>
-            
-            <Button 
-              onClick={() => setLoginModalOpen(true)} 
-              className={`${isScrolled 
-                ? "bg-white text-primary hover:bg-white/90" 
-                : "bg-primary text-white hover:bg-primary/90"
-              }`}
-            >
-              Acessar Plataforma
-            </Button>
           </div>
         </div>
       </nav>
