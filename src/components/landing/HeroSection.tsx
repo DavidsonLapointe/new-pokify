@@ -9,7 +9,7 @@ export function HeroSection() {
 
   return (
     <section className="pt-44 pb-20">
-      <div className="container mx-auto px-12">
+      <div className="max-w-[1152px] mx-auto px-4 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-2 mb-6">
