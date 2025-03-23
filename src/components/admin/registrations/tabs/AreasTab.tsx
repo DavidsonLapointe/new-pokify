@@ -169,7 +169,9 @@ export const AreasTab = () => {
 
   return (
     <>
-      <CardTitle className="text-left">Áreas</CardTitle>
+      <div className="px-6">
+        <CardTitle className="text-left">Áreas</CardTitle>
+      </div>
       <CardContent className="pt-4">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
