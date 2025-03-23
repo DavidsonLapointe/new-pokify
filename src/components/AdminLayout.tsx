@@ -38,7 +38,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
-    { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" },
+    // Removed Custo de IA menu item since it's now part of the Gestão page
     // Removed the Minha Empresa menu item since it's now part of Cadastro 1
     // Removed the Depoimentos menu item since it's now part of Cadastro 2
     { icon: User, label: "Meu Perfil", path: "/admin/profile", permissionId: "profile" },

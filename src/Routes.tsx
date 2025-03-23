@@ -106,6 +106,8 @@ function AppRoutes() {
           <Route path="module-setups" element={<Navigate to="/admin/management?tab=setups" replace />} />
           {/* Redirect Planos to RegistrationsTwo with planos tab */}
           <Route path="plans" element={<Navigate to="/admin/registrations-two?tab=planos" replace />} />
+          {/* Redirect ai-costs to Management with custo-de-ia tab */}
+          <Route path="ai-costs" element={<Navigate to="/admin/management?tab=custo-de-ia" replace />} />
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />
           <Route path="settings" element={<AdminSettings />} />
           {/* Redirect Leads to Management with leads tab */}
@@ -113,7 +115,6 @@ function AppRoutes() {
           {/* Redirect Financial to Management with financeiro tab */}
           <Route path="financial" element={<Navigate to="/admin/management?tab=financeiro" replace />} />
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
-          <Route path="ai-costs" element={<AdminAICosts />} />
           <Route path="company" element={<AdminCompany />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
