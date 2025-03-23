@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { CallsFilters } from "@/components/calls/CallsFilters";
 import { CallsTable } from "@/components/calls/CallsTable";
 import { StatusMap, Call } from "@/types/calls";
@@ -86,7 +85,7 @@ export const LeadsPageContent = ({
   };
   
   return (
-    <Card className="p-4 space-y-4">
+    <div className="space-y-4">
       <CallsFilters
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}
@@ -143,7 +142,6 @@ export const LeadsPageContent = ({
           </Button>
         </div>
       )}
-    </Card>
+    </div>
   );
 };
-
