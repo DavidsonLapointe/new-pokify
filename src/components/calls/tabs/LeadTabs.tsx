@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ClientLeadsTable } from "./ClientLeadsTable";
@@ -162,6 +161,15 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
     return pages;
   };
 
+  // Lead type explanations
+  const tabExplanations = {
+    client: "Leads do tipo 'Cliente' representam organizações ou indivíduos que já adquiriram seus produtos ou serviços.",
+    prospect: "Leads do tipo 'Prospect' são potenciais clientes que demonstraram interesse, mas ainda não realizaram uma compra.",
+    employee: "Leads do tipo 'Funcionário' são pessoas que trabalham ou podem trabalhar na sua empresa.",
+    candidate: "Leads do tipo 'Candidato RH' são pessoas que se candidataram a vagas na sua empresa.",
+    supplier: "Leads do tipo 'Fornecedor' são empresas ou indivíduos que fornecem produtos ou serviços para sua organização."
+  };
+
   return (
     <div>
       <Tabs defaultValue="client" value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -173,12 +181,17 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
           <TabsTrigger value="supplier" className="rounded-md">Fornecedores</TabsTrigger>
         </TabsList>
         
-        {/* Search and filter section - now below tabs */}
+        {/* Search and filter section - below tabs */}
         <div className="mb-4">
           <CallsFilters
             searchQuery={searchQuery}
             onSearchChange={onSearchChange}
           />
+        </div>
+        
+        {/* Tab explanation section */}
+        <div className="mb-4 bg-muted/50 p-3 rounded-md text-sm text-muted-foreground">
+          {tabExplanations[activeTab as keyof typeof tabExplanations]}
         </div>
         
         <TabsContent value="client">
