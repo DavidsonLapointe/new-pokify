@@ -13,7 +13,7 @@ import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/comp
 import { CompanyArea } from "@/components/admin/modules/module-form-schema";
 
 export const AreasTab = () => {
-  // State for areas
+  // State for areas - now all areas are standard areas that can be edited by admin
   const [areas, setAreas] = useState<CompanyArea[]>([
     { id: "1", name: "Financeiro", description: "Área responsável pelas finanças da empresa", isDefault: true },
     { id: "2", name: "Recursos Humanos", description: "Área responsável pela gestão de pessoas", isDefault: true },
@@ -23,7 +23,7 @@ export const AreasTab = () => {
     { id: "6", name: "Controladoria", description: "Área responsável pelo controle financeiro da empresa", isDefault: true },
     { id: "7", name: "Logística", description: "Área responsável pela logística da empresa", isDefault: true },
     { id: "8", name: "Jurídico", description: "Área responsável pelos assuntos jurídicos da empresa", isDefault: true },
-    { id: "9", name: "PERA", description: "Área de Pesquisa e Recursos Avançados", isDefault: false },
+    { id: "9", name: "PERA", description: "Área de Pesquisa e Recursos Avançados", isDefault: true },
   ]);
 
   // Dialog states
@@ -122,7 +122,7 @@ export const AreasTab = () => {
         id: String(Date.now()),
         name: formData.name,
         description: formData.description,
-        isDefault: false
+        isDefault: true // All areas created here are default areas
       };
       setAreas(prev => [...prev, newArea]);
       toast.success("Área criada com sucesso");
@@ -167,51 +167,25 @@ export const AreasTab = () => {
               <div className="p-4">
                 <p className="text-sm text-gray-600 mb-4">{area.description}</p>
                 <div className="flex justify-between items-center">
-                  {area.isDefault ? (
-                    <span className="text-xs bg-primary text-white py-1 px-2 rounded">Área padrão</span>
-                  ) : (
-                    <span></span>
-                  )}
+                  <span className="text-xs bg-primary text-white py-1 px-2 rounded">Área padrão</span>
                   <div className="flex space-x-2">
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={() => openEditDialog(area)}
-                      className={!area.isDefault ? "text-purple-600 hover:text-purple-800 hover:bg-purple-50" : ""}
+                      className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     
-                    {area.isDefault ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                disabled={true}
-                                className="text-red-300 cursor-not-allowed"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Áreas padrão não podem ser excluídas</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => openDeleteDialog(area)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => openDeleteDialog(area)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </div>
