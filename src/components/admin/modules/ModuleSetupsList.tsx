@@ -5,12 +5,19 @@ import { ModuleSetupsFilters } from "./ModuleSetupsFilters";
 import { ModuleSetupsTable } from "./ModuleSetupsTable";
 import { ModuleSetupNotes } from "./ModuleSetupNotes";
 import { useModuleSetups } from "./hooks/useModuleSetups";
+import { LeadsPagination } from "@/components/admin/leads/LeadsPagination";
 
 interface ModuleSetupsListProps {
   onStatusChange?: (setupId: string, moduleId: string, organizationId: string, newStatus: SetupStatus) => void;
+  currentPage?: number;
+  itemsPerPage?: number;
 }
 
-export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChange }) => {
+export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ 
+  onStatusChange,
+  currentPage = 1,
+  itemsPerPage = 5
+}) => {
   const {
     searchTerm,
     statusFilter,
@@ -26,8 +33,13 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
     handleDeleteNote,
     handleClearFilters,
     handleStatusFilterChange,
-    setShowNotesDialog
-  } = useModuleSetups(onStatusChange);
+    setShowNotesDialog,
+    setCurrentPage,
+    totalPages
+  } = useModuleSetups(onStatusChange, currentPage, itemsPerPage);
+  
+  // Calculate if we should show pagination
+  const shouldShowPagination = filteredSetups.length > 0 && totalPages > 1;
   
   return (
     <div className="space-y-4">
@@ -44,6 +56,15 @@ export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ onStatusChan
         onStatusChange={handleStatusChange}
         onOpenNotes={handleOpenNotes}
       />
+      
+      {shouldShowPagination && (
+        <LeadsPagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalItems={totalPages * itemsPerPage}
+          itemsPerPage={itemsPerPage}
+        />
+      )}
       
       <ModuleSetupNotes
         selectedSetup={selectedSetup}

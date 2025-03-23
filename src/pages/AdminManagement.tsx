@@ -34,6 +34,10 @@ const AdminManagement = () => {
   // Pagination state for AI executions
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  
+  // Pagination state for Setups
+  const [setupsCurrentPage, setSetupsCurrentPage] = useState(1);
+  const setupsItemsPerPage = 5;
 
   // Get tab from URL query params
   useEffect(() => {
@@ -50,6 +54,10 @@ const AdminManagement = () => {
     const params = new URLSearchParams(location.search);
     params.set('tab', value);
     navigate(`?${params.toString()}`);
+    
+    // Reset pagination when changing tabs
+    setCurrentPage(1);
+    setSetupsCurrentPage(1);
   };
 
   // Use React Query para buscar títulos com refetch ativado
@@ -309,7 +317,11 @@ const AdminManagement = () => {
                   <p className="text-sm text-muted-foreground text-left mb-6">Lista de Implantações Pendentes e em Andamento</p>
                 </div>
                 <TooltipProvider>
-                  <ModuleSetupsList onStatusChange={handleSetupStatusChange} />
+                  <ModuleSetupsList 
+                    onStatusChange={handleSetupStatusChange} 
+                    currentPage={setupsCurrentPage}
+                    itemsPerPage={setupsItemsPerPage}
+                  />
                 </TooltipProvider>
               </CardContent>
             </TabsContent>
@@ -321,4 +333,3 @@ const AdminManagement = () => {
 };
 
 export default AdminManagement;
-
