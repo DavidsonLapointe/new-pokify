@@ -1,5 +1,6 @@
 
-import { Call, LeadCalls } from "../types";
+import { Call } from "@/types/calls";
+import { LeadCalls } from "../types";
 import { useState, useCallback, useEffect } from "react";
 import { mockCalls } from "@/mocks/callsMocks";
 

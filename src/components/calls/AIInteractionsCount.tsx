@@ -19,7 +19,7 @@ export const AIInteractionsCount = ({ calls }: AIInteractionsCountProps) => {
     call.status === "success" && call.analysis?.summary).length;
   
   const chatAnalysisCount = calls.filter(call => 
-    call.status === "success" && call.analysis?.chatMessages?.length).length;
+    call.status === "success" && call.analysis?.chatMessages?.length > 0).length;
   
   const reportCount = calls.filter(call => 
     call.status === "success" && call.analysis?.report).length;

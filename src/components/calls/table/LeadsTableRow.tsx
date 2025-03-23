@@ -15,6 +15,9 @@ interface LeadsTableRowProps {
 }
 
 export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowProps) => {
+  // Check if there are any processed calls
+  const hasProcessedCalls = lead.calls.some(call => call.status === "success");
+  
   return (
     <TableRow>
       <TableCell className="font-medium text-xs">{getLeadName(lead)}</TableCell>
@@ -26,7 +29,7 @@ export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowPro
         <LeadStatusBadge status={lead.status || "active"} />
       </TableCell>
       <TableCell className="text-xs">
-        <LeadTemperatureBadge calls={lead.calls} />
+        <LeadTemperatureBadge calls={lead.calls} hasProcessed={hasProcessedCalls} />
       </TableCell>
       <TableCell className="text-xs">
         {lead.crmInfo ? (

@@ -1,3 +1,4 @@
+
 import { LucideIcon } from "lucide-react";
 
 export type LeadTemperature = "cold" | "warm" | "hot";
@@ -36,6 +37,8 @@ export interface CallAnalysis {
   suggestions?: string[];
   objections?: string[];
   leadInfo?: LeadInfo;
+  chatMessages?: any[]; // Added for chat interactions
+  report?: any; // Added for report generation
 }
 
 export interface Call {
