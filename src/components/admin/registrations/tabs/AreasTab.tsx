@@ -169,7 +169,7 @@ export const AreasTab = () => {
 
   return (
     <>
-      <CardTitle>Áreas</CardTitle>
+      <CardTitle className="text-left">Áreas</CardTitle>
       <CardContent className="pt-4">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
