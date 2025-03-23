@@ -25,7 +25,7 @@ const AdminRegistrationsTwo = () => {
   const searchParams = new URLSearchParams(location.search);
   const tabFromUrl = searchParams.get('tab');
   
-  // Set the default tab based on URL query parameter
+  // Set the default tab to 'integracoes' instead of 'depoimentos'
   const [activeTab, setActiveTab] = useState(
     tabFromUrl === 'planos' ? 'planos' : 
     tabFromUrl === 'depoimentos' ? 'depoimentos' : 
@@ -33,7 +33,7 @@ const AdminRegistrationsTwo = () => {
     tabFromUrl === 'modulos' ? 'modulos' : 
     tabFromUrl === 'pacotes-creditos' ? 'pacotes-creditos' : 
     tabFromUrl === 'prompts' ? 'prompts' : 
-    'depoimentos' // Default tab if no valid tab is specified
+    'integracoes' // Default tab changed to 'integracoes'
   );
 
   // Update the URL when the tab changes
