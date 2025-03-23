@@ -1,21 +1,16 @@
 
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Call, StatusMap } from "@/types/calls";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { ProcessingOverlay } from "./ProcessingOverlay";
-import { CallMediaButtons } from "./row/CallMediaButtons";
-import { CallActionButtons } from "./row/CallActionButtons";
-import { CallProcessingDialogs } from "./row/CallProcessingDialogs";
+import { FileAudio, FileVideo, Play, ClipboardCheck } from "lucide-react";
 
 interface CallHistoryTableRowProps {
   call: Call;
-  status: StatusMap[keyof StatusMap];
+  status: StatusMap["success" | "failed"];
   onMediaPlay: (call: Call) => void;
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
-  onStatusUpdate?: (callId: string, newStatus: Call['status']) => void;
 }
 
 export const CallHistoryTableRow = ({
@@ -24,114 +19,79 @@ export const CallHistoryTableRow = ({
   onMediaPlay,
   onViewAnalysis,
   formatDate,
-  onStatusUpdate,
 }: CallHistoryTableRowProps) => {
-  const { toast } = useToast();
-  const [showReprocessDialog, setShowReprocessDialog] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [processingMessage, setProcessingMessage] = useState("");
+  const isProcessed = call.status === "success";
+  const hasAudioOrVideo = call.audioUrl || call.videoUrl;
+  const callDate = call.date ? new Date(call.date) : null;
   
-  const StatusIcon = status?.icon;
-
-  const simulateProcessing = async () => {
-    return new Promise<boolean>((resolve) => {
-      setTimeout(() => {
-        resolve(Math.random() > 0.5);
-      }, 2000);
-    });
-  };
-
-  const handleReprocess = () => {
-    setShowReprocessDialog(true);
-  };
-
-  const confirmReprocess = async () => {
-    setShowReprocessDialog(false);
-    setIsProcessing(true);
-    setProcessingMessage("Reprocessando chamada...");
-    
-    toast({
-      title: "Reprocessando chamada",
-      description: "Aguarde enquanto a chamada é reprocessada...",
-      duration: 3000,
-    });
-
-    try {
-      const success = await simulateProcessing();
-      const newStatus = success ? "success" : "failed";
-      
-      onStatusUpdate?.(call.id, newStatus);
-      
-      toast({
-        title: success ? "Reprocessamento concluído" : "Erro no reprocessamento",
-        description: success 
-          ? "A chamada foi reprocessada com sucesso."
-          : "Ocorreu um erro durante o reprocessamento da chamada.",
-        variant: success ? "default" : "destructive",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro no reprocessamento",
-        description: "Ocorreu um erro inesperado durante o reprocessamento.",
-        variant: "destructive",
-      });
-      onStatusUpdate?.(call.id, "failed");
-    } finally {
-      setIsProcessing(false);
-      setProcessingMessage("");
-    }
-  };
-
-  // Se o status não estiver definido, não renderiza a linha
-  if (!status) {
-    console.error(`Status não encontrado para a chamada ${call.id} com status ${call.status}`);
-    return null;
-  }
+  const formattedDate = callDate 
+    ? `${formatDate(callDate.toISOString())} às ${callDate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+    : "Data não disponível";
 
   return (
-    <>
-      <TableRow className="text-xs">
-        <TableCell className="py-2">{formatDate(call.date)}</TableCell>
-        <TableCell className="py-2">{call.seller}</TableCell>
-        <TableCell className="py-2">{call.duration}</TableCell>
-        <TableCell className="py-2">
-          <Badge
-            variant="secondary"
-            className={`flex items-center gap-0.5 w-fit text-[11px] px-1.5 py-0.5 ${status.color}`}
-          >
-            <StatusIcon className="w-3 h-3" />
-            {status.label}
-          </Badge>
-        </TableCell>
-        <TableCell className="py-2">
-          <div className="flex items-center gap-2">
-            <CallMediaButtons
-              call={call}
-              onMediaPlay={onMediaPlay}
-              onViewAnalysis={onViewAnalysis}
-            />
-            <CallActionButtons
-              call={call}
-              isProcessing={isProcessing}
-              onReprocess={handleReprocess}
-            />
-          </div>
-        </TableCell>
-      </TableRow>
+    <TableRow>
+      <TableCell className="font-medium text-xs">{formattedDate}</TableCell>
+      <TableCell className="text-xs">{call.seller || "Sistema"}</TableCell>
+      <TableCell className="text-xs">{call.duration || "00:00"}</TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1.5">
+          <div
+            className={`rounded-full w-2 h-2 ${
+              isProcessed ? "bg-green-500" : "bg-red-500"
+            }`}
+          />
+          <span className="text-xs">{status.label}</span>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-1.5">
+          {hasAudioOrVideo && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 text-[#9b87f5] hover:text-[#7E69AB] transition-colors border-[#9b87f5]/20 hover:border-[#9b87f5]/50 hover:bg-[#9b87f5]/10"
+                  onClick={() => onMediaPlay(call)}
+                >
+                  {call.mediaType === "video" ? (
+                    <FileVideo className="h-4 w-4" />
+                  ) : (
+                    <FileAudio className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">
+                    {call.mediaType === "video" ? "Ver vídeo" : "Ouvir áudio"}
+                  </span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {call.mediaType === "video" ? "Ver vídeo" : "Ouvir áudio"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
-      <CallProcessingDialogs
-        showReprocessDialog={showReprocessDialog}
-        showProcessDialog={false}
-        onReprocessDialogChange={setShowReprocessDialog}
-        onProcessDialogChange={() => {}}
-        onConfirmReprocess={confirmReprocess}
-        onConfirmProcess={() => {}}
-      />
-
-      <ProcessingOverlay 
-        isVisible={isProcessing} 
-        message={processingMessage}
-      />
-    </>
+          {isProcessed && call.analysis && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 text-[#9b87f5] hover:text-[#7E69AB] transition-colors border-[#9b87f5]/20 hover:border-[#9b87f5]/50 hover:bg-[#9b87f5]/10"
+                  onClick={() => onViewAnalysis(call)}
+                >
+                  <ClipboardCheck className="h-4 w-4" />
+                  <span className="sr-only">Ver análise</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ver análise detalhada</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TableCell>
+    </TableRow>
   );
 };

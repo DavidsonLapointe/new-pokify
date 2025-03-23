@@ -1,61 +1,48 @@
 
 import { Button } from "@/components/ui/button";
 import { Call } from "@/types/calls";
-import { FileText, PlayCircle, Video } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { 
+  Play, 
+  FileVideo,
+  FileAudio
+} from "lucide-react";
 
 interface CallMediaButtonsProps {
   call: Call;
-  onMediaPlay: (call: Call) => void;
-  onViewAnalysis: (call: Call) => void;
+  onPlayAudio: (audioUrl: string) => void;
+  onPlayVideo: (call: Call) => void;
 }
 
 export const CallMediaButtons = ({
   call,
-  onMediaPlay,
-  onViewAnalysis,
+  onPlayAudio,
+  onPlayVideo,
 }: CallMediaButtonsProps) => {
-  const MediaIcon = call.mediaType === "video" ? Video : PlayCircle;
+  if (!call.audioUrl) return null;
+
+  const isVideo = call.mediaType === "video";
+
+  const handlePlay = () => {
+    if (isVideo) {
+      onPlayVideo(call);
+    } else {
+      onPlayAudio(call.audioUrl);
+    }
+  };
 
   return (
-    <>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onMediaPlay(call)}
-            className="hover:text-primary h-7 w-7"
-          >
-            <MediaIcon className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{call.mediaType === "video" ? "Assistir o vídeo desta chamada" : "Ouvir o áudio desta chamada"}</p>
-        </TooltipContent>
-      </Tooltip>
-      
-      {call.status === "success" && call.analysis && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onViewAnalysis(call)}
-              className="h-7 w-7"
-            >
-              <FileText className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Transcrição e resumo desta chamada</p>
-          </TooltipContent>
-        </Tooltip>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={handlePlay}
+      className="w-7 h-7 text-[#9b87f5] hover:text-[#7E69AB] transition-colors border-[#9b87f5]/20 hover:border-[#9b87f5]/50 hover:bg-[#9b87f5]/10"
+      title={isVideo ? "Ver vídeo" : "Ouvir áudio"}
+    >
+      {isVideo ? (
+        <FileVideo className="h-3.5 w-3.5" />
+      ) : (
+        <FileAudio className="h-3.5 w-3.5" />
       )}
-    </>
+    </Button>
   );
 };

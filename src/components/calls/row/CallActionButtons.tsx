@@ -20,7 +20,7 @@ export const CallActionButtons = ({
         size="sm"
         onClick={onReprocess}
         disabled={isProcessing}
-        className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors text-[11px] h-6 px-2"
+        className="text-[#9b87f5] border-[#9b87f5]/20 hover:bg-[#9b87f5]/10 hover:text-[#7E69AB] hover:border-[#9b87f5]/50 transition-colors text-[11px] h-6 px-2"
       >
         {isProcessing ? "Reprocessando..." : "Reprocessar"}
       </Button>
