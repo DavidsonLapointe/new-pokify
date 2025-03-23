@@ -45,22 +45,21 @@ export const TestimonialsTab = () => {
 
   return (
     <div className="text-left">
-      <CardTitle>Depoimentos</CardTitle>
-      <div className="pt-2">
+      <div className="flex justify-between items-center">
+        <div className="text-left">
+          <CardTitle>Depoimentos</CardTitle>
+          <p className="text-muted-foreground">
+            Gerencie os depoimentos exibidos na página inicial do site.
+          </p>
+        </div>
+        <Button onClick={handleAddTestimonial}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Adicionar Depoimento
+        </Button>
+      </div>
+      
+      <div className="pt-6">
         <div className="space-y-6">
-          <div>
-            <p className="text-muted-foreground">
-              Gerencie os depoimentos exibidos na página inicial do site.
-            </p>
-          </div>
-          
-          <div className="flex justify-end">
-            <Button onClick={handleAddTestimonial}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Adicionar Depoimento
-            </Button>
-          </div>
-
           <TestimonialsList 
             testimonials={testimonials}
             onEdit={handleEditTestimonial}
