@@ -3,10 +3,10 @@ import { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, subMonths, isWithinInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { filterDataBySeller } from "./utils";
-import { useCallsPage } from "../useCallsPage";
+import { Call } from "@/types/calls";
 
-export const useCallsData = () => {
-  const { filteredLeads } = useCallsPage();
+// Modified to not depend on useCallsPage hook
+export const useCallsData = (calls: Call[] = []) => {
   const [monthlyCallsSeller, setMonthlyCallsSeller] = useState("all");
   const [dailyCallsSeller, setDailyCallsSeller] = useState("all");
   const [callsDate, setCallsDate] = useState(() => new Date());
@@ -17,9 +17,9 @@ export const useCallsData = () => {
     
     const uploadsByDay = new Map();
     
-    filteredLeads.forEach(call => {
+    calls.forEach(call => {
       if (!call.emptyLead) {
-        const callDate = new Date(call.date);
+        const callDate = new Date(call.date || new Date());
         if (isWithinInterval(callDate, { start: monthStart, end: monthEnd })) {
           const dayKey = format(callDate, 'dd/MM');
           uploadsByDay.set(dayKey, (uploadsByDay.get(dayKey) || 0) + 1);
@@ -37,7 +37,7 @@ export const useCallsData = () => {
     });
 
     return filterDataBySeller(daysInMonth, dailyCallsSeller);
-  }, [callsDate, filteredLeads, dailyCallsSeller]);
+  }, [callsDate, calls, dailyCallsSeller]);
 
   const monthlyCallsData = useMemo(() => {
     const today = new Date();

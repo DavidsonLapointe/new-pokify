@@ -255,7 +255,13 @@ const OrganizationLeads = () => {
               setIsUploadOpen(false);
             }}
             onCancel={handleUploadCancel}
-            leadInfo={selectedLeadForUpload?.leadInfo}
+            leadInfo={selectedLeadForUpload ? {
+              personType: selectedLeadForUpload.personType || "pf",
+              firstName: selectedLeadForUpload.firstName,
+              lastName: selectedLeadForUpload.lastName || "",
+              razaoSocial: selectedLeadForUpload.razaoSocial || "",
+              phone: selectedLeadForUpload.contactValue || selectedLeadForUpload.phone || ""
+            } : undefined}
           />
         )}
 
