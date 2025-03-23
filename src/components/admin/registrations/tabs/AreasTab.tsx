@@ -86,18 +86,13 @@ export const AreasTab = () => {
     }
   };
 
-  // Function to check for linked users in profiles table
+  // Function to check for linked users in profiles table - fixed to avoid deep type instantiation
   const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
       // Query the profiles table to find users with the specified area
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          id, 
-          name, 
-          email, 
-          organizations(name)
-        `)
+        .select(`id, name, email, organizations(name)`)
         .eq('area', areaName)
         .in('status', ['active', 'pending']);
         
@@ -107,12 +102,12 @@ export const AreasTab = () => {
         return [];
       }
       
-      // Format the result to include organization names
-      const formattedData = data.map(user => ({
+      // Safely format the data to match our LinkedUser interface
+      const formattedData: LinkedUser[] = data.map((user: any) => ({
         id: user.id,
         name: user.name,
         email: user.email,
-        organization_name: user.organizations ? user.organizations.name : undefined
+        organization_name: user.organizations?.name
       }));
       
       return formattedData;
