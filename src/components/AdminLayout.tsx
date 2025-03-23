@@ -28,8 +28,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: FileText, label: "Cadastros 1", path: "/admin/registrations", permissionId: "registrations" },
     { icon: FilePlus, label: "Cadastros 2", path: "/admin/registrations-two", permissionId: "registrations-two" },
     { icon: BriefcaseIcon, label: "Gestão", path: "/admin/management", permissionId: "management" },
+    // Removed the Modules menu item as it's now part of Cadastros 2
     // Removed both Empresas and Usuarios menu items since they're now part of Cadastro 1
-    { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     // Removed Setups menu item since it's now part of the Gestão page
     // Removed Planos menu item since it's now part of Cadastro 2
     // Removed Pacotes de Créditos item since it's now part of Cadastros 2
