@@ -1,3 +1,4 @@
+
 import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -863,3 +864,107 @@ const AdminRegistrationsTwo = () => {
                       <TabsTrigger value="global">Prompts Globais</TabsTrigger>
                       <TabsTrigger value="custom">Prompts Customizados</TabsTrigger>
                     </TabsList>
+
+                    <TabsContent value="global">
+                      {isPromptsLoading ? (
+                        <div className="flex justify-center py-8">
+                          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {globalPromptGroups.map((group) => (
+                            <SinglePromptGroup
+                              key={group.name}
+                              groupName={group.name}
+                              groupIcon={group.icon}
+                              prompts={group.prompts}
+                              onView={handleView}
+                              onEdit={handleEdit}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="custom">
+                      {isPromptsLoading ? (
+                        <div className="flex justify-center py-8">
+                          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {customPromptGroups.map((group) => (
+                            <SinglePromptGroup
+                              key={group.name}
+                              groupName={group.name}
+                              groupIcon={group.icon}
+                              prompts={group.prompts}
+                              onView={handleView}
+                              onEdit={handleEdit}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+
+                  <PromptFormDialog
+                    open={isModalOpen}
+                    onOpenChange={setIsModalOpen}
+                    prompt={newPrompt}
+                    onPromptChange={handlePromptChange}
+                    onSave={handleSavePrompt}
+                    onCancel={handleCancel}
+                    isEditing={isEditing}
+                    modules={moduleOptions}
+                  />
+
+                  <ViewPromptDialog
+                    open={isViewModalOpen}
+                    onOpenChange={setIsViewModalOpen}
+                    prompt={selectedPrompt}
+                    onEdit={selectedPrompt ? handleEdit : undefined}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="depoimentos">
+              <CardTitle>Depoimentos</CardTitle>
+              <div className="pt-4">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-muted-foreground">
+                        Gerencie os depoimentos exibidos na landing page
+                      </p>
+                    </div>
+                    <Button onClick={handleAddTestimonial}>
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      Novo Depoimento
+                    </Button>
+                  </div>
+                  
+                  <TestimonialsList 
+                    testimonials={testimonials}
+                    onEdit={handleEditTestimonial}
+                    onDelete={handleDeleteTestimonial}
+                  />
+                  
+                  <EditTestimonialDialog
+                    open={open}
+                    onOpenChange={setOpen}
+                    testimonial={editingTestimonial}
+                    onSave={handleSaveTestimonial}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminRegistrationsTwo;
