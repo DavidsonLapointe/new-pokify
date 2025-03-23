@@ -7,12 +7,13 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CallsTableProps, LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
-import { UploadCallDialog } from "./UploadCallDialog";
 import { EmptyLeadsState } from "./table/EmptyLeadsState";
 import { LeadsTableHeader } from "./table/LeadsTableHeader";
 import { LeadsTableRow } from "./table/LeadsTableRow";
 import { useLeadsData } from "./table/useLeadsData";
 import { Call } from "@/types/calls";
+import { LeadDetailsDialog } from "./LeadDetailsDialog";
+import { toast } from "sonner";
 
 export const CallsTable = ({
   calls,
@@ -23,9 +24,7 @@ export const CallsTable = ({
 }: CallsTableProps) => {
   const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
   const [showCallsHistory, setShowCallsHistory] = useState(false);
-  const [showUpload, setShowUpload] = useState(false);
-  const [uploadLeadId, setUploadLeadId] = useState<string | null>(null);
-  const [uploadLeadInfo, setUploadLeadInfo] = useState<Call["leadInfo"] | undefined>();
+  const [showLeadDetails, setShowLeadDetails] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
 
   const { leadsWithCalls, updateLeadCalls } = useLeadsData(calls);
@@ -36,25 +35,25 @@ export const CallsTable = ({
     setShowCallsHistory(true);
   };
 
-  const handleShowUpload = (lead: LeadCalls) => {
-    setUploadLeadId(lead.id);
-    setUploadLeadInfo({
-      personType: lead.personType,
-      firstName: lead.firstName,
-      lastName: lead.lastName,
-      razaoSocial: lead.razaoSocial,
-      phone: lead.calls[0]?.phone || ""
-    });
-    setShowUpload(true);
+  const handleEditLead = (lead: LeadCalls) => {
+    setSelectedLead(lead);
+    setShowLeadDetails(true);
   };
 
-  const handleUploadSuccess = (newCall?: Call) => {
-    if (newCall && uploadLeadId) {
-      updateLeadCalls(uploadLeadId, newCall);
+  const handleUpdateLead = (updatedLead: LeadCalls) => {
+    // Aqui você pode implementar a lógica para atualizar o lead
+    // Por enquanto, vamos apenas mostrar um toast
+    toast.success(`Lead ${getLeadName(updatedLead)} atualizado com sucesso!`);
+    setShowLeadDetails(false);
+  };
+
+  // Função auxiliar para obter o nome do lead (copiado de utils.ts)
+  const getLeadName = (lead: LeadCalls): string => {
+    if (lead.personType === "pj" && lead.razaoSocial) {
+      return lead.razaoSocial;
     }
-    setShowUpload(false);
-    setUploadLeadId(null);
-    setUploadLeadInfo(undefined);
+    
+    return `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
   };
 
   console.log("CallsTable - calls:", calls);
@@ -80,8 +79,7 @@ export const CallsTable = ({
                 key={lead.id}
                 lead={lead}
                 formatDate={formatDate}
-                onShowHistory={handleShowCallHistory}
-                onShowUpload={handleShowUpload}
+                onEditLead={handleEditLead}
               />
             ))}
           </TableBody>
@@ -98,19 +96,12 @@ export const CallsTable = ({
         formatDate={formatDate}
       />
 
-      {uploadLeadId && (
-        <UploadCallDialog
-          leadId={uploadLeadId}
-          isOpen={showUpload}
-          onOpenChange={(open) => {
-            setShowUpload(open);
-            if (!open) {
-              setUploadLeadId(null);
-              setUploadLeadInfo(undefined);
-            }
-          }}
-          onUploadSuccess={handleUploadSuccess}
-          leadInfo={uploadLeadInfo}
+      {selectedLead && (
+        <LeadDetailsDialog
+          isOpen={showLeadDetails}
+          onClose={() => setShowLeadDetails(false)}
+          lead={selectedLead}
+          onUpdateLead={handleUpdateLead}
         />
       )}
     </TooltipProvider>

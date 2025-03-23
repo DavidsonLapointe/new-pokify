@@ -13,9 +13,9 @@ export const LeadsTableHeader = () => {
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
-        <TableHead className="w-[100px] text-xs whitespace-nowrap">Qtde de Uploads</TableHead>
         <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
-        <TableHead className="w-[100px] text-xs whitespace-nowrap">Ações</TableHead>
+        <TableHead className="w-[160px] text-xs whitespace-nowrap">Interações IA</TableHead>
+        <TableHead className="w-[80px] text-xs whitespace-nowrap text-center">Ações</TableHead>
       </TableRow>
     </TableHeader>
   );

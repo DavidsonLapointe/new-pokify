@@ -7,19 +7,18 @@ import { LeadStatusBadge } from "../LeadStatusBadge";
 import { LeadCRMInfo } from "../LeadCRMInfo";
 import { LeadActionButtons } from "../LeadActionButtons";
 import { getLeadName } from "../utils";
+import { AIInteractionsDisplay } from "../AIInteractionsDisplay";
 
 interface LeadsTableRowProps {
   lead: LeadCalls;
   formatDate: (date: string) => string;
-  onShowHistory: (lead: LeadCalls) => void;
-  onShowUpload: (lead: LeadCalls) => void;
+  onEditLead: (lead: LeadCalls) => void;
 }
 
 export const LeadsTableRow = ({
   lead,
   formatDate,
-  onShowHistory,
-  onShowUpload
+  onEditLead
 }: LeadsTableRowProps) => {
   // Todas as chamadas são válidas para contagem
   const totalCalls = lead.calls.length;
@@ -43,26 +42,19 @@ export const LeadsTableRow = ({
           hasProcessed={hasProcessed} 
         />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap text-center">
-        <Button
-          variant="link"
-          onClick={() => onShowHistory(lead)}
-          className="p-0 h-auto font-medium text-[#7E69AB] hover:text-[#9b87f5]"
-        >
-          {totalCalls}
-        </Button>
-      </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadCRMInfo 
           successfulCalls={successfulCalls}
           crmInfo={lead.crmInfo}
         />
       </TableCell>
+      <TableCell className="py-2 whitespace-nowrap">
+        <AIInteractionsDisplay lead={lead} />
+      </TableCell>
       <TableCell className="py-2">
         <LeadActionButtons
           lead={lead}
-          onShowHistory={onShowHistory}
-          onShowUpload={onShowUpload}
+          onEditLead={onEditLead}
         />
       </TableCell>
     </TableRow>
