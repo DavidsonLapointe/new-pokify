@@ -37,7 +37,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <div>
+        <div className="text-left">
           <h1 className="text-3xl font-semibold">Módulos</h1>
           <p className="text-muted-foreground">
             Gerencie as ferramentas de IA disponíveis no sistema
