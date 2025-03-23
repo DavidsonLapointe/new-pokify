@@ -299,7 +299,7 @@ const AdminRegistrations = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Cadastro 1</h1>
+        <h1 className="text-2xl font-bold">Cadastros 1</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
