@@ -16,6 +16,8 @@ interface CallsTableProps {
   onPlayAudio: (audioUrl: string) => void;
   onViewAnalysis: (call: Call) => void;
   formatDate: (date: string) => string;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
 }
 
 export const CallsTable = ({
@@ -24,6 +26,8 @@ export const CallsTable = ({
   onPlayAudio,
   onViewAnalysis,
   formatDate,
+  searchQuery,
+  onSearchChange,
 }: CallsTableProps) => {
   const [selectedLead, setSelectedLead] = useState<LeadCalls | null>(null);
   const [showCallsHistory, setShowCallsHistory] = useState(false);
@@ -76,6 +80,8 @@ export const CallsTable = ({
           formatDate={formatDate} 
           onEditLead={handleEditLead}
           onAddLead={() => setIsCreateLeadOpen(true)}
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
         />
 
         <CallHistory

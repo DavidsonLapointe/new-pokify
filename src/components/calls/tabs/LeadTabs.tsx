@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ClientLeadsTable } from "./ClientLeadsTable";
 import { EmployeeLeadsTable } from "./EmployeeLeadsTable";
@@ -7,6 +7,7 @@ import { CandidateLeadsTable } from "./CandidateLeadsTable";
 import { SupplierLeadsTable } from "./SupplierLeadsTable";
 import { ProspectLeadsTable } from "./ProspectLeadsTable";
 import { LeadCalls } from "../types";
+import { CallsFilters } from "@/components/calls/CallsFilters";
 import {
   Pagination,
   PaginationContent,
@@ -21,14 +22,17 @@ interface LeadTabsProps {
   formatDate: (date: string) => string;
   onEditLead: (lead: LeadCalls) => void;
   onAddLead: () => void;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
 }
 
 // Number of leads per page
 const ITEMS_PER_PAGE = 10;
 
-export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsProps) => {
+export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery, onSearchChange }: LeadTabsProps) => {
   const [activeTab, setActiveTab] = useState("client");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredLeads, setFilteredLeads] = useState<LeadCalls[]>([]);
 
   // Filter leads by type
   const clientLeads = leads.filter(lead => lead.leadType === "client");
@@ -36,6 +40,33 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
   const candidateLeads = leads.filter(lead => lead.leadType === "candidate");
   const supplierLeads = leads.filter(lead => lead.leadType === "supplier" || lead.leadType === "partner");
   const prospectLeads = leads.filter(lead => lead.leadType === "prospect");
+
+  // Apply search filter to the leads of the current active tab
+  useEffect(() => {
+    const currentTabLeads = getCurrentTabLeads();
+    
+    if (!searchQuery.trim()) {
+      setFilteredLeads(currentTabLeads);
+      return;
+    }
+    
+    const searchLower = searchQuery.toLowerCase();
+    const filtered = currentTabLeads.filter(lead => {
+      const name = lead.personType === "pj" 
+        ? (lead.razaoSocial || "")
+        : `${lead.firstName || ""} ${lead.lastName || ""}`.trim();
+      
+      return (
+        name.toLowerCase().includes(searchLower) ||
+        (lead.email || "").toLowerCase().includes(searchLower) ||
+        (lead.phone || "").toLowerCase().includes(searchLower)
+      );
+    });
+    
+    setFilteredLeads(filtered);
+    // Reset to first page when search changes
+    setCurrentPage(1);
+  }, [activeTab, searchQuery, leads]);
 
   // Get current leads for the active tab
   const getCurrentTabLeads = () => {
@@ -68,7 +99,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
   };
 
   // Calculate total pages for the current tab
-  const totalPages = Math.ceil(getCurrentTabLeads().length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredLeads.length / ITEMS_PER_PAGE);
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -122,10 +153,6 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
 
   return (
     <div>
-      <div className="mb-4">
-        {/* Removed "Leads" heading as requested */}
-      </div>
-      
       <Tabs defaultValue="client" value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="mb-4 w-full grid grid-cols-5 p-0">
           <TabsTrigger value="client" className="rounded-md">Clientes</TabsTrigger>
@@ -135,9 +162,17 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
           <TabsTrigger value="supplier" className="rounded-md">Fornecedores</TabsTrigger>
         </TabsList>
         
+        {/* Search and filter section - now below tabs */}
+        <div className="mb-4">
+          <CallsFilters
+            searchQuery={searchQuery}
+            onSearchChange={onSearchChange}
+          />
+        </div>
+        
         <TabsContent value="client">
           <ClientLeadsTable 
-            leads={getPaginatedLeads(clientLeads)} 
+            leads={getPaginatedLeads(filteredLeads)} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />
@@ -145,7 +180,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
         
         <TabsContent value="prospect">
           <ProspectLeadsTable 
-            leads={getPaginatedLeads(prospectLeads)} 
+            leads={getPaginatedLeads(filteredLeads)} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />
@@ -153,7 +188,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
         
         <TabsContent value="employee">
           <EmployeeLeadsTable 
-            leads={getPaginatedLeads(employeeLeads)} 
+            leads={getPaginatedLeads(filteredLeads)} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />
@@ -161,7 +196,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
         
         <TabsContent value="candidate">
           <CandidateLeadsTable 
-            leads={getPaginatedLeads(candidateLeads)} 
+            leads={getPaginatedLeads(filteredLeads)} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />
@@ -169,7 +204,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
         
         <TabsContent value="supplier">
           <SupplierLeadsTable 
-            leads={getPaginatedLeads(supplierLeads)} 
+            leads={getPaginatedLeads(filteredLeads)} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />
