@@ -47,7 +47,7 @@ const AverageCostTab = () => {
   return (
     <div className="space-y-4">
       {exchangeRate && (
-        <div className="text-sm text-muted-foreground mb-2">
+        <div className="text-sm text-muted-foreground mb-2 text-left">
           Cotação atual: 1 USD = R$ {exchangeRate.toFixed(2)} (atualizada diariamente às 11:00)
         </div>
       )}
