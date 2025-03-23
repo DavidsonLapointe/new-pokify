@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -304,10 +303,10 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="setups">
-              <CardTitle>Setups</CardTitle>
+              <CardTitle className="text-left">Setups</CardTitle>
               <CardContent className="pt-4 p-6">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground mb-6">Lista de Implantações Pendentes e em Andamento</p>
+                <div className="space-y-0">
+                  <p className="text-sm text-muted-foreground text-left mb-6">Lista de Implantações Pendentes e em Andamento</p>
                 </div>
                 <TooltipProvider>
                   <ModuleSetupsList onStatusChange={handleSetupStatusChange} />
