@@ -26,6 +26,7 @@ const AdminManagement = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("custo-de-ia");
+  const [aiCostSubTab, setAiCostSubTab] = useState("custo-medio");
   const [searchTerm, setSearchTerm] = useState("");
   const [toolFilter, setToolFilter] = useState("");
 
@@ -135,7 +136,7 @@ const AdminManagement = () => {
               <CardTitle>Gestão - Custo de IA</CardTitle>
               <CardContent className="pt-4 space-y-6">
                 {/* Custo de IA Tabs */}
-                <Tabs value={activeTab === "custo-de-ia" ? "custo-medio" : "analytic-report"} className="space-y-4">
+                <Tabs value={aiCostSubTab} onValueChange={setAiCostSubTab} className="space-y-4">
                   <TabsList className="w-full max-w-md">
                     <TabsTrigger value="custo-medio" className="flex-1">Custo Médio</TabsTrigger>
                     <TabsTrigger value="analytic-report" className="flex-1">Relatório Analítico</TabsTrigger>
@@ -246,7 +247,8 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="financeiro">
-              <CardContent className="p-0 pt-4">
+              <CardTitle>Gestão - Financeiro</CardTitle>
+              <CardContent className="pt-4">
                 <div className="space-y-6">
                   <FinancialHeader />
                   {financialLoading ? (
