@@ -9,6 +9,13 @@ import { EmpresasTab } from "@/components/admin/registrations/tabs/EmpresasTab";
 import { FuncoesTab } from "@/components/admin/registrations/tabs/FuncoesTab";
 import { MinhaEmpresaTab } from "@/components/admin/registrations/tabs/MinhaEmpresaTab";
 import { UsuariosTab } from "@/components/admin/registrations/tabs/UsuariosTab";
+import { 
+  Layers, 
+  Building2, 
+  UserCog, 
+  Building, 
+  Users 
+} from "lucide-react";
 
 const AdminRegistrations = () => {
   const { user } = useUser();
@@ -35,11 +42,26 @@ const AdminRegistrations = () => {
         <CardHeader>
           <Tabs defaultValue="areas" className="w-full">
             <TabsList className="mb-4">
-              <TabsTrigger value="areas">Áreas</TabsTrigger>
-              <TabsTrigger value="empresas">Empresas</TabsTrigger>
-              <TabsTrigger value="funcoes">Funções por tipo de usuário</TabsTrigger>
-              <TabsTrigger value="minha-empresa">Minha Empresa</TabsTrigger>
-              <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+              <TabsTrigger value="areas">
+                <Layers className="w-4 h-4 mr-2" />
+                Áreas
+              </TabsTrigger>
+              <TabsTrigger value="empresas">
+                <Building2 className="w-4 h-4 mr-2" />
+                Empresas
+              </TabsTrigger>
+              <TabsTrigger value="funcoes">
+                <UserCog className="w-4 h-4 mr-2" />
+                Funções por tipo de usuário
+              </TabsTrigger>
+              <TabsTrigger value="minha-empresa">
+                <Building className="w-4 h-4 mr-2" />
+                Minha Empresa
+              </TabsTrigger>
+              <TabsTrigger value="usuarios">
+                <Users className="w-4 h-4 mr-2" />
+                Usuários
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="areas">
