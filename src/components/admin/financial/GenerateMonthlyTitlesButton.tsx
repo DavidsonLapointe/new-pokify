@@ -1,39 +1,25 @@
 
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { GenerateMonthlyTitlesModal } from "./GenerateMonthlyTitlesModal";
 
 export const GenerateMonthlyTitlesButton = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleGenerateTitles = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-monthly-titles', {
-        body: {}
-      });
-      
-      if (error) throw error;
-      
-      toast.success(`Títulos mensais gerados com sucesso: ${data.message}`);
-    } catch (error) {
-      console.error('Erro ao gerar títulos:', error);
-      toast.error('Erro ao gerar títulos mensais');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <Button
-      onClick={handleGenerateTitles}
-      disabled={isLoading}
-      className="gap-2"
-    >
-      {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      Gerar Títulos Mensais
-    </Button>
+    <>
+      <Button
+        onClick={() => setIsModalOpen(true)}
+        className="gap-2"
+      >
+        Gerar Títulos Mensais
+      </Button>
+      
+      <GenerateMonthlyTitlesModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen} 
+      />
+    </>
   );
 };
