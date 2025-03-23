@@ -1,5 +1,4 @@
 
-import { CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
@@ -44,10 +43,10 @@ export const TestimonialsTab = () => {
   };
 
   return (
-    <div className="text-left">
-      <div className="flex justify-between items-center">
+    <div className="text-left p-6"> {/* Added padding to match module tab */}
+      <div className="flex justify-between items-center mb-6"> {/* Added margin bottom */}
         <div className="text-left">
-          <CardTitle>Depoimentos</CardTitle>
+          <h2 className="text-2xl font-semibold mb-1">Depoimentos</h2> {/* Added proper heading and margin */}
           <p className="text-muted-foreground">
             Gerencie os depoimentos exibidos na página inicial do site.
           </p>
@@ -58,7 +57,7 @@ export const TestimonialsTab = () => {
         </Button>
       </div>
       
-      <div className="pt-6">
+      <div>
         <div className="space-y-6">
           <TestimonialsList 
             testimonials={testimonials}
