@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Organization } from "@/types";
 import { useOrganizations } from "@/hooks/useOrganizations";
-import { OrganizationsHeader } from "@/components/admin/organizations/OrganizationsHeader";
 import { OrganizationsSearch } from "@/components/admin/organizations/OrganizationsSearch";
 import { OrganizationsLoadingState } from "@/components/admin/organizations/OrganizationsLoadingState";
 import { OrganizationsTable } from "@/components/admin/organizations/OrganizationsTable";
@@ -11,6 +10,8 @@ import { CreateOrganizationDialog } from "@/components/admin/organizations/Creat
 import { EditOrganizationDialog } from "@/components/admin/organizations/EditOrganizationDialog";
 import { ActiveUsersDialog } from "@/components/admin/organizations/ActiveUsersDialog";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export const EmpresasTab = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,10 +61,18 @@ export const EmpresasTab = () => {
     <>
       <div className="px-6">
         <CardTitle className="text-left">Empresas</CardTitle>
+        <p className="text-muted-foreground text-left mt-1">
+          Gerencie as empresas contratantes da plataforma
+        </p>
       </div>
       <CardContent className="pt-4 px-0">
         <div className="space-y-8">
-          <OrganizationsHeader onCreateNew={() => setIsCreateDialogOpen(true)} />
+          <div className="flex justify-end px-6">
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Empresa
+            </Button>
+          </div>
           
           <OrganizationsSearch 
             value={searchTerm}
