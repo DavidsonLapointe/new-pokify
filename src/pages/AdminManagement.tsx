@@ -13,7 +13,14 @@ import { SetupStatus } from "@/components/organization/modules/types";
 import { toast } from "sonner";
 import { LeadsTab } from "@/components/admin/registrations/tabs/LeadsTab";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FilterX } from "lucide-react";
+import { 
+  FilterX, 
+  Wallet, 
+  FileText, 
+  UserMinus, 
+  PieChart, 
+  ListChecks 
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -144,11 +151,26 @@ const AdminManagement = () => {
         <CardHeader>
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="mb-4">
-              <TabsTrigger value="custo-de-ia">Custo de IA</TabsTrigger>
-              <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
-              <TabsTrigger value="funcoes-sem-usuarios">Funções sem Usuários</TabsTrigger>
-              <TabsTrigger value="leads">Leads</TabsTrigger>
-              <TabsTrigger value="setups">Setups</TabsTrigger>
+              <TabsTrigger value="custo-de-ia">
+                <Wallet className="w-4 h-4 mr-2" />
+                Custo de IA
+              </TabsTrigger>
+              <TabsTrigger value="financeiro">
+                <FileText className="w-4 h-4 mr-2" />
+                Financeiro
+              </TabsTrigger>
+              <TabsTrigger value="funcoes-sem-usuarios">
+                <UserMinus className="w-4 h-4 mr-2" />
+                Funções sem Usuários
+              </TabsTrigger>
+              <TabsTrigger value="leads">
+                <PieChart className="w-4 h-4 mr-2" />
+                Leads
+              </TabsTrigger>
+              <TabsTrigger value="setups">
+                <ListChecks className="w-4 h-4 mr-2" />
+                Setups
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="custo-de-ia">
