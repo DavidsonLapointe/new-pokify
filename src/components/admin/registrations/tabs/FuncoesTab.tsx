@@ -1,13 +1,12 @@
-
 import React, { useState } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getPermissionData } from "@/components/admin/customer-success/utils/permission-utils";
 import { PermissionCategoryCard } from "@/components/admin/customer-success/components/PermissionCategoryCard";
 import { mockLeadlyEmployees } from "@/mocks/userMocks";
-import { UnusedPermissionsModal } from "@/components/admin/customer-success/UnusedPermissionsModal";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Users } from "lucide-react";
+import { UnusedPermissionsModal } from "@/components/admin/customer-success/UnusedPermissionsModal";
 
 export const FuncoesTab = () => {
   const { user } = useUser();
@@ -69,19 +68,19 @@ export const FuncoesTab = () => {
     .filter(data => data.count === 0)
     .length;
 
-  // Create data structure for the modal
-  const unusedPermissionsOrgs = [
-    {
-      id: "leadly1",
-      name: "Leadly AI",
-      adminName: "Admin Leadly",
-      adminEmail: "admin@leadly.ai",
-      adminPhone: "+5511999887766",
-      unusedPermissions: Object.entries(permissionData)
-        .filter(([_, data]) => data.count === 0)
-        .map(([key, _]) => key)
-    }
-  ];
+    // Create data structure for the modal
+    const unusedPermissionsOrgs = [
+      {
+        id: "leadly1",
+        name: "Leadly AI",
+        adminName: "Admin Leadly",
+        adminEmail: "admin@leadly.ai",
+        adminPhone: "+5511999887766",
+        unusedPermissions: Object.entries(permissionData)
+          .filter(([_, data]) => data.count === 0)
+          .map(([key, _]) => key)
+      }
+    ];
 
   return (
     <div className="space-y-6">
@@ -93,16 +92,6 @@ export const FuncoesTab = () => {
           </p>
         </div>
         
-        {unusedPermissionsCount > 0 && (
-          <Button 
-            variant="destructive" 
-            className="flex items-center gap-2"
-            onClick={() => setIsUnusedPermissionsModalOpen(true)}
-          >
-            <AlertTriangle className="h-4 w-4" />
-            <span>{unusedPermissionsCount} funções sem usuários</span>
-          </Button>
-        )}
       </div>
 
       {loading ? (
