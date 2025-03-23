@@ -92,7 +92,7 @@ export const ModulesTab = () => {
 
   return (
     <>
-      <CardTitle>Módulos</CardTitle>
+      {/* Removed the CardTitle that had "Módulos" text */}
       <CardContent className="p-0">
         <div className="container py-6 max-w-6xl mx-auto">
           <PageHeader 
