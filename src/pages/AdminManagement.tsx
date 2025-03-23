@@ -8,6 +8,10 @@ import { FinancialFilters } from "@/components/admin/financial/FinancialFilters"
 import { useFinancialFilters } from "@/components/admin/financial/hooks/useFinancialFilters";
 import { getAllTitles } from "@/services/financial";
 import { useQuery } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ModuleSetupsList } from "@/components/admin/modules/ModuleSetupsList";
+import { SetupStatus } from "@/components/organization/modules/types";
+import { toast } from "sonner";
 
 const AdminManagement = () => {
   // Use React Query para buscar títulos com refetch ativado
@@ -35,6 +39,23 @@ const AdminManagement = () => {
     search: string 
   }) => {
     applyFilters(filters);
+  };
+
+  // Handler para quando o status de um setup é alterado
+  const handleSetupStatusChange = (
+    setupId: string, 
+    moduleId: string, 
+    organizationId: string, 
+    newStatus: SetupStatus
+  ) => {
+    console.log(`Setup ${setupId} para o módulo ${moduleId} da organização ${organizationId} foi atualizado para ${newStatus}`);
+    
+    // Here you could add logic to update global state or make an API call
+    // When status is "completed", this should change the module status to "contracted" for the organization
+    if (newStatus === "completed") {
+      toast.success(`O módulo ${moduleId} foi configurado e agora está disponível para a organização ${organizationId}`);
+      // In a real environment, this would be done through an API
+    }
   };
 
   return (
@@ -101,10 +122,13 @@ const AdminManagement = () => {
             
             <TabsContent value="setups">
               <CardTitle>Gestão - Setups</CardTitle>
-              <CardContent className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
+              <CardContent className="pt-4 p-6">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground mb-6">Lista de Implantações Pendentes e em Andamento</p>
+                </div>
+                <TooltipProvider>
+                  <ModuleSetupsList onStatusChange={handleSetupStatusChange} />
+                </TooltipProvider>
               </CardContent>
             </TabsContent>
           </Tabs>
