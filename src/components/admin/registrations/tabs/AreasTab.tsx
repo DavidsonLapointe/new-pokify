@@ -86,51 +86,61 @@ export const AreasTab = () => {
     }
   };
 
-  // Function rewritten to avoid deep type instantiation completely
+  // Simplified version that bypasses TypeScript's deep instantiation issue
   const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
-      // Use raw query to avoid type issues
-      const { data: rawData, error } = await supabase
-        .from('profiles')
-        .select('id, name, email, organization_id')
-        .eq('area', areaName)
-        .in('status', ['active', 'pending']);
+      // First, get the profiles with matching area
+      const profilesResponse = await supabase.rpc(
+        'get_profiles_by_area', 
+        { area_name: areaName }
+      );
       
-      if (error) {
-        console.error("Error checking for linked users:", error);
+      if (profilesResponse.error) {
+        console.error("Error fetching profiles:", profilesResponse.error);
         toast.error("Erro ao verificar usuários vinculados");
         return [];
       }
       
-      if (!rawData || rawData.length === 0) {
+      // Use type assertion to bypass complex nested type inference
+      const profiles = profilesResponse.data as Array<{
+        id: string;
+        name: string;
+        email: string;
+        organization_id: string | null;
+      }>;
+      
+      if (!profiles || profiles.length === 0) {
         return [];
       }
-
-      // Manually create LinkedUser objects without deeply nested organization data
+      
+      // Convert to LinkedUser objects
       const users: LinkedUser[] = [];
       
-      // For each profile, get organization name in a separate query if needed
-      for (const profile of rawData) {
-        const userData: LinkedUser = {
+      for (const profile of profiles) {
+        const user: LinkedUser = {
           id: profile.id,
           name: profile.name,
           email: profile.email
         };
         
-        // Only fetch organization if organization_id exists
+        // Only get organization name if there's an organization_id
         if (profile.organization_id) {
-          const { data: orgData } = await supabase
-            .from('organizations')
-            .select('name')
-            .eq('id', profile.organization_id)
-            .single();
-            
-          if (orgData) {
-            userData.organization_name = orgData.name;
+          try {
+            const { data: orgData } = await supabase
+              .from('organizations')
+              .select('name')
+              .eq('id', profile.organization_id)
+              .single();
+              
+            if (orgData) {
+              user.organization_name = orgData.name;
+            }
+          } catch (err) {
+            console.error("Error fetching organization:", err);
           }
         }
         
-        users.push(userData);
+        users.push(user);
       }
       
       return users;
