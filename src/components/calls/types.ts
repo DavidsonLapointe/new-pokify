@@ -13,6 +13,7 @@ export interface LeadCalls {
     stage: string;
   };
   createdAt: string;
+  status: "active" | "inactive";  // Added this property
 }
 
 export interface CallsTableProps {

@@ -60,6 +60,9 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
           existingLead.crmInfo = call.crmInfo;
         }
       } else {
+        // Get the lead status from the call's leadInfo if available, default to "active"
+        const leadStatus = call.leadInfo.status as "active" | "inactive" || "active";
+        
         // Cria um novo lead, inicializando o array de calls
         // IMPORTANTE: Só adiciona a chamada se for válida
         const newLead: LeadCalls = {
@@ -71,6 +74,7 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
           calls: isValidCall ? [call] : [], // Array vazio se a chamada não for válida
           crmInfo: call.crmInfo,
           createdAt: call.date,
+          status: leadStatus // Set the status from the lead info
         };
         leadsMap.set(call.leadId, newLead);
         console.log(`Novo lead criado: ${call.leadId}`, newLead);
