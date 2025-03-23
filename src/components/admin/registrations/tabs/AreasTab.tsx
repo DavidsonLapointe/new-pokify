@@ -13,6 +13,14 @@ import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/comp
 import { CompanyArea } from "@/components/admin/modules/module-form-schema";
 import { supabase } from "@/integrations/supabase/client";
 
+// Define the user data type to avoid deep type instantiation
+interface LinkedUser {
+  id: string;
+  name: string;
+  email: string;
+  organization_name?: string;
+}
+
 export const AreasTab = () => {
   // State for areas - now all areas are standard areas that can be edited by admin
   const [areas, setAreas] = useState<CompanyArea[]>([
@@ -34,7 +42,7 @@ export const AreasTab = () => {
   const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
   const [currentArea, setCurrentArea] = useState<CompanyArea | null>(null);
   const [deletedAreaName, setDeletedAreaName] = useState<string>("");
-  const [linkedUsers, setLinkedUsers] = useState<{id: string, name: string, email: string, organization_name?: string}[]>([]);
+  const [linkedUsers, setLinkedUsers] = useState<LinkedUser[]>([]);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -79,7 +87,7 @@ export const AreasTab = () => {
   };
 
   // Function to check for linked users in profiles table
-  const checkForLinkedUsers = async (areaName: string): Promise<{id: string, name: string, email: string, organization_name?: string}[]> => {
+  const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
       // Query the profiles table to find users with the specified area
       const { data, error } = await supabase
