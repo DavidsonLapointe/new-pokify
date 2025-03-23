@@ -1,3 +1,4 @@
+
 import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -697,7 +698,7 @@ const AdminRegistrationsTwo = () => {
             <TabsContent value="planos">
               <div className="text-left">
                 <CardTitle>Planos</CardTitle>
-                <div className="pt-4">
+                <div className="pt-2">
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
                       <div className="space-y-2">
