@@ -86,31 +86,38 @@ export const AreasTab = () => {
     }
   };
 
-  // Function to check for linked users in profiles table - fixed to avoid deep type instantiation
+  // Completely rewritten function to avoid TypeScript deep instantiation issues
   const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
-      // Query the profiles table to find users with the specified area
       const { data, error } = await supabase
         .from('profiles')
-        .select(`id, name, email, organizations(name)`)
+        .select('id, name, email, organization_id, organizations:organizations(name)')
         .eq('area', areaName)
         .in('status', ['active', 'pending']);
-        
+      
       if (error) {
         console.error("Error checking for linked users:", error);
         toast.error("Erro ao verificar usuários vinculados");
         return [];
       }
       
-      // Safely format the data to match our LinkedUser interface
-      const formattedData: LinkedUser[] = data.map((user: any) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        organization_name: user.organizations?.name
-      }));
+      if (!data || data.length === 0) {
+        return [];
+      }
       
-      return formattedData;
+      // Map the results to our simpler LinkedUser interface to avoid deep type instantiation
+      const users: LinkedUser[] = [];
+      
+      for (const item of data) {
+        users.push({
+          id: item.id,
+          name: item.name,
+          email: item.email,
+          organization_name: item.organizations?.name
+        });
+      }
+      
+      return users;
     } catch (error) {
       console.error("Error in checkForLinkedUsers:", error);
       toast.error("Erro ao verificar usuários vinculados");
