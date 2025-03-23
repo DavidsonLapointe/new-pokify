@@ -12,6 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleSetupsList } from "@/components/admin/modules/ModuleSetupsList";
 import { SetupStatus } from "@/components/organization/modules/types";
 import { toast } from "sonner";
+import { LeadsTab } from "@/components/admin/registrations/tabs/LeadsTab";
 
 const AdminManagement = () => {
   // Use React Query para buscar títulos com refetch ativado
@@ -114,9 +115,7 @@ const AdminManagement = () => {
             <TabsContent value="leads">
               <CardTitle>Gestão - Leads</CardTitle>
               <CardContent className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
+                <LeadsTab />
               </CardContent>
             </TabsContent>
             

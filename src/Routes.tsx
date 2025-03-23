@@ -107,7 +107,8 @@ function AppRoutes() {
           <Route path="plans" element={<Navigate to="/admin/registrations-two?tab=planos" replace />} />
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />
           <Route path="settings" element={<AdminSettings />} />
-          <Route path="leads" element={<AdminLeads />} />
+          {/* Redirect Leads to Management with leads tab */}
+          <Route path="leads" element={<Navigate to="/admin/management?tab=leads" replace />} />
           {/* Redirect Financial to Management with financeiro tab */}
           <Route path="financial" element={<Navigate to="/admin/management?tab=financeiro" replace />} />
           <Route path="customer-success" element={<AdminCustomerSuccess />} />
