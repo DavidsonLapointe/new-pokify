@@ -16,7 +16,7 @@ interface ModuleSetupsListProps {
 export const ModuleSetupsList: React.FC<ModuleSetupsListProps> = ({ 
   onStatusChange,
   currentPage = 1,
-  itemsPerPage = 5
+  itemsPerPage = 10
 }) => {
   const {
     searchTerm,

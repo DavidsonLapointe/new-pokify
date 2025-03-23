@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -35,9 +34,9 @@ const AdminManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Pagination state for Setups
+  // Pagination state for Setups - updated to 10 items per page
   const [setupsCurrentPage, setSetupsCurrentPage] = useState(1);
-  const setupsItemsPerPage = 5;
+  const setupsItemsPerPage = 10;
 
   // Get tab from URL query params
   useEffect(() => {
