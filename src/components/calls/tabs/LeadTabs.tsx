@@ -123,16 +123,16 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-xl font-bold">Leads</h2>
+        {/* Removed "Leads" heading as requested */}
       </div>
       
       <Tabs defaultValue="client" value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="mb-4 w-full flex justify-start">
-          <TabsTrigger value="client" className="flex-1 max-w-[150px]">Clientes</TabsTrigger>
-          <TabsTrigger value="prospect" className="flex-1 max-w-[150px]">Prospects</TabsTrigger>
-          <TabsTrigger value="employee" className="flex-1 max-w-[150px]">Funcionários</TabsTrigger>
-          <TabsTrigger value="candidate" className="flex-1 max-w-[150px]">Candidatos RH</TabsTrigger>
-          <TabsTrigger value="supplier" className="flex-1 max-w-[150px]">Fornecedores</TabsTrigger>
+        <TabsList className="mb-4 w-full grid grid-cols-5 p-0">
+          <TabsTrigger value="client" className="rounded-md">Clientes</TabsTrigger>
+          <TabsTrigger value="prospect" className="rounded-md">Prospects</TabsTrigger>
+          <TabsTrigger value="employee" className="rounded-md">Funcionários</TabsTrigger>
+          <TabsTrigger value="candidate" className="rounded-md">Candidatos RH</TabsTrigger>
+          <TabsTrigger value="supplier" className="rounded-md">Fornecedores</TabsTrigger>
         </TabsList>
         
         <TabsContent value="client">
