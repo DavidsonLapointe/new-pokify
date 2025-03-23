@@ -1,3 +1,4 @@
+
 export const ADMIN_DEFAULT_PERMISSIONS = {
   leadly_employee: {
     dashboard: true,
@@ -101,13 +102,13 @@ export const availableAdminRoutePermissions = [
   },
   {
     id: "registrations",
-    label: "Cadastro 1",
+    label: "Cadastros 1",
     path: "/admin/registrations",
     description: "Gerenciamento de cadastros do sistema"
   },
   {
     id: "registrations-two",
-    label: "Cadastro 2",
+    label: "Cadastros 2",
     path: "/admin/registrations-two",
     description: "Gerenciamento de cadastros secundários do sistema"
   },

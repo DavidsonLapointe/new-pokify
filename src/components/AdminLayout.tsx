@@ -25,8 +25,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const adminMenuItems = [
     { icon: List, label: "Dashboard", path: "/admin/dashboard", permissionId: "dashboard" },
-    { icon: FileText, label: "Cadastro 1", path: "/admin/registrations", permissionId: "registrations" },
-    { icon: FilePlus, label: "Cadastro 2", path: "/admin/registrations-two", permissionId: "registrations-two" },
+    { icon: FileText, label: "Cadastros 1", path: "/admin/registrations", permissionId: "registrations" },
+    { icon: FilePlus, label: "Cadastros 2", path: "/admin/registrations-two", permissionId: "registrations-two" },
     { icon: BriefcaseIcon, label: "Gestão", path: "/admin/management", permissionId: "management" },
     // Removed both Empresas and Usuarios menu items since they're now part of Cadastro 1
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
