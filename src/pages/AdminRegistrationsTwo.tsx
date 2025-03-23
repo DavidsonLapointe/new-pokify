@@ -820,7 +820,7 @@ const AdminRegistrationsTwo = () => {
             <TabsContent value="depoimentos">
               <div className="text-left">
                 <CardTitle>Depoimentos</CardTitle>
-                <div className="pt-4">
+                <div className="pt-2"> {/* Changed from pt-4 to pt-2 to reduce spacing */}
                   <div className="space-y-6">
                     <div>
                       <p className="text-muted-foreground">
