@@ -175,9 +175,9 @@ export const CreditPackagesTab = () => {
   };
 
   return (
-    <>
+    <div className="text-left">
       <CardTitle>Pacotes de Créditos</CardTitle>
-      <div className="pt-4">
+      <div className="pt-2">
         <div className="space-y-6">
           <div>
             <p className="text-muted-foreground">
@@ -293,6 +293,6 @@ export const CreditPackagesTab = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </>
+    </div>
   );
 };
