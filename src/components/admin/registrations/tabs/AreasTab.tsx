@@ -21,6 +21,13 @@ interface LinkedUser {
   organization_name?: string;
 }
 
+// Interface for summarized company data
+interface CompanySummary {
+  name: string;
+  activeUsers: number;
+  pendingUsers: number;
+}
+
 export const AreasTab = () => {
   // State for areas - now all areas are standard areas that can be edited by admin
   const [areas, setAreas] = useState<CompanyArea[]>([
@@ -43,6 +50,7 @@ export const AreasTab = () => {
   const [currentArea, setCurrentArea] = useState<CompanyArea | null>(null);
   const [deletedAreaName, setDeletedAreaName] = useState<string>("");
   const [linkedUsers, setLinkedUsers] = useState<LinkedUser[]>([]);
+  const [companySummaries, setCompanySummaries] = useState<CompanySummary[]>([]);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -78,12 +86,40 @@ export const AreasTab = () => {
     
     if (areaUsers.length > 0) {
       setLinkedUsers(areaUsers);
+      
+      // Process users to get company summaries
+      const summaries = processUsersByCompany(areaUsers);
+      setCompanySummaries(summaries);
+      
       setCurrentArea(area);
       setIsDeleteWarningOpen(true);
     } else {
       setCurrentArea(area);
       setIsDeleteDialogOpen(true);
     }
+  };
+
+  // Group users by company and count active/pending
+  const processUsersByCompany = (users: LinkedUser[]): CompanySummary[] => {
+    const companies: { [key: string]: { active: number, pending: number } } = {};
+    
+    users.forEach(user => {
+      const companyName = user.organization_name || 'Sem empresa';
+      
+      if (!companies[companyName]) {
+        companies[companyName] = { active: 0, pending: 0 };
+      }
+      
+      // In a real implementation, you would check user.status
+      // For this mock, we'll assume all users are active
+      companies[companyName].active += 1;
+    });
+    
+    return Object.entries(companies).map(([name, counts]) => ({
+      name,
+      activeUsers: counts.active,
+      pendingUsers: counts.pending
+    }));
   };
 
   // Simulação da busca de usuários vinculados às áreas
@@ -318,7 +354,7 @@ export const AreasTab = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Warning Dialog for Linked Users */}
+      {/* Warning Dialog for Linked Users - Modified to show company summaries */}
       <AlertDialog open={isDeleteWarningOpen} onOpenChange={setIsDeleteWarningOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -336,14 +372,14 @@ export const AreasTab = () => {
             <div className="bg-slate-50 p-3 font-medium border-b">
               Usuários vinculados à área
             </div>
-            <div className="p-3 space-y-2">
-              {linkedUsers.map(user => (
-                <div key={user.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                  <div>
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
-                    {user.organization_name && (
-                      <p className="text-xs text-gray-400">Empresa: {user.organization_name}</p>
+            <div className="divide-y">
+              {companySummaries.map((company, index) => (
+                <div key={index} className="p-3">
+                  <p className="font-medium">{company.name}</p>
+                  <div className="mt-1 text-sm text-gray-600">
+                    <p>{company.activeUsers} usuário{company.activeUsers !== 1 ? 's' : ''} ativo{company.activeUsers !== 1 ? 's' : ''}</p>
+                    {company.pendingUsers > 0 && (
+                      <p>{company.pendingUsers} usuário{company.pendingUsers !== 1 ? 's' : ''} pendente{company.pendingUsers !== 1 ? 's' : ''}</p>
                     )}
                   </div>
                 </div>
