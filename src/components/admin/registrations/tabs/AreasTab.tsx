@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
@@ -363,8 +362,7 @@ export const AreasTab = () => {
               Impossível excluir área
             </AlertDialogTitle>
             <AlertDialogDescription>
-              A área <strong>{currentArea?.name}</strong> não pode ser excluída pois existem usuários ativos ou pendentes vinculados a ela. 
-              Você precisa primeiro mudar a área destes usuários para depois excluir esta área.
+              A área <strong>{currentArea?.name}</strong> não pode ser excluída pois existem usuários ativos ou pendentes vinculados a ela.
             </AlertDialogDescription>
           </AlertDialogHeader>
           
