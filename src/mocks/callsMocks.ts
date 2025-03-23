@@ -33,7 +33,7 @@ export const mockCalls: Call[] = [
       company: "Empresa ABC",
       razaoSocial: "Empresa ABC Ltda",
       temperature: "hot",
-      status: "negotiation"
+      status: "active" // Changed from "negotiation" to "active"
     }
   },
   {
@@ -66,7 +66,7 @@ export const mockCalls: Call[] = [
       company: "Empresa XYZ",
       razaoSocial: "Empresa XYZ S.A.",
       temperature: "warm",
-      status: "qualified"
+      status: "active" // Changed from "qualified" to "active"
     }
   }
 ];
