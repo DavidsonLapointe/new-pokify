@@ -19,9 +19,9 @@ const OrganizationUsers = () => {
   
   const { 
     users, 
-    isLoading, 
-    fetchOrganizationUsers, 
-    updateUser 
+    loading, 
+    updateUser,
+    fetchOrganizationUsers 
   } = useOrganizationUsers();
 
   // Configurar o listener de realtime
@@ -83,7 +83,7 @@ const OrganizationUsers = () => {
     <div className="space-y-8">
       <OrganizationUsersHeader onAddUser={() => setIsAddDialogOpen(true)} />
 
-      {isLoading ? (
+      {loading ? (
         <div>Carregando usuários...</div>
       ) : (
         <UsersTable

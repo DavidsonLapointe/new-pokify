@@ -70,3 +70,6 @@ export const crmTabPermissions = [
   "crm.integration",
   "crm.fields"
 ];
+
+// Define Permission type for export
+export type Permission = Record<string, boolean>;

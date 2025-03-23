@@ -8,23 +8,23 @@ export const useOrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        // In a real app, this would be an API call to get users
-        // For now, we'll use the mock data
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-        setUsers(mockLeadlyEmployees);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        toast.error("Failed to load users");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOrganizationUsers = async () => {
+    try {
+      setLoading(true);
+      // In a real app, this would be an API call to get users
+      // For now, we'll use the mock data
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      setUsers(mockLeadlyEmployees);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchUsers();
+  useEffect(() => {
+    fetchOrganizationUsers();
   }, []);
 
   const updateUser = async (updatedUser: User): Promise<boolean> => {
@@ -46,6 +46,7 @@ export const useOrganizationUsers = () => {
   return {
     users,
     loading,
-    updateUser
+    updateUser,
+    fetchOrganizationUsers
   };
 };
