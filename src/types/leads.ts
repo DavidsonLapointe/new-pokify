@@ -6,7 +6,7 @@ export interface Lead {
   organizationId?: string;
   firstName: string;
   lastName?: string;
-  status: "pending" | "contacted" | "failed" | "qualified" | "negotiation";
+  status: "active" | "inactive";
   temperature?: "cold" | "warm" | "hot";
   personType?: "pf" | "pj";
   contactType?: "phone" | "email";

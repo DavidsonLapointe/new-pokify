@@ -27,8 +27,6 @@ export const LeadsTableRow = ({
   const hasProcessed = lead.calls.some(call => call.status === "success" && call.analysis);
   const leadStatus = getLeadStatus(lead);
 
-  console.log("Lead:", lead.id, "Total calls:", totalCalls, "Calls array:", lead.calls); // Debug log mais detalhado
-
   return (
     <TableRow key={lead.id} className="text-xs">
       <TableCell className="py-2 whitespace-nowrap">

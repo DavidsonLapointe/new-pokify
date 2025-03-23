@@ -21,31 +21,28 @@ export const getLeadName = (lead: any) => {
 };
 
 // Determina o status visual do lead para exibição na tabela
-export const getLeadStatus = (lead: any): "active" | "pending" => {
-  // Se o lead tem pelo menos uma chamada, é considerado ativo
-  const hasCallHistory = lead.calls && lead.calls.length > 0;
-  
-  if (hasCallHistory) {
-    return "active";
+export const getLeadStatus = (lead: any): "active" | "inactive" => {
+  // Se o lead tem o status explicitamente definido como 'inactive', retorna inactive
+  if (lead.status === "inactive") {
+    return "inactive";
   }
   
-  return "pending";
+  // Por padrão, todos os outros leads são considerados ativos
+  return "active";
 };
 
 // Função para obter o status detalhado interno do lead (para logs e processamento)
 export const getDetailedLeadStatus = (lead: any) => {
-  const internalStatus = lead.status || "pending";
+  // Retém essa função para compatibilidade com código existente
+  // mas simplifica para refletir o novo modelo de status
+  const internalStatus = lead.status === "inactive" ? "inactive" : "active";
   
-  // Mapeamento dos status detalhados
   const statusMap: Record<string, string> = {
-    "pending": "Pendente de contato",
-    "contacted": "Contatado",
-    "failed": "Falha no contato",
-    "qualified": "Qualificado",
-    "negotiation": "Em negociação"
+    "active": "Lead ativo",
+    "inactive": "Lead inativo"
   };
   
-  return statusMap[internalStatus] || statusMap["pending"];
+  return statusMap[internalStatus] || statusMap["active"];
 };
 
 // Função para converter temperatura em texto legível

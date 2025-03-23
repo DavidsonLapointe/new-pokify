@@ -1,3 +1,4 @@
+
 import { Lead } from '@/types/leads';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -7,7 +8,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Carlos",
     lastName: "Oliveira",
-    status: "qualified",
+    status: "active",  // Updated to new status
     temperature: "hot",
     personType: "pj", 
     contactType: "phone",
@@ -63,7 +64,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Ana",
     lastName: "Silva",
-    status: "negotiation",
+    status: "active",  // Updated to new status
     temperature: "warm",
     personType: "pf",
     contactType: "phone",
@@ -98,7 +99,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Roberto",
     lastName: "Martins",
-    status: "pending",
+    status: "active",  // Updated to new status
     temperature: "cold",
     personType: "pj",
     contactType: "email",
@@ -118,7 +119,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Juliana",
     lastName: "Costa",
-    status: "qualified",
+    status: "active",  // Updated to new status
     temperature: "hot",
     personType: "pj",
     contactType: "phone",
@@ -190,7 +191,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Pedro",
     lastName: "Almeida",
-    status: "failed",
+    status: "inactive",  // Set as inactive to demonstrate both statuses
     temperature: "cold",
     personType: "pf",
     contactType: "phone",
@@ -216,7 +217,7 @@ export const leadsOrganizacao1: Lead[] = [
     notes: [
       {
         id: uuidv4(),
-        content: "Lead não tem interesse no momento",
+        content: "Lead não tem interesse no momento, solicitou não ser mais contactado",
         createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
         createdBy: {
           id: "2",
@@ -229,7 +230,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Mariana",
     lastName: "Santos",
-    status: "negotiation",
+    status: "active",  // Updated to new status
     temperature: "hot",
     personType: "pj",
     contactType: "phone",
@@ -287,7 +288,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Fernando",
     lastName: "Costa",
-    status: "qualified",
+    status: "inactive",  // Set as inactive to demonstrate both statuses
     temperature: "warm",
     personType: "pj",
     contactType: "phone",
@@ -379,7 +380,7 @@ export const leadsOrganizacao1: Lead[] = [
     notes: [
       {
         id: uuidv4(),
-        content: "Cliente interessado em implementação completa",
+        content: "Cliente solicitou que a empresa não faça mais contato",
         createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
         createdBy: {
           id: "2",
