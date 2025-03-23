@@ -7,8 +7,6 @@ import { CandidateLeadsTable } from "./CandidateLeadsTable";
 import { SupplierLeadsTable } from "./SupplierLeadsTable";
 import { ProspectLeadsTable } from "./ProspectLeadsTable";
 import { LeadCalls } from "../types";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 
 interface LeadTabsProps {
   leads: LeadCalls[];
@@ -29,12 +27,8 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4">
         <h2 className="text-xl font-bold">Leads</h2>
-        <Button className="bg-primary" onClick={onAddLead}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Lead
-        </Button>
       </div>
       
       <Tabs defaultValue="client" value={activeTab} onValueChange={setActiveTab} className="w-full">
