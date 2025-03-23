@@ -35,7 +35,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     // Removed Pacotes de Créditos item since it's now part of Cadastros 2
     // Removed Financeiro menu item since it's now in the Gestão page
     { icon: HeadphonesIcon, label: "Customer Success", path: "/admin/customer-success", permissionId: "customer-success" },
-    { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
+    // Removed the Integrations menu item since it's now part of Cadastros 2
     // Removed the Prompt menu item since it's now part of Cadastros 2
     { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
     // Removed Custo de IA menu item since it's now part of the Gestão page
