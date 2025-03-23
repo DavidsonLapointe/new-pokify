@@ -54,8 +54,8 @@ export const LeadsContent = ({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Leads da Landing Page</h1>
-        <p className="text-gray-500">
+        <h1 className="text-2xl font-bold text-left">Leads</h1>
+        <p className="text-gray-500 text-left">
           Gerencie e acompanhe todos os leads capturados através da landing page do seu produto
         </p>
       </div>
