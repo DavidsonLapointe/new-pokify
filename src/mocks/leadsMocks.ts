@@ -1,159 +1,284 @@
 
-import { Lead } from "@/types/leads";
-import { v4 as uuidv4 } from "uuid";
-import { LeadlyLead } from "@/pages/AdminLeads";
+import { Lead } from '@/types/leads';
+import { v4 as uuidv4 } from 'uuid';
 
-export const mockLeads: Lead[] = [
+// Generate mock lead data with call history
+export const leadsOrganizacao1: Lead[] = [
   {
     id: uuidv4(),
-    organizationId: "org-123",
+    firstName: "Carlos",
+    lastName: "Oliveira",
     status: "qualified",
     temperature: "hot",
-    personType: "pj",
-    firstName: "João",
-    lastName: "Silva",
-    email: "joao@empresa.com",
-    phone: "(11) 98765-4321",
-    company: "Empresa ABC",
-    razaoSocial: "Empresa ABC Ltda",
+    personType: "pj", 
+    contactType: "phone",
+    contactValue: "(11) 97654-3210",
+    email: "carlos@empresa.com.br",
+    company: "Empresa Tecnologia Ltda",
+    razaoSocial: "Empresa Tecnologia Ltda",
     cnpj: "12.345.678/0001-90",
-    lastContactDate: "2023-05-20T14:30:00Z",
-    createdAt: "2023-05-15T14:30:00Z",
-    updatedAt: "2023-05-20T14:30:00Z",
-    crmId: "crm-123",
-    crmLink: "https://crm.example.com/lead/crm-123",
-    source: "call",
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente interessado em nossa solução premium",
-        createdAt: "2023-05-15T15:00:00Z",
-        createdBy: {
-          id: "user-123",
-          name: "Vendedor 1"
-        }
-      }
-    ],
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
+    lastContactDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+    callCount: 3,
     calls: [
       {
         id: uuidv4(),
-        fileName: "call-01.mp3",
-        duration: "5:25",
-        date: "2023-05-15T14:30:00Z",
-        status: "success"
+        date: new Date(Date.now() - 86400000 * 2).toISOString(),
+        duration: "4:23",
+        status: "success",
+        fileName: "ligacao_carlos_01.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 4).toISOString(),
+        duration: "7:45",
+        status: "success",
+        fileName: "ligacao_carlos_02.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 5).toISOString(),
+        duration: "2:18",
+        status: "success",
+        fileName: "ligacao_carlos_03.mp3"
+      }
+    ],
+    source: "Site",
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Qualificação"
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente interessado no módulo financeiro",
+        createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+        createdBy: {
+          id: "1",
+          name: "Maria Santos"
+        }
       }
     ]
   },
   {
     id: uuidv4(),
-    organizationId: "org-123",
+    firstName: "Ana",
+    lastName: "Silva",
     status: "negotiation",
     temperature: "warm",
     personType: "pf",
-    firstName: "Maria",
-    lastName: "Oliveira",
-    email: "maria@example.com",
-    phone: "(11) 91234-5678",
-    cpf: "123.456.789-00",
-    lastContactDate: "2023-05-22T10:15:00Z",
-    createdAt: "2023-05-16T10:15:00Z",
-    updatedAt: "2023-05-22T10:15:00Z",
-    crmId: "crm-456",
-    crmLink: "https://crm.example.com/lead/crm-456",
-    source: "website",
-    notes: [
+    contactType: "phone",
+    contactValue: "(21) 98765-4321",
+    email: "ana.silva@email.com",
+    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+    callCount: 2,
+    calls: [
       {
         id: uuidv4(),
-        content: "Cliente solicitou uma demonstração",
-        createdAt: "2023-05-16T11:00:00Z",
-        createdBy: {
-          id: "user-123",
-          name: "Vendedor 1"
-        }
+        date: new Date(Date.now() - 86400000 * 1).toISOString(),
+        duration: "5:30",
+        status: "success",
+        fileName: "ana_silva_call_01.mp3"
       },
       {
         id: uuidv4(),
-        content: "Demonstração agendada para 25/05",
-        createdAt: "2023-05-22T10:15:00Z",
-        createdBy: {
-          id: "user-456",
-          name: "Gestor"
-        }
+        date: new Date(Date.now() - 86400000 * 7).toISOString(),
+        duration: "3:45",
+        status: "failed",
+        fileName: "ana_silva_call_02.mp3"
       }
     ],
-    calls: []
-  }
-];
-
-// Define the exported leadsOrganizacao1 used in other components
-export const leadsOrganizacao1 = mockLeads;
-
-// Mock data for leadly leads (from landing page)
-export const mockLeadlyLeads: LeadlyLead[] = [
-  {
-    id: "1",
-    name: "João Silva",
-    phone: "(11) 98765-4321",
-    createdAt: "2023-08-15T14:30:00Z",
-    status: "ganho",
-    notes: [
-      {
-        id: "note-1",
-        content: "Cliente interessado em uma demonstração do produto",
-        createdAt: new Date("2023-08-15T16:30:00Z"),
-        userName: "Carlos Vendedor"
-      }
-    ]
+    source: "Indicação",
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Negociação"
+    }
   },
   {
-    id: "2",
-    name: "Maria Oliveira",
-    phone: "(21) 97654-3210",
-    createdAt: "2023-08-16T10:15:00Z",
-    status: "contactar",
-    notes: []
+    id: uuidv4(),
+    firstName: "Roberto",
+    lastName: "Martins",
+    status: "pending",
+    temperature: "cold",
+    personType: "pj",
+    contactType: "email",
+    contactValue: "roberto@consultorias.com.br",
+    company: "RM Consultorias",
+    razaoSocial: "RM Consultorias e Serviços Ltda",
+    cnpj: "23.456.789/0001-23",
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    callCount: 0,
+    source: "LinkedIn",
+    crmInfo: {
+      funnel: "Marketing",
+      stage: "Lead Frio"
+    }
   },
   {
-    id: "3",
-    name: "Pedro Santos",
-    phone: "(31) 96543-2109",
-    createdAt: "2023-08-17T09:45:00Z",
-    status: "email_onboarding",
-    notes: [
+    id: uuidv4(),
+    firstName: "Juliana",
+    lastName: "Costa",
+    status: "qualified",
+    temperature: "hot",
+    personType: "pj",
+    contactType: "phone",
+    contactValue: "(11) 91234-5678",
+    email: "juliana@innovatech.com.br",
+    company: "InnovaTech",
+    razaoSocial: "InnovaTech Soluções Digitais Ltda",
+    cnpj: "34.567.890/0001-45",
+    createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
+    lastContactDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+    callCount: 4,
+    calls: [
       {
-        id: "note-2",
-        content: "Cliente solicitou material por e-mail",
-        createdAt: new Date("2023-08-17T11:20:00Z"),
-        userName: "Ana Marketing"
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 3).toISOString(),
+        duration: "12:05",
+        status: "success",
+        fileName: "juliana_innovatech_01.mp4"
       },
       {
-        id: "note-3",
-        content: "Material enviado, aguardando feedback",
-        createdAt: new Date("2023-08-18T14:10:00Z"),
-        userName: "Carlos Vendedor"
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 7).toISOString(),
+        duration: "8:15",
+        status: "success",
+        fileName: "juliana_innovatech_02.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 10).toISOString(),
+        duration: "5:40",
+        status: "success",
+        fileName: "juliana_innovatech_03.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 15).toISOString(),
+        duration: "3:22",
+        status: "failed",
+        fileName: "juliana_innovatech_04.mp3"
+      }
+    ],
+    source: "Google Ads",
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Proposta"
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente solicitou proposta para 30 usuários",
+        createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
+      },
+      {
+        id: uuidv4(),
+        content: "Demonstração realizada com sucesso para equipe de gestão",
+        createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
       }
     ]
   },
   {
-    id: "4",
-    name: "Lucia Ferreira",
-    phone: "(41) 95432-1098",
-    createdAt: "2023-08-18T16:30:00Z",
-    status: "nutricao_mkt",
-    notes: []
-  },
-  {
-    id: "5",
-    name: "Roberto Almeida",
-    phone: "(51) 94321-0987",
-    createdAt: "2023-08-19T11:20:00Z",
-    status: "qualificacao",
+    id: uuidv4(),
+    firstName: "Pedro",
+    lastName: "Almeida",
+    status: "failed",
+    temperature: "cold",
+    personType: "pf",
+    contactType: "phone",
+    contactValue: "(31) 98888-7777",
+    email: "pedro.almeida@email.com",
+    createdAt: new Date(Date.now() - 86400000 * 20).toISOString(),
+    lastContactDate: new Date(Date.now() - 86400000 * 15).toISOString(),
+    callCount: 1,
+    calls: [
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 15).toISOString(),
+        duration: "1:45",
+        status: "failed",
+        fileName: "pedro_almeida_01.mp3"
+      }
+    ],
+    source: "Instagram",
+    crmInfo: {
+      funnel: "Marketing",
+      stage: "Perdido"
+    },
     notes: [
       {
-        id: "note-4",
-        content: "Cliente indicado pelo Pedro Santos",
-        createdAt: new Date("2023-08-19T13:45:00Z"),
-        userName: "Ana Marketing"
+        id: uuidv4(),
+        content: "Lead não tem interesse no momento",
+        createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
+      }
+    ]
+  },
+  {
+    id: uuidv4(),
+    firstName: "Mariana",
+    lastName: "Santos",
+    status: "negotiation",
+    temperature: "hot",
+    personType: "pj",
+    contactType: "phone",
+    contactValue: "(47) 99876-5432",
+    email: "mariana@techinova.com.br",
+    company: "TechInova",
+    razaoSocial: "TechInova Sistemas de Gestão Ltda",
+    cnpj: "45.678.901/0001-67",
+    createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
+    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+    callCount: 3,
+    calls: [
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 1).toISOString(),
+        duration: "15:22",
+        status: "success",
+        fileName: "mariana_techinova_01.mp4"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 4).toISOString(),
+        duration: "7:18",
+        status: "success",
+        fileName: "mariana_techinova_02.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 8).toISOString(),
+        duration: "4:53",
+        status: "success",
+        fileName: "mariana_techinova_03.mp3"
+      }
+    ],
+    source: "Webinar",
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Demonstração"
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente agendou uma segunda demonstração com a equipe técnica",
+        createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
       }
     ]
   }

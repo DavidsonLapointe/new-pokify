@@ -82,42 +82,55 @@ const mockLoggedUser: User = {
 
 // Helper function to convert a lead to a call for display
 const leadToCall = (lead: any): Call => {
+  // Create analysis object for calls that have them
+  const hasAnalysis = lead.callCount > 0 && lead.calls && lead.calls.length > 0;
+  
   return {
     id: `call-${lead.id}`,
     leadId: lead.id,
     leadInfo: {
-      personType: "pf",
+      personType: lead.personType || "pf",
       firstName: lead.firstName,
       lastName: lead.lastName || "",
-      razaoSocial: "",
-      email: lead.contactType === "email" ? lead.contactValue : "",
-      phone: lead.contactType === "phone" ? lead.contactValue : "",
+      razaoSocial: lead.razaoSocial || "",
+      email: lead.email || "",
+      phone: lead.contactValue || "",
     },
     emptyLead: false,
     date: lead.createdAt,
     duration: lead.calls && lead.calls.length > 0 ? lead.calls[0].duration : "00:00",
-    status: lead.status === "contacted" ? "success" : "failed",
-    analysis: lead.calls && lead.calls.length > 0 ? {
-      summary: `Análise da chamada com ${lead.firstName} ${lead.lastName}`,
-      transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    status: lead.calls && lead.calls.length > 0 ? 
+      (lead.calls[0].status === "success" ? "success" : "failed") : 
+      "failed",
+    analysis: hasAnalysis ? {
+      summary: `Análise da chamada com ${lead.firstName} ${lead.lastName || ''}`,
+      transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
       sentiment: {
-        temperature: "warm" as const,
-        reason: "Lead demonstrou interesse no produto"
+        temperature: (lead.temperature || "warm") as "cold" | "warm" | "hot",
+        reason: lead.temperature === "hot" ? 
+          "Lead demonstrou grande interesse no produto" : 
+          (lead.temperature === "warm" ? 
+            "Lead demonstrou interesse moderado" : 
+            "Lead com pouco interesse no momento")
       },
       leadInfo: {
-        personType: "pf",
+        personType: lead.personType || "pf",
         firstName: lead.firstName,
         lastName: lead.lastName || "",
-        razaoSocial: "",
-        phone: lead.contactType === "phone" ? lead.contactValue : "",
-        email: lead.contactType === "email" ? lead.contactValue : "",
+        razaoSocial: lead.razaoSocial || "",
+        phone: lead.contactValue || "",
+        email: lead.email || "",
       }
     } : undefined,
     crmInfo: lead.crmInfo,
-    audioUrl: lead.calls && lead.calls.length > 0 ? "https://example.com/audio.mp3" : undefined,
-    phone: lead.contactType === "phone" ? lead.contactValue : "",
+    audioUrl: hasAnalysis ? 
+      `https://example.com/audio/${lead.calls[0].fileName || "audio.mp3"}` : 
+      undefined,
+    phone: lead.contactValue || "",
     seller: "Maria Santos",
-    mediaType: "audio",
+    mediaType: lead.calls && lead.calls.length > 0 && lead.calls[0].fileName?.endsWith(".mp4") ? 
+      "video" : 
+      "audio",
   };
 };
 
@@ -141,9 +154,10 @@ const OrganizationLeads = () => {
 
   const handlePlayAudio = (audioUrl: string) => {
     console.log("Playing audio:", audioUrl);
+    toast.info("Reproduzindo áudio...");
   };
 
-  const handleViewAnalysis = (call: any) => {
+  const handleViewAnalysis = (call: Call) => {
     console.log("Viewing analysis for call:", call);
   };
 
@@ -241,6 +255,7 @@ const OrganizationLeads = () => {
               setIsUploadOpen(false);
             }}
             onCancel={handleUploadCancel}
+            leadInfo={selectedLeadForUpload?.leadInfo}
           />
         )}
 
