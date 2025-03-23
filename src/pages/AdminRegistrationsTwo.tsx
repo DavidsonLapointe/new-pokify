@@ -45,6 +45,12 @@ import { CancelModuleDialog } from "@/components/admin/modules/CancelModuleDialo
 import { SetupContactDialog } from "@/components/admin/modules/SetupContactDialog";
 import { useModulesManagement } from "@/components/admin/modules/hooks/useModulesManagement";
 import { standardAreas } from "@/components/admin/modules/module-form-schema";
+import { ViewPromptDialog } from "@/components/admin/prompts/ViewPromptDialog";
+import { PromptFormDialog } from "@/components/admin/prompts/PromptFormDialog";
+import { PromptGroups } from "@/components/admin/prompts/PromptGroups";
+import { usePrompts } from "@/hooks/admin/prompts/usePrompts";
+import { usePromptForm } from "@/hooks/admin/prompts/usePromptForm";
+import { availableModules, groupPromptsByModule } from "@/utils/admin/prompts/promptUtils";
 
 // Mocked packages data - same as in AdminAnalysisPackages.tsx
 const mockedPackages: AnalysisPackage[] = [
@@ -92,6 +98,35 @@ const AdminRegistrationsTwo = () => {
     tabFromUrl === 'prompts' ? 'prompts' : 
     'depoimentos' // Default tab if no valid tab is specified
   );
+
+  // Prompts state
+  const { prompts, isLoading: isPromptsLoading, fetchPrompts } = usePrompts();
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    isViewModalOpen,
+    setIsViewModalOpen,
+    newPrompt,
+    selectedPrompt,
+    isEditing,
+    handleNewPrompt,
+    handleSavePrompt,
+    handleCancel,
+    handleEdit,
+    handleView,
+    handlePromptChange
+  } = usePromptForm(fetchPrompts);
+
+  // Group prompts by module and type
+  const globalPromptGroups = groupPromptsByModule(prompts, 'global', availableModules);
+  const customPromptGroups = groupPromptsByModule(prompts, 'custom', availableModules);
+
+  // Convert availableModules to the expected format for the PromptFormDialog
+  const moduleOptions = availableModules.map(module => ({
+    id: module.id,
+    name: module.name,
+    icon: module.icon
+  }));
 
   // Modules state
   const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
@@ -810,49 +845,23 @@ const AdminRegistrationsTwo = () => {
             <TabsContent value="prompts">
               <CardTitle>Prompts</CardTitle>
               <div className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="depoimentos">
-              <CardTitle>Depoimentos</CardTitle>
-              <div className="pt-4">
                 <div className="space-y-6">
-                  <div>
-                    <p className="text-muted-foreground">
-                      Gerencie os depoimentos exibidos na página inicial do site.
-                    </p>
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button onClick={handleAddTestimonial}>
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      Adicionar Depoimento
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-muted-foreground">
+                        Gerencie seus prompts de IA
+                      </p>
+                    </div>
+                    <Button onClick={handleNewPrompt}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Novo Prompt
                     </Button>
                   </div>
 
-                  <TestimonialsList 
-                    testimonials={testimonials}
-                    onEdit={handleEditTestimonial}
-                    onDelete={handleDeleteTestimonial}
-                  />
-
-                  <EditTestimonialDialog
-                    open={open}
-                    onOpenChange={setOpen}
-                    testimonial={editingTestimonial}
-                    onSave={handleSaveTestimonial}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AdminRegistrationsTwo;
+                  <Tabs defaultValue="global" className="w-full">
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="global">Prompts Globais</TabsTrigger>
+                      <TabsTrigger value="custom">Prompts Customizados</TabsTrigger>
+                    </TabsList>
+                    
+                    <

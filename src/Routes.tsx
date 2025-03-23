@@ -98,10 +98,11 @@ function AppRoutes() {
           <Route path="registrations-two" element={<AdminRegistrationsTwo />} />
           <Route path="management" element={<AdminManagement />} />
           <Route path="organizations" element={<AdminOrganizations />} />
-          <Route path="prompt" element={<AdminPrompt />} />
+          {/* Redirect prompt to RegistrationsTwo with prompts tab */}
+          <Route path="prompt" element={<Navigate to="/admin/registrations-two?tab=prompts" replace />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
-          <Route path="modules" element={<AdminModules />} />
+          <Route path="modules" element={<Navigate to="/admin/registrations-two?tab=modulos" replace />} />
           {/* Redirect module-setups to Management with setups tab */}
           <Route path="module-setups" element={<Navigate to="/admin/management?tab=setups" replace />} />
           {/* Redirect Planos to RegistrationsTwo with planos tab */}
