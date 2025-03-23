@@ -85,6 +85,11 @@ const leadToCall = (lead: any): Call => {
   // Create analysis object for calls that have them
   const hasAnalysis = lead.callCount > 0 && lead.calls && lead.calls.length > 0;
   
+  // Determine if the file is a video based on the extension
+  const isVideoFile = lead.calls && 
+                      lead.calls.length > 0 && 
+                      lead.calls[0].fileName?.toLowerCase().endsWith('.mp4');
+  
   return {
     id: `call-${lead.id}`,
     leadId: lead.id,
@@ -102,7 +107,7 @@ const leadToCall = (lead: any): Call => {
     status: lead.calls && lead.calls.length > 0 ? 
       (lead.calls[0].status === "success" ? "success" : "failed") : 
       "failed",
-    analysis: hasAnalysis ? {
+    analysis: hasAnalysis && lead.calls[0].status === "success" ? {
       summary: `Análise da chamada com ${lead.firstName} ${lead.lastName || ''}`,
       transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
       sentiment: {
@@ -128,9 +133,7 @@ const leadToCall = (lead: any): Call => {
       undefined,
     phone: lead.contactValue || "",
     seller: "Maria Santos",
-    mediaType: lead.calls && lead.calls.length > 0 && lead.calls[0].fileName?.endsWith(".mp4") ? 
-      "video" : 
-      "audio",
+    mediaType: isVideoFile ? "video" : "audio",
   };
 };
 

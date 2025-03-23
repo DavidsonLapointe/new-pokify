@@ -1,4 +1,3 @@
-
 import { Lead } from '@/types/leads';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -275,6 +274,122 @@ export const leadsOrganizacao1: Lead[] = [
         id: uuidv4(),
         content: "Cliente agendou uma segunda demonstração com a equipe técnica",
         createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
+      }
+    ]
+  },
+  
+  // New lead with 10 mixed status calls
+  {
+    id: uuidv4(),
+    firstName: "Fernando",
+    lastName: "Costa",
+    status: "qualified",
+    temperature: "warm",
+    personType: "pj",
+    contactType: "phone",
+    contactValue: "(11) 99123-4567",
+    email: "fernando@techsystems.com.br",
+    company: "Tech Systems",
+    razaoSocial: "Tech Systems Soluções em TI Ltda",
+    cnpj: "56.789.123/0001-89",
+    createdAt: new Date(Date.now() - 86400000 * 25).toISOString(),
+    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+    callCount: 10,
+    calls: [
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 1).toISOString(),
+        duration: "8:45",
+        status: "success",
+        fileName: "fernando_call_01.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 3).toISOString(),
+        duration: "6:12",
+        status: "failed",
+        fileName: "fernando_call_02.mp4"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 5).toISOString(),
+        duration: "10:34",
+        status: "success",
+        fileName: "fernando_call_03.mp4"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 7).toISOString(),
+        duration: "3:21",
+        status: "failed",
+        fileName: "fernando_call_04.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 9).toISOString(),
+        duration: "7:18",
+        status: "success",
+        fileName: "fernando_call_05.mp4"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 11).toISOString(),
+        duration: "5:50",
+        status: "failed",
+        fileName: "fernando_call_06.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 15).toISOString(),
+        duration: "9:23",
+        status: "success",
+        fileName: "fernando_call_07.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 18).toISOString(),
+        duration: "4:55",
+        status: "success",
+        fileName: "fernando_call_08.mp4"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 21).toISOString(),
+        duration: "2:40",
+        status: "failed",
+        fileName: "fernando_call_09.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 25).toISOString(),
+        duration: "11:07",
+        status: "success",
+        fileName: "fernando_call_10.mp4"
+      }
+    ],
+    source: "Evento",
+    crmInfo: {
+      funnel: "Vendas",
+      stage: "Qualificação"
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente interessado em implementação completa",
+        createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
+      },
+      {
+        id: uuidv4(),
+        content: "Solicitou orçamento para 20 usuários",
+        createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
         createdBy: {
           id: "2",
           name: "Maria Santos"
