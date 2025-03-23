@@ -14,7 +14,6 @@ import { LeadFormData } from "@/schemas/leadFormSchema";
 import { UseFormReturn } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { leadTypeConfig } from "./utils";
-import { Icon } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 interface LeadFormProps {
@@ -28,6 +27,9 @@ interface LeadFormProps {
   showCancelButton?: boolean;
   onCancel?: () => void;
 }
+
+// List of allowed lead types
+const allowedLeadTypes = ["client", "prospect", "employee", "candidate", "supplier"];
 
 export function LeadForm({
   form,
@@ -90,20 +92,22 @@ export function LeadForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.entries(leadTypeConfig).map(([key, config]) => {
-                    const IconComponent = LucideIcons[config.icon as keyof typeof LucideIcons] as React.FC<any>;
-                    return (
-                      <SelectItem key={key} value={key} className="flex items-center">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${config.color.split(" ")[0]}`}></div>
-                          <span className="flex items-center gap-1.5">
-                            {IconComponent && <IconComponent className="h-3.5 w-3.5" />}
-                            {config.label}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
+                  {Object.entries(leadTypeConfig)
+                    .filter(([key]) => allowedLeadTypes.includes(key))
+                    .map(([key, config]) => {
+                      const IconComponent = LucideIcons[config.icon as keyof typeof LucideIcons] as React.FC<any>;
+                      return (
+                        <SelectItem key={key} value={key} className="flex items-center">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${config.color.split(" ")[0]}`}></div>
+                            <span className="flex items-center gap-1.5">
+                              {IconComponent && <IconComponent className="h-3.5 w-3.5" />}
+                              {config.label}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                 </SelectContent>
               </Select>
               <FormMessage />

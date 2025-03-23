@@ -27,6 +27,9 @@ interface LeadDetailsDialogProps {
   onUpdateLead: (lead: LeadCalls) => void;
 }
 
+// List of allowed lead types
+const allowedLeadTypes = ["client", "prospect", "employee", "candidate", "supplier"];
+
 export const LeadDetailsDialog = ({
   lead,
   isOpen,
@@ -85,13 +88,13 @@ export const LeadDetailsDialog = ({
                   <SelectValue placeholder="Selecione o tipo de lead" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="client">Cliente</SelectItem>
-                  <SelectItem value="employee">Funcionário</SelectItem>
-                  <SelectItem value="supplier">Fornecedor</SelectItem>
-                  <SelectItem value="partner">Parceiro</SelectItem>
-                  <SelectItem value="prospect">Prospect</SelectItem>
-                  <SelectItem value="candidate">Candidato RH</SelectItem>
-                  <SelectItem value="other">Outro</SelectItem>
+                  {Object.entries(leadTypeConfig)
+                    .filter(([key]) => allowedLeadTypes.includes(key))
+                    .map(([key, config]) => (
+                      <SelectItem key={key} value={key}>
+                        {config.label}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
