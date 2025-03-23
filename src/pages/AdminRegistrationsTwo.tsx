@@ -1,5 +1,4 @@
-
-import { CardContent, CardHeader, CardTitle, Card, CardDescription, CardFooter } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Package, 
