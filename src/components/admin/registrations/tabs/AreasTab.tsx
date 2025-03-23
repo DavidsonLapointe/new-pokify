@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CompanyArea } from "@/components/admin/modules/module-form-schema";
+import { supabase } from "@/integrations/supabase/client";
 
 export const AreasTab = () => {
   // State for areas - now all areas are standard areas that can be edited by admin
@@ -33,7 +34,7 @@ export const AreasTab = () => {
   const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
   const [currentArea, setCurrentArea] = useState<CompanyArea | null>(null);
   const [deletedAreaName, setDeletedAreaName] = useState<string>("");
-  const [linkedUsers, setLinkedUsers] = useState<{id: string, name: string, email: string}[]>([]);
+  const [linkedUsers, setLinkedUsers] = useState<{id: string, name: string, email: string, organization_name?: string}[]>([]);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -63,9 +64,9 @@ export const AreasTab = () => {
     setIsDialogOpen(true);
   };
 
-  const openDeleteDialog = (area: CompanyArea) => {
+  const openDeleteDialog = async (area: CompanyArea) => {
     // Check if any users are linked to this area before allowing deletion
-    const areaUsers = checkForLinkedUsers(area.id);
+    const areaUsers = await checkForLinkedUsers(area.name);
     
     if (areaUsers.length > 0) {
       setLinkedUsers(areaUsers);
@@ -77,25 +78,41 @@ export const AreasTab = () => {
     }
   };
 
-  // Mock function to check for linked users - in real app, this would query the database
-  const checkForLinkedUsers = (areaId: string): {id: string, name: string, email: string}[] => {
-    // For demonstration purposes only
-    if (areaId === "9") {
-      return [
-        { id: "u1", name: "Carlos Oliveira", email: "carlos.oliveira@example.com" },
-        { id: "u2", name: "Ana Beatriz", email: "ana.beatriz@example.com" },
-        { id: "u3", name: "Felipe Santos", email: "felipe.santos@example.com" }
-      ];
+  // Function to check for linked users in profiles table
+  const checkForLinkedUsers = async (areaName: string): Promise<{id: string, name: string, email: string, organization_name?: string}[]> => {
+    try {
+      // Query the profiles table to find users with the specified area
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          id, 
+          name, 
+          email, 
+          organizations(name)
+        `)
+        .eq('area', areaName)
+        .in('status', ['active', 'pending']);
+        
+      if (error) {
+        console.error("Error checking for linked users:", error);
+        toast.error("Erro ao verificar usuários vinculados");
+        return [];
+      }
+      
+      // Format the result to include organization names
+      const formattedData = data.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        organization_name: user.organizations ? user.organizations.name : undefined
+      }));
+      
+      return formattedData;
+    } catch (error) {
+      console.error("Error in checkForLinkedUsers:", error);
+      toast.error("Erro ao verificar usuários vinculados");
+      return [];
     }
-    
-    if (areaId === "4") {
-      return [
-        { id: "u1", name: "João Silva", email: "joao.silva@example.com" },
-        { id: "u2", name: "Maria Souza", email: "maria.souza@example.com" }
-      ];
-    }
-    
-    return [];
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -314,6 +331,9 @@ export const AreasTab = () => {
                   <div>
                     <p className="font-medium">{user.name}</p>
                     <p className="text-sm text-gray-500">{user.email}</p>
+                    {user.organization_name && (
+                      <p className="text-xs text-gray-400">Empresa: {user.organization_name}</p>
+                    )}
                   </div>
                 </div>
               ))}
