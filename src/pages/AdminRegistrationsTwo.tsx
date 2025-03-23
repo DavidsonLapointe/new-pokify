@@ -51,6 +51,7 @@ import { PromptGroups, SinglePromptGroup } from "@/components/admin/prompts/Prom
 import { usePrompts } from "@/hooks/admin/prompts/usePrompts";
 import { usePromptForm } from "@/hooks/admin/prompts/usePromptForm";
 import { availableModules, groupPromptsByModule } from "@/utils/admin/prompts/promptUtils";
+import { Prompt } from "@/types/prompt";
 
 // Mocked packages data - same as in AdminAnalysisPackages.tsx
 const mockedPackages: AnalysisPackage[] = [
@@ -861,5 +862,4 @@ const AdminRegistrationsTwo = () => {
                   <Tabs defaultValue="global" className="w-full">
                     <TabsList className="mb-4">
                       <TabsTrigger value="global">Prompts Globais</TabsTrigger>
-                      <TabsTrigger value="custom">Prompts Customizados</TabsTrigger>
-                    </Tabs
+                      <TabsTrigger value="custom">Prom
