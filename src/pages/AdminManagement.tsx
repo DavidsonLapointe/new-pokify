@@ -1,3 +1,4 @@
+
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import AverageCostTab from "@/components/admin/ai-costs/AverageCostTab";
 import { mockAverageCostData } from "@/components/admin/ai-costs/utils";
 import { LeadsPagination } from "@/components/admin/leads/LeadsPagination";
+import { FuncoesTab } from "@/components/admin/registrations/tabs/FuncoesTab";
 
 const AdminManagement = () => {
   const location = useLocation();
@@ -297,9 +299,7 @@ const AdminManagement = () => {
             <TabsContent value="funcoes-sem-usuarios">
               <CardTitle>Funções sem Usuários</CardTitle>
               <CardContent className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
+                <FuncoesTab />
               </CardContent>
             </TabsContent>
             

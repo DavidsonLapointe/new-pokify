@@ -1,59 +1,61 @@
 
-// Define permission label mappings
+// Permission Labels for UI display
 export const permissionLabels: Record<string, string> = {
+  // Main Sections
+  profile: "Meu Perfil",
   dashboard: "Dashboard",
-  "dashboard.analytics": "Analytics",
-  "dashboard.organizations": "Organizações",
-  "dashboard.financial": "Financeiro",
-  organizations: "Empresas",
-  "organizations.manage": "Gerenciar",
-  "organizations.support": "Suporte",
   users: "Usuários",
+  organizations: "Empresas",
   modules: "Módulos",
-  "modules.manage": "Gerenciar",
-  "modules.setups": "Setups",
   plans: "Planos",
-  "credit-packages": "Pacotes de Créditos",
-  "credit-packages.manage": "Gerenciar",
-  "credit-packages.sales": "Vendas",
-  financial: "Financeiro",
-  "financial.invoices": "Faturas",
-  "financial.reports": "Relatórios",
   integrations: "Integrações",
-  prompt: "Prompt",
+  "credit-packages": "Pacotes de Créditos",
+  financial: "Financeiro",
   settings: "Configurações",
+  prompt: "Prompts",
+  
+  // Dashboard Tabs
+  "dashboard.analytics": "Analytics",
+  "dashboard.organizations": "Empresas",
+  "dashboard.financial": "Financeiro",
+  
+  // Settings Tabs
   "settings.alerts": "Alertas",
   "settings.analysis": "Análise",
   "settings.retention": "Retenção",
   "settings.llm": "LLM",
   "settings.system": "Sistema",
   "settings.permissions": "Permissões",
-  profile: "Meu Perfil",
-  "analysis-packages": "Pacotes de Análise",
-  leads: "Análise de Leads",
-  company: "Empresa",
-  "ai-costs": "Custo de IA", // New permission label
-  "dashboard.leads": "Leads",
-  "dashboard.uploads": "Uploads",
-  "dashboard.performance": "Performance",
-  "dashboard.objections": "Objeções",
-  "dashboard.suggestions": "Sugestões",
-  "dashboard.sellers": "Vendedores",
-  crm: "CRM",
+  
+  // CRM Tabs
   "crm.integration": "Integração",
   "crm.fields": "Campos",
+  
+  // Financial Tabs
+  "financial.invoices": "Faturas",
+  "financial.reports": "Relatórios",
+  
+  // Credit Packages Tabs
+  "credit-packages.manage": "Gerenciar",
+  "credit-packages.sales": "Vendas",
+  
+  // Organizations Tabs
+  "organizations.manage": "Gerenciar",
+  "organizations.support": "Suporte",
+  
+  // Modules Tabs
+  "modules.manage": "Gerenciar",
+  "modules.setups": "Setups"
 };
 
-// Define the Permission type that was missing
-export type Permission = boolean;
-
-// Define tab permissions
+// Define dashboard tabs for permission checks
 export const dashboardTabPermissions = [
   "dashboard.analytics",
   "dashboard.organizations",
   "dashboard.financial"
 ];
 
+// Define settings tabs for permission checks
 export const settingsTabPermissions = [
   "settings.alerts",
   "settings.analysis",
@@ -63,34 +65,8 @@ export const settingsTabPermissions = [
   "settings.permissions"
 ];
 
+// Define CRM tabs for permission checks
 export const crmTabPermissions = [
   "crm.integration",
   "crm.fields"
 ];
-
-// Add the availablePermissions export needed by AddLeadlyEmployeeDialog
-export const availablePermissions = {
-  dashboard: {
-    label: "Dashboard",
-    permissions: {
-      view: "Visualizar dashboard",
-      export: "Exportar relatórios",
-    },
-  },
-  calls: {
-    label: "Chamadas",
-    permissions: {
-      view: "Visualizar chamadas",
-      upload: "Upload de chamadas",
-      delete: "Deletar chamadas",
-    },
-  },
-  leads: {
-    label: "Leads",
-    permissions: {
-      view: "Visualizar leads",
-      edit: "Editar leads",
-      delete: "Deletar leads",
-    },
-  },
-} as const;
