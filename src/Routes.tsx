@@ -102,7 +102,8 @@ function AppRoutes() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="integrations" element={<AdminIntegrations />} />
           <Route path="modules" element={<AdminModules />} />
-          <Route path="module-setups" element={<AdminModuleSetups />} />
+          {/* Redirect module-setups to Management with setups tab */}
+          <Route path="module-setups" element={<Navigate to="/admin/management?tab=setups" replace />} />
           {/* Redirect Planos to RegistrationsTwo with planos tab */}
           <Route path="plans" element={<Navigate to="/admin/registrations-two?tab=planos" replace />} />
           <Route path="credit-packages" element={<AdminAnalysisPackages />} />

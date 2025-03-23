@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus, BriefcaseIcon } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
@@ -29,7 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: BriefcaseIcon, label: "Gestão", path: "/admin/management", permissionId: "management" },
     // Removed both Empresas and Usuarios menu items since they're now part of Cadastro 1
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
-    { icon: ClipboardCheck, label: "Setups", path: "/admin/module-setups", permissionId: "module-setups" },
+    // Removed Setups menu item since it's now part of the Gestão page
     // Removed Planos menu item since it's now part of Cadastro 2
     // Removed Pacotes de Créditos item since it's now part of Cadastros 2
     // Removed Financeiro menu item since it's now in the Gestão page
