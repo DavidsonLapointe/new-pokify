@@ -69,100 +69,96 @@ export const MinhaEmpresaTab = ({ defaultCompany }: MinhaEmpresaTabProps) => {
 
   return (
     <>
-      <CardTitle>Minha Empresa</CardTitle>
+      <div className="px-6">
+        <CardTitle className="text-left">Minha Empresa</CardTitle>
+        <p className="text-muted-foreground text-left mt-1">
+          Gerencie as informações da sua empresa
+        </p>
+      </div>
       <CardContent className="pt-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl font-medium mb-2">Minha Empresa</h1>
-            <p className="text-muted-foreground">
-              Gerencie as informações da sua empresa
-            </p>
-          </div>
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+          <form onSubmit={handleSubmitCompany} className="space-y-8">
+            {/* Logo Upload Section */}
+            <div className="mb-6">
+              <AvatarUpload
+                currentImage={company.logo}
+                name={company.razao_social}
+                onImageUpload={handleLogoUpload}
+                isLogo={true}
+              />
+              
+              <div className="mt-3 text-center text-sm text-muted-foreground">
+                <p>Esta imagem será exibida no cabeçalho do sistema</p>
+                <p>Tamanho recomendado: 180×90 pixels</p>
+                <p>Para melhor visualização, utilize uma imagem com fundo transparente (PNG)</p>
+              </div>
+            </div>
 
-          <div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
-            <form onSubmit={handleSubmitCompany} className="space-y-8">
-              {/* Logo Upload Section */}
-              <div className="mb-6">
-                <AvatarUpload
-                  currentImage={company.logo}
-                  name={company.razao_social}
-                  onImageUpload={handleLogoUpload}
-                  isLogo={true}
+            {/* Company Info Section */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="razao_social">Razão Social</Label>
+                <Input
+                  id="razao_social"
+                  name="razao_social"
+                  value={company.razao_social}
+                  readOnly
+                  className="bg-gray-100"
                 />
-                
-                <div className="mt-3 text-center text-sm text-muted-foreground">
-                  <p>Esta imagem será exibida no cabeçalho do sistema</p>
-                  <p>Tamanho recomendado: 180×90 pixels</p>
-                  <p>Para melhor visualização, utilize uma imagem com fundo transparente (PNG)</p>
-                </div>
               </div>
 
-              {/* Company Info Section */}
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="razao_social">Razão Social</Label>
-                  <Input
-                    id="razao_social"
-                    name="razao_social"
-                    value={company.razao_social}
-                    readOnly
-                    className="bg-gray-100"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="nome_fantasia">Nome Fantasia</Label>
-                  <Input
-                    id="nome_fantasia"
-                    name="nome_fantasia"
-                    value={company.nome_fantasia}
-                    onChange={handleInputChange}
-                    placeholder="Digite o nome fantasia"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="cnpj">CNPJ</Label>
-                  <Input
-                    id="cnpj"
-                    name="cnpj"
-                    value={company.cnpj}
-                    readOnly
-                    className="bg-gray-100"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={company.email}
-                    onChange={handleInputChange}
-                    placeholder="Digite o email da empresa"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    value={company.phone || ""}
-                    onChange={handleInputChange}
-                    placeholder="Digite o telefone da empresa"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="nome_fantasia">Nome Fantasia</Label>
+                <Input
+                  id="nome_fantasia"
+                  name="nome_fantasia"
+                  value={company.nome_fantasia}
+                  onChange={handleInputChange}
+                  placeholder="Digite o nome fantasia"
+                />
               </div>
 
-              <div className="flex justify-end">
-                <Button type="submit" disabled={isLoadingCompany}>
-                  {isLoadingCompany ? "Salvando..." : "Salvar Alterações"}
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="cnpj">CNPJ</Label>
+                <Input
+                  id="cnpj"
+                  name="cnpj"
+                  value={company.cnpj}
+                  readOnly
+                  className="bg-gray-100"
+                />
               </div>
-            </form>
-          </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={company.email}
+                  onChange={handleInputChange}
+                  placeholder="Digite o email da empresa"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={company.phone || ""}
+                  onChange={handleInputChange}
+                  placeholder="Digite o telefone da empresa"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isLoadingCompany}>
+                {isLoadingCompany ? "Salvando..." : "Salvar Alterações"}
+              </Button>
+            </div>
+          </form>
         </div>
       </CardContent>
     </>
