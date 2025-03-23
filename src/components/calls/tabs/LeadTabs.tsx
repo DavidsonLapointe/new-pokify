@@ -5,6 +5,7 @@ import { ClientLeadsTable } from "./ClientLeadsTable";
 import { EmployeeLeadsTable } from "./EmployeeLeadsTable";
 import { CandidateLeadsTable } from "./CandidateLeadsTable";
 import { SupplierLeadsTable } from "./SupplierLeadsTable";
+import { ProspectLeadsTable } from "./ProspectLeadsTable";
 import { LeadCalls } from "../types";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -22,8 +23,9 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
   // Filter leads by type
   const clientLeads = leads.filter(lead => lead.leadType === "client");
   const employeeLeads = leads.filter(lead => lead.leadType === "employee");
-  const candidateLeads = leads.filter(lead => lead.leadType === "candidate" || lead.leadType === "prospect");
+  const candidateLeads = leads.filter(lead => lead.leadType === "candidate");
   const supplierLeads = leads.filter(lead => lead.leadType === "supplier" || lead.leadType === "partner");
+  const prospectLeads = leads.filter(lead => lead.leadType === "prospect");
 
   return (
     <div>
@@ -37,15 +39,24 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead }: LeadTabsP
       
       <Tabs defaultValue="client" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4 w-full flex justify-start">
-          <TabsTrigger value="client" className="flex-1 max-w-[180px]">Clientes</TabsTrigger>
-          <TabsTrigger value="employee" className="flex-1 max-w-[180px]">Funcionários</TabsTrigger>
-          <TabsTrigger value="candidate" className="flex-1 max-w-[180px]">Candidatos RH</TabsTrigger>
-          <TabsTrigger value="supplier" className="flex-1 max-w-[180px]">Fornecedores</TabsTrigger>
+          <TabsTrigger value="client" className="flex-1 max-w-[150px]">Clientes</TabsTrigger>
+          <TabsTrigger value="prospect" className="flex-1 max-w-[150px]">Prospects</TabsTrigger>
+          <TabsTrigger value="employee" className="flex-1 max-w-[150px]">Funcionários</TabsTrigger>
+          <TabsTrigger value="candidate" className="flex-1 max-w-[150px]">Candidatos RH</TabsTrigger>
+          <TabsTrigger value="supplier" className="flex-1 max-w-[150px]">Fornecedores</TabsTrigger>
         </TabsList>
         
         <TabsContent value="client">
           <ClientLeadsTable 
             leads={clientLeads} 
+            formatDate={formatDate} 
+            onEditLead={onEditLead} 
+          />
+        </TabsContent>
+        
+        <TabsContent value="prospect">
+          <ProspectLeadsTable 
+            leads={prospectLeads} 
             formatDate={formatDate} 
             onEditLead={onEditLead} 
           />

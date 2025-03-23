@@ -1,75 +1,71 @@
 
+import { LucideIcon, Users, User, Building2, Briefcase, Phone } from "lucide-react";
 import { Call } from "@/types/calls";
-import { LeadCalls } from "./types";
-import { CircleDollarSign, Users, Briefcase, TruckIcon, Building, UserRound, Send, UserSquare } from "lucide-react";
 
-// Define LeadType enumeration
-export type LeadType = "client" | "employee" | "supplier" | "partner" | "prospect" | "candidate" | "other";
+// Define types for leads
+export type LeadType = "client" | "employee" | "supplier" | "candidate" | "partner" | "prospect";
 
-// Configuration for different lead types
-export const leadTypeConfig = {
+// Configuration for lead types
+export const leadTypeConfig: Record<LeadType, { 
+  label: string;
+  color: string;
+  icon: string;
+}> = {
   client: {
     label: "Cliente",
-    color: "bg-blue-100 text-blue-700 border-blue-200",
-    icon: "Building"
-  },
-  employee: {
-    label: "Funcionário",
-    color: "bg-green-100 text-green-700 border-green-200",
-    icon: "UserRound"
-  },
-  supplier: {
-    label: "Fornecedor",
-    color: "bg-purple-100 text-purple-700 border-purple-200",
-    icon: "TruckIcon"
-  },
-  partner: {
-    label: "Parceiro",
-    color: "bg-amber-100 text-amber-700 border-amber-200",
-    icon: "Briefcase"
+    color: "bg-blue-100 text-blue-800 hover:bg-blue-200",
+    icon: "User"
   },
   prospect: {
     label: "Prospect",
-    color: "bg-rose-100 text-rose-700 border-rose-200",
+    color: "bg-purple-100 text-purple-800 hover:bg-purple-200",
+    icon: "Phone"
+  },
+  employee: {
+    label: "Funcionário",
+    color: "bg-green-100 text-green-800 hover:bg-green-200",
     icon: "Users"
+  },
+  supplier: {
+    label: "Fornecedor",
+    color: "bg-amber-100 text-amber-800 hover:bg-amber-200",
+    icon: "Building2"
   },
   candidate: {
     label: "Candidato RH",
-    color: "bg-cyan-100 text-cyan-700 border-cyan-200",
-    icon: "UserSquare"
+    color: "bg-pink-100 text-pink-800 hover:bg-pink-200",
+    icon: "User"
   },
-  other: {
-    label: "Outro",
-    color: "bg-gray-100 text-gray-700 border-gray-200",
-    icon: "CircleDollarSign"
+  partner: {
+    label: "Parceiro",
+    color: "bg-indigo-100 text-indigo-800 hover:bg-indigo-200",
+    icon: "Briefcase"
   }
 };
 
-// Temperature configuration for leads
+// Temperature configuration
 export const temperatureConfig = {
   hot: {
     label: "Quente",
-    color: "bg-rose-100 text-rose-700 border-rose-200",
-    icon: "Flame",
+    color: "text-red-500 border-red-500",
   },
   warm: {
     label: "Morno",
-    color: "bg-amber-100 text-amber-700 border-amber-200",
-    icon: "Thermometer",
+    color: "text-orange-500 border-orange-500",
   },
   cold: {
     label: "Frio",
-    color: "bg-blue-100 text-blue-700 border-blue-200",
-    icon: "Snowflake",
-  },
+    color: "text-blue-500 border-blue-500",
+  }
 };
 
-/**
- * Obtém o nome formatado do lead com base no tipo de pessoa.
- */
-export const getLeadName = (lead: LeadCalls | null): string => {
-  if (!lead) return "Lead não encontrado";
-  
+// Helper function to get the lead name based on person type
+export const getLeadName = (lead: {
+  personType: "pf" | "pj";
+  firstName: string;
+  lastName?: string;
+  razaoSocial?: string;
+}): string => {
   if (lead.personType === "pj" && lead.razaoSocial) {
     return lead.razaoSocial;
   }
@@ -77,31 +73,24 @@ export const getLeadName = (lead: LeadCalls | null): string => {
   return `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
 };
 
-/**
- * Obtém os detalhes do lead para exibição.
- */
-export const getLeadDetails = (lead: LeadCalls | null): string => {
-  if (!lead) return "";
-  
-  if (lead.personType === "pj" && lead.razaoSocial) {
-    return `${lead.leadType ? leadTypeConfig[lead.leadType].label : 'Lead'} - ${lead.razaoSocial}`;
-  }
-  
-  return `${lead.leadType ? leadTypeConfig[lead.leadType].label : 'Lead'} - ${lead.firstName} ${lead.lastName || ''}`.trim();
-};
-
-/**
- * Obtém a temperatura do lead com base na chamada mais recente.
- * Retorna null se não houver chamadas ou se não tiver análise.
- */
-export const getLastCallTemperature = (calls: Call[] = []): "hot" | "warm" | "cold" | null => {
-  if (!calls || calls.length === 0) return null;
-  
-  // Procura pela chamada mais recente com análise de sentimento
-  const callWithAnalysis = calls.find(call => 
+// Helper function to get the temperature from the last processed call
+export const getLastCallTemperature = (calls: Call[]): "hot" | "warm" | "cold" | undefined => {
+  // Find the most recent call with analysis that has temperature information
+  const processedCalls = calls.filter(call => 
     call.status === "success" && 
     call.analysis?.sentiment?.temperature
   );
   
-  return callWithAnalysis?.analysis?.sentiment?.temperature || null;
+  if (processedCalls.length === 0) {
+    return undefined;
+  }
+  
+  // Sort by date descending and get the first one
+  processedCalls.sort((a, b) => {
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
+  });
+  
+  return processedCalls[0].analysis?.sentiment?.temperature;
 };
