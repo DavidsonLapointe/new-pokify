@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -165,16 +164,15 @@ export const UsuariosTab = () => {
 
   return (
     <>
-      <CardTitle>Usuários</CardTitle>
+      <div className="px-6">
+        <CardTitle className="text-left">Usuários</CardTitle>
+        <p className="text-muted-foreground text-left mt-1">
+          Gerencie os funcionários da Leadly
+        </p>
+      </div>
       <CardContent className="pt-4 px-0">
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <div className="text-left">
-              <h2 className="text-xl font-bold">Usuários</h2>
-              <p className="text-muted-foreground">
-                Gerencie os funcionários da Leadly
-              </p>
-            </div>
+          <div className="flex justify-end px-6">
             <Button onClick={() => setIsAddUserDialogOpen(true)}>
               <UserPlus className="w-4 h-4 mr-2" />
               Novo Funcionário
