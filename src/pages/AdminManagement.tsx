@@ -177,35 +177,36 @@ const AdminManagement = () => {
             <TabsContent value="custo-de-ia">
               <CardTitle className="text-left">Custo de IA</CardTitle>
               <CardContent className="pt-4 space-y-6">
-                {/* Custo de IA Tabs - Changed to a flex layout with left side tabs */}
+                {/* Reorganized layout with vertical tabs on the left */}
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Left side tabs */}
-                  <Tabs 
-                    value={aiCostSubTab} 
-                    onValueChange={setAiCostSubTab} 
-                    orientation="vertical" 
-                    className="w-full md:w-48 flex-shrink-0"
-                  >
-                    <TabsList className="flex flex-col h-auto w-full space-x-0 space-y-1 bg-transparent p-0">
-                      <TabsTrigger 
-                        value="custo-medio" 
-                        className="w-full justify-start px-3 py-2"
-                      >
-                        Custo Médio
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="analytic-report" 
-                        className="w-full justify-start px-3 py-2"
-                      >
-                        Relatório Analítico
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                  <div className="w-full md:w-48">
+                    <Tabs 
+                      value={aiCostSubTab} 
+                      onValueChange={setAiCostSubTab} 
+                      orientation="vertical" 
+                      className="w-full"
+                    >
+                      <TabsList className="flex flex-col h-auto w-full space-x-0 space-y-1 bg-transparent p-0">
+                        <TabsTrigger 
+                          value="custo-medio" 
+                          className="w-full justify-start px-3 py-2 text-left"
+                        >
+                          Custo Médio
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="analytic-report" 
+                          className="w-full justify-start px-3 py-2 text-left"
+                        >
+                          Relatório Analítico
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                   
                   {/* Right side content */}
                   <div className="flex-1">
                     <div className={aiCostSubTab === "custo-medio" ? "block" : "hidden"}>
-                      {/* Left-aligned exchange rate text */}
                       <AverageCostTab />
                     </div>
                     
