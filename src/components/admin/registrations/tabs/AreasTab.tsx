@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
@@ -85,7 +86,7 @@ export const AreasTab = () => {
     }
   };
 
-  // Simplificado para evitar problemas de tipagem
+  // Simulação da busca de usuários vinculados às áreas
   const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
       // Simulação da chamada ao banco - no frontend apenas
@@ -95,12 +96,22 @@ export const AreasTab = () => {
       // Simula um pequeno delay para parecer que está consultando o banco
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Mock de resposta - no ambiente real, isto viria do banco de dados
+      // Mock de respostas para diferentes áreas
       if (areaName === "Financeiro") {
-        // Retorna alguns usuários fictícios para teste da UI
         return [
           { id: "1", name: "João Silva", email: "joao@example.com", organization_name: "Empresa A" },
           { id: "2", name: "Maria Oliveira", email: "maria@example.com", organization_name: "Empresa B" }
+        ];
+      } else if (areaName === "Contabilidade") {
+        // Para a área de Contabilidade, retornamos usuários de 3 empresas diferentes
+        return [
+          { id: "3", name: "Carlos Ferreira", email: "carlos@contabex.com", organization_name: "ContabEx Ltda" },
+          { id: "4", name: "Ana Beatriz", email: "ana@contabex.com", organization_name: "ContabEx Ltda" },
+          { id: "5", name: "Marcos Souza", email: "marcos@fiscaltech.com", organization_name: "FiscalTech S.A." },
+          { id: "6", name: "Juliana Lima", email: "juliana@fiscaltech.com", organization_name: "FiscalTech S.A." },
+          { id: "7", name: "Ricardo Mendes", email: "ricardo@contaline.com", organization_name: "ContaLine Contabilidade" },
+          { id: "8", name: "Patricia Santos", email: "patricia@contaline.com", organization_name: "ContaLine Contabilidade" },
+          { id: "9", name: "Felipe Costa", email: "felipe@contaline.com", organization_name: "ContaLine Contabilidade" }
         ];
       }
       
