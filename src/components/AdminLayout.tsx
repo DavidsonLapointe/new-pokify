@@ -32,7 +32,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Puzzle, label: "Módulos", path: "/admin/modules", permissionId: "modules" },
     { icon: ClipboardCheck, label: "Setups", path: "/admin/module-setups", permissionId: "module-setups" },
     // Removed Planos menu item since it's now part of Cadastro 2
-    { icon: Package, label: "Pacotes de Créditos", path: "/admin/credit-packages", permissionId: "credit-packages" },
+    // Removed Pacotes de Créditos item since it's now part of Cadastros 2
     // Removed Financeiro menu item since it's now in the Gestão page
     { icon: HeadphonesIcon, label: "Customer Success", path: "/admin/customer-success", permissionId: "customer-success" },
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
