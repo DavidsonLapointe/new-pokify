@@ -499,7 +499,16 @@ const AdminRegistrationsTwo = () => {
             </TabsContent>
             
             <TabsContent value="modulos">
-              <CardTitle>Módulos</CardTitle>
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <CardTitle className="text-left">Módulos</CardTitle>
+                  <p className="text-muted-foreground">Gerencie as ferramentas de IA disponíveis no sistema</p>
+                </div>
+                <Button onClick={() => setIsCreateDialogOpen(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Novo Módulo
+                </Button>
+              </div>
               <CardContent className="p-0">
                 <div className="container py-6 max-w-6xl mx-auto">
                   <PageHeader 
@@ -512,7 +521,6 @@ const AdminRegistrationsTwo = () => {
                     <LoadingState />
                   ) : (
                     <ScrollArea className="w-full">
-                      {/* User-friendly message when no modules match the area filter */}
                       {activeAreaFilter && filteredModules.length === 0 && (
                         <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md mb-4">
                           <p className="text-sm text-yellow-700">
@@ -521,7 +529,6 @@ const AdminRegistrationsTwo = () => {
                         </div>
                       )}
                       
-                      {/* Carrossel de módulos */}
                       <ModuleCarousel
                         moduleGroups={activeAreaFilter ? getFilteredModuleGroups() : moduleGroups()}
                         selectedModule={selectedModule}
@@ -529,7 +536,6 @@ const AdminRegistrationsTwo = () => {
                         onSelectModule={handleSelectModule}
                       />
                       
-                      {/* Detalhes do módulo selecionado */}
                       {selectedModule && (
                         <ModuleDetailsView
                           selectedModule={selectedModule}
@@ -545,7 +551,6 @@ const AdminRegistrationsTwo = () => {
                     </ScrollArea>
                   )}
                   
-                  {/* Dialog para criar/editar módulo */}
                   <ModuleDialog
                     open={isCreateDialogOpen}
                     onOpenChange={setIsCreateDialogOpen}
@@ -553,7 +558,6 @@ const AdminRegistrationsTwo = () => {
                     onSave={handleSaveModule}
                   />
 
-                  {/* Dialog para cancelar módulo */}
                   <CancelModuleDialog
                     open={isCancelDialogOpen}
                     onOpenChange={setIsCancelDialogOpen}
@@ -562,7 +566,6 @@ const AdminRegistrationsTwo = () => {
                     onConfirm={handleConfirmCancel}
                   />
 
-                  {/* Diálogo para setup de contato */}
                   <SetupContactDialog
                     open={isSetupContactDialogOpen}
                     onOpenChange={setIsSetupContactDialogOpen}
