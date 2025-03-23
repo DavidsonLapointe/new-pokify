@@ -578,15 +578,16 @@ const AdminRegistrationsTwo = () => {
             </TabsContent>
             
             <TabsContent value="pacotes-creditos">
-              <CardTitle>Pacotes de Créditos</CardTitle>
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <CardTitle className="text-left">Pacotes de Créditos</CardTitle>
+                  <p className="text-muted-foreground">
+                    Gerencie os pacotes de créditos adicionais
+                  </p>
+                </div>
+              </div>
               <div className="pt-4">
                 <div className="space-y-6">
-                  <div>
-                    <p className="text-muted-foreground">
-                      Gerencie os pacotes de créditos adicionais
-                    </p>
-                  </div>
-
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
                     <Dialog open={isCreateDialogOpen2} onOpenChange={setIsCreateDialogOpen2}>
                       <Card>
