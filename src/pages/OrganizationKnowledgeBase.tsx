@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Book } from "lucide-react";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -33,7 +34,6 @@ const OrganizationKnowledgeBase = () => {
     role: "seller",
     status: "active",
     createdAt: new Date().toISOString(),
-    logs: [] // Add empty logs array to satisfy the type
   }));
 
   return (

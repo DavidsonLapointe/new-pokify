@@ -1,3 +1,4 @@
+
 import { CallsStats } from "@/components/calls/CallsStats";
 import { DailyCallsChart } from "@/components/dashboard/DailyCallsChart";
 import { DailyPerformanceChart } from "@/components/sellers/DailyPerformanceChart";
@@ -79,7 +80,6 @@ const OrganizationDashboard = () => {
     role: "seller",
     status: "active",
     createdAt: new Date().toISOString(),
-    logs: [] // Add empty logs array to satisfy the type
   }));
 
   // Mostra loading enquanto carrega o usuário

@@ -44,6 +44,8 @@ const OrganizationUsers = () => {
         }
       )
       .subscribe();
+
+    // Remove the extra call to fetchOrganizationUsers since it's already called in the hook
     
     return () => {
       supabase.removeChannel(channel);

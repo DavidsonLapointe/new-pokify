@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { CallsHeader } from "@/components/calls/CallsHeader";
 import { UserPlus } from "lucide-react";
@@ -49,11 +50,7 @@ export const LeadsPageHeader = ({
     .filter(user => 
       user.role === "admin" || 
       (user.permissions && Boolean(user.permissions['integrations']) && user.status === "active")
-    )
-    .map(user => ({
-      ...user,
-      logs: user.logs || [] // Ensure logs exists, even if empty
-    }));
+    );
 
   return (
     <>
