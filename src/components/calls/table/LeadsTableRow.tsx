@@ -6,7 +6,7 @@ import { LeadTemperatureBadge } from "../LeadTemperatureBadge";
 import { LeadStatusBadge } from "../LeadStatusBadge";
 import { LeadCRMInfo } from "../LeadCRMInfo";
 import { LeadActionButtons } from "../LeadActionButtons";
-import { getLeadName, getLeadStatus } from "../utils";
+import { getLeadName } from "../utils";
 
 interface LeadsTableRowProps {
   lead: LeadCalls;
@@ -25,7 +25,6 @@ export const LeadsTableRow = ({
   const totalCalls = lead.calls.length;
   const successfulCalls = lead.calls.filter(call => call.status === "success").length;
   const hasProcessed = lead.calls.some(call => call.status === "success" && call.analysis);
-  const leadStatus = getLeadStatus(lead);
 
   return (
     <TableRow key={lead.id} className="text-xs">
@@ -36,7 +35,7 @@ export const LeadsTableRow = ({
         {formatDate(lead.createdAt).split(',')[0]}
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
-        <LeadStatusBadge status={leadStatus} />
+        <LeadStatusBadge status={lead.status} />
       </TableCell>
       <TableCell className="py-2 whitespace-nowrap">
         <LeadTemperatureBadge 

@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { statusMap } from "@/constants/callStatus";
+import { LeadStatusBadge } from "@/components/calls/LeadStatusBadge";
 
 interface LeadsTableProps {
   leads: Lead[];
@@ -36,10 +37,6 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleString('pt-BR');
-  };
-
-  const getLeadStatus = (callCount: number) => {
-    return callCount === 0 ? "pending" : "contacted";
   };
 
   const handleShowCallHistory = (lead: Lead) => {
@@ -78,17 +75,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    getLeadStatus(lead.callCount) === 'contacted'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}
-                  >
-                    {getLeadStatus(lead.callCount) === 'contacted'
-                      ? 'Ativo'
-                      : 'Pendente'
-                    }
-                  </span>
+                  <LeadStatusBadge status={lead.status} />
                 </TableCell>
                 <TableCell>
                   {lead.callCount > 0 && lead.crmInfo ? (
@@ -109,6 +96,7 @@ export function LeadsTable({ leads, onStartCall }: LeadsTableProps) {
                     variant="ghost"
                     size="icon"
                     onClick={() => onStartCall(lead)}
+                    disabled={lead.status === "inactive"}
                   >
                     <PhoneCall className="h-4 w-4" />
                   </Button>

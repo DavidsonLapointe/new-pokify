@@ -8,7 +8,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Carlos",
     lastName: "Oliveira",
-    status: "active",  // Updated to new status
+    status: "active",
     temperature: "hot",
     personType: "pj", 
     contactType: "phone",
@@ -64,7 +64,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Ana",
     lastName: "Silva",
-    status: "active",  // Updated to new status
+    status: "active", 
     temperature: "warm",
     personType: "pf",
     contactType: "phone",
@@ -99,7 +99,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Roberto",
     lastName: "Martins",
-    status: "active",  // Updated to new status
+    status: "inactive", // Changed to inactive
     temperature: "cold",
     personType: "pj",
     contactType: "email",
@@ -113,13 +113,24 @@ export const leadsOrganizacao1: Lead[] = [
     crmInfo: {
       funnel: "Marketing",
       stage: "Lead Frio"
-    }
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente solicitou não ser mais contactado",
+        createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+        createdBy: {
+          id: "1",
+          name: "Maria Santos"
+        }
+      }
+    ]
   },
   {
     id: uuidv4(),
     firstName: "Juliana",
     lastName: "Costa",
-    status: "active",  // Updated to new status
+    status: "active",
     temperature: "hot",
     personType: "pj",
     contactType: "phone",
@@ -191,7 +202,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Pedro",
     lastName: "Almeida",
-    status: "inactive",  // Set as inactive to demonstrate both statuses
+    status: "inactive",  // Already set as inactive
     temperature: "cold",
     personType: "pf",
     contactType: "phone",
@@ -230,7 +241,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Mariana",
     lastName: "Santos",
-    status: "active",  // Updated to new status
+    status: "active",
     temperature: "hot",
     personType: "pj",
     contactType: "phone",
@@ -288,7 +299,7 @@ export const leadsOrganizacao1: Lead[] = [
     id: uuidv4(),
     firstName: "Fernando",
     lastName: "Costa",
-    status: "inactive",  // Set as inactive to demonstrate both statuses
+    status: "inactive",  // Already set as inactive
     temperature: "warm",
     personType: "pj",
     contactType: "phone",
@@ -391,6 +402,70 @@ export const leadsOrganizacao1: Lead[] = [
         id: uuidv4(),
         content: "Solicitou orçamento para 20 usuários",
         createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+        createdBy: {
+          id: "2",
+          name: "Maria Santos"
+        }
+      }
+    ]
+  },
+  // Adding two new leads - one active, one inactive
+  {
+    id: uuidv4(),
+    firstName: "Luciana",
+    lastName: "Gomes",
+    status: "active",
+    temperature: "warm",
+    personType: "pf",
+    contactType: "email",
+    contactValue: "luciana.gomes@email.com",
+    email: "luciana.gomes@email.com",
+    createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+    callCount: 0, // New lead, no calls yet, but still active
+    source: "Facebook",
+    notes: []
+  },
+  {
+    id: uuidv4(),
+    firstName: "Ricardo",
+    lastName: "Mendes",
+    status: "inactive",
+    temperature: "cold",
+    personType: "pj",
+    contactType: "phone",
+    contactValue: "(21) 97777-8888",
+    email: "ricardo@mendesltda.com.br",
+    company: "Mendes Consultoria",
+    razaoSocial: "Mendes Consultoria Empresarial Ltda",
+    cnpj: "67.890.123/0001-45",
+    createdAt: new Date(Date.now() - 86400000 * 12).toISOString(),
+    callCount: 2,
+    calls: [
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 10).toISOString(),
+        duration: "4:35",
+        status: "success",
+        fileName: "ricardo_call_01.mp3"
+      },
+      {
+        id: uuidv4(),
+        date: new Date(Date.now() - 86400000 * 12).toISOString(),
+        duration: "2:50",
+        status: "success",
+        fileName: "ricardo_call_02.mp3"
+      }
+    ],
+    source: "Email Marketing",
+    crmInfo: {
+      funnel: "Marketing",
+      stage: "Lead Frio"
+    },
+    notes: [
+      {
+        id: uuidv4(),
+        content: "Cliente informou que não tem interesse e pediu para não ser mais contactado",
+        createdAt: new Date(Date.now() - 86400000 * 9).toISOString(),
         createdBy: {
           id: "2",
           name: "Maria Santos"
