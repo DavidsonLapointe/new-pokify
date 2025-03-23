@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Organization } from "@/types";
 import { OrganizationSelector } from "@/components/admin/customer-success/OrganizationSelector";
@@ -570,13 +569,19 @@ const AdminCustomerSuccess = () => {
 
                 <div>
                   <UsersStatistics 
-                    users={selectedOrganization.users || []} 
+                    users={(selectedOrganization.users || []).map(user => ({
+                      ...user,
+                      logs: user.logs || [] // Ensure logs exists
+                    }))} 
                     organizationName={selectedOrganization.name}
                   />
                   
                   <div className="mt-6">
                     <UsersByPermission
-                      users={selectedOrganization.users || []}
+                      users={(selectedOrganization.users || []).map(user => ({
+                        ...user,
+                        logs: user.logs || [] // Ensure logs exists
+                      }))}
                       organizationName={selectedOrganization.name}
                     />
                   </div>

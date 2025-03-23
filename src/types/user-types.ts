@@ -21,7 +21,7 @@ export interface User {
   permissions?: { 
     [key: string]: boolean;
   };
-  logs: UserLog[];
+  logs?: UserLog[]; // Changed from required to optional
   avatar?: string | null;
   organization?: Organization;
   company_leadly_id?: string;

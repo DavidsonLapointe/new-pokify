@@ -83,6 +83,7 @@ export interface OrgUser {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
+  updatedAt?: string;
   lastAccess?: string | null;
   permissions?: {
     [key: string]: boolean;
@@ -90,7 +91,7 @@ export interface OrgUser {
   logs?: UserLog[];
   organization?: Organization;
   avatar?: string | null;
-  area?: string; // Adding area field to match User interface
+  area?: string;
 }
 
 export interface UserLog {
