@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
@@ -207,12 +206,13 @@ export const AreasTab = () => {
     <>
       <div className="px-6">
         <CardTitle className="text-left">Áreas</CardTitle>
+        <p className="text-muted-foreground text-left">
+          Gerencie as áreas padrão que estarão disponíveis para todas as empresas.
+        </p>
       </div>
       <CardContent className="pt-4">
         <div className="flex justify-between items-center mb-6">
-          <p className="text-muted-foreground">
-            Gerencie as áreas padrão que estarão disponíveis para todas as empresas.
-          </p>
+          <div className="invisible h-0 w-0">Placeholder</div>
           <Button onClick={openCreateDialog}>
             <Plus className="mr-2 h-4 w-4" />
             Nova Área
