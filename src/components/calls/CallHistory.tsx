@@ -86,6 +86,9 @@ export const CallHistory = ({
   const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
   const tempConfig = temperature ? temperatureConfig[temperature] : null;
 
+  // Get lead name safely, handling null case
+  const leadName = getLeadName(selectedLead);
+
   return (
     <TooltipProvider delayDuration={0}>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -93,7 +96,7 @@ export const CallHistory = ({
           <DialogHeader className="flex-shrink-0">
             <div className="flex items-center gap-2">
               <DialogTitle>
-                Histórico de Uploads - {getLeadName(selectedLead)}
+                Histórico de Uploads - {leadName}
               </DialogTitle>
               <Tooltip>
                 <TooltipTrigger asChild>

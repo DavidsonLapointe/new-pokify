@@ -66,7 +66,9 @@ export const getLeadName = (lead: {
   firstName: string;
   lastName?: string;
   razaoSocial?: string;
-}): string => {
+} | null): string => {
+  if (!lead) return ""; // Check for null lead
+  
   if (lead.personType === "pj" && lead.razaoSocial) {
     return lead.razaoSocial;
   }
