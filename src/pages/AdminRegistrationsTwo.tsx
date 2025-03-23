@@ -699,7 +699,20 @@ const AdminRegistrationsTwo = () => {
             </TabsContent>
             
             <TabsContent value="planos">
-              <CardTitle>Planos</CardTitle>
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <CardTitle className="text-left">Planos</CardTitle>
+                  <p className="text-muted-foreground">
+                    Gerencie os planos disponíveis na plataforma
+                  </p>
+                </div>
+                
+                <Button onClick={handleCreatePlan} className="bg-primary">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Novo Plano
+                </Button>
+              </div>
+
               <div className="pt-4">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
