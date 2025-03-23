@@ -1,13 +1,12 @@
 
-import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { LeadCalls } from "../types";
+import { LeadActionButtons } from "../LeadActionButtons";
 import { LeadTemperatureBadge } from "../LeadTemperatureBadge";
 import { LeadStatusBadge } from "../LeadStatusBadge";
-import { LeadCRMInfo } from "../LeadCRMInfo";
-import { LeadActionButtons } from "../LeadActionButtons";
+import { AIInteractionsCount } from "../AIInteractionsCount";
 import { getLeadName } from "../utils";
-import { AIInteractionsDisplay } from "../AIInteractionsDisplay";
+import { LeadTypeBadge } from "../LeadTypeBadge";
 
 interface LeadsTableRowProps {
   lead: LeadCalls;
@@ -15,47 +14,35 @@ interface LeadsTableRowProps {
   onEditLead: (lead: LeadCalls) => void;
 }
 
-export const LeadsTableRow = ({
-  lead,
-  formatDate,
-  onEditLead
-}: LeadsTableRowProps) => {
-  // Todas as chamadas são válidas para contagem
-  const totalCalls = lead.calls.length;
-  const successfulCalls = lead.calls.filter(call => call.status === "success").length;
-  const hasProcessed = lead.calls.some(call => call.status === "success" && call.analysis);
-
+export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowProps) => {
   return (
-    <TableRow key={lead.id} className="text-xs">
-      <TableCell className="py-2 whitespace-nowrap">
-        {getLeadName(lead)}
+    <TableRow>
+      <TableCell className="font-medium text-xs">{getLeadName(lead)}</TableCell>
+      <TableCell className="text-xs">
+        <LeadTypeBadge leadType={lead.leadType} />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        {formatDate(lead.createdAt).split(',')[0]}
+      <TableCell className="text-xs">{formatDate(lead.createdAt)}</TableCell>
+      <TableCell className="text-xs">
+        <LeadStatusBadge status={lead.status || "active"} />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        <LeadStatusBadge status={lead.status} />
+      <TableCell className="text-xs">
+        <LeadTemperatureBadge calls={lead.calls} />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        <LeadTemperatureBadge 
-          calls={lead.calls} 
-          hasProcessed={hasProcessed} 
-        />
+      <TableCell className="text-xs">
+        {lead.crmInfo ? (
+          <div className="text-xs space-y-1">
+            <div className="text-[11px] text-gray-700">{lead.crmInfo.funnel}</div>
+            <div className="text-[10px] text-gray-500">{lead.crmInfo.stage}</div>
+          </div>
+        ) : (
+          <span className="text-gray-400 text-xs">Não integrado</span>
+        )}
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        <LeadCRMInfo 
-          successfulCalls={successfulCalls}
-          crmInfo={lead.crmInfo}
-        />
+      <TableCell className="text-xs">
+        <AIInteractionsCount calls={lead.calls} />
       </TableCell>
-      <TableCell className="py-2 whitespace-nowrap">
-        <AIInteractionsDisplay lead={lead} />
-      </TableCell>
-      <TableCell className="py-2">
-        <LeadActionButtons
-          lead={lead}
-          onEditLead={onEditLead}
-        />
+      <TableCell className="text-center">
+        <LeadActionButtons lead={lead} onEditLead={onEditLead} />
       </TableCell>
     </TableRow>
   );

@@ -1,8 +1,10 @@
 
 import * as z from "zod";
+import { LeadType } from "@/components/calls/utils";
 
 export const leadFormSchema = z.object({
   personType: z.enum(["pf", "pj"]),
+  leadType: z.string().min(1, "Tipo de lead é obrigatório"),
   firstName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   lastName: z.string().optional(),
   phone: z
@@ -56,4 +58,3 @@ export const leadFormSchema = z.object({
 });
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;
-

@@ -54,3 +54,39 @@ export const temperatureConfig = {
     description: "Lead com baixa probabilidade de conversão"
   }
 };
+
+// Configuração dos tipos de leads disponíveis no sistema
+export const leadTypeConfig = {
+  cliente: {
+    label: "Cliente",
+    icon: "user",
+    color: "bg-blue-100 text-blue-800",
+    description: "Clientes atuais da empresa"
+  },
+  prospecto: {
+    label: "Prospecto",
+    icon: "users",
+    color: "bg-purple-100 text-purple-800",
+    description: "Potenciais clientes em processo de avaliação"
+  },
+  funcionario: {
+    label: "Funcionário",
+    icon: "briefcase",
+    color: "bg-green-100 text-green-800",
+    description: "Membros da equipe interna"
+  },
+  fornecedor: {
+    label: "Fornecedor",
+    icon: "factory",
+    color: "bg-yellow-100 text-yellow-800",
+    description: "Empresas ou pessoas que fornecem produtos/serviços"
+  },
+  parceiro: {
+    label: "Parceiro",
+    icon: "building",
+    color: "bg-indigo-100 text-indigo-800",
+    description: "Parceiros de negócios e colaboradores"
+  }
+};
+
+export type LeadType = keyof typeof leadTypeConfig;

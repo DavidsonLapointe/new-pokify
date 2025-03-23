@@ -1,10 +1,12 @@
 
-import { Call, StatusMap } from "@/types/calls";
+import { Call } from "@/types/calls";
+import { LeadType } from "./utils";
 
 export interface LeadCalls {
   id: string;
   personType: "pf" | "pj";
-  firstName?: string;
+  leadType?: LeadType;
+  firstName: string;
   lastName?: string;
   razaoSocial?: string;
   calls: Call[];
@@ -13,15 +15,5 @@ export interface LeadCalls {
     stage: string;
   };
   createdAt: string;
-  status: "active" | "inactive";  // Added this property
+  status?: "active" | "inactive";
 }
-
-export interface CallsTableProps {
-  calls: Call[];
-  statusMap: StatusMap;
-  onPlayAudio: (audioUrl: string) => void;
-  onViewAnalysis: (call: Call) => void;
-  formatDate: (date: string) => string;
-}
-
-export type { Call } from "@/types/calls";
