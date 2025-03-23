@@ -1,5 +1,5 @@
 
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, Card, CardDescription, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Package, 
@@ -99,7 +99,7 @@ const AdminRegistrationsTwo = () => {
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
   const [localPlans, setLocalPlans] = useState<Plan[]>([]);
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   // Credit Packages state
   const [packages, setPackages] = useState<AnalysisPackage[]>(mockedPackages);
@@ -197,7 +197,7 @@ const AdminRegistrationsTwo = () => {
           prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
         );
         console.log("Plano atualizado:", updatedPlan);
-        toast({
+        uiToast({
           title: "Plano atualizado com sucesso",
           description: `O plano ${updatedPlan.name} foi atualizado.`
         });
@@ -221,7 +221,7 @@ const AdminRegistrationsTwo = () => {
         setLocalPlans(prevPlans => [...prevPlans, newPlan]);
         
         // Exibir toast de sucesso
-        toast({
+        uiToast({
           title: "Plano criado com sucesso",
           description: `O plano ${newPlan.name} foi criado.`
         });
@@ -232,7 +232,7 @@ const AdminRegistrationsTwo = () => {
       
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
-      toast({
+      uiToast({
         title: "Erro ao salvar plano",
         description: "Ocorreu um erro ao salvar o plano. Tente novamente.",
         variant: "destructive"
@@ -257,9 +257,7 @@ const AdminRegistrationsTwo = () => {
     }
 
     if (emptyFields.length > 0) {
-      toast.error(
-        `Por favor, preencha os seguintes campos: ${emptyFields.join(", ")}`
-      );
+      toast(`Por favor, preencha os seguintes campos: ${emptyFields.join(", ")}`);
       return;
     }
 
@@ -267,43 +265,43 @@ const AdminRegistrationsTwo = () => {
     const price = parseFloat(newPackage.price);
 
     if (isNaN(credits) || credits <= 0) {
-      toast.error("A quantidade de créditos deve ser um número positivo");
+      toast(`A quantidade de créditos deve ser um número positivo`);
       return;
     }
 
     if (isNaN(price) || price <= 0) {
-      toast.error("O preço deve ser um número positivo");
+      toast(`O preço deve ser um número positivo`);
       return;
     }
 
-    toast.loading("Criando pacote e cadastrando no Stripe...");
-    
-    try {
-      // In a real app, this would call an API
-      // await createAnalysisPackage(newPackage);
-      
-      // For demo, just add to local state
-      const newId = `pkg-${Date.now().toString().slice(-3)}`;
-      const newPkg: AnalysisPackage = {
-        id: newId,
-        name: newPackage.name,
-        credits: credits,
-        price: price,
-        active: true,
-        stripeProductId: `prod_mock_${newId}`,
-        stripePriceId: `price_mock_${newId}`
-      };
-      
-      setPackages([...packages, newPkg]);
-      setNewPackage({ name: "", credits: "", price: "" });
-      setIsCreateDialogOpen(false);
-      toast.dismiss();
-      toast.success("Pacote criado com sucesso e registrado no Stripe");
-    } catch (error) {
-      console.error("Erro ao criar pacote:", error);
-      toast.dismiss();
-      toast.error("Ocorreu um erro ao criar o pacote");
-    }
+    toast.promise(
+      // Promise to simulate API call
+      new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // For demo, just add to local state
+          const newId = `pkg-${Date.now().toString().slice(-3)}`;
+          const newPkg: AnalysisPackage = {
+            id: newId,
+            name: newPackage.name,
+            credits: credits,
+            price: price,
+            active: true,
+            stripeProductId: `prod_mock_${newId}`,
+            stripePriceId: `price_mock_${newId}`
+          };
+          
+          setPackages([...packages, newPkg]);
+          setNewPackage({ name: "", credits: "", price: "" });
+          setIsCreateDialogOpen(false);
+          resolve();
+        }, 1000);
+      }),
+      {
+        loading: 'Criando pacote e cadastrando no Stripe...',
+        success: 'Pacote criado com sucesso e registrado no Stripe',
+        error: 'Ocorreu um erro ao criar o pacote'
+      }
+    );
   };
 
   const handleUpdatePackage = async (e: React.FormEvent) => {
@@ -311,47 +309,47 @@ const AdminRegistrationsTwo = () => {
     
     if (!editingPackage) return;
 
-    toast.loading("Atualizando pacote e sincronizando com o Stripe...");
-    
-    try {
-      // In a real app, this would call an API
-      // await updateAnalysisPackage(editingPackage.id, editingPackage);
-      
-      // For demo, just update local state
-      const updatedPackages = packages.map(pkg => 
-        pkg.id === editingPackage.id ? editingPackage : pkg
-      );
-      setPackages(updatedPackages);
-      setEditingPackage(null);
-      setIsEditDialogOpen(false);
-      toast.dismiss();
-      toast.success("Pacote atualizado com sucesso e sincronizado com o Stripe");
-    } catch (error) {
-      console.error("Erro ao atualizar pacote:", error);
-      toast.dismiss();
-      toast.error("Ocorreu um erro ao atualizar o pacote");
-    }
+    toast.promise(
+      // Promise to simulate API call
+      new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // For demo, just update local state
+          const updatedPackages = packages.map(pkg => 
+            pkg.id === editingPackage.id ? editingPackage : pkg
+          );
+          setPackages(updatedPackages);
+          setEditingPackage(null);
+          setIsEditDialogOpen(false);
+          resolve();
+        }, 1000);
+      }),
+      {
+        loading: 'Atualizando pacote e sincronizando com o Stripe...',
+        success: 'Pacote atualizado com sucesso e sincronizado com o Stripe',
+        error: 'Ocorreu um erro ao atualizar o pacote'
+      }
+    );
   };
 
   const handleToggleActive = async (pkg: AnalysisPackage, active: boolean) => {
-    toast.loading(`${active ? 'Ativando' : 'Desativando'} pacote e atualizando no Stripe...`);
-    
-    try {
-      // In a real app, this would call an API
-      // await togglePackageActive(pkg.id, active);
-      
-      // For demo, just update local state
-      const updatedPackages = packages.map(p => 
-        p.id === pkg.id ? { ...p, active } : p
-      );
-      setPackages(updatedPackages);
-      toast.dismiss();
-      toast.success(`Pacote ${active ? 'ativado' : 'desativado'} com sucesso`);
-    } catch (error) {
-      console.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote:`, error);
-      toast.dismiss();
-      toast.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote`);
-    }
+    toast.promise(
+      // Promise to simulate API call
+      new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // For demo, just update local state
+          const updatedPackages = packages.map(p => 
+            p.id === pkg.id ? { ...p, active } : p
+          );
+          setPackages(updatedPackages);
+          resolve();
+        }, 1000);
+      }),
+      {
+        loading: `${active ? 'Ativando' : 'Desativando'} pacote e atualizando no Stripe...`,
+        success: `Pacote ${active ? 'ativado' : 'desativado'} com sucesso`,
+        error: `Erro ao ${active ? 'ativar' : 'desativar'} pacote`
+      }
+    );
   };
 
   // Function to get the right icon based on benefit text
