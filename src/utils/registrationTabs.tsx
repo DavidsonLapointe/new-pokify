@@ -6,6 +6,20 @@ import { IntegracoesTab } from "@/components/admin/registrations/tabs/Integracoe
 import { LeadsTab } from "@/components/admin/registrations/tabs/LeadsTab";
 import { MinhaEmpresaTab } from "@/components/admin/registrations/tabs/MinhaEmpresaTab";
 import { UsuariosTab } from "@/components/admin/registrations/tabs/UsuariosTab";
+import { CompanyLeadly } from "@/types/company-leadly";
+
+// Default company object for MinhaEmpresaTab
+const defaultCompany: CompanyLeadly = {
+  id: "default",
+  razao_social: "Empresa Padrão",
+  nome_fantasia: "Nome Fantasia Padrão",
+  cnpj: "00.000.000/0001-00",
+  email: "contato@empresa.com",
+  phone: "(00) 0000-0000",
+  logo: "",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+};
 
 export type RegistrationTwoTabValue = 
   | "empresas" 
@@ -22,7 +36,7 @@ export const getTabComponent = (tabValue: RegistrationTwoTabValue) => {
     case "empresas":
       return <EmpresasTab />;
     case "minha-empresa":
-      return <MinhaEmpresaTab />;
+      return <MinhaEmpresaTab defaultCompany={defaultCompany} />;
     case "usuarios":
       return <UsuariosTab />;
     case "areas":
