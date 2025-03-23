@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -269,7 +268,7 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="financeiro">
-              <CardTitle>Financeiro</CardTitle>
+              <CardTitle className="text-left">Financeiro</CardTitle>
               <CardContent className="pt-4">
                 <div className="space-y-6">
                   <FinancialHeader />
