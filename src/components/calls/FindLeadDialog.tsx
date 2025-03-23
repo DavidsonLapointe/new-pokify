@@ -38,7 +38,7 @@ export function FindLeadDialog({
             lastName: "Silva",
             contactType: "phone" as const,
             contactValue: "(11) 98765-4321",
-            status: "pending" as const,
+            status: "active" as const, // Updated from "pending" to "active"
             createdAt: new Date().toISOString(),
             callCount: 2
           },
@@ -48,7 +48,7 @@ export function FindLeadDialog({
             lastName: "Santos",
             contactType: "email" as const,
             contactValue: "maria@email.com",
-            status: "contacted" as const,
+            status: "active" as const, // Updated from "contacted" to "active"
             createdAt: new Date().toISOString(),
             callCount: 1
           }
