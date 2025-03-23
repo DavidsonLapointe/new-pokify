@@ -56,10 +56,21 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
         ? (lead.razaoSocial || "")
         : `${lead.firstName || ""} ${lead.lastName || ""}`.trim();
       
+      // Fix: access email and phone values in a type-safe way
+      // For email, we don't have direct access, so check leads.call[0].leadInfo.email
+      const emailValue = lead.calls.length > 0 && lead.calls[0].leadInfo?.email 
+          ? lead.calls[0].leadInfo.email 
+          : "";
+      
+      // For phone, get it from leadInfo if available
+      const phoneValue = lead.calls.length > 0 && lead.calls[0].leadInfo?.phone
+          ? lead.calls[0].leadInfo.phone
+          : "";
+      
       return (
         name.toLowerCase().includes(searchLower) ||
-        (lead.email || "").toLowerCase().includes(searchLower) ||
-        (lead.phone || "").toLowerCase().includes(searchLower)
+        emailValue.toLowerCase().includes(searchLower) ||
+        phoneValue.toLowerCase().includes(searchLower)
       );
     });
     
