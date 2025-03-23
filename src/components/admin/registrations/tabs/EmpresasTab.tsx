@@ -58,7 +58,9 @@ export const EmpresasTab = () => {
 
   return (
     <>
-      <CardTitle>Empresas</CardTitle>
+      <div className="px-6">
+        <CardTitle className="text-left">Empresas</CardTitle>
+      </div>
       <CardContent className="pt-4 px-0">
         <div className="space-y-8">
           <OrganizationsHeader onCreateNew={() => setIsCreateDialogOpen(true)} />
