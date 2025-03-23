@@ -23,6 +23,11 @@ export interface SinglePromptGroupProps {
 }
 
 export const PromptGroups = ({ promptGroups, isLoading, onEdit, onView }: PromptGroupsProps) => {
+  // Add null/undefined check for promptGroups
+  if (!promptGroups || !Array.isArray(promptGroups)) {
+    return isLoading ? null : <EmptyPromptState />;
+  }
+  
   if (!isLoading && promptGroups.length === 0) {
     return <EmptyPromptState />;
   }

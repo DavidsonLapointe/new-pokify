@@ -13,7 +13,7 @@ interface ViewPromptDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   prompt: Prompt | null;
-  onEdit?: () => void;
+  onEdit?: (prompt: Prompt) => void;
 }
 
 export const ViewPromptDialog = ({
@@ -22,6 +22,12 @@ export const ViewPromptDialog = ({
   prompt,
   onEdit
 }: ViewPromptDialogProps) => {
+  const handleEdit = () => {
+    if (prompt && onEdit) {
+      onEdit(prompt);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
@@ -48,8 +54,8 @@ export const ViewPromptDialog = ({
           <Button variant="cancel" onClick={() => onOpenChange(false)}>
             Fechar
           </Button>
-          {onEdit && (
-            <Button variant="default" onClick={onEdit}>
+          {onEdit && prompt && (
+            <Button variant="default" onClick={handleEdit}>
               Editar
             </Button>
           )}
