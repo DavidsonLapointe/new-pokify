@@ -1,19 +1,22 @@
 
 import { useState } from "react";
-import {
-  Table,
-  TableBody,
-} from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { CallsTableProps, LeadCalls } from "./types";
+import { Call } from "@/types/calls";
+import { LeadCalls } from "./types";
 import { CallHistory } from "./CallHistory";
 import { EmptyLeadsState } from "./table/EmptyLeadsState";
-import { LeadsTableHeader } from "./table/LeadsTableHeader";
-import { LeadsTableRow } from "./table/LeadsTableRow";
 import { useLeadsData } from "./table/useLeadsData";
-import { Call } from "@/types/calls";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
+import { LeadTabs } from "./tabs/LeadTabs";
 import { toast } from "sonner";
+
+interface CallsTableProps {
+  calls: Call[];
+  statusMap: any;
+  onPlayAudio: (audioUrl: string) => void;
+  onViewAnalysis: (call: Call) => void;
+  formatDate: (date: string) => string;
+}
 
 export const CallsTable = ({
   calls,
@@ -47,7 +50,7 @@ export const CallsTable = ({
     setShowLeadDetails(false);
   };
 
-  // Função auxiliar para obter o nome do lead (copiado de utils.ts)
+  // Função auxiliar para obter o nome do lead
   const getLeadName = (lead: LeadCalls): string => {
     if (lead.personType === "pj" && lead.razaoSocial) {
       return lead.razaoSocial;
@@ -55,9 +58,6 @@ export const CallsTable = ({
     
     return `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
   };
-
-  console.log("CallsTable - calls:", calls);
-  console.log("CallsTable - leadsWithCalls:", leadsWithCalls);
 
   if (!calls || calls.length === 0) {
     return (
@@ -70,40 +70,33 @@ export const CallsTable = ({
 
   return (
     <TooltipProvider>
-      <div className="rounded-md border">
-        <Table>
-          <LeadsTableHeader />
-          <TableBody>
-            {leadsWithCalls.map((lead) => (
-              <LeadsTableRow
-                key={lead.id}
-                lead={lead}
-                formatDate={formatDate}
-                onEditLead={handleEditLead}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <CallHistory
-        isOpen={showCallsHistory}
-        onOpenChange={setShowCallsHistory}
-        selectedLead={selectedLead}
-        statusMap={statusMap}
-        onPlayAudio={onPlayAudio}
-        onViewAnalysis={onViewAnalysis}
-        formatDate={formatDate}
-      />
-
-      {selectedLead && (
-        <LeadDetailsDialog
-          isOpen={showLeadDetails}
-          onClose={() => setShowLeadDetails(false)}
-          lead={selectedLead}
-          onUpdateLead={handleUpdateLead}
+      <div>
+        <LeadTabs 
+          leads={leadsWithCalls} 
+          formatDate={formatDate} 
+          onEditLead={handleEditLead}
+          onAddLead={() => setIsCreateLeadOpen(true)}
         />
-      )}
+
+        <CallHistory
+          isOpen={showCallsHistory}
+          onOpenChange={setShowCallsHistory}
+          selectedLead={selectedLead}
+          statusMap={statusMap}
+          onPlayAudio={onPlayAudio}
+          onViewAnalysis={onViewAnalysis}
+          formatDate={formatDate}
+        />
+
+        {selectedLead && (
+          <LeadDetailsDialog
+            isOpen={showLeadDetails}
+            onClose={() => setShowLeadDetails(false)}
+            lead={selectedLead}
+            onUpdateLead={handleUpdateLead}
+          />
+        )}
+      </div>
     </TooltipProvider>
   );
 };

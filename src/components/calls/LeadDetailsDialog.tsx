@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { LeadCalls } from "./types";
-import { getLeadName } from "./utils";
+import { getLeadName, LeadType, leadTypeConfig } from "./utils";
 
 interface LeadDetailsDialogProps {
   lead: LeadCalls;
@@ -72,6 +72,30 @@ export const LeadDetailsDialog = ({
               </Select>
             </div>
 
+            {/* Tipo de Lead */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="leadType" className="text-right">
+                Tipo de Lead
+              </Label>
+              <Select
+                value={editedLead.leadType || "client"}
+                onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Selecione o tipo de lead" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="client">Cliente</SelectItem>
+                  <SelectItem value="employee">Funcionário</SelectItem>
+                  <SelectItem value="supplier">Fornecedor</SelectItem>
+                  <SelectItem value="partner">Parceiro</SelectItem>
+                  <SelectItem value="prospect">Prospect</SelectItem>
+                  <SelectItem value="candidate">Candidato RH</SelectItem>
+                  <SelectItem value="other">Outro</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Campos condicionais baseados no tipo de pessoa */}
             {editedLead.personType === "pf" ? (
               <>
@@ -118,7 +142,7 @@ export const LeadDetailsDialog = ({
                 Status
               </Label>
               <Select
-                value={editedLead.status}
+                value={editedLead.status || "active"}
                 onValueChange={(value) => handleInputChange("status", value as "active" | "inactive")}
               >
                 <SelectTrigger className="col-span-3">

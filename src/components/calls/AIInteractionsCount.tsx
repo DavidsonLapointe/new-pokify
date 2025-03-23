@@ -19,10 +19,13 @@ export const AIInteractionsCount = ({ calls }: AIInteractionsCountProps) => {
     call.status === "success" && call.analysis?.summary).length;
   
   const chatAnalysisCount = calls.filter(call => 
-    call.status === "success" && call.analysis?.chatMessages?.length > 0).length;
+    call.status === "success" && 
+    call.analysis?.chatMessages && 
+    call.analysis.chatMessages.length > 0).length;
   
   const reportCount = calls.filter(call => 
-    call.status === "success" && call.analysis?.report).length;
+    call.status === "success" && 
+    call.analysis?.report).length;
 
   if (callAnalysisCount === 0 && chatAnalysisCount === 0 && reportCount === 0) {
     return <span className="text-xs text-gray-400">Nenhuma</span>;

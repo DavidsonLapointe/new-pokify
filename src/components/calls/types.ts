@@ -27,4 +27,4 @@ export interface CallsTableProps {
 }
 
 // Re-export Call type for components that import from here
-export { Call };
+export type { Call };

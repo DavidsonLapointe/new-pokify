@@ -1,9 +1,10 @@
+
 import { Call } from "@/types/calls";
 import { LeadCalls } from "./types";
-import { CircleDollarSign, Users, Briefcase, TruckIcon, Building, UserRound, Send } from "lucide-react";
+import { CircleDollarSign, Users, Briefcase, TruckIcon, Building, UserRound, Send, UserSquare } from "lucide-react";
 
 // Define LeadType enumeration
-export type LeadType = "client" | "employee" | "supplier" | "partner" | "prospect" | "other";
+export type LeadType = "client" | "employee" | "supplier" | "partner" | "prospect" | "candidate" | "other";
 
 // Configuration for different lead types
 export const leadTypeConfig = {
@@ -31,6 +32,11 @@ export const leadTypeConfig = {
     label: "Prospect",
     color: "bg-rose-100 text-rose-700 border-rose-200",
     icon: "Users"
+  },
+  candidate: {
+    label: "Candidato RH",
+    color: "bg-cyan-100 text-cyan-700 border-cyan-200",
+    icon: "UserSquare"
   },
   other: {
     label: "Outro",
