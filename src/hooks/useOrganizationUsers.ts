@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { User } from "@/types";
 import { mockLeadlyEmployees } from "@/mocks/userMocks";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ export const useOrganizationUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchOrganizationUsers = async () => {
+  const fetchOrganizationUsers = useCallback(async () => {
     try {
       setLoading(true);
       // In a real app, this would be an API call to get users
@@ -21,11 +21,12 @@ export const useOrganizationUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Initial data fetch
   useEffect(() => {
     fetchOrganizationUsers();
-  }, []);
+  }, [fetchOrganizationUsers]);
 
   const updateUser = async (updatedUser: User): Promise<boolean> => {
     try {

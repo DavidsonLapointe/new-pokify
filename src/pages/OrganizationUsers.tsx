@@ -45,8 +45,8 @@ const OrganizationUsers = () => {
       )
       .subscribe();
 
-    fetchOrganizationUsers();
-
+    // Remove the extra call to fetchOrganizationUsers since it's already called in the hook
+    
     return () => {
       supabase.removeChannel(channel);
     };
@@ -84,7 +84,10 @@ const OrganizationUsers = () => {
       <OrganizationUsersHeader onAddUser={() => setIsAddDialogOpen(true)} />
 
       {loading ? (
-        <div>Carregando usuários...</div>
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mr-2" />
+          <span className="text-muted-foreground">Carregando usuários...</span>
+        </div>
       ) : (
         <UsersTable
           users={users}
