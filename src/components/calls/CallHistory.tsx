@@ -28,6 +28,7 @@ import { CallHistoryTableHeader } from "./CallHistoryTableHeader";
 import { CallHistoryTableRow } from "./CallHistoryTableRow";
 import { CallVideoModal } from "./CallVideoModal";
 import { CallAnalysisDialog } from "./CallAnalysisDialog";
+import { toast } from "sonner";
 
 interface CallHistoryProps {
   isOpen: boolean;
@@ -74,6 +75,12 @@ export const CallHistory = ({
   const handleViewAnalysis = (call: Call) => {
     setSelectedCall(call);
     setShowCallAnalysis(true);
+  };
+
+  const handleUpdateLead = (updatedLead: LeadCalls) => {
+    // Implementação básica para atualizar o lead
+    toast.success(`Lead ${getLeadName(updatedLead)} atualizado com sucesso!`);
+    setShowLeadDetails(false);
   };
 
   const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
@@ -144,11 +151,14 @@ export const CallHistory = ({
         videoUrl={selectedMediaUrl}
       />
 
-      <LeadDetailsDialog
-        isOpen={showLeadDetails}
-        lead={selectedLead}
-        onClose={() => setShowLeadDetails(false)}
-      />
+      {selectedLead && (
+        <LeadDetailsDialog
+          isOpen={showLeadDetails}
+          lead={selectedLead}
+          onClose={() => setShowLeadDetails(false)}
+          onUpdateLead={handleUpdateLead}
+        />
+      )}
 
       {selectedCall && (
         <CallAnalysisDialog
