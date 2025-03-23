@@ -137,6 +137,65 @@ const leadToCall = (lead: any): Call => {
   };
 };
 
+// Helper function to format the date to match the UI in the image
+const formatDateToUI = (isoDateString: string) => {
+  const date = new Date(isoDateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+// Helper function to update mock data dates to match the UI
+const updateMockDatesToMatchUI = (leads: any[]) => {
+  // Sort leads by createdAt date, newest first
+  leads.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
+  // Update the dates to match what's shown in the UI
+  const today = new Date();
+  
+  // RM Consultorias
+  if (leads[0]) {
+    leads[0].createdAt = new Date(today.getFullYear(), today.getMonth(), 21).toISOString(); // 21/03/2025
+  }
+  
+  // Empresa Tecnologia
+  if (leads[1]) {
+    leads[1].createdAt = new Date(today.getFullYear(), today.getMonth(), 18).toISOString(); // 18/03/2025
+  }
+  
+  // TechInova
+  if (leads[2]) {
+    leads[2].createdAt = new Date(today.getFullYear(), today.getMonth(), 15).toISOString(); // 15/03/2025
+  }
+  
+  // Ana Silva
+  if (leads[3]) {
+    leads[3].createdAt = new Date(today.getFullYear(), today.getMonth(), 13).toISOString(); // 13/03/2025
+  }
+  
+  // InnovaTech
+  if (leads[4]) {
+    leads[4].createdAt = new Date(today.getFullYear(), today.getMonth(), 8).toISOString(); // 08/03/2025
+  }
+  
+  // Pedro Almeida
+  if (leads[5]) {
+    leads[5].createdAt = new Date(today.getFullYear(), today.getMonth(), 3).toISOString(); // 03/03/2025
+  }
+  
+  // Tech Systems (Fernando Costa)
+  if (leads[6]) {
+    leads[6].createdAt = new Date(today.getFullYear(), today.getMonth() - 1, 26).toISOString(); // 26/02/2025
+    leads[6].firstName = "Tech Systems";
+    leads[6].lastName = "";
+    leads[6].personType = "pj";
+    leads[6].razaoSocial = "Tech Systems Soluções em TI Ltda";
+  }
+  
+  return leads;
+};
+
 const OrganizationLeads = () => {
   const location = useLocation();
   const showCreateLeadFromState = location.state?.showCreateLead || false;
@@ -149,8 +208,11 @@ const OrganizationLeads = () => {
 
   // Carregar os leads mockados quando o componente montar
   useEffect(() => {
+    // Atualizar os dados mockados para corresponder à UI
+    const updatedLeads = updateMockDatesToMatchUI([...leadsOrganizacao1]);
+    
     // Converter leads para o formato de calls
-    const calls = leadsOrganizacao1.map(leadToCall);
+    const calls = updatedLeads.map(leadToCall);
     setCurrentCalls(calls);
     toast.success(`${calls.length} leads da Organização 1 Ltda. carregados com sucesso!`);
   }, []);
@@ -165,7 +227,7 @@ const OrganizationLeads = () => {
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pt-BR');
+    return formatDateToUI(date);
   };
 
   const {
