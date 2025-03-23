@@ -35,6 +35,16 @@ import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
 import { AnalysisPackage, NewPackageForm } from "@/types/packages";
 import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ModuleDialog } from "@/components/admin/modules/ModuleDialog";
+import { LoadingState } from "@/components/admin/modules/LoadingState";
+import { PageHeader } from "@/components/admin/modules/PageHeader";
+import { ModuleCarousel } from "@/components/admin/modules/ModuleCarousel";
+import { ModuleDetailsView } from "@/components/admin/modules/ModuleDetailsView";
+import { CancelModuleDialog } from "@/components/admin/modules/CancelModuleDialog";
+import { SetupContactDialog } from "@/components/admin/modules/SetupContactDialog";
+import { useModulesManagement } from "@/components/admin/modules/hooks/useModulesManagement";
+import { standardAreas } from "@/components/admin/modules/module-form-schema";
 
 // Mocked packages data - same as in AdminAnalysisPackages.tsx
 const mockedPackages: AnalysisPackage[] = [
@@ -83,6 +93,84 @@ const AdminRegistrationsTwo = () => {
     'depoimentos' // Default tab if no valid tab is specified
   );
 
+  // Modules state
+  const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
+  
+  const {
+    modules,
+    isLoading: modulesLoading,
+    selectedModule,
+    deletingModuleId,
+    isCreateDialogOpen,
+    editingModule,
+    isCancelDialogOpen,
+    cancelModuleId,
+    isSetupContactDialogOpen,
+    setupContactInfo,
+    moduleGroups,
+    setSelectedModule,
+    setIsCreateDialogOpen,
+    setEditingModule,
+    setIsCancelDialogOpen,
+    setCancelModuleId,
+    setIsSetupContactDialogOpen,
+    setSetupContactInfo,
+    handleSaveModule,
+    handleDeleteModule,
+    handleEditModule,
+    handleSelectModule
+  } = useModulesManagement();
+
+  // Update the active area filter and close any open module details
+  const handleAreaFilterChange = (areaId: string | null) => {
+    setActiveAreaFilter(areaId);
+    if (selectedModule) {
+      setSelectedModule(null);
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    if (cancelModuleId) {
+      handleDeleteModule(cancelModuleId);
+      setIsCancelDialogOpen(false);
+    }
+  };
+
+  const handleContactInfoChange = (info: { name?: string; phone?: string }) => {
+    setSetupContactInfo(prev => ({ ...prev, ...info }));
+  };
+
+  const handleSubmitContactInfo = () => {
+    console.log("Informações de contato enviadas:", setupContactInfo);
+    setIsSetupContactDialogOpen(false);
+    // Aqui você pode adicionar a lógica para enviar as informações de contato
+  };
+
+  // Filter modules based on the active area filter
+  const filteredModules = activeAreaFilter
+    ? modules.filter(module => 
+        Array.isArray(module.areas) && module.areas.includes(activeAreaFilter)
+      )
+    : modules;
+
+  // Get module groups with filtered modules
+  const getFilteredModuleGroups = () => {
+    const groups = [];
+    const groupSize = 4; // 4 cards per slide
+    
+    for (let i = 0; i < filteredModules.length; i += groupSize) {
+      groups.push(filteredModules.slice(i, i + groupSize));
+    }
+    
+    return groups;
+  };
+
+  // Get the name of the active area filter
+  const getActiveAreaName = () => {
+    const defaultAreas = standardAreas.filter(area => area.isDefault);
+    return defaultAreas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter;
+  };
+
   // Testimonials state
   const { 
     testimonials, 
@@ -105,7 +193,7 @@ const AdminRegistrationsTwo = () => {
   const [isLoadingPackages, setIsLoadingPackages] = useState(true);
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCreateDialogOpen2, setIsCreateDialogOpen2] = useState(false);
   const [newPackage, setNewPackage] = useState<NewPackageForm>({
     name: "",
     credits: "",
@@ -291,7 +379,7 @@ const AdminRegistrationsTwo = () => {
           
           setPackages([...packages, newPkg]);
           setNewPackage({ name: "", credits: "", price: "" });
-          setIsCreateDialogOpen(false);
+          setIsCreateDialogOpen2(false);
           resolve();
         }, 1000);
       }),
@@ -412,11 +500,78 @@ const AdminRegistrationsTwo = () => {
             
             <TabsContent value="modulos">
               <CardTitle>Módulos</CardTitle>
-              <div className="pt-4">
-                <p className="text-muted-foreground">
-                  O conteúdo desta aba será implementado posteriormente.
-                </p>
-              </div>
+              <CardContent className="p-0">
+                <div className="container py-6 max-w-6xl mx-auto">
+                  <PageHeader 
+                    setIsCreateDialogOpen={setIsCreateDialogOpen}
+                    activeAreaFilter={activeAreaFilter}
+                    setActiveAreaFilter={handleAreaFilterChange}
+                  />
+                  
+                  {modulesLoading ? (
+                    <LoadingState />
+                  ) : (
+                    <ScrollArea className="w-full">
+                      {/* User-friendly message when no modules match the area filter */}
+                      {activeAreaFilter && filteredModules.length === 0 && (
+                        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md mb-4">
+                          <p className="text-sm text-yellow-700">
+                            Nenhum módulo encontrado para a área "{getActiveAreaName()}".
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Carrossel de módulos */}
+                      <ModuleCarousel
+                        moduleGroups={activeAreaFilter ? getFilteredModuleGroups() : moduleGroups()}
+                        selectedModule={selectedModule}
+                        onEditModule={handleEditModule}
+                        onSelectModule={handleSelectModule}
+                      />
+                      
+                      {/* Detalhes do módulo selecionado */}
+                      {selectedModule && (
+                        <ModuleDetailsView
+                          selectedModule={selectedModule}
+                          onEditModule={handleEditModule}
+                          onDeleteModule={(id) => {
+                            setIsCancelDialogOpen(true);
+                            setEditingModule(null);
+                            setCancelModuleId(id);
+                          }}
+                          deletingModuleId={deletingModuleId}
+                        />
+                      )}
+                    </ScrollArea>
+                  )}
+                  
+                  {/* Dialog para criar/editar módulo */}
+                  <ModuleDialog
+                    open={isCreateDialogOpen}
+                    onOpenChange={setIsCreateDialogOpen}
+                    module={editingModule}
+                    onSave={handleSaveModule}
+                  />
+
+                  {/* Dialog para cancelar módulo */}
+                  <CancelModuleDialog
+                    open={isCancelDialogOpen}
+                    onOpenChange={setIsCancelDialogOpen}
+                    modules={modules}
+                    cancelModuleId={cancelModuleId}
+                    onConfirm={handleConfirmCancel}
+                  />
+
+                  {/* Diálogo para setup de contato */}
+                  <SetupContactDialog
+                    open={isSetupContactDialogOpen}
+                    onOpenChange={setIsSetupContactDialogOpen}
+                    setupContactInfo={setupContactInfo}
+                    onContactInfoChange={handleContactInfoChange}
+                    onSubmit={handleSubmitContactInfo}
+                  />
+                </div>
+              </CardContent>
             </TabsContent>
             
             <TabsContent value="pacotes-creditos">
@@ -430,7 +585,7 @@ const AdminRegistrationsTwo = () => {
                   </div>
 
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                    <Dialog open={isCreateDialogOpen2} onOpenChange={setIsCreateDialogOpen2}>
                       <Card>
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
@@ -443,7 +598,7 @@ const AdminRegistrationsTwo = () => {
                         </CardHeader>
                         <CardContent>
                           <Button 
-                            onClick={() => setIsCreateDialogOpen(true)} 
+                            onClick={() => setIsCreateDialogOpen2(true)} 
                             className="w-full"
                           >
                             Criar Pacote
@@ -463,7 +618,7 @@ const AdminRegistrationsTwo = () => {
                           newPackage={newPackage}
                           onSubmit={handleCreatePackage}
                           onChange={(field, value) => setNewPackage(prev => ({ ...prev, [field]: value }))}
-                          onCancel={() => setIsCreateDialogOpen(false)}
+                          onCancel={() => setIsCreateDialogOpen2(false)}
                         />
                       </DialogContent>
                     </Dialog>
