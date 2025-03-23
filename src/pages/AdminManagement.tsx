@@ -1,3 +1,4 @@
+
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -296,7 +297,7 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="leads">
-              <CardTitle>Leads</CardTitle>
+              {/* Removed the CardTitle that was showing "Leads" in the red rectangle */}
               <CardContent className="pt-4">
                 <LeadsTab />
               </CardContent>
