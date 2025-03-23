@@ -1,6 +1,7 @@
 
 import { LucideIcon, Users, User, Building2, Briefcase, Phone } from "lucide-react";
 import { Call } from "@/types/calls";
+import { LeadCalls } from "./types";
 
 // Define types for leads
 export type LeadType = "client" | "employee" | "supplier" | "candidate" | "partner" | "prospect";
@@ -71,6 +72,20 @@ export const getLeadName = (lead: {
   }
   
   return `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
+};
+
+// Helper function to get detailed information about a lead for display
+export const getLeadDetails = (lead: LeadCalls | null): string => {
+  if (!lead) return "";
+  
+  // For person type "pj" (legal entity), show company info
+  if (lead.personType === "pj" && lead.razaoSocial) {
+    return `Empresa: ${lead.razaoSocial}`;
+  }
+  
+  // For person type "pf" (individual), show name and any additional info
+  const name = `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
+  return `Nome: ${name}`;
 };
 
 // Helper function to get the temperature from the last processed call
