@@ -87,8 +87,8 @@ export const FuncoesTab = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Funções sem Usuários</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-xl font-bold tracking-tight text-left">Funções sem Usuários</h2>
+          <p className="text-muted-foreground text-left">
             Visualize a distribuição das funções e abas do sistema entre os usuários ativos da Leadly.
           </p>
         </div>

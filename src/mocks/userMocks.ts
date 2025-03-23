@@ -19,10 +19,14 @@ export const mockLeadlyEmployees: User[] = [
       plans: true,
       "credit-packages": true,
       financial: true,
-      integrations: true,
+      integrations: false, // This will create an unused permission
       prompt: true,
       settings: true,
-      profile: true
+      profile: true,
+      // Adding some new permissions that no user has access to
+      "advanced-analytics": false,
+      "custom-reports": false,
+      "api-access": false
     },
     logs: [
       {
@@ -49,7 +53,10 @@ export const mockLeadlyEmployees: User[] = [
       organizations: false,
       settings: true,
       "settings.alerts": true,
-      profile: true
+      profile: true,
+      // These permissions will be unique to this user, creating some unused tabs
+      "dashboard.reports": false,
+      "settings.advanced": false
     },
     logs: [
       {

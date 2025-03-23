@@ -18,6 +18,7 @@ export const permissionLabels: Record<string, string> = {
   "dashboard.analytics": "Analytics",
   "dashboard.organizations": "Empresas",
   "dashboard.financial": "Financeiro",
+  "dashboard.reports": "Relatórios",
   
   // Settings Tabs
   "settings.alerts": "Alertas",
@@ -26,6 +27,7 @@ export const permissionLabels: Record<string, string> = {
   "settings.llm": "LLM",
   "settings.system": "Sistema",
   "settings.permissions": "Permissões",
+  "settings.advanced": "Avançado",
   
   // CRM Tabs
   "crm.integration": "Integração",
@@ -45,14 +47,20 @@ export const permissionLabels: Record<string, string> = {
   
   // Modules Tabs
   "modules.manage": "Gerenciar",
-  "modules.setups": "Setups"
+  "modules.setups": "Setups",
+  
+  // Advanced features
+  "advanced-analytics": "Analytics Avançado",
+  "custom-reports": "Relatórios Personalizados",
+  "api-access": "Acesso à API"
 };
 
 // Define dashboard tabs for permission checks
 export const dashboardTabPermissions = [
   "dashboard.analytics",
   "dashboard.organizations",
-  "dashboard.financial"
+  "dashboard.financial",
+  "dashboard.reports"
 ];
 
 // Define settings tabs for permission checks
@@ -62,7 +70,8 @@ export const settingsTabPermissions = [
   "settings.retention",
   "settings.llm",
   "settings.system",
-  "settings.permissions"
+  "settings.permissions",
+  "settings.advanced"
 ];
 
 // Define CRM tabs for permission checks

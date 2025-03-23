@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -297,7 +296,6 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="funcoes-sem-usuarios">
-              <CardTitle>Funções sem Usuários</CardTitle>
               <CardContent className="pt-4">
                 <FuncoesTab />
               </CardContent>
