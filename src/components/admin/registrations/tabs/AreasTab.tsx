@@ -86,12 +86,13 @@ export const AreasTab = () => {
     }
   };
 
-  // Completely rewritten function to avoid TypeScript deep instantiation issues
+  // Function rewritten to avoid deep type instantiation completely
   const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
     try {
-      const { data, error } = await supabase
+      // Use raw query to avoid type issues
+      const { data: rawData, error } = await supabase
         .from('profiles')
-        .select('id, name, email, organization_id, organizations:organizations(name)')
+        .select('id, name, email, organization_id')
         .eq('area', areaName)
         .in('status', ['active', 'pending']);
       
@@ -101,20 +102,35 @@ export const AreasTab = () => {
         return [];
       }
       
-      if (!data || data.length === 0) {
+      if (!rawData || rawData.length === 0) {
         return [];
       }
-      
-      // Map the results to our simpler LinkedUser interface to avoid deep type instantiation
+
+      // Manually create LinkedUser objects without deeply nested organization data
       const users: LinkedUser[] = [];
       
-      for (const item of data) {
-        users.push({
-          id: item.id,
-          name: item.name,
-          email: item.email,
-          organization_name: item.organizations?.name
-        });
+      // For each profile, get organization name in a separate query if needed
+      for (const profile of rawData) {
+        const userData: LinkedUser = {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email
+        };
+        
+        // Only fetch organization if organization_id exists
+        if (profile.organization_id) {
+          const { data: orgData } = await supabase
+            .from('organizations')
+            .select('name')
+            .eq('id', profile.organization_id)
+            .single();
+            
+          if (orgData) {
+            userData.organization_name = orgData.name;
+          }
+        }
+        
+        users.push(userData);
       }
       
       return users;
