@@ -1,3 +1,4 @@
+
 import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -817,34 +818,36 @@ const AdminRegistrationsTwo = () => {
             </TabsContent>
             
             <TabsContent value="depoimentos">
-              <CardTitle>Depoimentos</CardTitle>
-              <div className="pt-4">
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-muted-foreground">
-                      Gerencie os depoimentos exibidos na página inicial do site.
-                    </p>
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button onClick={handleAddTestimonial}>
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      Adicionar Depoimento
-                    </Button>
-                  </div>
+              <div className="text-left">
+                <CardTitle>Depoimentos</CardTitle>
+                <div className="pt-4">
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-muted-foreground">
+                        Gerencie os depoimentos exibidos na página inicial do site.
+                      </p>
+                    </div>
+                    
+                    <div className="flex justify-end">
+                      <Button onClick={handleAddTestimonial}>
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Adicionar Depoimento
+                      </Button>
+                    </div>
 
-                  <TestimonialsList 
-                    testimonials={testimonials}
-                    onEdit={handleEditTestimonial}
-                    onDelete={handleDeleteTestimonial}
-                  />
+                    <TestimonialsList 
+                      testimonials={testimonials}
+                      onEdit={handleEditTestimonial}
+                      onDelete={handleDeleteTestimonial}
+                    />
 
-                  <EditTestimonialDialog
-                    open={open}
-                    onOpenChange={setOpen}
-                    testimonial={editingTestimonial}
-                    onSave={handleSaveTestimonial}
-                  />
+                    <EditTestimonialDialog
+                      open={open}
+                      onOpenChange={setOpen}
+                      testimonial={editingTestimonial}
+                      onSave={handleSaveTestimonial}
+                    />
+                  </div>
                 </div>
               </div>
             </TabsContent>
