@@ -1,12 +1,5 @@
 
-import { User, UserRole } from "@/types";
-
-export interface EditUserDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  user: User | null;
-  onUserUpdate: (user: User) => void;
-}
+import { User, UserRole, UserStatus } from "@/types";
 
 export interface UserFormProps {
   editedUser: User | null;
@@ -17,10 +10,29 @@ export interface UserFormProps {
   onRoleChange: (value: UserRole) => void;
   onStatusChange: (value: string) => void;
   onAreaChange?: (value: string) => void;
+  availableStatusOptions: { value: string; label: string }[];
+  availableRoles: { value: UserRole; label: string }[];
+  availableAreas?: string[];
+  currentStatusLabel?: React.ReactNode;
+  currentRole?: UserRole;
 }
 
-// Definição das permissões padrão por função
-export const DEFAULT_PERMISSIONS = {
-  admin: ["dashboard", "leads", "users", "integrations", "settings", "plan", "profile"],
-  seller: ["dashboard", "leads", "integrations", "profile"]
-};
+export interface EditUserDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: User;
+  onUserUpdate: (user: User) => void;
+}
+
+export interface AddUserDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onUserAdded: () => void;
+}
+
+export interface UserPermissionsDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: User;
+  onUserUpdate: (user: User) => void;
+}

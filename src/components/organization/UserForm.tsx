@@ -15,9 +15,16 @@ export const UserForm = ({
   editedUser,
   pendingRole,
   pendingStatus,
+  pendingArea,
   onEditUser,
   onRoleChange,
-  onStatusChange
+  onStatusChange,
+  onAreaChange,
+  availableStatusOptions,
+  availableRoles,
+  availableAreas,
+  currentStatusLabel,
+  currentRole
 }: UserFormProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -29,22 +36,6 @@ export const UserForm = ({
         return <Badge variant="default">Pendente</Badge>;
       default:
         return null;
-    }
-  };
-
-  const getStatusOptions = (currentStatus: UserStatus) => {
-    switch (currentStatus) {
-      case "active":
-        return [{ value: "inactive", label: "Inativo" }];
-      case "inactive":
-        return [{ value: "active", label: "Ativo" }];
-      case "pending":
-        return [
-          { value: "active", label: "Ativo" },
-          { value: "inactive", label: "Inativo" }
-        ];
-      default:
-        return [];
     }
   };
 
@@ -84,16 +75,44 @@ export const UserForm = ({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="admin">Administrador</SelectItem>
-            <SelectItem value="seller">Vendedor</SelectItem>
+            {availableRoles.map(role => (
+              <SelectItem key={role.value} value={role.value}>
+                {role.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Status atual:</label>
-          {editedUser?.status && getStatusBadge(editedUser.status)}
+      
+      {/* Area field */}
+      {onAreaChange && availableAreas && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Área</label>
+          <Select
+            value={pendingArea || editedUser?.area || ''}
+            onValueChange={onAreaChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione uma área" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableAreas.map(area => (
+                <SelectItem key={area} value={area}>
+                  {area}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+      )}
+      
+      <div className="space-y-2">
+        {currentStatusLabel || (
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Status atual:</label>
+            {editedUser?.status && getStatusBadge(editedUser.status)}
+          </div>
+        )}
         <Select 
           value={pendingStatus} 
           onValueChange={onStatusChange}
@@ -102,7 +121,7 @@ export const UserForm = ({
             <SelectValue placeholder="Selecione o novo status" />
           </SelectTrigger>
           <SelectContent>
-            {editedUser && getStatusOptions(editedUser.status).map(option => (
+            {availableStatusOptions.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>

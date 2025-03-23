@@ -12,9 +12,18 @@ export const useOrganizationUsers = () => {
     try {
       setLoading(true);
       // In a real app, this would be an API call to get users
-      // For now, we'll use the mock data
+      // For now, we'll use the mock data and ensure it has all required properties
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-      setUsers(mockLeadlyEmployees);
+      
+      // Make sure all users have the required properties including logs
+      const usersWithRequiredProps = mockLeadlyEmployees.map(user => ({
+        ...user,
+        logs: user.logs || [],
+        status: user.status || 'active',
+        area: user.area || 'General'
+      }));
+      
+      setUsers(usersWithRequiredProps);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error("Failed to load users");

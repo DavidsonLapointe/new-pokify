@@ -11,10 +11,16 @@ import {
 import { User, UserRole } from "@/types";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { UserForm } from "@/components/admin/users/UserForm";
-import { EditUserDialogProps, DEFAULT_PERMISSIONS } from "@/components/admin/users/types";
+import { UserForm } from "@/components/organization/UserForm";
+import { EditUserDialogProps } from "@/components/organization/types";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/contexts/UserContext";
+
+// Define default permissions for different roles
+const DEFAULT_PERMISSIONS = {
+  admin: ["dashboard", "users", "leads", "settings", "profile"],
+  seller: ["dashboard", "leads", "profile"]
+};
 
 export const EditUserDialog = ({
   isOpen,
@@ -51,7 +57,7 @@ export const EditUserDialog = ({
     const newRole = pendingRole || editedUser.role;
     
     // Convert array permissions to object permissions
-    const permissionsList = DEFAULT_PERMISSIONS[newRole];
+    const permissionsList = DEFAULT_PERMISSIONS[newRole] || DEFAULT_PERMISSIONS.seller;
     const newPermissions = permissionsList.reduce((acc, permission) => ({
       ...acc,
       [permission]: true
@@ -63,10 +69,18 @@ export const EditUserDialog = ({
       area: pendingArea || editedUser.area,
       status: pendingStatus ? (pendingStatus as "active" | "inactive" | "pending") : editedUser.status,
       permissions: newPermissions,
-      logs: [
+      logs: editedUser.logs ? [
         ...editedUser.logs,
         {
-          id: String(Math.max(...editedUser.logs.map(log => parseInt(log.id))) + 1),
+          id: editedUser.logs.length > 0 ? 
+                String(Math.max(...editedUser.logs.map(log => parseInt(log.id))) + 1) : 
+                "1",
+          date: new Date().toISOString(),
+          action: `Usuário atualizado${pendingRole ? ` - Função alterada para ${newRole}` : ''}`
+        }
+      ] : [
+        {
+          id: "1",
           date: new Date().toISOString(),
           action: `Usuário atualizado${pendingRole ? ` - Função alterada para ${newRole}` : ''}`
         }
@@ -168,7 +182,7 @@ export const EditUserDialog = ({
           currentRole={editedUser?.role}
         />
         <DialogFooter>
-          <Button variant="cancel" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={handleUpdateUser}>Salvar Alterações</Button>
