@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Settings, Building2, List, Database, User, LogOut, MessageSquare, DollarSign, Users, Puzzle, ClipboardCheck, Package, HeadphonesIcon, MessageCircle, CpuIcon, FileText, FilePlus, BriefcaseIcon } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
@@ -38,7 +37,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Database, label: "Integrações", path: "/admin/integrations", permissionId: "integrations" },
     { icon: MessageSquare, label: "Prompt", path: "/admin/prompt", permissionId: "prompt" },
     { icon: Settings, label: "Configurações", path: "/admin/settings", permissionId: "settings" },
-    { icon: MessageCircle, label: "Leads", path: "/admin/leads", permissionId: "leads" },
     { icon: CpuIcon, label: "Custo de IA", path: "/admin/ai-costs", permissionId: "ai-costs" },
     // Removed the Minha Empresa menu item since it's now part of Cadastro 1
     // Removed the Depoimentos menu item since it's now part of Cadastro 2
