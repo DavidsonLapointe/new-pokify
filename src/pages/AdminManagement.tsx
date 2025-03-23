@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AverageCostTab from "@/components/admin/ai-costs/AverageCostTab";
 import { mockAverageCostData } from "@/components/admin/ai-costs/utils";
+import { LeadsPagination } from "@/components/admin/leads/LeadsPagination";
 
 const AdminManagement = () => {
   const location = useLocation();
@@ -29,6 +30,10 @@ const AdminManagement = () => {
   const [aiCostSubTab, setAiCostSubTab] = useState("custo-medio");
   const [searchTerm, setSearchTerm] = useState("");
   const [toolFilter, setToolFilter] = useState("");
+  
+  // Pagination state for AI executions
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Get tab from URL query params
   useEffect(() => {
@@ -78,6 +83,12 @@ const AdminManagement = () => {
     
     return matchesSearch && matchesTool;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentExecutions = filteredExecutions?.slice(indexOfFirstItem, indexOfLastItem);
+  const totalExecutions = filteredExecutions?.length || 0;
 
   // Use nosso hook personalizado para filtragem
   const { filteredTitles, filters, applyFilters, clearFilters } = useFinancialFilters(fetchedTitles || []);
@@ -133,7 +144,7 @@ const AdminManagement = () => {
             </TabsList>
             
             <TabsContent value="custo-de-ia">
-              <CardTitle>Gestão - Custo de IA</CardTitle>
+              <CardTitle className="text-left">Custo de IA</CardTitle>
               <CardContent className="pt-4 space-y-6">
                 {/* Custo de IA Tabs */}
                 <Tabs value={aiCostSubTab} onValueChange={setAiCostSubTab} className="space-y-4">
@@ -182,6 +193,7 @@ const AdminManagement = () => {
                           onClick={() => {
                             setSearchTerm("");
                             setToolFilter("");
+                            setCurrentPage(1); // Reset to first page when filters change
                           }}
                         >
                           <FilterX className="h-4 w-4" />
@@ -222,7 +234,7 @@ const AdminManagement = () => {
                               </tr>
                             ) : (
                               // Data rows
-                              filteredExecutions?.map((execution) => (
+                              currentExecutions?.map((execution) => (
                                 <tr key={execution.id} className="border-b">
                                   <td className="p-3 font-medium text-foreground">
                                     {execution.toolName}
@@ -241,13 +253,23 @@ const AdminManagement = () => {
                         </table>
                       </TooltipProvider>
                     </div>
+                    
+                    {/* Pagination */}
+                    {filteredExecutions && filteredExecutions.length > 0 && (
+                      <LeadsPagination
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        totalItems={totalExecutions}
+                        itemsPerPage={itemsPerPage}
+                      />
+                    )}
                   </TabsContent>
                 </Tabs>
               </CardContent>
             </TabsContent>
             
             <TabsContent value="financeiro">
-              <CardTitle>Gestão - Financeiro</CardTitle>
+              <CardTitle>Financeiro</CardTitle>
               <CardContent className="pt-4">
                 <div className="space-y-6">
                   <FinancialHeader />
@@ -266,7 +288,7 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="funcoes-sem-usuarios">
-              <CardTitle>Gestão - Funções sem Usuários</CardTitle>
+              <CardTitle>Funções sem Usuários</CardTitle>
               <CardContent className="pt-4">
                 <p className="text-muted-foreground">
                   O conteúdo desta aba será implementado posteriormente.
@@ -275,14 +297,14 @@ const AdminManagement = () => {
             </TabsContent>
             
             <TabsContent value="leads">
-              <CardTitle>Gestão - Leads</CardTitle>
+              <CardTitle>Leads</CardTitle>
               <CardContent className="pt-4">
                 <LeadsTab />
               </CardContent>
             </TabsContent>
             
             <TabsContent value="setups">
-              <CardTitle>Gestão - Setups</CardTitle>
+              <CardTitle>Setups</CardTitle>
               <CardContent className="pt-4 p-6">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground mb-6">Lista de Implantações Pendentes e em Andamento</p>
