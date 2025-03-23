@@ -13,12 +13,14 @@ interface ViewPromptDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   prompt: Prompt | null;
+  onEdit?: () => void;
 }
 
 export const ViewPromptDialog = ({
   open,
   onOpenChange,
   prompt,
+  onEdit
 }: ViewPromptDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,10 +44,15 @@ export const ViewPromptDialog = ({
             </p>
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="flex justify-between">
           <Button variant="cancel" onClick={() => onOpenChange(false)}>
             Fechar
           </Button>
+          {onEdit && (
+            <Button variant="default" onClick={onEdit}>
+              Editar
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

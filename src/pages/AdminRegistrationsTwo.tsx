@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -48,7 +47,7 @@ import { useModulesManagement } from "@/components/admin/modules/hooks/useModule
 import { standardAreas } from "@/components/admin/modules/module-form-schema";
 import { ViewPromptDialog } from "@/components/admin/prompts/ViewPromptDialog";
 import { PromptFormDialog } from "@/components/admin/prompts/PromptFormDialog";
-import { PromptGroups } from "@/components/admin/prompts/PromptGroups";
+import { PromptGroups, SinglePromptGroup } from "@/components/admin/prompts/PromptGroups";
 import { usePrompts } from "@/hooks/admin/prompts/usePrompts";
 import { usePromptForm } from "@/hooks/admin/prompts/usePromptForm";
 import { availableModules, groupPromptsByModule } from "@/utils/admin/prompts/promptUtils";
@@ -864,119 +863,3 @@ const AdminRegistrationsTwo = () => {
                       <TabsTrigger value="global">Prompts Globais</TabsTrigger>
                       <TabsTrigger value="custom">Prompts Customizados</TabsTrigger>
                     </TabsList>
-                    
-                    <TabsContent value="global">
-                      {isPromptsLoading ? (
-                        <div className="flex justify-center items-center py-8">
-                          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                        </div>
-                      ) : globalPromptGroups.length === 0 ? (
-                        <div className="py-8 text-center">
-                          <p className="text-muted-foreground">Nenhum prompt global encontrado</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-8">
-                          {globalPromptGroups.map((group) => (
-                            <PromptGroups 
-                              key={group.name} 
-                              groupName={group.name} 
-                              groupIcon={group.icon} 
-                              prompts={group.prompts}
-                              onView={handleView}
-                              onEdit={handleEdit}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </TabsContent>
-                    
-                    <TabsContent value="custom">
-                      {isPromptsLoading ? (
-                        <div className="flex justify-center items-center py-8">
-                          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                        </div>
-                      ) : customPromptGroups.length === 0 ? (
-                        <div className="py-8 text-center">
-                          <p className="text-muted-foreground">Nenhum prompt customizado encontrado</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-8">
-                          {customPromptGroups.map((group) => (
-                            <PromptGroups 
-                              key={group.name} 
-                              groupName={group.name} 
-                              groupIcon={group.icon} 
-                              prompts={group.prompts}
-                              onView={handleView}
-                              onEdit={handleEdit}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </TabsContent>
-                  </Tabs>
-                </div>
-              </div>
-              
-              {/* Prompt modal forms */}
-              <PromptFormDialog 
-                isOpen={isModalOpen}
-                onOpenChange={setIsModalOpen}
-                prompt={isEditing ? selectedPrompt : newPrompt}
-                isEditing={isEditing}
-                onSave={handleSavePrompt}
-                onChange={handlePromptChange}
-                onCancel={handleCancel}
-                modules={moduleOptions}
-              />
-              
-              <ViewPromptDialog 
-                isOpen={isViewModalOpen}
-                onOpenChange={setIsViewModalOpen}
-                prompt={selectedPrompt}
-                onEdit={() => {
-                  setIsViewModalOpen(false);
-                  handleEdit(selectedPrompt);
-                }}
-              />
-            </TabsContent>
-            
-            <TabsContent value="depoimentos">
-              <CardTitle>Depoimentos</CardTitle>
-              <div className="pt-4">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-muted-foreground">
-                        Gerencie depoimentos que irão aparecer no site
-                      </p>
-                    </div>
-                    <Button onClick={handleAddTestimonial}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Novo Depoimento
-                    </Button>
-                  </div>
-                  
-                  <TestimonialsList 
-                    testimonials={testimonials}
-                    onEdit={handleEditTestimonial}
-                    onDelete={handleDeleteTestimonial}
-                  />
-                </div>
-                
-                <EditTestimonialDialog 
-                  open={open}
-                  onOpenChange={setOpen}
-                  testimonial={editingTestimonial}
-                  onSave={handleSaveTestimonial}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AdminRegistrationsTwo;
