@@ -1,4 +1,3 @@
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
@@ -177,148 +176,125 @@ const AdminManagement = () => {
             <TabsContent value="custo-de-ia">
               <CardTitle className="text-left">Custo de IA</CardTitle>
               <CardContent className="pt-4 space-y-6">
-                {/* Reorganized layout with vertical tabs on the left */}
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Left side tabs */}
-                  <div className="w-full md:w-48">
-                    <Tabs 
-                      value={aiCostSubTab} 
-                      onValueChange={setAiCostSubTab} 
-                      orientation="vertical" 
-                      className="w-full"
-                    >
-                      <TabsList className="flex flex-col h-auto w-full space-x-0 space-y-1 bg-transparent p-0">
-                        <TabsTrigger 
-                          value="custo-medio" 
-                          className="w-full justify-start px-3 py-2 text-left"
+                {/* Custo de IA Tabs */}
+                <Tabs value={aiCostSubTab} onValueChange={setAiCostSubTab} className="space-y-4">
+                  <TabsList className="w-full max-w-md">
+                    <TabsTrigger value="custo-medio" className="flex-1">Custo Médio</TabsTrigger>
+                    <TabsTrigger value="analytic-report" className="flex-1">Relatório Analítico</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="custo-medio" className="space-y-4">
+                    <AverageCostTab />
+                  </TabsContent>
+
+                  <TabsContent value="analytic-report" className="space-y-4">
+                    {/* Filters */}
+                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                      <div className="flex-1">
+                        <Label htmlFor="search" className="mb-2">Buscar</Label>
+                        <Input
+                          id="search"
+                          placeholder="Buscar por empresa ou CNPJ..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                      </div>
+                      <div className="w-full sm:w-72">
+                        <Label htmlFor="tool" className="mb-2">Ferramenta de IA</Label>
+                        <Select
+                          value={toolFilter}
+                          onValueChange={setToolFilter}
                         >
-                          Custo Médio
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="analytic-report" 
-                          className="w-full justify-start px-3 py-2 text-left"
+                          <SelectTrigger id="tool">
+                            <SelectValue placeholder="Todas as ferramentas" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todas as ferramentas</SelectItem>
+                            {uniqueToolNames.map((tool) => (
+                              <SelectItem key={tool} value={tool}>{tool}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-end">
+                        <Button 
+                          variant="cancel"
+                          className="flex items-center gap-2"
+                          onClick={() => {
+                            setSearchTerm("");
+                            setToolFilter("");
+                            setCurrentPage(1); // Reset to first page when filters change
+                          }}
                         >
-                          Relatório Analítico
-                        </TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                  </div>
-                  
-                  {/* Right side content */}
-                  <div className="flex-1">
-                    <div className={aiCostSubTab === "custo-medio" ? "block" : "hidden"}>
-                      <AverageCostTab />
+                          <FilterX className="h-4 w-4" />
+                          Limpar Filtros
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Data Table */}
+                    <div className="bg-white rounded-lg border shadow-sm">
+                      <TooltipProvider>
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left p-3 font-medium">Ferramenta de IA</th>
+                              <th className="text-left p-3 font-medium">Data e Hora</th>
+                              <th className="text-right p-3 font-medium">Custo Total</th>
+                              <th className="text-left p-3 font-medium">Empresa</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {aiCostsLoading ? (
+                              // Loading state
+                              Array.from({ length: 5 }).map((_, i) => (
+                                <tr key={i} className="border-b">
+                                  <td className="p-3"><div className="h-6 w-36 bg-gray-200 rounded animate-pulse"></div></td>
+                                  <td className="p-3"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse"></div></td>
+                                  <td className="p-3 text-right"><div className="h-6 w-24 bg-gray-200 rounded animate-pulse ml-auto"></div></td>
+                                  <td className="p-3"><div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div></td>
+                                </tr>
+                              ))
+                            ) : filteredExecutions?.length === 0 ? (
+                              // Empty state
+                              <tr>
+                                <td colSpan={4} className="text-center py-10 text-muted-foreground">
+                                  Nenhuma execução de IA encontrada com os filtros atuais
+                                </td>
+                              </tr>
+                            ) : (
+                              // Data rows
+                              currentExecutions?.map((execution) => (
+                                <tr key={execution.id} className="border-b">
+                                  <td className="p-3 font-medium text-foreground">
+                                    {execution.toolName}
+                                  </td>
+                                  <td className="p-3">
+                                    {new Date(execution.executionDate).toLocaleDateString('pt-BR')} às {new Date(execution.executionDate).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
+                                  </td>
+                                  <td className="p-3 text-right font-medium">
+                                    ${execution.totalCost.toFixed(4)}
+                                  </td>
+                                  <td className="p-3">{execution.organizationName}</td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </TooltipProvider>
                     </div>
                     
-                    <div className={aiCostSubTab === "analytic-report" ? "block" : "hidden"}>
-                      {/* Filters */}
-                      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                        <div className="flex-1">
-                          <Label htmlFor="search" className="mb-2">Buscar</Label>
-                          <Input
-                            id="search"
-                            placeholder="Buscar por empresa ou CNPJ..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                        </div>
-                        <div className="w-full sm:w-72">
-                          <Label htmlFor="tool" className="mb-2">Ferramenta de IA</Label>
-                          <Select
-                            value={toolFilter}
-                            onValueChange={setToolFilter}
-                          >
-                            <SelectTrigger id="tool">
-                              <SelectValue placeholder="Todas as ferramentas" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">Todas as ferramentas</SelectItem>
-                              {uniqueToolNames.map((tool) => (
-                                <SelectItem key={tool} value={tool}>{tool}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="flex items-end">
-                          <Button 
-                            variant="cancel"
-                            className="flex items-center gap-2"
-                            onClick={() => {
-                              setSearchTerm("");
-                              setToolFilter("");
-                              setCurrentPage(1); // Reset to first page when filters change
-                            }}
-                          >
-                            <FilterX className="h-4 w-4" />
-                            Limpar Filtros
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Data Table */}
-                      <div className="bg-white rounded-lg border shadow-sm">
-                        <TooltipProvider>
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left p-3 font-medium">Ferramenta de IA</th>
-                                <th className="text-left p-3 font-medium">Data e Hora</th>
-                                <th className="text-right p-3 font-medium">Custo Total</th>
-                                <th className="text-left p-3 font-medium">Empresa</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {aiCostsLoading ? (
-                                // Loading state
-                                Array.from({ length: 5 }).map((_, i) => (
-                                  <tr key={i} className="border-b">
-                                    <td className="p-3"><div className="h-6 w-36 bg-gray-200 rounded animate-pulse"></div></td>
-                                    <td className="p-3"><div className="h-6 w-40 bg-gray-200 rounded animate-pulse"></div></td>
-                                    <td className="p-3 text-right"><div className="h-6 w-24 bg-gray-200 rounded animate-pulse ml-auto"></div></td>
-                                    <td className="p-3"><div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div></td>
-                                  </tr>
-                                ))
-                              ) : filteredExecutions?.length === 0 ? (
-                                // Empty state
-                                <tr>
-                                  <td colSpan={4} className="text-center py-10 text-muted-foreground">
-                                    Nenhuma execução de IA encontrada com os filtros atuais
-                                  </td>
-                                </tr>
-                              ) : (
-                                // Data rows
-                                currentExecutions?.map((execution) => (
-                                  <tr key={execution.id} className="border-b">
-                                    <td className="p-3 font-medium text-foreground">
-                                      {execution.toolName}
-                                    </td>
-                                    <td className="p-3">
-                                      {new Date(execution.executionDate).toLocaleDateString('pt-BR')} às {new Date(execution.executionDate).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
-                                    </td>
-                                    <td className="p-3 text-right font-medium">
-                                      ${execution.totalCost.toFixed(4)}
-                                    </td>
-                                    <td className="p-3">{execution.organizationName}</td>
-                                  </tr>
-                                ))
-                              )}
-                            </tbody>
-                          </table>
-                        </TooltipProvider>
-                      </div>
-                      
-                      {/* Pagination */}
-                      {filteredExecutions && filteredExecutions.length > 0 && (
-                        <LeadsPagination
-                          currentPage={currentPage}
-                          setCurrentPage={setCurrentPage}
-                          totalItems={totalExecutions}
-                          itemsPerPage={itemsPerPage}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+                    {/* Pagination */}
+                    {filteredExecutions && filteredExecutions.length > 0 && (
+                      <LeadsPagination
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        totalItems={totalExecutions}
+                        itemsPerPage={itemsPerPage}
+                      />
+                    )}
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </TabsContent>
             
