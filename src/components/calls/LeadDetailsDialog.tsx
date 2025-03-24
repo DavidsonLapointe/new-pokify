@@ -31,7 +31,7 @@ interface LeadDetailsDialogProps {
 }
 
 // List of allowed lead types
-const allowedLeadTypes = ["client", "prospect", "employee", "candidate", "supplier"];
+const allowedLeadTypes = ["client", "prospect", "employee", "candidate", "supplier", "partner"];
 
 export const LeadDetailsDialog = ({
   lead,
@@ -69,6 +69,17 @@ export const LeadDetailsDialog = ({
     return currentStatus === "active" 
       ? [{ value: "inactive", label: "Inativo" }] 
       : [{ value: "active", label: "Ativo" }];
+  };
+
+  // Get available lead type options (filter out the current lead type)
+  const getAvailableLeadTypeOptions = () => {
+    const currentLeadType = lead.leadType;
+    return Object.entries(leadTypeConfig)
+      .filter(([key]) => allowedLeadTypes.includes(key) && key !== currentLeadType)
+      .map(([key, config]) => ({
+        value: key,
+        label: config.label
+      }));
   };
 
   return (
@@ -125,13 +136,11 @@ export const LeadDetailsDialog = ({
                     <SelectValue placeholder="Selecione o novo tipo de Lead" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(leadTypeConfig)
-                      .filter(([key]) => allowedLeadTypes.includes(key))
-                      .map(([key, config]) => (
-                        <SelectItem key={key} value={key}>
-                          {config.label}
-                        </SelectItem>
-                      ))}
+                    {getAvailableLeadTypeOptions().map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
