@@ -88,7 +88,7 @@ export function LeadForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo de lead" />
+                        <SelectValue placeholder="Selecione o tipo de Lead" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

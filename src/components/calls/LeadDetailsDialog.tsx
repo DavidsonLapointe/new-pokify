@@ -122,7 +122,7 @@ export const LeadDetailsDialog = ({
                   onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo de lead" />
+                    <SelectValue placeholder="Selecione o tipo de Lead" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(leadTypeConfig)
@@ -138,7 +138,7 @@ export const LeadDetailsDialog = ({
             </div>
 
             {/* Campos condicionais baseados no tipo de pessoa */}
-            {/* Always show firstName/lastName for pessoa física */}
+            {/* Only show firstName/lastName for pessoa física */}
             {editedLead.personType === "pf" && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

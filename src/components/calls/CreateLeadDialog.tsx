@@ -161,7 +161,7 @@ export function CreateLeadDialog({
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo de lead" />
+                              <SelectValue placeholder="Selecione o tipo de Lead" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
