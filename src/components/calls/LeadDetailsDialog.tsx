@@ -75,7 +75,10 @@ export const LeadDetailsDialog = ({
   const getAvailableLeadTypeOptions = () => {
     const currentLeadType = lead.leadType;
     return Object.entries(leadTypeConfig)
-      .filter(([key]) => allowedLeadTypes.includes(key) && key !== currentLeadType)
+      .filter(([key]) => 
+        allowedLeadTypes.includes(key) && 
+        key !== currentLeadType
+      )
       .map(([key, config]) => ({
         value: key,
         label: config.label
