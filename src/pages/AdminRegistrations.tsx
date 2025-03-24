@@ -41,7 +41,7 @@ const AdminRegistrations = () => {
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <CardHeader>
-          <Tabs defaultValue="areas" className="w-full">
+          <Tabs defaultValue="tipos-de-lead" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="areas">
                 <Layers className="w-4 h-4 mr-2" />

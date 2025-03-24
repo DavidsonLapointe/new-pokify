@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from 'uuid';
 
 interface LeadType {
   id: string;
@@ -58,42 +58,70 @@ export const TiposDeLeadTab = () => {
     { value: "Phone", label: "Telefone" },
   ];
 
+  // Static initial lead types
+  const defaultLeadTypes: LeadType[] = [
+    {
+      id: "1",
+      name: "client",
+      label: "Cliente",
+      color: "bg-blue-100 text-blue-800",
+      icon: "User",
+      isDefault: true,
+      isActive: true,
+      organization_id: null
+    },
+    {
+      id: "2",
+      name: "prospect",
+      label: "Prospect",
+      color: "bg-green-100 text-green-800",
+      icon: "Users",
+      isDefault: true,
+      isActive: true,
+      organization_id: null
+    },
+    {
+      id: "3",
+      name: "employee",
+      label: "Funcionário",
+      color: "bg-purple-100 text-purple-800",
+      icon: "Briefcase",
+      isDefault: true,
+      isActive: true,
+      organization_id: null
+    },
+    {
+      id: "4",
+      name: "hr_candidate",
+      label: "Candidato RH",
+      color: "bg-orange-100 text-orange-800",
+      icon: "FileText",
+      isDefault: true,
+      isActive: true,
+      organization_id: null
+    },
+    {
+      id: "5",
+      name: "supplier",
+      label: "Fornecedor",
+      color: "bg-red-100 text-red-800",
+      icon: "Truck",
+      isDefault: true,
+      isActive: true,
+      organization_id: null
+    }
+  ];
+
   useEffect(() => {
-    fetchLeadTypes();
+    // Load default lead types
+    setLeadTypes(defaultLeadTypes);
   }, []);
 
   const fetchLeadTypes = async () => {
-    setIsLoading(true);
-    try {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('organization_id')
-        .single();
-      
-      if (!profileData?.organization_id) {
-        console.error('Organization ID not found');
-        return;
-      }
-
-      // Fetch both system default lead types and organization custom lead types
-      const { data, error } = await supabase
-        .from('lead_types')
-        .select('*')
-        .or(`organization_id.is.null,organization_id.eq.${profileData.organization_id}`);
-
-      if (error) throw error;
-      
-      setLeadTypes(data || []);
-    } catch (error) {
-      console.error('Error fetching lead types:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao carregar tipos de lead",
-        description: "Ocorreu um erro ao carregar os tipos de lead. Por favor, tente novamente."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // This is just a placeholder for future Supabase integration
+    console.log('Will fetch lead types from database in the future');
+    setLeadTypes(defaultLeadTypes);
+    setIsLoading(false);
   };
 
   const handleOpenNewDialog = () => {
@@ -178,137 +206,110 @@ export const TiposDeLeadTab = () => {
     if (!validateLeadType()) return;
     
     setIsLoading(true);
-    try {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('organization_id')
-        .single();
-      
-      if (!profileData?.organization_id) {
-        console.error('Organization ID not found');
-        return;
+    
+    // Simulate async operation
+    setTimeout(() => {
+      try {
+        if (currentLeadType?.isDefault) {
+          // For system default types, only allow updating label, color and icon
+          const updatedLeadTypes = leadTypes.map(lt => 
+            lt.id === currentLeadType.id 
+              ? {
+                  ...lt,
+                  label: newLeadType.label,
+                  color: newLeadType.color,
+                  icon: newLeadType.icon,
+                  isActive: newLeadType.isActive
+                }
+              : lt
+          );
+          setLeadTypes(updatedLeadTypes);
+        } else if (currentLeadType) {
+          // Updating existing custom lead type
+          const updatedLeadTypes = leadTypes.map(lt => 
+            lt.id === currentLeadType.id 
+              ? {
+                  ...lt,
+                  name: newLeadType.name,
+                  label: newLeadType.label,
+                  color: newLeadType.color,
+                  icon: newLeadType.icon,
+                  isActive: newLeadType.isActive
+                }
+              : lt
+          );
+          setLeadTypes(updatedLeadTypes);
+        } else {
+          // Creating new lead type
+          const newId = uuidv4();
+          setLeadTypes([
+            ...leadTypes,
+            {
+              id: newId,
+              name: newLeadType.name,
+              label: newLeadType.label,
+              color: newLeadType.color,
+              icon: newLeadType.icon,
+              isActive: newLeadType.isActive,
+              isDefault: false,
+              organization_id: "organization_id_placeholder"
+            }
+          ]);
+        }
+
+        setIsDialogOpen(false);
+        toast({
+          title: "Sucesso",
+          description: currentLeadType ? "Tipo de lead atualizado com sucesso!" : "Tipo de lead criado com sucesso!"
+        });
+      } catch (error) {
+        console.error('Error saving lead type:', error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao salvar",
+          description: "Ocorreu um erro ao salvar o tipo de lead. Por favor, tente novamente."
+        });
+      } finally {
+        setIsLoading(false);
       }
-
-      // For system default types, only allow updating label, color and icon
-      if (currentLeadType?.isDefault) {
-        const { error } = await supabase
-          .from('lead_types')
-          .update({
-            label: newLeadType.label,
-            color: newLeadType.color,
-            icon: newLeadType.icon,
-            isActive: newLeadType.isActive
-          })
-          .eq('id', currentLeadType.id);
-
-        if (error) throw error;
-      } else if (currentLeadType) {
-        // Updating existing custom lead type
-        const { error } = await supabase
-          .from('lead_types')
-          .update({
-            name: newLeadType.name,
-            label: newLeadType.label,
-            color: newLeadType.color,
-            icon: newLeadType.icon,
-            isActive: newLeadType.isActive
-          })
-          .eq('id', currentLeadType.id);
-
-        if (error) throw error;
-      } else {
-        // Creating new lead type
-        const { error } = await supabase
-          .from('lead_types')
-          .insert({
-            name: newLeadType.name,
-            label: newLeadType.label,
-            color: newLeadType.color,
-            icon: newLeadType.icon,
-            isActive: newLeadType.isActive,
-            organization_id: profileData.organization_id
-          });
-
-        if (error) throw error;
-      }
-
-      await fetchLeadTypes();
-      setIsDialogOpen(false);
-      toast({
-        title: "Sucesso",
-        description: currentLeadType ? "Tipo de lead atualizado com sucesso!" : "Tipo de lead criado com sucesso!"
-      });
-    } catch (error) {
-      console.error('Error saving lead type:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao salvar",
-        description: "Ocorreu um erro ao salvar o tipo de lead. Por favor, tente novamente."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    }, 500);
   };
 
   const handleDeleteLeadType = async () => {
     if (!currentLeadType) return;
     
     setIsLoading(true);
-    try {
-      // Check if this lead type is being used
-      const { data: usageData, error: usageError } = await supabase
-        .from('organization_leads')
-        .select('id')
-        .eq('lead_type', currentLeadType.name)
-        .limit(1);
-      
-      if (usageError) throw usageError;
-      
-      if (usageData && usageData.length > 0) {
+    
+    // Simulate async operation
+    setTimeout(() => {
+      try {
+        setLeadTypes(leadTypes.filter(lt => lt.id !== currentLeadType.id));
+        setIsDeleteDialogOpen(false);
+        toast({
+          title: "Sucesso",
+          description: "Tipo de lead excluído com sucesso!"
+        });
+      } catch (error) {
+        console.error('Error deleting lead type:', error);
         toast({
           variant: "destructive",
-          title: "Não é possível excluir",
-          description: "Este tipo de lead está sendo utilizado por leads existentes e não pode ser excluído."
+          title: "Erro ao excluir",
+          description: "Ocorreu um erro ao excluir o tipo de lead. Por favor, tente novamente."
         });
-        setIsDeleteDialogOpen(false);
-        return;
+      } finally {
+        setIsLoading(false);
       }
-
-      const { error } = await supabase
-        .from('lead_types')
-        .delete()
-        .eq('id', currentLeadType.id);
-
-      if (error) throw error;
-
-      await fetchLeadTypes();
-      setIsDeleteDialogOpen(false);
-      toast({
-        title: "Sucesso",
-        description: "Tipo de lead excluído com sucesso!"
-      });
-    } catch (error) {
-      console.error('Error deleting lead type:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao excluir",
-        description: "Ocorreu um erro ao excluir o tipo de lead. Por favor, tente novamente."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    }, 500);
   };
 
   const toggleStatus = async (leadType: LeadType) => {
     try {
-      const { error } = await supabase
-        .from('lead_types')
-        .update({ isActive: !leadType.isActive })
-        .eq('id', leadType.id);
-
-      if (error) throw error;
-
-      await fetchLeadTypes();
+      const updatedLeadTypes = leadTypes.map(lt => 
+        lt.id === leadType.id 
+          ? { ...lt, isActive: !lt.isActive }
+          : lt
+      );
+      setLeadTypes(updatedLeadTypes);
       toast({
         title: "Status atualizado",
         description: `Tipo de lead ${leadType.isActive ? 'desativado' : 'ativado'} com sucesso!`
