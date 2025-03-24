@@ -24,7 +24,7 @@ export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowPro
       <TableCell className="text-xs">
         <LeadTypeBadge leadType={lead.leadType} />
       </TableCell>
-      <TableCell className="text-xs">{formatDate(lead.createdAt)}</TableCell>
+      <TableCell className="text-xs text-center">{formatDate(lead.createdAt)}</TableCell>
       <TableCell className="text-xs">
         <LeadStatusBadge status={lead.status || "active"} />
       </TableCell>
@@ -41,7 +41,7 @@ export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowPro
           <span className="text-gray-400 text-xs">Não integrado</span>
         )}
       </TableCell>
-      <TableCell className="text-xs">
+      <TableCell className="text-xs text-center">
         <AIInteractionsCount 
           calls={lead.calls} 
           lead={lead} 

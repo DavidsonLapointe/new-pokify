@@ -20,11 +20,11 @@ export const ClientLeadsTable = ({ leads, formatDate, onEditLead }: ClientLeadsT
         <TableHeader>
           <TableRow>
             <TableHead className="w-[200px] text-xs whitespace-nowrap text-left">Nome do Lead</TableHead>
-            <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
+            <TableHead className="w-[120px] text-xs whitespace-nowrap text-center">Data de Cadastro</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Status</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
             <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
-            <TableHead className="w-[160px] text-xs whitespace-nowrap">Interações IA</TableHead>
+            <TableHead className="w-[160px] text-xs whitespace-nowrap text-center">Interações IA</TableHead>
             <TableHead className="w-[80px] text-xs whitespace-nowrap text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -36,7 +36,7 @@ export const ClientLeadsTable = ({ leads, formatDate, onEditLead }: ClientLeadsT
               return (
                 <TableRow key={lead.id}>
                   <TableCell className="font-medium text-xs text-left">{getLeadName(lead)}</TableCell>
-                  <TableCell className="text-xs">{formatDate(lead.createdAt)}</TableCell>
+                  <TableCell className="text-xs text-center">{formatDate(lead.createdAt)}</TableCell>
                   <TableCell className="text-xs">
                     <LeadStatusBadge status={lead.status || "active"} />
                   </TableCell>
@@ -53,8 +53,12 @@ export const ClientLeadsTable = ({ leads, formatDate, onEditLead }: ClientLeadsT
                       <span className="text-gray-400 text-xs">Não integrado</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-xs">
-                    <AIInteractionsCount calls={lead.calls} />
+                  <TableCell className="text-xs text-center">
+                    <AIInteractionsCount 
+                      calls={lead.calls} 
+                      lead={lead} 
+                      formatDate={formatDate}
+                    />
                   </TableCell>
                   <TableCell className="text-center">
                     <LeadActionButtons lead={lead} onEditLead={onEditLead} />

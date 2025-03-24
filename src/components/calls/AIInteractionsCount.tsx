@@ -30,15 +30,22 @@ export const AIInteractionsCount = ({ calls, lead, formatDate = (date) => new Da
   const totalInteractions = callAnalysisCount + chatAnalysisCount + reportCount;
 
   if (totalInteractions === 0) {
-    return <span className="text-xs text-gray-400">0</span>;
+    return <span className="text-xs text-gray-400 text-center block">0</span>;
   }
+
+  const handleOpenModal = () => {
+    if (lead) {
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <>
       <Button 
         variant="link" 
-        className="p-0 h-auto font-medium text-xs text-blue-600 hover:text-blue-800"
-        onClick={() => setIsModalOpen(true)}
+        className="p-0 h-auto font-medium text-xs text-blue-600 hover:text-blue-800 mx-auto"
+        onClick={handleOpenModal}
+        disabled={!lead}
       >
         {totalInteractions}
       </Button>
