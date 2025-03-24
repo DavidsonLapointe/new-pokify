@@ -21,8 +21,8 @@ export const useLeadForm = ({
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadFormSchema),
     defaultValues: {
-      personType: "pf",
-      leadType: "cliente", // Valor padrão para o tipo de lead
+      // Remove default values for personType and leadType
+      // to show placeholders instead
       firstName: "",
       lastName: "",
       phone: "",
@@ -96,7 +96,7 @@ export const useLeadForm = ({
         .insert({
           organization_id: profileData.organization_id,
           person_type: data.personType,
-          lead_type: data.leadType, // Salvando o tipo de lead
+          lead_type: data.leadType,
           first_name: data.firstName,
           last_name: data.lastName,
           razao_social: data.razaoSocial,

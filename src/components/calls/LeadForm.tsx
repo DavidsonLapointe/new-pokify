@@ -57,7 +57,7 @@ export function LeadForm({
                   <FormLabel>Tipo de Pessoa</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -83,7 +83,7 @@ export function LeadForm({
                   <FormLabel>Tipo de Lead</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
