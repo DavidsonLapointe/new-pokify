@@ -20,6 +20,7 @@ import { useState } from "react";
 import { LeadCalls } from "./types";
 import { getLeadName, LeadType, leadTypeConfig } from "./utils";
 import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface LeadDetailsDialogProps {
   lead: LeadCalls;
@@ -47,6 +48,26 @@ export const LeadDetailsDialog = ({
     e.preventDefault();
     onUpdateLead(editedLead);
     onClose();
+  };
+
+  // Get the status badge color based on current status
+  const getStatusBadgeClass = (status: string) => {
+    return status === "active" 
+      ? "bg-green-100 text-green-800" 
+      : "bg-red-100 text-red-800";
+  };
+
+  // Get status label for display
+  const getStatusLabel = (status: string) => {
+    return status === "active" ? "Ativo" : "Inativo";
+  };
+
+  // Get available status options (only show statuses different from current)
+  const getAvailableStatusOptions = () => {
+    const currentStatus = lead.status || "active";
+    return currentStatus === "active" 
+      ? [{ value: "inactive", label: "Inativo" }] 
+      : [{ value: "active", label: "Ativo" }];
   };
 
   return (
@@ -175,21 +196,29 @@ export const LeadDetailsDialog = ({
               </div>
             </div>
 
-            {/* Status do Lead */}
+            {/* Status do Lead - Updated with badge showing current status */}
             <div className="space-y-2">
-              <Label htmlFor="status">
-                Status
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="status">
+                  Status atual:
+                </Label>
+                <Badge className={getStatusBadgeClass(lead.status || "active")}>
+                  {getStatusLabel(lead.status || "active")}
+                </Badge>
+              </div>
               <Select
                 value={editedLead.status || "active"}
                 onValueChange={(value) => handleInputChange("status", value as "active" | "inactive")}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o status" />
+                  <SelectValue placeholder="Selecione o novo status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Ativo</SelectItem>
-                  <SelectItem value="inactive">Inativo</SelectItem>
+                  {getAvailableStatusOptions().map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
