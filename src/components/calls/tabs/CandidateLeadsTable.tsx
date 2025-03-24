@@ -18,7 +18,7 @@ export const CandidateLeadsTable = ({ leads, formatDate, onEditLead }: Candidate
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
+            <TableHead className="w-[200px] text-xs whitespace-nowrap text-left">Nome do Lead</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Status</TableHead>
             <TableHead className="w-[160px] text-xs whitespace-nowrap">Interações IA</TableHead>
@@ -29,7 +29,7 @@ export const CandidateLeadsTable = ({ leads, formatDate, onEditLead }: Candidate
           {leads.length > 0 ? (
             leads.map((lead) => (
               <TableRow key={lead.id}>
-                <TableCell className="font-medium text-xs">{getLeadName(lead)}</TableCell>
+                <TableCell className="font-medium text-xs text-left">{getLeadName(lead)}</TableCell>
                 <TableCell className="text-xs">{formatDate(lead.createdAt)}</TableCell>
                 <TableCell className="text-xs">
                   <LeadStatusBadge status={lead.status || "active"} />

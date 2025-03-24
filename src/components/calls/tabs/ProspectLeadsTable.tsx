@@ -19,7 +19,7 @@ export const ProspectLeadsTable = ({ leads, formatDate, onEditLead }: ProspectLe
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
+            <TableHead className="w-[200px] text-xs whitespace-nowrap text-left">Nome do Lead</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Status</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
@@ -35,7 +35,7 @@ export const ProspectLeadsTable = ({ leads, formatDate, onEditLead }: ProspectLe
               
               return (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium text-xs">{getLeadName(lead)}</TableCell>
+                  <TableCell className="font-medium text-xs text-left">{getLeadName(lead)}</TableCell>
                   <TableCell className="text-xs">{formatDate(lead.createdAt)}</TableCell>
                   <TableCell className="text-xs">
                     <LeadStatusBadge status={lead.status || "active"} />
