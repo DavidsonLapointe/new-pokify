@@ -2,475 +2,187 @@
 import { Lead } from '@/types/leads';
 import { v4 as uuidv4 } from 'uuid';
 
-// Generate mock lead data with call history
-export const leadsOrganizacao1: Lead[] = [
-  {
-    id: uuidv4(),
-    firstName: "Carlos",
-    lastName: "Oliveira",
-    status: "active",
-    temperature: "hot",
-    personType: "pj", 
-    contactType: "phone",
-    contactValue: "(11) 97654-3210",
-    email: "carlos@empresa.com.br",
-    company: "Empresa Tecnologia Ltda",
-    razaoSocial: "Empresa Tecnologia Ltda",
-    cnpj: "12.345.678/0001-90",
-    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
-    lastContactDate: new Date(Date.now() - 86400000 * 2).toISOString(),
-    callCount: 3,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 2).toISOString(),
-        duration: "4:23",
-        status: "success",
-        fileName: "ligacao_carlos_01.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 4).toISOString(),
-        duration: "7:45",
-        status: "success",
-        fileName: "ligacao_carlos_02.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 5).toISOString(),
-        duration: "2:18",
-        status: "success",
-        fileName: "ligacao_carlos_03.mp3"
-      }
-    ],
-    source: "Site",
-    crmInfo: {
-      funnel: "Vendas",
-      stage: "Qualificação"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente interessado no módulo financeiro",
-        createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-        createdBy: {
-          id: "1",
-          name: "Maria Santos"
-        }
-      }
-    ]
-  },
-  {
-    id: uuidv4(),
-    firstName: "Ana",
-    lastName: "Silva",
-    status: "active", 
-    temperature: "warm",
-    personType: "pf",
-    contactType: "phone",
-    contactValue: "(21) 98765-4321",
-    email: "ana.silva@email.com",
-    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
-    callCount: 2,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 1).toISOString(),
-        duration: "5:30",
-        status: "success",
-        fileName: "ana_silva_call_01.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 7).toISOString(),
-        duration: "3:45",
-        status: "failed",
-        fileName: "ana_silva_call_02.mp3"
-      }
-    ],
-    source: "Indicação",
-    crmInfo: {
-      funnel: "Vendas",
-      stage: "Negociação"
+// Helper function to create dates from X days ago
+const daysAgo = (days: number): string => {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString();
+};
+
+// Helper function to generate random phone numbers
+const generatePhone = (): string => {
+  const area = Math.floor(Math.random() * 90 + 10);
+  const prefix = Math.floor(Math.random() * 9000 + 1000);
+  const suffix = Math.floor(Math.random() * 9000 + 1000);
+  return `(${area}) ${prefix}-${suffix}`;
+};
+
+// Helper function to generate leads by type
+const generateLeadsByType = (
+  type: 'client' | 'prospect' | 'employee' | 'candidate' | 'supplier',
+  count: number
+): Lead[] => {
+  // Company domains based on lead type
+  const domains: Record<string, string> = {
+    client: 'empresa.com.br',
+    prospect: 'prospectiva.com.br',
+    employee: 'nossotime.com.br',
+    candidate: 'perfis.com.br',
+    supplier: 'fornecedores.com.br',
+  };
+
+  // Company name prefixes based on lead type
+  const companyPrefixes: Record<string, string[]> = {
+    client: ['Clientes', 'Compradores', 'Usuários', 'Assinantes'],
+    prospect: ['Futuros', 'Potencial', 'Interesse', 'Oportunidade'],
+    employee: ['Equipe', 'Colaboradores', 'Funcionários', 'Time'],
+    candidate: ['Talentos', 'CV', 'Perfil', 'Vagas'],
+    supplier: ['Fornece', 'Suprimentos', 'Parceiros', 'Distribuição'],
+  };
+
+  // First names pool
+  const firstNames = [
+    'Miguel', 'Sofia', 'Davi', 'Alice', 'Arthur', 'Julia', 'Pedro', 'Isabella',
+    'Gabriel', 'Manuela', 'Bernardo', 'Laura', 'Lucas', 'Luiza', 'Matheus',
+    'Valentina', 'Rafael', 'Giovanna', 'Heitor', 'Maria', 'Enzo', 'Helena',
+    'Guilherme', 'Beatriz', 'Nicolas', 'Lara', 'Lorenzo', 'Mariana', 'Gustavo', 'Nicole'
+  ];
+
+  // Last names pool
+  const lastNames = [
+    'Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves',
+    'Pereira', 'Lima', 'Gomes', 'Costa', 'Ribeiro', 'Martins', 'Carvalho',
+    'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira', 'Barbosa'
+  ];
+
+  // Status distribution (70% active, 30% inactive)
+  const getStatus = (index: number): 'active' | 'inactive' => {
+    return index % 10 < 7 ? 'active' : 'inactive';
+  };
+
+  // Temperature distribution
+  const getTemperature = (index: number): 'cold' | 'warm' | 'hot' => {
+    const mod = index % 3;
+    if (mod === 0) return 'hot';
+    if (mod === 1) return 'warm';
+    return 'cold';
+  };
+
+  const leads: Lead[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const personType = i % 3 === 0 ? 'pj' : 'pf';
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const status = getStatus(i);
+    const temperature = getTemperature(i);
+    const daysOffset = Math.floor(Math.random() * 90) + 1;  // 1 to 90 days ago
+    const createdDate = daysAgo(daysOffset);
+    const lastContactDate = status === 'active' ? daysAgo(Math.floor(Math.random() * daysOffset)) : undefined;
+    const callCount = Math.floor(Math.random() * 5);  // 0 to 4 calls
+    const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${domains[type]}`;
+    const phone = generatePhone();
+    
+    // Company info for PJ
+    let companyName = '';
+    let razaoSocial = '';
+    
+    if (personType === 'pj') {
+      const prefix = companyPrefixes[type][Math.floor(Math.random() * companyPrefixes[type].length)];
+      const suffix = Math.floor(Math.random() * 1000) + 1;
+      companyName = `${prefix} ${suffix}`;
+      razaoSocial = `${companyName} Ltda`;
     }
-  },
-  {
-    id: uuidv4(),
-    firstName: "Roberto",
-    lastName: "Martins",
-    status: "inactive", // Changed to inactive
-    temperature: "cold",
-    personType: "pj",
-    contactType: "email",
-    contactValue: "roberto@consultorias.com.br",
-    company: "RM Consultorias",
-    razaoSocial: "RM Consultorias e Serviços Ltda",
-    cnpj: "23.456.789/0001-23",
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    callCount: 0,
-    source: "LinkedIn",
-    crmInfo: {
-      funnel: "Marketing",
-      stage: "Lead Frio"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente solicitou não ser mais contactado",
-        createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
-        createdBy: {
-          id: "1",
-          name: "Maria Santos"
-        }
+
+    // Generate calls if any
+    const calls = [];
+    if (callCount > 0) {
+      for (let j = 0; j < callCount; j++) {
+        const callDaysAgo = Math.floor(Math.random() * daysOffset);
+        const callStatus = Math.random() > 0.3 ? 'success' : 'failed';
+        const minutes = Math.floor(Math.random() * 10) + 1;
+        const seconds = Math.floor(Math.random() * 60);
+        
+        calls.push({
+          id: uuidv4(),
+          date: daysAgo(callDaysAgo),
+          duration: `${minutes}:${seconds.toString().padStart(2, '0')}`,
+          status: callStatus,
+          fileName: `${firstName.toLowerCase()}_${type}_${j + 1}.${Math.random() > 0.3 ? 'mp3' : 'mp4'}`
+        });
       }
-    ]
-  },
-  {
-    id: uuidv4(),
-    firstName: "Juliana",
-    lastName: "Costa",
-    status: "active",
-    temperature: "hot",
-    personType: "pj",
-    contactType: "phone",
-    contactValue: "(11) 91234-5678",
-    email: "juliana@innovatech.com.br",
-    company: "InnovaTech",
-    razaoSocial: "InnovaTech Soluções Digitais Ltda",
-    cnpj: "34.567.890/0001-45",
-    createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
-    lastContactDate: new Date(Date.now() - 86400000 * 3).toISOString(),
-    callCount: 4,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 3).toISOString(),
-        duration: "12:05",
-        status: "success",
-        fileName: "juliana_innovatech_01.mp4"
+    }
+
+    // CRM info
+    const funnels = {
+      client: 'Retenção',
+      prospect: 'Vendas',
+      employee: 'RH',
+      candidate: 'Recrutamento',
+      supplier: 'Compras'
+    };
+    
+    const stages = {
+      client: ['Cliente Ativo', 'Expansão', 'Renovação', 'Suporte'],
+      prospect: ['Lead', 'Qualificação', 'Demonstração', 'Proposta', 'Negociação', 'Fechamento'],
+      employee: ['Contratado', 'Em treinamento', 'Efetivado', 'Desligamento'],
+      candidate: ['Triagem', 'Entrevista', 'Testes', 'Contratação'],
+      supplier: ['Avaliação', 'Negociação', 'Contrato', 'Ativo']
+    };
+
+    const funnel = funnels[type];
+    const stage = stages[type][Math.floor(Math.random() * stages[type].length)];
+
+    const lead: Lead = {
+      id: uuidv4(),
+      firstName,
+      lastName,
+      status,
+      temperature,
+      personType,
+      contactType: Math.random() > 0.5 ? 'phone' : 'email',
+      contactValue: Math.random() > 0.5 ? phone : email,
+      email,
+      phone,
+      createdAt: createdDate,
+      lastContactDate,
+      callCount,
+      calls,
+      source: ['Site', 'Google', 'LinkedIn', 'Indicação', 'Evento', 'Email Marketing'][Math.floor(Math.random() * 6)],
+      crmInfo: {
+        funnel,
+        stage
       },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 7).toISOString(),
-        duration: "8:15",
-        status: "success",
-        fileName: "juliana_innovatech_02.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 10).toISOString(),
-        duration: "5:40",
-        status: "success",
-        fileName: "juliana_innovatech_03.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 15).toISOString(),
-        duration: "3:22",
-        status: "failed",
-        fileName: "juliana_innovatech_04.mp3"
-      }
-    ],
-    source: "Google Ads",
-    crmInfo: {
-      funnel: "Vendas",
-      stage: "Proposta"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente solicitou proposta para 30 usuários",
-        createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      },
-      {
-        id: uuidv4(),
-        content: "Demonstração realizada com sucesso para equipe de gestão",
-        createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      }
-    ]
-  },
-  {
-    id: uuidv4(),
-    firstName: "Pedro",
-    lastName: "Almeida",
-    status: "inactive",  // Already set as inactive
-    temperature: "cold",
-    personType: "pf",
-    contactType: "phone",
-    contactValue: "(31) 98888-7777",
-    email: "pedro.almeida@email.com",
-    createdAt: new Date(Date.now() - 86400000 * 20).toISOString(),
-    lastContactDate: new Date(Date.now() - 86400000 * 15).toISOString(),
-    callCount: 1,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 15).toISOString(),
-        duration: "1:45",
-        status: "failed",
-        fileName: "pedro_almeida_01.mp3"
-      }
-    ],
-    source: "Instagram",
-    crmInfo: {
-      funnel: "Marketing",
-      stage: "Perdido"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Lead não tem interesse no momento, solicitou não ser mais contactado",
-        createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      }
-    ]
-  },
-  {
-    id: uuidv4(),
-    firstName: "Mariana",
-    lastName: "Santos",
-    status: "active",
-    temperature: "hot",
-    personType: "pj",
-    contactType: "phone",
-    contactValue: "(47) 99876-5432",
-    email: "mariana@techinova.com.br",
-    company: "TechInova",
-    razaoSocial: "TechInova Sistemas de Gestão Ltda",
-    cnpj: "45.678.901/0001-67",
-    createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
-    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
-    callCount: 3,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 1).toISOString(),
-        duration: "15:22",
-        status: "success",
-        fileName: "mariana_techinova_01.mp4"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 4).toISOString(),
-        duration: "7:18",
-        status: "success",
-        fileName: "mariana_techinova_02.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 8).toISOString(),
-        duration: "4:53",
-        status: "success",
-        fileName: "mariana_techinova_03.mp3"
-      }
-    ],
-    source: "Webinar",
-    crmInfo: {
-      funnel: "Vendas",
-      stage: "Demonstração"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente agendou uma segunda demonstração com a equipe técnica",
-        createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      }
-    ]
-  },
-  
-  // New lead with 10 mixed status calls
-  {
-    id: uuidv4(),
-    firstName: "Fernando",
-    lastName: "Costa",
-    status: "inactive",  // Already set as inactive
-    temperature: "warm",
-    personType: "pj",
-    contactType: "phone",
-    contactValue: "(11) 99123-4567",
-    email: "fernando@techsystems.com.br",
-    company: "Tech Systems",
-    razaoSocial: "Tech Systems Soluções em TI Ltda",
-    cnpj: "56.789.123/0001-89",
-    createdAt: new Date(Date.now() - 86400000 * 25).toISOString(),
-    lastContactDate: new Date(Date.now() - 86400000 * 1).toISOString(),
-    callCount: 10,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 1).toISOString(),
-        duration: "8:45",
-        status: "success",
-        fileName: "fernando_call_01.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 3).toISOString(),
-        duration: "6:12",
-        status: "failed",
-        fileName: "fernando_call_02.mp4"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 5).toISOString(),
-        duration: "10:34",
-        status: "success",
-        fileName: "fernando_call_03.mp4"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 7).toISOString(),
-        duration: "3:21",
-        status: "failed",
-        fileName: "fernando_call_04.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 9).toISOString(),
-        duration: "7:18",
-        status: "success",
-        fileName: "fernando_call_05.mp4"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 11).toISOString(),
-        duration: "5:50",
-        status: "failed",
-        fileName: "fernando_call_06.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 15).toISOString(),
-        duration: "9:23",
-        status: "success",
-        fileName: "fernando_call_07.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 18).toISOString(),
-        duration: "4:55",
-        status: "success",
-        fileName: "fernando_call_08.mp4"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 21).toISOString(),
-        duration: "2:40",
-        status: "failed",
-        fileName: "fernando_call_09.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 25).toISOString(),
-        duration: "11:07",
-        status: "success",
-        fileName: "fernando_call_10.mp4"
-      }
-    ],
-    source: "Evento",
-    crmInfo: {
-      funnel: "Vendas",
-      stage: "Qualificação"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente solicitou que a empresa não faça mais contato",
-        createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      },
-      {
-        id: uuidv4(),
-        content: "Solicitou orçamento para 20 usuários",
-        createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      }
-    ]
-  },
-  // Adding two new leads - one active, one inactive
-  {
-    id: uuidv4(),
-    firstName: "Luciana",
-    lastName: "Gomes",
-    status: "active",
-    temperature: "warm",
-    personType: "pf",
-    contactType: "email",
-    contactValue: "luciana.gomes@email.com",
-    email: "luciana.gomes@email.com",
-    createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    callCount: 0, // New lead, no calls yet, but still active
-    source: "Facebook",
-    notes: []
-  },
-  {
-    id: uuidv4(),
-    firstName: "Ricardo",
-    lastName: "Mendes",
-    status: "inactive",
-    temperature: "cold",
-    personType: "pj",
-    contactType: "phone",
-    contactValue: "(21) 97777-8888",
-    email: "ricardo@mendesltda.com.br",
-    company: "Mendes Consultoria",
-    razaoSocial: "Mendes Consultoria Empresarial Ltda",
-    cnpj: "67.890.123/0001-45",
-    createdAt: new Date(Date.now() - 86400000 * 12).toISOString(),
-    callCount: 2,
-    calls: [
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 10).toISOString(),
-        duration: "4:35",
-        status: "success",
-        fileName: "ricardo_call_01.mp3"
-      },
-      {
-        id: uuidv4(),
-        date: new Date(Date.now() - 86400000 * 12).toISOString(),
-        duration: "2:50",
-        status: "success",
-        fileName: "ricardo_call_02.mp3"
-      }
-    ],
-    source: "Email Marketing",
-    crmInfo: {
-      funnel: "Marketing",
-      stage: "Lead Frio"
-    },
-    notes: [
-      {
-        id: uuidv4(),
-        content: "Cliente informou que não tem interesse e pediu para não ser mais contactado",
-        createdAt: new Date(Date.now() - 86400000 * 9).toISOString(),
-        createdBy: {
-          id: "2",
-          name: "Maria Santos"
-        }
-      }
-    ]
+      leadType: type
+    };
+
+    // Add company info for PJ
+    if (personType === 'pj') {
+      lead.company = companyName;
+      lead.razaoSocial = razaoSocial;
+      lead.cnpj = `${Math.floor(Math.random() * 90) + 10}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}/0001-${Math.floor(Math.random() * 90) + 10}`;
+    } else {
+      lead.cpf = `${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 90) + 10}`;
+    }
+
+    leads.push(lead);
   }
+
+  return leads;
+};
+
+// Generate 15 leads for each type
+const clientLeads = generateLeadsByType('client', 15);
+const prospectLeads = generateLeadsByType('prospect', 15);
+const employeeLeads = generateLeadsByType('employee', 15);
+const candidateLeads = generateLeadsByType('candidate', 15);
+const supplierLeads = generateLeadsByType('supplier', 15);
+
+// Export all leads
+export const leadsOrganizacao1: Lead[] = [
+  ...clientLeads,
+  ...prospectLeads,
+  ...employeeLeads,
+  ...candidateLeads,
+  ...supplierLeads
 ];

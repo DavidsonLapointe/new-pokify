@@ -1,6 +1,7 @@
 
 import { Call } from "@/types/calls";
-import { LeadType } from "./utils";
+
+export type LeadType = "client" | "prospect" | "employee" | "candidate" | "supplier" | "partner";
 
 export interface LeadCalls {
   id: string;

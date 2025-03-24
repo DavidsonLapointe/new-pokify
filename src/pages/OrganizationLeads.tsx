@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -99,7 +98,8 @@ const leadToCall = (lead: any): Call => {
       lastName: lead.lastName || "",
       razaoSocial: lead.razaoSocial || "",
       email: lead.email || "",
-      phone: lead.contactValue || "",
+      phone: lead.contactValue || lead.phone || "",
+      status: lead.status
     },
     emptyLead: false,
     date: lead.createdAt,
@@ -108,7 +108,7 @@ const leadToCall = (lead: any): Call => {
       (lead.calls[0].status === "success" ? "success" : "failed") : 
       "failed",
     analysis: hasAnalysis && lead.calls[0].status === "success" ? {
-      summary: `Análise da chamada com ${lead.firstName} ${lead.lastName || ''}`,
+      summary: `Análise da chamada com ${lead.personType === "pj" ? lead.razaoSocial : `${lead.firstName} ${lead.lastName || ''}`}`,
       transcription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
       sentiment: {
         temperature: (lead.temperature || "warm") as "cold" | "warm" | "hot",
@@ -123,17 +123,19 @@ const leadToCall = (lead: any): Call => {
         firstName: lead.firstName,
         lastName: lead.lastName || "",
         razaoSocial: lead.razaoSocial || "",
-        phone: lead.contactValue || "",
+        phone: lead.contactValue || lead.phone || "",
         email: lead.email || "",
+        status: lead.status
       }
     } : undefined,
     crmInfo: lead.crmInfo,
     audioUrl: hasAnalysis ? 
       `https://example.com/audio/${lead.calls[0].fileName || "audio.mp3"}` : 
       undefined,
-    phone: lead.contactValue || "",
+    phone: lead.contactValue || lead.phone || "",
     seller: "Maria Santos",
     mediaType: isVideoFile ? "video" : "audio",
+    leadType: lead.leadType
   };
 };
 
@@ -146,56 +148,6 @@ const formatDateToUI = (isoDateString: string) => {
   return `${day}/${month}/${year}`;
 };
 
-// Helper function to update mock data dates to match the UI
-const updateMockDatesToMatchUI = (leads: any[]) => {
-  // Sort leads by createdAt date, newest first
-  leads.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  
-  // Update the dates to match what's shown in the UI
-  const today = new Date();
-  
-  // RM Consultorias
-  if (leads[0]) {
-    leads[0].createdAt = new Date(today.getFullYear(), today.getMonth(), 21).toISOString(); // 21/03/2025
-  }
-  
-  // Empresa Tecnologia
-  if (leads[1]) {
-    leads[1].createdAt = new Date(today.getFullYear(), today.getMonth(), 18).toISOString(); // 18/03/2025
-  }
-  
-  // TechInova
-  if (leads[2]) {
-    leads[2].createdAt = new Date(today.getFullYear(), today.getMonth(), 15).toISOString(); // 15/03/2025
-  }
-  
-  // Ana Silva
-  if (leads[3]) {
-    leads[3].createdAt = new Date(today.getFullYear(), today.getMonth(), 13).toISOString(); // 13/03/2025
-  }
-  
-  // InnovaTech
-  if (leads[4]) {
-    leads[4].createdAt = new Date(today.getFullYear(), today.getMonth(), 8).toISOString(); // 08/03/2025
-  }
-  
-  // Pedro Almeida
-  if (leads[5]) {
-    leads[5].createdAt = new Date(today.getFullYear(), today.getMonth(), 3).toISOString(); // 03/03/2025
-  }
-  
-  // Tech Systems (Fernando Costa)
-  if (leads[6]) {
-    leads[6].createdAt = new Date(today.getFullYear(), today.getMonth() - 1, 26).toISOString(); // 26/02/2025
-    leads[6].firstName = "Tech Systems";
-    leads[6].lastName = "";
-    leads[6].personType = "pj";
-    leads[6].razaoSocial = "Tech Systems Soluções em TI Ltda";
-  }
-  
-  return leads;
-};
-
 const OrganizationLeads = () => {
   const location = useLocation();
   const showCreateLeadFromState = location.state?.showCreateLead || false;
@@ -206,13 +158,10 @@ const OrganizationLeads = () => {
   const [searchQuery, setSearchQuery] = useState(searchQueryFromState);
   const [currentCalls, setCurrentCalls] = useState<Call[]>([]);
 
-  // Carregar os leads mockados quando o componente montar
+  // Load the mock leads when the component mounts
   useEffect(() => {
-    // Atualizar os dados mockados para corresponder à UI
-    const updatedLeads = updateMockDatesToMatchUI([...leadsOrganizacao1]);
-    
-    // Converter leads para o formato de calls
-    const calls = updatedLeads.map(leadToCall);
+    // Convert leads to the format of calls
+    const calls = leadsOrganizacao1.map(leadToCall);
     setCurrentCalls(calls);
     toast.success(`${calls.length} leads da Organização 1 Ltda. carregados com sucesso!`);
   }, []);
