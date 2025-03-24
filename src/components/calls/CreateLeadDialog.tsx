@@ -179,67 +179,16 @@ export function CreateLeadDialog({
                 </div>
 
                 {/* Campos condicionais baseados no tipo de pessoa */}
-                {personType === "pf" ? (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Nome</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Nome" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Sobrenome</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Sobrenome" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                {personType === "pf" && (
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="cpf"
+                      name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>CPF</FormLabel>
+                          <FormLabel>Nome</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="123.456.789-00"
-                              value={field.value}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                handleDocumentChange(e);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="razaoSocial"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Razão Social</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Razão Social" {...field} />
+                            <Input placeholder="Nome" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -247,25 +196,80 @@ export function CreateLeadDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="cnpj"
+                      name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>CNPJ</FormLabel>
+                          <FormLabel>Sobrenome</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="00.000.000/0000-00"
-                              value={field.value}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                handleDocumentChange(e);
-                              }}
-                            />
+                            <Input placeholder="Sobrenome" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </>
+                  </div>
+                )}
+
+                {personType === "pf" && (
+                  <FormField
+                    control={form.control}
+                    name="cpf"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CPF</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="123.456.789-00"
+                            value={field.value}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleDocumentChange(e);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {personType === "pj" && (
+                  <FormField
+                    control={form.control}
+                    name="razaoSocial"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Razão Social</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Razão Social" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {personType === "pj" && (
+                  <FormField
+                    control={form.control}
+                    name="cnpj"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CNPJ</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="00.000.000/0000-00"
+                            value={field.value}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleDocumentChange(e);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 )}
 
                 <div className="grid grid-cols-2 gap-4">

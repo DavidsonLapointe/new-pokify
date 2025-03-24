@@ -134,32 +134,34 @@ export const LeadDetailsDialog = ({
             </div>
 
             {/* Campos condicionais baseados no tipo de pessoa */}
-            {editedLead.personType === "pf" ? (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">
-                      Nome
-                    </Label>
-                    <Input
-                      id="firstName"
-                      value={editedLead.firstName || ""}
-                      onChange={(e) => handleInputChange("firstName", e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">
-                      Sobrenome
-                    </Label>
-                    <Input
-                      id="lastName"
-                      value={editedLead.lastName || ""}
-                      onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    />
-                  </div>
+            {/* Always show firstName/lastName for pessoa física */}
+            {editedLead.personType === "pf" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">
+                    Nome
+                  </Label>
+                  <Input
+                    id="firstName"
+                    value={editedLead.firstName || ""}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  />
                 </div>
-              </>
-            ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">
+                    Sobrenome
+                  </Label>
+                  <Input
+                    id="lastName"
+                    value={editedLead.lastName || ""}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Only show razaoSocial for pessoa jurídica */}
+            {editedLead.personType === "pj" && (
               <div className="space-y-2">
                 <Label htmlFor="razaoSocial">
                   Razão Social

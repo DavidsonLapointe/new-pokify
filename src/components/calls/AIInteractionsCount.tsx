@@ -50,7 +50,7 @@ export const AIInteractionsCount = ({ calls, lead, formatDate = (date) => new Da
         {totalInteractions}
       </Button>
       
-      {lead && (
+      {lead && isModalOpen && (
         <AIInteractionsModal
           isOpen={isModalOpen}
           onOpenChange={setIsModalOpen}
