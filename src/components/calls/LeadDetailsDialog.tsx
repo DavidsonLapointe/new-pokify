@@ -132,7 +132,9 @@ export const LeadDetailsDialog = ({
                   onValueChange={(value) => handleInputChange("personType", value as "pf" | "pj")}
                 >
                   <SelectTrigger id="personType">
-                    <SelectValue placeholder="Selecione o novo tipo de pessoa" />
+                    <SelectValue>
+                      {editedLead.personType === "pf" ? "Pessoa Física" : "Pessoa Jurídica"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {getAvailablePersonTypeOptions().map(option => (
@@ -157,7 +159,9 @@ export const LeadDetailsDialog = ({
                   onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
                 >
                   <SelectTrigger id="leadType">
-                    <SelectValue placeholder="Selecione o novo tipo de Lead" />
+                    <SelectValue>
+                      {leadTypeConfig[editedLead.leadType || "client"]?.label}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {getAvailableLeadTypeOptions().map(option => (
@@ -247,7 +251,9 @@ export const LeadDetailsDialog = ({
                 onValueChange={(value) => handleInputChange("status", value as "active" | "inactive")}
               >
                 <SelectTrigger id="status">
-                  <SelectValue placeholder="Selecione o novo status" />
+                  <SelectValue>
+                    {getStatusLabel(editedLead.status || "active")}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {getAvailableStatusOptions().map(option => (
