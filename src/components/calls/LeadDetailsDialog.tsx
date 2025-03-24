@@ -82,9 +82,9 @@ export const LeadDetailsDialog = ({
       }));
   };
   
-  // Get person type label based on the current type
+  // Get person type label based on the current type (using abbreviated format)
   const getPersonTypeLabel = (type: "pf" | "pj") => {
-    return type === "pf" ? "Pessoa Física" : "Pessoa Jurídica";
+    return type === "pf" ? "PF" : "PJ";
   };
   
   // Get available person type options (only show the type different from current)
