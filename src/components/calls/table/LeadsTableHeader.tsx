@@ -9,7 +9,7 @@ export const LeadsTableHeader = () => {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-[200px] text-xs whitespace-nowrap">Nome do Lead</TableHead>
+        <TableHead className="w-[200px] text-xs whitespace-nowrap text-left">Nome do Lead</TableHead>
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Tipo</TableHead>
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Data de Cadastro</TableHead>
         <TableHead className="w-[120px] text-xs whitespace-nowrap">Status do Lead</TableHead>

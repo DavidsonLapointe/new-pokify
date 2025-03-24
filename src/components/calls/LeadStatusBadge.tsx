@@ -20,7 +20,7 @@ export const LeadStatusBadge = ({ status }: LeadStatusBadgeProps) => {
       tooltip: "Lead ativo que pode ser envolvido em qualquer ferramenta de IA do sistema."
     },
     inactive: {
-      color: "bg-gray-100 text-gray-800",
+      color: "bg-red-100 text-red-800",
       label: "Inativo",
       tooltip: "Lead inativo que não será mais contactado por nenhuma ferramenta de IA da empresa."
     }

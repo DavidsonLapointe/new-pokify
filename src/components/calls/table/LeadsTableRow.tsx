@@ -20,7 +20,7 @@ export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowPro
   
   return (
     <TableRow>
-      <TableCell className="font-medium text-xs">{getLeadName(lead)}</TableCell>
+      <TableCell className="font-medium text-xs text-left">{getLeadName(lead)}</TableCell>
       <TableCell className="text-xs">
         <LeadTypeBadge leadType={lead.leadType} />
       </TableCell>
@@ -42,7 +42,11 @@ export const LeadsTableRow = ({ lead, formatDate, onEditLead }: LeadsTableRowPro
         )}
       </TableCell>
       <TableCell className="text-xs">
-        <AIInteractionsCount calls={lead.calls} />
+        <AIInteractionsCount 
+          calls={lead.calls} 
+          lead={lead} 
+          formatDate={formatDate}
+        />
       </TableCell>
       <TableCell className="text-center">
         <LeadActionButtons lead={lead} onEditLead={onEditLead} />
