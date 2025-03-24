@@ -23,7 +23,7 @@ export const ClientLeadsTable = ({ leads, formatDate, onEditLead }: ClientLeadsT
             <TableHead className="w-[120px] text-xs whitespace-nowrap text-center">Data de Cadastro</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Status</TableHead>
             <TableHead className="w-[120px] text-xs whitespace-nowrap">Temperatura do Lead</TableHead>
-            <TableHead className="w-[160px] text-xs whitespace-nowrap">Funil (CRM)</TableHead>
+            <TableHead className="w-[160px] text-xs whitespace-nowrap text-center">Funil (CRM)</TableHead>
             <TableHead className="w-[160px] text-xs whitespace-nowrap text-center">Interações IA</TableHead>
             <TableHead className="w-[80px] text-xs whitespace-nowrap text-center">Ações</TableHead>
           </TableRow>
@@ -43,9 +43,9 @@ export const ClientLeadsTable = ({ leads, formatDate, onEditLead }: ClientLeadsT
                   <TableCell className="text-xs">
                     <LeadTemperatureBadge calls={lead.calls} hasProcessed={hasProcessedCalls} />
                   </TableCell>
-                  <TableCell className="text-xs">
+                  <TableCell className="text-xs text-center">
                     {lead.crmInfo ? (
-                      <div className="text-xs space-y-1">
+                      <div className="text-xs space-y-1 flex flex-col items-center">
                         <div className="text-[11px] text-gray-700">{lead.crmInfo.funnel}</div>
                         <div className="text-[10px] text-gray-500">{lead.crmInfo.stage}</div>
                       </div>
