@@ -122,7 +122,7 @@ export const LeadDetailsDialog = ({
                   onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo de Lead" />
+                    <SelectValue placeholder="Selecione o novo tipo de Lead" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(leadTypeConfig)
