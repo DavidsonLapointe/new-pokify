@@ -19,7 +19,7 @@ const generatePhone = (): string => {
 
 // Helper function to generate leads by type
 const generateLeadsByType = (
-  type: 'client' | 'prospect' | 'employee' | 'candidate' | 'supplier',
+  type: 'client' | 'prospect' | 'employee' | 'candidate' | 'supplier' | 'partner',
   count: number
 ): Lead[] => {
   // Company domains based on lead type
@@ -29,6 +29,7 @@ const generateLeadsByType = (
     employee: 'nossotime.com.br',
     candidate: 'perfis.com.br',
     supplier: 'fornecedores.com.br',
+    partner: 'parceiros.com.br'
   };
 
   // Company name prefixes based on lead type
@@ -38,6 +39,7 @@ const generateLeadsByType = (
     employee: ['Equipe', 'Colaboradores', 'Funcionários', 'Time'],
     candidate: ['Talentos', 'CV', 'Perfil', 'Vagas'],
     supplier: ['Fornece', 'Suprimentos', 'Parceiros', 'Distribuição'],
+    partner: ['Aliança', 'Parceria', 'Colaboração', 'Representante']
   };
 
   // First names pool
@@ -119,7 +121,8 @@ const generateLeadsByType = (
       prospect: 'Vendas',
       employee: 'RH',
       candidate: 'Recrutamento',
-      supplier: 'Compras'
+      supplier: 'Compras',
+      partner: 'Parceria'
     };
     
     const stages = {
@@ -127,7 +130,8 @@ const generateLeadsByType = (
       prospect: ['Lead', 'Qualificação', 'Demonstração', 'Proposta', 'Negociação', 'Fechamento'],
       employee: ['Contratado', 'Em treinamento', 'Efetivado', 'Desligamento'],
       candidate: ['Triagem', 'Entrevista', 'Testes', 'Contratação'],
-      supplier: ['Avaliação', 'Negociação', 'Contrato', 'Ativo']
+      supplier: ['Avaliação', 'Negociação', 'Contrato', 'Ativo'],
+      partner: ['Prospecção', 'Negociação', 'Contrato', 'Ativo']
     };
 
     const funnel = funnels[type];
@@ -177,6 +181,7 @@ const prospectLeads = generateLeadsByType('prospect', 15);
 const employeeLeads = generateLeadsByType('employee', 15);
 const candidateLeads = generateLeadsByType('candidate', 15);
 const supplierLeads = generateLeadsByType('supplier', 15);
+const partnerLeads = generateLeadsByType('partner', 15);
 
 // Export all leads
 export const leadsOrganizacao1: Lead[] = [
@@ -184,5 +189,6 @@ export const leadsOrganizacao1: Lead[] = [
   ...prospectLeads,
   ...employeeLeads,
   ...candidateLeads,
-  ...supplierLeads
+  ...supplierLeads,
+  ...partnerLeads
 ];

@@ -6,7 +6,7 @@ import { EmployeeLeadsTable } from "./EmployeeLeadsTable";
 import { CandidateLeadsTable } from "./CandidateLeadsTable";
 import { SupplierLeadsTable } from "./SupplierLeadsTable";
 import { ProspectLeadsTable } from "./ProspectLeadsTable";
-import { LeadCalls } from "../types";
+import { LeadCalls, LeadType } from "../types";
 import { CallsFilters } from "@/components/calls/CallsFilters";
 import {
   Pagination,
@@ -34,12 +34,29 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredLeads, setFilteredLeads] = useState<LeadCalls[]>([]);
 
+  console.log("All leads in LeadTabs:", leads); // Debug log
+
   // Filter leads by type
-  const clientLeads = leads.filter(lead => lead.leadType === "client");
-  const employeeLeads = leads.filter(lead => lead.leadType === "employee");
-  const candidateLeads = leads.filter(lead => lead.leadType === "candidate");
-  const supplierLeads = leads.filter(lead => lead.leadType === "supplier" || lead.leadType === "partner");
-  const prospectLeads = leads.filter(lead => lead.leadType === "prospect");
+  const getLeadsByType = (type: LeadType): LeadCalls[] => {
+    if (type === "supplier") {
+      // Special case: include both supplier and partner types in supplier tab
+      return leads.filter(lead => lead.leadType === "supplier" || lead.leadType === "partner");
+    }
+    return leads.filter(lead => lead.leadType === type);
+  };
+
+  const clientLeads = getLeadsByType("client");
+  const employeeLeads = getLeadsByType("employee");
+  const candidateLeads = getLeadsByType("candidate");
+  const supplierLeads = getLeadsByType("supplier"); // Includes partners too
+  const prospectLeads = getLeadsByType("prospect");
+
+  console.log(`Lead counts by type: 
+    clients: ${clientLeads.length}, 
+    employees: ${employeeLeads.length}, 
+    candidates: ${candidateLeads.length}, 
+    suppliers: ${supplierLeads.length}, 
+    prospects: ${prospectLeads.length}`); // Debug log
 
   // Apply search filter to the leads of the current active tab
   useEffect(() => {
@@ -161,7 +178,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
   };
 
   // Lead type explanations
-  const tabExplanations = {
+  const tabExplanations: Record<string, string> = {
     client: "Leads do tipo 'Cliente' representam organizações ou indivíduos que já adquiriram seus produtos ou serviços.",
     prospect: "Leads do tipo 'Prospect' são potenciais clientes que demonstraram interesse, mas ainda não realizaram uma compra.",
     employee: "Leads do tipo 'Funcionário' são pessoas que trabalham ou podem trabalhar na sua empresa.",
@@ -190,7 +207,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
         
         {/* Tab explanation section */}
         <div className="mb-4 bg-muted/50 p-3 rounded-md text-sm text-muted-foreground">
-          {tabExplanations[activeTab as keyof typeof tabExplanations]}
+          {tabExplanations[activeTab]}
         </div>
         
         <TabsContent value="client">
