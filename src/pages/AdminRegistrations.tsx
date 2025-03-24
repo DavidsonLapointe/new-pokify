@@ -1,6 +1,5 @@
 
-import { useState } from "react";
-import { CardContent, CardHeader } from "@/components/ui/card";
+import { CardHeader } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUser } from "@/contexts/UserContext";
 import { CompanyLeadly } from "@/types/company-leadly";
@@ -9,12 +8,14 @@ import { EmpresasTab } from "@/components/admin/registrations/tabs/EmpresasTab";
 import { FuncoesTab } from "@/components/admin/registrations/tabs/FuncoesTab";
 import { MinhaEmpresaTab } from "@/components/admin/registrations/tabs/MinhaEmpresaTab";
 import { UsuariosTab } from "@/components/admin/registrations/tabs/UsuariosTab";
+import { TiposDeLeadTab } from "@/components/admin/registrations/tabs/TiposDeLeadTab";
 import { 
   Layers, 
   Building2, 
   UserCog, 
   Building, 
-  Users 
+  Users,
+  Tag
 } from "lucide-react";
 
 const AdminRegistrations = () => {
@@ -62,6 +63,10 @@ const AdminRegistrations = () => {
                 <Users className="w-4 h-4 mr-2" />
                 Usuários
               </TabsTrigger>
+              <TabsTrigger value="tipos-de-lead">
+                <Tag className="w-4 h-4 mr-2" />
+                Tipos de Lead
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="areas">
@@ -82,6 +87,10 @@ const AdminRegistrations = () => {
             
             <TabsContent value="usuarios">
               <UsuariosTab />
+            </TabsContent>
+            
+            <TabsContent value="tipos-de-lead">
+              <TiposDeLeadTab />
             </TabsContent>
           </Tabs>
         </CardHeader>
