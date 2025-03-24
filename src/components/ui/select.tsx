@@ -16,10 +16,10 @@ const SelectValue = React.forwardRef<
   <SelectPrimitive.Value
     ref={ref}
     placeholder={placeholder}
-    className={cn("text-sm", className)}
+    className={cn("text-sm flex items-center", className)}
     {...props}
   >
-    {children}
+    {children || <span className="text-muted-foreground">{placeholder}</span>}
   </SelectPrimitive.Value>
 ))
 SelectValue.displayName = SelectPrimitive.Value.displayName

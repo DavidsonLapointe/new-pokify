@@ -99,7 +99,7 @@ export const LeadDetailsDialog = ({
                   value={editedLead.personType}
                   onValueChange={(value) => handleInputChange("personType", value as "pf" | "pj")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="personType">
                     <SelectValue placeholder="Selecione o tipo de pessoa" />
                   </SelectTrigger>
                   <SelectContent>
@@ -121,7 +121,7 @@ export const LeadDetailsDialog = ({
                   value={editedLead.leadType || "client"}
                   onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="leadType">
                     <SelectValue placeholder="Selecione o novo tipo de Lead" />
                   </SelectTrigger>
                   <SelectContent>
