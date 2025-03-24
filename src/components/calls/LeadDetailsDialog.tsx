@@ -67,99 +67,124 @@ export const LeadDetailsDialog = ({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            {/* Tipo de Pessoa */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="personType" className="text-right">
-                Tipo de Pessoa
-              </Label>
-              <Select
-                value={editedLead.personType}
-                onValueChange={(value) => handleInputChange("personType", value as "pf" | "pj")}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o tipo de pessoa" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pf">Pessoa Física</SelectItem>
-                  <SelectItem value="pj">Pessoa Jurídica</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Tipo de Pessoa */}
+              <div className="space-y-2">
+                <Label htmlFor="personType">
+                  Tipo de Pessoa
+                </Label>
+                <Select
+                  value={editedLead.personType}
+                  onValueChange={(value) => handleInputChange("personType", value as "pf" | "pj")}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo de pessoa" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pf">Pessoa Física</SelectItem>
+                    <SelectItem value="pj">Pessoa Jurídica</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Tipo de Lead */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="leadType" className="text-right">
-                Tipo de Lead
-              </Label>
-              <Select
-                value={editedLead.leadType || "client"}
-                onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o tipo de lead" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(leadTypeConfig)
-                    .filter(([key]) => allowedLeadTypes.includes(key))
-                    .map(([key, config]) => (
-                      <SelectItem key={key} value={key}>
-                        {config.label}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+              {/* Tipo de Lead */}
+              <div className="space-y-2">
+                <Label htmlFor="leadType">
+                  Tipo de Lead
+                </Label>
+                <Select
+                  value={editedLead.leadType || "client"}
+                  onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo de lead" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(leadTypeConfig)
+                      .filter(([key]) => allowedLeadTypes.includes(key))
+                      .map(([key, config]) => (
+                        <SelectItem key={key} value={key}>
+                          {config.label}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Campos condicionais baseados no tipo de pessoa */}
             {editedLead.personType === "pf" ? (
               <>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="firstName" className="text-right">
-                    Nome
-                  </Label>
-                  <Input
-                    id="firstName"
-                    value={editedLead.firstName || ""}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="lastName" className="text-right">
-                    Sobrenome
-                  </Label>
-                  <Input
-                    id="lastName"
-                    value={editedLead.lastName || ""}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    className="col-span-3"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">
+                      Nome
+                    </Label>
+                    <Input
+                      id="firstName"
+                      value={editedLead.firstName || ""}
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">
+                      Sobrenome
+                    </Label>
+                    <Input
+                      id="lastName"
+                      value={editedLead.lastName || ""}
+                      onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    />
+                  </div>
                 </div>
               </>
             ) : (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="razaoSocial" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="razaoSocial">
                   Razão Social
                 </Label>
                 <Input
                   id="razaoSocial"
                   value={editedLead.razaoSocial || ""}
                   onChange={(e) => handleInputChange("razaoSocial", e.target.value)}
-                  className="col-span-3"
                 />
               </div>
             )}
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editedLead.email || ""}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">
+                  Telefone
+                </Label>
+                <Input
+                  id="phone"
+                  value={editedLead.phone || ""}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* Status do Lead */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
+            <div className="space-y-2">
+              <Label htmlFor="status">
                 Status
               </Label>
               <Select
                 value={editedLead.status || "active"}
                 onValueChange={(value) => handleInputChange("status", value as "active" | "inactive")}
               >
-                <SelectTrigger className="col-span-3">
+                <SelectTrigger>
                   <SelectValue placeholder="Selecione o status" />
                 </SelectTrigger>
                 <SelectContent>
