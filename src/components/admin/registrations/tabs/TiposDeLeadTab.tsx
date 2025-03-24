@@ -47,18 +47,6 @@ export const TiposDeLeadTab = () => {
     { value: "bg-gray-100 text-gray-800", label: "Cinza" },
   ];
 
-  // Available icons for lead types
-  const iconOptions = [
-    { value: "User", label: "Usuário" },
-    { value: "Users", label: "Usuários" },
-    { value: "Building", label: "Prédio" },
-    { value: "Briefcase", label: "Pasta" },
-    { value: "FileText", label: "Documento" },
-    { value: "ShoppingCart", label: "Carrinho" },
-    { value: "Truck", label: "Caminhão" },
-    { value: "Phone", label: "Telefone" },
-  ];
-
   // Static initial lead types
   const defaultLeadTypes: LeadType[] = [
     {
@@ -469,40 +457,6 @@ export const TiposDeLeadTab = () => {
                   </div>
                 ))}
               </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Ícone</Label>
-              <div className="grid grid-cols-4 gap-2">
-                {iconOptions.map((option) => (
-                  <div 
-                    key={option.value}
-                    className={`flex flex-col items-center gap-1 p-2 rounded cursor-pointer border-2 ${
-                      newLeadType.icon === option.value ? 'border-primary' : 'border-transparent'
-                    }`}
-                    onClick={() => handleInputChange('icon', option.value)}
-                  >
-                    <div className="w-6 h-6 flex items-center justify-center">
-                      {/* This is just a placeholder for the icon representation */}
-                      <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-xs">
-                        {option.value.charAt(0)}
-                      </div>
-                    </div>
-                    <span className="text-xs">{option.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="isActive"
-                className="rounded border-gray-300"
-                checked={newLeadType.isActive}
-                onChange={(e) => handleInputChange('isActive', e.target.checked)}
-              />
-              <Label htmlFor="isActive">Ativo</Label>
             </div>
           </div>
 
