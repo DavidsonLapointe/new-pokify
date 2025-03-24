@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -378,7 +379,7 @@ export const TiposDeLeadTab = () => {
                         size="icon"
                         onClick={() => handleOpenEditDialog(leadType)}
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4 text-primary" />
                       </Button>
                       
                       <CustomSwitch 
