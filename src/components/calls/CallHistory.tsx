@@ -83,6 +83,7 @@ export const CallHistory = ({
     setShowLeadDetails(false);
   };
 
+  // Safely access properties with null checks
   const temperature = selectedLead ? getLastCallTemperature(selectedLead.calls) : null;
   const tempConfig = temperature ? temperatureConfig[temperature] : null;
 
@@ -96,23 +97,25 @@ export const CallHistory = ({
           <DialogHeader className="flex-shrink-0">
             <div className="flex items-center gap-2">
               <DialogTitle>
-                Histórico de Uploads - {leadName}
+                Histórico de Uploads - {leadName || 'Sem nome'}
               </DialogTitle>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setShowLeadDetails(true)}
-                    className={`h-8 w-8 rounded-full border-2 ${tempConfig?.color} hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-95`}
-                  >
-                    <ClipboardList className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Ver relatório completo do lead</p>
-                </TooltipContent>
-              </Tooltip>
+              {selectedLead && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setShowLeadDetails(true)}
+                      className={`h-8 w-8 rounded-full border-2 ${tempConfig?.color || ''} hover:opacity-80 transition-all duration-200 hover:scale-110 active:scale-95`}
+                    >
+                      <ClipboardList className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ver relatório completo do lead</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
               {tempConfig && (
                 <Badge
                   variant="secondary"

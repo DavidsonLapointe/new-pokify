@@ -9,7 +9,9 @@ export type LeadType = "client" | "prospect" | "employee" | "candidate" | "suppl
 /**
  * Gets the formatted name of a lead based on its type (person or company)
  */
-export const getLeadName = (lead: LeadCalls): string => {
+export const getLeadName = (lead: LeadCalls | null): string => {
+  if (!lead) return ""; // Return empty string if lead is null or undefined
+  
   if (lead.personType === "pj" && lead.razaoSocial) {
     return lead.razaoSocial;
   }

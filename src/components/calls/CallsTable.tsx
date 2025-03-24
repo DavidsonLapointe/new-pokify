@@ -9,6 +9,7 @@ import { useLeadsData } from "./table/useLeadsData";
 import { LeadDetailsDialog } from "./LeadDetailsDialog";
 import { LeadTabs } from "./tabs/LeadTabs";
 import { toast } from "sonner";
+import { getLeadName } from "./utils";
 
 interface CallsTableProps {
   calls: Call[];
@@ -52,15 +53,6 @@ export const CallsTable = ({
     // Por enquanto, vamos apenas mostrar um toast
     toast.success(`Lead ${getLeadName(updatedLead)} atualizado com sucesso!`);
     setShowLeadDetails(false);
-  };
-
-  // Função auxiliar para obter o nome do lead
-  const getLeadName = (lead: LeadCalls): string => {
-    if (lead.personType === "pj" && lead.razaoSocial) {
-      return lead.razaoSocial;
-    }
-    
-    return `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
   };
 
   if (!calls || calls.length === 0) {
