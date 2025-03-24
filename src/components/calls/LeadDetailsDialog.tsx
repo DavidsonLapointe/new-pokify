@@ -21,6 +21,7 @@ import { LeadCalls } from "./types";
 import { getLeadName, LeadType, leadTypeConfig } from "./utils";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { LeadTypeBadge } from "./LeadTypeBadge";
 
 interface LeadDetailsDialogProps {
   lead: LeadCalls;
@@ -110,9 +111,12 @@ export const LeadDetailsDialog = ({
 
               {/* Tipo de Lead */}
               <div className="space-y-2">
-                <Label htmlFor="leadType">
-                  Tipo de Lead
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="leadType">
+                    Tipo de Lead Atual:
+                  </Label>
+                  {lead.leadType && <LeadTypeBadge leadType={lead.leadType} />}
+                </div>
                 <Select
                   value={editedLead.leadType || "client"}
                   onValueChange={(value) => handleInputChange("leadType", value as LeadType)}
