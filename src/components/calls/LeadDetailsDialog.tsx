@@ -213,7 +213,7 @@ export const LeadDetailsDialog = ({
                 value={editedLead.status || "active"}
                 onValueChange={(value) => handleInputChange("status", value as "active" | "inactive")}
               >
-                <SelectTrigger>
+                <SelectTrigger id="status">
                   <SelectValue placeholder="Selecione o novo status" />
                 </SelectTrigger>
                 <SelectContent>
