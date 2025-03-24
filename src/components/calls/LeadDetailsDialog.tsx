@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import { LeadCalls } from "./types";
 import { getLeadName, LeadType, leadTypeConfig } from "./utils";
+import { X } from "lucide-react";
 
 interface LeadDetailsDialogProps {
   lead: LeadCalls;
@@ -45,11 +46,21 @@ export const LeadDetailsDialog = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onUpdateLead(editedLead);
+    onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogClose asChild>
+          <button
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+        </DialogClose>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Editar Lead: {getLeadName(lead)}</DialogTitle>
@@ -159,12 +170,12 @@ export const LeadDetailsDialog = ({
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" type="button" onClick={onClose}>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit">Salvar Alterações</Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
