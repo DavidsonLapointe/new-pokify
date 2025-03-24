@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -101,6 +102,7 @@ const leadToCall = (lead: any): Call => {
       phone: lead.contactValue || lead.phone || "",
       status: lead.status
     },
+    leadType: lead.leadType, // Ensure leadType is passed from the mock data
     emptyLead: false,
     date: lead.createdAt,
     duration: lead.calls && lead.calls.length > 0 ? lead.calls[0].duration : "00:00",
@@ -134,8 +136,7 @@ const leadToCall = (lead: any): Call => {
       undefined,
     phone: lead.contactValue || lead.phone || "",
     seller: "Maria Santos",
-    mediaType: isVideoFile ? "video" : "audio",
-    leadType: lead.leadType
+    mediaType: isVideoFile ? "video" : "audio"
   };
 };
 
@@ -160,8 +161,12 @@ const OrganizationLeads = () => {
 
   // Load the mock leads when the component mounts
   useEffect(() => {
+    console.log("Loading mock leads data from leadsOrganizacao1:", leadsOrganizacao1.length);
+    
     // Convert leads to the format of calls
     const calls = leadsOrganizacao1.map(leadToCall);
+    console.log("Transformed calls from leads:", calls.length);
+    
     setCurrentCalls(calls);
     toast.success(`${calls.length} leads da Organização 1 Ltda. carregados com sucesso!`);
   }, []);

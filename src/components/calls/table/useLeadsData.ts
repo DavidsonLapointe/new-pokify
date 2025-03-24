@@ -29,7 +29,7 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
   const processLeads = useCallback((callsData: Call[]) => {
     const leadsMap = new Map<string, LeadCalls>();
 
-    console.log("Processando chamadas:", callsData);
+    console.log("Processando chamadas:", callsData.length);
 
     // Primeiro, processa todas as chamadas para criar/atualizar leads
     callsData.forEach(call => {
@@ -75,7 +75,8 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
           calls: isValidCall ? [call] : [], // Array vazio se a chamada não for válida
           crmInfo: call.crmInfo,
           createdAt: call.date,
-          status: leadStatus // Set the status from the lead info
+          status: leadStatus, // Set the status from the lead info
+          leadType: call.leadType // Add the leadType from the call
         };
         leadsMap.set(call.leadId, newLead);
         console.log(`Novo lead criado: ${call.leadId}`, newLead);
@@ -85,7 +86,7 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
     // Ordena as chamadas de cada lead por data (mais recente primeiro)
     leadsMap.forEach(lead => {
       lead.calls.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      console.log(`Lead ${lead.id} com ${lead.calls.length} chamadas após ordenação:`, lead.calls);
+      console.log(`Lead ${lead.id} com ${lead.calls.length} chamadas após ordenação`);
     });
 
     // Retorna os leads ordenados por data de criação (mais recente primeiro)
@@ -104,7 +105,7 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
       // Adiciona a nova chamada ao início do array apenas se for uma chamada válida
       if (!newCall.emptyLead && newCall.status === "success") {
         const updatedCalls = [newCall, ...prevCalls];
-        console.log("Chamadas atualizadas:", updatedCalls);
+        console.log("Chamadas atualizadas:", updatedCalls.length);
         return updatedCalls;
       }
       // IMPORTANTE: Se não for uma chamada válida, ainda precisamos incluir o lead
@@ -117,6 +118,7 @@ export const useLeadsData = (initialCalls: Call[] = []) => {
   }, []);
 
   const leadsWithCalls = processLeads(calls);
+  console.log("Total leads processados:", leadsWithCalls.length);
 
   return { leadsWithCalls, updateLeadCalls };
 };

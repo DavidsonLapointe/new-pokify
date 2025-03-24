@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Call } from "@/types/calls";
 import { LeadCalls } from "./types";
@@ -35,8 +35,11 @@ export const CallsTable = ({
   const [showLeadDetails, setShowLeadDetails] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
 
+  // Use the useLeadsData hook to process the calls into leads
   const { leadsWithCalls, updateLeadCalls } = useLeadsData(calls);
 
+  console.log("Processed leads with calls:", leadsWithCalls); // Debug log to verify data
+  
   const handleShowCallHistory = (lead: LeadCalls) => {
     console.log("Mostrando histórico para lead:", lead);
     setSelectedLead(lead);
