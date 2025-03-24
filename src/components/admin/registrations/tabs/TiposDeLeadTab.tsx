@@ -6,9 +6,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Check, X } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { v4 as uuidv4 } from 'uuid';
+import { CustomSwitch } from "@/components/ui/custom-switch";
 
 interface LeadType {
   id: string;
@@ -393,18 +394,11 @@ export const TiposDeLeadTab = () => {
                         <Edit className="h-4 w-4" />
                       </Button>
                       
-                      <Button
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => toggleStatus(leadType)}
-                        title={leadType.isActive ? "Desativar" : "Ativar"}
-                      >
-                        {leadType.isActive ? (
-                          <X className="h-4 w-4 text-red-500" />
-                        ) : (
-                          <Check className="h-4 w-4 text-green-500" />
-                        )}
-                      </Button>
+                      <CustomSwitch 
+                        checked={leadType.isActive}
+                        onCheckedChange={() => toggleStatus(leadType)}
+                        aria-label={leadType.isActive ? "Desativar tipo de lead" : "Ativar tipo de lead"}
+                      />
                       
                       {!leadType.isDefault && (
                         <Button 
