@@ -81,6 +81,19 @@ export const LeadDetailsDialog = ({
         label: config.label
       }));
   };
+  
+  // Get person type label based on the current type
+  const getPersonTypeLabel = (type: "pf" | "pj") => {
+    return type === "pf" ? "Pessoa Física" : "Pessoa Jurídica";
+  };
+  
+  // Get available person type options (only show the type different from current)
+  const getAvailablePersonTypeOptions = () => {
+    const currentType = lead.personType;
+    return currentType === "pf" 
+      ? [{ value: "pj", label: "Pessoa Jurídica" }] 
+      : [{ value: "pf", label: "Pessoa Física" }];
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -103,19 +116,27 @@ export const LeadDetailsDialog = ({
             <div className="grid grid-cols-2 gap-4">
               {/* Tipo de Pessoa */}
               <div className="space-y-2">
-                <Label htmlFor="personType">
-                  Tipo de Pessoa
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="personType">
+                    Tipo de Pessoa Atual:
+                  </Label>
+                  <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+                    {getPersonTypeLabel(lead.personType)}
+                  </Badge>
+                </div>
                 <Select
                   value={editedLead.personType}
                   onValueChange={(value) => handleInputChange("personType", value as "pf" | "pj")}
                 >
                   <SelectTrigger id="personType">
-                    <SelectValue placeholder="Selecione o tipo de pessoa" />
+                    <SelectValue placeholder="Selecione o novo tipo de pessoa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pf">Pessoa Física</SelectItem>
-                    <SelectItem value="pj">Pessoa Jurídica</SelectItem>
+                    {getAvailablePersonTypeOptions().map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
