@@ -181,7 +181,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
   const tabExplanations: Record<string, string> = {
     client: "Leads do tipo 'Cliente' representam organizações ou indivíduos que já adquiriram seus produtos ou serviços.",
     prospect: "Leads do tipo 'Prospect' são potenciais clientes que demonstraram interesse, mas ainda não realizaram uma compra.",
-    employee: "Leads do tipo 'Funcionário' são pessoas que trabalham ou podem trabalhar na sua empresa.",
+    employee: "Leads do tipo 'Funcionário' são pessoas que trabalham na sua empresa.",
     candidate: "Leads do tipo 'Candidato RH' são pessoas que se candidataram a vagas na sua empresa.",
     supplier: "Leads do tipo 'Fornecedor' são empresas ou indivíduos que fornecem produtos ou serviços para sua organização."
   };
