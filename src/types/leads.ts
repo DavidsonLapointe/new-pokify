@@ -44,6 +44,7 @@ export interface Lead {
     funnel: string;
     stage: string;
   };
+  leadType?: "client" | "prospect" | "employee" | "candidate" | "supplier" | "partner";
 }
 
 export interface LeadWithCalls {
