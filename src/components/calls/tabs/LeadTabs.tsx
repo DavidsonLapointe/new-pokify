@@ -206,7 +206,7 @@ export const LeadTabs = ({ leads, formatDate, onEditLead, onAddLead, searchQuery
         </div>
         
         {/* Tab explanation section - with updated styling */}
-        <div className="mb-4 bg-[#E5DEFF] p-3 rounded-md text-sm text-white">
+        <div className="mb-4 bg-[#E5DEFF] p-3 rounded-md text-sm text-gray-800">
           {tabExplanations[activeTab]}
         </div>
         
