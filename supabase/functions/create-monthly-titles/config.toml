@@ -1,6 +1,0 @@
-
-project_id = "qrkovwuraehejkiiwhbi"
-serve_command = "deno run --allow-net --allow-env --allow-read index.ts"
-[env]
-SUPABASE_URL = { value = "" }
-SUPABASE_SERVICE_ROLE_KEY = { value = "" }

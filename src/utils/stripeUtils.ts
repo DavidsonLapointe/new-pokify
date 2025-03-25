@@ -1,43 +1,29 @@
-
 /**
  * Utilitário para gerenciar a configuração e validação do Stripe
+ * Versão mockada sem dependências do Supabase
  */
 
 import { loadStripe } from "@stripe/stripe-js";
-import { supabase } from "@/integrations/supabase/client";
+
+// Chave mockada do Stripe para desenvolvimento
+const MOCK_STRIPE_KEY = "pk_test_mockStripeKeyForDevelopment";
 
 // Função para obter a chave pública do Stripe com validação
 export const getStripePublicKey = async (): Promise<string> => {
   try {
-    // Primeiro, tentar buscar a chave do Supabase Edge Function
-    const { data, error } = await supabase.functions.invoke('get-stripe-key', {
-      body: { type: 'public' }
-    });
-    
-    if (error) {
-      console.error("Erro ao buscar chave do Stripe:", error);
-      // Fallback para variável de ambiente local
-      return getLocalStripeKey();
-    }
-    
-    if (data && data.key) {
-      console.log("Chave pública do Stripe obtida do Supabase");
-      return validateStripeKey(data.key);
-    } else {
-      console.log("Nenhuma chave encontrada no Supabase, usando variável de ambiente local");
-      return getLocalStripeKey();
-    }
+    // Versão mockada que retorna uma chave de teste fixa
+    console.log("Usando chave mockada do Stripe para desenvolvimento");
+    return MOCK_STRIPE_KEY;
   } catch (error) {
     console.error("Exceção ao buscar chave do Stripe:", error);
-    // Fallback para variável de ambiente local
-    return getLocalStripeKey();
+    return "";
   }
 };
 
 // Função para obter a chave local da variável de ambiente
 const getLocalStripeKey = (): string => {
-  const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-  return validateStripeKey(stripeKey);
+  // Versão mockada que retorna uma chave de teste fixa
+  return MOCK_STRIPE_KEY;
 };
 
 // Validar formato da chave
@@ -45,7 +31,7 @@ const validateStripeKey = (stripeKey: string | undefined): string => {
   if (!stripeKey) {
     console.error(
       "ERRO: Chave pública do Stripe não encontrada.",
-      "Certifique-se de que a chave está definida no Supabase ou como variável de ambiente."
+      "Certifique-se de que a chave está definida como variável de ambiente."
     );
     return "";
   }
@@ -102,26 +88,9 @@ export const getInitialStripeStatus = (): StripeConfigStatus => {
 
 // Função assíncrona para verificar a configuração do Stripe
 export const validateStripeConfig = async (): Promise<StripeConfigStatus> => {
-  const stripeKey = await getStripePublicKey();
-  
-  if (!stripeKey) {
-    return { 
-      valid: false, 
-      message: "Chave do Stripe não configurada. Configure a chave no Supabase ou como variável de ambiente." 
-    };
-  }
-  
-  if (!stripeKey.startsWith('pk_')) {
-    return { 
-      valid: false, 
-      message: "Formato inválido da chave do Stripe. Deve começar com 'pk_'." 
-    };
-  }
-  
-  const isTestKey = stripeKey.startsWith('pk_test_');
-  
+  // Versão mockada que sempre retorna sucesso
   return { 
     valid: true, 
-    message: `Configuração do Stripe válida. Usando chave ${isTestKey ? 'de teste' : 'de produção'}: ${stripeKey.substring(0, 8)}...` 
+    message: "Configuração do Stripe válida. Usando chave de teste mockada para desenvolvimento." 
   };
 };
