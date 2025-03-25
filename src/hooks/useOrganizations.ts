@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Organization } from '@/types';
-import { mockOrganizations } from '@/mocks/organizationMocks';
+import { fetchOrganizations as fetchOrgsService } from '@/services/mockOrganizationService';
 
 export const useOrganizations = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -12,11 +11,11 @@ export const useOrganizations = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // In a real app, this would be an API call
-      // For now, we're using mock data
+      // Usando o serviço mockado em vez dos dados mockados diretamente
+      const orgs = await fetchOrgsService();
       
-      // Ensure each organization has a users array
-      const orgsWithUsers = mockOrganizations.map(org => ({
+      // Garantir que cada organização tenha um array de usuários
+      const orgsWithUsers = orgs.map(org => ({
         ...org,
         users: org.users || []
       }));

@@ -1,4 +1,3 @@
-
 export interface AnalysisPackage {
   id: string;
   name: string;
@@ -7,6 +6,8 @@ export interface AnalysisPackage {
   active: boolean;
   stripeProductId?: string;
   stripePriceId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface NewPackageForm {

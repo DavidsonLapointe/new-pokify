@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { AnalysisPackage } from "@/types/packages";
@@ -7,11 +6,37 @@ import { toast } from "sonner";
 
 interface PackagesListProps {
   packages: AnalysisPackage[];
+  isLoading?: boolean;
   onEdit: (pkg: AnalysisPackage) => void;
-  onToggleActive: (pkg: AnalysisPackage, active: boolean) => void;
+  onToggleActive: (pkg: AnalysisPackage) => void;
 }
 
-export function PackagesList({ packages, onEdit, onToggleActive }: PackagesListProps) {
+export function PackagesList({ packages, isLoading = false, onEdit, onToggleActive }: PackagesListProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div 
+            key={i} 
+            className="p-4 border rounded-lg flex items-center justify-between animate-pulse"
+          >
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-24"></div>
+              <div className="h-3 bg-gray-200 rounded w-32"></div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="h-4 bg-gray-200 rounded w-16"></div>
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-10 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {packages.length === 0 ? (
@@ -45,9 +70,9 @@ export function PackagesList({ packages, onEdit, onToggleActive }: PackagesListP
                 </Button>
                 <CustomSwitch
                   checked={pkg.active}
-                  onCheckedChange={(checked) => {
-                    onToggleActive(pkg, checked);
-                    toast.success(`Pacote ${checked ? 'ativado' : 'desativado'} com sucesso`);
+                  onCheckedChange={() => {
+                    onToggleActive(pkg);
+                    toast.success(`Pacote ${pkg.active ? 'desativado' : 'ativado'} com sucesso`);
                   }}
                 />
               </div>

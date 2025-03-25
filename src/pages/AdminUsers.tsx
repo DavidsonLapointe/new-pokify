@@ -1,17 +1,14 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import { User, UserRole } from "@/types";
+import { User } from "@/types";
 import { useUser } from "@/contexts/UserContext";
 import { UsersTable } from "@/components/admin/users/UsersTable";
 import { AddLeadlyEmployeeDialog } from "@/components/admin/users/AddLeadlyEmployeeDialog";
 import { EditLeadlyEmployeeDialog } from "@/components/admin/users/EditLeadlyEmployeeDialog";
 import { AdminUserPermissionsDialog } from "@/components/admin/users/AdminUserPermissionsDialog";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { formatUserData } from "@/utils/userUtils";
-import { mockLeadlyEmployees } from "@/mocks/userMocks";
+import { useUsers } from "@/hooks";
 import {
   Pagination,
   PaginationContent,
@@ -23,81 +20,29 @@ import {
 
 const AdminUsers = () => {
   const { user } = useUser();
+  const { 
+    users, 
+    loading, 
+    createUser, 
+    updateUser 
+  } = useUsers();
+  
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const fetchUsers = async () => {
+  const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     try {
-      // For demonstration purposes, we'll use mock data
-      // In a real environment, we would fetch from the database
-      
-      // Start with the 2 existing Leadly employees from our mocks
-      let mockUsers = [...mockLeadlyEmployees];
-      
-      // Generate 13 more Leadly employees to reach a total of 15
-      for (let i = 0; i < 13; i++) {
-        const id = `l${i + 3}`; // l3, l4, l5, etc. (since l1 and l2 already exist)
-        const role = i % 3 === 0 ? "leadly_master" as UserRole : "leadly_employee" as UserRole;
-        
-        const newUser: User = {
-          id,
-          name: `Funcionário Leadly ${i + 3}`,
-          email: `employee${i + 3}@leadly.ai`,
-          phone: `+55119999${String(i).padStart(5, '0')}`,
-          role: role,
-          status: i % 5 === 0 ? "inactive" as "inactive" : i % 7 === 0 ? "pending" as "pending" : "active" as "active",
-          createdAt: new Date(Date.now() - (i * 30 * 24 * 60 * 60 * 1000)).toISOString(), // Different creation dates
-          lastAccess: new Date(Date.now() - (i * 3 * 24 * 60 * 60 * 1000)).toISOString(), // Different last access dates
-          permissions: {
-            dashboard: true,
-            organizations: i % 2 === 0,
-            users: i % 3 === 0,
-            modules: i % 2 === 0,
-            plans: i % 4 === 0,
-            "credit-packages": i % 3 === 0,
-            financial: i % 5 === 0,
-            integrations: i % 2 === 0,
-            prompt: i % 3 === 0,
-            settings: i % 4 === 0,
-            profile: true
-          },
-          logs: [
-            {
-              id: "1",
-              date: new Date(Date.now() - (i * 24 * 60 * 60 * 1000)).toISOString(),
-              action: "Usuário fez login"
-            }
-          ],
-          avatar: null,
-          company_leadly_id: "leadly1"
-        };
-        
-        mockUsers.push(newUser);
-      }
-
-      console.log("Usuários Leadly carregados:", mockUsers);
-      setUsers(mockUsers);
+      await createUser(newUser);
+      toast.success('Usuário adicionado com sucesso');
+      setIsAddDialogOpen(false);
     } catch (error) {
-      console.error('Erro ao carregar usuários:', error);
-      toast.error('Erro ao carregar usuários');
-    } finally {
-      setLoading(false);
+      console.error('Erro ao adicionar usuário:', error);
+      toast.error('Erro ao adicionar usuário');
     }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleAddUser = () => {
-    fetchUsers(); // Recarrega a lista após adicionar
-    setIsAddDialogOpen(false);
   };
 
   const handleEditUser = (user: User) => {
@@ -107,31 +52,8 @@ const AdminUsers = () => {
 
   const handleUserUpdate = async (updatedUser: User) => {
     try {
-      // For database compatibility, if role is "manager", store it as "admin"
-      // This is a temporary solution until the database enum is updated
-      let roleForDatabase: string | UserRole = updatedUser.role;
-      
-      if (updatedUser.role === "manager") {
-        roleForDatabase = "admin";
-      }
-        
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          name: updatedUser.name,
-          email: updatedUser.email,
-          phone: updatedUser.phone,
-          role: roleForDatabase as any, // Use type assertion for database compatibility
-          permissions: updatedUser.permissions,
-          status: updatedUser.status,
-          company_leadly_id: updatedUser.company_leadly_id
-        })
-        .eq('id', updatedUser.id);
-
-      if (error) throw error;
-
+      await updateUser(updatedUser);
       toast.success('Usuário atualizado com sucesso');
-      await fetchUsers(); // Recarrega a lista após atualizar
       setIsEditDialogOpen(false);
       setIsPermissionsDialogOpen(false);
     } catch (error) {
@@ -161,7 +83,12 @@ const AdminUsers = () => {
   };
 
   if (loading) {
-    return <div>Carregando usuários...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="mt-4 text-muted-foreground">Carregando usuários...</p>
+      </div>
+    );
   }
 
   return (

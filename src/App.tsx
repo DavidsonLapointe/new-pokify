@@ -1,16 +1,15 @@
-
-import AppRoutes from "./Routes"
-import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "./contexts/AuthContext"
-import './App.css'
+import { AuthProvider } from './contexts/AuthContext';
+import AppRoutes from './Routes';
+import { Toaster } from 'sonner';
+import './App.css';
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" richColors />
       <AppRoutes />
-      <Toaster />
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
