@@ -4,7 +4,8 @@ import { useUser } from "@/contexts/UserContext";
 import { CreditsBalanceCard } from "@/components/organization/plans/CreditsBalanceCard";
 import { AnalysisPackagesDialog } from "@/components/organization/plans/AnalysisPackagesDialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { fetchPlanById } from "@/services/plans";
+import { fetchPlanById } from "@/services/mockPlanService";
+import { fetchCreditBalance } from "@/services/mockCreditsService";
 import { mockPlans } from "@/mocks/plansMocks";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { Loader2 } from "lucide-react";
@@ -14,65 +15,70 @@ export default function OrganizationCredits() {
   const [isPackagesDialogOpen, setIsPackagesDialogOpen] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [credits, setCredits] = useState({
+    monthlyQuota: 0,
+    used: 0,
+    additional: 0
+  });
 
   // Get the user's current plan ID, ensuring it's a string
   const planId = typeof user?.organization?.plan === 'string' 
     ? user?.organization?.plan 
     : user?.organization?.plan?.id || '';
   
-  // Use effect to handle plan fetching with fallback to mocks
+  // Carregar dados do plano e créditos
   useEffect(() => {
-    const loadPlan = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       
       try {
-        if (!planId) {
-          throw new Error("No plan ID available");
+        // Carregar o plano
+        let plan: Plan | null = null;
+        
+        if (planId) {
+          plan = await fetchPlanById(planId);
         }
         
-        // Try to fetch from the API
-        const fetchedPlan = await fetchPlanById(planId);
+        if (!plan) {
+          // Fallback para o primeiro plano mockado
+          const defaultPlan = mockPlans[0];
+          plan = {
+            id: defaultPlan.id,
+            name: defaultPlan.name,
+            price: defaultPlan.price,
+            shortDescription: defaultPlan.shortDescription || defaultPlan.description,
+            description: defaultPlan.description,
+            benefits: defaultPlan.benefits || defaultPlan.features,
+            active: defaultPlan.active,
+            stripeProductId: defaultPlan.stripeProductId,
+            stripePriceId: defaultPlan.stripePriceId,
+            credits: defaultPlan.credits
+          };
+        }
         
-        if (fetchedPlan) {
-          setCurrentPlan(fetchedPlan);
+        setCurrentPlan(plan);
+        
+        // Carregar os créditos
+        const creditBalance = await fetchCreditBalance();
+        
+        if (creditBalance) {
+          setCredits({
+            monthlyQuota: plan.credits ? Number(plan.credits) : 100,
+            used: creditBalance.usedCredits,
+            additional: creditBalance.additionalCredits
+          });
         } else {
-          // If no plan found, fallback to mock data
-          const mockPlan = mockPlans.find(p => p.id.toString() === planId || p.name.toLowerCase() === planId.toLowerCase());
-          
-          if (mockPlan) {
-            setCurrentPlan({
-              id: mockPlan.id,
-              name: mockPlan.name,
-              price: mockPlan.price,
-              shortDescription: mockPlan.shortDescription || mockPlan.description,
-              description: mockPlan.description,
-              benefits: mockPlan.benefits || mockPlan.features,
-              active: mockPlan.active,
-              stripeProductId: mockPlan.stripeProductId,
-              stripePriceId: mockPlan.stripePriceId,
-              credits: mockPlan.credits
-            });
-          } else {
-            // If no matching plan found, use first mock plan
-            const defaultPlan = mockPlans[0];
-            setCurrentPlan({
-              id: defaultPlan.id,
-              name: defaultPlan.name,
-              price: defaultPlan.price,
-              shortDescription: defaultPlan.shortDescription || defaultPlan.description,
-              description: defaultPlan.description,
-              benefits: defaultPlan.benefits || defaultPlan.features,
-              active: defaultPlan.active,
-              stripeProductId: defaultPlan.stripeProductId,
-              stripePriceId: defaultPlan.stripePriceId,
-              credits: defaultPlan.credits
-            });
-            console.log("Using default mock plan");
-          }
+          // Valores padrão se não conseguir carregar
+          setCredits({
+            monthlyQuota: plan.credits ? Number(plan.credits) : 100,
+            used: 45,
+            additional: 20
+          });
         }
       } catch (error) {
-        console.error("Error loading plan:", error);
-        // Fallback to first mock plan on error
+        console.error("Erro ao carregar dados:", error);
+        
+        // Fallback para valores padrão em caso de erro
         const defaultPlan = mockPlans[0];
         setCurrentPlan({
           id: defaultPlan.id,
@@ -86,12 +92,18 @@ export default function OrganizationCredits() {
           stripePriceId: defaultPlan.stripePriceId,
           credits: defaultPlan.credits
         });
+        
+        setCredits({
+          monthlyQuota: 100,
+          used: 45,
+          additional: 20
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadPlan();
+    loadData();
   }, [planId]);
 
   if (isLoading) {
@@ -110,14 +122,6 @@ export default function OrganizationCredits() {
     );
   }
 
-  // Ensure monthly quota, used credits, and additional credits are numbers
-  const monthlyQuota = typeof currentPlan.credits === 'string' 
-    ? parseInt(currentPlan.credits, 10) 
-    : Number(currentPlan.credits || 0);
-    
-  const usedCredits = 45; // Example values
-  const additionalCredits = 20; // Example values
-
   return (
     <>
       <Helmet>
@@ -132,9 +136,9 @@ export default function OrganizationCredits() {
 
         <div className="max-w-md w-full">
           <CreditsBalanceCard 
-            monthlyQuota={monthlyQuota}
-            used={usedCredits}
-            additionalCredits={additionalCredits}
+            monthlyQuota={credits.monthlyQuota}
+            used={credits.used}
+            additionalCredits={credits.additional}
             onBuyMoreCredits={() => setIsPackagesDialogOpen(true)}
           />
         </div>
@@ -144,7 +148,7 @@ export default function OrganizationCredits() {
           onOpenChange={setIsPackagesDialogOpen}
           onPackagePurchased={() => {
             // Refresh credits data after purchase
-            // Could implement a refetch here
+            // Em uma implementação real, recarregaríamos os dados
           }}
         />
       </div>

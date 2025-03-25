@@ -1,6 +1,2 @@
-
-export * from "./planFetchService";
-export * from "./planCreateService";
-export * from "./planUpdateService";
-export * from "./planDeleteService";
-export * from "./planUtils";
+// Exportando os serviços mockados para substituir os serviços que usam Supabase
+export * from "../mockPlanService";

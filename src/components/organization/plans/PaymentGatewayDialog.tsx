@@ -370,7 +370,7 @@ export function PaymentGatewayDialog({
               <p className="text-xs mt-1 text-red-700">{stripeStatus.message}</p>
               <p className="text-xs mt-2 text-red-700">
                 Para que o Stripe funcione corretamente, certifique-se de que a chave pública do Stripe 
-                está configurada corretamente nas variáveis de ambiente do Supabase.
+                está configurada corretamente nas variáveis de ambiente da aplicação.
               </p>
             </div>
           </div>

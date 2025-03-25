@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchCreditBalance } from "@/services/mockCreditsService";
 
 interface CreditsBalanceCardProps {
   monthlyQuota: number;
@@ -23,8 +23,9 @@ export function CreditsBalanceCard({
 }: CreditsBalanceCardProps) {
   const [loading, setLoading] = useState(true);
   const [credits, setCredits] = useState({
-    total: 0,
-    used: 0
+    total: monthlyQuota,
+    used: used,
+    additional: additionalCredits
   });
 
   useEffect(() => {
@@ -33,32 +34,37 @@ export function CreditsBalanceCard({
 
   const fetchCreditsBalance = async () => {
     try {
-      const { data, error } = await supabase
-        .from('credit_balances')
-        .select('*')
-        .single();
-
-      if (error) {
-        console.error('Erro ao buscar saldo de créditos:', error);
-        toast.error('Erro ao carregar saldo de créditos');
-        return;
-      }
+      const data = await fetchCreditBalance();
 
       if (data) {
         setCredits({
-          total: data.total_credits,
-          used: data.used_credits
+          total: data.totalCredits,
+          used: data.usedCredits,
+          additional: data.additionalCredits
+        });
+      } else {
+        // Fallback para os valores passados como props
+        setCredits({
+          total: monthlyQuota,
+          used: used,
+          additional: additionalCredits
         });
       }
     } catch (error) {
       console.error('Erro ao buscar saldo:', error);
       toast.error('Erro ao carregar saldo de créditos');
+      // Fallback para os valores passados como props
+      setCredits({
+        total: monthlyQuota,
+        used: used,
+        additional: additionalCredits
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const usagePercentage = (credits.used / monthlyQuota) * 100;
+  const usagePercentage = (credits.used / credits.total) * 100;
 
   if (loading) {
     return (
@@ -84,7 +90,7 @@ export function CreditsBalanceCard({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Créditos do plano mensal</span>
-              <span className="font-medium">{credits.used}/{monthlyQuota}</span>
+              <span className="font-medium">{credits.used}/{credits.total}</span>
             </div>
             <Progress value={usagePercentage} className="h-2" />
             <p className="text-xs text-muted-foreground">
@@ -97,7 +103,7 @@ export function CreditsBalanceCard({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Créditos adicionais disponíveis</span>
-            <span className="font-medium">{additionalCredits}</span>
+            <span className="font-medium">{credits.additional}</span>
           </div>
           <p className="text-xs text-muted-foreground">
             Não expiram e são consumidos após o término dos créditos mensais
