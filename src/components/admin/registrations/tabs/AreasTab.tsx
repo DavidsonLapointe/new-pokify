@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CardContent, CardTitle } from "@/components/ui/card";
 import { Building2, Plus, Trash2, Pencil, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CompanyArea } from "@/components/admin/modules/module-form-schema";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 
 // Define the user data type to avoid deep type instantiation
 interface LinkedUser {
@@ -27,19 +27,18 @@ interface CompanySummary {
   pendingUsers: number;
 }
 
+// Interface for adapting CompanyArea to correspond to the table in the database
+interface AreaData {
+  id: string;
+  name: string;
+  description: string;
+  isDefault: boolean;
+}
+
 export const AreasTab = () => {
-  // State for areas - now all areas are standard areas that can be edited by admin
-  const [areas, setAreas] = useState<CompanyArea[]>([
-    { id: "1", name: "Financeiro", description: "Área responsável pelas finanças da empresa", isDefault: true },
-    { id: "2", name: "Recursos Humanos", description: "Área responsável pela gestão de pessoas", isDefault: true },
-    { id: "3", name: "Contabilidade", description: "Área responsável pela contabilidade da empresa", isDefault: true },
-    { id: "4", name: "Marketing", description: "Área responsável pelo marketing da empresa", isDefault: true },
-    { id: "5", name: "Vendas", description: "Área responsável pelas vendas da empresa", isDefault: true },
-    { id: "6", name: "Controladoria", description: "Área responsável pelo controle financeiro da empresa", isDefault: true },
-    { id: "7", name: "Logística", description: "Área responsável pela logística da empresa", isDefault: true },
-    { id: "8", name: "Jurídico", description: "Área responsável pelos assuntos jurídicos da empresa", isDefault: true },
-    { id: "9", name: "PERA", description: "Área de Pesquisa e Recursos Avançados", isDefault: true },
-  ]);
+  // Estado para áreas - agora vamos buscar do Supabase
+  const [areas, setAreas] = useState<CompanyArea[]>([]);
+  const [loadingAreas, setLoadingAreas] = useState(true);
 
   // Dialog states
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -55,6 +54,60 @@ export const AreasTab = () => {
     name: "",
     description: ""
   });
+
+  // Função para buscar áreas do Supabase
+  const fetchAreas = async () => {
+    setLoadingAreas(true);
+    try {
+      console.log("Iniciando busca de áreas...");
+      
+      const { data: areasData, error } = await supabase
+        .from('areas')
+        .select('*');
+
+      if (error) {
+        throw error;
+      }
+
+      if (!areasData) {
+        setAreas([]);
+        return;
+      }
+
+      console.log('Áreas retornadas pelo Supabase:', areasData);
+
+      // Mapear os dados do Supabase para o formato de CompanyArea
+      const mappedAreas: CompanyArea[] = areasData.map(area => ({
+        id: area.id.toString(),
+        name: area.name || '',
+        description: area.description || '',
+        isDefault: area.default || true,
+        organization_id: area.organization_id || null
+      }));
+
+      console.log('Áreas mapeadas:', mappedAreas);
+      setAreas(mappedAreas);
+    } catch (error) {
+      console.error('Erro ao carregar áreas:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+      
+      toast.error(`Erro ao carregar áreas: ${errorMessage}`);
+      setAreas([]);
+    } finally {
+      setLoadingAreas(false);
+    }
+  };
+
+  // Buscar áreas ao montar o componente
+  useEffect(() => {
+    fetchAreas();
+  }, []);
 
   // Sort areas alphabetically by name
   const sortedAreas = [...areas].sort((a, b) => a.name.localeCompare(b.name));
@@ -74,19 +127,19 @@ export const AreasTab = () => {
     setCurrentArea(area);
     setFormData({
       name: area.name,
-      description: area.description
+      description: area.description || ''
     });
     setIsDialogOpen(true);
   };
 
   const openDeleteDialog = async (area: CompanyArea) => {
-    // Check if any users are linked to this area before allowing deletion
-    const areaUsers = await checkForLinkedUsers(area.name);
+    // Verifica se existem usuários vinculados a esta área antes de permitir a exclusão
+    const areaUsers = await checkForLinkedUsers(area.id);
     
     if (areaUsers.length > 0) {
       setLinkedUsers(areaUsers);
       
-      // Process users to get company summaries
+      // Processa os usuários para obter os resumos das empresas
       const summaries = processUsersByCompany(areaUsers);
       setCompanySummaries(summaries);
       
@@ -121,36 +174,13 @@ export const AreasTab = () => {
     }));
   };
 
-  // Simulação da busca de usuários vinculados às áreas
-  const checkForLinkedUsers = async (areaName: string): Promise<LinkedUser[]> => {
+  // Verifica usuários vinculados a uma área
+  const checkForLinkedUsers = async (areaId: string): Promise<LinkedUser[]> => {
     try {
-      // Simulação da chamada ao banco - no frontend apenas
-      // Esta função será implementada no Supabase posteriormente
-      console.log(`Verificando usuários vinculados à área ${areaName}`);
+      console.log(`Verificando usuários vinculados à área ID ${areaId}`);
       
-      // Simula um pequeno delay para parecer que está consultando o banco
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Mock de respostas para diferentes áreas
-      if (areaName === "Financeiro") {
-        return [
-          { id: "1", name: "João Silva", email: "joao@example.com", organization_name: "Empresa A" },
-          { id: "2", name: "Maria Oliveira", email: "maria@example.com", organization_name: "Empresa B" }
-        ];
-      } else if (areaName === "Contabilidade") {
-        // Para a área de Contabilidade, retornamos usuários de 3 empresas diferentes
-        return [
-          { id: "3", name: "Carlos Ferreira", email: "carlos@contabex.com", organization_name: "ContabEx Ltda" },
-          { id: "4", name: "Ana Beatriz", email: "ana@contabex.com", organization_name: "ContabEx Ltda" },
-          { id: "5", name: "Marcos Souza", email: "marcos@fiscaltech.com", organization_name: "FiscalTech S.A." },
-          { id: "6", name: "Juliana Lima", email: "juliana@fiscaltech.com", organization_name: "FiscalTech S.A." },
-          { id: "7", name: "Ricardo Mendes", email: "ricardo@contaline.com", organization_name: "ContaLine Contabilidade" },
-          { id: "8", name: "Patricia Santos", email: "patricia@contaline.com", organization_name: "ContaLine Contabilidade" },
-          { id: "9", name: "Felipe Costa", email: "felipe@contaline.com", organization_name: "ContaLine Contabilidade" }
-        ];
-      }
-      
-      // Para outras áreas, retorna array vazio (sem usuários vinculados)
+      // Aqui poderia ter uma consulta real ao Supabase para verificar usuários vinculados
+      // Por enquanto, retornamos um array vazio para todas as áreas
       return [];
     } catch (error) {
       console.error("Erro ao verificar usuários vinculados:", error);
@@ -159,7 +189,7 @@ export const AreasTab = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
@@ -167,38 +197,107 @@ export const AreasTab = () => {
       return;
     }
 
-    if (currentArea) {
-      // Edit existing area
-      setAreas(prev => 
-        prev.map(area => 
-          area.id === currentArea.id 
-            ? { ...area, name: formData.name, description: formData.description }
-            : area
-        )
-      );
-      toast.success("Área atualizada com sucesso");
-    } else {
-      // Create new area
-      const newArea: CompanyArea = {
-        id: String(Date.now()),
-        name: formData.name,
-        description: formData.description,
-        isDefault: true // All areas created here are default areas
-      };
-      setAreas(prev => [...prev, newArea]);
-      toast.success("Área criada com sucesso");
+    try {
+      if (currentArea) {
+        // Editar área existente
+        const { error } = await supabase
+          .from('areas')
+          .update({
+            name: formData.name,
+            description: formData.description,
+          })
+          .eq('id', currentArea.id);
+
+        if (error) throw error;
+        
+        // Atualiza o estado local
+        setAreas(prev => 
+          prev.map(area => 
+            area.id === currentArea.id 
+              ? { ...area, name: formData.name, description: formData.description }
+              : area
+          )
+        );
+        
+        toast.success("Área atualizada com sucesso");
+      } else {
+        // Criar nova área
+        const { data, error } = await supabase
+          .from('areas')
+          .insert({
+            name: formData.name,
+            description: formData.description,
+            default: true, // Conforme solicitado, sempre será true
+            created_at: new Date().toISOString(),
+            // organization_id fica vazio/null
+          })
+          .select();
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          // Adiciona a nova área ao estado local
+          const newArea: CompanyArea = {
+            id: data[0].id.toString(),
+            name: data[0].name,
+            description: data[0].description,
+            isDefault: true,
+            organization_id: null
+          };
+          
+          setAreas(prev => [...prev, newArea]);
+          toast.success("Área criada com sucesso");
+        }
+      }
+      
+      setIsDialogOpen(false);
+      // Recarrega as áreas para ter os dados mais atualizados
+      fetchAreas();
+    } catch (error) {
+      console.error('Erro ao salvar área:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+      
+      toast.error(`Erro ao salvar área: ${errorMessage}`);
     }
-    
-    setIsDialogOpen(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (currentArea) {
-      // Save the area name before removing it
-      setDeletedAreaName(currentArea.name);
-      setAreas(prev => prev.filter(area => area.id !== currentArea.id));
-      setIsDeleteDialogOpen(false);
-      setIsSuccessDialogOpen(true);
+      try {
+        // Salva o nome da área antes de removê-la
+        setDeletedAreaName(currentArea.name);
+        
+        // Exclui a área do Supabase
+        const { error } = await supabase
+          .from('areas')
+          .delete()
+          .eq('id', currentArea.id);
+
+        if (error) throw error;
+        
+        // Atualiza o estado local
+        setAreas(prev => prev.filter(area => area.id !== currentArea.id));
+        
+        setIsDeleteDialogOpen(false);
+        setIsSuccessDialogOpen(true);
+      } catch (error) {
+        console.error('Erro ao excluir área:', error);
+        
+        let errorMessage = 'Erro desconhecido';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'object' && error !== null) {
+          errorMessage = JSON.stringify(error);
+        }
+        
+        toast.error(`Erro ao excluir área: ${errorMessage}`);
+      }
     }
   };
 
@@ -219,43 +318,50 @@ export const AreasTab = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedAreas.map((area) => (
-            <div key={area.id} className="bg-white border rounded-lg shadow-sm overflow-hidden">
-              <div className="bg-slate-50 p-4 border-b">
-                <h3 className="flex items-center text-lg font-semibold">
-                  <Building2 className="h-5 w-5 mr-2 text-primary" />
-                  {area.name}
-                </h3>
-              </div>
-              <div className="p-4">
-                <p className="text-sm text-gray-600 mb-4">{area.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs bg-primary text-white py-1 px-2 rounded">Área padrão</span>
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => openEditDialog(area)}
-                      className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => openDeleteDialog(area)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+        {loadingAreas ? (
+          <div className="flex justify-center items-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-3">Carregando áreas...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sortedAreas.map((area) => (
+              <div key={area.id} className="bg-white border rounded-lg shadow-sm overflow-hidden">
+                <div className="bg-slate-50 p-4 border-b">
+                  <h3 className="flex items-center text-lg font-semibold">
+                    <Building2 className="h-5 w-5 mr-2 text-primary" />
+                    {area.name}
+                  </h3>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-gray-600 mb-4">{area.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs bg-primary text-white py-1 px-2 rounded">Área padrão</span>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => openEditDialog(area)}
+                        className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => openDeleteDialog(area)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
 
       {/* Create/Edit Area Dialog */}
