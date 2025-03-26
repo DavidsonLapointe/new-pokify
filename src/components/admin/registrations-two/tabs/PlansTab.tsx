@@ -96,78 +96,145 @@ export const PlansTab = () => {
     fetchPlans();
   }, []);
 
-  // Função para criar produto e preço no Stripe
+  // Função para criar produto e preço no Stripe usando diretamente a API do Stripe
   const createStripeProduct = async (plan: {
     name: string;
     price: number;
     shortDescription?: string;
   }): Promise<{ productId: string, priceId: string }> => {
     try {
-      console.log("Preparando para criar produto no Stripe:", {
+      // Detalhes completos para log da criação do produto
+      console.log("1. Iniciando criação no Stripe para o plano:", {
         name: plan.name,
         price: plan.price,
-        description: plan.shortDescription
+        description: plan.shortDescription || plan.name
       });
+
+      // Chave secreta do Stripe
+      const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
       
-      // Primeiro precisamos verificar se a API está disponível antes de chamar
-      const checkApiResponse = await fetch('/api/health-check', { 
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      }).catch(() => null);
+      // PASSO 1: Criar o produto no Stripe
+      const productFormData = new URLSearchParams();
+      productFormData.append('name', plan.name);
+      productFormData.append('type', 'service');
+      productFormData.append('description', plan.shortDescription || plan.name);
       
-      // Se a API de saúde não estiver disponível, usamos um endpoint alternativo
-      // ou reportamos que não está disponível
-      if (!checkApiResponse || !checkApiResponse.ok) {
-        console.warn("API de Stripe não está disponível, usando mock de teste");
-        
-        // Criamos um ID falso para usar como teste
-        // Em ambiente de produção, estes seriam IDs reais do Stripe
-        return {
-          productId: `prod_mock_${Date.now()}`,
-          priceId: `price_mock_${Date.now()}`
-        };
-      }
-      
-      // Se a API estiver disponível, fazemos a chamada normal
-      const response = await fetch('/api/stripe/create-product', {
+      // Log da requisição para criar produto
+      console.log('2. Dados para criação do produto:', {
+        url: 'https://api.stripe.com/v1/products',
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: JSON.stringify({
-          name: plan.name,
-          description: plan.shortDescription || plan.name,
-          amount: Math.round(plan.price * 100), // Converte para centavos
-          interval: 'month',
-          apiKey: 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU'
-        }),
+        body: productFormData.toString()
       });
 
-      if (!response.ok) {
-        let errorMessage = 'Erro ao criar produto no Stripe';
-        
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // Se não conseguir ler o JSON, usa o texto da resposta
-          const text = await response.text();
-          if (text) errorMessage += `: ${text}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
+      try {
+        // Chamada da API para criar o produto
+        const productResponse = await fetch('https://api.stripe.com/v1/products', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${stripeSecretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: productFormData
+        });
 
-      const data = await response.json();
-      console.log("Stripe response:", data);
-      
-      return { 
-        productId: data.productId, 
-        priceId: data.priceId 
-      };
+        // Verificar se a requisição foi bem-sucedida
+        if (!productResponse.ok) {
+          const errorText = await productResponse.text();
+          console.error('3. Erro ao criar produto no Stripe:', {
+            status: productResponse.status,
+            statusText: productResponse.statusText,
+            error: errorText
+          });
+          throw new Error(`Falha ao criar produto no Stripe: ${productResponse.status} ${productResponse.statusText}`);
+        }
+
+        // Processar a resposta
+        const productData = await productResponse.json();
+        console.log('3. Produto criado com sucesso no Stripe:', productData);
+
+        // PASSO 2: Criar o preço no Stripe
+        const priceFormData = new URLSearchParams();
+        // Converter para centavos e garantir que seja número inteiro
+        priceFormData.append('unit_amount', Math.round(plan.price * 100).toString());
+        priceFormData.append('currency', 'brl'); // Usar BRL para Reais brasileiros
+        priceFormData.append('recurring[interval]', 'month');
+        priceFormData.append('product', productData.id);
+
+        // Log da requisição para criar preço
+        console.log('4. Dados para criação do preço:', {
+          url: 'https://api.stripe.com/v1/prices',
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: priceFormData.toString()
+        });
+
+        // Chamada da API para criar o preço
+        const priceResponse = await fetch('https://api.stripe.com/v1/prices', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${stripeSecretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: priceFormData
+        });
+
+        // Verificar se a requisição foi bem-sucedida
+        if (!priceResponse.ok) {
+          const errorText = await priceResponse.text();
+          console.error('5. Erro ao criar preço no Stripe:', {
+            status: priceResponse.status,
+            statusText: priceResponse.statusText,
+            error: errorText
+          });
+          throw new Error(`Falha ao criar preço no Stripe: ${priceResponse.status} ${priceResponse.statusText}`);
+        }
+
+        // Processar a resposta
+        const priceData = await priceResponse.json();
+        console.log('5. Preço criado com sucesso no Stripe:', priceData);
+
+        // Retornar os IDs do produto e do preço
+        return {
+          productId: productData.id,
+          priceId: priceData.id
+        };
+      } catch (apiError) {
+        console.error('Erro na chamada da API Stripe:', apiError);
+        
+        // Gerar IDs temporários em caso de erro
+        const mockProductId = `prod_mock_${Date.now()}`;
+        const mockPriceId = `price_mock_${Date.now()}`;
+        
+        console.log('Usando IDs temporários após erro de API:', {
+          productId: mockProductId,
+          priceId: mockPriceId
+        });
+        
+        throw new Error(`Erro na API Stripe: ${apiError.message}`);
+      }
     } catch (error) {
-      console.error('Erro ao criar produto no Stripe:', error);
-      throw error;
+      console.error('Erro global ao criar no Stripe:', error);
+      
+      // Gerar IDs temporários para falhar graciosamente
+      const mockProductId = `prod_mock_${Date.now()}`;
+      const mockPriceId = `price_mock_${Date.now()}`;
+      
+      console.log('Usando IDs temporários para falha graciosa:', {
+        productId: mockProductId,
+        priceId: mockPriceId
+      });
+      
+      return {
+        productId: mockProductId,
+        priceId: mockPriceId
+      };
     }
   };
 
@@ -264,27 +331,54 @@ export const PlansTab = () => {
       } 
       // Se estamos criando um novo plano
       else {
-        console.log("4. Iniciando criação de novo plano (ID temporário ou não definido)");
+        console.log("4. Iniciando criação de novo plano (dados completos):", JSON.stringify(planData, null, 2));
         
         // Variáveis para armazenar IDs do Stripe
-        let priceId = null;
-        let productId = null;
+        let stripeProductId = null;
+        let stripePriceId = null;
+        let stripeIntegrated = false;
         
-        console.log("5. Iniciando tentativa de criação no Stripe...");
-        
-        // Tentar criar produto no Stripe, mas continuar mesmo se falhar
+        // Tentar criar produto no Stripe
         try {
-          // Criar produto no Stripe está falhando, geramos IDs temporários
-          productId = `prod_mock_${Date.now()}`;
-          priceId = `price_mock_${Date.now()}`;
+          // Criar produto e preço no Stripe
+          const stripeResult = await createStripeProduct({
+            name: planData.name,
+            price: planData.price,
+            shortDescription: planData.shortDescription
+          });
           
-          console.log("6. Usando valores temporários para Stripe:", { productId, priceId });
+          stripeProductId = stripeResult.productId;
+          stripePriceId = stripeResult.priceId;
+          stripeIntegrated = !stripeProductId.includes('mock');
+          
+          console.log("6. Resultado da operação Stripe:", { 
+            productId: stripeProductId, 
+            priceId: stripePriceId,
+            isRealStripeIntegration: stripeIntegrated,
+            timestamp: new Date().toISOString()
+          });
         } catch (stripeError) {
-          console.error('6. Erro ao criar produto no Stripe:', stripeError);
+          console.error('6. Erro detalhado na criação no Stripe:', {
+            message: stripeError.message,
+            stack: stripeError.stack,
+            name: stripeError.name,
+            timestamp: new Date().toISOString()
+          });
+          
+          // Gerar IDs temporários
+          stripeProductId = `prod_mock_${Date.now()}`;
+          stripePriceId = `price_mock_${Date.now()}`;
+          stripeIntegrated = false;
+          
+          console.log("6.1 IDs temporários gerados após erro:", { 
+            stripeProductId, 
+            stripePriceId,
+            timestamp: new Date().toISOString()
+          });
           
           uiToast({
             title: "Aviso",
-            description: "Plano será criado sem integração com Stripe: " + 
+            description: "Plano será criado sem integração real com Stripe: " + 
                         (stripeError instanceof Error ? stripeError.message : String(stripeError)),
             variant: "destructive"
           });
@@ -293,7 +387,7 @@ export const PlansTab = () => {
         // Prepare dados para inserção no Supabase
         const insertData = {
           name: planData.name,
-          price_id: priceId,
+          price_id: stripePriceId,
           value: planData.price,
           credit: planData.credits || 0,
           description: planData.description || '',
@@ -302,7 +396,7 @@ export const PlansTab = () => {
           active: true
         };
         
-        console.log("7. Dados para inserção no Supabase:", insertData);
+        console.log("7. Dados para inserção no Supabase:", JSON.stringify(insertData, null, 2));
         
         // Inserir no Supabase
         const { data, error } = await supabase
@@ -311,14 +405,20 @@ export const PlansTab = () => {
           .select();
           
         if (error) {
-          console.error("8. Erro ao inserir plano no Supabase:", error);
+          console.error("8. Erro detalhado ao inserir plano no Supabase:", {
+            code: error.code,
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            timestamp: new Date().toISOString()
+          });
           throw error;
         }
         
-        console.log("8. Resposta do Supabase após inserção:", data);
+        console.log("8. Resposta detalhada do Supabase após inserção:", JSON.stringify(data, null, 2));
         
         if (data && data.length > 0) {
-          console.log("9. Plano criado com sucesso:", data[0]);
+          console.log("9. Plano criado com sucesso (dados completos):", JSON.stringify(data[0], null, 2));
           
           // Converter o item retornado para o formato usado na UI
           const newPlan: PlanCreate = {
@@ -335,10 +435,18 @@ export const PlansTab = () => {
           
           setPlans(prev => [...prev, newPlan]);
           
-          uiToast({
-            title: "Plano criado com sucesso",
-            description: `O plano ${newPlan.name} foi criado.`
-          });
+          // Mensagem baseada no tipo de integração com Stripe
+          if (stripeIntegrated) {
+            uiToast({
+              title: "Plano criado com sucesso",
+              description: `O plano ${newPlan.name} foi criado com integração completa ao Stripe.`
+            });
+          } else {
+            uiToast({
+              title: "Plano criado com ID temporário",
+              description: `O plano ${newPlan.name} foi criado com ID temporário do Stripe.`
+            });
+          }
         } else {
           console.error("9. Nenhum dado retornado após inserção");
           throw new Error("Falha ao criar plano: nenhum dado retornado");
@@ -413,7 +521,14 @@ export const PlansTab = () => {
                   <div className="p-4 pt-6 flex-grow flex flex-col">
                     {/* Nome do plano e preço */}
                     <div className="flex flex-col mb-2">
-                      <h3 className="text-xl font-semibold">{plan.name}</h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold">{plan.name}</h3>
+                        {plan.priceId && plan.priceId.includes('mock') && (
+                          <span className="text-xs bg-yellow-100 text-yellow-800 rounded-full px-2 py-1">
+                            ID Temporário
+                          </span>
+                        )}
+                      </div>
                       <div className="text-purple-500 font-medium mt-1">
                         R$ {plan.price.toFixed(2)}<span className="text-sm text-gray-500">/mês</span>
                       </div>
