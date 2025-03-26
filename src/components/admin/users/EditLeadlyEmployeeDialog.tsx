@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -108,14 +107,14 @@ export const EditLeadlyEmployeeDialog = ({
   };
 
   const getAvailableRoles = (currentRole: UserRole): { value: UserRole; label: string }[] => {
-    switch (currentRole) {
-      case "admin":
-        return [{ value: "seller", label: "Vendedor" }];
-      case "seller":
-        return [{ value: "admin", label: "Administrador" }];
-      default:
-        return [];
-    }
+    // Retornar todas as opções de função do Supabase
+    return [
+      { value: "leadly_master", label: "Second Brain Master" },
+      { value: "leadly_employee", label: "Second Brain Employee" },
+      { value: "admin", label: "Organization Admin" },
+      { value: "manager", label: "Organization Manager" },
+      { value: "user", label: "Organization Employee" }
+    ];
   };
 
   return (

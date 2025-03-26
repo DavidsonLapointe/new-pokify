@@ -1,5 +1,4 @@
-
-export type UserRole = "admin" | "seller" | "leadly_employee" | "manager" | "leadly_master";
+export type UserRole = "admin" | "seller" | "leadly_employee" | "manager" | "leadly_master" | "user";
 export type UserStatus = "active" | "inactive" | "pending";
 
 export interface UserLog {
@@ -25,6 +24,7 @@ export interface User {
   avatar?: string | null;
   organization?: Organization;
   company_leadly_id?: string;
+  user_id?: string; // ID do usuário no Supabase Auth
   area?: string; // Added area field
 }
 

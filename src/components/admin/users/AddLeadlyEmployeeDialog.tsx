@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,13 +9,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { UserRole } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { User, UserRole } from "@/types";
 import { toast } from "sonner";
 
 interface AddLeadlyEmployeeDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onUserAdded: () => void;
+  onUserAdded: (user: Omit<User, 'id'>) => void;
 }
 
 export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLeadlyEmployeeDialogProps) => {
@@ -24,16 +30,65 @@ export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLea
     name: "",
     email: "",
     phone: "",
-    role: "seller" as UserRole,
+    role: "second_brain_employee" as string,
+    status: "active" as "active" | "inactive" | "pending",
+    permissions: {
+      dashboard: true,
+      organizations: false,
+      users: false,
+      modules: false,
+      plans: false,
+      "credit-packages": false,
+      financial: false,
+      integrations: false,
+      prompt: false,
+      settings: false,
+      profile: true
+    }
   });
 
-  const handleAddUser = () => {
-    // TODO: Implementar integração com a API
-    console.log("Novo usuário:", newUser);
-    toast.success("Usuário adicionado com sucesso!");
-    onClose();
-    setNewUser({ name: "", email: "", phone: "", role: "seller" });
-    onUserAdded();
+  const handleSubmit = () => {
+    if (!newUser.name || !newUser.email) {
+      toast.error("Nome e email são obrigatórios!");
+      return;
+    }
+
+    // Enviar os dados do novo usuário para o componente pai
+    onUserAdded({
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      role: newUser.role as UserRole,
+      status: newUser.status,
+      permissions: newUser.permissions,
+      createdAt: new Date().toISOString(),
+      lastAccess: null,
+      logs: [],
+      avatar: null,
+      company_leadly_id: null
+    });
+
+    // Limpar o formulário
+    setNewUser({
+      name: "",
+      email: "",
+      phone: "",
+      role: "second_brain_employee",
+      status: "active",
+      permissions: {
+        dashboard: true,
+        organizations: false,
+        users: false,
+        modules: false,
+        plans: false,
+        "credit-packages": false,
+        financial: false,
+        integrations: false,
+        prompt: false,
+        settings: false,
+        profile: true
+      }
+    });
   };
 
   return (
@@ -81,18 +136,28 @@ export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLea
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Função</label>
-            <Input
-              value="Funcionário Leadly"
-              disabled
-              className="bg-gray-50"
-            />
+            <Select
+              value={newUser.role}
+              onValueChange={(value) => setNewUser({ ...newUser, role: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione uma função" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="second_brain_master">Second Brain Master</SelectItem>
+                <SelectItem value="second_brain_employee">Second Brain Employee</SelectItem>
+                <SelectItem value="organization_admin">Organization Admin</SelectItem>
+                <SelectItem value="organization_manager">Organization Manager</SelectItem>
+                <SelectItem value="organization_employee">Organization Employee</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleAddUser}>Adicionar Usuário</Button>
+          <Button onClick={handleSubmit}>Adicionar Usuário</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

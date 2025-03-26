@@ -97,7 +97,7 @@ const AdminUsers = () => {
         <div className="text-left">
           <h1 className="text-3xl font-bold">Usuários</h1>
           <p className="text-muted-foreground">
-            Gerencie os funcionários da Leadly
+            Gerencie os funcionários da Leadly teste
           </p>
         </div>
         <Button onClick={() => setIsAddDialogOpen(true)}>
