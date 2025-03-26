@@ -596,6 +596,7 @@ export const PlansTab = () => {
             onOpenChange={handleDialogOpenChange}
             plan={selectedPlan}
             onSave={handleSavePlan}
+            disablePriceEdit={true}
           />
         </div>
       </div>

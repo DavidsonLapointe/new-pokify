@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -15,13 +14,15 @@ interface EditPlanDialogProps {
   onOpenChange: (open: boolean) => void;
   plan?: Plan;
   onSave: (data: Partial<Plan>) => void;
+  disablePriceEdit?: boolean;
 }
 
 export const EditPlanDialog = ({ 
   open, 
   onOpenChange, 
   plan, 
-  onSave 
+  onSave,
+  disablePriceEdit = false
 }: EditPlanDialogProps) => {
   const { form, isEditing, onSubmit } = usePlanForm({
     plan,
@@ -47,6 +48,7 @@ export const EditPlanDialog = ({
           isEditing={isEditing}
           onSubmit={onSubmit}
           onCancel={() => onOpenChange(false)}
+          disablePriceEdit={disablePriceEdit}
         />
       </DialogContent>
     </Dialog>
