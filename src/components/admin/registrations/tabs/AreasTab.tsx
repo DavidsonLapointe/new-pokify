@@ -55,15 +55,17 @@ export const AreasTab = () => {
     description: ""
   });
 
-  // Função para buscar áreas do Supabase
+  // Função para buscar áreas do Supabase - filtrando apenas default=true
   const fetchAreas = async () => {
     setLoadingAreas(true);
     try {
-      console.log("Iniciando busca de áreas...");
+      console.log("Iniciando busca de áreas padrão...");
       
+      // Modificado para filtrar apenas áreas com default=true
       const { data: areasData, error } = await supabase
         .from('areas')
-        .select('*');
+        .select('*')
+        .eq('default', true);  // Filtro adicionado aqui
 
       if (error) {
         throw error;
@@ -74,15 +76,15 @@ export const AreasTab = () => {
         return;
       }
 
-      console.log('Áreas retornadas pelo Supabase:', areasData);
+      console.log('Áreas padrão retornadas pelo Supabase:', areasData);
 
       // Mapear os dados do Supabase para o formato de CompanyArea
       const mappedAreas: CompanyArea[] = areasData.map(area => ({
         id: area.id.toString(),
         name: area.name || '',
         description: area.description || '',
-        isDefault: area.default || true,
-        organization_id: area.organization_id || null
+        isDefault: area.default || true
+        // Removido organization_id para resolver o erro de tipagem
       }));
 
       console.log('Áreas mapeadas:', mappedAreas);
@@ -227,9 +229,9 @@ export const AreasTab = () => {
           .insert({
             name: formData.name,
             description: formData.description,
-            default: true, // Conforme solicitado, sempre será true
-            created_at: new Date().toISOString(),
-            // organization_id fica vazio/null
+            default: true, // Sempre true conforme solicitado
+            created_at: new Date().toISOString()
+            // organization_id não é incluído
           })
           .select();
 
@@ -241,8 +243,8 @@ export const AreasTab = () => {
             id: data[0].id.toString(),
             name: data[0].name,
             description: data[0].description,
-            isDefault: true,
-            organization_id: null
+            isDefault: true
+            // Removido organization_id para resolver o erro de tipagem
           };
           
           setAreas(prev => [...prev, newArea]);

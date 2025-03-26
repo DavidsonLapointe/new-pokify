@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,20 +5,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2 } from "lucide-react"; // Added Edit icon
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { v4 as uuidv4 } from 'uuid';
 import { CustomSwitch } from "@/components/ui/custom-switch";
+import { supabase } from "@/integrations/supabase/realClient";
 
+// Interface baseada na estrutura da tabela lead_type do Supabase
 interface LeadType {
   id: string;
   name: string;
-  label: string;
-  color: string;
-  icon: string;
-  isDefault?: boolean;
-  isActive: boolean;
-  organization_id: string | null;
+  cor: string;
+  active: boolean;
+  created_at: string;
 }
 
 export const TiposDeLeadTab = () => {
@@ -30,12 +27,10 @@ export const TiposDeLeadTab = () => {
   const [currentLeadType, setCurrentLeadType] = useState<LeadType | null>(null);
   const [newLeadType, setNewLeadType] = useState({
     name: "",
-    label: "",
-    color: "bg-blue-100 text-blue-800",
-    icon: "User",
-    isActive: true
+    cor: "bg-blue-100 text-blue-800",
+    active: true
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Available colors for lead types
   const colorOptions = [
@@ -47,80 +42,57 @@ export const TiposDeLeadTab = () => {
     { value: "bg-gray-100 text-gray-800", label: "Cinza" },
   ];
 
-  // Static initial lead types
-  const defaultLeadTypes: LeadType[] = [
-    {
-      id: "1",
-      name: "client",
-      label: "Cliente",
-      color: "bg-blue-100 text-blue-800",
-      icon: "User",
-      isDefault: true,
-      isActive: true,
-      organization_id: null
-    },
-    {
-      id: "2",
-      name: "prospect",
-      label: "Prospect",
-      color: "bg-green-100 text-green-800",
-      icon: "Users",
-      isDefault: true,
-      isActive: true,
-      organization_id: null
-    },
-    {
-      id: "3",
-      name: "employee",
-      label: "Funcionário",
-      color: "bg-purple-100 text-purple-800",
-      icon: "Briefcase",
-      isDefault: true,
-      isActive: true,
-      organization_id: null
-    },
-    {
-      id: "4",
-      name: "hr_candidate",
-      label: "Candidato RH",
-      color: "bg-orange-100 text-orange-800",
-      icon: "FileText",
-      isDefault: true,
-      isActive: true,
-      organization_id: null
-    },
-    {
-      id: "5",
-      name: "supplier",
-      label: "Fornecedor",
-      color: "bg-red-100 text-red-800",
-      icon: "Truck",
-      isDefault: true,
-      isActive: true,
-      organization_id: null
-    }
-  ];
-
-  useEffect(() => {
-    // Load default lead types
-    setLeadTypes(defaultLeadTypes);
-  }, []);
-
+  // Função para buscar tipos de lead do Supabase
   const fetchLeadTypes = async () => {
-    // This is just a placeholder for future Supabase integration
-    console.log('Will fetch lead types from database in the future');
-    setLeadTypes(defaultLeadTypes);
-    setIsLoading(false);
+    setIsLoading(true);
+    try {
+      console.log("Buscando tipos de lead do Supabase...");
+      
+      const { data, error } = await supabase
+        .from('lead_type')
+        .select('*');
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log("Tipos de lead retornados:", data);
+      
+      if (data) {
+        setLeadTypes(data);
+      } else {
+        setLeadTypes([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar tipos de lead:", error);
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados",
+        description: errorMessage
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // Carregar dados ao montar o componente
+  useEffect(() => {
+    fetchLeadTypes();
+  }, []);
 
   const handleOpenNewDialog = () => {
     setCurrentLeadType(null);
     setNewLeadType({
       name: "",
-      label: "",
-      color: "bg-blue-100 text-blue-800",
-      icon: "User",
-      isActive: true
+      cor: "bg-blue-100 text-blue-800",
+      active: true
     });
     setIsDialogOpen(true);
   };
@@ -129,23 +101,13 @@ export const TiposDeLeadTab = () => {
     setCurrentLeadType(leadType);
     setNewLeadType({
       name: leadType.name,
-      label: leadType.label,
-      color: leadType.color,
-      icon: leadType.icon,
-      isActive: leadType.isActive
+      cor: leadType.cor,
+      active: leadType.active
     });
     setIsDialogOpen(true);
   };
 
   const handleOpenDeleteDialog = (leadType: LeadType) => {
-    if (leadType.isDefault) {
-      toast({
-        variant: "destructive",
-        title: "Operação não permitida",
-        description: "Tipos de lead padrão do sistema não podem ser excluídos."
-      });
-      return;
-    }
     setCurrentLeadType(leadType);
     setIsDeleteDialogOpen(true);
   };
@@ -160,15 +122,6 @@ export const TiposDeLeadTab = () => {
         variant: "destructive",
         title: "Nome é obrigatório",
         description: "Por favor, insira um nome para o tipo de lead."
-      });
-      return false;
-    }
-    
-    if (!newLeadType.label.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Rótulo é obrigatório",
-        description: "Por favor, insira um rótulo para o tipo de lead."
       });
       return false;
     }
@@ -196,72 +149,82 @@ export const TiposDeLeadTab = () => {
     
     setIsLoading(true);
     
-    // Simulate async operation
-    setTimeout(() => {
-      try {
-        if (currentLeadType?.isDefault) {
-          // For system default types, only allow updating label, color and icon
-          const updatedLeadTypes = leadTypes.map(lt => 
-            lt.id === currentLeadType.id 
-              ? {
-                  ...lt,
-                  label: newLeadType.label,
-                  color: newLeadType.color,
-                  icon: newLeadType.icon,
-                  isActive: newLeadType.isActive
-                }
-              : lt
-          );
-          setLeadTypes(updatedLeadTypes);
-        } else if (currentLeadType) {
-          // Updating existing custom lead type
-          const updatedLeadTypes = leadTypes.map(lt => 
+    try {
+      if (currentLeadType) {
+        // Atualizando tipo de lead existente
+        const { error } = await supabase
+          .from('lead_type')
+          .update({
+            name: newLeadType.name,
+            cor: newLeadType.cor,
+            active: newLeadType.active
+          })
+          .eq('id', currentLeadType.id);
+
+        if (error) throw error;
+        
+        // Atualiza o estado local
+        setLeadTypes(prev => 
+          prev.map(lt => 
             lt.id === currentLeadType.id 
               ? {
                   ...lt,
                   name: newLeadType.name,
-                  label: newLeadType.label,
-                  color: newLeadType.color,
-                  icon: newLeadType.icon,
-                  isActive: newLeadType.isActive
+                  cor: newLeadType.cor,
+                  active: newLeadType.active
                 }
               : lt
-          );
-          setLeadTypes(updatedLeadTypes);
-        } else {
-          // Creating new lead type
-          const newId = uuidv4();
-          setLeadTypes([
-            ...leadTypes,
-            {
-              id: newId,
-              name: newLeadType.name,
-              label: newLeadType.label,
-              color: newLeadType.color,
-              icon: newLeadType.icon,
-              isActive: newLeadType.isActive,
-              isDefault: false,
-              organization_id: "organization_id_placeholder"
-            }
-          ]);
-        }
-
-        setIsDialogOpen(false);
+          )
+        );
+        
         toast({
           title: "Sucesso",
-          description: currentLeadType ? "Tipo de lead atualizado com sucesso!" : "Tipo de lead criado com sucesso!"
+          description: "Tipo de lead atualizado com sucesso!"
         });
-      } catch (error) {
-        console.error('Error saving lead type:', error);
-        toast({
-          variant: "destructive",
-          title: "Erro ao salvar",
-          description: "Ocorreu um erro ao salvar o tipo de lead. Por favor, tente novamente."
-        });
-      } finally {
-        setIsLoading(false);
+      } else {
+        // Criando novo tipo de lead
+        const { data, error } = await supabase
+          .from('lead_type')
+          .insert({
+            name: newLeadType.name,
+            cor: newLeadType.cor,
+            active: newLeadType.active,
+            created_at: new Date().toISOString()
+          })
+          .select();
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setLeadTypes(prev => [...prev, data[0]]);
+          toast({
+            title: "Sucesso",
+            description: "Tipo de lead criado com sucesso!"
+          });
+        }
       }
-    }, 500);
+
+      setIsDialogOpen(false);
+      // Recarregar para ter os dados mais atualizados
+      fetchLeadTypes();
+    } catch (error) {
+      console.error('Erro ao salvar tipo de lead:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: errorMessage
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteLeadType = async () => {
@@ -269,46 +232,78 @@ export const TiposDeLeadTab = () => {
     
     setIsLoading(true);
     
-    // Simulate async operation
-    setTimeout(() => {
-      try {
-        setLeadTypes(leadTypes.filter(lt => lt.id !== currentLeadType.id));
-        setIsDeleteDialogOpen(false);
-        toast({
-          title: "Sucesso",
-          description: "Tipo de lead excluído com sucesso!"
-        });
-      } catch (error) {
-        console.error('Error deleting lead type:', error);
-        toast({
-          variant: "destructive",
-          title: "Erro ao excluir",
-          description: "Ocorreu um erro ao excluir o tipo de lead. Por favor, tente novamente."
-        });
-      } finally {
-        setIsLoading(false);
+    try {
+      const { error } = await supabase
+        .from('lead_type')
+        .delete()
+        .eq('id', currentLeadType.id);
+
+      if (error) throw error;
+      
+      setLeadTypes(leadTypes.filter(lt => lt.id !== currentLeadType.id));
+      setIsDeleteDialogOpen(false);
+      
+      toast({
+        title: "Sucesso",
+        description: "Tipo de lead excluído com sucesso!"
+      });
+    } catch (error) {
+      console.error('Erro ao excluir tipo de lead:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
       }
-    }, 500);
+      
+      toast({
+        variant: "destructive",
+        title: "Erro ao excluir",
+        description: errorMessage
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleStatus = async (leadType: LeadType) => {
     try {
+      const newStatus = !leadType.active;
+      
+      const { error } = await supabase
+        .from('lead_type')
+        .update({ active: newStatus })
+        .eq('id', leadType.id);
+
+      if (error) throw error;
+      
       const updatedLeadTypes = leadTypes.map(lt => 
         lt.id === leadType.id 
-          ? { ...lt, isActive: !lt.isActive }
+          ? { ...lt, active: newStatus }
           : lt
       );
+      
       setLeadTypes(updatedLeadTypes);
+      
       toast({
         title: "Status atualizado",
-        description: `Tipo de lead ${leadType.isActive ? 'desativado' : 'ativado'} com sucesso!`
+        description: `Tipo de lead ${newStatus ? 'ativado' : 'desativado'} com sucesso!`
       });
     } catch (error) {
-      console.error('Error toggling status:', error);
+      console.error('Erro ao atualizar status:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+      
       toast({
         variant: "destructive",
         title: "Erro ao atualizar status",
-        description: "Ocorreu um erro ao atualizar o status do tipo de lead."
+        description: errorMessage
       });
     }
   };
@@ -340,40 +335,30 @@ export const TiposDeLeadTab = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Rótulo</TableHead>
-                <TableHead>Cor</TableHead>
-                <TableHead>Origem</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Ações</TableHead>
+                <TableHead className="w-1/3 text-center">Nome</TableHead>
+                <TableHead className="w-1/3 text-center">Status</TableHead>
+                <TableHead className="w-1/3 text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leadTypes.map((leadType) => (
                 <TableRow key={leadType.id}>
-                  <TableCell className="font-medium">{leadType.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className={leadType.color}>
-                      {leadType.label}
-                    </Badge>
+                  <TableCell className="text-center">
+                    <div className="flex justify-center">
+                      <Badge className={leadType.cor}>
+                        {leadType.name}
+                      </Badge>
+                    </div>
                   </TableCell>
-                  <TableCell>
-                    <div className={`w-6 h-6 rounded ${leadType.color.split(' ')[0]}`}></div>
+                  <TableCell className="text-center">
+                    <div className="flex justify-center">
+                      <Badge variant={leadType.active ? "success" : "destructive"}>
+                        {leadType.active ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
                   </TableCell>
-                  <TableCell>
-                    {leadType.isDefault ? (
-                      <Badge variant="outline" className="bg-blue-50">Sistema</Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-green-50">Personalizado</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={leadType.isActive ? "success" : "destructive"}>
-                      {leadType.isActive ? "Ativo" : "Inativo"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
                       <Button 
                         variant="ghost" 
                         size="icon"
@@ -383,21 +368,18 @@ export const TiposDeLeadTab = () => {
                       </Button>
                       
                       <CustomSwitch 
-                        checked={leadType.isActive}
+                        checked={leadType.active}
                         onCheckedChange={() => toggleStatus(leadType)}
-                        aria-label={leadType.isActive ? "Desativar tipo de lead" : "Ativar tipo de lead"}
+                        aria-label={leadType.active ? "Desativar tipo de lead" : "Ativar tipo de lead"}
                       />
                       
-                      {!leadType.isDefault && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => handleOpenDeleteDialog(leadType)}
-                          disabled={leadType.isDefault}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleOpenDeleteDialog(leadType)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -418,26 +400,12 @@ export const TiposDeLeadTab = () => {
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nome (identificador único)</Label>
+              <Label htmlFor="name">Nome</Label>
               <Input
                 id="name"
                 value={newLeadType.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                disabled={Boolean(currentLeadType?.isDefault)}
-                placeholder="ex: client, prospect, partner"
-              />
-              {currentLeadType?.isDefault && (
-                <p className="text-xs text-muted-foreground">O nome dos tipos de lead padrão do sistema não pode ser alterado.</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="label">Rótulo (exibido na interface)</Label>
-              <Input
-                id="label"
-                value={newLeadType.label}
-                onChange={(e) => handleInputChange('label', e.target.value)}
-                placeholder="ex: Cliente, Prospect, Parceiro"
+                placeholder="ex: Cliente, Prospect"
               />
             </div>
             
@@ -448,9 +416,9 @@ export const TiposDeLeadTab = () => {
                   <div 
                     key={option.value}
                     className={`flex items-center gap-2 p-2 rounded cursor-pointer border-2 ${
-                      newLeadType.color === option.value ? 'border-primary' : 'border-transparent'
+                      newLeadType.cor === option.value ? 'border-primary' : 'border-transparent'
                     }`}
-                    onClick={() => handleInputChange('color', option.value)}
+                    onClick={() => handleInputChange('cor', option.value)}
                   >
                     <div className={`w-4 h-4 rounded ${option.value.split(' ')[0]}`}></div>
                     <span>{option.label}</span>
@@ -486,7 +454,7 @@ export const TiposDeLeadTab = () => {
           </DialogHeader>
           
           <div>
-            <p>Tem certeza que deseja excluir o tipo de lead <strong>{currentLeadType?.label}</strong>?</p>
+            <p>Tem certeza que deseja excluir o tipo de lead <strong>{currentLeadType?.name}</strong>?</p>
             <p className="text-sm text-muted-foreground mt-2">Esta ação não poderá ser desfeita.</p>
           </div>
 

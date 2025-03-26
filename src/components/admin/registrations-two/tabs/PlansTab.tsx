@@ -1,37 +1,170 @@
-
 import { CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Check, CreditCard, Users, Database, Mail } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPlans } from "@/services/plans/planFetchService";
 import { EditPlanDialog } from "@/components/admin/plans/EditPlanDialog";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/realClient";
+
+// Definição de interface para o tipo de plano conforme estrutura da tabela
+interface PlanData {
+  id: number;
+  name: string;
+  price_id: string | null;
+  value: number;
+  credit: number;
+  description: string;
+  short_description: string;
+  resources: string;
+  active: boolean;
+  created_at: string;
+}
+
+// Interface temporária para a criação de planos (compatível com UI)
+interface PlanCreate {
+  id: number;
+  name: string;
+  price: number;
+  credits: number; 
+  description: string;
+  shortDescription: string;
+  benefits: string[];
+  active: boolean;
+  priceId?: string;
+}
 
 export const PlansTab = () => {
   const [editPlanDialogOpen, setEditPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>(undefined);
-  const [localPlans, setLocalPlans] = useState<Plan[]>([]);
+  const [plans, setPlans] = useState<PlanCreate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast: uiToast } = useToast();
 
-  const { data: fetchedPlans, isLoading, error } = useQuery({
-    queryKey: ['plans'],
-    queryFn: fetchPlans
-  });
-
-  // Initialize local plans when data is loaded
-  useEffect(() => {
-    if (fetchedPlans) {
-      setLocalPlans(fetchedPlans);
-      console.log("Planos iniciais carregados:", fetchedPlans);
+  // Função para buscar planos do Supabase
+  const fetchPlans = async () => {
+    setIsLoading(true);
+    try {
+      console.log("Iniciando busca de planos no Supabase...");
+      
+      const { data, error } = await supabase
+        .from('planos')
+        .select('*');
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        // Mapear dados do Supabase para o formato PlanCreate usado na UI
+        const formattedPlans: PlanCreate[] = data.map((item: PlanData) => ({
+          id: item.id,
+          name: item.name,
+          price: item.value,
+          credits: item.credit,
+          description: item.description,
+          shortDescription: item.short_description,
+          benefits: item.resources ? item.resources.split(',').filter(b => b.trim()) : [],
+          active: item.active,
+          priceId: item.price_id || ''
+        }));
+        
+        setPlans(formattedPlans);
+        console.log("Planos carregados:", formattedPlans);
+      } else {
+        setPlans([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar planos:", error);
+      let errorMessage = 'Erro ao carregar planos';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      uiToast({
+        title: "Erro",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [fetchedPlans]);
+  };
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  // Função para criar produto e preço no Stripe
+  const createStripeProduct = async (plan: {
+    name: string;
+    price: number;
+    shortDescription?: string;
+  }): Promise<{ productId: string, priceId: string }> => {
+    try {
+      console.log("Preparando para criar produto no Stripe:", {
+        name: plan.name,
+        price: plan.price,
+        description: plan.shortDescription
+      });
+      
+      // Utiliza o fetch para fazer uma chamada à sua API que gerenciará a criação no Stripe
+      const response = await fetch('/api/stripe/create-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: plan.name,
+          description: plan.shortDescription || plan.name,
+          amount: Math.round(plan.price * 100), // Converte para centavos
+          interval: 'month',
+          apiKey: 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU'
+        }),
+      });
+
+      const responseText = await response.text();
+      console.log("Resposta bruta da API:", responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error(`Resposta inválida do servidor: ${responseText}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Erro ao criar produto no Stripe');
+      }
+
+      console.log("Stripe response:", data);
+      
+      return { 
+        productId: data.productId, 
+        priceId: data.priceId 
+      };
+    } catch (error) {
+      console.error('Erro ao criar produto no Stripe:', error);
+      throw error;
+    }
+  };
 
   // Plans handlers
-  const handleEditPlan = (plan: Plan) => {
-    setSelectedPlan(plan);
+  const handleEditPlan = (plan: PlanCreate) => {
+    // Converte para o formato esperado pelo Dialog
+    const dialogPlan: Plan = {
+      id: plan.id,
+      name: plan.name,
+      price: plan.price,
+      credits: plan.credits,
+      description: plan.description,
+      shortDescription: plan.shortDescription,
+      benefits: plan.benefits,
+      active: plan.active // Adicionado para resolver erro de tipagem
+    };
+    
+    setSelectedPlan(dialogPlan);
     setEditPlanDialogOpen(true);
   };
 
@@ -49,69 +182,178 @@ export const PlansTab = () => {
     }
   };
 
-  const handleSavePlan = async (updatedPlan: Partial<Plan>) => {
+  const handleSavePlan = async (planData: Plan) => {
     try {
+      setIsLoading(true);
+      console.log("Dados recebidos do formulário:", planData);
+      
+      // Verifica se os dados são válidos
+      if (!planData.name || !planData.price) {
+        throw new Error("Nome e preço são obrigatórios");
+      }
+      
+      // Formatação dos benefícios para armazenamento
+      let resources = '';
+      if (Array.isArray(planData.benefits)) {
+        resources = planData.benefits.join(',');
+      } else if (planData.benefits) {
+        resources = String(planData.benefits).split('\n').filter(b => b.trim()).join(',');
+      }
+      
+      // Verifica se estamos editando ou criando
+      const isEditing = planData.id && Number(planData.id) > 0 && planData.id !== 100;
+      
+      console.log("Operação:", isEditing ? "Atualização" : "Criação", "de plano");
+      
       // Se estamos editando um plano existente
-      if (updatedPlan.id) {
-        setLocalPlans(prevPlans => 
-          prevPlans.map(p => p.id === updatedPlan.id ? { ...p, ...updatedPlan } as Plan : p)
-        );
-        console.log("Plano atualizado:", updatedPlan);
+      if (isEditing) {
+        // Prepare dados para atualização
+        const updateData = {
+          name: planData.name,
+          value: planData.price,
+          credit: planData.credits,
+          description: planData.description || '',
+          short_description: planData.shortDescription || '',
+          resources: resources,
+          active: planData.active !== undefined ? planData.active : true
+        };
+        
+        console.log("Dados para atualização:", updateData);
+        
+        // Atualizar no Supabase
+        const { error } = await supabase
+          .from('planos')
+          .update(updateData)
+          .eq('id', planData.id);
+          
+        if (error) {
+          console.error("Erro ao atualizar plano no Supabase:", error);
+          throw error;
+        }
+
         uiToast({
           title: "Plano atualizado com sucesso",
-          description: `O plano ${updatedPlan.name} foi atualizado.`
+          description: `O plano ${planData.name} foi atualizado.`
         });
       } 
       // Se estamos criando um novo plano
       else {
-        // Criar um novo plano completo com ID
-        const newPlan: Plan = { 
-          ...updatedPlan as Plan,
-          id: Date.now(), // Garantir um ID único baseado no timestamp
-          benefits: Array.isArray(updatedPlan.benefits) 
-            ? updatedPlan.benefits 
-            : updatedPlan.benefits 
-              ? (updatedPlan.benefits as string).split('\n').filter(b => b.trim()) 
-              : []
+        let stripeProductId = null;
+        let stripePriceId = null;
+        
+        // Tentar criar produto no Stripe, mas continuar mesmo se falhar
+        try {
+          console.log("Iniciando criação no Stripe...");
+          
+          // A API do Stripe não está disponível (erro 404), então vamos ignorar esta parte
+          // e salvar o plano apenas no Supabase por enquanto
+          
+          // Comentando a chamada da API do Stripe que está retornando 404
+          /*
+          const stripeData = await createStripeProduct({
+            name: planData.name,
+            price: planData.price,
+            shortDescription: planData.shortDescription
+          });
+          
+          stripeProductId = stripeData.productId;
+          stripePriceId = stripeData.priceId;
+          */
+          
+          // Apenas log para debug
+          console.log("Integração com Stripe será implementada posteriormente");
+          
+        } catch (stripeError) {
+          console.error('Erro ao criar produto no Stripe:', stripeError);
+          // Continuar com a criação no Supabase mesmo com erro no Stripe
+          uiToast({
+            title: "Aviso",
+            description: "Plano será criado apenas no Supabase. A integração com Stripe será feita posteriormente.",
+            variant: "default"
+          });
+        }
+        
+        // Prepare dados para inserção no Supabase
+        // Removemos o campo stripe_product_id que não existe na tabela
+        const insertData = {
+          name: planData.name,
+          price_id: null, // Este campo existe na tabela
+          value: planData.price,
+          credit: planData.credits || 0,
+          description: planData.description || '',
+          short_description: planData.shortDescription || '',
+          resources: resources,
+          active: true
+          // Removido o campo stripe_product_id que estava causando erro
         };
         
-        console.log("Novo plano criado:", newPlan);
+        console.log("Dados para inserção no Supabase:", insertData);
         
-        // Atualizar o estado com o novo plano
-        setLocalPlans(prevPlans => [...prevPlans, newPlan]);
+        // Inserir no Supabase
+        const { data, error } = await supabase
+          .from('planos')
+          .insert([insertData])
+          .select();
+          
+        if (error) {
+          console.error("Erro ao inserir plano no Supabase:", error);
+          throw error;
+        }
         
-        // Exibir toast de sucesso
-        uiToast({
-          title: "Plano criado com sucesso",
-          description: `O plano ${newPlan.name} foi criado.`
-        });
+        console.log("Resposta do Supabase após inserção:", data);
+        
+        if (data && data.length > 0) {
+          console.log("Plano criado com sucesso:", data[0]);
+          
+          // Converter o item retornado para o formato usado na UI
+          const newPlan: PlanCreate = {
+            id: data[0].id,
+            name: data[0].name,
+            price: data[0].value,
+            credits: data[0].credit,
+            description: data[0].description,
+            shortDescription: data[0].short_description,
+            benefits: data[0].resources ? data[0].resources.split(',') : [],
+            active: data[0].active,
+            priceId: data[0].price_id || ''
+            // Removido o campo stripeProductId que não existe na tabela
+          };
+          
+          setPlans(prev => [...prev, newPlan]);
+          
+          uiToast({
+            title: "Plano criado com sucesso",
+            description: `O plano ${newPlan.name} foi criado.`
+          });
+        } else {
+          console.error("Nenhum dado retornado após inserção");
+          throw new Error("Falha ao criar plano: nenhum dado retornado");
+        }
       }
       
-      // Fechar o modal depois de salvar
+      // Fechar o modal e atualizar a lista
       setEditPlanDialogOpen(false);
+      await fetchPlans(); // Recarregar para ter dados atualizados
       
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        // Tratamento para erros do Supabase que podem vir em formato de objeto
+        errorMessage = JSON.stringify(error);
+      }
+      
       uiToast({
         title: "Erro ao salvar plano",
-        description: "Ocorreu um erro ao salvar o plano. Tente novamente.",
+        description: errorMessage,
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  // Function to get the right icon based on benefit text
-  const getBenefitIcon = (benefit: string) => {
-    if (benefit.toLowerCase().includes('usuário') || benefit.toLowerCase().includes('usuários')) {
-      return <Users className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
-    } else if (benefit.toLowerCase().includes('crédito') || benefit.toLowerCase().includes('créditos')) {
-      return <CreditCard className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
-    } else if (benefit.toLowerCase().includes('integração') || benefit.toLowerCase().includes('crm')) {
-      return <Database className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
-    } else if (benefit.toLowerCase().includes('suporte') || benefit.toLowerCase().includes('email')) {
-      return <Mail className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
-    }
-    return <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />;
   };
 
   return (
@@ -132,15 +374,11 @@ export const PlansTab = () => {
             </Button>
           </div>
 
-          {isLoading && localPlans.length === 0 ? (
+          {isLoading ? (
             <div className="flex items-center justify-center min-h-[500px]">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : error && localPlans.length === 0 ? (
-            <div className="flex items-center justify-center min-h-[500px]">
-              <p className="text-red-500">Erro ao carregar planos. Por favor, tente novamente.</p>
-            </div>
-          ) : localPlans.length === 0 ? (
+          ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg border border-dashed border-gray-300 p-8">
               <h3 className="text-lg font-medium text-gray-600 mb-2">Nenhum plano cadastrado</h3>
               <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
@@ -153,10 +391,10 @@ export const PlansTab = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {localPlans.map((plan) => (
+              {plans.map((plan) => (
                 <div key={plan.id} className="border rounded-lg shadow-sm overflow-hidden flex flex-col">
                   <div className="p-4 pt-6 flex-grow flex flex-col">
-                    {/* Coloca o nome do plano e o preço em elementos separados, um abaixo do outro */}
+                    {/* Nome do plano e preço */}
                     <div className="flex flex-col mb-2">
                       <h3 className="text-xl font-semibold">{plan.name}</h3>
                       <div className="text-purple-500 font-medium mt-1">
@@ -164,14 +402,14 @@ export const PlansTab = () => {
                       </div>
                     </div>
                     
-                    {/* Descrição com altura fixa para garantir alinhamento entre os cards */}
+                    {/* Descrição */}
                     <div className="h-12 mb-6">
                       <p className="text-sm text-gray-500">
                         {plan.shortDescription}
                       </p>
                     </div>
                     
-                    {/* Container para créditos com altura fixa e centralizado */}
+                    {/* Container para créditos */}
                     <div className="h-16 flex items-center justify-center mb-6">
                       {plan.credits && (
                         <div className="bg-gray-100 rounded-md p-3 w-full flex items-center justify-center">
@@ -181,7 +419,7 @@ export const PlansTab = () => {
                       )}
                     </div>
                     
-                    {/* Container para recursos inclusos com altura fixa para garantir alinhamento */}
+                    {/* Container para recursos inclusos */}
                     <div className="mb-4">
                       <div className="h-10 flex items-center">
                         <h4 className="font-medium text-sm text-gray-600">Recursos inclusos:</h4>
@@ -199,10 +437,10 @@ export const PlansTab = () => {
                       </ul>
                     </div>
                     
-                    {/* Spacer flexível para empurrar o botão para o final do card */}
+                    {/* Spacer flexível */}
                     <div className="flex-grow min-h-[20px]"></div>
                     
-                    {/* Container do botão com altura fixa para garantir alinhamento entre os cards */}
+                    {/* Botão de edição */}
                     <div className="h-12 flex items-center mt-4">
                       <Button 
                         onClick={() => handleEditPlan(plan)} 
