@@ -1,4 +1,3 @@
-
 import { CardTitle } from "@/components/ui/card";
 import { Card, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -10,40 +9,20 @@ import { CreatePackageForm } from "@/components/admin/packages/CreatePackageForm
 import { EditPackageForm } from "@/components/admin/packages/EditPackageForm";
 import { PackagesList } from "@/components/admin/packages/PackagesList";
 import { AnalysisPackage, NewPackageForm } from "@/types/packages";
+import { supabase } from "@/integrations/supabase/realClient";
 
-// Mocked packages data - same as in AdminAnalysisPackages.tsx
-const mockedPackages: AnalysisPackage[] = [
-  {
-    id: "pkg-001",
-    name: "Pacote Básico",
-    credits: 50,
-    price: 99.90,
-    active: true,
-    stripeProductId: "prod_mock_001",
-    stripePriceId: "price_mock_001"
-  },
-  {
-    id: "pkg-002",
-    name: "Pacote Profissional",
-    credits: 150,
-    price: 249.90,
-    active: true,
-    stripeProductId: "prod_mock_002",
-    stripePriceId: "price_mock_002"
-  },
-  {
-    id: "pkg-003",
-    name: "Pacote Empresarial",
-    credits: 500,
-    price: 699.90,
-    active: true,
-    stripeProductId: "prod_mock_003",
-    stripePriceId: "price_mock_003"
-  }
-];
+// Interface para representar os dados conforme a estrutura da tabela
+interface CreditPackageData {
+  id: number;
+  created_at: string;
+  name: string;
+  value: number;
+  credit: number;
+  active: boolean;
+}
 
 export const CreditPackagesTab = () => {
-  const [packages, setPackages] = useState<AnalysisPackage[]>(mockedPackages);
+  const [packages, setPackages] = useState<AnalysisPackage[]>([]);
   const [isLoadingPackages, setIsLoadingPackages] = useState(true);
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -54,13 +33,48 @@ export const CreditPackagesTab = () => {
     price: ""
   });
 
-  // Effect for loading packages simulation
-  useEffect(() => {
-    // Just for visual demonstration, set a brief loading state
+  // Função para buscar pacotes do Supabase
+  const fetchCreditPackages = async () => {
     setIsLoadingPackages(true);
-    setTimeout(() => {
+    try {
+      console.log("Buscando pacotes de crédito no Supabase...");
+      
+      const { data, error } = await supabase
+        .from('credit_package')
+        .select('*')
+        .order('value', { ascending: true });
+      
+      if (error) {
+        console.error("Erro ao buscar pacotes:", error);
+        throw error;
+      }
+      
+      if (data) {
+        // Mapear dados do Supabase para o formato AnalysisPackage usado na UI
+        const formattedPackages: AnalysisPackage[] = data.map((item: CreditPackageData) => ({
+          id: item.id.toString(),
+          name: item.name,
+          credits: item.credit,
+          price: item.value,
+          active: item.active
+        }));
+        
+        setPackages(formattedPackages);
+        console.log("Pacotes carregados:", formattedPackages);
+      } else {
+        setPackages([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar pacotes:", error);
+      toast.error("Erro ao carregar pacotes de crédito");
+    } finally {
       setIsLoadingPackages(false);
-    }, 1000);
+    }
+  };
+
+  // Efeito para carregar pacotes ao montar o componente
+  useEffect(() => {
+    fetchCreditPackages();
   }, []);
 
   const handleCreatePackage = async (e: React.FormEvent) => {
@@ -97,31 +111,52 @@ export const CreditPackagesTab = () => {
     }
 
     toast.promise(
-      // Promise to simulate API call
-      new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // For demo, just add to local state
-          const newId = `pkg-${Date.now().toString().slice(-3)}`;
+      async () => {
+        try {
+          // Inserir no Supabase
+          const { data, error } = await supabase
+            .from('credit_package')
+            .insert([{
+              name: newPackage.name,
+              credit: credits,
+              value: price,
+              active: true
+            }])
+            .select();
+            
+          if (error) {
+            console.error("Erro ao inserir pacote:", error);
+            throw new Error(error.message);
+          }
+          
+          if (!data || data.length === 0) {
+            throw new Error("Nenhum dado retornado após a inserção");
+          }
+          
+          // Converter para o formato de UI
           const newPkg: AnalysisPackage = {
-            id: newId,
-            name: newPackage.name,
-            credits: credits,
-            price: price,
-            active: true,
-            stripeProductId: `prod_mock_${newId}`,
-            stripePriceId: `price_mock_${newId}`
+            id: data[0].id.toString(),
+            name: data[0].name,
+            credits: data[0].credit,
+            price: data[0].value,
+            active: data[0].active
           };
           
-          setPackages([...packages, newPkg]);
+          // Atualizar o estado local
+          setPackages(prevPackages => [...prevPackages, newPkg]);
           setNewPackage({ name: "", credits: "", price: "" });
           setIsCreateDialogOpen(false);
-          resolve();
-        }, 1000);
-      }),
+          
+          return data[0];
+        } catch (error) {
+          console.error("Erro ao criar pacote:", error);
+          throw error;
+        }
+      },
       {
-        loading: 'Criando pacote e cadastrando no Stripe...',
-        success: 'Pacote criado com sucesso e registrado no Stripe',
-        error: 'Ocorreu um erro ao criar o pacote'
+        loading: 'Criando pacote de créditos...',
+        success: 'Pacote criado com sucesso',
+        error: (err) => `Erro ao criar pacote: ${err.message}`
       }
     );
   };
@@ -132,44 +167,77 @@ export const CreditPackagesTab = () => {
     if (!editingPackage) return;
 
     toast.promise(
-      // Promise to simulate API call
-      new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // For demo, just update local state
+      async () => {
+        try {
+          // Atualizar no Supabase
+          const { error } = await supabase
+            .from('credit_package')
+            .update({
+              name: editingPackage.name,
+              credit: editingPackage.credits,
+              value: editingPackage.price,
+              active: editingPackage.active
+            })
+            .eq('id', editingPackage.id);
+            
+          if (error) {
+            console.error("Erro ao atualizar pacote:", error);
+            throw new Error(error.message);
+          }
+          
+          // Atualizar estado local
           const updatedPackages = packages.map(pkg => 
             pkg.id === editingPackage.id ? editingPackage : pkg
           );
           setPackages(updatedPackages);
           setEditingPackage(null);
           setIsEditDialogOpen(false);
-          resolve();
-        }, 1000);
-      }),
+          
+          return editingPackage;
+        } catch (error) {
+          console.error("Erro ao atualizar pacote:", error);
+          throw error;
+        }
+      },
       {
-        loading: 'Atualizando pacote e sincronizando com o Stripe...',
-        success: 'Pacote atualizado com sucesso e sincronizado com o Stripe',
-        error: 'Ocorreu um erro ao atualizar o pacote'
+        loading: 'Atualizando pacote de créditos...',
+        success: 'Pacote atualizado com sucesso',
+        error: (err) => `Erro ao atualizar pacote: ${err.message}`
       }
     );
   };
 
   const handleToggleActive = async (pkg: AnalysisPackage, active: boolean) => {
     toast.promise(
-      // Promise to simulate API call
-      new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // For demo, just update local state
+      async () => {
+        try {
+          // Atualizar status no Supabase
+          const { error } = await supabase
+            .from('credit_package')
+            .update({ active })
+            .eq('id', pkg.id);
+            
+          if (error) {
+            console.error("Erro ao atualizar status do pacote:", error);
+            throw new Error(error.message);
+          }
+          
+          // Atualizar estado local
           const updatedPackages = packages.map(p => 
             p.id === pkg.id ? { ...p, active } : p
           );
           setPackages(updatedPackages);
-          resolve();
-        }, 1000);
-      }),
+          
+          return { ...pkg, active };
+        } catch (error) {
+          console.error(`Erro ao ${active ? 'ativar' : 'desativar'} pacote:`, error);
+          throw error;
+        }
+      },
       {
-        loading: `${active ? 'Ativando' : 'Desativando'} pacote e atualizando no Stripe...`,
+        loading: `${active ? 'Ativando' : 'Desativando'} pacote...`,
         success: `Pacote ${active ? 'ativado' : 'desativado'} com sucesso`,
-        error: `Erro ao ${active ? 'ativar' : 'desativar'} pacote`
+        error: (err) => `Erro ao ${active ? 'ativar' : 'desativar'} pacote: ${err.message}`
       }
     );
   };
