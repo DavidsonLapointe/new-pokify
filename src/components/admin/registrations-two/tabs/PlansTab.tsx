@@ -13,6 +13,7 @@ interface PlanData {
   id: number;
   name: string;
   price_id: string | null;
+  prod_id: string | null;
   value: number;
   credit: number;
   description: string;
@@ -33,6 +34,7 @@ interface PlanCreate {
   benefits: string[];
   active: boolean;
   priceId?: string;
+  prodId?: string;
 }
 
 export const PlansTab = () => {
@@ -67,7 +69,8 @@ export const PlansTab = () => {
           shortDescription: item.short_description,
           benefits: item.resources ? item.resources.split(',').filter(b => b.trim()) : [],
           active: item.active,
-          priceId: item.price_id || ''
+          priceId: item.price_id || '',
+          prodId: item.prod_id || ''
         }));
         
         setPlans(formattedPlans);
@@ -300,7 +303,7 @@ export const PlansTab = () => {
       
       // Se estamos editando um plano existente
       if (isEditing) {
-        // Código para atualização (mantido como estava)
+        // Código para atualização
         const updateData = {
           name: planData.name,
           value: planData.price,
@@ -309,6 +312,8 @@ export const PlansTab = () => {
           short_description: planData.shortDescription || '',
           resources: resources,
           active: planData.active !== undefined ? planData.active : true
+          // Nota: não atualizamos price_id e prod_id durante a edição para preservar 
+          // a integração com o Stripe existente
         };
         
         console.log("4. Dados para atualização:", updateData);
@@ -340,6 +345,8 @@ export const PlansTab = () => {
         
         // Tentar criar produto no Stripe
         try {
+          console.log("5. Iniciando criação no Stripe para o plano:", planData.name);
+          
           // Criar produto e preço no Stripe
           const stripeResult = await createStripeProduct({
             name: planData.name,
@@ -384,10 +391,11 @@ export const PlansTab = () => {
           });
         }
         
-        // Prepare dados para inserção no Supabase
+        // Prepare dados para inserção no Supabase, agora incluindo prod_id
         const insertData = {
           name: planData.name,
           price_id: stripePriceId,
+          prod_id: stripeProductId,
           value: planData.price,
           credit: planData.credits || 0,
           description: planData.description || '',
@@ -405,20 +413,14 @@ export const PlansTab = () => {
           .select();
           
         if (error) {
-          console.error("8. Erro detalhado ao inserir plano no Supabase:", {
-            code: error.code,
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            timestamp: new Date().toISOString()
-          });
+          console.error("8. Erro ao inserir plano no Supabase:", error);
           throw error;
         }
         
-        console.log("8. Resposta detalhada do Supabase após inserção:", JSON.stringify(data, null, 2));
+        console.log("8. Resposta do Supabase após inserção:", data);
         
         if (data && data.length > 0) {
-          console.log("9. Plano criado com sucesso (dados completos):", JSON.stringify(data[0], null, 2));
+          console.log("9. Plano criado com sucesso:", data[0]);
           
           // Converter o item retornado para o formato usado na UI
           const newPlan: PlanCreate = {
@@ -430,7 +432,8 @@ export const PlansTab = () => {
             shortDescription: data[0].short_description,
             benefits: data[0].resources ? data[0].resources.split(',') : [],
             active: data[0].active,
-            priceId: data[0].price_id || ''
+            priceId: data[0].price_id || '',
+            prodId: data[0].prod_id || ''
           };
           
           setPlans(prev => [...prev, newPlan]);
