@@ -146,9 +146,6 @@ export const AddLeadlyEmployeeDialog = ({ isOpen, onClose, onUserAdded }: AddLea
               <SelectContent>
                 <SelectItem value="second_brain_master">Second Brain Master</SelectItem>
                 <SelectItem value="second_brain_employee">Second Brain Employee</SelectItem>
-                <SelectItem value="organization_admin">Organization Admin</SelectItem>
-                <SelectItem value="organization_manager">Organization Manager</SelectItem>
-                <SelectItem value="organization_employee">Organization Employee</SelectItem>
               </SelectContent>
             </Select>
           </div>

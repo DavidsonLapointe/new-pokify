@@ -57,7 +57,8 @@ export const UsuariosTab = () => {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      // Simplificando a consulta - primeiro vamos verificar se conseguimos obter dados básicos
+      console.log("Iniciando busca de usuários...");
+      
       const { data: profiles, error } = await supabase
         .from('profiles')
         .select('*');
@@ -105,8 +106,8 @@ export const UsuariosTab = () => {
       setUsers(mappedUsers);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
-      let errorMessage = 'Erro desconhecido';
       
+      let errorMessage = 'Erro desconhecido';
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'object' && error !== null) {
@@ -114,6 +115,7 @@ export const UsuariosTab = () => {
       }
       
       toast.error(`Erro ao carregar usuários: ${errorMessage}`);
+      setUsers([]);
     } finally {
       setLoadingUsers(false);
     }
@@ -125,22 +127,45 @@ export const UsuariosTab = () => {
 
   const handleAddUser = async (newUser: Omit<User, 'id'>) => {
     try {
-      // Preparando os dados para inserção, respeitando a estrutura da tabela
+      // Log detalhado para verificar os dados recebidos do diálogo
+      console.log("Dados brutos recebidos do AddLeadlyEmployeeDialog:", newUser);
+      
+      if (!newUser) {
+        toast.error('Nenhum dado fornecido pelo formulário');
+        return;
+      }
+
+      if (!newUser.email) {
+        toast.error('O email é obrigatório');
+        return;
+      }
+      
+      // Corrigindo o mapeamento de função - verificando se a função já está no formato do banco
+      let dbFunction;
+      
+      // Verificar se o role já está no formato do banco de dados
+      if (newUser.role.startsWith('second_brain_')) {
+        // Já está no formato do banco, usar diretamente
+        dbFunction = newUser.role;
+      } else {
+        // Precisa ser convertido usando a função de mapeamento
+        dbFunction = mapAppRoleToDatabaseRole(newUser.role);
+      }
+      
+      // Preparando os dados para inserção corretamente
       const profileData = {
-        name: newUser.name,
+        name: newUser.name || '',
         email: newUser.email,
         tel: newUser.phone || null,
-        function: mapAppRoleToDatabaseRole(newUser.role),
-        status: newUser.status || 'inactive',
-        // Deixando organization_id como null se não for fornecido
+        function: dbFunction, // Usando a função corrigida
+        status: 'pending',
         organization_id: newUser.company_leadly_id || null,
-        user_id: newUser.user_id || null,
         created_at: new Date().toISOString()
       };
 
-      console.log("Tentando criar perfil com dados:", profileData);
+      console.log("Tentando criar perfil com dados formatados:", profileData);
 
-      // Inserir diretamente sem verificar a tabela
+      // Usando a tabela profiles
       const { data, error } = await supabase
         .from('profiles')
         .insert(profileData)
@@ -151,24 +176,21 @@ export const UsuariosTab = () => {
         throw error;
       }
 
-      console.log("Usuário criado com sucesso:", data);
+      console.log("Perfil criado com sucesso:", data);
       await fetchUsers();
-      toast.success('Usuário adicionado com sucesso');
+      toast.success('Perfil adicionado com sucesso');
       setIsAddUserDialogOpen(false);
     } catch (error: unknown) {
-      // Corrigindo o tipo any para unknown para resolver o erro do linter
       console.error('Erro completo:', error);
       
       let errorMessage = 'Erro desconhecido';
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'object' && error !== null && 'message' in error) {
-        errorMessage = String((error as { message: string }).message);
       } else if (typeof error === 'object' && error !== null) {
         errorMessage = JSON.stringify(error);
       }
       
-      toast.error(`Erro ao adicionar usuário: ${errorMessage}`);
+      toast.error(`Erro ao adicionar perfil: ${errorMessage}`);
     }
   };
 
@@ -190,10 +212,7 @@ export const UsuariosTab = () => {
         tel: updatedUser.phone || null,
         function: mapAppRoleToDatabaseRole(updatedUser.role),
         status: updatedUser.status || 'inactive',
-        // Permitir que organization_id seja nulo
-        organization_id: updatedUser.company_leadly_id || null,
-        // Não incluir user_id na atualização para evitar problemas
-        updated_at: new Date().toISOString()
+        organization_id: updatedUser.company_leadly_id || null
       };
 
       const { error } = await supabase
