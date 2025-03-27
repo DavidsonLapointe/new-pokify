@@ -8,83 +8,214 @@ import { addDays, endOfMonth, format, startOfMonth, differenceInDays } from "dat
  */
 export const createOrganization = async (values: CreateOrganizationFormData) => {
   try {
-    console.log("Criando organização com dados:", values);
+    console.log("%c 🏢 CRIAÇÃO DE ORGANIZAÇÃO - INÍCIO", "background: #3498db; color: white; padding: 5px; font-weight: bold; border-radius: 5px;");
+    console.log("%c Dados do formulário:", "font-weight: bold;", JSON.stringify(values, null, 2));
     
     // Clean CNPJ before inserting (remove non-numeric characters)
     const cleanedCnpj = values.cnpj.replace(/[^0-9]/g, '');
     
+    // Validação de dados críticos
+    if (!values.razaoSocial || !values.nomeFantasia || !cleanedCnpj || !values.email || !values.plan) {
+      console.error("%c ❌ Dados obrigatórios da organização ausentes", "color: red;", {
+        razaoSocial: values.razaoSocial,
+        nomeFantasia: values.nomeFantasia,
+        cnpj: cleanedCnpj,
+        email: values.email,
+        plan: values.plan
+      });
+      return { 
+        data: null, 
+        error: { message: "Dados obrigatórios da organização ausentes" },
+        planName: null 
+      };
+    }
+    
+    // Validação de dados do administrador
+    if (!values.adminName || !values.adminEmail) {
+      console.error("%c ❌ Dados obrigatórios do administrador ausentes", "color: red;", {
+        adminName: values.adminName,
+        adminEmail: values.adminEmail
+      });
+      return { 
+        data: null,
+        error: { message: "Dados obrigatórios do administrador ausentes" },
+        planName: null
+      };
+    }
+    
     // Fetch plan name for the selected plan ID
+    console.log("%c 🔍 ETAPA 1: Buscando detalhes do plano", "color: #f39c12;", values.plan);
     const { data: planData, error: planError } = await supabase
       .from('planos')
       .select('id, name, value')
       .eq('id', values.plan)
       .single();
       
+    console.log("%c Resultado da busca de plano:", "font-weight: bold;", { 
+      dados: planData, 
+      erro: planError 
+    });
+      
     if (planError) {
-      console.error("Erro ao buscar detalhes do plano:", planError);
+      console.error("%c ❌ Erro ao buscar detalhes do plano:", "color: red;", planError);
       return { data: null, error: planError, planName: null };
     }
     
-    // Convert modules array to comma-separated string for storage
-    const modulesString = values.modules && values.modules.length > 0 
-      ? values.modules.join(',') 
-      : null;
+    // Convert modules array to PostgreSQL array format
+    let modulosIds = null;
+    if (values.modules && values.modules.length > 0) {
+      // Formato de array do PostgreSQL: {elemento1,elemento2}
+      modulosIds = `{${values.modules.join(',')}}`;
+    }
+    
+    const organizationData = {
+      razao_social: values.razaoSocial,
+      nome_fantasia: values.nomeFantasia,
+      cnpj: cleanedCnpj,
+      email_empresa: values.email,
+      telefone_empresa: values.phone,
+      plano_id: values.plan,
+      user_admin_id: values.adminEmail,
+      modulos_ids: modulosIds
+    };
+    
+    console.log("%c 📋 ETAPA 2: Dados para inserção na tabela 'organization'", "color: #f39c12;", organizationData);
+    
+    // Verificar se já existe organização com este CNPJ
+    console.log("%c 🔍 ETAPA 3: Verificando CNPJ existente", "color: #f39c12;", cleanedCnpj);
+    const { data: existingOrg, error: checkError } = await supabase
+      .from('organization')
+      .select('id, razao_social')
+      .eq('cnpj', cleanedCnpj)
+      .limit(1);
+      
+    console.log("%c Resultado da verificação de CNPJ:", "font-weight: bold;", {
+      dados: existingOrg,
+      erro: checkError
+    });
+      
+    if (checkError) {
+      console.error("%c ❌ Erro ao verificar CNPJ existente:", "color: red;", checkError);
+    } else if (existingOrg && existingOrg.length > 0) {
+      console.error("%c ❌ CNPJ já existe", "color: red;", `CNPJ ${cleanedCnpj} já existe para a organização "${existingOrg[0].razao_social}"`);
+      return { 
+        data: null, 
+        error: { message: `CNPJ ${values.cnpj} já está em uso por outra empresa` },
+        planName: null
+      };
+    } else {
+      console.log("%c ✅ CNPJ não encontrado, prosseguindo com a criação", "color: green;");
+    }
     
     // Insert the new organization
-    // Note: Field names must match the database column names
-    const { data, error } = await supabase
+    console.log("%c 📝 ETAPA 4: Inserindo nova organização", "color: #f39c12;", "Payload:", organizationData);
+    const organizationInsertResult = await supabase
       .from('organization')
-      .insert({
-        razao_social: values.razaoSocial,
-        nome_fantasia: values.nomeFantasia,
-        cnpj: cleanedCnpj,
-        email_empresa: values.email,
-        telefone_empresa: values.phone,
-        plano_id: values.plan, // Use the plan ID from the form values
-        user_admin_id: values.adminEmail, // Using admin email as temporary user admin ID
-        modulos_ids: modulesString
-      })
+      .insert(organizationData)
       .select('*')
       .single();
     
+    const { data, error } = organizationInsertResult;
+    
+    console.log("%c Resultado da inserção da organização:", "font-weight: bold;", {
+      dados: data,
+      erro: error,
+      resposta_completa: organizationInsertResult
+    });
+    
     if (error) {
-      console.error("Erro ao criar organização:", error);
+      console.error("%c ❌ Erro ao criar organização:", "color: red;", error);
+      if (error.code === '23505') {
+        return { 
+          data: null, 
+          error: { message: "CNPJ já cadastrado no sistema" },
+          planName: null
+        };
+      }
       return { data: null, error, planName: null };
     }
     
-    // Now create the admin profile in the profiles table according to the schema in the second image
-    console.log("Criando perfil de administrador para a organização:", data.id);
+    if (!data || !data.id) {
+      console.error("%c ❌ Organização criada, mas sem ID retornado", "color: red;");
+      return { 
+        data: null, 
+        error: { message: "Erro ao criar organização: ID não retornado" },
+        planName: null
+      };
+    }
     
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .insert({
+    console.log("%c ✅ ETAPA 4 CONCLUÍDA: Organização criada com sucesso!", "color: green;", {
+      id: data.id,
+      nome: data.nome_fantasia
+    });
+    
+    // Now create the admin profile in the profiles table
+    console.log("%c 👤 ETAPA 5: Criando perfil de administrador", "color: #f39c12;", `ID da organização: ${data.id}`);
+    
+    try {
+      const profileInsertData = {
         name: values.adminName,
         email: values.adminEmail,
-        tel: values.phone, // Usando o telefone da empresa para o administrador
-        function: 'admin', // user_type enum value for admin
+        tel: values.phone,
+        function: 'organization_admin', // user_type enum value for admin
         status: 'active', // user_status enum value for active
         user_id: values.adminEmail, // Using email as user_id temporarily
         organization_id: data.id // Link to the newly created organization
-      })
-      .select('*')
-      .single();
+      };
+      
+      console.log("%c Dados do perfil a serem inseridos:", "font-weight: bold;", profileInsertData);
+      
+      const profileInsertResult = await supabase
+        .from('profiles')
+        .insert(profileInsertData)
+        .select('*')
+        .single();
 
-    if (profileError) {
-      console.error("Erro ao criar perfil de administrador:", profileError);
-      console.warn("Organização criada, mas houve falha ao criar o perfil de administrador.");
-    } else {
-      console.log("Perfil de administrador criado com sucesso:", profileData);
+      const { data: profileData, error: profileError } = profileInsertResult;
+      
+      console.log("%c Resultado da inserção do perfil:", "font-weight: bold;", {
+        dados: profileData,
+        erro: profileError,
+        resposta_completa: profileInsertResult
+      });
+
+      if (profileError) {
+        console.error("%c ❌ Erro ao criar perfil de administrador:", "color: red;", profileError);
+        console.warn("%c ⚠️ Organização criada, mas houve falha ao criar o perfil", "color: orange;");
+        
+        // Tentar determinar o erro específico
+        if (profileError.code === '23505') {
+          console.error("%c ❌ Erro de duplicidade no perfil.", "color: red;", "Possível perfil já existente com este email.");
+        } else if (profileError.code === '23503') {
+          console.error("%c ❌ Erro de chave estrangeira.", "color: red;", "Possível problema com organization_id.");
+        }
+      } else {
+        console.log("%c ✅ ETAPA 5 CONCLUÍDA: Perfil de administrador criado!", "color: green;", profileData);
+      }
+      
+      console.log("%c 🏁 CRIAÇÃO DE ORGANIZAÇÃO - CONCLUÍDO", "background: #2ecc71; color: white; padding: 5px; font-weight: bold; border-radius: 5px;");
+      
+      return { 
+        data, 
+        error: null, 
+        planName: planData?.name || null,
+        planPrice: planData?.value || 0,
+        profile: profileError ? null : profileData
+      };
+    } catch (profileCreateError) {
+      console.error("%c ❌ Erro inesperado ao criar perfil:", "color: red;", profileCreateError);
+      
+      return { 
+        data, 
+        error: null, 
+        planName: planData?.name || null,
+        planPrice: planData?.value || 0,
+        profile: null,
+        profileError: profileCreateError
+      };
     }
-    
-    return { 
-      data, 
-      error: null, 
-      planName: planData?.name || null,
-      planPrice: planData?.value || 0,
-      profile: profileError ? null : profileData
-    };
   } catch (error) {
-    console.error("Erro inesperado ao criar organização:", error);
+    console.error("%c ❌ ERRO CRÍTICO ao criar organização:", "background: #c0392b; color: white; padding: 5px; font-weight: bold; border-radius: 5px;", error);
     return { 
       data: null, 
       error: {
@@ -207,7 +338,15 @@ export const sendOnboardingEmail = async (
   selectedModules: string[] = []
 ) => {
   try {
-    console.log(`Enviando email de onboarding para a organização: ${organizationId}`);
+    console.log("%c 📧 ENVIANDO EMAIL DE ONBOARDING", "background: #2980b9; color: white; padding: 5px; font-weight: bold; border-radius: 5px;");
+    console.log("%c Dados para envio de email:", "font-weight: bold;", {
+      organizationId,
+      contractLink,
+      confirmRegistrationLink,
+      paymentLink,
+      proRataValue,
+      selectedModules
+    });
     
     // Get module names if modules were selected
     let moduleNames: string[] = [];
@@ -218,32 +357,41 @@ export const sendOnboardingEmail = async (
       // For now, we'll just pass the raw module IDs as names
       moduleNames = selectedModules;
       
-      console.log(`Módulos selecionados para o email: ${moduleNames.join(', ')}`);
+      console.log("%c Módulos selecionados para o email:", "color: #3498db;", moduleNames.join(', '));
     }
 
-    const { error } = await supabase.functions.invoke('send-organization-emails', {
-      body: {
-        organizationId: organizationId,
-        type: "onboarding",
-        data: {
-          contractUrl: contractLink,
-          confirmationToken: confirmRegistrationLink,
-          paymentUrl: paymentLink,
-          proRataAmount: proRataValue,
-          selectedModules: moduleNames  // Pass module names to the email function
-        }
-      },
+    console.log("%c Chamando função Supabase 'send-organization-emails'", "color: #3498db;");
+    
+    const emailPayload = {
+      organizationId: organizationId,
+      type: "onboarding",
+      data: {
+        contractUrl: contractLink,
+        confirmationToken: confirmRegistrationLink,
+        paymentUrl: paymentLink,
+        proRataAmount: proRataValue,
+        selectedModules: moduleNames  // Pass module names to the email function
+      }
+    };
+    console.log("%c Payload da requisição:", "font-weight: bold;", emailPayload);
+    
+    const emailResult = await supabase.functions.invoke('send-organization-emails', {
+      body: emailPayload,
     });
 
+    const { error } = emailResult;
+    
+    console.log("%c Resultado do envio de email:", "font-weight: bold;", emailResult);
+
     if (error) {
-      console.error("Erro ao enviar email de onboarding:", error);
+      console.error("%c ❌ Erro ao enviar email de onboarding:", "color: red;", error);
       return { error };
     }
 
-    console.log("Email de onboarding enviado com sucesso");
+    console.log("%c ✅ Email de onboarding enviado com sucesso", "color: green;");
     return { error: null };
   } catch (error) {
-    console.error("Erro ao chamar a função de email de onboarding:", error);
+    console.error("%c ❌ Erro ao chamar a função de email de onboarding:", "color: red;", error);
     return { error: error };
   }
 };
