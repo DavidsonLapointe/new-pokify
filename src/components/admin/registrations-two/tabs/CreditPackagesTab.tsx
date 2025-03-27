@@ -284,6 +284,37 @@ export const CreditPackagesTab = () => {
           const priceData = await priceResponse.json();
           console.log('4. Novo preço criado com sucesso:', priceData);
           
+          // PASSO 2.5: Arquivar o preço antigo no Stripe
+          try {
+            if (pkg.stripePriceId && !pkg.stripePriceId.includes('mock_')) {
+              console.log('4.5. Arquivando preço antigo no Stripe:', pkg.stripePriceId);
+              
+              const archiveFormData = new URLSearchParams();
+              archiveFormData.append('active', 'false');
+              
+              const archiveResponse = await fetch(`https://api.stripe.com/v1/prices/${pkg.stripePriceId}`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${stripeSecretKey}`,
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: archiveFormData
+              });
+              
+              if (!archiveResponse.ok) {
+                const errorText = await archiveResponse.text();
+                console.warn('Aviso: Não foi possível arquivar o preço antigo:', errorText);
+                // Continuamos o processo mesmo se falhar o arquivamento
+              } else {
+                const archiveData = await archiveResponse.json();
+                console.log('Preço antigo arquivado com sucesso:', archiveData);
+              }
+            }
+          } catch (archiveError) {
+            // Apenas logar o erro, não interromper o fluxo principal
+            console.warn('Erro ao tentar arquivar preço antigo:', archiveError);
+          }
+          
           // PASSO 3: Atualizar o banco de dados com o novo price_id
           console.log('5. Atualizando dados no banco de dados:', {
             id: pkg.id,
