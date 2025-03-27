@@ -29,6 +29,7 @@ export const CreditPackagesTab = () => {
   const [editingPackage, setEditingPackage] = useState<AnalysisPackage | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isStripeEditDialogOpen, setIsStripeEditDialogOpen] = useState(false);
   const [newPackage, setNewPackage] = useState<NewPackageForm>({
     name: "",
     credits: "",
@@ -201,6 +202,140 @@ export const CreditPackagesTab = () => {
     } finally {
       setIsLoadingPackages(false);
     }
+  };
+
+  // Função para atualizar um produto existente no Stripe
+  const updateStripeProduct = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault();
+    
+    if (!editingPackage) return;
+    
+    const pkg = editingPackage;
+
+    if (!pkg.stripeProductId || !pkg.stripePriceId || 
+        pkg.stripeProductId.includes('mock_') || pkg.stripePriceId.includes('mock_')) {
+      toast.error('Este pacote não possui IDs válidos do Stripe');
+      console.error('Tentativa de atualizar pacote sem IDs Stripe válidos:', pkg);
+      return;
+    }
+
+    toast.promise(
+      async () => {
+        try {
+          // Chave secreta do Stripe
+          const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
+          
+          // PASSO 1: Atualizar o produto no Stripe
+          console.log('1. Atualizando produto no Stripe:', {
+            id: pkg.stripeProductId,
+            name: pkg.name,
+            description: `Pacote de ${pkg.credits} créditos para análises`,
+          });
+          
+          const productFormData = new URLSearchParams();
+          productFormData.append('name', pkg.name);
+          productFormData.append('description', `Pacote de ${pkg.credits} créditos para análises`);
+          
+          const productResponse = await fetch(`https://api.stripe.com/v1/products/${pkg.stripeProductId}`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${stripeSecretKey}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: productFormData
+          });
+          
+          if (!productResponse.ok) {
+            const errorText = await productResponse.text();
+            console.error('Erro ao atualizar produto no Stripe:', errorText);
+            throw new Error(`Falha ao atualizar produto no Stripe: ${productResponse.status}`);
+          }
+          
+          const productData = await productResponse.json();
+          console.log('2. Produto atualizado com sucesso:', productData);
+          
+          // PASSO 2: Criar um novo preço para o produto
+          // Nota: O Stripe não permite atualizar preços existentes, então criamos um novo
+          const priceFormData = new URLSearchParams();
+          priceFormData.append('unit_amount', Math.round(pkg.price * 100).toString());
+          priceFormData.append('currency', 'brl');
+          priceFormData.append('product', pkg.stripeProductId);
+          
+          console.log('3. Criando novo preço para o produto:', {
+            product_id: pkg.stripeProductId,
+            price: pkg.price,
+          });
+          
+          const priceResponse = await fetch('https://api.stripe.com/v1/prices', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${stripeSecretKey}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: priceFormData
+          });
+          
+          if (!priceResponse.ok) {
+            const errorText = await priceResponse.text();
+            console.error('Erro ao criar novo preço no Stripe:', errorText);
+            throw new Error(`Falha ao criar novo preço no Stripe: ${priceResponse.status}`);
+          }
+          
+          const priceData = await priceResponse.json();
+          console.log('4. Novo preço criado com sucesso:', priceData);
+          
+          // PASSO 3: Atualizar o banco de dados com o novo price_id
+          console.log('5. Atualizando dados no banco de dados:', {
+            id: pkg.id,
+            old_price_id: pkg.stripePriceId,
+            new_price_id: priceData.id,
+            name: pkg.name,
+            credits: pkg.credits,
+            price: pkg.price
+          });
+          
+          const { error } = await supabase
+            .from('credit_package')
+            .update({
+              price_id: priceData.id,
+              name: pkg.name,
+              credit: pkg.credits,
+              value: pkg.price,
+              active: pkg.active
+            })
+            .eq('id', pkg.id);
+            
+          if (error) {
+            console.error('Erro ao atualizar dados no banco de dados:', error);
+            throw new Error(`Falha ao atualizar o banco de dados: ${error.message}`);
+          }
+          
+          // Atualizar o estado local
+          const updatedPackages = packages.map(p => 
+            p.id === pkg.id ? { 
+              ...p, 
+              stripePriceId: priceData.id,
+              name: pkg.name,
+              credits: pkg.credits,
+              price: pkg.price,
+              active: pkg.active
+            } : p
+          );
+          setPackages(updatedPackages);
+          setIsStripeEditDialogOpen(false);
+          
+          return { success: true };
+        } catch (error) {
+          console.error('Erro ao atualizar no Stripe:', error);
+          throw error;
+        }
+      },
+      {
+        loading: 'Atualizando pacote no Stripe...',
+        success: 'Pacote atualizado com sucesso no Stripe',
+        error: (err) => `Erro ao atualizar no Stripe: ${err.message}`
+      }
+    );
   };
 
   // Efeito para carregar pacotes ao montar o componente
@@ -394,6 +529,11 @@ export const CreditPackagesTab = () => {
     );
   };
 
+  const handleOpenStripeEdit = (pkg: AnalysisPackage) => {
+    setEditingPackage(pkg);
+    setIsStripeEditDialogOpen(true);
+  };
+
   return (
     <div className="text-left">
       <CardTitle>Pacotes de Créditos</CardTitle>
@@ -490,6 +630,7 @@ export const CreditPackagesTab = () => {
                       setIsEditDialogOpen(true);
                     }}
                     onToggleActive={handleToggleActive}
+                    onEditStripe={handleOpenStripeEdit}
                   />
                 )}
               </CardContent>
@@ -501,14 +642,107 @@ export const CreditPackagesTab = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Editar Pacote</DialogTitle>
+              <DialogDescription>
+                Atualize as informações do pacote de créditos
+              </DialogDescription>
             </DialogHeader>
+
             {editingPackage && (
               <EditPackageForm
-                package_={editingPackage}
+                pkg={editingPackage}
                 onSubmit={handleUpdatePackage}
-                onChange={(field, value) => setEditingPackage(prev => ({ ...prev!, [field]: value }))}
+                onChange={(field, value) => {
+                  setEditingPackage(prev => {
+                    if (!prev) return prev;
+                    return { ...prev, [field]: value };
+                  });
+                }}
                 onCancel={() => setIsEditDialogOpen(false)}
               />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo para editar pacote no Stripe */}
+        <Dialog open={isStripeEditDialogOpen} onOpenChange={setIsStripeEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Atualizar no Stripe</DialogTitle>
+              <DialogDescription>
+                Atualizar dados do pacote no Stripe e no banco de dados
+              </DialogDescription>
+            </DialogHeader>
+
+            {editingPackage && (
+              <form onSubmit={updateStripeProduct}>
+                <div className="space-y-4 py-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Nome do Pacote</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={editingPackage.name}
+                      onChange={(e) => setEditingPackage({ ...editingPackage, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Quantidade de Créditos</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded"
+                      value={editingPackage.credits}
+                      onChange={(e) => setEditingPackage({ ...editingPackage, credits: parseInt(e.target.value) || 0 })}
+                      required
+                      min="1"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Preço (R$)</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded"
+                      value={editingPackage.price}
+                      onChange={(e) => setEditingPackage({ ...editingPackage, price: parseFloat(e.target.value) || 0 })}
+                      required
+                      min="0.01"
+                      step="0.01"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={editingPackage.active}
+                        onChange={(e) => setEditingPackage({ ...editingPackage, active: e.target.checked })}
+                      />
+                      <span className="text-sm font-medium">Ativo</span>
+                    </label>
+                  </div>
+
+                  {editingPackage.stripeProductId && editingPackage.stripePriceId && (
+                    <div className="mt-4 p-3 bg-muted rounded-md">
+                      <h4 className="text-sm font-semibold mb-2">Informações do Stripe:</h4>
+                      <p className="text-xs text-muted-foreground">Product ID: {editingPackage.stripeProductId}</p>
+                      <p className="text-xs text-muted-foreground">Price ID: {editingPackage.stripePriceId}</p>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsStripeEditDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button type="submit">Atualizar no Stripe</Button>
+                  </div>
+                </div>
+              </form>
             )}
           </DialogContent>
         </Dialog>
