@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 import { type CreateOrganizationFormData } from "../schema";
 import { Organization, OrganizationPlan, OrganizationStatus } from "@/types/organization-types";
 import { addDays, endOfMonth, format, startOfMonth, differenceInDays } from "date-fns";
@@ -15,8 +15,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     
     // Fetch plan name for the selected plan ID
     const { data: planData, error: planError } = await supabase
-      .from('plans')
-      .select('name, price')
+      .from('modulos')
+      .select('name, value')
       .eq('id', values.plan)
       .single();
       
@@ -33,19 +33,17 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     // Insert the new organization
     // Note: Field names must match the database column names
     const { data, error } = await supabase
-      .from('organizations')
+      .from('organization')
       .insert({
-        name: values.razaoSocial,
+        razao_social: values.razaoSocial,
         nome_fantasia: values.nomeFantasia,
         cnpj: cleanedCnpj,
-        email: values.email,
-        phone: values.phone,
-        plan: values.plan,
-        admin_name: values.adminName,
-        admin_email: values.adminEmail,
-        status: values.status === "suspended" || values.status === "canceled" ? "inactive" : values.status,
+        email_empresa: values.email,
+        telefone_empresa: values.phone,
+        plano_id: values.plan,
+        user_admin_id: values.adminEmail, // Using admin email as temporary user admin ID
         // Store selected modules as comma-separated list if provided
-        modules: modulesString
+        modulos_ids: modulesString
       })
       .select('*')
       .single();
@@ -59,7 +57,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       data, 
       error: null, 
       planName: planData?.name || null,
-      planPrice: planData?.price || 0
+      planPrice: planData?.value || 0
     };
   } catch (error) {
     console.error("Erro inesperado ao criar organização:", error);
@@ -144,15 +142,15 @@ export const handleProRataCreation = async (organization: Organization) => {
     if (typeof organization.plan === 'string') {
       // Fetch plan info from the database
       const { data: planData } = await supabase
-        .from('plans')
-        .select('price')
+        .from('modulos')
+        .select('value')
         .eq('id', organization.plan)
         .single();
         
-      planPrice = planData?.price || 0;
+      planPrice = planData?.value || 0;
     } else {
       // Plan is already an object with price
-      planPrice = organization.plan.price;
+      planPrice = organization.plan.value;
     }
 
     // Calculate the pro-rata value
@@ -233,24 +231,24 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
   let planValue: string | OrganizationPlan;
   
   // Convert plan to either string or OrganizationPlan
-  if (typeof dbOrg.plan === 'string') {
-    planValue = dbOrg.plan;
-  } else if (dbOrg.plan && typeof dbOrg.plan === 'object') {
+  if (typeof dbOrg.plano_id === 'string') {
+    planValue = dbOrg.plano_id;
+  } else if (dbOrg.plano_id && typeof dbOrg.plano_id === 'object') {
     planValue = {
-      id: dbOrg.plan.id,
-      name: dbOrg.plan.name,
-      price: dbOrg.plan.price || 0
+      id: dbOrg.plano_id.id,
+      name: dbOrg.plano_id.name,
+      value: dbOrg.plano_id.value || 0
     };
   } else {
-    planValue = dbOrg.plan || '';
+    planValue = dbOrg.plano_id || '';
   }
 
   // Convert modules from string to array if it exists
   let modulesValue: string[] | undefined;
-  if (dbOrg.modules) {
-    modulesValue = typeof dbOrg.modules === 'string' ? 
-      dbOrg.modules.split(',') : 
-      dbOrg.modules;
+  if (dbOrg.modulos_ids) {
+    modulesValue = typeof dbOrg.modulos_ids === 'string' ? 
+      dbOrg.modulos_ids.split(',') : 
+      dbOrg.modulos_ids;
   }
 
   // Map database status to OrganizationStatus, ensuring it's valid
@@ -261,10 +259,10 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
 
   return {
     id: dbOrg.id,
-    name: dbOrg.name,
+    name: dbOrg.razao_social,
     nomeFantasia: dbOrg.nome_fantasia,
     plan: planValue,
-    planName: dbOrg.planName,
+    planName: dbOrg.plano_id?.name,
     users: [], // You might need to fetch the users separately
     status: status,
     pendingReason: dbOrg.pending_reason || null,
@@ -273,11 +271,11 @@ export const mapToOrganizationType = (dbOrg: any): Organization => {
     registrationStatus: dbOrg.registration_status,
     integratedCRM: dbOrg.integrated_crm,
     integratedLLM: dbOrg.integrated_llm,
-    email: dbOrg.email,
-    phone: dbOrg.phone,
+    email: dbOrg.email_empresa,
+    phone: dbOrg.telefone_empresa,
     cnpj: dbOrg.cnpj,
-    adminName: dbOrg.admin_name,
-    adminEmail: dbOrg.admin_email,
+    adminName: dbOrg.user_admin_id,
+    adminEmail: dbOrg.user_admin_id,
     contractSignedAt: dbOrg.contract_signed_at,
     createdAt: dbOrg.created_at,
     logo: dbOrg.logo,
@@ -301,8 +299,8 @@ export const checkOrganizationExists = async (cnpj: string) => {
   const cleanedCnpj = cnpj.replace(/[^0-9]/g, '');
   
   const { data, error } = await supabase
-    .from('organizations')
-    .select('id, name')
+    .from('organization')
+    .select('id, razao_social')
     .eq('cnpj', cleanedCnpj)
     .limit(1);
     

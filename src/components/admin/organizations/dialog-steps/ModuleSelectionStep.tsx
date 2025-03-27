@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { FormLabel } from "@/components/ui/form";
@@ -86,7 +85,7 @@ export const ModuleSelectionStep: React.FC<ModuleSelectionStepProps> = ({
               </SelectTrigger>
               <SelectContent>
                 {plans
-                  .filter(plan => plan.active)
+                  .filter(plan => plan.active && !plan.coming_soon)
                   .map(plan => (
                     <SelectItem
                       key={plan.id}

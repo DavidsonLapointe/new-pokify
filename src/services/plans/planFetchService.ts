@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { mapDbPlanToPlan } from "./planUtils";
@@ -9,7 +9,7 @@ export async function fetchPlans(): Promise<Plan[]> {
     const { data, error } = await supabase
       .from('planos')
       .select('*')
-      .order('price', { ascending: true });
+      .order('value', { ascending: true });
     
     if (error) {
       console.error('Erro ao buscar planos:', error);

@@ -1,4 +1,3 @@
-
 import { useFormErrorHandlers } from "../utils/form-error-handlers";
 import { useUser } from "@/contexts/UserContext";
 import { type CreateOrganizationFormData } from "../schema";
@@ -10,7 +9,7 @@ import {
 } from "../api/organization-api";
 import { createInactiveSubscription } from "@/services/subscriptionService";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 
 /**
  * Hook for handling organization form submission logic
@@ -40,7 +39,7 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
 
       // Check if organization with same CNPJ already exists before trying to create
       const { data: existingOrgs, error: checkError } = await supabase
-        .from('organizations')
+        .from('organization')
         .select('id, cnpj')
         .eq('cnpj', values.cnpj.replace(/[^0-9]/g, ''))
         .limit(1);

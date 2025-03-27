@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { updateStripeProduct } from "../stripeService";
@@ -32,7 +32,7 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
         .from('planos')
         .insert({
           name: plan.name,
-          price: plan.price,
+          value: plan.price, // Changed from price to value to match DB column
           description: plan.description,
           features: benefits, // Use benefits as features in the database
           active: plan.active,

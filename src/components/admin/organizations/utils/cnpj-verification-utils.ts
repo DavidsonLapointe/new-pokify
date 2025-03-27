@@ -1,5 +1,4 @@
-
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 import { toast } from "sonner";
 
 /**
@@ -21,8 +20,8 @@ export const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
     
     // Check if the CNPJ already exists in our database
     const { data, error } = await supabase
-      .from('organizations')
-      .select('id, name')
+      .from('organization')
+      .select('id, razao_social')
       .eq('cnpj', cleanedCnpj)
       .limit(1);
       
@@ -33,8 +32,8 @@ export const checkCnpjExists = async (cnpj: string): Promise<boolean> => {
     }
     
     if (data && data.length > 0) {
-      console.warn(`CNPJ ${cnpj} já existe para a organização "${data[0].name}"`);
-      toast.error(`CNPJ ${cnpj} já cadastrado para a empresa "${data[0].name}"`);
+      console.warn(`CNPJ ${cnpj} já existe para a organização "${data[0].razao_social || 'Sem nome'}"`);
+      toast.error(`CNPJ ${cnpj} já cadastrado para a empresa "${data[0].razao_social || 'Sem nome'}"`);
       return false;
     }
     
@@ -63,7 +62,7 @@ export const checkCnpjExistsInDatabase = async (cnpj: string): Promise<boolean> 
     
     // Check if CNPJ exists in our database
     const { data, error } = await supabase
-      .from('organizations')
+      .from('organization')
       .select('id')
       .eq('cnpj', cleanedCnpj)
       .limit(1);

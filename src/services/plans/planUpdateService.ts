@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/realClient";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
 import { updateStripeProduct } from "../stripeService";
@@ -56,7 +56,7 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       
       // Only include defined fields in the update
       if (plan.name !== undefined) updateData.name = plan.name;
-      if (plan.price !== undefined) updateData.price = plan.price;
+      if (plan.price !== undefined) updateData.value = plan.price;
       if (plan.description !== undefined) updateData.description = plan.description;
       if (plan.active !== undefined) updateData.active = plan.active;
       if (features !== undefined) updateData.features = features;

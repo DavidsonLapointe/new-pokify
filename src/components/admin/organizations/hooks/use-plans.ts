@@ -1,22 +1,50 @@
-
 import { useQuery } from "@tanstack/react-query";
-import { fetchPlans } from "@/services/plans/planFetchService";
+import { supabase } from "@/integrations/supabase/realClient";
+
+interface Module {
+  id: string | number;
+  name: string;
+  value: number;
+  active: boolean;
+  coming_soon: boolean;
+  short_description?: string;
+  long_description?: string;
+  credit_per_use?: number;
+  benefit?: string[];
+  how_works?: string[];
+  icone?: string;
+  button_label?: string;
+}
 
 export function usePlans() {
   const { 
-    data: plans = [],
+    data: modules = [],
     isLoading,
     error
   } = useQuery({
-    queryKey: ['plans', 'active'],
-    queryFn: fetchPlans,
+    queryKey: ['modules', 'active'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('modulos')
+          .select('*')
+          .eq('active', true)
+          .eq('coming_soon', false);
+          
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return data || [];
+      } catch (err) {
+        console.error("Error fetching modules:", err);
+        return [];
+      }
+    },
   });
 
-  // Filter for active plans only
-  const activePlans = plans.filter(plan => plan.active);
-
   return {
-    plans: activePlans,
+    plans: modules,
     isLoading,
     error
   };

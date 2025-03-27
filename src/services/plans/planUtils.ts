@@ -1,11 +1,10 @@
-
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 
 export function mapDbPlanToPlan(dbPlan: any): Plan {
   return {
     id: dbPlan.id,
     name: dbPlan.name,
-    price: parseFloat(dbPlan.price),
+    price: parseFloat(dbPlan.value), // Changed from price to value to match DB column
     shortDescription: dbPlan.short_description || "",
     description: dbPlan.description,
     benefits: dbPlan.features || [],  // Map features from DB to benefits in our app

@@ -1,4 +1,3 @@
-
 // Organization status types
 export type OrganizationStatus = "active" | "pending" | "suspended" | "canceled" | "inactive";
 
@@ -29,7 +28,7 @@ export type Address = OrganizationAddress;
 export interface OrganizationPlan {
   id: string;
   name: string;
-  price: number;
+  value: number;
   features?: string[];
   expiresAt?: string;
 }
