@@ -13,7 +13,7 @@ export const useOrganizations = () => {
     try {
       // Fetch real organizations from Supabase
       const { data, error: supabaseError } = await supabase
-        .from('organizations')
+        .from('empresas')
         .select('*');
       
       if (supabaseError) {

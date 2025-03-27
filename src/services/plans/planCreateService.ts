@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -30,7 +29,7 @@ export async function createPlan(plan: Omit<Plan, 'id'>): Promise<Plan | null> {
       
       // 2. Criar o plano no Supabase com os IDs do Stripe
       const { data, error } = await supabase
-        .from('plans')
+        .from('planos')
         .insert({
           name: plan.name,
           price: plan.price,

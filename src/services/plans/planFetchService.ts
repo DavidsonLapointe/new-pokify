@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -8,7 +7,7 @@ import { mockPlans } from "@/mocks/plansMocks";
 export async function fetchPlans(): Promise<Plan[]> {
   try {
     const { data, error } = await supabase
-      .from('plans')
+      .from('planos')
       .select('*')
       .order('price', { ascending: true });
     
@@ -58,7 +57,7 @@ export async function fetchPlanById(id: string): Promise<Plan | null> {
   try {
     // Tenta buscar no Supabase
     const { data, error } = await supabase
-      .from('plans')
+      .from('planos')
       .select('*')
       .eq('id', id)
       .single();

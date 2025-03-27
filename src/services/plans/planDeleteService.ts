@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { updateStripeProduct } from "../stripeService";
 import { toast } from "sonner";
@@ -17,7 +16,7 @@ export async function deletePlan(id: string): Promise<boolean> {
     
     // 1. First, get the current plan to have all information
     const { data: currentPlan, error: fetchError } = await supabase
-      .from('plans')
+      .from('planos')
       .select('*')
       .eq('id', id)
       .single();
@@ -49,7 +48,7 @@ export async function deletePlan(id: string): Promise<boolean> {
     
     // 3. Update the plan status to inactive in our database
     const { error: updateError } = await supabase
-      .from('plans')
+      .from('planos')
       .update({ active: false })
       .eq('id', id);
     

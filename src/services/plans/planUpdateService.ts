@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
@@ -9,7 +8,7 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
   try {
     // Buscar plano atual para ter informações completas
     const { data: currentPlan, error: fetchError } = await supabase
-      .from('plans')
+      .from('planos')
       .select('*')
       .eq('id', id.toString())
       .single();
@@ -85,7 +84,7 @@ export async function updatePlan(id: number | string, plan: Partial<Plan>): Prom
       
       // 2. Atualizar plano no Supabase
       const { data, error } = await supabase
-        .from('plans')
+        .from('planos')
         .update(updateData)
         .eq('id', id.toString())
         .select()
