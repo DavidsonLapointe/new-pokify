@@ -96,8 +96,8 @@ export const CreateOrganizationDialog = ({
   if (step === 2) {
     dialogDescription = "Preencha os dados da empresa e do administrador.";
   } else if (step === 3) {
-    dialogTitle = "Selecionar Planos";
-    dialogDescription = "Selecione pelo menos um plano para associar à empresa.";
+    dialogTitle = "Selecionar Módulos";
+    dialogDescription = "Selecione os módulos que deseja associar à empresa.";
   }
 
   return (
