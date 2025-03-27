@@ -52,11 +52,36 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
       return { data: null, error, planName: null };
     }
     
+    // Now create the admin profile in the profiles table according to the schema in the second image
+    console.log("Criando perfil de administrador para a organização:", data.id);
+    
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        name: values.adminName,
+        email: values.adminEmail,
+        tel: values.phone, // Usando o telefone da empresa para o administrador
+        function: 'admin', // user_type enum value for admin
+        status: 'active', // user_status enum value for active
+        user_id: values.adminEmail, // Using email as user_id temporarily
+        organization_id: data.id // Link to the newly created organization
+      })
+      .select('*')
+      .single();
+
+    if (profileError) {
+      console.error("Erro ao criar perfil de administrador:", profileError);
+      console.warn("Organização criada, mas houve falha ao criar o perfil de administrador.");
+    } else {
+      console.log("Perfil de administrador criado com sucesso:", profileData);
+    }
+    
     return { 
       data, 
       error: null, 
       planName: planData?.name || null,
-      planPrice: planData?.value || 0
+      planPrice: planData?.value || 0,
+      profile: profileError ? null : profileData
     };
   } catch (error) {
     console.error("Erro inesperado ao criar organização:", error);
