@@ -30,14 +30,14 @@ export const ModuleSelectionStep: React.FC<ModuleSelectionStepProps> = ({
 }) => {
   const { plans, isLoading } = usePlans();
 
-  const handleAddModule = (moduleId: string) => {
-    if (!selectedModules.includes(moduleId)) {
-      onModuleChange([...selectedModules, moduleId]);
+  const handleAddModule = (planId: string) => {
+    if (!selectedModules.includes(planId)) {
+      onModuleChange([...selectedModules, planId]);
     }
   };
 
-  const handleRemoveModule = (moduleId: string) => {
-    onModuleChange(selectedModules.filter(id => id !== moduleId));
+  const handleRemoveModule = (planId: string) => {
+    onModuleChange(selectedModules.filter(id => id !== planId));
   };
 
   return (
@@ -45,24 +45,24 @@ export const ModuleSelectionStep: React.FC<ModuleSelectionStepProps> = ({
       <div className="space-y-3">
         <div>
           <FormLabel className="text-base font-medium">
-            Módulos disponíveis <span className="font-normal text-gray-500">(selecione os módulos que deseja associar à empresa)</span>
+            Planos disponíveis <span className="font-normal text-gray-500">(selecione os planos que deseja associar à empresa)</span>
           </FormLabel>
           <div className="mt-2 p-3 border rounded-md bg-slate-50">
             <div className="flex flex-wrap gap-2 mb-3">
               {selectedModules.length > 0 ? (
-                selectedModules.map((moduleId) => {
-                  const module = plans.find(p => p.id.toString() === moduleId);
-                  return module ? (
+                selectedModules.map((planId) => {
+                  const plan = plans.find(p => p.id.toString() === planId);
+                  return plan ? (
                     <Badge 
-                      key={moduleId} 
+                      key={planId} 
                       variant="secondary"
                       className="px-2.5 py-1 flex items-center bg-[#9b87f5] text-white"
                     >
-                      {module.name}
+                      {plan.name}
                       <button 
                         type="button"
                         className="ml-1.5 text-white hover:text-gray-200 focus:outline-none"
-                        onClick={() => handleRemoveModule(moduleId)}
+                        onClick={() => handleRemoveModule(planId)}
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -71,7 +71,7 @@ export const ModuleSelectionStep: React.FC<ModuleSelectionStepProps> = ({
                 })
               ) : (
                 <div className="text-sm text-gray-500">
-                  Nenhum módulo selecionado
+                  Nenhum plano selecionado
                 </div>
               )}
             </div>
@@ -81,11 +81,11 @@ export const ModuleSelectionStep: React.FC<ModuleSelectionStepProps> = ({
               onValueChange={(value) => handleAddModule(value)}
             >
               <SelectTrigger className="w-full bg-white">
-                <SelectValue placeholder="Selecione um módulo" />
+                <SelectValue placeholder="Selecione um plano" />
               </SelectTrigger>
               <SelectContent>
                 {plans
-                  .filter(plan => plan.active && !plan.coming_soon)
+                  .filter(plan => plan.active)
                   .map(plan => (
                     <SelectItem
                       key={plan.id}

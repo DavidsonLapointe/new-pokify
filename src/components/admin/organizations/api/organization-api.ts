@@ -15,8 +15,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
     
     // Fetch plan name for the selected plan ID
     const { data: planData, error: planError } = await supabase
-      .from('modulos')
-      .select('name, value')
+      .from('planos')
+      .select('id, name, value')
       .eq('id', values.plan)
       .single();
       
@@ -40,9 +40,8 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         cnpj: cleanedCnpj,
         email_empresa: values.email,
         telefone_empresa: values.phone,
-        plano_id: values.plan,
+        plano_id: values.plan, // Use the plan ID from the form values
         user_admin_id: values.adminEmail, // Using admin email as temporary user admin ID
-        // Store selected modules as comma-separated list if provided
         modulos_ids: modulesString
       })
       .select('*')
@@ -142,7 +141,7 @@ export const handleProRataCreation = async (organization: Organization) => {
     if (typeof organization.plan === 'string') {
       // Fetch plan info from the database
       const { data: planData } = await supabase
-        .from('modulos')
+        .from('planos')
         .select('value')
         .eq('id', organization.plan)
         .single();

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -74,11 +73,15 @@ export const CreateOrganizationDialog = ({
   };
 
   // Move to module selection step
-  const handleNextToModules = async (values: any) => {
+  const handleNextToModules = (values: any) => {
+    console.log("Moving to step 3 with values:", values);
+    
     // Save form values for the next step
     Object.entries(values).forEach(([key, value]) => {
       form.setValue(key as any, value);
     });
+    
+    // Move to step 3
     setStep(3);
   };
 
@@ -93,8 +96,8 @@ export const CreateOrganizationDialog = ({
   if (step === 2) {
     dialogDescription = "Preencha os dados da empresa e do administrador.";
   } else if (step === 3) {
-    dialogTitle = "Selecionar Módulos";
-    dialogDescription = "Selecione pelo menos um módulo para associar à empresa.";
+    dialogTitle = "Selecionar Planos";
+    dialogDescription = "Selecione pelo menos um plano para associar à empresa.";
   }
 
   return (

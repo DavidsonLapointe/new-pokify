@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
@@ -7,7 +6,7 @@ import { OrganizationFormFields } from "../organization-form-fields";
 
 interface OrganizationFormStepProps {
   form: UseFormReturn<CreateOrganizationFormData>;
-  onSubmit: (values: CreateOrganizationFormData) => Promise<void>;
+  onSubmit: (values: CreateOrganizationFormData) => void;
   onBack: () => void;
   cnpjValidated: boolean;
 }
@@ -18,8 +17,14 @@ export const OrganizationFormStep = ({
   onBack,
   cnpjValidated
 }: OrganizationFormStepProps) => {
+  const handleSubmit = (values: CreateOrganizationFormData) => {
+    console.log("Submitting organization form:", values);
+    // Call the parent component's onSubmit function
+    onSubmit(values);
+  };
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-1">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-1">
       <div className="bg-white rounded-md">
         <div className="flex items-center gap-2 mb-3">
           <div className="h-3 w-1 bg-[#9b87f5] rounded-full"></div>

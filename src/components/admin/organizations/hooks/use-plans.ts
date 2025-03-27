@@ -1,35 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/realClient";
 
-interface Module {
+interface Plan {
   id: string | number;
   name: string;
   value: number;
   active: boolean;
-  coming_soon: boolean;
+  description?: string;
   short_description?: string;
-  long_description?: string;
-  credit_per_use?: number;
-  benefit?: string[];
-  how_works?: string[];
-  icone?: string;
-  button_label?: string;
+  resources?: string;
+  credit?: number;
+  price_id?: string;
+  prod_id?: string;
 }
 
 export function usePlans() {
   const { 
-    data: modules = [],
+    data: plans = [],
     isLoading,
     error
   } = useQuery({
-    queryKey: ['modules', 'active'],
+    queryKey: ['plans', 'active'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('modulos')
+          .from('planos')
           .select('*')
-          .eq('active', true)
-          .eq('coming_soon', false);
+          .eq('active', true);
           
         if (error) {
           throw new Error(error.message);
@@ -37,14 +34,14 @@ export function usePlans() {
         
         return data || [];
       } catch (err) {
-        console.error("Error fetching modules:", err);
+        console.error("Error fetching plans:", err);
         return [];
       }
     },
   });
 
   return {
-    plans: modules,
+    plans,
     isLoading,
     error
   };

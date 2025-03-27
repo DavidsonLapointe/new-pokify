@@ -1,8 +1,7 @@
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { organizationSchema, type CreateOrganizationFormData } from "../schema";
+import { organizationDetailsSchema, type CreateOrganizationFormData } from "../schema";
 import { usePlans } from "./use-plans";
 
 /**
@@ -12,7 +11,7 @@ export const useOrganizationFormInit = () => {
   const { plans } = usePlans();
   
   const form = useForm<CreateOrganizationFormData>({
-    resolver: zodResolver(organizationSchema),
+    resolver: zodResolver(organizationDetailsSchema), // Use the details schema instead of full schema
     defaultValues: {
       razaoSocial: "",
       nomeFantasia: "",
