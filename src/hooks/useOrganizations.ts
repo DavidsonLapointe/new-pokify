@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Organization } from '@/types';
-import { fetchOrganizations as fetchOrgsService } from '@/services/mockOrganizationService';
+import { supabase } from '@/integrations/supabase/realClient';
 
 export const useOrganizations = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -11,13 +11,36 @@ export const useOrganizations = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Usando o serviço mockado em vez dos dados mockados diretamente
-      const orgs = await fetchOrgsService();
+      // Fetch real organizations from Supabase
+      const { data, error: supabaseError } = await supabase
+        .from('organizations')
+        .select('*');
       
-      // Garantir que cada organização tenha um array de usuários
-      const orgsWithUsers = orgs.map(org => ({
-        ...org,
-        users: org.users || []
+      if (supabaseError) {
+        throw new Error(supabaseError.message);
+      }
+      
+      // Transform data to match Organization interface
+      const orgsWithUsers = (data || []).map((org: any) => ({
+        id: org.id,
+        name: org.name || '',
+        nomeFantasia: org.nome_fantasia || '',
+        cnpj: org.cnpj || '',
+        email: org.email || '',
+        phone: org.phone || '',
+        status: org.status || 'pending',
+        createdAt: org.created_at || new Date().toISOString(),
+        updatedAt: org.updated_at,
+        plan: org.plan || 'basic',
+        users: org.users || [],
+        adminName: org.admin_name,
+        adminEmail: org.admin_email,
+        adminPhone: org.admin_phone,
+        logo: org.logo,
+        address: org.address || {},
+        // Default values for fields that might be undefined
+        features: org.features || {},
+        modules: org.modules || []
       }));
       
       setOrganizations(orgsWithUsers);
