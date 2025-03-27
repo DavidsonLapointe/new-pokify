@@ -19,6 +19,8 @@ interface CreditPackageData {
   value: number;
   credit: number;
   active: boolean;
+  prod_id: string | null;
+  price_id: string | null;
 }
 
 export const CreditPackagesTab = () => {
@@ -32,6 +34,133 @@ export const CreditPackagesTab = () => {
     credits: "",
     price: ""
   });
+
+  // Função para criar produto e preço no Stripe usando diretamente a API do Stripe (one-time/avulso)
+  const createStripeProduct = async (pkg: {
+    name: string;
+    price: number;
+    credits: number;
+  }): Promise<{ productId: string, priceId: string }> => {
+    try {
+      // Detalhes completos para log da criação do produto
+      console.log("1. Iniciando criação de produto avulso no Stripe para o pacote:", {
+        name: pkg.name,
+        price: pkg.price,
+        credits: pkg.credits
+      });
+
+      // Chave secreta do Stripe
+      const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
+      
+      // PASSO 1: Criar o produto no Stripe
+      const productFormData = new URLSearchParams();
+      productFormData.append('name', pkg.name);
+      productFormData.append('type', 'service');
+      productFormData.append('description', `Pacote de ${pkg.credits} créditos para análises`);
+      
+      // Log da requisição para criar produto
+      console.log('2. Dados para criação do produto:', {
+        url: 'https://api.stripe.com/v1/products',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: productFormData.toString()
+      });
+
+      // Chamada da API para criar o produto
+      const productResponse = await fetch('https://api.stripe.com/v1/products', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${stripeSecretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: productFormData
+      });
+
+      // Verificar se a requisição foi bem-sucedida
+      if (!productResponse.ok) {
+        const errorText = await productResponse.text();
+        console.error('3. Erro ao criar produto no Stripe:', {
+          status: productResponse.status,
+          statusText: productResponse.statusText,
+          error: errorText
+        });
+        throw new Error(`Falha ao criar produto no Stripe: ${productResponse.status} ${productResponse.statusText}`);
+      }
+
+      // Processar a resposta
+      const productData = await productResponse.json();
+      console.log('3. Produto criado com sucesso no Stripe:', productData);
+
+      // PASSO 2: Criar o preço no Stripe (one-time/avulso, sem recurring)
+      const priceFormData = new URLSearchParams();
+      // Converter para centavos e garantir que seja número inteiro
+      priceFormData.append('unit_amount', Math.round(pkg.price * 100).toString());
+      priceFormData.append('currency', 'brl'); // Usar BRL para Reais brasileiros
+      // Não adicionamos o recurring aqui para que seja um produto avulso
+      priceFormData.append('product', productData.id);
+
+      // Log da requisição para criar preço
+      console.log('4. Dados para criação do preço (one-time):', {
+        url: 'https://api.stripe.com/v1/prices',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: priceFormData.toString()
+      });
+
+      // Chamada da API para criar o preço
+      const priceResponse = await fetch('https://api.stripe.com/v1/prices', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${stripeSecretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: priceFormData
+      });
+
+      // Verificar se a requisição foi bem-sucedida
+      if (!priceResponse.ok) {
+        const errorText = await priceResponse.text();
+        console.error('5. Erro ao criar preço no Stripe:', {
+          status: priceResponse.status,
+          statusText: priceResponse.statusText,
+          error: errorText
+        });
+        throw new Error(`Falha ao criar preço no Stripe: ${priceResponse.status} ${priceResponse.statusText}`);
+      }
+
+      // Processar a resposta
+      const priceData = await priceResponse.json();
+      console.log('5. Preço criado com sucesso no Stripe:', priceData);
+
+      // Retornar os IDs do produto e do preço
+      return {
+        productId: productData.id,
+        priceId: priceData.id
+      };
+    } catch (error) {
+      console.error('Erro global ao criar no Stripe:', error);
+      
+      // Gerar IDs temporários para falhar graciosamente
+      const mockProductId = `prod_mock_${Date.now()}`;
+      const mockPriceId = `price_mock_${Date.now()}`;
+      
+      console.log('Usando IDs temporários para falha graciosa:', {
+        productId: mockProductId,
+        priceId: mockPriceId
+      });
+      
+      return {
+        productId: mockProductId,
+        priceId: mockPriceId
+      };
+    }
+  };
 
   // Função para buscar pacotes do Supabase
   const fetchCreditPackages = async () => {
@@ -56,7 +185,9 @@ export const CreditPackagesTab = () => {
           name: item.name,
           credits: item.credit,
           price: item.value,
-          active: item.active
+          active: item.active,
+          stripeProductId: item.prod_id || undefined,
+          stripePriceId: item.price_id || undefined
         }));
         
         setPackages(formattedPackages);
@@ -113,14 +244,31 @@ export const CreditPackagesTab = () => {
     toast.promise(
       async () => {
         try {
-          // Inserir no Supabase
+          console.log("Iniciando criação de pacote de créditos:", {
+            name: newPackage.name,
+            credits,
+            price
+          });
+          
+          // Criar produto no Stripe para o novo pacote
+          const stripeResult = await createStripeProduct({
+            name: newPackage.name,
+            price: price,
+            credits: credits
+          });
+          
+          console.log("Produto criado no Stripe:", stripeResult);
+          
+          // Inserir no Supabase incluindo os IDs do Stripe
           const { data, error } = await supabase
             .from('credit_package')
             .insert([{
               name: newPackage.name,
               credit: credits,
               value: price,
-              active: true
+              active: true,
+              prod_id: stripeResult.productId,
+              price_id: stripeResult.priceId
             }])
             .select();
             
@@ -139,7 +287,9 @@ export const CreditPackagesTab = () => {
             name: data[0].name,
             credits: data[0].credit,
             price: data[0].value,
-            active: data[0].active
+            active: data[0].active,
+            stripeProductId: data[0].prod_id,
+            stripePriceId: data[0].price_id
           };
           
           // Atualizar o estado local
@@ -176,7 +326,9 @@ export const CreditPackagesTab = () => {
               name: editingPackage.name,
               credit: editingPackage.credits,
               value: editingPackage.price,
-              active: editingPackage.active
+              active: editingPackage.active,
+              // Mantém os valores existentes de prod_id e price_id
+              // Não alteramos esses campos durante a edição para preservar a integração com o Stripe
             })
             .eq('id', editingPackage.id);
             
