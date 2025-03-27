@@ -63,27 +63,269 @@ export const convertModuleDataToPlan = (moduleData: ModuleData): Plan => {
   };
 };
 
-// Mock function to create a Stripe product and price
+// Create a product in Stripe using API
 export const createStripeProduct = async (module: Partial<Plan>) => {
   try {
     console.log('Creating Stripe product for module:', module.name);
     
-    // Generate mock IDs for Stripe product and price
-    const productId = `prod_${Math.random().toString(36).substring(2, 15)}`;
-    const priceId = `price_${Math.random().toString(36).substring(2, 15)}`;
+    // Chave secreta do Stripe
+    const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
     
-    console.log('Mock Stripe product and price created successfully:', {
-      productId,
-      priceId
+    // PASSO 1: Criar o produto no Stripe
+    const productFormData = new URLSearchParams();
+    productFormData.append('name', module.name || 'Módulo sem nome');
+    productFormData.append('type', 'service');
+    productFormData.append('description', module.shortDescription || '');
+    
+    // Adicionar metadados relevantes
+    if (module.credits) {
+      productFormData.append('metadata[credits]', module.credits.toString());
+    }
+    
+    console.log('Enviando requisição para criar produto no Stripe:', {
+      url: 'https://api.stripe.com/v1/products',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: productFormData.toString()
+    });
+
+    // Chamada da API para criar o produto
+    const productResponse = await fetch('https://api.stripe.com/v1/products', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: productFormData
+    });
+
+    // Verificar se a requisição foi bem-sucedida
+    if (!productResponse.ok) {
+      const errorText = await productResponse.text();
+      console.error('Erro ao criar produto no Stripe:', {
+        status: productResponse.status,
+        statusText: productResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Falha ao criar produto no Stripe: ${productResponse.status} ${productResponse.statusText}`);
+    }
+
+    // Processar a resposta
+    const productData = await productResponse.json();
+    console.log('Produto criado com sucesso no Stripe:', productData);
+
+    // PASSO 2: Criar o preço no Stripe (one-time/avulso, sem recurring)
+    const priceFormData = new URLSearchParams();
+    // Converter para centavos e garantir que seja número inteiro
+    priceFormData.append('unit_amount', Math.round((module.price || 0) * 100).toString());
+    priceFormData.append('currency', 'brl'); // Usar BRL para Reais brasileiros
+    // Não adicionamos o recurring aqui para que seja um produto avulso
+    priceFormData.append('product', productData.id);
+
+    console.log('Enviando requisição para criar preço no Stripe:', {
+      url: 'https://api.stripe.com/v1/prices',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: priceFormData.toString()
+    });
+
+    // Chamada da API para criar o preço
+    const priceResponse = await fetch('https://api.stripe.com/v1/prices', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: priceFormData
+    });
+
+    // Verificar se a requisição foi bem-sucedida
+    if (!priceResponse.ok) {
+      const errorText = await priceResponse.text();
+      console.error('Erro ao criar preço no Stripe:', {
+        status: priceResponse.status,
+        statusText: priceResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Falha ao criar preço no Stripe: ${priceResponse.status} ${priceResponse.statusText}`);
+    }
+
+    // Processar a resposta
+    const priceData = await priceResponse.json();
+    console.log('Preço criado com sucesso no Stripe:', priceData);
+
+    // Retornar os IDs do produto e do preço
+    return {
+      productId: productData.id,
+      priceId: priceData.id
+    };
+  } catch (error) {
+    console.error('Erro global ao criar no Stripe:', error);
+    
+    // Gerar IDs temporários para falhar graciosamente
+    const mockProductId = `prod_mock_${Date.now()}`;
+    const mockPriceId = `price_mock_${Date.now()}`;
+    
+    console.log('Usando IDs temporários para falha graciosa:', {
+      productId: mockProductId,
+      priceId: mockPriceId
     });
     
     return {
-      productId,
-      priceId
+      productId: mockProductId,
+      priceId: mockPriceId
+    };
+  }
+};
+
+// Função para atualizar o produto no Stripe
+export const updateStripeProduct = async (module: Partial<Plan>) => {
+  if (!module.stripeProductId || !module.stripePriceId || 
+      module.stripeProductId.includes('mock_') || module.stripePriceId.includes('mock_')) {
+    console.error('Não é possível atualizar produto sem IDs Stripe válidos:', module);
+    // Criar novo produto se não tiver IDs válidos
+    return createStripeProduct(module);
+  }
+
+  try {
+    console.log('Atualizando produto no Stripe:', module.name);
+    
+    // Chave secreta do Stripe
+    const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
+    
+    // PASSO 1: Atualizar o produto no Stripe
+    const productFormData = new URLSearchParams();
+    productFormData.append('name', module.name || 'Módulo sem nome');
+    productFormData.append('description', module.shortDescription || '');
+    
+    if (module.credits) {
+      productFormData.append('metadata[credits]', module.credits.toString());
+    }
+    
+    console.log('Enviando requisição para atualizar produto no Stripe:', {
+      url: `https://api.stripe.com/v1/products/${module.stripeProductId}`,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: productFormData.toString()
+    });
+
+    // Atualizar o produto
+    const productResponse = await fetch(`https://api.stripe.com/v1/products/${module.stripeProductId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: productFormData
+    });
+
+    // Verificar se a requisição foi bem-sucedida
+    if (!productResponse.ok) {
+      const errorText = await productResponse.text();
+      console.error('Erro ao atualizar produto no Stripe:', {
+        status: productResponse.status,
+        statusText: productResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Falha ao atualizar produto no Stripe: ${productResponse.status} ${productResponse.statusText}`);
+    }
+
+    // Processar a resposta
+    const productData = await productResponse.json();
+    console.log('Produto atualizado com sucesso no Stripe:', productData);
+
+    // PASSO 2: Criar novo preço (Stripe não permite atualizar preços existentes)
+    const priceFormData = new URLSearchParams();
+    priceFormData.append('unit_amount', Math.round((module.price || 0) * 100).toString());
+    priceFormData.append('currency', 'brl');
+    priceFormData.append('product', module.stripeProductId);
+
+    console.log('Enviando requisição para criar novo preço no Stripe:', {
+      url: 'https://api.stripe.com/v1/prices',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey.substring(0, 10)}...`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: priceFormData.toString()
+    });
+
+    // Criar novo preço
+    const priceResponse = await fetch('https://api.stripe.com/v1/prices', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeSecretKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: priceFormData
+    });
+
+    // Verificar se a requisição foi bem-sucedida
+    if (!priceResponse.ok) {
+      const errorText = await priceResponse.text();
+      console.error('Erro ao criar novo preço no Stripe:', {
+        status: priceResponse.status,
+        statusText: priceResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Falha ao criar novo preço no Stripe: ${priceResponse.status} ${priceResponse.statusText}`);
+    }
+
+    // Processar a resposta
+    const priceData = await priceResponse.json();
+    console.log('Novo preço criado com sucesso no Stripe:', priceData);
+
+    // PASSO 3: Arquivar o preço antigo no Stripe
+    try {
+      const archiveFormData = new URLSearchParams();
+      archiveFormData.append('active', 'false');
+      
+      console.log('Arquivando preço antigo no Stripe:', module.stripePriceId);
+      
+      const archiveResponse = await fetch(`https://api.stripe.com/v1/prices/${module.stripePriceId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${stripeSecretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: archiveFormData
+      });
+      
+      if (!archiveResponse.ok) {
+        const errorText = await archiveResponse.text();
+        console.warn('Aviso: Não foi possível arquivar o preço antigo:', errorText);
+        // Continuamos o processo mesmo se falhar o arquivamento
+      } else {
+        const archiveData = await archiveResponse.json();
+        console.log('Preço antigo arquivado com sucesso:', archiveData);
+      }
+    } catch (archiveError) {
+      // Apenas logar o erro, não interromper o fluxo principal
+      console.warn('Erro ao tentar arquivar preço antigo:', archiveError);
+    }
+
+    // Retornar os IDs do produto e do novo preço
+    return {
+      productId: productData.id,
+      priceId: priceData.id
     };
   } catch (error) {
-    console.error('Error creating Stripe product:', error);
-    throw error;
+    console.error('Erro ao atualizar no Stripe:', error);
+    
+    // Retornar os IDs existentes para não perder a referência
+    return {
+      productId: module.stripeProductId || `prod_mock_${Date.now()}`,
+      priceId: module.stripePriceId || `price_mock_${Date.now()}`
+    };
   }
 };
 
@@ -147,16 +389,18 @@ export const createModule = async (moduleData: Partial<Plan>): Promise<Plan> => 
 // Update an existing module
 export const updateModule = async (id: number, moduleData: Partial<Plan>): Promise<Plan> => {
   try {
-    // First, check if the module already has Stripe IDs
-    if (!moduleData.stripeProductId || !moduleData.stripePriceId) {
-      // Create new Stripe product and price if needed
-      const stripeIds = await createStripeProduct(moduleData);
-      moduleData.stripeProductId = stripeIds.productId;
-      moduleData.stripePriceId = stripeIds.priceId;
-    }
+    // Update the product and price in Stripe first
+    const stripeIds = await updateStripeProduct(moduleData);
+    
+    // Add/update the Stripe IDs in the module data
+    const moduleWithStripe = {
+      ...moduleData,
+      stripeProductId: stripeIds.productId,
+      stripePriceId: stripeIds.priceId
+    };
     
     // Convert to database format
-    const dbModule = convertPlanToModuleData(moduleData);
+    const dbModule = convertPlanToModuleData(moduleWithStripe);
     
     // Update in database
     const { data, error } = await supabase
@@ -182,6 +426,18 @@ export const updateModule = async (id: number, moduleData: Partial<Plan>): Promi
 // Delete a module
 export const deleteModule = async (id: number): Promise<void> => {
   try {
+    // Get the module data first to get the Stripe IDs
+    const { data: moduleData, error: fetchError } = await supabase
+      .from('modulos')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      console.error('Error fetching module for deletion:', fetchError);
+      throw fetchError;
+    }
+    
     // Delete from database
     const { error } = await supabase
       .from('modulos')
@@ -191,6 +447,40 @@ export const deleteModule = async (id: number): Promise<void> => {
     if (error) {
       console.error('Error deleting module:', error);
       throw error;
+    }
+    
+    // If the module had Stripe IDs, archive the product
+    if (moduleData?.prod_id && !moduleData.prod_id.includes('mock_')) {
+      try {
+        // Chave secreta do Stripe
+        const stripeSecretKey = 'sk_test_51QQ86wIeNufQUOGGfKZEZFTVMhcKsBVeQRBmQxxjRHECLsgFJ9rJKAv8wKYQX1MY5QKzPpAbLOMXMt9v51dN00GA00xvvYBtkU';
+        
+        // Arquivar o produto no Stripe
+        const productFormData = new URLSearchParams();
+        productFormData.append('active', 'false');
+        
+        console.log('Arquivando produto no Stripe:', moduleData.prod_id);
+        
+        const productResponse = await fetch(`https://api.stripe.com/v1/products/${moduleData.prod_id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${stripeSecretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: productFormData
+        });
+        
+        if (!productResponse.ok) {
+          const errorText = await productResponse.text();
+          console.warn('Aviso: Não foi possível arquivar o produto:', errorText);
+        } else {
+          const productData = await productResponse.json();
+          console.log('Produto arquivado com sucesso:', productData);
+        }
+      } catch (archiveError) {
+        // Apenas logar o erro, não interromper o fluxo principal
+        console.warn('Erro ao tentar arquivar produto no Stripe:', archiveError);
+      }
     }
     
     console.log('Module deleted successfully:', id);
