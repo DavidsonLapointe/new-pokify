@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
 import { toast } from "sonner";
-import { mockModules } from "@/components/admin/modules/module-constants";
+import { fetchModules, createModule, updateModule, deleteModule } from "@/services/moduleService";
 
 export const useModulesManagement = () => {
   const [modules, setModules] = useState<Plan[]>([]);
@@ -20,25 +20,15 @@ export const useModulesManagement = () => {
     loadModules();
   }, []);
 
-  // Removed the useEffect that automatically selects the first module
-
   const loadModules = async () => {
     setIsLoading(true);
     try {
-      console.log("Carregando módulos...");
-      // Simulamos a busca no banco de dados usando dados mockados
-      // Em um ambiente real, nós usaríamos fetchPlans() e adaptaríamos para módulos
-      setTimeout(() => {
-        // Adicione a propriedade areas aos módulos mockados se ainda não existirem
-        const modulesWithAreas = mockModules.map(module => ({
-          ...module,
-          areas: module.areas || []
-        }));
-        
-        console.log("Módulos carregados com mock data:", modulesWithAreas);
-        setModules(modulesWithAreas);
-        setIsLoading(false);
-      }, 1000);
+      console.log("Carregando módulos do banco de dados...");
+      const modulesData = await fetchModules();
+      
+      console.log("Módulos carregados do Supabase:", modulesData);
+      setModules(modulesData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao carregar módulos:", error);
       toast.error("Não foi possível carregar os módulos. Tente novamente.");
@@ -50,12 +40,12 @@ export const useModulesManagement = () => {
     console.log("Salvando módulo:", data);
     try {
       // Se estiver editando um módulo existente
-      if (editingModule) {
-        // Atualiza o módulo existente
-        const updatedModule = {
+      if (editingModule && typeof editingModule.id === 'number') {
+        // Atualiza o módulo existente no banco de dados
+        const updatedModule = await updateModule(editingModule.id, {
           ...editingModule,
           ...data
-        };
+        });
         
         // Atualiza a lista de módulos
         setModules(prevModules => 
@@ -69,14 +59,13 @@ export const useModulesManagement = () => {
         
         toast.success("Módulo atualizado com sucesso!");
       } else {
-        // Criar um novo módulo
-        const newModule = {
-          id: Date.now(), // ID temporário
+        // Criar um novo módulo no banco de dados
+        const newModule = await createModule({
           ...data,
           active: data.active !== undefined ? data.active : true,
           comingSoon: data.comingSoon || false,
           areas: data.areas || [],
-        } as Plan;
+        });
         
         // Adicionar à lista de módulos
         setModules(prevModules => [...prevModules, newModule]);
@@ -101,21 +90,26 @@ export const useModulesManagement = () => {
     try {
       setDeletingModuleId(id);
       
-      // Em um ambiente real, chamaríamos deletePlan(id)
-      // Simulação de deleção com timeout
-      setTimeout(() => {
-        // Remove o módulo da lista
-        setModules(prevModules => prevModules.filter(m => m.id !== id));
-        
-        // Se o módulo selecionado for o que está sendo deletado, selecionar outro
-        if (selectedModule && selectedModule.id === id) {
-          const remainingModules = modules.filter(m => m.id !== id);
-          setSelectedModule(remainingModules.length > 0 ? remainingModules[0] : null);
-        }
-        
+      // Delete o módulo do banco de dados
+      if (typeof id === 'number') {
+        await deleteModule(id);
+      } else {
+        toast.error("ID do módulo inválido para exclusão");
         setDeletingModuleId(null);
-        toast.success("Módulo removido com sucesso.");
-      }, 1000);
+        return;
+      }
+      
+      // Remove o módulo da lista
+      setModules(prevModules => prevModules.filter(m => m.id !== id));
+      
+      // Se o módulo selecionado for o que está sendo deletado, selecionar outro
+      if (selectedModule && selectedModule.id === id) {
+        const remainingModules = modules.filter(m => m.id !== id);
+        setSelectedModule(remainingModules.length > 0 ? remainingModules[0] : null);
+      }
+      
+      setDeletingModuleId(null);
+      toast.success("Módulo removido com sucesso.");
     } catch (error) {
       console.error("Erro ao deletar módulo:", error);
       toast.error("Ocorreu um erro ao remover o módulo.");

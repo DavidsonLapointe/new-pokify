@@ -1,7 +1,6 @@
-
 import { CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/admin/modules/PageHeader";
 import { LoadingState } from "@/components/admin/modules/LoadingState";
 import { ModuleCarousel } from "@/components/admin/modules/ModuleCarousel";
@@ -11,9 +10,13 @@ import { CancelModuleDialog } from "@/components/admin/modules/CancelModuleDialo
 import { SetupContactDialog } from "@/components/admin/modules/SetupContactDialog";
 import { useModulesManagement } from "@/components/admin/modules/hooks/useModulesManagement";
 import { Plan } from "@/components/admin/plans/plan-form-schema";
+import { CompanyArea } from "@/components/admin/modules/module-form-schema";
+import { fetchDefaultAreas } from "@/services/areasService";
 
 export const ModulesTab = () => {
   const [activeAreaFilter, setActiveAreaFilter] = useState<string | null>(null);
+  const [areas, setAreas] = useState<CompanyArea[]>([]);
+  const [loadingAreas, setLoadingAreas] = useState(true);
   
   const {
     modules,
@@ -39,6 +42,23 @@ export const ModulesTab = () => {
     handleEditModule,
     handleSelectModule
   } = useModulesManagement();
+
+  // Load areas from database when component mounts
+  useEffect(() => {
+    const loadAreas = async () => {
+      try {
+        setLoadingAreas(true);
+        const defaultAreas = await fetchDefaultAreas();
+        setAreas(defaultAreas);
+      } catch (error) {
+        console.error('Error loading areas:', error);
+      } finally {
+        setLoadingAreas(false);
+      }
+    };
+
+    loadAreas();
+  }, []);
 
   // Update the active area filter and close any open module details
   const handleAreaFilterChange = (areaId: string | null) => {
@@ -86,8 +106,7 @@ export const ModulesTab = () => {
 
   // Get the name of the active area filter
   const getActiveAreaName = () => {
-    const defaultAreas = [] // This would come from standardAreas in the original code
-    return defaultAreas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter;
+    return areas.find(a => a.id === activeAreaFilter)?.name || activeAreaFilter;
   };
 
   return (
@@ -101,7 +120,7 @@ export const ModulesTab = () => {
             setActiveAreaFilter={handleAreaFilterChange}
           />
           
-          {modulesLoading ? (
+          {modulesLoading || loadingAreas ? (
             <LoadingState />
           ) : (
             <ScrollArea className="w-full">

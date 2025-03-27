@@ -1,9 +1,9 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
-import { standardAreas } from "@/components/admin/modules/module-form-schema";
+import { CompanyArea } from "@/components/admin/modules/module-form-schema";
 import { Badge } from "@/components/ui/badge";
+import { fetchDefaultAreas } from "@/services/areasService";
 
 interface PageHeaderProps {
   setIsCreateDialogOpen: (open: boolean) => void;
@@ -16,10 +16,26 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   activeAreaFilter,
   setActiveAreaFilter 
 }) => {
-  // Filter only default areas and sort them alphabetically by name
-  const defaultAreas = standardAreas
-    .filter(area => area.isDefault)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const [areas, setAreas] = useState<CompanyArea[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAreas = async () => {
+      try {
+        setIsLoading(true);
+        const defaultAreas = await fetchDefaultAreas();
+        // Sort areas alphabetically by name
+        const sortedAreas = defaultAreas.sort((a, b) => a.name.localeCompare(b.name));
+        setAreas(sortedAreas);
+      } catch (error) {
+        console.error('Error loading areas:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAreas();
+  }, []);
 
   const handleAreaFilterClick = (areaId: string) => {
     if (activeAreaFilter === areaId) {
@@ -52,21 +68,27 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       <div className="flex flex-wrap items-center gap-2">
         <div className="text-sm text-muted-foreground mr-2">Filtrar por área:</div>
         <div className="flex flex-wrap gap-1.5">
-          {defaultAreas.map((area) => (
-            <Badge
-              key={area.id}
-              variant={activeAreaFilter === area.id ? "default" : "outline"}
-              className={`
-                px-2.5 py-1 text-xs cursor-pointer
-                ${activeAreaFilter === area.id 
-                  ? "bg-primary text-white hover:bg-primary-hover" 
-                  : "hover:bg-gray-100 text-gray-700"}
-              `}
-              onClick={() => handleAreaFilterClick(area.id)}
-            >
-              {area.name}
-            </Badge>
-          ))}
+          {isLoading ? (
+            <div className="text-sm text-muted-foreground">Carregando áreas...</div>
+          ) : areas.length === 0 ? (
+            <div className="text-sm text-muted-foreground">Nenhuma área encontrada</div>
+          ) : (
+            areas.map((area) => (
+              <Badge
+                key={area.id}
+                variant={activeAreaFilter === area.id ? "default" : "outline"}
+                className={`
+                  px-2.5 py-1 text-xs cursor-pointer
+                  ${activeAreaFilter === area.id 
+                    ? "bg-primary text-white hover:bg-primary-hover" 
+                    : "hover:bg-gray-100 text-gray-700"}
+                `}
+                onClick={() => handleAreaFilterClick(area.id)}
+              >
+                {area.name}
+              </Badge>
+            ))
+          )}
           
           {activeAreaFilter && (
             <Badge 
