@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -9,6 +8,7 @@ import Auth from "./pages/Auth";
 import ConfirmRegistration from "./pages/ConfirmRegistration";
 import Contract from "./pages/Contract";
 import NotFound from "./pages/NotFound";
+import Onboarding from "./pages/Onboarding";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./contexts/AuthContext";
 
@@ -78,6 +78,7 @@ function AppRoutes() {
         <Route path="/confirm-registration/:id" element={<ConfirmRegistration />} />
         <Route path="/contract/:id" element={<Contract />} />
         <Route path="/payment/:id" element={<Contract paymentMode={true} />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/organization/setup" element={<OrganizationSetup />} />
         <Route path="/organization/setup/:setupToken" element={<OrganizationSetup />} />
 

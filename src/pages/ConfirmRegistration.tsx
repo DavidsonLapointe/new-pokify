@@ -88,7 +88,7 @@ const ConfirmRegistration = () => {
       } catch (error) {
         console.error("Erro ao verificar token:", error);
         toast.error("Erro ao verificar token");
-        navigate("/");
+       navigate("/");
       } finally {
         setLoading(false);
       }
