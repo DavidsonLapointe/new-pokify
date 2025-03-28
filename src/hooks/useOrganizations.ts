@@ -91,7 +91,7 @@ export const useOrganizations = () => {
           cnpj: org.cnpj || '',
           email: org.email || '',
           phone: org.phone || '',
-          status: org.status || 'pending',
+          status: org.status_empresa || 'pending',
           createdAt: org.created_at || new Date().toISOString(),
           updatedAt: org.updated_at,
           plan: plan, // Using the plan object
