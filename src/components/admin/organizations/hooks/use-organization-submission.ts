@@ -7,10 +7,10 @@ import {
   sendOnboardingEmail,
   mapToOrganizationType 
 } from "../api/organization-api";
-import { createInactiveSubscription } from "@/services/subscriptionService";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/realClient";
 import { PostgrestError } from "@supabase/supabase-js";
+import { addDays } from "date-fns";
 
 /**
  * Hook for handling organization form submission logic
@@ -123,62 +123,41 @@ export const useOrganizationSubmission = (onSuccess: () => void) => {
         planName: createResult.planName // Inject plan name from the creation response
       });
 
-      // Create inactive subscription for the new organization with retries
-      console.log("%c 💳 Criando assinatura inativa...", "color: #3498db;");
-      let subscriptionCreated = false;
-      let retryCount = 0;
-      const maxRetries = 3;
+      // Mockamos a criação de assinatura no Stripe (temporariamente)
+      console.log("%c 💳 [DESATIVADO] Criação de assinatura no Stripe...", "color: #3498db;");
+      console.log("%c ✅ Simulando criação de assinatura com sucesso", "color: green;", {
+        organizationId: organizationFormatted.id,
+        plan: organizationFormatted.plan,
+        status: "inactive"
+      });
       
-      while (!subscriptionCreated && retryCount < maxRetries) {
-        try {
-          console.log(`%c 🔄 Tentativa ${retryCount + 1} de criar assinatura inativa`, "color: #3498db;", `ID da organização: ${organizationFormatted.id}`);
-          const inactiveSubscription = await createInactiveSubscription(organizationFormatted.id);
-          
-          console.log("%c Resultado da criação de assinatura:", "font-weight: bold;", inactiveSubscription);
-          
-          if (inactiveSubscription) {
-            console.log("%c ✅ Assinatura inativa criada com sucesso:", "color: green;", inactiveSubscription);
-            subscriptionCreated = true;
-          } else {
-            console.warn(`%c ⚠️ Tentativa ${retryCount + 1} falhou`, "color: orange;", "Aguardando antes de tentar novamente...");
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            retryCount++;
-          }
-        } catch (subscriptionError) {
-          console.error(`%c ❌ Erro na tentativa ${retryCount + 1} de criar assinatura:`, "color: red;", subscriptionError);
-          retryCount++;
-          
-          if (retryCount < maxRetries) {
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
-          } else {
-            console.error("%c ❌ Falha ao criar assinatura inativa após todas as tentativas", "color: red;");
-            toast.error("Erro ao criar assinatura. Tente novamente ou contate o suporte.");
-          }
-        }
-      }
+      // Mock de uma assinatura inativa para não quebrar o fluxo
+      const mockSubscription = {
+        id: `mock_subscription_${Date.now()}`,
+        organizationId: organizationFormatted.id,
+        stripeCustomerId: `mock_customer_${organizationFormatted.id}`,
+        stripeSubscriptionId: `mock_sub_${Date.now()}`,
+        stripePriceId: `mock_price_${organizationFormatted.plan}`,
+        status: "inactive",
+        currentPeriodStart: new Date().toISOString(),
+        currentPeriodEnd: addDays(new Date(), 30).toISOString(),
+        cancelAtPeriodEnd: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
-      // Calculate pro-rata value and create pro-rata title
       try {
-        // Create pro-rata title
-        console.log("%c 💰 Criando título pro-rata...", "color: #3498db;");
-        const proRataTitle = await handleProRataCreation(organizationFormatted);
-
-        console.log("%c Título pro-rata criado:", "font-weight: bold;", proRataTitle);
-
-        if (!proRataTitle) {
-          console.error("%c ❌ Falha ao criar título pro-rata", "color: red;");
-        }
+        // [DESATIVADO] Criação de título pro-rata
+        console.log("%c 💰 [DESATIVADO] Criação de título pro-rata", "color: #3498db;");
         
-        // Get pro-rata value from the title creation process
-        const proRataValue = proRataTitle?.value || 0;
+        // Valor mockado para não quebrar o fluxo
+        const proRataValue = 0;
         
         // Send single onboarding email with all links and selected modules
         try {
           console.log("%c 📧 Enviando email único de onboarding...", "color: #3498db;", {
             organizationId: organizationFormatted.id,
-            proRataValue: proRataValue,
+            proRataValue: proRataValue, // Valor zero por enquanto
             modules: values.modules
           });
           

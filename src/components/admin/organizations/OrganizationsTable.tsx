@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Organization } from "@/types";
 import {
@@ -57,12 +56,12 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   };
 
   const getActiveUsersCount = (org: Organization) => {
-    // Verificação dupla para garantir que users exista e seja um array
+    // Use the direct length of users array which now contains only active users from profiles table
     if (!org || !org.users || !Array.isArray(org.users)) {
       console.log("Organização sem array de usuários válido:", org);
       return 0;
     }
-    return org.users.filter(user => user.status === "active").length;
+    return org.users.length;
   };
 
   const getPendingSteps = (org: Organization) => {
