@@ -85,8 +85,10 @@ export const OrganizationsTable: React.FC<OrganizationsTableProps> = ({
   // Helper function to render plan name safely
   const renderPlanName = (org: Organization) => {
     if (typeof org.plan === 'object' && org.plan !== null) {
-      return org.plan.name;
+      return org.plan.name || "Plano não especificado";
     }
+    
+    // Fallback to planName or default message
     return org.planName || "Plano não especificado";
   };
 

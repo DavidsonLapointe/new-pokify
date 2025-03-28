@@ -61,20 +61,28 @@ export const useOrganizations = () => {
         }));
 
         // Find the plan details from planos table
-        const planId = org.plan_id || '';
+        const planId = org.plano_id?.toString() || '';
         const planData = planosMap[planId];
         
-        const plan: OrganizationPlan = planData ? {
-          id: planData.id,
-          name: planData.name || 'Plano não especificado',
-          value: planData.value || 0,
-          features: planData.resources ? planData.resources.split(',') : []
-        } : {
-          id: '',
-          name: 'Plano não especificado',
-          value: 0,
-          features: []
-        };
+        // Create plan object with data from 'planos' table
+        let plan: OrganizationPlan;
+        
+        if (planData) {
+          plan = {
+            id: planData.id.toString(),
+            name: planData.name || 'Plano não especificado',
+            value: planData.value || 0,
+            features: planData.resources ? planData.resources.split(',') : []
+          };
+        } else {
+          console.log(`Plano não encontrado para o ID: ${planId}, org: ${org.name}`);
+          plan = {
+            id: '',
+            name: 'Plano não especificado',
+            value: 0,
+            features: []
+          };
+        }
 
         return {
           id: org.id,
@@ -86,7 +94,7 @@ export const useOrganizations = () => {
           status: org.status || 'pending',
           createdAt: org.created_at || new Date().toISOString(),
           updatedAt: org.updated_at,
-          plan: plan,
+          plan: plan, // Using the plan object
           planName: plan.name,
           users: formattedUsers,
           adminName: org.admin_name,
