@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface OrganizationData {
   id: string;
@@ -46,13 +45,56 @@ interface AddressData {
   uf: string;
 }
 
+// Componente de indicador de progresso
+const StepIndicator: React.FC<{ currentStep: number; totalSteps: number }> = ({ 
+  currentStep, 
+  totalSteps 
+}) => {
+  return (
+    <div className="flex items-center justify-between w-full mb-8">
+      {Array.from({ length: totalSteps }).map((_, index) => (
+        <React.Fragment key={index}>
+          <div className="flex flex-col items-center">
+            <div 
+              className={`w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm ${
+                index + 1 === currentStep 
+                  ? "bg-primary text-white" 
+                  : index + 1 < currentStep 
+                    ? "bg-primary-100 text-primary border-2 border-primary" 
+                    : "bg-gray-100 text-gray-500 border border-gray-300"
+              }`}
+            >
+              {index + 1 < currentStep ? (
+                <CheckCircle className="h-5 w-5" />
+              ) : (
+                index + 1
+              )}
+            </div>
+            <span className={`text-xs mt-1 ${index + 1 === currentStep ? "text-primary font-medium" : "text-gray-500"}`}>
+              {index === 0 ? "Empresa" : index === 1 ? "Endereço" : "Plano"}
+            </span>
+          </div>
+          
+          {index < totalSteps - 1 && (
+            <div className={`h-[2px] flex-1 mx-2 ${
+              index + 1 < currentStep ? "bg-primary" : "bg-gray-200"
+            }`} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 const Onboarding: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const organizationId = searchParams.get("id");
   
-  const [activeTab, setActiveTab] = useState("empresa");
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
+  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -243,7 +285,7 @@ const Onboarding: React.FC = () => {
   
   // Validate form data for current step
   const validateCurrentStep = (): boolean => {
-    if (activeTab === "empresa") {
+    if (currentStep === 1) {
       if (
         !formData.cnpj ||
         !formData.razao_social ||
@@ -272,7 +314,7 @@ const Onboarding: React.FC = () => {
           return false;
         }
       }
-    } else if (activeTab === "endereco") {
+    } else if (currentStep === 2) {
       if (
         !formData.cep ||
         !formData.rua ||
@@ -295,26 +337,24 @@ const Onboarding: React.FC = () => {
   
   // Handle next step
   const handleNextStep = () => {
-    if (!validateCurrentStep()) return;
-    
-    if (activeTab === "empresa") {
-      setActiveTab("endereco");
-    } else if (activeTab === "endereco") {
-      setActiveTab("plano");
+    // Avança para a próxima etapa sem validação obrigatória
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     }
   };
   
   // Handle previous step
   const handlePreviousStep = () => {
-    if (activeTab === "endereco") {
-      setActiveTab("empresa");
-    } else if (activeTab === "plano") {
-      setActiveTab("endereco");
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
     }
   };
   
   // Handle form submission
   const handleSubmit = async () => {
+    // Apenas na submissão final fazemos a validação completa
     if (!validateCurrentStep()) return;
     
     setSaving(true);
@@ -401,6 +441,307 @@ const Onboarding: React.FC = () => {
     }
   };
   
+  // Render the current step content
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium mb-4">Dados da Empresa</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cnpj">CNPJ</Label>
+                  <Input
+                    id="cnpj"
+                    name="cnpj"
+                    value={formData.cnpj}
+                    onChange={handleInputChange}
+                    placeholder="00.000.000/0000-00"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="razao_social">Razão Social</Label>
+                  <Input
+                    id="razao_social"
+                    name="razao_social"
+                    value={formData.razao_social}
+                    onChange={handleInputChange}
+                    placeholder="Razão Social da Empresa"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nome_fantasia">Nome Fantasia</Label>
+                  <Input
+                    id="nome_fantasia"
+                    name="nome_fantasia"
+                    value={formData.nome_fantasia}
+                    onChange={handleInputChange}
+                    placeholder="Nome Fantasia"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email_empresa">Email da Empresa</Label>
+                  <Input
+                    id="email_empresa"
+                    name="email_empresa"
+                    value={formData.email_empresa}
+                    onChange={handleInputChange}
+                    placeholder="email@empresa.com"
+                    type="email"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="telefone_empresa">Telefone da Empresa</Label>
+                  <Input
+                    id="telefone_empresa"
+                    name="telefone_empresa"
+                    value={formData.telefone_empresa}
+                    onChange={handleInputChange}
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div>
+              <h3 className="text-lg font-medium mb-4">Dados do Administrador</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="admin_name">Nome</Label>
+                  <Input
+                    id="admin_name"
+                    name="admin_name"
+                    value={formData.admin_name}
+                    onChange={handleInputChange}
+                    placeholder="Nome do Administrador"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="admin_email">Email</Label>
+                  <Input
+                    id="admin_email"
+                    name="admin_email"
+                    value={formData.admin_email}
+                    onChange={handleInputChange}
+                    placeholder="email@administrador.com"
+                    type="email"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="admin_password">Senha</Label>
+                  <Input
+                    id="admin_password"
+                    name="admin_password"
+                    value={formData.admin_password}
+                    onChange={handleInputChange}
+                    placeholder="******"
+                    type="password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="admin_confirm_password">Confirmar Senha</Label>
+                  <Input
+                    id="admin_confirm_password"
+                    name="admin_confirm_password"
+                    value={formData.admin_confirm_password}
+                    onChange={handleInputChange}
+                    placeholder="******"
+                    type="password"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium mb-4">Endereço</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2 flex items-end gap-2">
+                <div className="flex-1">
+                  <Label htmlFor="cep">CEP</Label>
+                  <Input
+                    id="cep"
+                    name="cep"
+                    value={formData.cep}
+                    onChange={handleInputChange}
+                    placeholder="00000-000"
+                  />
+                </div>
+                <Button 
+                  variant="outline"
+                  onClick={handleCepSearch}
+                  className="mb-0.5"
+                >
+                  Buscar
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rua">Rua</Label>
+                <Input
+                  id="rua"
+                  name="rua"
+                  value={formData.rua}
+                  onChange={handleInputChange}
+                  placeholder="Nome da Rua"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="numero">Número</Label>
+                <Input
+                  id="numero"
+                  name="numero"
+                  value={formData.numero}
+                  onChange={handleInputChange}
+                  placeholder="123"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="complemento">Complemento</Label>
+                <Input
+                  id="complemento"
+                  name="complemento"
+                  value={formData.complemento}
+                  onChange={handleInputChange}
+                  placeholder="Apto, Sala, etc."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bairro">Bairro</Label>
+                <Input
+                  id="bairro"
+                  name="bairro"
+                  value={formData.bairro}
+                  onChange={handleInputChange}
+                  placeholder="Nome do Bairro"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cidade">Cidade</Label>
+                <Input
+                  id="cidade"
+                  name="cidade"
+                  value={formData.cidade}
+                  onChange={handleInputChange}
+                  placeholder="Nome da Cidade"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="uf">UF</Label>
+                <Input
+                  id="uf"
+                  name="uf"
+                  value={formData.uf}
+                  onChange={handleInputChange}
+                  placeholder="UF"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium mb-4">Detalhes do Plano</h3>
+            
+            {planData ? (
+              <Card className="border border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="text-xl">{planData.name}</CardTitle>
+                  <CardDescription>
+                    <span className="text-xl font-bold text-primary">
+                      R$ {planData.value.toFixed(2)}
+                    </span>
+                    {" "}/ mês
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-sm">{planData.description}</p>
+                    
+                    {planData.resources && (
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recursos Incluídos:</h4>
+                        <ul className="space-y-1">
+                          {planData.resources.split(',').map((feature, index) => (
+                            <li key={index} className="flex items-center gap-2 text-sm">
+                              <CheckCircle className="h-4 w-4 text-primary" />
+                              <span>{feature.trim()}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <p className="text-center text-muted-foreground">
+                    Nenhum plano encontrado para esta organização
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mt-4">
+              <p className="text-sm text-amber-800">
+                Ao finalizar o cadastro, você confirma os dados da empresa e concorda com os termos de uso do serviço.
+              </p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+  
+  // Navigation buttons based on current step
+  const renderNavButtons = () => {
+    return (
+      <div className="flex justify-between mt-6">
+        {currentStep > 1 && (
+          <Button 
+            variant="outline" 
+            onClick={handlePreviousStep}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+        )}
+        
+        {currentStep < totalSteps ? (
+          <Button 
+            onClick={handleNextStep}
+            className="flex items-center gap-2 ml-auto"
+          >
+            Continuar
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button 
+            onClick={handleSubmit} 
+            disabled={saving}
+            className="flex items-center gap-2 ml-auto"
+          >
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            Finalizar Cadastro
+          </Button>
+        )}
+      </div>
+    );
+  };
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -441,298 +782,10 @@ const Onboarding: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="empresa">Dados da Empresa</TabsTrigger>
-              <TabsTrigger value="endereco">Endereço</TabsTrigger>
-              <TabsTrigger value="plano">Plano</TabsTrigger>
-            </TabsList>
-            
-            {/* Etapa 1: Dados da Empresa */}
-            <TabsContent value="empresa">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Dados da Empresa</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="cnpj">CNPJ</Label>
-                      <Input
-                        id="cnpj"
-                        name="cnpj"
-                        value={formData.cnpj}
-                        onChange={handleInputChange}
-                        placeholder="00.000.000/0000-00"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="razao_social">Razão Social</Label>
-                      <Input
-                        id="razao_social"
-                        name="razao_social"
-                        value={formData.razao_social}
-                        onChange={handleInputChange}
-                        placeholder="Razão Social da Empresa"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="nome_fantasia">Nome Fantasia</Label>
-                      <Input
-                        id="nome_fantasia"
-                        name="nome_fantasia"
-                        value={formData.nome_fantasia}
-                        onChange={handleInputChange}
-                        placeholder="Nome Fantasia"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email_empresa">Email da Empresa</Label>
-                      <Input
-                        id="email_empresa"
-                        name="email_empresa"
-                        value={formData.email_empresa}
-                        onChange={handleInputChange}
-                        placeholder="email@empresa.com"
-                        type="email"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="telefone_empresa">Telefone da Empresa</Label>
-                      <Input
-                        id="telefone_empresa"
-                        name="telefone_empresa"
-                        value={formData.telefone_empresa}
-                        onChange={handleInputChange}
-                        placeholder="(00) 00000-0000"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Dados do Administrador</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="admin_name">Nome</Label>
-                      <Input
-                        id="admin_name"
-                        name="admin_name"
-                        value={formData.admin_name}
-                        onChange={handleInputChange}
-                        placeholder="Nome do Administrador"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="admin_email">Email</Label>
-                      <Input
-                        id="admin_email"
-                        name="admin_email"
-                        value={formData.admin_email}
-                        onChange={handleInputChange}
-                        placeholder="email@administrador.com"
-                        type="email"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="admin_password">Senha</Label>
-                      <Input
-                        id="admin_password"
-                        name="admin_password"
-                        value={formData.admin_password}
-                        onChange={handleInputChange}
-                        placeholder="******"
-                        type="password"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="admin_confirm_password">Confirmar Senha</Label>
-                      <Input
-                        id="admin_confirm_password"
-                        name="admin_confirm_password"
-                        value={formData.admin_confirm_password}
-                        onChange={handleInputChange}
-                        placeholder="******"
-                        type="password"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end mt-6">
-                <Button onClick={handleNextStep}>
-                  Próximo
-                </Button>
-              </div>
-            </TabsContent>
-            
-            {/* Etapa 2: Endereço */}
-            <TabsContent value="endereco">
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium mb-4">Endereço</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2 flex items-end gap-2">
-                    <div className="flex-1">
-                      <Label htmlFor="cep">CEP</Label>
-                      <Input
-                        id="cep"
-                        name="cep"
-                        value={formData.cep}
-                        onChange={handleInputChange}
-                        placeholder="00000-000"
-                      />
-                    </div>
-                    <Button 
-                      variant="outline"
-                      onClick={handleCepSearch}
-                      className="mb-0.5"
-                    >
-                      Buscar
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="rua">Rua</Label>
-                    <Input
-                      id="rua"
-                      name="rua"
-                      value={formData.rua}
-                      onChange={handleInputChange}
-                      placeholder="Nome da Rua"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="numero">Número</Label>
-                    <Input
-                      id="numero"
-                      name="numero"
-                      value={formData.numero}
-                      onChange={handleInputChange}
-                      placeholder="123"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="complemento">Complemento</Label>
-                    <Input
-                      id="complemento"
-                      name="complemento"
-                      value={formData.complemento}
-                      onChange={handleInputChange}
-                      placeholder="Apto, Sala, etc."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bairro">Bairro</Label>
-                    <Input
-                      id="bairro"
-                      name="bairro"
-                      value={formData.bairro}
-                      onChange={handleInputChange}
-                      placeholder="Nome do Bairro"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cidade">Cidade</Label>
-                    <Input
-                      id="cidade"
-                      name="cidade"
-                      value={formData.cidade}
-                      onChange={handleInputChange}
-                      placeholder="Nome da Cidade"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="uf">UF</Label>
-                    <Input
-                      id="uf"
-                      name="uf"
-                      value={formData.uf}
-                      onChange={handleInputChange}
-                      placeholder="UF"
-                      maxLength={2}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={handlePreviousStep}>
-                  Voltar
-                </Button>
-                <Button onClick={handleNextStep}>
-                  Próximo
-                </Button>
-              </div>
-            </TabsContent>
-            
-            {/* Etapa 3: Plano */}
-            <TabsContent value="plano">
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium mb-4">Detalhes do Plano</h3>
-                
-                {planData ? (
-                  <Card className="border border-primary/20 bg-primary/5">
-                    <CardHeader>
-                      <CardTitle className="text-xl">{planData.name}</CardTitle>
-                      <CardDescription>
-                        <span className="text-xl font-bold text-primary">
-                          R$ {planData.value.toFixed(2)}
-                        </span>
-                        {" "}/ mês
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <p className="text-sm">{planData.description}</p>
-                        
-                        {planData.resources && (
-                          <div className="space-y-2">
-                            <h4 className="font-medium">Recursos Incluídos:</h4>
-                            <ul className="space-y-1">
-                              {planData.resources.split(',').map((feature, index) => (
-                                <li key={index} className="flex items-center gap-2 text-sm">
-                                  <CheckCircle className="h-4 w-4 text-primary" />
-                                  <span>{feature.trim()}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <p className="text-center text-muted-foreground">
-                        Nenhum plano encontrado para esta organização
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-                
-                <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mt-4">
-                  <p className="text-sm text-amber-800">
-                    Ao finalizar o cadastro, você confirma os dados da empresa e concorda com os termos de uso do serviço.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={handlePreviousStep}>
-                  Voltar
-                </Button>
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={saving}
-                  className="gap-2"
-                >
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Finalizar Cadastro
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
+          <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
+          
+          {renderStepContent()}
+          {renderNavButtons()}
         </CardContent>
       </Card>
     </div>
