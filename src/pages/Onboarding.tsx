@@ -162,22 +162,55 @@ const Onboarding: React.FC = () => {
         throw new Error("Organização não encontrada");
       }
       
+      console.log("Dados da organização:", orgData);
       setOrganizationData(orgData);
       
-      // Fetch admin data (user from profiles with this organization_id)
-      const { data: adminUserData, error: adminError } = await supabase
+      // Buscar o usuário admin associado a esta organização
+      // Usar o organization_id para buscar na tabela profiles
+      console.log("Buscando administrador para organization_id:", organizationId);
+      
+      const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
         .select("*")
-        .eq("organization_id", organizationId)
-        .eq("function", "admin")
-        .single();
+        .eq("organization_id", organizationId);
       
-      if (adminError && adminError.code !== "PGRST116") {
-        console.error("Erro ao buscar dados do administrador:", adminError);
+      console.log("Resultado da busca de perfis:", profilesData, profilesError);
+      
+      if (profilesError) {
+        console.error("Erro ao buscar perfis:", profilesError);
       }
       
-      if (adminUserData) {
-        setAdminData(adminUserData);
+      if (profilesData && profilesData.length > 0) {
+        // Verificar se temos um admin
+        const adminUser = profilesData.find(profile => profile.function === "admin");
+        
+        if (adminUser) {
+          console.log("Administrador encontrado:", adminUser);
+          setAdminData(adminUser);
+          
+          // Atualizar form data com os dados do admin
+          setFormData(prev => ({
+            ...prev,
+            admin_name: adminUser.name || "",
+            admin_email: adminUser.email || "",
+            admin_password: "",
+            admin_confirm_password: "",
+          }));
+        } else {
+          // Se não encontrar especificamente um admin, usar o primeiro usuário
+          console.log("Nenhum administrador específico encontrado, usando o primeiro usuário:", profilesData[0]);
+          setAdminData(profilesData[0]);
+          
+          setFormData(prev => ({
+            ...prev,
+            admin_name: profilesData[0].name || "",
+            admin_email: profilesData[0].email || "",
+            admin_password: "",
+            admin_confirm_password: "",
+          }));
+        }
+      } else {
+        console.log("Nenhum perfil encontrado para esta organização");
       }
       
       // Fetch plan data
@@ -203,10 +236,6 @@ const Onboarding: React.FC = () => {
         nome_fantasia: orgData.nome_fantasia || "",
         email_empresa: orgData.email_empresa || "",
         telefone_empresa: orgData.telefone_empresa || "",
-        admin_name: adminUserData?.name || "",
-        admin_email: adminUserData?.email || "",
-        admin_password: "",
-        admin_confirm_password: "",
       }));
       
       setLoading(false);
