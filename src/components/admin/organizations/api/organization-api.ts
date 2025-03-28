@@ -158,7 +158,7 @@ export const createOrganization = async (values: CreateOrganizationFormData) => 
         email: values.adminEmail,
         tel: values.phone,
         function: 'organization_admin', // user_type enum value for admin
-        status: 'active', // user_status enum value for active
+        status: 'pending', // Changed from 'active' to 'pending'
         user_id: values.adminEmail, // Using email as user_id temporarily
         organization_id: data.id // Link to the newly created organization
       };
